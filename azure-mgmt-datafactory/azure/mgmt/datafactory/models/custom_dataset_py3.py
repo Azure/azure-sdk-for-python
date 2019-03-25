@@ -43,14 +43,13 @@ class CustomDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param type_properties: Required. Custom dataset properties.
+    :param type_properties: Custom dataset properties.
     :type type_properties: object
     """
 
     _validation = {
         'linked_service_name': {'required': True},
         'type': {'required': True},
-        'type_properties': {'required': True},
     }
 
     _attribute_map = {
@@ -66,7 +65,7 @@ class CustomDataset(Dataset):
         'type_properties': {'key': 'typeProperties', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, type_properties, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, type_properties=None, **kwargs) -> None:
         super(CustomDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.type_properties = type_properties
         self.type = 'CustomDataset'
