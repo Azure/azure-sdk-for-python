@@ -442,8 +442,8 @@ class HanaInstancesOperations(object):
         :type resource_group_name: str
         :param hana_instance_name: Name of the SAP HANA on Azure instance.
         :type hana_instance_name: str
-        :param monitoring_parameter: Request body that only contains the new
-         Tags field
+        :param monitoring_parameter: Request body that only contains
+         monitoring attributes
         :type monitoring_parameter:
          ~azure.mgmt.hanaonazure.models.MonitoringDetails
         :param dict custom_headers: headers that will be added to the request
