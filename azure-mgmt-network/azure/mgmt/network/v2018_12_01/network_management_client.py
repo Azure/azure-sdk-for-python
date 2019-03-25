@@ -30,6 +30,7 @@ from .operations.available_endpoint_services_operations import AvailableEndpoint
 from .operations.express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
 from .operations.express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
 from .operations.express_route_circuit_connections_operations import ExpressRouteCircuitConnectionsOperations
+from .operations.peer_express_route_circuit_connections_operations import PeerExpressRouteCircuitConnectionsOperations
 from .operations.express_route_circuits_operations import ExpressRouteCircuitsOperations
 from .operations.express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
 from .operations.express_route_cross_connections_operations import ExpressRouteCrossConnectionsOperations
@@ -86,6 +87,7 @@ from .operations.vpn_gateways_operations import VpnGatewaysOperations
 from .operations.vpn_connections_operations import VpnConnectionsOperations
 from .operations.p2s_vpn_server_configurations_operations import P2sVpnServerConfigurationsOperations
 from .operations.p2s_vpn_gateways_operations import P2sVpnGatewaysOperations
+from .operations.web_application_firewall_policies_operations import WebApplicationFirewallPoliciesOperations
 from . import models
 
 
@@ -153,6 +155,8 @@ class NetworkManagementClient(SDKClient):
     :vartype express_route_circuit_peerings: azure.mgmt.network.v2018_12_01.operations.ExpressRouteCircuitPeeringsOperations
     :ivar express_route_circuit_connections: ExpressRouteCircuitConnections operations
     :vartype express_route_circuit_connections: azure.mgmt.network.v2018_12_01.operations.ExpressRouteCircuitConnectionsOperations
+    :ivar peer_express_route_circuit_connections: PeerExpressRouteCircuitConnections operations
+    :vartype peer_express_route_circuit_connections: azure.mgmt.network.v2018_12_01.operations.PeerExpressRouteCircuitConnectionsOperations
     :ivar express_route_circuits: ExpressRouteCircuits operations
     :vartype express_route_circuits: azure.mgmt.network.v2018_12_01.operations.ExpressRouteCircuitsOperations
     :ivar express_route_service_providers: ExpressRouteServiceProviders operations
@@ -265,6 +269,8 @@ class NetworkManagementClient(SDKClient):
     :vartype p2s_vpn_server_configurations: azure.mgmt.network.v2018_12_01.operations.P2sVpnServerConfigurationsOperations
     :ivar p2s_vpn_gateways: P2sVpnGateways operations
     :vartype p2s_vpn_gateways: azure.mgmt.network.v2018_12_01.operations.P2sVpnGatewaysOperations
+    :ivar web_application_firewall_policies: WebApplicationFirewallPolicies operations
+    :vartype web_application_firewall_policies: azure.mgmt.network.v2018_12_01.operations.WebApplicationFirewallPoliciesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -309,6 +315,8 @@ class NetworkManagementClient(SDKClient):
         self.express_route_circuit_peerings = ExpressRouteCircuitPeeringsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_circuit_connections = ExpressRouteCircuitConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.peer_express_route_circuit_connections = PeerExpressRouteCircuitConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_circuits = ExpressRouteCircuitsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -421,6 +429,8 @@ class NetworkManagementClient(SDKClient):
         self.p2s_vpn_server_configurations = P2sVpnServerConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.p2s_vpn_gateways = P2sVpnGatewaysOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.web_application_firewall_policies = WebApplicationFirewallPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def check_dns_name_availability(

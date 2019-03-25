@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class VirtualHubRoute(Model):
     """VirtualHub route.
 
-    :param address_prefixes: list of all addressPrefixes.
+    :param address_prefixes: List of all addressPrefixes.
     :type address_prefixes: list[str]
     :param next_hop_ip_address: NextHop ip address.
     :type next_hop_ip_address: str

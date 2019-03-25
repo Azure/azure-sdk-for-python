@@ -25,7 +25,7 @@ class P2SVpnServerConfiguration(SubResource):
      group. This name can be used to access the resource along with Paren
      VirtualWan resource name.
     :type p2_svpn_server_configuration_properties_name: str
-    :param vpn_protocols: vpnProtocols for the P2SVpnServerConfiguration.
+    :param vpn_protocols: VPN protocols for the P2SVpnServerConfiguration.
     :type vpn_protocols: list[str or
      ~azure.mgmt.network.v2018_12_01.models.VpnGatewayTunnelingProtocol]
     :param p2_svpn_server_config_vpn_client_root_certificates: VPN client root
