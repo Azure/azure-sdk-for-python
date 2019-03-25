@@ -12,6 +12,14 @@
 from enum import Enum
 
 
+class State(str, Enum):
+
+    passed = "Passed"  #: All supported regulatory compliance controls in the given standard have a passed state
+    failed = "Failed"  #: At least one supported regulatory compliance control in the given standard has a state of failed
+    skipped = "Skipped"  #: All supported regulatory compliance controls in the given standard have a state of skipped
+    unsupported = "Unsupported"  #: No supported regulatory compliance data for the given standard
+
+
 class PricingTier(str, Enum):
 
     free = "Free"  #: Get free Azure security center experience with basic security features
@@ -90,6 +98,18 @@ class ExternalSecuritySolutionKind(str, Enum):
     cef = "CEF"
     ata = "ATA"
     aad = "AAD"
+
+
+class Direction(str, Enum):
+
+    inbound = "Inbound"
+    outbound = "Outbound"
+
+
+class TransportProtocol(str, Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
 
 
 class ConnectionType(str, Enum):

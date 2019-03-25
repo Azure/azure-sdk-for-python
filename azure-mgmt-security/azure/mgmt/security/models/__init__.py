@@ -10,10 +10,13 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .pricing_py3 import Pricing
-    from .pricing_list_py3 import PricingList
+    from .regulatory_compliance_standard_py3 import RegulatoryComplianceStandard
+    from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
+    from .regulatory_compliance_assessment_py3 import RegulatoryComplianceAssessment
     from .asc_location_py3 import AscLocation
     from .resource_py3 import Resource
+    from .pricing_py3 import Pricing
+    from .pricing_list_py3 import PricingList
     from .security_contact_py3 import SecurityContact
     from .workspace_setting_py3 import WorkspaceSetting
     from .auto_provisioning_setting_py3 import AutoProvisioningSetting
@@ -64,11 +67,18 @@ try:
     from .connected_resource_py3 import ConnectedResource
     from .connectable_resource_py3 import ConnectableResource
     from .allowed_connections_resource_py3 import AllowedConnectionsResource
+    from .rule_py3 import Rule
+    from .effective_network_security_groups_py3 import EffectiveNetworkSecurityGroups
+    from .adaptive_network_hardening_py3 import AdaptiveNetworkHardening
+    from .adaptive_network_hardening_enforce_request_py3 import AdaptiveNetworkHardeningEnforceRequest
 except (SyntaxError, ImportError):
-    from .pricing import Pricing
-    from .pricing_list import PricingList
+    from .regulatory_compliance_standard import RegulatoryComplianceStandard
+    from .regulatory_compliance_control import RegulatoryComplianceControl
+    from .regulatory_compliance_assessment import RegulatoryComplianceAssessment
     from .asc_location import AscLocation
     from .resource import Resource
+    from .pricing import Pricing
+    from .pricing_list import PricingList
     from .security_contact import SecurityContact
     from .workspace_setting import WorkspaceSetting
     from .auto_provisioning_setting import AutoProvisioningSetting
@@ -119,6 +129,13 @@ except (SyntaxError, ImportError):
     from .connected_resource import ConnectedResource
     from .connectable_resource import ConnectableResource
     from .allowed_connections_resource import AllowedConnectionsResource
+    from .rule import Rule
+    from .effective_network_security_groups import EffectiveNetworkSecurityGroups
+    from .adaptive_network_hardening import AdaptiveNetworkHardening
+    from .adaptive_network_hardening_enforce_request import AdaptiveNetworkHardeningEnforceRequest
+from .regulatory_compliance_standard_paged import RegulatoryComplianceStandardPaged
+from .regulatory_compliance_control_paged import RegulatoryComplianceControlPaged
+from .regulatory_compliance_assessment_paged import RegulatoryComplianceAssessmentPaged
 from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
 from .auto_provisioning_setting_paged import AutoProvisioningSettingPaged
@@ -134,7 +151,9 @@ from .jit_network_access_policy_paged import JitNetworkAccessPolicyPaged
 from .external_security_solution_paged import ExternalSecuritySolutionPaged
 from .topology_resource_paged import TopologyResourcePaged
 from .allowed_connections_resource_paged import AllowedConnectionsResourcePaged
+from .adaptive_network_hardening_paged import AdaptiveNetworkHardeningPaged
 from .security_center_enums import (
+    State,
     PricingTier,
     AlertNotifications,
     AlertsToAdmins,
@@ -147,14 +166,19 @@ from .security_center_enums import (
     StatusReason,
     AadConnectivityState,
     ExternalSecuritySolutionKind,
+    Direction,
+    TransportProtocol,
     ConnectionType,
 )
 
 __all__ = [
-    'Pricing',
-    'PricingList',
+    'RegulatoryComplianceStandard',
+    'RegulatoryComplianceControl',
+    'RegulatoryComplianceAssessment',
     'AscLocation',
     'Resource',
+    'Pricing',
+    'PricingList',
     'SecurityContact',
     'WorkspaceSetting',
     'AutoProvisioningSetting',
@@ -205,6 +229,13 @@ __all__ = [
     'ConnectedResource',
     'ConnectableResource',
     'AllowedConnectionsResource',
+    'Rule',
+    'EffectiveNetworkSecurityGroups',
+    'AdaptiveNetworkHardening',
+    'AdaptiveNetworkHardeningEnforceRequest',
+    'RegulatoryComplianceStandardPaged',
+    'RegulatoryComplianceControlPaged',
+    'RegulatoryComplianceAssessmentPaged',
     'SecurityContactPaged',
     'WorkspaceSettingPaged',
     'AutoProvisioningSettingPaged',
@@ -220,6 +251,8 @@ __all__ = [
     'ExternalSecuritySolutionPaged',
     'TopologyResourcePaged',
     'AllowedConnectionsResourcePaged',
+    'AdaptiveNetworkHardeningPaged',
+    'State',
     'PricingTier',
     'AlertNotifications',
     'AlertsToAdmins',
@@ -232,5 +265,7 @@ __all__ = [
     'StatusReason',
     'AadConnectivityState',
     'ExternalSecuritySolutionKind',
+    'Direction',
+    'TransportProtocol',
     'ConnectionType',
 ]

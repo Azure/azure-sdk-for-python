@@ -9,6 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
+from .regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
+from .regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
 from .pricings_operations import PricingsOperations
 from .security_contacts_operations import SecurityContactsOperations
 from .workspace_settings_operations import WorkspaceSettingsOperations
@@ -26,8 +29,12 @@ from .jit_network_access_policies_operations import JitNetworkAccessPoliciesOper
 from .external_security_solutions_operations import ExternalSecuritySolutionsOperations
 from .topology_operations import TopologyOperations
 from .allowed_connections_operations import AllowedConnectionsOperations
+from .adaptive_network_hardenings_operations import AdaptiveNetworkHardeningsOperations
 
 __all__ = [
+    'RegulatoryComplianceStandardsOperations',
+    'RegulatoryComplianceControlsOperations',
+    'RegulatoryComplianceAssessmentsOperations',
     'PricingsOperations',
     'SecurityContactsOperations',
     'WorkspaceSettingsOperations',
@@ -45,4 +52,5 @@ __all__ = [
     'ExternalSecuritySolutionsOperations',
     'TopologyOperations',
     'AllowedConnectionsOperations',
+    'AdaptiveNetworkHardeningsOperations',
 ]
