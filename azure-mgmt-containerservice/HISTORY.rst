@@ -3,6 +3,27 @@
 Release History
 ===============
 
+5.0.0 (2019-03-19)
+++++++++++++++++++
+
+**Features**
+
+- Model ManagedClusterAgentPoolProfile has a new parameter min_count
+- Model ManagedClusterAgentPoolProfile has a new parameter availability_zones
+- Model ManagedClusterAgentPoolProfile has a new parameter type
+- Model ManagedClusterAgentPoolProfile has a new parameter enable_auto_scaling
+- Model ManagedClusterAgentPoolProfile has a new parameter max_count
+- Model ManagedClusterAgentPoolProfile has a new parameter provisioning_state
+- Model ManagedClusterAgentPoolProfile has a new parameter orchestrator_version
+- Model ManagedCluster has a new parameter api_server_authorized_ip_ranges
+- Model ManagedCluster has a new parameter enable_pod_security_policy
+- Added operation group AgentPoolsOperations
+
+**Breaking changes**
+
+- Parameter count of model ManagedClusterAgentPoolProfile is now required
+- Model ManagedClusterAgentPoolProfile no longer has parameter storage_profile
+
 4.4.0 (2019-01-09)
 ++++++++++++++++++
 
