@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class VirtualHubRouteTable(Model):
     """VirtualHub route table.
 
-    :param routes: list of all routes.
+    :param routes: List of all routes.
     :type routes: list[~azure.mgmt.network.v2018_12_01.models.VirtualHubRoute]
     """
 

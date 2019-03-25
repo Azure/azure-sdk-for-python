@@ -24,16 +24,20 @@ class ApplicationGatewayBackendHealthServer(Model):
      'Unknown', 'Up', 'Down', 'Partial', 'Draining'
     :type health: str or
      ~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayBackendHealthServerHealth
+    :param health_probe_log: Health Probe Log.
+    :type health_probe_log: str
     """
 
     _attribute_map = {
         'address': {'key': 'address', 'type': 'str'},
         'ip_configuration': {'key': 'ipConfiguration', 'type': 'NetworkInterfaceIPConfiguration'},
         'health': {'key': 'health', 'type': 'str'},
+        'health_probe_log': {'key': 'healthProbeLog', 'type': 'str'},
     }
 
-    def __init__(self, *, address: str=None, ip_configuration=None, health=None, **kwargs) -> None:
+    def __init__(self, *, address: str=None, ip_configuration=None, health=None, health_probe_log: str=None, **kwargs) -> None:
         super(ApplicationGatewayBackendHealthServer, self).__init__(**kwargs)
         self.address = address
         self.ip_configuration = ip_configuration
         self.health = health
+        self.health_probe_log = health_probe_log

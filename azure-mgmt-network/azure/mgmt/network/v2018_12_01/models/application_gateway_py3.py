@@ -38,44 +38,57 @@ class ApplicationGateway(Resource):
      'Stopping'
     :vartype operational_state: str or
      ~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayOperationalState
-    :param gateway_ip_configurations: Subnets of application the gateway
-     resource.
+    :param gateway_ip_configurations: Subnets of the application gateway
+     resource. For default limits, see [Application Gateway
+     limits](https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits).
     :type gateway_ip_configurations:
      list[~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayIPConfiguration]
     :param authentication_certificates: Authentication certificates of the
-     application gateway resource.
+     application gateway resource. For default limits, see [Application Gateway
+     limits](https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits).
     :type authentication_certificates:
      list[~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayAuthenticationCertificate]
     :param trusted_root_certificates: Trusted Root certificates of the
-     application gateway resource.
+     application gateway resource. For default limits, see [Application Gateway
+     limits](https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits).
     :type trusted_root_certificates:
      list[~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayTrustedRootCertificate]
     :param ssl_certificates: SSL certificates of the application gateway
-     resource.
+     resource. For default limits, see [Application Gateway
+     limits](https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits).
     :type ssl_certificates:
      list[~azure.mgmt.network.v2018_12_01.models.ApplicationGatewaySslCertificate]
     :param frontend_ip_configurations: Frontend IP addresses of the
-     application gateway resource.
+     application gateway resource. For default limits, see [Application Gateway
+     limits](https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits).
     :type frontend_ip_configurations:
      list[~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayFrontendIPConfiguration]
     :param frontend_ports: Frontend ports of the application gateway resource.
+     For default limits, see [Application Gateway
+     limits](https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits).
     :type frontend_ports:
      list[~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayFrontendPort]
     :param probes: Probes of the application gateway resource.
     :type probes:
      list[~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayProbe]
     :param backend_address_pools: Backend address pool of the application
-     gateway resource.
+     gateway resource. For default limits, see [Application Gateway
+     limits](https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits).
     :type backend_address_pools:
      list[~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayBackendAddressPool]
     :param backend_http_settings_collection: Backend http settings of the
-     application gateway resource.
+     application gateway resource. For default limits, see [Application Gateway
+     limits](https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits).
     :type backend_http_settings_collection:
      list[~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayBackendHttpSettings]
     :param http_listeners: Http listeners of the application gateway resource.
+     For default limits, see [Application Gateway
+     limits](https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits).
     :type http_listeners:
      list[~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayHttpListener]
     :param url_path_maps: URL path map of the application gateway resource.
+     For default limits, see [Application Gateway
+     limits](https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits).
     :type url_path_maps:
      list[~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayUrlPathMap]
     :param request_routing_rules: Request routing rules of the application
@@ -87,13 +100,16 @@ class ApplicationGateway(Resource):
     :type rewrite_rule_sets:
      list[~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayRewriteRuleSet]
     :param redirect_configurations: Redirect configurations of the application
-     gateway resource.
+     gateway resource. For default limits, see [Application Gateway
+     limits](https://docs.microsoft.com/azure/azure-subscription-service-limits#application-gateway-limits).
     :type redirect_configurations:
      list[~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayRedirectConfiguration]
     :param web_application_firewall_configuration: Web application firewall
      configuration.
     :type web_application_firewall_configuration:
      ~azure.mgmt.network.v2018_12_01.models.ApplicationGatewayWebApplicationFirewallConfiguration
+    :param firewall_policy: Reference of the FirewallPolicy resource.
+    :type firewall_policy: ~azure.mgmt.network.v2018_12_01.models.SubResource
     :param enable_http2: Whether HTTP2 is enabled on the application gateway
      resource.
     :type enable_http2: bool
@@ -154,6 +170,7 @@ class ApplicationGateway(Resource):
         'rewrite_rule_sets': {'key': 'properties.rewriteRuleSets', 'type': '[ApplicationGatewayRewriteRuleSet]'},
         'redirect_configurations': {'key': 'properties.redirectConfigurations', 'type': '[ApplicationGatewayRedirectConfiguration]'},
         'web_application_firewall_configuration': {'key': 'properties.webApplicationFirewallConfiguration', 'type': 'ApplicationGatewayWebApplicationFirewallConfiguration'},
+        'firewall_policy': {'key': 'properties.firewallPolicy', 'type': 'SubResource'},
         'enable_http2': {'key': 'properties.enableHttp2', 'type': 'bool'},
         'enable_fips': {'key': 'properties.enableFips', 'type': 'bool'},
         'autoscale_configuration': {'key': 'properties.autoscaleConfiguration', 'type': 'ApplicationGatewayAutoscaleConfiguration'},
@@ -165,7 +182,7 @@ class ApplicationGateway(Resource):
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, trusted_root_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, rewrite_rule_sets=None, redirect_configurations=None, web_application_firewall_configuration=None, enable_http2: bool=None, enable_fips: bool=None, autoscale_configuration=None, resource_guid: str=None, provisioning_state: str=None, custom_error_configurations=None, etag: str=None, zones=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, trusted_root_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, rewrite_rule_sets=None, redirect_configurations=None, web_application_firewall_configuration=None, firewall_policy=None, enable_http2: bool=None, enable_fips: bool=None, autoscale_configuration=None, resource_guid: str=None, provisioning_state: str=None, custom_error_configurations=None, etag: str=None, zones=None, identity=None, **kwargs) -> None:
         super(ApplicationGateway, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.ssl_policy = ssl_policy
@@ -185,6 +202,7 @@ class ApplicationGateway(Resource):
         self.rewrite_rule_sets = rewrite_rule_sets
         self.redirect_configurations = redirect_configurations
         self.web_application_firewall_configuration = web_application_firewall_configuration
+        self.firewall_policy = firewall_policy
         self.enable_http2 = enable_http2
         self.enable_fips = enable_fips
         self.autoscale_configuration = autoscale_configuration
