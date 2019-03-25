@@ -3,6 +3,27 @@
 Release History
 ===============
 
+0.3.0 (2019-03-25)
+++++++++++++++++++
+
+**Features**
+
+- Model VolumePatch has a new parameter export_policy
+- Model NetAppAccount has a new parameter active_directories
+- Model Volume has a new parameter export_policy
+- Model MountTarget has a new parameter smb_server_fqdn
+- Model MountTarget has a new parameter subnet
+
+**Breaking changes**
+
+- Operation PoolsOperations.update has a new signature
+- Operation PoolsOperations.update has a new signature
+- Model MountTarget no longer has parameter vlan_id
+- Operation AccountsOperations.update has a new signature
+- Operation AccountsOperations.create_or_update has a new signature
+- Model CapacityPoolPatch has a new signature
+- Model NetAppAccountPatch has a new signature
+
 0.2.0 (2019-03-04)
 ++++++++++++++++++
 
