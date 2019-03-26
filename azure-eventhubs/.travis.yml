@@ -1,0 +1,43 @@
+language: python
+cache: pip
+dist: xenial
+sudo: required
+matrix:
+  include:
+    - os: linux
+      python: "2.7"
+      dist: trusty
+      script:
+        - pytest
+        - python ./setup.py check -r -s
+        - pylint --ignore=async_ops azure.eventhub
+    - os: linux
+      python: "3.4"
+      dist: trusty
+      script:
+        - pytest
+        - python ./setup.py check -r -s
+    - os: linux
+      python: "3.5"
+      script: 
+        - pytest
+        - python ./setup.py check -r -s
+        - pylint azure.eventhub
+        - pylint azure.eventprocessorhost
+    - os: linux
+      python: "3.6"
+      script: 
+        - pytest
+        - python ./setup.py check -r -s
+        - pylint azure.eventhub
+        - pylint azure.eventprocessorhost
+    - os: linux
+      python: "3.7"
+      script: 
+        - pytest
+        - python ./setup.py check -r -s
+        - pylint azure.eventhub
+        - pylint azure.eventprocessorhost
+install:
+  - pip install -r dev_requirements.txt
+  - pip install -e .
