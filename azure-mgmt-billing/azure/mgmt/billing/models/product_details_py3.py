@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class ProductDetails(Model):
     """Details of the product to be transferred.
 
-    :param product_type: Type of the prouct to be transferred. Possible values
-     include: 'AzureSubscription', 'AzureReservation'
+    :param product_type: Type of the product to be transferred. Possible
+     values include: 'AzureSubscription', 'AzureReservation'
     :type product_type: str or ~azure.mgmt.billing.models.ProductType
     :param product_id: Id of product to be transferred.
     :type product_id: str
