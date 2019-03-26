@@ -36,14 +36,16 @@ class ValidationActivity(ControlActivity):
      pattern: ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type timeout: object
     :param sleep: A delay in seconds between validation attempts. If no value
-     is specified, 10 seconds will be used as the default.
+     is specified, 10 seconds will be used as the default. Type: integer (or
+     Expression with resultType integer).
     :type sleep: object
     :param minimum_size: Can be used if dataset points to a file. The file
-     must be greater than or equal in size to the value specified.
+     must be greater than or equal in size to the value specified. Type:
+     integer (or Expression with resultType integer).
     :type minimum_size: object
     :param child_items: Can be used if dataset points to a folder. If set to
      true, the folder must have at least one file. If set to false, the folder
-     must be empty.
+     must be empty. Type: boolean (or Expression with resultType boolean).
     :type child_items: object
     :param dataset: Required. Validation activity dataset reference.
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
