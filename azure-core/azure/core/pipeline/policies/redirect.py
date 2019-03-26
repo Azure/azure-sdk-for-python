@@ -56,20 +56,22 @@ class RedirectPolicy(HTTPPolicy):
     REDIRECT_HEADERS_BLACKLIST = frozenset(['Authorization'])
 
     def __init__(self, **kwargs):
-        self.redirects = kwargs.pop('redirect_max', 30)
+        self.allow = kwargs.get('redirects_allow', True)
+        self.max_redirects = kwargs.get('redirect_max', 30)
 
-        remove_headers = kwargs.pop('redirect_remove_headers', set())
+        remove_headers = kwargs.get('redirect_remove_headers', set())
         self._remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
-        redirect_status = kwargs.pop('redirect_on_status_codes', set())
+        redirect_status = kwargs.get('redirect_on_status_codes', set())
         self._redirect_on_status_codes = redirect_status.union(self.REDIRECT_STATUSES)
 
     @classmethod
     def no_redirects(cls):
-        return cls(redirect_max=0)
+        return cls(redirects_allow=False)
 
     def configure_redirects(self, **kwargs):
         return {
-            'redirects': kwargs.get("redirect_max", self.redirects),
+            'allow': kwargs.pop("redirects_allow", self.max_redirects),
+            'redirects': kwargs.pop("redirect_max", self.max_redirects),
             'history': []
         }
 
@@ -114,7 +116,7 @@ class RedirectPolicy(HTTPPolicy):
             response.http_request.method = 'GET'
         for non_redirect_header in self._remove_headers_on_redirect:
             response.http_request.headers.pop(non_redirect_header, None)
-        return settings['redirects'] > 0
+        return settings['redirects'] > 0 or not settings['allow']
 
     def send(self, request, **kwargs):
         retryable = True

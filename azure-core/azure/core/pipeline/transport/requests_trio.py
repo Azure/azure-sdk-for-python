@@ -27,6 +27,7 @@ import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
+import urllib3
 from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
 
 import requests
@@ -96,24 +97,48 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         return super(TrioRequestsTransport, self).__exit__()
 
+    async def sleep(self, duration):
+        await trio.sleep(duration)
+
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
         """Send the request using this HTTP sender.
         """
         trio_limiter = kwargs.get("trio_limiter", None)
-        future = trio.run_sync_in_worker_thread(
-            functools.partial(
-                self.session.request,
-                request.method,
-                request.url,
-                **kwargs
-            ),
-            limiter=trio_limiter
-        )
+        response = None
+        error = None
+        if self.config.proxy_policy and 'proxies' not in kwargs:
+            kwargs['proxies'] = self.config.proxy_policy.proxies
         try:
-            return TrioRequestsTransportResponse(
-                request,
-                await future
-            )
+            response = await trio.run_sync_in_worker_thread(
+                functools.partial(
+                    self.session.request,
+                    request.method,
+                    request.url,
+                    headers=request.headers,
+                    data=request.data,
+                    files=request.files,
+                    verify=kwargs.get('connection_verify', self.config.connection.verify),
+                    timeout=kwargs.get('connection_timeout', self.config.connection.timeout),
+                    cert=kwargs.get('connection_cert', self.config.connection.cert),
+                    allow_redirects=False,
+                    **kwargs),
+                limiter=trio_limiter)
+
+        except urllib3.exceptions.NewConnectionError as err:
+            error = ConnectionError(err, error=err)
+        except requests.exceptions.ReadTimeout as err:
+            error = ReadTimeoutError(err, error=err)
+        except requests.exceptions.ConnectionError as err:
+            if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
+                error = ConnectionReadError(err, error=err)
+            else:
+                error = ConnectionError(err, error=err)
         except requests.RequestException as err:
-            msg = "Error occurred in request."
-            raise_with_traceback(ClientRequestError, msg, err)
+            error = ServiceRequestError(err, error=err)
+        finally:
+            if not self.config.connection.keep_alive and (not response or not kwargs['stream']):
+                self.session.close()
+        if error:
+            raise error
+
+        return TrioRequestsTransportResponse(request, response)

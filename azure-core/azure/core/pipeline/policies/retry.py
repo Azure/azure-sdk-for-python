@@ -30,6 +30,7 @@ from __future__ import absolute_import  # we have a "requests" module that confl
 import contextlib
 import logging
 import time
+import re
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 import warnings
 
@@ -72,13 +73,13 @@ class RetryPolicy(HTTPPolicy):
 
     def configure_retries(self, **kwargs):
         return {
-            'total': kwargs.get("retry_total", self.total_retries),
-            'connect': kwargs.get("retry_connect", self.connect_retries),
-            'read': kwargs.get("retry_read", self.read_retries),
-            'status': kwargs.get("retry_status", self.status_retries),
-            'backoff': kwargs.get("retry_backoff_factor", self.backoff_factor),
-            'max_backoff': kwargs.get("retry_backoff_max", self.BACKOFF_MAX),
-            'methods': kwargs.get("retry_on_methods", self._method_whitelist),
+            'total': kwargs.pop("retry_total", self.total_retries),
+            'connect': kwargs.pop("retry_connect", self.connect_retries),
+            'read': kwargs.pop("retry_read", self.read_retries),
+            'status': kwargs.pop("retry_status", self.status_retries),
+            'backoff': kwargs.pop("retry_backoff_factor", self.backoff_factor),
+            'max_backoff': kwargs.pop("retry_backoff_max", self.BACKOFF_MAX),
+            'methods': kwargs.pop("retry_on_methods", self._method_whitelist),
             'history': []
         }
 
@@ -121,21 +122,20 @@ class RetryPolicy(HTTPPolicy):
 
         return self.parse_retry_after(retry_after)
 
-    def sleep_for_retry(self, response):
+    def sleep_for_retry(self, response, transport):
         retry_after = self.get_retry_after(response)
         if retry_after:
-            time.sleep(retry_after)
+            transport.sleep(retry_after)
             return True
-
         return False
 
-    def _sleep_backoff(self, settings):
+    def _sleep_backoff(self, settings, transport):
         backoff = self.get_backoff_time(settings)
         if backoff <= 0:
             return
-        time.sleep(backoff)
+        transport.sleep(backoff)
 
-    def sleep(self, settings, response=None):
+    def sleep(self, settings, transport, response=None):
         """ Sleep between retry attempts.
 
         This method will respect a server's ``Retry-After`` response header
@@ -143,13 +143,11 @@ class RetryPolicy(HTTPPolicy):
         will use an exponential backoff. By default, the backoff factor is 0 and
         this method will return immediately.
         """
-
         if response:
-            slept = self.sleep_for_retry(response)
+            slept = self.sleep_for_retry(response, transport)
             if slept:
                 return
-
-        self._sleep_backoff(settings)
+        self._sleep_backoff(settings, transport)
 
     def _is_connection_error(self, err):
         """ Errors when we're fairly sure that the server did not receive the
@@ -183,8 +181,8 @@ class RetryPolicy(HTTPPolicy):
         be retried upon on the presence of the aforementioned header)
         """
         has_retry_after = bool(response.http_response.headers.get("Retry-After"))
-        if has_retry_after and self._respect_retry_after_header:
-            return True
+        #if has_retry_after and self._respect_retry_after_header:
+        #    return True
         if not self._is_method_retryable(settings, response.http_request, response=response.http_response):
             return False
         return (settings['total'] and response.http_response.status_code in self._retry_on_status_codes)
@@ -240,14 +238,14 @@ class RetryPolicy(HTTPPolicy):
                 if self.is_retry(retry_settings, response):
                     retries_remaining = self.increment(retry_settings, response=response)
                     if retries_remaining:
-                        self.sleep(retry_settings)
+                        self.sleep(retry_settings, request.context.transport, response=response)
                         continue
                 return response
             except ServiceRequestError as err:
                 if self._is_method_retryable(retry_settings, request.http_request):
                     retries_remaining = self.increment(retry_settings, response=request, error=err)
                     if retries_remaining:
-                        self.sleep(retry_settings)
+                        self.sleep(retry_settings, request.context.transport)
                         continue
                 raise err
         return response

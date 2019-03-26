@@ -30,13 +30,23 @@ import logging
 from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
 
 from . import AsyncHTTPPolicy
+from .redirect import RedirectPolicy
+
+from azure.core.exceptions import TooManyRedirectsError
 
 
-class AsyncRedirectPolicy(AsyncHTTPPolicy):
-
-    def __init__(self, **kwargs):
-        self.redirect_allow = kwargs.pop('redirect_allow', True)
-        self.redirect_max = kwargs.pop('redirect_max', 30)
+class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):
 
     async def send(self, request, **kwargs):
-        return await self.next.send(request, **kwargs)
+        redirects_remaining = True
+        redirect_settings = self.configure_redirects(**kwargs)
+        while redirects_remaining:
+            response = await self.next.send(request, **kwargs)
+            redirect_location = self.get_redirect_location(response)
+            if redirect_location:
+                redirects_remaining = self.increment(redirect_settings, response, redirect_location)
+                request.http_request = response.http_request
+                continue
+            return response
+
+        raise TooManyRedirectsError(redirect_settings['history'])
