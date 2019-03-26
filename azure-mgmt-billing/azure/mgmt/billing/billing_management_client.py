@@ -45,7 +45,7 @@ from .operations.products_operations import ProductsOperations
 from .operations.transactions_by_billing_account_operations import TransactionsByBillingAccountOperations
 from .operations.policy_operations import PolicyOperations
 from .operations.billing_property_operations import BillingPropertyOperations
-from .operations.invoice_section_operations import InvoiceSectionOperations
+from .operations.billing_profile_invoice_section_operations import BillingProfileInvoiceSectionOperations
 from .operations.transfers_operations import TransfersOperations
 from .operations.recipient_transfers_operations import RecipientTransfersOperations
 from .operations.operations import Operations
@@ -155,8 +155,8 @@ class BillingManagementClient(SDKClient):
     :vartype policy: azure.mgmt.billing.operations.PolicyOperations
     :ivar billing_property: BillingProperty operations
     :vartype billing_property: azure.mgmt.billing.operations.BillingPropertyOperations
-    :ivar invoice_section: InvoiceSection operations
-    :vartype invoice_section: azure.mgmt.billing.operations.InvoiceSectionOperations
+    :ivar billing_profile_invoice_section: BillingProfileInvoiceSection operations
+    :vartype billing_profile_invoice_section: azure.mgmt.billing.operations.BillingProfileInvoiceSectionOperations
     :ivar transfers: Transfers operations
     :vartype transfers: azure.mgmt.billing.operations.TransfersOperations
     :ivar recipient_transfers: RecipientTransfers operations
@@ -257,7 +257,7 @@ class BillingManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_property = BillingPropertyOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.invoice_section = InvoiceSectionOperations(
+        self.billing_profile_invoice_section = BillingProfileInvoiceSectionOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.transfers = TransfersOperations(
             self._client, self.config, self._serialize, self._deserialize)
