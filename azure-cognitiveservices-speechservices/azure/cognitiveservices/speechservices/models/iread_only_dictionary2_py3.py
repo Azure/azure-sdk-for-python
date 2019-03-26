@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class GetSupportedLocalesForDatasetsOKResponse(Model):
+class IReadOnlyDictionary2(Model):
     """IReadOnlyDictionary`2.
 
     :param none:
@@ -39,7 +39,7 @@ class GetSupportedLocalesForDatasetsOKResponse(Model):
     }
 
     def __init__(self, *, none=None, language=None, acoustic=None, pronunciation=None, custom_voice=None, language_generation=None, **kwargs) -> None:
-        super(GetSupportedLocalesForDatasetsOKResponse, self).__init__(**kwargs)
+        super(IReadOnlyDictionary2, self).__init__(**kwargs)
         self.none = none
         self.language = language
         self.acoustic = acoustic

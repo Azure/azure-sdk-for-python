@@ -40,7 +40,7 @@ try:
     from .dataset_definition_py3 import DatasetDefinition
     from .voice_test_py3 import VoiceTest
     from .voice_test_definition_py3 import VoiceTestDefinition
-    from .get_supported_locales_for_datasets_ok_response_py3 import GetSupportedLocalesForDatasetsOKResponse
+    from .iread_only_dictionary2_py3 import IReadOnlyDictionary2
     from .get_supported_locales_for_models_ok_response_py3 import GetSupportedLocalesForModelsOKResponse
 except (SyntaxError, ImportError):
     from .dataset import Dataset
@@ -73,7 +73,7 @@ except (SyntaxError, ImportError):
     from .dataset_definition import DatasetDefinition
     from .voice_test import VoiceTest
     from .voice_test_definition import VoiceTestDefinition
-    from .get_supported_locales_for_datasets_ok_response import GetSupportedLocalesForDatasetsOKResponse
+    from .iread_only_dictionary2 import IReadOnlyDictionary2
     from .get_supported_locales_for_models_ok_response import GetSupportedLocalesForModelsOKResponse
 
 __all__ = [
@@ -107,6 +107,6 @@ __all__ = [
     'DatasetDefinition',
     'VoiceTest',
     'VoiceTestDefinition',
-    'GetSupportedLocalesForDatasetsOKResponse',
+    'IReadOnlyDictionary2',
     'GetSupportedLocalesForModelsOKResponse',
 ]

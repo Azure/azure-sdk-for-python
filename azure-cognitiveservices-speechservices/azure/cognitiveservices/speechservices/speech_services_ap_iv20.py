@@ -919,7 +919,7 @@ class SpeechServicesAPIv20(SDKClient):
         header_dict = {}
 
         if response.status_code == 200:
-            deserialized = self._deserialize('GetSupportedLocalesForDatasetsOKResponse', response)
+            deserialized = self._deserialize('IReadOnlyDictionary2', response)
             header_dict = {
                 'X-RateLimit-Limit': 'int',
                 'X-RateLimit-Remaining': 'int',
