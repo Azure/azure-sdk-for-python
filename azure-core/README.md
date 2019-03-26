@@ -31,22 +31,24 @@ class FooServiceClient():
         # Here the SDK developer would define the default
         # config to interact with the service
         config = Configuration(**kwargs)
-        config.user_agent = UserAgentPolicy("ServiceUserAgentValue", **kwargs)
-        config.headers = HeadersPolicy({"CustomHeader": "Value"})
-        config.retry = RetryPolicy(**kwargs)
-        config.redirect = RedirectPolicy(**kwargs)
+        config.user_agent_policy = UserAgentPolicy("ServiceUserAgentValue", **kwargs)
+        config.headers_policy = HeadersPolicy({"CustomHeader": "Value"})
+        config.retry_policy = RetryPolicy(**kwargs)
+        config.redirect_policy = RedirectPolicy(**kwargs)
+        config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
+        config.proxy_policy = ProxyPolicy(**kwargs)
 
-    def __init__(self, credentials, config=None, transport=None):
-        config = config or FooServiceClient.create_config()
+    def __init__(self, endpoint=None, credentials=None, configuration=None, transport=None, **kwargs):
+        config = configuration or FooServiceClient.create_config(**kwargs)
         transport = RequestsTransport(config)
         policies = [
-            config.user_agent,
-            config.headers,
+            config.user_agent_policy,
+            config.headers_policy,
             credentials,
             ContentDecodePolicy(),
-            config.redirect,
-            config.retry,
-            config.logging,
+            config.redirect_policy,
+            config.retry_policy,
+            config.logging_policy,
         ]
         self._pipeline = Pipeline(transport, policies=policies)
 
@@ -65,28 +67,29 @@ from azure.core.credentials import FooCredentials
 from azure.foo import FooServiceClient
 
 creds = FooCredentials("api-key")
+endpoint = "http://service.azure.net
 
 # Scenario using entirely default configuration
-client = FooServiceClient(creds)
+client = FooServiceClient(endpoint, creds)
 response = client.get_request()
 
 # Scenario where user wishes to tweak a couple of settings
 foo_config = FooserviceClient.create_config()
-foo_config.retry.total_retries = 5
-foo_config.logging.enable_http_logger = True
+foo_config.retry_policy.total_retries = 5
+foo_config.logging_policy.enable_http_logger = True
 
-client = FooServiceClient(creds, config=config)
+client = FooServiceClient(endpoint, creds, config=config)
 response = client.get_request()
 
 # Scenario where user wishes to tweak settings for only a specific request
-client = FooServiceClient(creds)
+client = FooServiceClient(endpoint, creds)
 response = client.get_request(redirects_max=0)
 
 # Scenario where user wishes to substitute custom policy
 foo_config = FooserviceClient.create_config()
-foo_config.retry = CustomRetryPolicy()
+foo_config.retry_policy = CustomRetryPolicy()
 
-client = FooServiceClient(creds, config=config)
+client = FooServiceClient(endpoint, creds, config=config)
 response = client.get_request()
 ```
 
@@ -101,30 +104,30 @@ The Configuration object does not specify in what order the policies will be add
 It is up to the SDK developer to use the policies in the Configuration to construct the pipeline correctly, as well
 as inserting any unexposed/non-configurable policies.
 ```python
-config = config or FooServiceClient.create_config()
+config = config or FooServiceClient.create_config(**kwargs)
 transport = RequestsTransport(config)
 
 # SDK developer needs to build the policy order for the pipeline.
 policies = [
-    config.user_agent,
-    config.headers,
+    config.user_agent_policy,
+    config.headers_policy,
     credentials,  # Credentials policy needs to be inserted after all request mutation to accomodate signing.
     ContentDecodePolicy(),
-    config.redirect,
-    config.retry,
-    config.logging,  # Logger should come last to accurately record the request/response as they are on the wire
+    config.redirect_policy,
+    config.retry_policy,
+    config.logging_policy,  # Logger should come last to accurately record the request/response as they are on the wire
 ]
 self._pipeline = Pipeline(transport, policies=policies)
 ```
 The policies that should currently be defined on the Configuration object are as follows:
 ```python
-- Configuration.headers  # HeadersPolicy
-- Configuration.retry  # RetryPolicy
-- Configuration.redirect  # RedirectPolicu
-- Configuration.logging  # NetworkTraceLoggingPolicy
-- Configuration.user_agent  # UserAgentPolicy
+- Configuration.headers_policy  # HeadersPolicy
+- Configuration.retry_policy  # RetryPolicy
+- Configuration.redirect_policy  # RedirectPolicu
+- Configuration.logging_policy  # NetworkTraceLoggingPolicy
+- Configuration.user_agent_policy  # UserAgentPolicy
 - Configuration.connection  # The is a ConnectionConfiguration, used to provide common transport parameters.
-- Configuration.proxy  # While this is a ProxyPolicy object, current implementation is transport configuration.
+- Configuration.proxy_policy  # While this is a ProxyPolicy object, current implementation is transport configuration.
 ```
 
 ### Transport 
