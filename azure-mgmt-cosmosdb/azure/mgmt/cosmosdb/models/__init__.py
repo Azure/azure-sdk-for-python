@@ -16,10 +16,19 @@ try:
     from .failover_policy_py3 import FailoverPolicy
     from .virtual_network_rule_py3 import VirtualNetworkRule
     from .database_account_py3 import DatabaseAccount
+    from .sql_database_resource_py3 import SqlDatabaseResource
+    from .indexes_py3 import Indexes
+    from .included_paths_py3 import IncludedPaths
+    from .indexing_policy_py3 import IndexingPolicy
+    from .partition_key_py3 import PartitionKey
+    from .conflict_resolution_policy_py3 import ConflictResolutionPolicy
+    from .sql_container_resource_py3 import SqlContainerResource
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .failover_policies_py3 import FailoverPolicies
     from .region_for_online_offline_py3 import RegionForOnlineOffline
     from .resource_py3 import Resource
+    from .extened_resource_properties_py3 import ExtenedResourceProperties
+    from .generic_resource_properties_py3 import GenericResourceProperties
     from .database_account_create_update_parameters_py3 import DatabaseAccountCreateUpdateParameters
     from .database_account_patch_parameters_py3 import DatabaseAccountPatchParameters
     from .database_account_list_read_only_keys_result_py3 import DatabaseAccountListReadOnlyKeysResult
@@ -27,6 +36,11 @@ try:
     from .database_account_connection_string_py3 import DatabaseAccountConnectionString
     from .database_account_list_connection_strings_result_py3 import DatabaseAccountListConnectionStringsResult
     from .database_account_regenerate_key_parameters_py3 import DatabaseAccountRegenerateKeyParameters
+    from .sql_database_create_update_resource_py3 import SqlDatabaseCreateUpdateResource
+    from .create_update_options_py3 import CreateUpdateOptions
+    from .sql_database_create_update_parameters_py3 import SqlDatabaseCreateUpdateParameters
+    from .sql_container_create_update_resource_py3 import SqlContainerCreateUpdateResource
+    from .sql_container_create_update_parameters_py3 import SqlContainerCreateUpdateParameters
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
     from .metric_name_py3 import MetricName
@@ -46,10 +60,19 @@ except (SyntaxError, ImportError):
     from .failover_policy import FailoverPolicy
     from .virtual_network_rule import VirtualNetworkRule
     from .database_account import DatabaseAccount
+    from .sql_database_resource import SqlDatabaseResource
+    from .indexes import Indexes
+    from .included_paths import IncludedPaths
+    from .indexing_policy import IndexingPolicy
+    from .partition_key import PartitionKey
+    from .conflict_resolution_policy import ConflictResolutionPolicy
+    from .sql_container_resource import SqlContainerResource
     from .error_response import ErrorResponse, ErrorResponseException
     from .failover_policies import FailoverPolicies
     from .region_for_online_offline import RegionForOnlineOffline
     from .resource import Resource
+    from .extened_resource_properties import ExtenedResourceProperties
+    from .generic_resource_properties import GenericResourceProperties
     from .database_account_create_update_parameters import DatabaseAccountCreateUpdateParameters
     from .database_account_patch_parameters import DatabaseAccountPatchParameters
     from .database_account_list_read_only_keys_result import DatabaseAccountListReadOnlyKeysResult
@@ -57,6 +80,11 @@ except (SyntaxError, ImportError):
     from .database_account_connection_string import DatabaseAccountConnectionString
     from .database_account_list_connection_strings_result import DatabaseAccountListConnectionStringsResult
     from .database_account_regenerate_key_parameters import DatabaseAccountRegenerateKeyParameters
+    from .sql_database_create_update_resource import SqlDatabaseCreateUpdateResource
+    from .create_update_options import CreateUpdateOptions
+    from .sql_database_create_update_parameters import SqlDatabaseCreateUpdateParameters
+    from .sql_container_create_update_resource import SqlContainerCreateUpdateResource
+    from .sql_container_create_update_parameters import SqlContainerCreateUpdateParameters
     from .operation_display import OperationDisplay
     from .operation import Operation
     from .metric_name import MetricName
@@ -73,6 +101,8 @@ from .database_account_paged import DatabaseAccountPaged
 from .metric_paged import MetricPaged
 from .usage_paged import UsagePaged
 from .metric_definition_paged import MetricDefinitionPaged
+from .sql_database_resource_paged import SqlDatabaseResourcePaged
+from .sql_container_resource_paged import SqlContainerResourcePaged
 from .operation_paged import OperationPaged
 from .percentile_metric_paged import PercentileMetricPaged
 from .partition_metric_paged import PartitionMetricPaged
@@ -81,6 +111,11 @@ from .cosmos_db_enums import (
     DatabaseAccountKind,
     DatabaseAccountOfferType,
     DefaultConsistencyLevel,
+    IndexingMode,
+    DataType,
+    IndexKind,
+    PartitionKind,
+    ConflictResolutionMode,
     KeyKind,
     UnitType,
     PrimaryAggregationType,
@@ -93,10 +128,19 @@ __all__ = [
     'FailoverPolicy',
     'VirtualNetworkRule',
     'DatabaseAccount',
+    'SqlDatabaseResource',
+    'Indexes',
+    'IncludedPaths',
+    'IndexingPolicy',
+    'PartitionKey',
+    'ConflictResolutionPolicy',
+    'SqlContainerResource',
     'ErrorResponse', 'ErrorResponseException',
     'FailoverPolicies',
     'RegionForOnlineOffline',
     'Resource',
+    'ExtenedResourceProperties',
+    'GenericResourceProperties',
     'DatabaseAccountCreateUpdateParameters',
     'DatabaseAccountPatchParameters',
     'DatabaseAccountListReadOnlyKeysResult',
@@ -104,6 +148,11 @@ __all__ = [
     'DatabaseAccountConnectionString',
     'DatabaseAccountListConnectionStringsResult',
     'DatabaseAccountRegenerateKeyParameters',
+    'SqlDatabaseCreateUpdateResource',
+    'CreateUpdateOptions',
+    'SqlDatabaseCreateUpdateParameters',
+    'SqlContainerCreateUpdateResource',
+    'SqlContainerCreateUpdateParameters',
     'OperationDisplay',
     'Operation',
     'MetricName',
@@ -120,6 +169,8 @@ __all__ = [
     'MetricPaged',
     'UsagePaged',
     'MetricDefinitionPaged',
+    'SqlDatabaseResourcePaged',
+    'SqlContainerResourcePaged',
     'OperationPaged',
     'PercentileMetricPaged',
     'PartitionMetricPaged',
@@ -127,6 +178,11 @@ __all__ = [
     'DatabaseAccountKind',
     'DatabaseAccountOfferType',
     'DefaultConsistencyLevel',
+    'IndexingMode',
+    'DataType',
+    'IndexKind',
+    'PartitionKind',
+    'ConflictResolutionMode',
     'KeyKind',
     'UnitType',
     'PrimaryAggregationType',
