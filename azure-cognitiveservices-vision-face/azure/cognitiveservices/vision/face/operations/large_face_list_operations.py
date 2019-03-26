@@ -356,7 +356,7 @@ class LargeFaceListOperations(object):
         item.
         * "top" parameter (int, optional) specifies the number of entries to
         return. A maximal of 1000 entries can be returned in one call. To fetch
-        more, you can specify "start" with the last retuned entry’s Id of the
+        more, you can specify "start" with the last returned entry’s Id of the
         current call.
         <br />
         For example, total 5 large person lists: "list1", ..., "list5".
