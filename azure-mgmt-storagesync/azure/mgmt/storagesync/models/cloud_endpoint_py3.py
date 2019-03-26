@@ -28,7 +28,7 @@ class CloudEndpoint(ProxyResource):
     :vartype type: str
     :param storage_account_resource_id: Storage Account Resource Id
     :type storage_account_resource_id: str
-    :param azure_file_share_name: Storage Account Share name
+    :param azure_file_share_name: Azure file share name
     :type azure_file_share_name: str
     :param storage_account_tenant_id: Storage Account Tenant Id
     :type storage_account_tenant_id: str
