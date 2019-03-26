@@ -30,12 +30,12 @@ class IReadOnlyDictionary2(Model):
     """
 
     _attribute_map = {
-        'none': {'key': 'None', 'type': '[str]'},
-        'language': {'key': 'Language', 'type': '[str]'},
-        'acoustic': {'key': 'Acoustic', 'type': '[str]'},
-        'pronunciation': {'key': 'Pronunciation', 'type': '[str]'},
-        'custom_voice': {'key': 'CustomVoice', 'type': '[str]'},
-        'language_generation': {'key': 'LanguageGeneration', 'type': '[str]'},
+        'none': {'key': 'none', 'type': '[str]'},
+        'language': {'key': 'language', 'type': '[str]'},
+        'acoustic': {'key': 'acoustic', 'type': '[str]'},
+        'pronunciation': {'key': 'pronunciation', 'type': '[str]'},
+        'custom_voice': {'key': 'customVoice', 'type': '[str]'},
+        'language_generation': {'key': 'languageGeneration', 'type': '[str]'},
     }
 
     def __init__(self, *, none=None, language=None, acoustic=None, pronunciation=None, custom_voice=None, language_generation=None, **kwargs) -> None:
