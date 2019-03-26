@@ -37,7 +37,7 @@ class InvoiceSectionsByBillingProfileNameOperations(object):
         self.config = config
 
     def list(
-            self, billing_account_name, billing_profile_name, expand=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
         """Lists all invoice sections under a billing profile for a user which he
         has access to.
 
@@ -45,8 +45,6 @@ class InvoiceSectionsByBillingProfileNameOperations(object):
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
-        :param expand: May be used to expand the billingProfiles.
-        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -69,8 +67,6 @@ class InvoiceSectionsByBillingProfileNameOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if expand is not None:
-            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
         # Construct headers
         header_parameters = {}
