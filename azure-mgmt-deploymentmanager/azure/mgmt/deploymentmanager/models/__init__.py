@@ -81,7 +81,7 @@ except (SyntaxError, ImportError):
     from .azure_entity_resource import AzureEntityResource
     from .resource import Resource
     from .tracked_resource import TrackedResource
-from .azure_deployment_manager_enums import (
+from .deployment_manager_client_enums import (
     DeploymentMode,
 )
 

@@ -23,8 +23,8 @@ from .operations.operations import Operations
 from . import models
 
 
-class AzureDeploymentManagerConfiguration(AzureConfiguration):
-    """Configuration for AzureDeploymentManager
+class DeploymentManagerClientConfiguration(AzureConfiguration):
+    """Configuration for DeploymentManagerClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -48,7 +48,7 @@ class AzureDeploymentManagerConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(AzureDeploymentManagerConfiguration, self).__init__(base_url)
+        super(DeploymentManagerClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-mgmt-deploymentmanager/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
@@ -57,11 +57,11 @@ class AzureDeploymentManagerConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class AzureDeploymentManager(SDKClient):
+class DeploymentManagerClient(SDKClient):
     """REST APIs for orchestrating deployments using the Azure Deployment Manager (ADM). See https://docs.microsoft.com/en-us/azure/azure-resource-manager/deployment-manager-overview for more information.
 
     :ivar config: Configuration for client.
-    :vartype config: AzureDeploymentManagerConfiguration
+    :vartype config: DeploymentManagerClientConfiguration
 
     :ivar service_topologies: ServiceTopologies operations
     :vartype service_topologies: azure.mgmt.deploymentmanager.operations.ServiceTopologiesOperations
@@ -91,8 +91,8 @@ class AzureDeploymentManager(SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = AzureDeploymentManagerConfiguration(credentials, subscription_id, base_url)
-        super(AzureDeploymentManager, self).__init__(self.config.credentials, self.config)
+        self.config = DeploymentManagerClientConfiguration(credentials, subscription_id, base_url)
+        super(DeploymentManagerClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-09-01-preview'
