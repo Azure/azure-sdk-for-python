@@ -278,17 +278,18 @@ class PoolsOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}'}
 
     def update(
-            self, resource_group_name, account_name, pool_name, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, body, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, **operation_config):
         """Patch a capacity pool.
 
+        :param body: Capacity pool object supplied in the body of the
+         operation.
+        :type body: ~azure.mgmt.netapp.models.CapacityPoolPatch
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
         :param pool_name: The name of the capacity pool
         :type pool_name: str
-        :param tags: Resource tags
-        :type tags: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -300,8 +301,6 @@ class PoolsOperations(object):
         :raises:
          :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
         """
-        body = models.CapacityPoolPatch(tags=tags)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

@@ -9,11 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum
+from msrest.serialization import Model
 
 
-class ServiceLevel(str, Enum):
+class VolumePropertiesExportPolicy(Model):
+    """Export policy rule.
 
-    standard = "Standard"  #: Standard service level
-    premium = "Premium"  #: Premium service level
-    ultra = "Ultra"  #: Ultra service level
+    :param rules:
+    :type rules: list[~azure.mgmt.netapp.models.ExportPolicyRule]
+    """
+
+    _attribute_map = {
+        'rules': {'key': 'rules', 'type': '[ExportPolicyRule]'},
+    }
+
+    def __init__(self, *, rules=None, **kwargs) -> None:
+        super(VolumePropertiesExportPolicy, self).__init__(**kwargs)
+        self.rules = rules
