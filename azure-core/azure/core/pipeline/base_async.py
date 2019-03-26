@@ -78,7 +78,8 @@ class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseTy
     async def send(self, request, **kwargs):
         return PipelineResponse(
             request.http_request,
-            await self._sender.send(request.http_request, **kwargs)
+            await self._sender.send(request.http_request, **kwargs),
+            #context=request.context
         )
 
 

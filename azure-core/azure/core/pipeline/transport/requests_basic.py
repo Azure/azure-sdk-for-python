@@ -49,8 +49,9 @@ from azure.core.exceptions import (
 CONTENT_CHUNK_SIZE = 10 * 1024
 
 class RequestsContext(object):
-    def __init__(self, session):
+    def __init__(self, session, transport):
         self.session = session
+        self.transport = transport
 
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
@@ -126,8 +127,8 @@ class RequestsTransport(HttpTransport):
 
         This is initialization I want to do once only on a session.
         """
-        if self.config.proxy:
-            session.trust_env = self.config.proxy.use_env_settings
+        if self.config.proxy_policy:
+            session.trust_env = self.config.proxy_policy.use_env_settings
         disable_retries = Retry(total=False, redirect=False, raise_on_status=False)
         adapter = requests.adapters.HTTPAdapter(max_retries=disable_retries)
         for p in self._protocols:
@@ -151,6 +152,7 @@ class RequestsTransport(HttpTransport):
         # type: () -> RequestsContext
         return RequestsContext(
             session=self.session,
+            transport=self,
         )
 
     def close(self):
@@ -166,9 +168,10 @@ class RequestsTransport(HttpTransport):
 
         :param HttpRequest request: The request object to be sent.
         """
+        response = None
         error = None
-        if self.config.proxy and 'proxies' not in kwargs:
-            kwargs['proxies'] = self.config.proxy.proxies
+        if self.config.proxy_policy and 'proxies' not in kwargs:
+            kwargs['proxies'] = self.config.proxy_policy.proxies
         try:
             response = self.session.request(
                 request.method,
@@ -193,6 +196,9 @@ class RequestsTransport(HttpTransport):
                 error = ConnectionError(err, error=err)
         except requests.RequestException as err:
             error = ServiceRequestError(err, error=err)
+        finally:
+            if not self.config.connection.keep_alive and (not response or not kwargs['stream']):
+                self.session.close()
 
         if error:
             raise error

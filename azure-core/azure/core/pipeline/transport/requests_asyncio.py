@@ -27,6 +27,7 @@ import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
+import urllib3
 from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
 
 import requests
@@ -36,8 +37,12 @@ from .base import HttpRequest
 from .base_async import AsyncHttpTransport, AsyncHttpResponse
 from .requests_basic import RequestsTransport, RequestsTransportResponse
 from azure.core.exceptions import (
-    ClientRequestError,
-    raise_with_traceback)
+    ServiceRequestError,
+    ConnectionError,
+    ConnectionReadError,
+    ReadTimeoutError,
+    raise_with_traceback
+)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -53,7 +58,7 @@ def _get_running_loop():
         return loop
 
 
-class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
+class AsyncioRequestsTransport(AsyncHttpTransport, RequestsTransport):  # type: ignore
 
     async def __aenter__(self):
         return super(AsyncioRequestsTransport, self).__enter__()
@@ -65,23 +70,45 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
         """Send the request using this HTTP sender.
         """
         loop = kwargs.get("loop", _get_running_loop())
-        future = loop.run_in_executor(
-            None,
-            functools.partial(
-                self.session.request,
-                request.method,
-                request.url,
-                **kwargs
-            )
-        )
+        response = None
+        error = None
+        if self.config.proxy_policy and 'proxies' not in kwargs:
+            kwargs['proxies'] = self.config.proxy_policy.proxies
         try:
-            return AsyncioRequestsTransportResponse(
-                request,
-                await future
-            )
+            response = await loop.run_in_executor(
+                None,
+                functools.partial(
+                    self.session.request,
+                    request.method,
+                    request.url,
+                    headers=request.headers,
+                    data=request.data,
+                    files=request.files,
+                    verify=kwargs.get('connection_verify', self.config.connection.verify),
+                    timeout=kwargs.get('connection_timeout', self.config.connection.timeout),
+                    cert=kwargs.get('connection_cert', self.config.connection.cert),
+                    allow_redirects=False,
+                    **kwargs))
+
+        except urllib3.exceptions.NewConnectionError as err:
+            error = ConnectionError(err, error=err)
+        except requests.exceptions.ReadTimeout as err:
+            error = ReadTimeoutError(err, error=err)
+        except requests.exceptions.ConnectionError as err:
+            if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
+                error = ConnectionReadError(err, error=err)
+            else:
+                error = ConnectionError(err, error=err)
         except requests.RequestException as err:
-            msg = "Error occurred in request."
-            raise_with_traceback(ClientRequestError, msg, err)
+            error = ServiceRequestError(err, error=err)
+        finally:
+            if not self.config.connection.keep_alive and (not response or not kwargs['stream']):
+                self.session.close()
+        if error:
+            raise error
+
+        return AsyncioRequestsTransportResponse(request, response)
+
 
 
 class _ResponseStopIteration(Exception):

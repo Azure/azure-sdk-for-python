@@ -26,44 +26,28 @@
 
 
 class Configuration(object):
-    """Add proxy.
-
-    :param str protocol: Protocol for which proxy is to be applied. Can
-        be 'http', 'https', etc. Can also include host.
-    :param str proxy_url: The proxy URL. Where basic auth is required,
-        use the format: http://user:password@host
-    """
-
-    def __iter__(self):
-        dict_values = dict(self.__dict__)
-        for attr, value in dict_values.items():
-            try:
-                yield attr, dict(value)
-            except TypeError:
-                yield attr, value
-
 
     def __init__(self, **kwargs):
         # Communication configuration - applied per transport.
         self.connection = ConnectionConfiguration(**kwargs)
 
         # Headers (sent with every request)
-        self.headers = None
+        self.headers_policy = None
 
         # Proxy settings (Currently used to configure transport, could be pipeline policy instead)
-        self.proxy = None
+        self.proxy_policy = None
  
         # Redirect configuration
-        self.redirect = None
+        self.redirect_policy = None
 
         # Retry configuration
-        self.retry = None
+        self.retry_policy = None
 
         # Logger configuration
-        self.logging = None
+        self.logging_policy = None
 
         # User Agent configuration
-        self.user_agent = None
+        self.user_agent_policy = None
 
 
 class ConnectionConfiguration(object):
@@ -74,18 +58,4 @@ class ConnectionConfiguration(object):
         self.verify = kwargs.pop('connection_verify', True)
         self.cert = kwargs.pop('connection_cert', None)
         self.data_block_size = kwargs.pop('connection_data_block_size', 4096)
-        self.keep_alive = kwargs.pop('connection_keep_alive', False)
-
-    def __iter__(self):
-        dict_values = dict(self.__dict__)
-        for attr, value in dict_values.items():
-            yield "connection_" + attr, value
-
-    def __call__(self):
-        # type: () -> Dict[str, Union[str, int]]
-        """Return configuration to be applied to connection."""
-        debug = "Configuring request: timeout=%r, verify=%r, cert=%r"
-        _LOGGER.debug(debug, self.timeout, self.verify, self.cert)
-        return {'timeout': self.timeout,
-                'verify': self.verify,
-                'cert': self.cert}
+        self.keep_alive = kwargs.pop('connection_keep_alive', True)
