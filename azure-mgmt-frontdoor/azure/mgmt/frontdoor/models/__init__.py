@@ -18,11 +18,15 @@ try:
     from .key_vault_certificate_source_parameters_vault_py3 import KeyVaultCertificateSourceParametersVault
     from .custom_https_configuration_py3 import CustomHttpsConfiguration
     from .frontend_endpoint_py3 import FrontendEndpoint
+    from .backend_pools_settings_py3 import BackendPoolsSettings
     from .front_door_update_parameters_py3 import FrontDoorUpdateParameters
     from .purge_parameters_py3 import PurgeParameters
     from .sub_resource_py3 import SubResource
-    from .cache_configuration_py3 import CacheConfiguration
+    from .route_configuration_py3 import RouteConfiguration
     from .routing_rule_update_parameters_py3 import RoutingRuleUpdateParameters
+    from .cache_configuration_py3 import CacheConfiguration
+    from .forwarding_configuration_py3 import ForwardingConfiguration
+    from .redirect_configuration_py3 import RedirectConfiguration
     from .backend_py3 import Backend
     from .load_balancing_settings_update_parameters_py3 import LoadBalancingSettingsUpdateParameters
     from .health_probe_settings_update_parameters_py3 import HealthProbeSettingsUpdateParameters
@@ -61,11 +65,15 @@ except (SyntaxError, ImportError):
     from .key_vault_certificate_source_parameters_vault import KeyVaultCertificateSourceParametersVault
     from .custom_https_configuration import CustomHttpsConfiguration
     from .frontend_endpoint import FrontendEndpoint
+    from .backend_pools_settings import BackendPoolsSettings
     from .front_door_update_parameters import FrontDoorUpdateParameters
     from .purge_parameters import PurgeParameters
     from .sub_resource import SubResource
-    from .cache_configuration import CacheConfiguration
+    from .route_configuration import RouteConfiguration
     from .routing_rule_update_parameters import RoutingRuleUpdateParameters
+    from .cache_configuration import CacheConfiguration
+    from .forwarding_configuration import ForwardingConfiguration
+    from .redirect_configuration import RedirectConfiguration
     from .backend import Backend
     from .load_balancing_settings_update_parameters import LoadBalancingSettingsUpdateParameters
     from .health_probe_settings_update_parameters import HealthProbeSettingsUpdateParameters
@@ -110,11 +118,16 @@ from .front_door_management_client_enums import (
     FrontDoorCertificateSource,
     FrontDoorTlsProtocolType,
     FrontDoorCertificateType,
+    EnforceCertificateNameCheckEnabledState,
     FrontDoorEnabledState,
     FrontDoorProtocol,
+    RoutingRuleEnabledState,
     FrontDoorForwardingProtocol,
     FrontDoorQuery,
     DynamicCompressionEnabled,
+    FrontDoorRedirectType,
+    FrontDoorRedirectProtocol,
+    BackendEnabledState,
     SessionAffinityEnabledState,
     ResourceType,
     Availability,
@@ -140,11 +153,15 @@ __all__ = [
     'KeyVaultCertificateSourceParametersVault',
     'CustomHttpsConfiguration',
     'FrontendEndpoint',
+    'BackendPoolsSettings',
     'FrontDoorUpdateParameters',
     'PurgeParameters',
     'SubResource',
-    'CacheConfiguration',
+    'RouteConfiguration',
     'RoutingRuleUpdateParameters',
+    'CacheConfiguration',
+    'ForwardingConfiguration',
+    'RedirectConfiguration',
     'Backend',
     'LoadBalancingSettingsUpdateParameters',
     'HealthProbeSettingsUpdateParameters',
@@ -188,11 +205,16 @@ __all__ = [
     'FrontDoorCertificateSource',
     'FrontDoorTlsProtocolType',
     'FrontDoorCertificateType',
+    'EnforceCertificateNameCheckEnabledState',
     'FrontDoorEnabledState',
     'FrontDoorProtocol',
+    'RoutingRuleEnabledState',
     'FrontDoorForwardingProtocol',
     'FrontDoorQuery',
     'DynamicCompressionEnabled',
+    'FrontDoorRedirectType',
+    'FrontDoorRedirectProtocol',
+    'BackendEnabledState',
     'SessionAffinityEnabledState',
     'ResourceType',
     'Availability',
