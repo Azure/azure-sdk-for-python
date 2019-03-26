@@ -284,7 +284,7 @@ class AssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
-    who_is_blueprint.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprintAssignments/{assignmentName}'}
+    who_is_blueprint.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprintAssignments/{assignmentName}/WhoIsBlueprint'}
 
     def list(
             self, scope, custom_headers=None, raw=False, **operation_config):
