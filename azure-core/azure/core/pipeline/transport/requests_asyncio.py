@@ -58,7 +58,7 @@ def _get_running_loop():
         return loop
 
 
-class AsyncioRequestsTransport(AsyncHttpTransport, RequestsTransport):  # type: ignore
+class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
 
     async def __aenter__(self):
         return super(AsyncioRequestsTransport, self).__enter__()

@@ -183,7 +183,7 @@ class HttpRequest(object):
 
     def set_bytes_body(self, data):
         if data:
-            self.headers['Content-Length'] = len(data)
+            self.headers['Content-Length'] = str(len(data))
         self.data = data
         self.files = None
 
