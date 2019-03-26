@@ -15,11 +15,15 @@ try:
     from .metric_specification_py3 import MetricSpecification
     from .service_specification_py3 import ServiceSpecification
     from .operation_py3 import Operation
+    from .active_directory_py3 import ActiveDirectory
     from .net_app_account_py3 import NetAppAccount
     from .net_app_account_patch_py3 import NetAppAccountPatch
     from .capacity_pool_py3 import CapacityPool
     from .capacity_pool_patch_py3 import CapacityPoolPatch
+    from .export_policy_rule_py3 import ExportPolicyRule
+    from .volume_properties_export_policy_py3 import VolumePropertiesExportPolicy
     from .volume_py3 import Volume
+    from .volume_patch_properties_export_policy_py3 import VolumePatchPropertiesExportPolicy
     from .volume_patch_py3 import VolumePatch
     from .mount_target_py3 import MountTarget
     from .snapshot_py3 import Snapshot
@@ -31,11 +35,15 @@ except (SyntaxError, ImportError):
     from .metric_specification import MetricSpecification
     from .service_specification import ServiceSpecification
     from .operation import Operation
+    from .active_directory import ActiveDirectory
     from .net_app_account import NetAppAccount
     from .net_app_account_patch import NetAppAccountPatch
     from .capacity_pool import CapacityPool
     from .capacity_pool_patch import CapacityPoolPatch
+    from .export_policy_rule import ExportPolicyRule
+    from .volume_properties_export_policy import VolumePropertiesExportPolicy
     from .volume import Volume
+    from .volume_patch_properties_export_policy import VolumePatchPropertiesExportPolicy
     from .volume_patch import VolumePatch
     from .mount_target import MountTarget
     from .snapshot import Snapshot
@@ -57,11 +65,15 @@ __all__ = [
     'MetricSpecification',
     'ServiceSpecification',
     'Operation',
+    'ActiveDirectory',
     'NetAppAccount',
     'NetAppAccountPatch',
     'CapacityPool',
     'CapacityPoolPatch',
+    'ExportPolicyRule',
+    'VolumePropertiesExportPolicy',
     'Volume',
+    'VolumePatchPropertiesExportPolicy',
     'VolumePatch',
     'MountTarget',
     'Snapshot',
