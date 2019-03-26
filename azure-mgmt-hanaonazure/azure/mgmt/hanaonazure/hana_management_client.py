@@ -15,6 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.hana_instances_operations import HanaInstancesOperations
+from .operations.monitor_operations import MonitorOperations
 from . import models
 
 
@@ -62,6 +63,8 @@ class HanaManagementClient(SDKClient):
     :vartype operations: azure.mgmt.hanaonazure.operations.Operations
     :ivar hana_instances: HanaInstances operations
     :vartype hana_instances: azure.mgmt.hanaonazure.operations.HanaInstancesOperations
+    :ivar monitor: Monitor operations
+    :vartype monitor: azure.mgmt.hanaonazure.operations.MonitorOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -87,4 +90,6 @@ class HanaManagementClient(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.hana_instances = HanaInstancesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.monitor = MonitorOperations(
             self._client, self.config, self._serialize, self._deserialize)

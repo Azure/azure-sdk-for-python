@@ -11,8 +11,10 @@
 
 from .operations import Operations
 from .hana_instances_operations import HanaInstancesOperations
+from .monitor_operations import MonitorOperations
 
 __all__ = [
     'Operations',
     'HanaInstancesOperations',
+    'MonitorOperations',
 ]
