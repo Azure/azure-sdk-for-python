@@ -13,9 +13,11 @@ from msrest.serialization import Model
 
 
 class WhoIsBlueprintContract(Model):
-    """AAD object Id of the Azure Blueprints service principal in the tenant.
+    """Response schema for querying the Azure Blueprints service principal in the
+    tenant.
 
-    :param object_id: Identifier.
+    :param object_id: AAD object Id of the Azure Blueprints service principal
+     in the tenant.
     :type object_id: str
     """
 

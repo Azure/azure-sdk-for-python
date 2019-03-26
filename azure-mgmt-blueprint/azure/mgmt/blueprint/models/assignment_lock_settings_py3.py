@@ -19,7 +19,7 @@ class AssignmentLockSettings(Model):
      'AllResourcesReadOnly', 'AllResourcesDoNotDelete'
     :type mode: str or ~azure.mgmt.blueprint.models.AssignmentLockMode
     :param excluded_principals: List of AAD principals excluded from blueprint
-     locks. Up to 5 principals permitted.
+     locks. Up to 5 principals are permitted.
     :type excluded_principals: list[str]
     """
 
