@@ -3,14 +3,14 @@
 Release History
 ===============
 
-2.0.0 (2018-03-25)
+1.1.1 (2018-03-26)
 ++++++++++++++++++
 
 **Features**
 
 - Model StreamingLocator has a new parameter filters
 
-**Breaking changes**
+**Bugfixes**
 
 - Parameter start of model JpgImage is now required
 - Parameter filename_pattern of model Mp4Format is now required
