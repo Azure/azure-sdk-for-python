@@ -17,7 +17,6 @@ Release History
 **Breaking changes**
 
 - Operation PoolsOperations.update has a new signature
-- Operation PoolsOperations.update has a new signature
 - Model MountTarget no longer has parameter vlan_id
 - Operation AccountsOperations.update has a new signature
 - Operation AccountsOperations.create_or_update has a new signature
