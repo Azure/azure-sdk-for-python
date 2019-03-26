@@ -9,20 +9,20 @@ config = FooService.create_config()
 
 # Total number of retries to allow. Takes precedence over other counts.
 # Default value is 10.
-config.retry.total_retries = 5
+config.retry_policy.total_retries = 5
 
 # How many connection-related errors to retry on.
 # These are errors raised before the request is sent to the remote server,
 # which we assume has not triggered the server to process the request. Default value is 3
-config.retry.connect_retries = 2
+config.retry_policy.connect_retries = 2
 
 # How many times to retry on read errors.
 # These errors are raised after the request was sent to the server, so the
 # request may have side-effects. Default value is 3.
-config.retry.read_retries = 4
+config.retry_policy.read_retries = 4
 
 # How many times to retry on bad status codes. Default value is 3.
-config.retry.status_retries = 3
+config.retry_policy.status_retries = 3
 
 # A backoff factor to apply between attempts after the second try
 # (most errors are resolved immediately by a second try without a delay).
@@ -31,14 +31,14 @@ config.retry.status_retries = 3
 # seconds. If the backoff_factor is 0.1, then the retry will sleep
 # for [0.0s, 0.2s, 0.4s, ...] between retries.
 # The default value is 0.8.
-config.retry.backoff_factor = 0.5
+config.retry_policy.backoff_factor = 0.5
 
 # The maximum back off time. Default value is 120 seconds (2 minutes).
-config.retry.backoff_max
+config.retry_policy.backoff_max
 
 # Alternatively you can disable redirects entirely
 from azure.core.pipeline.policies import RetryPolicy
-config.retry = RetryPolicy.no_retries()
+config.retry_policy = RetryPolicy.no_retries()
 ```
 
 All of these settings can also be configured per operation.
@@ -61,14 +61,14 @@ The redirect policy in the pipeline can be configured directly or per operation.
 config = FooService.create_config()
 
 # The maximum allowed redirects. The default value is 30
-config.redirect.redirects = 10
+config.redirect_policy.max_redirects = 10
 
 # It can also be overridden per operation.
 result = client.get_operation(redirect_max=5)
 
 # Alternatively you can disable redirects entirely
 from azure.core.pipeline.policies import RedirectPolicy
-config.redirect = RedirectPolicy.no_redirects()
+config.redirect_policy = RedirectPolicy.no_redirects()
 ```
 
 ### Configuring logging
@@ -95,7 +95,7 @@ logger.addHandler(file_handler)
 # Enable network trace logging. This will be logged at DEBUG level.
 # By default, logging is disabled.
 config = FooService.create_config()
-config.logging.enable_http_logger = True
+config.logging_policy.enable_http_logger = True
 ```
 The logger can also be enabled per operation.
 ```python
@@ -107,7 +107,7 @@ result = client.get_operation(enable_http_logging=True)
 Headers can be configured up front, where any custom headers will be applied to all outgoing operations, and additional headers can also be added dynamically per operation.
 ```python
 config = FooService.create_config()
-config.headers.headers = {'CustomValue': 'Foo'}
+config.headers_policy.headers = {'CustomValue': 'Foo'}
 
 # Or headers can be added per operation. These headers will supplement existing headers
 # or those defined in the config headers policy. They will also overwrite existing
@@ -121,7 +121,7 @@ Custom values can be added to the User-Agent header via the pipeline configurati
 ```python
 config = FooService.create_config()
 # The user-agent policy allows you to append a custom value to the header.
-config.user_agent.add_user_agent("CustomValue")
+config.user_agent_policy.add_user_agent("CustomValue")
 
 # You can also pass in a custom value per operation to append to the end of the user-agent.
 # This can be used together with the policy configuration to append multiple values.
