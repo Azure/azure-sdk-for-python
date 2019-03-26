@@ -236,9 +236,16 @@ class AssignmentsOperations(object):
     delete.metadata = {'url': '/{scope}/providers/Microsoft.Blueprint/blueprintAssignments/{assignmentName}'}
 
     def who_is_blueprint(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, scope, assignment_name, custom_headers=None, raw=False, **operation_config):
         """Get Blueprints service SPN objectId.
 
+        :param scope: The scope of the resource. Valid scopes are: management
+         group (format:
+         '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
+         subscription (format: '/subscriptions/{subscriptionId}').
+        :type scope: str
+        :param assignment_name: Name of the blueprint assignment.
+        :type assignment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -251,9 +258,15 @@ class AssignmentsOperations(object):
         """
         # Construct URL
         url = self.who_is_blueprint.metadata['url']
+        path_format_arguments = {
+            'scope': self._serialize.url("scope", scope, 'str', skip_quote=True),
+            'assignmentName': self._serialize.url("assignment_name", assignment_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
