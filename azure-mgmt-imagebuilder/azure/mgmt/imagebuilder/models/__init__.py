@@ -18,9 +18,13 @@ try:
     from .image_template_py3 import ImageTemplate
     from .image_template_iso_source_py3 import ImageTemplateIsoSource
     from .image_template_platform_image_source_py3 import ImageTemplatePlatformImageSource
+    from .image_template_managed_image_source_py3 import ImageTemplateManagedImageSource
     from .image_template_shell_customizer_py3 import ImageTemplateShellCustomizer
+    from .image_template_restart_customizer_py3 import ImageTemplateRestartCustomizer
+    from .image_template_power_shell_customizer_py3 import ImageTemplatePowerShellCustomizer
     from .image_template_managed_image_distributor_py3 import ImageTemplateManagedImageDistributor
     from .image_template_shared_image_distributor_py3 import ImageTemplateSharedImageDistributor
+    from .image_template_vhd_distributor_py3 import ImageTemplateVhdDistributor
     from .image_template_update_parameters_py3 import ImageTemplateUpdateParameters
     from .run_output_py3 import RunOutput
     from .resource_py3 import Resource
@@ -39,9 +43,13 @@ except (SyntaxError, ImportError):
     from .image_template import ImageTemplate
     from .image_template_iso_source import ImageTemplateIsoSource
     from .image_template_platform_image_source import ImageTemplatePlatformImageSource
+    from .image_template_managed_image_source import ImageTemplateManagedImageSource
     from .image_template_shell_customizer import ImageTemplateShellCustomizer
+    from .image_template_restart_customizer import ImageTemplateRestartCustomizer
+    from .image_template_power_shell_customizer import ImageTemplatePowerShellCustomizer
     from .image_template_managed_image_distributor import ImageTemplateManagedImageDistributor
     from .image_template_shared_image_distributor import ImageTemplateSharedImageDistributor
+    from .image_template_vhd_distributor import ImageTemplateVhdDistributor
     from .image_template_update_parameters import ImageTemplateUpdateParameters
     from .run_output import RunOutput
     from .resource import Resource
@@ -64,9 +72,13 @@ __all__ = [
     'ImageTemplate',
     'ImageTemplateIsoSource',
     'ImageTemplatePlatformImageSource',
+    'ImageTemplateManagedImageSource',
     'ImageTemplateShellCustomizer',
+    'ImageTemplateRestartCustomizer',
+    'ImageTemplatePowerShellCustomizer',
     'ImageTemplateManagedImageDistributor',
     'ImageTemplateSharedImageDistributor',
+    'ImageTemplateVhdDistributor',
     'ImageTemplateUpdateParameters',
     'RunOutput',
     'Resource',

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .virtual_machine_image_template_operations import VirtualMachineImageTemplateOperations
+from .virtual_machine_image_templates_operations import VirtualMachineImageTemplatesOperations
 from .operations import Operations
 
 __all__ = [
-    'VirtualMachineImageTemplateOperations',
+    'VirtualMachineImageTemplatesOperations',
     'Operations',
 ]

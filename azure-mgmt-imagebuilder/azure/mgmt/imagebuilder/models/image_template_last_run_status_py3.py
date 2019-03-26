@@ -19,11 +19,11 @@ class ImageTemplateLastRunStatus(Model):
     :type start_time: datetime
     :param end_time: End time of the last run (UTC)
     :type end_time: datetime
-    :param run_state: State of the last run. Possible values include: 'ready',
-     'running', 'succeeded', 'partiallySucceeded', 'failed'
+    :param run_state: State of the last run. Possible values include:
+     'Running', 'Succeeded', 'PartiallySucceeded', 'Failed'
     :type run_state: str or ~azure.mgmt.imagebuilder.models.enum
-    :param run_sub_state: Sub state of the last run. Possible values include:
-     'queued', 'building', 'customizing', 'distributing'
+    :param run_sub_state: Sub-state of the last run. Possible values include:
+     'Queued', 'Building', 'Customizing', 'Distributing'
     :type run_sub_state: str or ~azure.mgmt.imagebuilder.models.enum
     :param message: Verbose information about the last run state
     :type message: str

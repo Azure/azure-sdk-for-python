@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .image_template_distributor_py3 import ImageTemplateDistributor
+from .image_template_distributor import ImageTemplateDistributor
 
 
-class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
-    """Distribute via Shared Image Gallery.
+class ImageTemplateVhdDistributor(ImageTemplateDistributor):
+    """Distribute via VHD in a storage account.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -25,30 +25,19 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
     :type artifact_tags: dict[str, str]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param gallery_image_id: Required. Resource Id of the Shared Image Gallery
-     image
-    :type gallery_image_id: str
-    :param replication_regions: Required.
-    :type replication_regions: list[str]
     """
 
     _validation = {
         'run_output_name': {'required': True, 'pattern': r'^[A-Za-z0-9-_]{1,64}$'},
         'type': {'required': True},
-        'gallery_image_id': {'required': True},
-        'replication_regions': {'required': True},
     }
 
     _attribute_map = {
         'run_output_name': {'key': 'runOutputName', 'type': 'str'},
         'artifact_tags': {'key': 'artifactTags', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
-        'gallery_image_id': {'key': 'galleryImageId', 'type': 'str'},
-        'replication_regions': {'key': 'replicationRegions', 'type': '[str]'},
     }
 
-    def __init__(self, *, run_output_name: str, gallery_image_id: str, replication_regions, artifact_tags=None, **kwargs) -> None:
-        super(ImageTemplateSharedImageDistributor, self).__init__(run_output_name=run_output_name, artifact_tags=artifact_tags, **kwargs)
-        self.gallery_image_id = gallery_image_id
-        self.replication_regions = replication_regions
-        self.type = 'SharedImage'
+    def __init__(self, **kwargs):
+        super(ImageTemplateVhdDistributor, self).__init__(**kwargs)
+        self.type = 'VHD'

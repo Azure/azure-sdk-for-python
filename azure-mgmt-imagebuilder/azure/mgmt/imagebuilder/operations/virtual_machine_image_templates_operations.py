@@ -17,14 +17,14 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class VirtualMachineImageTemplateOperations(object):
-    """VirtualMachineImageTemplateOperations operations.
+class VirtualMachineImageTemplatesOperations(object):
+    """VirtualMachineImageTemplatesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2018-02-01-preview".
+    :ivar api_version: Client Api Version. Constant value: "2019-02-01-preview".
     """
 
     models = models
@@ -34,7 +34,7 @@ class VirtualMachineImageTemplateOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-02-01-preview"
+        self.api_version = "2019-02-01-preview"
 
         self.config = config
 
@@ -221,9 +221,10 @@ class VirtualMachineImageTemplateOperations(object):
 
     def create_or_update(
             self, parameters, resource_group_name, image_template_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or Update a Virtual Machine Image Template.
+        """Create or update a virtual machine image template.
 
-        :param parameters: Parameters supplied to the Create Image Template
+        :param parameters: Parameters supplied to the CreateImageTemplate
+         operation
         :type parameters: ~azure.mgmt.imagebuilder.models.ImageTemplate
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -342,7 +343,7 @@ class VirtualMachineImageTemplateOperations(object):
 
     def get(
             self, resource_group_name, image_template_name, custom_headers=None, raw=False, **operation_config):
-        """Get Information about Virtual Machine Image Template.
+        """Get information about a virtual machine image template.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -439,7 +440,7 @@ class VirtualMachineImageTemplateOperations(object):
 
     def delete(
             self, resource_group_name, image_template_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Delete Virtual Machine Image Template.
+        """Delete a virtual machine image template.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -517,7 +518,7 @@ class VirtualMachineImageTemplateOperations(object):
 
     def run(
             self, resource_group_name, image_template_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create artifacts from a existing Image Template.
+        """Create artifacts from a existing image template.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -628,7 +629,7 @@ class VirtualMachineImageTemplateOperations(object):
 
     def get_run_output(
             self, resource_group_name, image_template_name, run_output_name, custom_headers=None, raw=False, **operation_config):
-        """Get the specified run output for the specified Template resource.
+        """Get the specified run output for the specified image template resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

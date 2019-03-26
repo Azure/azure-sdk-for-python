@@ -18,8 +18,8 @@ class ApiError(Model):
 
     :param details: The Api error details
     :type details: list[~azure.mgmt.imagebuilder.models.ApiErrorBase]
-    :param innererror: The Api inner error
-    :type innererror: ~azure.mgmt.imagebuilder.models.InnerError
+    :param inner_error: The Api inner error
+    :type inner_error: ~azure.mgmt.imagebuilder.models.InnerError
     :param code: The error code.
     :type code: str
     :param target: The target of the particular error.
@@ -30,7 +30,7 @@ class ApiError(Model):
 
     _attribute_map = {
         'details': {'key': 'details', 'type': '[ApiErrorBase]'},
-        'innererror': {'key': 'innererror', 'type': 'InnerError'},
+        'inner_error': {'key': 'innerError', 'type': 'InnerError'},
         'code': {'key': 'code', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
@@ -39,7 +39,7 @@ class ApiError(Model):
     def __init__(self, **kwargs):
         super(ApiError, self).__init__(**kwargs)
         self.details = kwargs.get('details', None)
-        self.innererror = kwargs.get('innererror', None)
+        self.inner_error = kwargs.get('inner_error', None)
         self.code = kwargs.get('code', None)
         self.target = kwargs.get('target', None)
         self.message = kwargs.get('message', None)

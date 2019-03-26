@@ -51,4 +51,4 @@ class ImageTemplateManagedImageDistributor(ImageTemplateDistributor):
         super(ImageTemplateManagedImageDistributor, self).__init__(**kwargs)
         self.image_id = kwargs.get('image_id', None)
         self.location = kwargs.get('location', None)
-        self.type = 'managedImage'
+        self.type = 'ManagedImage'

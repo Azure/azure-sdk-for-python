@@ -9,15 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .image_template_customizer_py3 import ImageTemplateCustomizer
 
 
-class ImageTemplateCustomizer(Model):
-    """ImageTemplateCustomizer.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ImageTemplateShellCustomizer,
-    ImageTemplateRestartCustomizer, ImageTemplatePowerShellCustomizer
+class ImageTemplatePowerShellCustomizer(ImageTemplateCustomizer):
+    """Runs the specified PowerShell on the VM (Windows). Corresponds to Packer
+    powershell provisioner.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -26,6 +23,11 @@ class ImageTemplateCustomizer(Model):
     :type name: str
     :param type: Required. Constant filled by server.
     :type type: str
+    :param script: The PowerShell script to be run for customizing. It can be
+     a github link, SAS URI for Azure Storage, etc
+    :type script: str
+    :param valid_exit_codes:
+    :type valid_exit_codes: list[int]
     """
 
     _validation = {
@@ -35,13 +37,12 @@ class ImageTemplateCustomizer(Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'script': {'key': 'script', 'type': 'str'},
+        'valid_exit_codes': {'key': 'validExitCodes', 'type': '[int]'},
     }
 
-    _subtype_map = {
-        'type': {'Shell': 'ImageTemplateShellCustomizer', 'WindowsRestart': 'ImageTemplateRestartCustomizer', 'PowerShell': 'ImageTemplatePowerShellCustomizer'}
-    }
-
-    def __init__(self, *, name: str=None, **kwargs) -> None:
-        super(ImageTemplateCustomizer, self).__init__(**kwargs)
-        self.name = name
-        self.type = None
+    def __init__(self, *, name: str=None, script: str=None, valid_exit_codes=None, **kwargs) -> None:
+        super(ImageTemplatePowerShellCustomizer, self).__init__(name=name, **kwargs)
+        self.script = script
+        self.valid_exit_codes = valid_exit_codes
+        self.type = 'PowerShell'

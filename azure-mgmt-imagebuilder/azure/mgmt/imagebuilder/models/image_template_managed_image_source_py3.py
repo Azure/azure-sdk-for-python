@@ -9,35 +9,32 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .image_template_customizer import ImageTemplateCustomizer
+from .image_template_source_py3 import ImageTemplateSource
 
 
-class ImageTemplateShellCustomizer(ImageTemplateCustomizer):
-    """Runs a shell script during the customization phase (Linux).
+class ImageTemplateManagedImageSource(ImageTemplateSource):
+    """Describes an image source that is a managed image in customer subscription.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Friendly Name to provide context on what this customization
-     step does
-    :type name: str
     :param type: Required. Constant filled by server.
     :type type: str
-    :param script: The shell script to be run for customizing. It can be a
-     github link, SAS URI for Azure Storage, etc
-    :type script: str
+    :param image_id: Required. ARM resource id of the managed image in
+     customer subscription
+    :type image_id: str
     """
 
     _validation = {
         'type': {'required': True},
+        'image_id': {'required': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'script': {'key': 'script', 'type': 'str'},
+        'image_id': {'key': 'imageId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ImageTemplateShellCustomizer, self).__init__(**kwargs)
-        self.script = kwargs.get('script', None)
-        self.type = 'Shell'
+    def __init__(self, *, image_id: str, **kwargs) -> None:
+        super(ImageTemplateManagedImageSource, self).__init__(**kwargs)
+        self.image_id = image_id
+        self.type = 'ManagedImage'
