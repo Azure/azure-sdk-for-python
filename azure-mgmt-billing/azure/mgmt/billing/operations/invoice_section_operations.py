@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class BillingProfileInvoiceSectionOperations(object):
-    """BillingProfileInvoiceSectionOperations operations.
+class InvoiceSectionOperations(object):
+    """InvoiceSectionOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -35,13 +35,11 @@ class BillingProfileInvoiceSectionOperations(object):
         self.config = config
 
     def elevate(
-            self, billing_account_name, billing_profile_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
         """Elevates the caller's access to match their billing profile access.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
-        :param billing_profile_name: Billing Profile Id.
-        :type billing_profile_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -58,7 +56,6 @@ class BillingProfileInvoiceSectionOperations(object):
         url = self.elevate.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
-            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -85,4 +82,4 @@ class BillingProfileInvoiceSectionOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    elevate.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/elevate'}
+    elevate.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/elevate'}
