@@ -23,9 +23,11 @@ class MonitoringDetails(Model):
     :param hana_instance_num: A number between 00 and 99, stored as a string
      to maintain leading zero.
     :type hana_instance_num: str
-    :param hana_mdc: Flag to specify the use of MDC(Multi Database
-     Containers). Default value: False .
-    :type hana_mdc: bool
+    :param db_container: Either single or multiple depending on the use of
+     MDC(Multiple Database Containers). Possible values include: 'single',
+     'multiple'. Default value: "single" .
+    :type db_container: str or
+     ~azure.mgmt.hanaonazure.models.HanaDatabaseContainersEnum
     :param hana_database: Name of the database itself.  It only needs to be
      specified if using MDC
     :type hana_database: str
@@ -41,7 +43,7 @@ class MonitoringDetails(Model):
         'hana_vnet': {'key': 'hanaVnet', 'type': 'str'},
         'hana_hostname': {'key': 'hanaHostname', 'type': 'str'},
         'hana_instance_num': {'key': 'hanaInstanceNum', 'type': 'str'},
-        'hana_mdc': {'key': 'hanaMdc', 'type': 'bool'},
+        'db_container': {'key': 'dbContainer', 'type': 'str'},
         'hana_database': {'key': 'hanaDatabase', 'type': 'str'},
         'hana_db_username': {'key': 'hanaDbUsername', 'type': 'str'},
         'hana_db_password': {'key': 'hanaDbPassword', 'type': 'str'},
@@ -52,7 +54,7 @@ class MonitoringDetails(Model):
         self.hana_vnet = kwargs.get('hana_vnet', None)
         self.hana_hostname = kwargs.get('hana_hostname', None)
         self.hana_instance_num = kwargs.get('hana_instance_num', None)
-        self.hana_mdc = kwargs.get('hana_mdc', False)
+        self.db_container = kwargs.get('db_container', "single")
         self.hana_database = kwargs.get('hana_database', None)
         self.hana_db_username = kwargs.get('hana_db_username', None)
         self.hana_db_password = kwargs.get('hana_db_password', None)

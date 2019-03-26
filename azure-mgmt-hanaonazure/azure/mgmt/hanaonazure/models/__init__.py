@@ -43,6 +43,7 @@ from .hana_management_client_enums import (
     HanaHardwareTypeNamesEnum,
     HanaInstanceSizeNamesEnum,
     HanaInstancePowerStateEnum,
+    HanaDatabaseContainersEnum,
 )
 
 __all__ = [
@@ -64,4 +65,5 @@ __all__ = [
     'HanaHardwareTypeNamesEnum',
     'HanaInstanceSizeNamesEnum',
     'HanaInstancePowerStateEnum',
+    'HanaDatabaseContainersEnum',
 ]

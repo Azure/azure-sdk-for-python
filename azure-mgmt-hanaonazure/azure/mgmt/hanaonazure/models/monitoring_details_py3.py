@@ -23,9 +23,11 @@ class MonitoringDetails(Model):
     :param hana_instance_num: A number between 00 and 99, stored as a string
      to maintain leading zero.
     :type hana_instance_num: str
-    :param hana_mdc: Flag to specify the use of MDC(Multi Database
-     Containers). Default value: False .
-    :type hana_mdc: bool
+    :param db_container: Either single or multiple depending on the use of
+     MDC(Multiple Database Containers). Possible values include: 'single',
+     'multiple'. Default value: "single" .
+    :type db_container: str or
+     ~azure.mgmt.hanaonazure.models.HanaDatabaseContainersEnum
     :param hana_database: Name of the database itself.  It only needs to be
      specified if using MDC
     :type hana_database: str
@@ -41,18 +43,18 @@ class MonitoringDetails(Model):
         'hana_vnet': {'key': 'hanaVnet', 'type': 'str'},
         'hana_hostname': {'key': 'hanaHostname', 'type': 'str'},
         'hana_instance_num': {'key': 'hanaInstanceNum', 'type': 'str'},
-        'hana_mdc': {'key': 'hanaMdc', 'type': 'bool'},
+        'db_container': {'key': 'dbContainer', 'type': 'str'},
         'hana_database': {'key': 'hanaDatabase', 'type': 'str'},
         'hana_db_username': {'key': 'hanaDbUsername', 'type': 'str'},
         'hana_db_password': {'key': 'hanaDbPassword', 'type': 'str'},
     }
 
-    def __init__(self, *, hana_vnet: str=None, hana_hostname: str=None, hana_instance_num: str=None, hana_mdc: bool=False, hana_database: str=None, hana_db_username: str=None, hana_db_password: str=None, **kwargs) -> None:
+    def __init__(self, *, hana_vnet: str=None, hana_hostname: str=None, hana_instance_num: str=None, db_container="single", hana_database: str=None, hana_db_username: str=None, hana_db_password: str=None, **kwargs) -> None:
         super(MonitoringDetails, self).__init__(**kwargs)
         self.hana_vnet = hana_vnet
         self.hana_hostname = hana_hostname
         self.hana_instance_num = hana_instance_num
-        self.hana_mdc = hana_mdc
+        self.db_container = db_container
         self.hana_database = hana_database
         self.hana_db_username = hana_db_username
         self.hana_db_password = hana_db_password
