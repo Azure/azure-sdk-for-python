@@ -58,14 +58,16 @@ class HeadersPolicy(SansIOHTTPPolicy):
 
     This overwrite any headers already defined in the request.
     """
-    def __init__(self, headers, **kwargs):
+    def __init__(self, headers=None, **kwargs):
         # type: (Mapping[str, str]) -> None
         self.headers = headers or {}
 
     def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
+        additional_headers = kwargs.pop('headers', {})
         http_request = request.http_request
         http_request.headers.update(self.headers)
+        http_request.headers.update(additional_headers)
 
 
 class UserAgentPolicy(SansIOHTTPPolicy):
@@ -108,8 +110,9 @@ class UserAgentPolicy(SansIOHTTPPolicy):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
         if 'user_agent' in kwargs:
-            if kwargs.get('user_agent_overwrite', self.overwrite):
-                http_request.headers[self._USERAGENT] = kwargs['user_agent']
+            user_agent = kwargs.pop('user_agent')
+            if kwargs.pop('user_agent_overwrite', self.overwrite):
+                http_request.headers[self._USERAGENT] = user_agent
             else:
                 user_agent = "{} {}".format(self.user_agent, user_agent)
                 http_request.headers[self._USERAGENT] = user_agent

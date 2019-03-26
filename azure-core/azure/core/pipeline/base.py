@@ -74,7 +74,8 @@ class _TransportRunner(HTTPPolicy):
     def send(self, request, **kwargs):
         return PipelineResponse(
             request.http_request,
-            self._sender.send(request.http_request, **kwargs)
+            self._sender.send(request.http_request, **kwargs),
+            #context=request.context
         )
 
 

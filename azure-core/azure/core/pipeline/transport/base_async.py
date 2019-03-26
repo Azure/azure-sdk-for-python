@@ -82,6 +82,9 @@ class AsyncHttpTransport(AbstractAsyncContextManager, abc.ABC, Generic[HTTPReque
         """
         return None
 
+    async def sleep(self, duration):
+        await asyncio.sleep(duration)
+
     def __enter__(self):
         raise TypeError("Use async with instead")
 

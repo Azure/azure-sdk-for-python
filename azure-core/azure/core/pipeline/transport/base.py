@@ -28,6 +28,7 @@ import abc
 import json
 import logging
 import os
+import time
 try:
     from urlparse import urlparse
 except ImportError:
@@ -70,6 +71,9 @@ class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPRe
         required and None by default.
         """
         return None
+
+    def sleep(self, duration):
+        time.sleep(duration)
 
 
 class HttpRequest(object):
@@ -179,37 +183,9 @@ class HttpRequest(object):
 
     def set_bytes_body(self, data):
         if data:
-            self.headers['Content-Length'] = str(len(data))
+            self.headers['Content-Length'] = len(data)
         self.data = data
         self.files = None
-
-    def add_content(self, data):
-        # type: (Optional[Union[Dict[str, Any], ET.Element]]) -> None
-        """Add a body to the request.
-        DEPRECATED
-
-        :param data: Request body data, can be a json serializable
-         object (e.g. dictionary) or a generator (e.g. file data).
-        """
-        if data is None:
-            return
-        if isinstance(data, ET.Element):
-            self.set_xml_body(data)
-        # By default, assume JSON
-        self.set_json_body(data)
-
-    def add_formdata(self, content=None):
-        # type: (Optional[Dict[str, str]]) -> None
-        """Add data as a multipart form-data request to the request.
-        DEPRECATED
-
-        We only deal with file-like objects or strings at this point.
-        The requests is not yet streamed.
-
-        :param dict headers: Any headers to add to the request.
-        :param dict content: Dictionary of the fields of the formdata.
-        """
-        self.set_multipart_body(content)
 
 
 class _HttpResponseBase(object):
