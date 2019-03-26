@@ -32,6 +32,9 @@ class FrontDoorUpdateParameters(Model):
     :param frontend_endpoints: Frontend endpoints available to routing rules.
     :type frontend_endpoints:
      list[~azure.mgmt.frontdoor.models.FrontendEndpoint]
+    :param backend_pools_settings: Settings for all backendPools
+    :type backend_pools_settings:
+     ~azure.mgmt.frontdoor.models.BackendPoolsSettings
     :param enabled_state: Operational status of the Front Door load balancer.
      Permitted values are 'Enabled' or 'Disabled'. Possible values include:
      'Enabled', 'Disabled'
@@ -46,10 +49,11 @@ class FrontDoorUpdateParameters(Model):
         'health_probe_settings': {'key': 'healthProbeSettings', 'type': '[HealthProbeSettingsModel]'},
         'backend_pools': {'key': 'backendPools', 'type': '[BackendPool]'},
         'frontend_endpoints': {'key': 'frontendEndpoints', 'type': '[FrontendEndpoint]'},
+        'backend_pools_settings': {'key': 'backendPoolsSettings', 'type': 'BackendPoolsSettings'},
         'enabled_state': {'key': 'enabledState', 'type': 'str'},
     }
 
-    def __init__(self, *, friendly_name: str=None, routing_rules=None, load_balancing_settings=None, health_probe_settings=None, backend_pools=None, frontend_endpoints=None, enabled_state=None, **kwargs) -> None:
+    def __init__(self, *, friendly_name: str=None, routing_rules=None, load_balancing_settings=None, health_probe_settings=None, backend_pools=None, frontend_endpoints=None, backend_pools_settings=None, enabled_state=None, **kwargs) -> None:
         super(FrontDoorUpdateParameters, self).__init__(**kwargs)
         self.friendly_name = friendly_name
         self.routing_rules = routing_rules
@@ -57,4 +61,5 @@ class FrontDoorUpdateParameters(Model):
         self.health_probe_settings = health_probe_settings
         self.backend_pools = backend_pools
         self.frontend_endpoints = frontend_endpoints
+        self.backend_pools_settings = backend_pools_settings
         self.enabled_state = enabled_state

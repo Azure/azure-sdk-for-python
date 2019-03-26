@@ -46,6 +46,9 @@ class FrontDoor(Resource):
     :param frontend_endpoints: Frontend endpoints available to routing rules.
     :type frontend_endpoints:
      list[~azure.mgmt.frontdoor.models.FrontendEndpoint]
+    :param backend_pools_settings: Settings for all backendPools
+    :type backend_pools_settings:
+     ~azure.mgmt.frontdoor.models.BackendPoolsSettings
     :param enabled_state: Operational status of the Front Door load balancer.
      Permitted values are 'Enabled' or 'Disabled'. Possible values include:
      'Enabled', 'Disabled'
@@ -82,6 +85,7 @@ class FrontDoor(Resource):
         'health_probe_settings': {'key': 'properties.healthProbeSettings', 'type': '[HealthProbeSettingsModel]'},
         'backend_pools': {'key': 'properties.backendPools', 'type': '[BackendPool]'},
         'frontend_endpoints': {'key': 'properties.frontendEndpoints', 'type': '[FrontendEndpoint]'},
+        'backend_pools_settings': {'key': 'properties.backendPoolsSettings', 'type': 'BackendPoolsSettings'},
         'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -96,6 +100,7 @@ class FrontDoor(Resource):
         self.health_probe_settings = kwargs.get('health_probe_settings', None)
         self.backend_pools = kwargs.get('backend_pools', None)
         self.frontend_endpoints = kwargs.get('frontend_endpoints', None)
+        self.backend_pools_settings = kwargs.get('backend_pools_settings', None)
         self.enabled_state = kwargs.get('enabled_state', None)
         self.resource_state = kwargs.get('resource_state', None)
         self.provisioning_state = None

@@ -61,6 +61,12 @@ class FrontDoorCertificateType(str, Enum):
     dedicated = "Dedicated"
 
 
+class EnforceCertificateNameCheckEnabledState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class FrontDoorEnabledState(str, Enum):
 
     enabled = "Enabled"
@@ -71,6 +77,12 @@ class FrontDoorProtocol(str, Enum):
 
     http = "Http"
     https = "Https"
+
+
+class RoutingRuleEnabledState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
 
 
 class FrontDoorForwardingProtocol(str, Enum):
@@ -87,6 +99,27 @@ class FrontDoorQuery(str, Enum):
 
 
 class DynamicCompressionEnabled(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class FrontDoorRedirectType(str, Enum):
+
+    moved = "Moved"
+    found = "Found"
+    temporary_redirect = "TemporaryRedirect"
+    permanent_redirect = "PermanentRedirect"
+
+
+class FrontDoorRedirectProtocol(str, Enum):
+
+    http_only = "HttpOnly"
+    https_only = "HttpsOnly"
+    match_request = "MatchRequest"
+
+
+class BackendEnabledState(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
