@@ -25,6 +25,7 @@ from .operations.billing_profiles_by_billing_account_name_operations import Bill
 from .operations.billing_profiles_operations import BillingProfilesOperations
 from .operations.invoice_sections_by_billing_account_name_operations import InvoiceSectionsByBillingAccountNameOperations
 from .operations.invoice_sections_operations import InvoiceSectionsOperations
+from .operations.invoice_sections_by_billing_profile_name_operations import InvoiceSectionsByBillingProfileNameOperations
 from .operations.invoice_sections_with_create_subscription_permission_operations import InvoiceSectionsWithCreateSubscriptionPermissionOperations
 from .operations.departments_by_billing_account_name_operations import DepartmentsByBillingAccountNameOperations
 from .operations.departments_operations import DepartmentsOperations
@@ -44,6 +45,7 @@ from .operations.products_operations import ProductsOperations
 from .operations.transactions_by_billing_account_operations import TransactionsByBillingAccountOperations
 from .operations.policy_operations import PolicyOperations
 from .operations.billing_property_operations import BillingPropertyOperations
+from .operations.invoice_section_operations import InvoiceSectionOperations
 from .operations.transfers_operations import TransfersOperations
 from .operations.recipient_transfers_operations import RecipientTransfersOperations
 from .operations.operations import Operations
@@ -113,6 +115,8 @@ class BillingManagementClient(SDKClient):
     :vartype invoice_sections_by_billing_account_name: azure.mgmt.billing.operations.InvoiceSectionsByBillingAccountNameOperations
     :ivar invoice_sections: InvoiceSections operations
     :vartype invoice_sections: azure.mgmt.billing.operations.InvoiceSectionsOperations
+    :ivar invoice_sections_by_billing_profile_name: InvoiceSectionsByBillingProfileName operations
+    :vartype invoice_sections_by_billing_profile_name: azure.mgmt.billing.operations.InvoiceSectionsByBillingProfileNameOperations
     :ivar invoice_sections_with_create_subscription_permission: InvoiceSectionsWithCreateSubscriptionPermission operations
     :vartype invoice_sections_with_create_subscription_permission: azure.mgmt.billing.operations.InvoiceSectionsWithCreateSubscriptionPermissionOperations
     :ivar departments_by_billing_account_name: DepartmentsByBillingAccountName operations
@@ -151,6 +155,8 @@ class BillingManagementClient(SDKClient):
     :vartype policy: azure.mgmt.billing.operations.PolicyOperations
     :ivar billing_property: BillingProperty operations
     :vartype billing_property: azure.mgmt.billing.operations.BillingPropertyOperations
+    :ivar invoice_section: InvoiceSection operations
+    :vartype invoice_section: azure.mgmt.billing.operations.InvoiceSectionOperations
     :ivar transfers: Transfers operations
     :vartype transfers: azure.mgmt.billing.operations.TransfersOperations
     :ivar recipient_transfers: RecipientTransfers operations
@@ -211,6 +217,8 @@ class BillingManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.invoice_sections = InvoiceSectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.invoice_sections_by_billing_profile_name = InvoiceSectionsByBillingProfileNameOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.invoice_sections_with_create_subscription_permission = InvoiceSectionsWithCreateSubscriptionPermissionOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.departments_by_billing_account_name = DepartmentsByBillingAccountNameOperations(
@@ -248,6 +256,8 @@ class BillingManagementClient(SDKClient):
         self.policy = PolicyOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_property = BillingPropertyOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.invoice_section = InvoiceSectionOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.transfers = TransfersOperations(
             self._client, self.config, self._serialize, self._deserialize)
