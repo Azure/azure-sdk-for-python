@@ -21,8 +21,8 @@ class RiskyIPBlobUri(Model):
     :type service_id: str
     :param result_sas_uri: The blob uri for the report.
     :type result_sas_uri: str
-    :param blob_create_date_time: Time at which the the new Risky IP report
-     was requested.
+    :param blob_create_date_time: Time at which the new Risky IP report was
+     requested.
     :type blob_create_date_time: datetime
     :param job_completion_time: Time at which the blob creation job for the
      new Risky IP report was completed.
