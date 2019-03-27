@@ -75,16 +75,16 @@ def test_no_log(mock_http_logger):
     mock_http_logger.reset_mock()
 
     # I can enable it per request
-    http_logger.on_request(request, **{"enable_http_logger": True})
+    http_logger.on_request(request, **{"logging_enable": True})
     assert mock_http_logger.debug.call_count >= 1
-    http_logger.on_response(request, response, **{"enable_http_logger": True})
+    http_logger.on_response(request, response, **{"logging_enable": True})
     assert mock_http_logger.debug.call_count >= 1
     mock_http_logger.reset_mock()
 
     # I can enable it per request (bool value should be honored)
-    http_logger.on_request(request, **{"enable_http_logger": False})
+    http_logger.on_request(request, **{"logging_enable": False})
     mock_http_logger.debug.assert_not_called()
-    http_logger.on_response(request, response, **{"enable_http_logger": False})
+    http_logger.on_response(request, response, **{"logging_enable": False})
     mock_http_logger.debug.assert_not_called()
     mock_http_logger.reset_mock()
 
@@ -98,9 +98,9 @@ def test_no_log(mock_http_logger):
 
     # I can enable it globally and override it locally
     http_logger.enable_http_logger = True
-    http_logger.on_request(request, **{"enable_http_logger": False})
+    http_logger.on_request(request, **{"logging_enable": False})
     mock_http_logger.debug.assert_not_called()
-    http_logger.on_response(request, response, **{"enable_http_logger": False})
+    http_logger.on_response(request, response, **{"logging_enable": False})
     mock_http_logger.debug.assert_not_called()
     mock_http_logger.reset_mock()
 
