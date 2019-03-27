@@ -40,11 +40,11 @@ class LeaseContainerRequest(Model):
     }
 
     _attribute_map = {
-        'action': {'key': 'Action', 'type': 'str'},
-        'lease_id': {'key': 'LeaseId', 'type': 'str'},
-        'break_period': {'key': 'BreakPeriod', 'type': 'int'},
-        'lease_duration': {'key': 'LeaseDuration', 'type': 'int'},
-        'proposed_lease_id': {'key': 'ProposedLeaseId', 'type': 'str'},
+        'action': {'key': 'action', 'type': 'str'},
+        'lease_id': {'key': 'leaseId', 'type': 'str'},
+        'break_period': {'key': 'breakPeriod', 'type': 'int'},
+        'lease_duration': {'key': 'leaseDuration', 'type': 'int'},
+        'proposed_lease_id': {'key': 'proposedLeaseId', 'type': 'str'},
     }
 
     def __init__(self, *, action, lease_id: str=None, break_period: int=None, lease_duration: int=None, proposed_lease_id: str=None, **kwargs) -> None:

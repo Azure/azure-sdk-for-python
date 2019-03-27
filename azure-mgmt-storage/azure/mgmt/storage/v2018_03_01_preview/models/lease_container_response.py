@@ -25,8 +25,8 @@ class LeaseContainerResponse(Model):
     """
 
     _attribute_map = {
-        'lease_id': {'key': 'LeaseId', 'type': 'str'},
-        'lease_time_seconds': {'key': 'LeaseTimeSeconds', 'type': 'str'},
+        'lease_id': {'key': 'leaseId', 'type': 'str'},
+        'lease_time_seconds': {'key': 'leaseTimeSeconds', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
