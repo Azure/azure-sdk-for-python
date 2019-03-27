@@ -19,7 +19,6 @@ try:
     from .managed_cluster_agent_pool_profile_properties_py3 import ManagedClusterAgentPoolProfileProperties
     from .managed_cluster_agent_pool_profile_py3 import ManagedClusterAgentPoolProfile
     from .agent_pool_py3 import AgentPool
-    from .container_service_windows_profile_py3 import ContainerServiceWindowsProfile
     from .managed_cluster_windows_profile_py3 import ManagedClusterWindowsProfile
     from .container_service_ssh_public_key_py3 import ContainerServiceSshPublicKey
     from .container_service_ssh_configuration_py3 import ContainerServiceSshConfiguration
@@ -46,7 +45,6 @@ except (SyntaxError, ImportError):
     from .managed_cluster_agent_pool_profile_properties import ManagedClusterAgentPoolProfileProperties
     from .managed_cluster_agent_pool_profile import ManagedClusterAgentPoolProfile
     from .agent_pool import AgentPool
-    from .container_service_windows_profile import ContainerServiceWindowsProfile
     from .managed_cluster_windows_profile import ManagedClusterWindowsProfile
     from .container_service_ssh_public_key import ContainerServiceSshPublicKey
     from .container_service_ssh_configuration import ContainerServiceSshConfiguration
@@ -85,7 +83,6 @@ __all__ = [
     'ManagedClusterAgentPoolProfileProperties',
     'ManagedClusterAgentPoolProfile',
     'AgentPool',
-    'ContainerServiceWindowsProfile',
     'ManagedClusterWindowsProfile',
     'ContainerServiceSshPublicKey',
     'ContainerServiceSshConfiguration',
