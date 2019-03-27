@@ -37,9 +37,6 @@ class VirtualMachineScaleSetVM(Resource):
     :ivar latest_model_applied: Specifies whether the latest model has been
      applied to the virtual machine.
     :vartype latest_model_applied: bool
-    :param protect_from_scale_in: Specifies whether the virtual machine
-     instance shouldn't be considered for deletion during a scale-in operation
-    :type protect_from_scale_in: bool
     :ivar vm_id: Azure VM unique ID.
     :vartype vm_id: str
     :ivar instance_view: The virtual machine instance view.
@@ -134,7 +131,6 @@ class VirtualMachineScaleSetVM(Resource):
         'instance_id': {'key': 'instanceId', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'latest_model_applied': {'key': 'properties.latestModelApplied', 'type': 'bool'},
-        'protect_from_scale_in': {'key': 'properties.protectFromScaleIn', 'type': 'bool'},
         'vm_id': {'key': 'properties.vmId', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineScaleSetVMInstanceView'},
         'hardware_profile': {'key': 'properties.hardwareProfile', 'type': 'HardwareProfile'},
@@ -156,7 +152,6 @@ class VirtualMachineScaleSetVM(Resource):
         self.instance_id = None
         self.sku = None
         self.latest_model_applied = None
-        self.protect_from_scale_in = kwargs.get('protect_from_scale_in', None)
         self.vm_id = None
         self.instance_view = None
         self.hardware_profile = kwargs.get('hardware_profile', None)
