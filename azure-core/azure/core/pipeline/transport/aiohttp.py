@@ -60,7 +60,7 @@ class AioHttpTransport(AsyncHttpTransport):
         pass  # configure sesison
 
     def build_context(self):
-        # type: () -> RequestsContext
+        # type: () -> AioHttpContext
         return AioHttpContext(
             session=self.session,
             transport=self,
@@ -103,9 +103,6 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     async def load_body(self) -> None:
         """Load in memory the body, so it could be accessible from sync methods."""
         self._body = await self.internal_response.read()
-
-    def raise_for_status(self):
-        self.internal_response.raise_for_status()
 
     def stream_download(self, chunk_size: Optional[int] = None, callback: Optional[Callable] = None) -> AsyncIterator[bytes]:
         """Generator for streaming request body data.

@@ -39,7 +39,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
-    """An http policy ABC.
+    """An HTTP policy ABC.
     """
     def __init__(self):
         self.next = None
@@ -49,7 +49,7 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
         # type: (PipelineRequest[HTTPRequestType], Any) -> PipelineResponse[HTTPRequestType, HTTPResponseType]
         """Mutate the request.
 
-        Context content is dependent of the HttpTransport.
+        Context content is dependent on the HttpTransport.
         """
         pass
 
@@ -63,9 +63,10 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     Context is not available, since it's implementation dependent.
     if a policy needs a context of the Sender, it can't be universal.
 
-    Example: setting a UserAgent does not need to be tight to
+    Example: setting a UserAgent does not need to be tied to
     sync or async implementation or specific HTTP lib
     """
+
     def on_request(self, request, **kwargs):
         # type: (PipelineRequest[HTTPRequestType], Any) -> None
         """Is executed before sending the request to next policy.
@@ -102,6 +103,10 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
 
 
 class RequestHistory(object):
+    """A container for an attempted request and the applicable response.
+
+    This is used to document requests/responses that resulted in redirected requests.
+    """
  
     def __init__(self, http_request, http_response=None, error=None, context=None):
         # type: (PipelineRequest[HTTPRequestType], Exception, Optional[Dict[str, Any]]) -> None

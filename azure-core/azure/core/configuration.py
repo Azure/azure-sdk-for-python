@@ -27,7 +27,7 @@
 
 class Configuration(object):
 
-    def __init__(self, **kwargs):
+    def __init__(self, transport=None, **kwargs):
         # Communication configuration - applied per transport.
         self.connection = ConnectionConfiguration(**kwargs)
 
@@ -48,6 +48,13 @@ class Configuration(object):
 
         # User Agent configuration
         self.user_agent_policy = None
+
+        # HTTP Transport
+        self.transport = None
+
+    def get_transport(self, **kwargs):
+        if self.transport:
+            return self.transport(configuration=self, **kwargs)
 
 
 class ConnectionConfiguration(object):
