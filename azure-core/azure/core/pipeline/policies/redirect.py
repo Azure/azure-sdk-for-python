@@ -39,8 +39,7 @@ except ImportError:
 
 from azure.core.exceptions import (
     ClientRequestError,
-    TooManyRedirectsError,
-    raise_with_traceback
+    TooManyRedirectsError
 )
 
 from .base import HTTPPolicy, RequestHistory
@@ -50,6 +49,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class RedirectPolicy(HTTPPolicy):
+    """A redirect policy"""
 
     REDIRECT_STATUSES = frozenset([301, 302, 303, 307, 308])
 
@@ -76,8 +76,8 @@ class RedirectPolicy(HTTPPolicy):
         }
 
     def get_redirect_location(self, response):
-        """
-        Should we redirect and where to?
+        """Should we redirect and where to?
+
         :returns: Truthy redirect location string if we got a redirect status
             code and valid location. ``None`` if redirect status and no
             location. ``False`` if not a redirect status code.
@@ -89,17 +89,14 @@ class RedirectPolicy(HTTPPolicy):
         return False
 
     def increment(self, settings, response, redirect_location):
-        """ Return a new Retry object with incremented retry counters.
+        """Increment the redirect attempts for this request.
 
-        :param response: A response object, or None, if the server did not
-            return a response.
-        :type response: :class:`~urllib3.response.HTTPResponse`
-        :param Exception error: An error encountered during the request, or
-            None if the response was received successfully.
+        :param response: A pipeline response object.
+        :param redirect_location: The redirected endpoint.
 
-        :return: A new ``Retry`` object.
+        :return: Whether further redirect attempts are remaining.
         """
-        # Redirect retry?
+        # TODO: Revise some of the logic here.
         settings['redirects'] -= 1
         settings['history'].append(RequestHistory(response.http_request, http_response=response.http_response))
         

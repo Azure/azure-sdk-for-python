@@ -30,6 +30,7 @@ from __future__ import absolute_import  # we have a "requests" module that confl
 import contextlib
 import logging
 import time
+import email
 import re
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 import warnings
@@ -37,8 +38,7 @@ import warnings
 from azure.core.exceptions import (
     ServiceRequestError,
     ConnectionError,
-    ConnectionReadError,
-    raise_with_traceback
+    ConnectionReadError
 )
 
 from .base import HTTPPolicy, RequestHistory
@@ -48,6 +48,26 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class RetryPolicy(HTTPPolicy):
+    """A retry policy.
+    
+    :param retry_total: Total number of retries to allow. Takes precedence over other counts.
+     Default value is 10.
+    :param retry_connect: How many connection-related errors to retry on.
+     These are errors raised before the request is sent to the remote server,
+     which we assume has not triggered the server to process the request. Default value is 3
+    :param retry_read: How many times to retry on read errors.
+     These errors are raised after the request was sent to the server, so the
+     request may have side-effects. Default value is 3.
+    :param retry_status: How many times to retry on bad status codes. Default value is 3.
+    :param retry_backoff_factor: A backoff factor to apply between attempts after the second try
+     (most errors are resolved immediately by a second try without a delay).
+     Retry policy will sleep for:
+        {backoff factor} * (2 ** ({number of total retries} - 1))
+     seconds. If the backoff_factor is 0.1, then the retry will sleep
+     for [0.0s, 0.2s, 0.4s, ...] between retries.
+     The default value is 0.8.
+    :param retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+    """
 
     #: Maximum backoff time.
     BACKOFF_MAX = 120
@@ -97,32 +117,28 @@ class RetryPolicy(HTTPPolicy):
         return min(settings['max_backoff'], backoff_value)
 
     def parse_retry_after(self, retry_after):
-        # Whitespace: https://tools.ietf.org/html/rfc7230#section-3.2.4
-        if re.match(r"^\s*[0-9]+\s*$", retry_after):
+        try:
             seconds = int(retry_after)
-        else:
+        except TypeError:
             retry_date_tuple = email.utils.parsedate(retry_after)
             if retry_date_tuple is None:
-                raise InvalidHeader("Invalid Retry-After header: %s" % retry_after)
+                return None
             retry_date = time.mktime(retry_date_tuple)
             seconds = retry_date - time.time()
 
         if seconds < 0:
             seconds = 0
-
         return seconds
 
     def get_retry_after(self, response):
-        """ Get the value of Retry-After in seconds. """
+        """Get the value of Retry-After in seconds."""
 
         retry_after = response.http_response.headers.get("Retry-After")
-
         if retry_after is None:
             return None
-
         return self.parse_retry_after(retry_after)
 
-    def sleep_for_retry(self, response, transport):
+    def _sleep_for_retry(self, response, transport):
         retry_after = self.get_retry_after(response)
         if retry_after:
             transport.sleep(retry_after)
@@ -136,7 +152,7 @@ class RetryPolicy(HTTPPolicy):
         transport.sleep(backoff)
 
     def sleep(self, settings, transport, response=None):
-        """ Sleep between retry attempts.
+        """Sleep between retry attempts.
 
         This method will respect a server's ``Retry-After`` response header
         and sleep the duration of the time requested. If that is not present, it
@@ -144,7 +160,7 @@ class RetryPolicy(HTTPPolicy):
         this method will return immediately.
         """
         if response:
-            slept = self.sleep_for_retry(response, transport)
+            slept = self._sleep_for_retry(response, transport)
             if slept:
                 return
         self._sleep_backoff(settings, transport)
@@ -174,21 +190,21 @@ class RetryPolicy(HTTPPolicy):
         return True
 
     def is_retry(self, settings, response):
-        """ Is this method/status code retryable? (Based on whitelists and control
+        """Is this method/status code retryable? (Based on whitelists and control
         variables such as the number of total retries to allow, whether to
         respect the Retry-After header, whether this header is present, and
         whether the returned status code is on the list of status codes to
         be retried upon on the presence of the aforementioned header)
         """
         has_retry_after = bool(response.http_response.headers.get("Retry-After"))
-        #if has_retry_after and self._respect_retry_after_header:
-        #    return True
+        if has_retry_after and self._respect_retry_after_header:
+            return True
         if not self._is_method_retryable(settings, response.http_request, response=response.http_response):
             return False
         return (settings['total'] and response.http_response.status_code in self._retry_on_status_codes)
 
     def is_exhausted(self, settings):
-        """ Are we out of retries? """
+        """Are we out of retries?"""
         retry_counts = (settings['total'], settings['connect'], settings['read'], settings['status'])
         retry_counts = list(filter(None, retry_counts))
         if not retry_counts:
@@ -197,15 +213,13 @@ class RetryPolicy(HTTPPolicy):
         return min(retry_counts) < 0
 
     def increment(self, settings, response=None, error=None):
-        """ Return a new Retry object with incremented retry counters.
+        """Increment the retry counters.
 
-        :param response: A response object, or None, if the server did not
-            return a response.
-        :type response: :class:`~urllib3.response.HTTPResponse`
-        :param Exception error: An error encountered during the request, or
+        :param response: A pipeline response object.
+        :param error: An error encountered during the request, or
             None if the response was received successfully.
 
-        :return: A new ``Retry`` object.
+        :return: Whether the retry attempts are exhausted.
         """
         settings['total'] -= 1
 

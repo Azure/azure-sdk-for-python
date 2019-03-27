@@ -80,11 +80,6 @@ class HttpRequest(object):
     """Represents a HTTP request.
 
     URL can be given without query parameters, to be added later using "format_parameters".
-
-    Instance can be created without data, to be added later using "add_content"
-
-    Instance can be created without files, to be added later using "add_formdata"
-
     :param str method: HTTP method (GET, HEAD, etc.)
     :param str url: At least complete scheme/host/path
     :param dict[str,str] headers: HTTP headers
@@ -153,6 +148,7 @@ class HttpRequest(object):
         self.url = self.url + query
 
     def set_xml_body(self, data):
+        """Set an XML element tree as the body of the request."""
         if data is None:
             self.data = None
         else:
@@ -162,6 +158,7 @@ class HttpRequest(object):
         self.files = None
 
     def set_json_body(self, data):
+        """Set a JSON-friendly object as the body of the request."""
         if data is None:
             self.data = None
         else:
@@ -170,6 +167,7 @@ class HttpRequest(object):
         self.files = None
 
     def set_multipart_body(self, data=None):
+        """Set form-encoded data as the body of the request."""
         if data is None:
             data = {}
         content_type = self.headers.pop('Content-Type', None) if self.headers else None
@@ -182,6 +180,7 @@ class HttpRequest(object):
             self.data = None
 
     def set_bytes_body(self, data):
+        """Set generic bytes as the body of the request."""
         if data:
             self.headers['Content-Length'] = str(len(data))
         self.data = data
@@ -217,14 +216,6 @@ class _HttpResponseBase(object):
          Implementation can be smarter if they want (using headers).
         """
         return self.body().decode(encoding or "utf-8")
-
-    def raise_for_status(self):
-        """Raise for status. Should be overriden, but basic implementation provided.
-        """
-        if self.status_code >= 400 and self.status_code < 500:
-            raise ClientRequestError("Received status code {}".format(self.status_code), response=self)
-        if self.status_code >= 500:
-            raise ServerError("Received status code {}".format(self.status_code), respone=self)
 
 
 class HttpResponse(_HttpResponseBase):

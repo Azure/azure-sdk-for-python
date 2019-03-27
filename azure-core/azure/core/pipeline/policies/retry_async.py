@@ -46,7 +46,7 @@ _LOGGER = logging.getLogger(__name__)
 class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):
 
 
-    async def sleep_for_retry(self, response, transport):
+    async def _sleep_for_retry(self, response, transport):
         retry_after = self.get_retry_after(response)
         if retry_after:
             await transport.sleep(retry_after)
@@ -68,7 +68,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):
         this method will return immediately.
         """
         if response:
-            slept = await self.sleep_for_retry(response, transport)
+            slept = await self._sleep_for_retry(response, transport)
             if slept:
                 return
         await self._sleep_backoff(settings, transport)

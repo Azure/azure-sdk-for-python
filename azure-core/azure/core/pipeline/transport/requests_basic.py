@@ -70,9 +70,6 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
             self.internal_response.encoding = encoding
         return self.internal_response.text
 
-    def raise_for_status(self):
-        self.internal_response.raise_for_status()
-
 
 class RequestsTransportResponse(_RequestsTransportResponseBase, HttpResponse):
 
