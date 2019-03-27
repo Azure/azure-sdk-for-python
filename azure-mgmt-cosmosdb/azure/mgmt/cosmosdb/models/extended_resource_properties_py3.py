@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class ExtenedResourceProperties(Model):
+class ExtendedResourceProperties(Model):
     """The system generated resource properties associated with SQL databases and
     SQL containers.
 
@@ -36,9 +36,9 @@ class ExtenedResourceProperties(Model):
         '_etag': {'key': '_etag', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ExtenedResourceProperties, self).__init__(**kwargs)
-        self._rid = kwargs.get('_rid', None)
-        self._ts = kwargs.get('_ts', None)
-        self._self = kwargs.get('_self', None)
-        self._etag = kwargs.get('_etag', None)
+    def __init__(self, *, _rid: str=None, _ts=None, _self: str=None, _etag: str=None, **kwargs) -> None:
+        super(ExtendedResourceProperties, self).__init__(**kwargs)
+        self._rid = _rid
+        self._ts = _ts
+        self._self = _self
+        self._etag = _etag

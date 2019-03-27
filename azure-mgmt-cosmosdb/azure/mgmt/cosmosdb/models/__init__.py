@@ -27,7 +27,7 @@ try:
     from .failover_policies_py3 import FailoverPolicies
     from .region_for_online_offline_py3 import RegionForOnlineOffline
     from .resource_py3 import Resource
-    from .extened_resource_properties_py3 import ExtenedResourceProperties
+    from .extended_resource_properties_py3 import ExtendedResourceProperties
     from .generic_resource_properties_py3 import GenericResourceProperties
     from .database_account_create_update_parameters_py3 import DatabaseAccountCreateUpdateParameters
     from .database_account_patch_parameters_py3 import DatabaseAccountPatchParameters
@@ -37,7 +37,6 @@ try:
     from .database_account_list_connection_strings_result_py3 import DatabaseAccountListConnectionStringsResult
     from .database_account_regenerate_key_parameters_py3 import DatabaseAccountRegenerateKeyParameters
     from .sql_database_create_update_resource_py3 import SqlDatabaseCreateUpdateResource
-    from .create_update_options_py3 import CreateUpdateOptions
     from .sql_database_create_update_parameters_py3 import SqlDatabaseCreateUpdateParameters
     from .sql_container_create_update_resource_py3 import SqlContainerCreateUpdateResource
     from .sql_container_create_update_parameters_py3 import SqlContainerCreateUpdateParameters
@@ -71,7 +70,7 @@ except (SyntaxError, ImportError):
     from .failover_policies import FailoverPolicies
     from .region_for_online_offline import RegionForOnlineOffline
     from .resource import Resource
-    from .extened_resource_properties import ExtenedResourceProperties
+    from .extended_resource_properties import ExtendedResourceProperties
     from .generic_resource_properties import GenericResourceProperties
     from .database_account_create_update_parameters import DatabaseAccountCreateUpdateParameters
     from .database_account_patch_parameters import DatabaseAccountPatchParameters
@@ -81,7 +80,6 @@ except (SyntaxError, ImportError):
     from .database_account_list_connection_strings_result import DatabaseAccountListConnectionStringsResult
     from .database_account_regenerate_key_parameters import DatabaseAccountRegenerateKeyParameters
     from .sql_database_create_update_resource import SqlDatabaseCreateUpdateResource
-    from .create_update_options import CreateUpdateOptions
     from .sql_database_create_update_parameters import SqlDatabaseCreateUpdateParameters
     from .sql_container_create_update_resource import SqlContainerCreateUpdateResource
     from .sql_container_create_update_parameters import SqlContainerCreateUpdateParameters
@@ -139,7 +137,7 @@ __all__ = [
     'FailoverPolicies',
     'RegionForOnlineOffline',
     'Resource',
-    'ExtenedResourceProperties',
+    'ExtendedResourceProperties',
     'GenericResourceProperties',
     'DatabaseAccountCreateUpdateParameters',
     'DatabaseAccountPatchParameters',
@@ -149,7 +147,6 @@ __all__ = [
     'DatabaseAccountListConnectionStringsResult',
     'DatabaseAccountRegenerateKeyParameters',
     'SqlDatabaseCreateUpdateResource',
-    'CreateUpdateOptions',
     'SqlDatabaseCreateUpdateParameters',
     'SqlContainerCreateUpdateResource',
     'SqlContainerCreateUpdateParameters',

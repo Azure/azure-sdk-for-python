@@ -1554,7 +1554,7 @@ class DatabaseAccountsOperations(object):
          ~azure.mgmt.cosmosdb.models.SqlDatabaseCreateUpdateResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
-        :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
+        :type options: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1730,7 +1730,7 @@ class DatabaseAccountsOperations(object):
          ~azure.mgmt.cosmosdb.models.SqlDatabaseCreateUpdateResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
-        :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
+        :type options: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1998,7 +1998,7 @@ class DatabaseAccountsOperations(object):
          ~azure.mgmt.cosmosdb.models.SqlContainerCreateUpdateResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
-        :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
+        :type options: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -2181,7 +2181,7 @@ class DatabaseAccountsOperations(object):
          ~azure.mgmt.cosmosdb.models.SqlContainerCreateUpdateResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
-        :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
+        :type options: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response

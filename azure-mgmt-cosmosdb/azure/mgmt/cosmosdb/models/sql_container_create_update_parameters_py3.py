@@ -22,7 +22,7 @@ class SqlContainerCreateUpdateParameters(Model):
      ~azure.mgmt.cosmosdb.models.SqlContainerCreateUpdateResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
-    :type options: ~azure.mgmt.cosmosdb.models.CreateUpdateOptions
+    :type options: dict[str, str]
     """
 
     _validation = {
@@ -32,7 +32,7 @@ class SqlContainerCreateUpdateParameters(Model):
 
     _attribute_map = {
         'resource': {'key': 'properties.resource', 'type': 'SqlContainerCreateUpdateResource'},
-        'options': {'key': 'properties.options', 'type': 'CreateUpdateOptions'},
+        'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
     def __init__(self, *, resource, options, **kwargs) -> None:

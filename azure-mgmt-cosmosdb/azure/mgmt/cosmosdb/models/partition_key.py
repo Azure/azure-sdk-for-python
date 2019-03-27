@@ -17,7 +17,7 @@ class PartitionKey(Model):
     into multiple partitions.
 
     :param paths: List of paths using which data within the SQL container can
-     be parititoned
+     be partitioned
     :type paths: list[str]
     :param kind: Indicates the kind of algorithm used for partitioning.
      Possible values include: 'Hash', 'Range'. Default value: "Hash" .

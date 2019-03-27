@@ -16,7 +16,7 @@ class IncludedPaths(Model):
     """The paths that are included in indexing.
 
     :param path: The path for which the indexing behavior applies to. Index
-     paths typically start with root and end with windcard (/path/*)
+     paths typically start with root and end with wildcard (/path/*)
     :type path: str
     :param indexes: List of indexes for this path
     :type indexes: list[~azure.mgmt.cosmosdb.models.Indexes]
