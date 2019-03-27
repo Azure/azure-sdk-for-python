@@ -70,6 +70,8 @@ try:
     from .cors_rules_py3 import CorsRules
     from .delete_retention_policy_py3 import DeleteRetentionPolicy
     from .blob_service_properties_py3 import BlobServiceProperties
+    from .lease_container_request_py3 import LeaseContainerRequest
+    from .lease_container_response_py3 import LeaseContainerResponse
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .dimension import Dimension
@@ -131,6 +133,8 @@ except (SyntaxError, ImportError):
     from .cors_rules import CorsRules
     from .delete_retention_policy import DeleteRetentionPolicy
     from .blob_service_properties import BlobServiceProperties
+    from .lease_container_request import LeaseContainerRequest
+    from .lease_container_response import LeaseContainerResponse
 from .operation_paged import OperationPaged
 from .sku_paged import SkuPaged
 from .storage_account_paged import StorageAccountPaged
@@ -227,6 +231,8 @@ __all__ = [
     'CorsRules',
     'DeleteRetentionPolicy',
     'BlobServiceProperties',
+    'LeaseContainerRequest',
+    'LeaseContainerResponse',
     'OperationPaged',
     'SkuPaged',
     'StorageAccountPaged',
