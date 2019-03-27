@@ -50,7 +50,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 
 
 class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
-    """An http policy ABC.
+    """An async HTTP policy ABC.
     """
     def __init__(self) -> None:
         # next will be set once in the pipeline
@@ -60,6 +60,6 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
     async def send(self, request: PipelineRequest, **kwargs: Any):
         """Mutate the request.
 
-        Context content is dependent of the HttpTransport.
+        Context content is dependent on the HttpTransport.
         """
         pass

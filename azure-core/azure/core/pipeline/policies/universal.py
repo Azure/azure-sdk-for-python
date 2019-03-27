@@ -56,11 +56,21 @@ class HeadersPolicy(SansIOHTTPPolicy):
     """A simple policy that sends the given headers
     with the request.
 
-    This overwrite any headers already defined in the request.
+    This will overwrite any headers already defined in the request.
     """
-    def __init__(self, headers=None, **kwargs):
+    def __init__(self, base_headers=None, **kwargs):
         # type: (Mapping[str, str]) -> None
-        self.headers = headers or {}
+        self._headers = base_headers or {}
+        self._headers.update(kwargs.pop('headers', {}))
+
+    @property
+    def headers(self):
+        """The current headers collection."""
+        return self._headers
+
+    def add_header(self, key, value):
+        """Add a header to the configuration to be applied to all requests."""
+        self._headers[key] = value
 
     def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
@@ -132,7 +142,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
     def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
-        if kwargs.get("enable_http_logger", self.enable_http_logger):
+        if kwargs.get("logging_enable", self.enable_http_logger):
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 
@@ -156,7 +166,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
 
     def on_response(self, request, response, **kwargs):
         # type: (PipelineRequest, PipelineResponse, Any) -> None
-        if kwargs.get("enable_http_logger", self.enable_http_logger):
+        if kwargs.get("logging_enable", self.enable_http_logger):
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 

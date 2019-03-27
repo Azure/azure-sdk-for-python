@@ -60,11 +60,18 @@ class AzureError(Exception):
     def __init__(self, message, *args, **kwargs):
         self.inner_exception = kwargs.get('error')
         self.response = kwargs.get('response')
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        # If not called inside a "except", exc_type will be None. Assume it will not happen
-        self.exc_msg = "{}, {}: {}".format(message, exc_type.__name__, exc_value)  # type: ignore
+        self.exc_type, self.exc_value, self.exc_traceback = sys.exc_info()
+        self.exc_type = self.exc_type.__name__ if self.exc_type else type(self.inner_exception)
+        self.exc_msg = "{}, {}: {}".format(message, self.exc_type, self.exc_value)  # type: ignore
         self.message = str(message)
         super(AzureError, self).__init__(self.message, *args)
+
+    def raise_with_traceback(self):
+        try:
+            raise super(AzureError, self).with_traceback(self.exc_traceback)
+        except AttributeError:
+            self.__traceback__ = self.exc_traceback
+            raise self
 
 
 class AzureLibraryError(AzureError):
@@ -130,7 +137,6 @@ class ResourceModifiedError(ClientRequestError):
 class ServerError(ServiceRequestError):
     """An error response with status code 5xx.
     This will not be raised directly by the Azure core pipeline."""
-
 
 
 class TooManyRedirectsError(ServiceRequestError):
