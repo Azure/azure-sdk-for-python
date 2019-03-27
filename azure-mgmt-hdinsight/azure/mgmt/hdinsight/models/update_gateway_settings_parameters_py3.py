@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class UpdateGatewaySettingsParameters(Model):
-    """UpdateGatewaySettingsParameters.
+    """The update gateway settings request parameters.
 
     :param is_credential_enabled: Indicates whether or not the gateway
      settings based authorization is enabled. Default value: True .
