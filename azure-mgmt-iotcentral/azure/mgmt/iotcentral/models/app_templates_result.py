@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class AppTemplates(Model):
+class AppTemplatesResult(Model):
     """A list of IoT Central Application Templates with a next link.
 
     Variables are only populated by the server, and will be ignored when
@@ -34,7 +34,7 @@ class AppTemplates(Model):
         'value': {'key': 'value', 'type': '[AppTemplate]'},
     }
 
-    def __init__(self, *, next_link: str=None, **kwargs) -> None:
-        super(AppTemplates, self).__init__(**kwargs)
-        self.next_link = next_link
+    def __init__(self, **kwargs):
+        super(AppTemplatesResult, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
         self.value = None

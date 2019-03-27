@@ -10,9 +10,11 @@
 # --------------------------------------------------------------------------
 
 from .apps_operations import AppsOperations
+from .app_operations import AppOperations
 from .operations import Operations
 
 __all__ = [
     'AppsOperations',
+    'AppOperations',
     'Operations',
 ]

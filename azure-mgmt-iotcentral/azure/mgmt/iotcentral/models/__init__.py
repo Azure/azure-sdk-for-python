@@ -21,7 +21,7 @@ try:
     from .operation_inputs_py3 import OperationInputs
     from .app_availability_info_py3 import AppAvailabilityInfo
     from .app_template_py3 import AppTemplate
-    from .app_templates_py3 import AppTemplates
+    from .app_templates_result_py3 import AppTemplatesResult
 except (SyntaxError, ImportError):
     from .app_sku_info import AppSkuInfo
     from .app import App
@@ -34,7 +34,7 @@ except (SyntaxError, ImportError):
     from .operation_inputs import OperationInputs
     from .app_availability_info import AppAvailabilityInfo
     from .app_template import AppTemplate
-    from .app_templates import AppTemplates
+    from .app_templates_result import AppTemplatesResult
 from .app_paged import AppPaged
 from .operation_paged import OperationPaged
 from .iot_central_client_enums import (
@@ -53,7 +53,7 @@ __all__ = [
     'OperationInputs',
     'AppAvailabilityInfo',
     'AppTemplate',
-    'AppTemplates',
+    'AppTemplatesResult',
     'AppPaged',
     'OperationPaged',
     'AppSku',

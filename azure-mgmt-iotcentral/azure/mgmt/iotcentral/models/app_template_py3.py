@@ -24,7 +24,7 @@ class AppTemplate(Model):
     :vartype manifest_version: str
     :ivar name: The name of the template.
     :vartype name: str
-    :ivar title: The localized title of the template.
+    :ivar title: The title of the template.
     :vartype title: str
     :ivar order: The order of the template in the templates list.
     :vartype order: float

@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.apps_operations import AppsOperations
+from .operations.app_operations import AppOperations
 from .operations.operations import Operations
 from . import models
 
@@ -58,6 +59,8 @@ class IotCentralClient(SDKClient):
 
     :ivar apps: Apps operations
     :vartype apps: azure.mgmt.iotcentral.operations.AppsOperations
+    :ivar app: App operations
+    :vartype app: azure.mgmt.iotcentral.operations.AppOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.iotcentral.operations.Operations
 
@@ -81,6 +84,8 @@ class IotCentralClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
         self.apps = AppsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.app = AppOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
