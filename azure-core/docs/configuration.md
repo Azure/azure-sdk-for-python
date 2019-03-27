@@ -99,7 +99,7 @@ config.logging_policy.enable_http_logger = True
 ```
 The logger can also be enabled per operation.
 ```python
-result = client.get_operation(enable_http_logging=True)
+result = client.get_operation(logging_enable=True)
 ```
 
 ### Configuring headers

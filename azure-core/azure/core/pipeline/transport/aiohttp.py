@@ -72,9 +72,22 @@ class AioHttpTransport(AsyncHttpTransport):
         Will pre-load the body into memory to be available with a sync method.
         pass stream=True to avoid this behavior.
         """
+        # TODO SSL config
+        # ssl_ctx = None
+        # if self.config.connection.verify not in (True, False):
+        #    import ssl
+         #   ssl_ctx = ssl.create_default_context(cafile=self.config.connection.verify)
+
         result = await self.session.request(
             request.method,
             request.url,
+            headers=request.headers,
+            data=request.data,
+            # files=request.files,  # TODO: What is aiohttp equivalent...?
+            # verify=config.get('connection_verify', self.config.connection.verify),
+            timeout=config.get('connection_timeout', self.config.connection.timeout),
+            # cert=config.get('connection_cert', self.config.connection.cert),
+            allow_redirects=False,
             **config
         )
         response = AioHttpTransportResponse(request, result)

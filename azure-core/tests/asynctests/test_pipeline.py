@@ -73,7 +73,8 @@ async def test_basic_aiohttp():
     conf = Configuration()
     request = HttpRequest("GET", "http://bing.com")
     policies = [
-        UserAgentPolicy("myusergant")
+        UserAgentPolicy("myusergant"),
+        AsyncRedirectPolicy()
     ]
     async with AsyncPipeline(AioHttpTransport(conf), policies=policies) as pipeline:
         response = await pipeline.run(request)

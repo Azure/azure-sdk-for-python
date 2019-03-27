@@ -77,6 +77,7 @@ def test_no_log(mock_http_logger):
     # I can enable it per request
     http_logger.on_request(request, **{"logging_enable": True})
     assert mock_http_logger.debug.call_count >= 1
+    mock_http_logger.reset_mock()
     http_logger.on_response(request, response, **{"logging_enable": True})
     assert mock_http_logger.debug.call_count >= 1
     mock_http_logger.reset_mock()

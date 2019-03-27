@@ -59,9 +59,9 @@ class RedirectPolicy(HTTPPolicy):
         self.allow = kwargs.get('redirects_allow', True)
         self.max_redirects = kwargs.get('redirect_max', 30)
 
-        remove_headers = kwargs.get('redirect_remove_headers', set())
+        remove_headers = set(kwargs.get('redirect_remove_headers', []))
         self._remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
-        redirect_status = kwargs.get('redirect_on_status_codes', set())
+        redirect_status = set(kwargs.get('redirect_on_status_codes', []))
         self._redirect_on_status_codes = redirect_status.union(self.REDIRECT_STATUSES)
 
     @classmethod
