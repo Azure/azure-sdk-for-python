@@ -31,7 +31,8 @@ class Blueprint(AzureResourceBase):
     :ivar status: Status of the blueprint. This field is readonly.
     :vartype status: ~azure.mgmt.blueprint.models.BlueprintStatus
     :param target_scope: The scope where this blueprint definition can be
-     assigned. Possible values include: 'subscription', 'managementGroup'
+     assigned. Management group is reserved for future use. Possible values
+     include: 'subscription', 'managementGroup'
     :type target_scope: str or
      ~azure.mgmt.blueprint.models.BlueprintTargetScope
     :param parameters: Parameters required by this blueprint definition.
