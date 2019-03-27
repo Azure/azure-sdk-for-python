@@ -32,47 +32,6 @@ from azure.core.configuration import Configuration
 from azure.core.pipeline.transport import RequestsTransport
 
 
-@pytest.mark.skip("TODO: configures requests via RequestsTransport._configure_send")
-def test_session_callback():
-
-    cfg = Configuration()
-    with RequestsTransport(cfg) as driver:
-
-        def callback(session, global_config, local_config, **kwargs):
-            assert session is driver.session
-            assert global_config is cfg
-            assert local_config["test"]
-            my_kwargs = kwargs.copy()
-            my_kwargs.update({"used_callback": True})
-            return my_kwargs
-
-        cfg.session_configuration_callback = callback
-
-        request = HttpRequest("GET", "http://127.0.0.1/")
-        output_kwargs = driver._configure_send(request, **{"test": True})
-        assert output_kwargs["used_callback"]
-
-
-@pytest.mark.skip("TODO: configures requests via RequestsTransport._configure_send")
-def test_max_retries_on_default_adapter():
-    # max_retries must be applied only on the default adapters of requests
-    # If the user adds its own adapter, don't touch it
-    cfg = Configuration()
-    max_retries = cfg.retry_count_total
-
-    with RequestsTransport(cfg) as driver:
-        request = HttpRequest("GET", "/")
-        driver.session.mount('"http://127.0.0.1/"', HTTPAdapter())
-
-        driver._configure_send(request)
-        assert driver.session.adapters["http://"].max_retries is max_retries
-        assert driver.session.adapters["https://"].max_retries is max_retries
-        assert (
-            driver.session.adapters['"http://127.0.0.1/"'].max_retries
-            is not max_retries
-        )
-
-
 def test_threading_basic_requests():
     # Basic should have the session for all threads, it's why it's not recommended
     sender = RequestsTransport()

@@ -61,11 +61,9 @@ class RetryPolicy(HTTPPolicy):
     :param retry_status: How many times to retry on bad status codes. Default value is 3.
     :param retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay).
-     Retry policy will sleep for:
-        {backoff factor} * (2 ** ({number of total retries} - 1))
+     Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
      seconds. If the backoff_factor is 0.1, then the retry will sleep
-     for [0.0s, 0.2s, 0.4s, ...] between retries.
-     The default value is 0.8.
+     for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
     :param retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
     """
 
