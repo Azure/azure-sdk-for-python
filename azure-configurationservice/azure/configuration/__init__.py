@@ -9,14 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import AzureConfigurationClientImpConfiguration
-from ._azure_configuration_client_imp import AzureConfigurationClientImp
-from .aio import AzureConfigurationClientImp as AzureConfigurationClientAsyncImp
-from .models import *
+from .azure_configuration_client import AzureConfigurationClient
+from .azure_configuration_client_async import AzureConfigurationClientAsync
+from ._generated import *
 
-__all__ = ['AzureConfigurationClientImp', 'AzureConfigurationClientAsyncImp', 'AzureConfigurationClientImpConfiguration', 'KeyValue']
+__all__ = [
+    'AzureConfigurationClient',
+    'AzureConfigurationClientAsync',
+    'KeyValue'
+    ]
 
-from .version import VERSION
-
-__version__ = VERSION
 
