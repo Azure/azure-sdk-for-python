@@ -12,6 +12,14 @@
 from enum import Enum
 
 
+class State(str, Enum):
+
+    passed = "Passed"  #: All supported regulatory compliance controls in the given standard have a passed state
+    failed = "Failed"  #: At least one supported regulatory compliance control in the given standard has a state of failed
+    skipped = "Skipped"  #: All supported regulatory compliance controls in the given standard have a state of skipped
+    unsupported = "Unsupported"  #: No supported regulatory compliance data for the given standard
+
+
 class PricingTier(str, Enum):
 
     free = "Free"  #: Get free Azure security center experience with basic security features
@@ -34,6 +42,12 @@ class AutoProvision(str, Enum):
 
     on = "On"  #: Install missing security agent on VMs automatically
     off = "Off"  #: Do not install security agent on the VMs automatically
+
+
+class ValueType(str, Enum):
+
+    ip_cidr = "IpCidr"  #: An IP range in CIDR format (e.g. '192.168.0.1/8').
+    string = "String"  #: Any string value.
 
 
 class SettingKind(str, Enum):
@@ -90,6 +104,18 @@ class ExternalSecuritySolutionKind(str, Enum):
     cef = "CEF"
     ata = "ATA"
     aad = "AAD"
+
+
+class Direction(str, Enum):
+
+    inbound = "Inbound"
+    outbound = "Outbound"
+
+
+class TransportProtocol(str, Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
 
 
 class ConnectionType(str, Enum):

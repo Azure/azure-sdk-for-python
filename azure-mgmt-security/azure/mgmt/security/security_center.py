@@ -13,12 +13,16 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
+from .operations.regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
+from .operations.regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
 from .operations.pricings_operations import PricingsOperations
 from .operations.security_contacts_operations import SecurityContactsOperations
 from .operations.workspace_settings_operations import WorkspaceSettingsOperations
 from .operations.auto_provisioning_settings_operations import AutoProvisioningSettingsOperations
 from .operations.compliances_operations import CompliancesOperations
 from .operations.advanced_threat_protection_operations import AdvancedThreatProtectionOperations
+from .operations.device_security_groups_operations import DeviceSecurityGroupsOperations
 from .operations.settings_operations import SettingsOperations
 from .operations.information_protection_policies_operations import InformationProtectionPoliciesOperations
 from .operations.operations import Operations
@@ -30,6 +34,7 @@ from .operations.jit_network_access_policies_operations import JitNetworkAccessP
 from .operations.external_security_solutions_operations import ExternalSecuritySolutionsOperations
 from .operations.topology_operations import TopologyOperations
 from .operations.allowed_connections_operations import AllowedConnectionsOperations
+from .operations.adaptive_network_hardenings_operations import AdaptiveNetworkHardeningsOperations
 from . import models
 
 
@@ -77,6 +82,12 @@ class SecurityCenter(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: SecurityCenterConfiguration
 
+    :ivar regulatory_compliance_standards: RegulatoryComplianceStandards operations
+    :vartype regulatory_compliance_standards: azure.mgmt.security.operations.RegulatoryComplianceStandardsOperations
+    :ivar regulatory_compliance_controls: RegulatoryComplianceControls operations
+    :vartype regulatory_compliance_controls: azure.mgmt.security.operations.RegulatoryComplianceControlsOperations
+    :ivar regulatory_compliance_assessments: RegulatoryComplianceAssessments operations
+    :vartype regulatory_compliance_assessments: azure.mgmt.security.operations.RegulatoryComplianceAssessmentsOperations
     :ivar pricings: Pricings operations
     :vartype pricings: azure.mgmt.security.operations.PricingsOperations
     :ivar security_contacts: SecurityContacts operations
@@ -89,6 +100,8 @@ class SecurityCenter(SDKClient):
     :vartype compliances: azure.mgmt.security.operations.CompliancesOperations
     :ivar advanced_threat_protection: AdvancedThreatProtection operations
     :vartype advanced_threat_protection: azure.mgmt.security.operations.AdvancedThreatProtectionOperations
+    :ivar device_security_groups: DeviceSecurityGroups operations
+    :vartype device_security_groups: azure.mgmt.security.operations.DeviceSecurityGroupsOperations
     :ivar settings: Settings operations
     :vartype settings: azure.mgmt.security.operations.SettingsOperations
     :ivar information_protection_policies: InformationProtectionPolicies operations
@@ -111,6 +124,8 @@ class SecurityCenter(SDKClient):
     :vartype topology: azure.mgmt.security.operations.TopologyOperations
     :ivar allowed_connections: AllowedConnections operations
     :vartype allowed_connections: azure.mgmt.security.operations.AllowedConnectionsOperations
+    :ivar adaptive_network_hardenings: AdaptiveNetworkHardenings operations
+    :vartype adaptive_network_hardenings: azure.mgmt.security.operations.AdaptiveNetworkHardeningsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -133,6 +148,12 @@ class SecurityCenter(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.regulatory_compliance_standards = RegulatoryComplianceStandardsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.regulatory_compliance_controls = RegulatoryComplianceControlsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.regulatory_compliance_assessments = RegulatoryComplianceAssessmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.pricings = PricingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.security_contacts = SecurityContactsOperations(
@@ -144,6 +165,8 @@ class SecurityCenter(SDKClient):
         self.compliances = CompliancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.advanced_threat_protection = AdvancedThreatProtectionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.device_security_groups = DeviceSecurityGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.settings = SettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -166,4 +189,6 @@ class SecurityCenter(SDKClient):
         self.topology = TopologyOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.allowed_connections = AllowedConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.adaptive_network_hardenings = AdaptiveNetworkHardeningsOperations(
             self._client, self.config, self._serialize, self._deserialize)

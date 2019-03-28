@@ -9,12 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
+from .regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
+from .regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
 from .pricings_operations import PricingsOperations
 from .security_contacts_operations import SecurityContactsOperations
 from .workspace_settings_operations import WorkspaceSettingsOperations
 from .auto_provisioning_settings_operations import AutoProvisioningSettingsOperations
 from .compliances_operations import CompliancesOperations
 from .advanced_threat_protection_operations import AdvancedThreatProtectionOperations
+from .device_security_groups_operations import DeviceSecurityGroupsOperations
 from .settings_operations import SettingsOperations
 from .information_protection_policies_operations import InformationProtectionPoliciesOperations
 from .operations import Operations
@@ -26,14 +30,19 @@ from .jit_network_access_policies_operations import JitNetworkAccessPoliciesOper
 from .external_security_solutions_operations import ExternalSecuritySolutionsOperations
 from .topology_operations import TopologyOperations
 from .allowed_connections_operations import AllowedConnectionsOperations
+from .adaptive_network_hardenings_operations import AdaptiveNetworkHardeningsOperations
 
 __all__ = [
+    'RegulatoryComplianceStandardsOperations',
+    'RegulatoryComplianceControlsOperations',
+    'RegulatoryComplianceAssessmentsOperations',
     'PricingsOperations',
     'SecurityContactsOperations',
     'WorkspaceSettingsOperations',
     'AutoProvisioningSettingsOperations',
     'CompliancesOperations',
     'AdvancedThreatProtectionOperations',
+    'DeviceSecurityGroupsOperations',
     'SettingsOperations',
     'InformationProtectionPoliciesOperations',
     'Operations',
@@ -45,4 +54,5 @@ __all__ = [
     'ExternalSecuritySolutionsOperations',
     'TopologyOperations',
     'AllowedConnectionsOperations',
+    'AdaptiveNetworkHardeningsOperations',
 ]
