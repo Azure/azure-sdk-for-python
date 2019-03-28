@@ -150,6 +150,28 @@ class CollectionManagement:
             else: 
                 raise errors.HTTPFailure(e.status_code)
 
+        print("\n2.5 Create Collection - With Partition key")
+        
+        try:
+            coll = {
+                "id": "collection_partition_key",
+                "partitionKey": {
+                    "paths": [
+                      "/field1"
+                    ],
+                    "kind": "Hash"
+                }
+            }
+
+            collection = client.CreateContainer(database_link, coll)
+            print('Collection with id \'{0}\' created'.format(collection['id']))
+            
+        except errors.CosmosError as e:
+            if e.status_code == 409:
+               print('A collection with id \'{0}\' already exists'.format(collection['id']))
+            else: 
+                raise errors.HTTPFailure(e.status_code) 
+
     @staticmethod
     def manage_offer_throughput(client, id):
         print("\n3.1 Get Collection Performance tier")
