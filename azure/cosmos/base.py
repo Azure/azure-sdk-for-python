@@ -31,6 +31,7 @@ import binascii
 
 from . import auth
 from . import documents
+from . import partition_key
 from . import http_constants
 from . import constants
 from . import runtime_constants
@@ -141,9 +142,12 @@ def GetHeaders(cosmos_client_connection,
         headers[http_constants.HttpHeaders.OfferThroughput] = options['offerThroughput']
 
     if 'partitionKey' in options:
-        # if partitionKey value is Undefined, serialize it as {} to be consistent with other SDKs
-        if options.get('partitionKey') is documents.Undefined:
+        # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
+        if options.get('partitionKey') is partition_key._Undefined:
             headers[http_constants.HttpHeaders.PartitionKey] = [{}]
+        # If partitionKey value is Empty, serialize it as [], which is the equivalent to be sent for migrated collections
+        elif options.get('partitionKey') is partition_key._Empty:
+            headers[http_constants.HttpHeaders.PartitionKey] = []
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
             headers[http_constants.HttpHeaders.PartitionKey] = json.dumps([options['partitionKey']])

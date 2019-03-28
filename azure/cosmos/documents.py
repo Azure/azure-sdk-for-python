@@ -372,10 +372,6 @@ class ConnectionPolicy(object):
         self.DisableSSLVerification = False
         self.UseMultipleWriteLocations = False
 
-class Undefined(object):
-    """Represents undefined value for partitionKey when it's mising.
-    """
-
 class _OperationType(object):
     """Represents the type of the operation
     """

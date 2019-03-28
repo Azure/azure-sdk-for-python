@@ -37,6 +37,7 @@ from . import global_endpoint_manager
 from .routing import routing_map_provider as routing_map_provider
 from . import session
 from . import utils
+from .partition_key import _Undefined, _Empty
 
 class CosmosClientConnection(object):
     """Represents a document client.
@@ -2882,12 +2883,15 @@ class CosmosClientConnection(object):
 
         # Parses the paths into a list of token each representing a property
         partition_key_parts = base.ParsePaths(partitionKeyDefinition.get('paths'))
+        # Check if the partitionKey is system generated or not
+        is_system_key = (partitionKeyDefinition['systemKey']
+                         if 'systemKey' in partitionKeyDefinition else False)
 
         # Navigates the document to retrieve the partitionKey specified in the paths
-        return self._RetrievePartitionKey(partition_key_parts, document)
+        return self._retrieve_partition_key(partition_key_parts, document, is_system_key)
 
     # Navigates the document to retrieve the partitionKey specified in the partition key parts
-    def _RetrievePartitionKey(self, partition_key_parts, document):
+    def _retrieve_partition_key(self, partition_key_parts, document, is_system_key):
         expected_matchCount = len(partition_key_parts)
         matchCount = 0
         partitionKey = document
@@ -2895,7 +2899,7 @@ class CosmosClientConnection(object):
         for part in partition_key_parts:
             # At any point if we don't find the value of a sub-property in the document, we return as Undefined
             if part not in partitionKey:
-                return documents.Undefined
+                return self._return_undefined_or_empty_partition_key(is_system_key)
             else:
                 partitionKey = partitionKey.get(part)
                 matchCount += 1
@@ -2905,10 +2909,10 @@ class CosmosClientConnection(object):
 
         # Match the count of hops we did to get the partitionKey with the length of partition key parts and validate that it's not a dict at that level
         if ((matchCount != expected_matchCount) or isinstance(partitionKey, dict)):
-            return documents.Undefined
-         
+            return self._return_undefined_or_empty_partition_key(is_system_key)
+
         return partitionKey
-    
+
     def _UpdateSessionIfRequired(self, request_headers, response_result, response_headers):    
         """
         Updates session if necessary.
@@ -2932,7 +2936,7 @@ class CosmosClientConnection(object):
         if http_constants.HttpHeaders.ConsistencyLevel in request_headers:
             if documents.ConsistencyLevel.Session == request_headers[http_constants.HttpHeaders.ConsistencyLevel]:
                 is_session_consistency = True
-              
+
         if is_session_consistency:
             # update session
             self.session.update_session(response_result, response_headers)
@@ -2952,3 +2956,11 @@ class CosmosClientConnection(object):
         else:
             database_id = cast("Dict[str, str]", database_or_id)["id"]
         return "dbs/{}".format(database_id)
+
+    @staticmethod
+    def _return_undefined_or_empty_partition_key(is_system_key):
+        if is_system_key:
+            return _Empty
+        else:
+            return _Undefined
+

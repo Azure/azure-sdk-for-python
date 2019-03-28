@@ -30,7 +30,7 @@ from .http_constants import StatusCodes
 from .offer import Offer
 from .scripts import Scripts
 from .query_iterable import QueryIterable
-
+from .partition_key import NonePartitionKeyValue
 from typing import (
     Any,
     List,
@@ -60,7 +60,9 @@ class Container:
         self.properties = properties
         database_link = CosmosClientConnection._get_database_link(database)
         self.container_link = u"{}/colls/{}".format(database_link, self.id)
-        self.scripts = Scripts(self.client_connection, self.container_link)
+        self.is_system_key = (self.properties['partitionKey']['systemKey']
+                              if 'systemKey' in self.properties['partitionKey'] else False)
+        self.scripts = Scripts(self.client_connection, self.container_link, self.is_system_key)
 
     def _get_document_link(self, item_or_link):
         # type: (Union[Dict[str, Any], str, Item]) -> str
@@ -103,7 +105,7 @@ class Container:
 
         request_options = {}  # type: Dict[str, Any]
         if partition_key:
-            request_options["partitionKey"] = partition_key
+            request_options["partitionKey"] = self._set_partition_key(partition_key)
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:
@@ -237,7 +239,7 @@ class Container:
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if partition_key is not None:
-            request_options["partitionKey"] = partition_key
+            request_options["partitionKey"] = self._set_partition_key(partition_key)
         if enable_scan_in_query is not None:
             request_options["enableScanInQuery"] = enable_scan_in_query
 
@@ -247,7 +249,7 @@ class Container:
             if parameters is None
             else dict(query=query, parameters=parameters),
             options=request_options,
-            partition_key=partition_key,
+            partition_key=partition_key
         )
         return items
 
@@ -281,7 +283,9 @@ class Container:
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
         data = self.client_connection.ReplaceItem(
-            document_link=item_link, new_document=body, options=request_options
+            document_link=item_link,
+            new_document=body,
+            options=request_options
         )
         return Item(data=data)
 
@@ -316,7 +320,8 @@ class Container:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.UpsertItem(
-            database_or_Container_link=self.container_link, document=body
+            database_or_Container_link=self.container_link,
+            document=body
         )
         return Item(data=result)
 
@@ -368,7 +373,7 @@ class Container:
         result = self.client_connection.CreateItem(
             database_or_Container_link=self.container_link,
             document=body,
-            options=request_options,
+            options=request_options
         )
         return Item(data=result)
 
@@ -394,7 +399,7 @@ class Container:
         """
         request_options = {}  # type: Dict[str, Any]
         if partition_key:
-            request_options["partitionKey"] = partition_key
+            request_options["partitionKey"] = self._set_partition_key(partition_key)
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:
@@ -406,7 +411,7 @@ class Container:
 
         document_link = self._get_document_link(item)
         self.client_connection.DeleteItem(
-            document_link=document_link, options=request_options or None
+            document_link=document_link, options=request_options
         )
 
     def read_offer(self):
@@ -495,7 +500,7 @@ class Container:
         if enable_cross_partition_query is not None:
             request_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if partition_key is not None:
-            request_options["partitionKey"] = partition_key
+            request_options["partitionKey"] = self._set_partition_key(partition_key)
 
         return self.client_connection.QueryConflicts(
             collection_link=self.container_link,
@@ -521,7 +526,7 @@ class Container:
         """
         request_options = {}  # type: Dict[str, Any]
         if partition_key:
-            request_options["partitionKey"] = partition_key
+            request_options["partitionKey"] = self._set_partition_key(partition_key)
 
         return self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(id),
@@ -539,10 +544,15 @@ class Container:
         """
         request_options = {}  # type: Dict[str, Any]
         if partition_key:
-            request_options["partitionKey"] = partition_key
+            request_options["partitionKey"] = self._set_partition_key(partition_key)
 
         self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(id),
             options=request_options
         )
 
+    def _set_partition_key(self, partition_key):
+        if partition_key == NonePartitionKeyValue:
+            return CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
+        else:
+         return partition_key

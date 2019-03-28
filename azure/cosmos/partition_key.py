@@ -20,6 +20,21 @@
 #SOFTWARE.
 
 
+class NonePartitionKeyValue(object):
+    """Represents none value for partitionKey when it's missing in a containers.
+    """
+
+
+class _Empty(object):
+    """Represents empty value for partitionKey when it's missing in an item belonging to a migrated container.
+    """
+
+
+class _Undefined(object):
+    """Represents undefined value for partitionKey when it's missing in an item belonging to a multi-partition container.
+    """
+
+
 class PartitionKey(dict):
     """ Key used to partition a container into logical partitions.
 

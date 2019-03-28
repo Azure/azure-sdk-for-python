@@ -23,6 +23,7 @@
 """
 
 from azure.cosmos.cosmos_client_connection import CosmosClientConnection
+from .partition_key import NonePartitionKeyValue
 
 
 class ScriptType:
@@ -33,10 +34,11 @@ class ScriptType:
 
 class Scripts:
 
-    def __init__(self, client_connection, container_link):
+    def __init__(self, client_connection, container_link, is_system_key):
         # type: (CosmosClientConnection, Union[Container, str], str, Dict[str, Any]) -> None
         self.client_connection = client_connection
         self.container_link = container_link
+        self.is_system_key = is_system_key
 
     def _get_resource_link(self, id, type):
         return u"{}/{}/{}".format(self.container_link, type, id)
@@ -147,7 +149,8 @@ class Scripts:
 
         request_options = {}  # type: Dict[str, Any]
         if partition_key is not None:
-            request_options["partitionKey"] = partition_key
+            request_options["partitionKey"] = (CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
+                                               if partition_key == NonePartitionKeyValue else partition_key)
         if enable_script_logging is not None:
             request_options["enableScriptLogging"] = enable_script_logging
 

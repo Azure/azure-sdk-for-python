@@ -28,7 +28,6 @@ import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes
 
 database_ids_to_delete = []
-collection_id_to_delete = None
 
 @pytest.fixture(scope="session")
 def teardown(request):
