@@ -66,7 +66,7 @@ class Asset(ProxyResource):
         'description': {'key': 'properties.description', 'type': 'str'},
         'container': {'key': 'properties.container', 'type': 'str'},
         'storage_account_name': {'key': 'properties.storageAccountName', 'type': 'str'},
-        'storage_encryption_format': {'key': 'properties.storageEncryptionFormat', 'type': 'AssetStorageEncryptionFormat'},
+        'storage_encryption_format': {'key': 'properties.storageEncryptionFormat', 'type': 'str'},
     }
 
     def __init__(self, *, alternate_id: str=None, description: str=None, container: str=None, storage_account_name: str=None, **kwargs) -> None:

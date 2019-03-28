@@ -18,25 +18,36 @@ class ImageAnalysis(Model):
     :param categories: An array indicating identified categories.
     :type categories:
      list[~azure.cognitiveservices.vision.computervision.models.Category]
-    :param adult:
+    :param adult: An object describing whether the image contains
+     adult-oriented content and/or is racy.
     :type adult:
      ~azure.cognitiveservices.vision.computervision.models.AdultInfo
-    :param color:
+    :param color: An object providing additional metadata describing color
+     attributes.
     :type color:
      ~azure.cognitiveservices.vision.computervision.models.ColorInfo
-    :param image_type:
+    :param image_type: An object providing possible image types and matching
+     confidence levels.
     :type image_type:
      ~azure.cognitiveservices.vision.computervision.models.ImageType
     :param tags: A list of tags with confidence level.
     :type tags:
      list[~azure.cognitiveservices.vision.computervision.models.ImageTag]
-    :param description:
+    :param description: A collection of content tags, along with a list of
+     captions sorted by confidence level, and image metadata.
     :type description:
      ~azure.cognitiveservices.vision.computervision.models.ImageDescriptionDetails
     :param faces: An array of possible faces within the image.
     :type faces:
      list[~azure.cognitiveservices.vision.computervision.models.FaceDescription]
-    :param request_id: Id of the request for tracking purposes.
+    :param objects: Array of objects describing what was detected in the
+     image.
+    :type objects:
+     list[~azure.cognitiveservices.vision.computervision.models.DetectedObject]
+    :param brands: Array of brands detected in the image.
+    :type brands:
+     list[~azure.cognitiveservices.vision.computervision.models.DetectedBrand]
+    :param request_id: Id of the REST API request.
     :type request_id: str
     :param metadata:
     :type metadata:
@@ -51,11 +62,13 @@ class ImageAnalysis(Model):
         'tags': {'key': 'tags', 'type': '[ImageTag]'},
         'description': {'key': 'description', 'type': 'ImageDescriptionDetails'},
         'faces': {'key': 'faces', 'type': '[FaceDescription]'},
+        'objects': {'key': 'objects', 'type': '[DetectedObject]'},
+        'brands': {'key': 'brands', 'type': '[DetectedBrand]'},
         'request_id': {'key': 'requestId', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': 'ImageMetadata'},
     }
 
-    def __init__(self, *, categories=None, adult=None, color=None, image_type=None, tags=None, description=None, faces=None, request_id: str=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, categories=None, adult=None, color=None, image_type=None, tags=None, description=None, faces=None, objects=None, brands=None, request_id: str=None, metadata=None, **kwargs) -> None:
         super(ImageAnalysis, self).__init__(**kwargs)
         self.categories = categories
         self.adult = adult
@@ -64,5 +77,7 @@ class ImageAnalysis(Model):
         self.tags = tags
         self.description = description
         self.faces = faces
+        self.objects = objects
+        self.brands = brands
         self.request_id = request_id
         self.metadata = metadata

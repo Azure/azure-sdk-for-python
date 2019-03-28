@@ -24,8 +24,8 @@ class Deinterlace(Model):
     """
 
     _attribute_map = {
-        'parity': {'key': 'parity', 'type': 'DeinterlaceParity'},
-        'mode': {'key': 'mode', 'type': 'DeinterlaceMode'},
+        'parity': {'key': 'parity', 'type': 'str'},
+        'mode': {'key': 'mode', 'type': 'str'},
     }
 
     def __init__(self, *, parity=None, mode=None, **kwargs) -> None:

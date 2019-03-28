@@ -18,7 +18,7 @@ class FaceAttributes(Model):
     :param age: Age in years
     :type age: float
     :param gender: Possible gender of the face. Possible values include:
-     'male', 'female', 'genderless'
+     'male', 'female'
     :type gender: str or ~azure.cognitiveservices.vision.face.models.Gender
     :param smile: Smile intensity, a number between [0,1]
     :type smile: float

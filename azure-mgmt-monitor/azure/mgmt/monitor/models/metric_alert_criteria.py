@@ -16,7 +16,8 @@ class MetricAlertCriteria(Model):
     """The rule criteria that defines the conditions of the alert rule.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MetricAlertSingleResourceMultipleMetricCriteria
+    sub-classes are: MetricAlertSingleResourceMultipleMetricCriteria,
+    MetricAlertMultipleResourceMultipleMetricCriteria
 
     All required parameters must be populated in order to send to Azure.
 
@@ -37,7 +38,7 @@ class MetricAlertCriteria(Model):
     }
 
     _subtype_map = {
-        'odatatype': {'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria': 'MetricAlertSingleResourceMultipleMetricCriteria'}
+        'odatatype': {'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria': 'MetricAlertSingleResourceMultipleMetricCriteria', 'Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria': 'MetricAlertMultipleResourceMultipleMetricCriteria'}
     }
 
     def __init__(self, **kwargs):

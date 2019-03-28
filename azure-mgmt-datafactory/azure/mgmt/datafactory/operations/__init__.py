@@ -11,7 +11,9 @@
 
 from .operations import Operations
 from .factories_operations import FactoriesOperations
+from .exposure_control_operations import ExposureControlOperations
 from .integration_runtimes_operations import IntegrationRuntimesOperations
+from .integration_runtime_object_metadata_operations import IntegrationRuntimeObjectMetadataOperations
 from .integration_runtime_nodes_operations import IntegrationRuntimeNodesOperations
 from .linked_services_operations import LinkedServicesOperations
 from .datasets_operations import DatasetsOperations
@@ -19,11 +21,15 @@ from .pipelines_operations import PipelinesOperations
 from .pipeline_runs_operations import PipelineRunsOperations
 from .activity_runs_operations import ActivityRunsOperations
 from .triggers_operations import TriggersOperations
+from .rerun_triggers_operations import RerunTriggersOperations
+from .trigger_runs_operations import TriggerRunsOperations
 
 __all__ = [
     'Operations',
     'FactoriesOperations',
+    'ExposureControlOperations',
     'IntegrationRuntimesOperations',
+    'IntegrationRuntimeObjectMetadataOperations',
     'IntegrationRuntimeNodesOperations',
     'LinkedServicesOperations',
     'DatasetsOperations',
@@ -31,4 +37,6 @@ __all__ = [
     'PipelineRunsOperations',
     'ActivityRunsOperations',
     'TriggersOperations',
+    'RerunTriggersOperations',
+    'TriggerRunsOperations',
 ]

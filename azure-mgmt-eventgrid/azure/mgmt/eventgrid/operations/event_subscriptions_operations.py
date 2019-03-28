@@ -25,7 +25,7 @@ class EventSubscriptionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-09-15-preview".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-02-01-preview".
     """
 
     models = models
@@ -35,7 +35,7 @@ class EventSubscriptionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-09-15-preview"
+        self.api_version = "2019-02-01-preview"
 
         self.config = config
 
@@ -502,13 +502,20 @@ class EventSubscriptionsOperations(object):
     get_full_url.metadata = {'url': '/{scope}/providers/Microsoft.EventGrid/eventSubscriptions/{eventSubscriptionName}/getFullUrl'}
 
     def list_global_by_subscription(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
         """Get an aggregated list of all global event subscriptions under an Azure
         subscription.
 
         List all aggregated global event subscriptions under a specific Azure
         subscription.
 
+        :param filter: Filter the results using OData syntax.
+        :type filter: str
+        :param top: The number of results to return.
+        :type top: int
+        :param label: The label used to filter the results for event
+         subscriptions list.
+        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -532,6 +539,12 @@ class EventSubscriptionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if label is not None:
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -570,7 +583,7 @@ class EventSubscriptionsOperations(object):
     list_global_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/eventSubscriptions'}
 
     def list_global_by_subscription_for_topic_type(
-            self, topic_type_name, custom_headers=None, raw=False, **operation_config):
+            self, topic_type_name, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
         """List all global event subscriptions for a topic type.
 
         List all global event subscriptions under an Azure subscription for a
@@ -578,6 +591,13 @@ class EventSubscriptionsOperations(object):
 
         :param topic_type_name: Name of the topic type
         :type topic_type_name: str
+        :param filter: Filter the results using OData syntax.
+        :type filter: str
+        :param top: The number of results to return.
+        :type top: int
+        :param label: The label used to filter the results for event
+         subscriptions list.
+        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -602,6 +622,12 @@ class EventSubscriptionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if label is not None:
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -640,7 +666,7 @@ class EventSubscriptionsOperations(object):
     list_global_by_subscription_for_topic_type.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/topicTypes/{topicTypeName}/eventSubscriptions'}
 
     def list_global_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
         """List all global event subscriptions under an Azure subscription and
         resource group.
 
@@ -650,6 +676,13 @@ class EventSubscriptionsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
+        :param filter: Filter the results using OData syntax.
+        :type filter: str
+        :param top: The number of results to return.
+        :type top: int
+        :param label: The label used to filter the results for event
+         subscriptions list.
+        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -674,6 +707,12 @@ class EventSubscriptionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if label is not None:
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -712,7 +751,7 @@ class EventSubscriptionsOperations(object):
     list_global_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/eventSubscriptions'}
 
     def list_global_by_resource_group_for_topic_type(
-            self, resource_group_name, topic_type_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, topic_type_name, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
         """List all global event subscriptions under a resource group for a topic
         type.
 
@@ -724,6 +763,13 @@ class EventSubscriptionsOperations(object):
         :type resource_group_name: str
         :param topic_type_name: Name of the topic type
         :type topic_type_name: str
+        :param filter: Filter the results using OData syntax.
+        :type filter: str
+        :param top: The number of results to return.
+        :type top: int
+        :param label: The label used to filter the results for event
+         subscriptions list.
+        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -749,6 +795,12 @@ class EventSubscriptionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if label is not None:
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -787,7 +839,7 @@ class EventSubscriptionsOperations(object):
     list_global_by_resource_group_for_topic_type.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topicTypes/{topicTypeName}/eventSubscriptions'}
 
     def list_regional_by_subscription(
-            self, location, custom_headers=None, raw=False, **operation_config):
+            self, location, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
         """List all regional event subscriptions under an Azure subscription.
 
         List all event subscriptions from the given location under a specific
@@ -795,6 +847,13 @@ class EventSubscriptionsOperations(object):
 
         :param location: Name of the location
         :type location: str
+        :param filter: Filter the results using OData syntax.
+        :type filter: str
+        :param top: The number of results to return.
+        :type top: int
+        :param label: The label used to filter the results for event
+         subscriptions list.
+        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -819,6 +878,12 @@ class EventSubscriptionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if label is not None:
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -857,7 +922,7 @@ class EventSubscriptionsOperations(object):
     list_regional_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/locations/{location}/eventSubscriptions'}
 
     def list_regional_by_resource_group(
-            self, resource_group_name, location, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, location, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
         """List all regional event subscriptions under an Azure subscription and
         resource group.
 
@@ -869,6 +934,13 @@ class EventSubscriptionsOperations(object):
         :type resource_group_name: str
         :param location: Name of the location
         :type location: str
+        :param filter: Filter the results using OData syntax.
+        :type filter: str
+        :param top: The number of results to return.
+        :type top: int
+        :param label: The label used to filter the results for event
+         subscriptions list.
+        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -894,6 +966,12 @@ class EventSubscriptionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if label is not None:
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -932,7 +1010,7 @@ class EventSubscriptionsOperations(object):
     list_regional_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/locations/{location}/eventSubscriptions'}
 
     def list_regional_by_subscription_for_topic_type(
-            self, location, topic_type_name, custom_headers=None, raw=False, **operation_config):
+            self, location, topic_type_name, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
         """List all regional event subscriptions under an Azure subscription for a
         topic type.
 
@@ -943,6 +1021,13 @@ class EventSubscriptionsOperations(object):
         :type location: str
         :param topic_type_name: Name of the topic type
         :type topic_type_name: str
+        :param filter: Filter the results using OData syntax.
+        :type filter: str
+        :param top: The number of results to return.
+        :type top: int
+        :param label: The label used to filter the results for event
+         subscriptions list.
+        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -968,6 +1053,12 @@ class EventSubscriptionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if label is not None:
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -1006,7 +1097,7 @@ class EventSubscriptionsOperations(object):
     list_regional_by_subscription_for_topic_type.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/locations/{location}/topicTypes/{topicTypeName}/eventSubscriptions'}
 
     def list_regional_by_resource_group_for_topic_type(
-            self, resource_group_name, location, topic_type_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, location, topic_type_name, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
         """List all regional event subscriptions under an Azure subscription and
         resource group for a topic type.
 
@@ -1020,6 +1111,13 @@ class EventSubscriptionsOperations(object):
         :type location: str
         :param topic_type_name: Name of the topic type
         :type topic_type_name: str
+        :param filter: Filter the results using OData syntax.
+        :type filter: str
+        :param top: The number of results to return.
+        :type top: int
+        :param label: The label used to filter the results for event
+         subscriptions list.
+        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1046,6 +1144,12 @@ class EventSubscriptionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if label is not None:
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -1084,7 +1188,7 @@ class EventSubscriptionsOperations(object):
     list_regional_by_resource_group_for_topic_type.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/locations/{location}/topicTypes/{topicTypeName}/eventSubscriptions'}
 
     def list_by_resource(
-            self, resource_group_name, provider_namespace, resource_type_name, resource_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, provider_namespace, resource_type_name, resource_name, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
         """List all event subscriptions for a specific topic.
 
         List all event subscriptions that have been created for a specific
@@ -1099,6 +1203,13 @@ class EventSubscriptionsOperations(object):
         :type resource_type_name: str
         :param resource_name: Name of the resource
         :type resource_name: str
+        :param filter: Filter the results using OData syntax.
+        :type filter: str
+        :param top: The number of results to return.
+        :type top: int
+        :param label: The label used to filter the results for event
+         subscriptions list.
+        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1126,6 +1237,12 @@ class EventSubscriptionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if label is not None:
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -1164,7 +1281,7 @@ class EventSubscriptionsOperations(object):
     list_by_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerNamespace}/{resourceTypeName}/{resourceName}/providers/Microsoft.EventGrid/eventSubscriptions'}
 
     def list_by_domain_topic(
-            self, resource_group_name, domain_name, topic_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, domain_name, topic_name, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
         """List all event subscriptions for a specific domain topic.
 
         List all event subscriptions that have been created for a specific
@@ -1177,6 +1294,13 @@ class EventSubscriptionsOperations(object):
         :type domain_name: str
         :param topic_name: Name of the domain topic
         :type topic_name: str
+        :param filter: Filter the results using OData syntax.
+        :type filter: str
+        :param top: The number of results to return.
+        :type top: int
+        :param label: The label used to filter the results for event
+         subscriptions list.
+        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1203,6 +1327,12 @@ class EventSubscriptionsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
+                if label is not None:
+                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
