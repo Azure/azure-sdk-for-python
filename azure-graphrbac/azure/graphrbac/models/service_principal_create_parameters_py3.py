@@ -31,7 +31,7 @@ class ServicePrincipalCreateParameters(ServicePrincipalBase):
      associated with the service principal.
     :type password_credentials:
      list[~azure.graphrbac.models.PasswordCredential]
-    :param service_principal_type: the type of the servie principal
+    :param service_principal_type: the type of the service principal
     :type service_principal_type: str
     :param tags: Optional list of tags that you can apply to your service
      principals. Not nullable.

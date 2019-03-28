@@ -35,10 +35,10 @@ class Image(Video):
      resized to fit the desired output resolution(s). Default is AutoSize.
      Possible values include: 'None', 'AutoSize', 'AutoFit'
     :type stretch_mode: str or ~azure.mgmt.media.models.StretchMode
-    :param start: The position in the input video from where to start
-     generating thumbnails. The value can be in absolute timestamp (ISO 8601,
-     e.g: PT05S), or a frame count (For example, 10 for the 10th frame), or a
-     relative value (For example, 1%). Also supports a macro {Best}, which
+    :param start: Required. The position in the input video from where to
+     start generating thumbnails. The value can be in absolute timestamp (ISO
+     8601, e.g: PT05S), or a frame count (For example, 10 for the 10th frame),
+     or a relative value (For example, 1%). Also supports a macro {Best}, which
      tells the encoder to select the best thumbnail from the first few seconds
      of the video.
     :type start: str
@@ -56,6 +56,7 @@ class Image(Video):
 
     _validation = {
         'odatatype': {'required': True},
+        'start': {'required': True},
     }
 
     _attribute_map = {
@@ -72,7 +73,7 @@ class Image(Video):
         'odatatype': {'#Microsoft.Media.JpgImage': 'JpgImage', '#Microsoft.Media.PngImage': 'PngImage'}
     }
 
-    def __init__(self, *, label: str=None, key_frame_interval=None, stretch_mode=None, start: str=None, step: str=None, range: str=None, **kwargs) -> None:
+    def __init__(self, *, start: str, label: str=None, key_frame_interval=None, stretch_mode=None, step: str=None, range: str=None, **kwargs) -> None:
         super(Image, self).__init__(label=label, key_frame_interval=key_frame_interval, stretch_mode=stretch_mode, **kwargs)
         self.start = start
         self.step = step

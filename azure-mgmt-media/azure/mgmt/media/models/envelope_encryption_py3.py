@@ -22,8 +22,14 @@ class EnvelopeEncryption(Model):
     :param content_keys: Representing default content key for each encryption
      scheme and separate content keys for specific tracks
     :type content_keys: ~azure.mgmt.media.models.StreamingPolicyContentKeys
-    :param custom_key_acquisition_url_template: KeyAcquisitionUrlTemplate is
-     used to point to user specified service to delivery content keys
+    :param custom_key_acquisition_url_template: Template for the URL of the
+     custom service delivering keys to end user players.  Not required when
+     using Azure Media Services for issuing keys.  The template supports
+     replaceable tokens that the service will update at runtime with the value
+     specific to the request.  The currently supported token values are
+     {AlternativeMediaId}, which is replaced with the value of
+     StreamingLocatorId.AlternativeMediaId, and {ContentKeyId}, which is
+     replaced with the value of identifier of the key being requested.
     :type custom_key_acquisition_url_template: str
     """
 

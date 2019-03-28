@@ -22,7 +22,7 @@ class VpnConnection(SubResource):
     :type id: str
     :param remote_vpn_site: Id of the connected vpn site.
     :type remote_vpn_site: ~azure.mgmt.network.v2018_12_01.models.SubResource
-    :param routing_weight: routing weight for vpn connection.
+    :param routing_weight: Routing weight for vpn connection.
     :type routing_weight: int
     :param connection_status: The connection status. Possible values include:
      'Unknown', 'Connecting', 'Connected', 'NotConnected'
