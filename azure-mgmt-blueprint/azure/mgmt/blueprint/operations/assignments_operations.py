@@ -44,7 +44,9 @@ class AssignmentsOperations(object):
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
-         subscription (format: '/subscriptions/{subscriptionId}').
+         subscription (format: '/subscriptions/{subscriptionId}'). For
+         blueprint assignments management group scope is reserved for future
+         use.
         :type scope: str
         :param assignment_name: Name of the blueprint assignment.
         :type assignment_name: str
@@ -114,7 +116,9 @@ class AssignmentsOperations(object):
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
-         subscription (format: '/subscriptions/{subscriptionId}').
+         subscription (format: '/subscriptions/{subscriptionId}'). For
+         blueprint assignments management group scope is reserved for future
+         use.
         :type scope: str
         :param assignment_name: Name of the blueprint assignment.
         :type assignment_name: str
@@ -178,7 +182,9 @@ class AssignmentsOperations(object):
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
-         subscription (format: '/subscriptions/{subscriptionId}').
+         subscription (format: '/subscriptions/{subscriptionId}'). For
+         blueprint assignments management group scope is reserved for future
+         use.
         :type scope: str
         :param assignment_name: Name of the blueprint assignment.
         :type assignment_name: str
@@ -242,7 +248,9 @@ class AssignmentsOperations(object):
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
-         subscription (format: '/subscriptions/{subscriptionId}').
+         subscription (format: '/subscriptions/{subscriptionId}'). For
+         blueprint assignments management group scope is reserved for future
+         use.
         :type scope: str
         :param assignment_name: Name of the blueprint assignment.
         :type assignment_name: str
@@ -306,7 +314,9 @@ class AssignmentsOperations(object):
         :param scope: The scope of the resource. Valid scopes are: management
          group (format:
          '/providers/Microsoft.Management/managementGroups/{managementGroup}'),
-         subscription (format: '/subscriptions/{subscriptionId}').
+         subscription (format: '/subscriptions/{subscriptionId}'). For
+         blueprint assignments management group scope is reserved for future
+         use.
         :type scope: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
