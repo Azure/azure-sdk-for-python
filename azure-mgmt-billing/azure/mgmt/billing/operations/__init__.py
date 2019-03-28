@@ -17,7 +17,6 @@ from .billing_profiles_by_billing_account_name_operations import BillingProfiles
 from .billing_profiles_operations import BillingProfilesOperations
 from .invoice_sections_by_billing_account_name_operations import InvoiceSectionsByBillingAccountNameOperations
 from .invoice_sections_operations import InvoiceSectionsOperations
-from .invoice_sections_by_billing_profile_name_operations import InvoiceSectionsByBillingProfileNameOperations
 from .invoice_sections_with_create_subscription_permission_operations import InvoiceSectionsWithCreateSubscriptionPermissionOperations
 from .departments_by_billing_account_name_operations import DepartmentsByBillingAccountNameOperations
 from .departments_operations import DepartmentsOperations
@@ -37,7 +36,7 @@ from .products_operations import ProductsOperations
 from .transactions_by_billing_account_operations import TransactionsByBillingAccountOperations
 from .policy_operations import PolicyOperations
 from .billing_property_operations import BillingPropertyOperations
-from .billing_profile_invoice_section_operations import BillingProfileInvoiceSectionOperations
+from .invoice_section_operations import InvoiceSectionOperations
 from .transfers_operations import TransfersOperations
 from .recipient_transfers_operations import RecipientTransfersOperations
 from .operations import Operations
@@ -60,7 +59,6 @@ __all__ = [
     'BillingProfilesOperations',
     'InvoiceSectionsByBillingAccountNameOperations',
     'InvoiceSectionsOperations',
-    'InvoiceSectionsByBillingProfileNameOperations',
     'InvoiceSectionsWithCreateSubscriptionPermissionOperations',
     'DepartmentsByBillingAccountNameOperations',
     'DepartmentsOperations',
@@ -80,7 +78,7 @@ __all__ = [
     'TransactionsByBillingAccountOperations',
     'PolicyOperations',
     'BillingPropertyOperations',
-    'BillingProfileInvoiceSectionOperations',
+    'InvoiceSectionOperations',
     'TransfersOperations',
     'RecipientTransfersOperations',
     'Operations',
