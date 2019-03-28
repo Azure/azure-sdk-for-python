@@ -344,7 +344,7 @@ class LargePersonGroupOperations(object):
 
     def list(
             self, start=None, top=1000, return_recognition_model=False, custom_headers=None, raw=False, **operation_config):
-        """List all existing large person groups’s largePersonGroupId, name,
+        """List all existing large person groups’ largePersonGroupId, name,
         userData and recognitionModel.<br />
         * Large person groups are stored in alphabetical order of
         largePersonGroupId.
@@ -354,7 +354,7 @@ class LargePersonGroupOperations(object):
         first item.
         * "top" parameter (int, optional) specifies the number of entries to
         return. A maximal of 1000 entries can be returned in one call. To fetch
-        more, you can specify "start" with the last retuned entry’s Id of the
+        more, you can specify "start" with the last returned entry’s Id of the
         current call.
         <br />
         For example, total 5 large person groups: "group1", ..., "group5".
