@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 def get_endpoint_from_connection_string(connection_string):
     endpoint, _, _ = parse_connection_string(connection_string)
@@ -30,4 +30,4 @@ def parse_connection_string(connection_string):
     return endpoint, id_, secret
 
 def get_current_utc_time():
-    return str(datetime.utcnow().strftime("%b, %d %Y %H:%M:%S ")) + "GMT"
+    return str(datetime.now(timezone.utc).strftime("%b, %d %Y %H:%M:%S ")) + "GMT"
