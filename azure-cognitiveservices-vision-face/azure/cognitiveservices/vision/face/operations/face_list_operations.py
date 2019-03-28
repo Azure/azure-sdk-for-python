@@ -293,7 +293,7 @@ class FaceListOperations(object):
 
     def delete_face(
             self, face_list_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an existing face from a face list (given by a persisitedFaceId
+        """Delete an existing face from a face list (given by a persistedFaceId
         and a faceListId). Persisted image related to the face will also be
         deleted.
 

@@ -17,6 +17,8 @@ class QueryOptions(Model):
 
     :param top: Maximum number of records to return.
     :type top: int
+    :param filter: OData filter expression.
+    :type filter: str
     :param order_by: Ordering expression using OData notation. One or more
      comma-separated column names with an optional "desc" (the default) or
      "asc", e.g. "$orderby=PolicyAssignmentId, ResourceId asc".
@@ -32,28 +34,31 @@ class QueryOptions(Model):
     :param to: ISO 8601 formatted timestamp specifying the end time of the
      interval to query. When not specified, the service uses request time.
     :type to: datetime
-    :param filter: OData filter expression.
-    :type filter: str
     :param apply: OData apply expression for aggregations.
     :type apply: str
+    :param expand: The $expand query parameter. For example, to expand
+     policyEvaluationDetails, use $expand=policyEvaluationDetails
+    :type expand: str
     """
 
     _attribute_map = {
         'top': {'key': '', 'type': 'int'},
+        'filter': {'key': '', 'type': 'str'},
         'order_by': {'key': '', 'type': 'str'},
         'select': {'key': '', 'type': 'str'},
         'from_property': {'key': '', 'type': 'iso-8601'},
         'to': {'key': '', 'type': 'iso-8601'},
-        'filter': {'key': '', 'type': 'str'},
         'apply': {'key': '', 'type': 'str'},
+        'expand': {'key': '', 'type': 'str'},
     }
 
-    def __init__(self, *, top: int=None, order_by: str=None, select: str=None, from_property=None, to=None, filter: str=None, apply: str=None, **kwargs) -> None:
+    def __init__(self, *, top: int=None, filter: str=None, order_by: str=None, select: str=None, from_property=None, to=None, apply: str=None, expand: str=None, **kwargs) -> None:
         super(QueryOptions, self).__init__(**kwargs)
         self.top = top
+        self.filter = filter
         self.order_by = order_by
         self.select = select
         self.from_property = from_property
         self.to = to
-        self.filter = filter
         self.apply = apply
+        self.expand = expand

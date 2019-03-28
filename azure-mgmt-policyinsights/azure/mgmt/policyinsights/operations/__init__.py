@@ -9,11 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .policy_tracked_resources_operations import PolicyTrackedResourcesOperations
+from .remediations_operations import RemediationsOperations
 from .policy_events_operations import PolicyEventsOperations
 from .policy_states_operations import PolicyStatesOperations
 from .operations import Operations
 
 __all__ = [
+    'PolicyTrackedResourcesOperations',
+    'RemediationsOperations',
     'PolicyEventsOperations',
     'PolicyStatesOperations',
     'Operations',

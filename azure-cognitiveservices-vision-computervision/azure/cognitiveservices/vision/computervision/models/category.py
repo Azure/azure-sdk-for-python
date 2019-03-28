@@ -19,7 +19,7 @@ class Category(Model):
     :type name: str
     :param score: Scoring of the category.
     :type score: float
-    :param detail:
+    :param detail: Details of the identified category.
     :type detail:
      ~azure.cognitiveservices.vision.computervision.models.CategoryDetail
     """
