@@ -43,7 +43,7 @@ class WebHookActivity(ControlActivity):
      called back. If there is no value specified, it defaults to 10 minutes.
      Type: string. Pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
-    :type timeout: object
+    :type timeout: str
     :param headers: Represents the headers that will be sent to the request.
      For example, to set the language and type on a request: "headers" : {
      "Accept-Language": "en-us", "Content-Type": "application/json" }. Type:
@@ -75,7 +75,7 @@ class WebHookActivity(ControlActivity):
         'type': {'key': 'type', 'type': 'str'},
         'method': {'key': 'typeProperties.method', 'type': 'str'},
         'url': {'key': 'typeProperties.url', 'type': 'object'},
-        'timeout': {'key': 'typeProperties.timeout', 'type': 'object'},
+        'timeout': {'key': 'typeProperties.timeout', 'type': 'str'},
         'headers': {'key': 'typeProperties.headers', 'type': 'object'},
         'body': {'key': 'typeProperties.body', 'type': 'object'},
         'authentication': {'key': 'typeProperties.authentication', 'type': 'WebActivityAuthentication'},
