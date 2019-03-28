@@ -85,8 +85,8 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             'resource_skus': '2017-09-01',
-            'disks': '2018-06-01',
-            'snapshots': '2018-06-01',
+            'disks': '2018-09-30',
+            'snapshots': '2018-09-30',
             None: DEFAULT_API_VERSION
         }},
         _PROFILE_TAG + " latest"
