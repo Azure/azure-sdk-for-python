@@ -38,7 +38,7 @@ class AzConfigRequestsCredentialsPolicy(HTTPPolicy):
         self._config = config
 
     
-    def _signed_session(self, request, session):
+    def _signed_request(self, request):
         verb = request.http_request.method.upper()
         host, credential, secret = parse_connection_string(self._config.credentials)
 
@@ -71,7 +71,6 @@ class AzConfigRequestsCredentialsPolicy(HTTPPolicy):
         return request
 
     def send(self, request, **kwargs):
-        session = request.context.session
-        self._signed_session(request, session)
+        self._signed_request(request)
         return self.next.send(request, **kwargs)
         
