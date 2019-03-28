@@ -39,10 +39,9 @@ class WebHookActivity(ControlActivity):
     :param url: Required. WebHook activity target endpoint and path. Type:
      string (or Expression with resultType string).
     :type url: object
-    :param timeout: Specifies the timeout within which the webhook should be
-     called back. If there is no value specified, it defaults to 10 minutes.
-     Type: string. Pattern:
-     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :param timeout: The timeout within which the webhook should be called
+     back. If there is no value specified, it defaults to 10 minutes. Type:
+     string. Pattern: ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type timeout: str
     :param headers: Represents the headers that will be sent to the request.
      For example, to set the language and type on a request: "headers" : {
