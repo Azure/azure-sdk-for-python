@@ -14,10 +14,12 @@ try:
     from ._models_py3 import APIError
     from ._models_py3 import Address
     from ._models_py3 import Body
-    from ._models_py3 import BodyMetadata
     from ._models_py3 import BodyModel
     from ._models_py3 import Candidate
     from ._models_py3 import Classification
+    from ._models_py3 import ClassificationCategory1
+    from ._models_py3 import ClassificationCategory2
+    from ._models_py3 import ClassificationCategory3
     from ._models_py3 import Content
     from ._models_py3 import CreateReviewBodyItem
     from ._models_py3 import CreateReviewBodyItemMetadataItem
@@ -40,7 +42,6 @@ try:
     from ._models_py3 import ImageAdditionalInfoItem
     from ._models_py3 import ImageIds
     from ._models_py3 import ImageList
-    from ._models_py3 import ImageListMetadata
     from ._models_py3 import Job
     from ._models_py3 import JobExecutionReportDetails
     from ._models_py3 import JobId
@@ -52,14 +53,12 @@ try:
     from ._models_py3 import PII
     from ._models_py3 import Phone
     from ._models_py3 import RefreshIndex
-    from ._models_py3 import RefreshIndexAdvancedInfoItem
     from ._models_py3 import Review
-    from ._models_py3 import Score
+    from ._models_py3 import SSN
     from ._models_py3 import Screen
     from ._models_py3 import Status
     from ._models_py3 import Tag
     from ._models_py3 import TermList
-    from ._models_py3 import TermListMetadata
     from ._models_py3 import Terms
     from ._models_py3 import TermsData
     from ._models_py3 import TermsInList
@@ -74,10 +73,12 @@ except (SyntaxError, ImportError):
     from ._models import APIError
     from ._models import Address
     from ._models import Body
-    from ._models import BodyMetadata
     from ._models import BodyModel
     from ._models import Candidate
     from ._models import Classification
+    from ._models import ClassificationCategory1
+    from ._models import ClassificationCategory2
+    from ._models import ClassificationCategory3
     from ._models import Content
     from ._models import CreateReviewBodyItem
     from ._models import CreateReviewBodyItemMetadataItem
@@ -100,7 +101,6 @@ except (SyntaxError, ImportError):
     from ._models import ImageAdditionalInfoItem
     from ._models import ImageIds
     from ._models import ImageList
-    from ._models import ImageListMetadata
     from ._models import Job
     from ._models import JobExecutionReportDetails
     from ._models import JobId
@@ -112,14 +112,12 @@ except (SyntaxError, ImportError):
     from ._models import PII
     from ._models import Phone
     from ._models import RefreshIndex
-    from ._models import RefreshIndexAdvancedInfoItem
     from ._models import Review
-    from ._models import Score
+    from ._models import SSN
     from ._models import Screen
     from ._models import Status
     from ._models import Tag
     from ._models import TermList
-    from ._models import TermListMetadata
     from ._models import Terms
     from ._models import TermsData
     from ._models import TermsInList
@@ -130,17 +128,18 @@ except (SyntaxError, ImportError):
     from ._models import VideoFrameBodyItemMetadataItem
     from ._models import VideoFrameBodyItemReviewerResultTagsItem
     from ._models import APIErrorException
-from ._content_moderator_client_enums import AzureRegionBaseUrl
 
 
 __all__=[
     'APIError',
     'Address',
     'Body',
-    'BodyMetadata',
     'BodyModel',
     'Candidate',
     'Classification',
+    'ClassificationCategory1',
+    'ClassificationCategory2',
+    'ClassificationCategory3',
     'Content',
     'CreateReviewBodyItem',
     'CreateReviewBodyItemMetadataItem',
@@ -163,7 +162,6 @@ __all__=[
     'ImageAdditionalInfoItem',
     'ImageIds',
     'ImageList',
-    'ImageListMetadata',
     'Job',
     'JobExecutionReportDetails',
     'JobId',
@@ -175,14 +173,12 @@ __all__=[
     'PII',
     'Phone',
     'RefreshIndex',
-    'RefreshIndexAdvancedInfoItem',
     'Review',
-    'Score',
+    'SSN',
     'Screen',
     'Status',
     'Tag',
     'TermList',
-    'TermListMetadata',
     'Terms',
     'TermsData',
     'TermsInList',
@@ -193,5 +189,4 @@ __all__=[
     'VideoFrameBodyItemMetadataItem',
     'VideoFrameBodyItemReviewerResultTagsItem',
     'APIErrorException',
-    'AzureRegionBaseUrl',
 ]

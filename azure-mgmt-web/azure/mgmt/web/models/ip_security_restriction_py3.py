@@ -15,10 +15,7 @@ from msrest.serialization import Model
 class IpSecurityRestriction(Model):
     """IP security restriction on an app.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param ip_address: Required. IP address the security restriction is valid
-     for.
+    :param ip_address: IP address the security restriction is valid for.
      It can be in form of pure ipv4 address (required SubnetMask property) or
      CIDR notation such as ipv4/mask (leading bit match). For CIDR,
      SubnetMask property must not be specified.
@@ -26,6 +23,12 @@ class IpSecurityRestriction(Model):
     :param subnet_mask: Subnet mask for the range of IP addresses the
      restriction is valid for.
     :type subnet_mask: str
+    :param vnet_subnet_resource_id: Virtual network resource id
+    :type vnet_subnet_resource_id: str
+    :param vnet_traffic_tag: (internal) Vnet traffic tag
+    :type vnet_traffic_tag: int
+    :param subnet_traffic_tag: (internal) Subnet traffic tag
+    :type subnet_traffic_tag: int
     :param action: Allow or Deny access for this IP range.
     :type action: str
     :param tag: Defines what this IP filter will be used for. This is to
@@ -40,13 +43,12 @@ class IpSecurityRestriction(Model):
     :type description: str
     """
 
-    _validation = {
-        'ip_address': {'required': True},
-    }
-
     _attribute_map = {
         'ip_address': {'key': 'ipAddress', 'type': 'str'},
         'subnet_mask': {'key': 'subnetMask', 'type': 'str'},
+        'vnet_subnet_resource_id': {'key': 'vnetSubnetResourceId', 'type': 'str'},
+        'vnet_traffic_tag': {'key': 'vnetTrafficTag', 'type': 'int'},
+        'subnet_traffic_tag': {'key': 'subnetTrafficTag', 'type': 'int'},
         'action': {'key': 'action', 'type': 'str'},
         'tag': {'key': 'tag', 'type': 'IpFilterTag'},
         'priority': {'key': 'priority', 'type': 'int'},
@@ -54,10 +56,13 @@ class IpSecurityRestriction(Model):
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, *, ip_address: str, subnet_mask: str=None, action: str=None, tag=None, priority: int=None, name: str=None, description: str=None, **kwargs) -> None:
+    def __init__(self, *, ip_address: str=None, subnet_mask: str=None, vnet_subnet_resource_id: str=None, vnet_traffic_tag: int=None, subnet_traffic_tag: int=None, action: str=None, tag=None, priority: int=None, name: str=None, description: str=None, **kwargs) -> None:
         super(IpSecurityRestriction, self).__init__(**kwargs)
         self.ip_address = ip_address
         self.subnet_mask = subnet_mask
+        self.vnet_subnet_resource_id = vnet_subnet_resource_id
+        self.vnet_traffic_tag = vnet_traffic_tag
+        self.subnet_traffic_tag = subnet_traffic_tag
         self.action = action
         self.tag = tag
         self.priority = priority

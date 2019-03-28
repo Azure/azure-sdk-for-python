@@ -3,6 +3,31 @@
 Release History
 ===============
 
+1.0.0 (2019-03-22)
+++++++++++++++++++
+
+This is a stable release of the Cognitive Services Custom Vision SDK.
+
+**Training**
+
+- Added an advanced training option to set a budget to train longer for improved iteration performance.
+- Added additional export options targetting Vision AI Dev Kit and Docker ARM for Raspberry Pi.
+
+**Prediction**
+
+- PredictImage and PredictImageUrl have been replaced with project type specific calls.
+  ClassifyImage and ClassifyImageUrl for image classification projects.
+  DetectImage and DetectImageUrl for object detection projects .
+- Prediction methods now take a name to designate which published iteration to use. Iterations can be published using the Custom Vision Training SDK.
+
+0.4.0 (2018-11-13)
+++++++++++++++++++
+
+- The API client name was changed from TrainingAPI to CustomVisionTrainingClient, in keeping with other Azure SDKs.
+- The way the Azure region is specfied has changed.  Specifically, the AzureRegion property was dropped in favor of an Endpoint property. If you were previously specifying an AzureRegion value, you should now specify Endpoint='https://{AzureRegion}.api.cognitive.microsoft.com' instead. This change ensures better global coverage.
+- Added ONNX 1.2 as an export option
+- Added negative tag support.
+
 0.3.0 (2018-07-12)
 ++++++++++++++++++
 
