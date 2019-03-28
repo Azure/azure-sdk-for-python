@@ -22,7 +22,7 @@ class TransferDetails(Model):
     :vartype creation_time: datetime
     :ivar expiration_time: Transfer expiration time.
     :vartype expiration_time: datetime
-    :ivar invoice_section_id: Target invoice setion Id.
+    :ivar invoice_section_id: Target invoice section Id.
     :vartype invoice_section_id: str
     :ivar billing_account_id: Target billing account Id.
     :vartype billing_account_id: str
