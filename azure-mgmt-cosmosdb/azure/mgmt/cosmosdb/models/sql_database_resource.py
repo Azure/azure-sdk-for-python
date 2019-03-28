@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .generic_resource_properties import GenericResourceProperties
+from .proxy_resource import ProxyResource
 
 
-class SqlDatabaseResource(GenericResourceProperties):
+class SqlDatabaseResource(ProxyResource):
     """An Azure Cosmos DB SQL database.
 
     Variables are only populated by the server, and will be ignored when

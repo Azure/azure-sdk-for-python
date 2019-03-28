@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class GenericResourceProperties(Model):
+class ProxyResource(Model):
     """The general properties associated with all API resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -38,8 +38,8 @@ class GenericResourceProperties(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
-        super(GenericResourceProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None

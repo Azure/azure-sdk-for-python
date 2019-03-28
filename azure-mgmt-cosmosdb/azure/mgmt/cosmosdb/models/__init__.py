@@ -28,7 +28,7 @@ try:
     from .region_for_online_offline_py3 import RegionForOnlineOffline
     from .resource_py3 import Resource
     from .extended_resource_properties_py3 import ExtendedResourceProperties
-    from .generic_resource_properties_py3 import GenericResourceProperties
+    from .proxy_resource_py3 import ProxyResource
     from .database_account_create_update_parameters_py3 import DatabaseAccountCreateUpdateParameters
     from .database_account_patch_parameters_py3 import DatabaseAccountPatchParameters
     from .database_account_list_read_only_keys_result_py3 import DatabaseAccountListReadOnlyKeysResult
@@ -71,7 +71,7 @@ except (SyntaxError, ImportError):
     from .region_for_online_offline import RegionForOnlineOffline
     from .resource import Resource
     from .extended_resource_properties import ExtendedResourceProperties
-    from .generic_resource_properties import GenericResourceProperties
+    from .proxy_resource import ProxyResource
     from .database_account_create_update_parameters import DatabaseAccountCreateUpdateParameters
     from .database_account_patch_parameters import DatabaseAccountPatchParameters
     from .database_account_list_read_only_keys_result import DatabaseAccountListReadOnlyKeysResult
@@ -138,7 +138,7 @@ __all__ = [
     'RegionForOnlineOffline',
     'Resource',
     'ExtendedResourceProperties',
-    'GenericResourceProperties',
+    'ProxyResource',
     'DatabaseAccountCreateUpdateParameters',
     'DatabaseAccountPatchParameters',
     'DatabaseAccountListReadOnlyKeysResult',
