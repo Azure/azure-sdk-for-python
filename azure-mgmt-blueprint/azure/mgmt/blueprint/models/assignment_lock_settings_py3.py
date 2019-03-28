@@ -18,12 +18,17 @@ class AssignmentLockSettings(Model):
     :param mode: Lock mode. Possible values include: 'None',
      'AllResourcesReadOnly', 'AllResourcesDoNotDelete'
     :type mode: str or ~azure.mgmt.blueprint.models.AssignmentLockMode
+    :param excluded_principals: List of AAD principals excluded from blueprint
+     locks. Up to 5 principals are permitted.
+    :type excluded_principals: list[str]
     """
 
     _attribute_map = {
         'mode': {'key': 'mode', 'type': 'str'},
+        'excluded_principals': {'key': 'excludedPrincipals', 'type': '[str]'},
     }
 
-    def __init__(self, *, mode=None, **kwargs) -> None:
+    def __init__(self, *, mode=None, excluded_principals=None, **kwargs) -> None:
         super(AssignmentLockSettings, self).__init__(**kwargs)
         self.mode = mode
+        self.excluded_principals = excluded_principals

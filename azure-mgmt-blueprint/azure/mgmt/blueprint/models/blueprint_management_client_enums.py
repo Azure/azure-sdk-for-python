@@ -14,8 +14,8 @@ from enum import Enum
 
 class BlueprintTargetScope(str, Enum):
 
-    subscription = "subscription"
-    management_group = "managementGroup"
+    subscription = "subscription"  #: The blueprint targets a subscription during blueprint assignment.
+    management_group = "managementGroup"  #: The blueprint targets a management group during blueprint assignment. This is reserved for future use.
 
 
 class TemplateParameterType(str, Enum):
