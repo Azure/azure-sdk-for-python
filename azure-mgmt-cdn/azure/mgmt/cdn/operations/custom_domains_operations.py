@@ -24,7 +24,7 @@ class CustomDomainsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2017-10-12".
+    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-02. Constant value: "2025-10-15".
     """
 
     models = models
@@ -34,7 +34,7 @@ class CustomDomainsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-10-12"
+        self.api_version = "2025-10-15"
 
         self.config = config
 
@@ -478,7 +478,7 @@ class CustomDomainsOperations(object):
     disable_custom_https.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/endpoints/{endpointName}/customDomains/{customDomainName}/disableCustomHttps'}
 
     def enable_custom_https(
-            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, custom_domain_https_parameters=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, profile_name, endpoint_name, custom_domain_name, custom_headers=None, raw=False, **operation_config):
         """Enable https delivery of the custom domain.
 
         :param resource_group_name: Name of the Resource group within the
@@ -493,12 +493,6 @@ class CustomDomainsOperations(object):
         :param custom_domain_name: Name of the custom domain within an
          endpoint.
         :type custom_domain_name: str
-        :param custom_domain_https_parameters: The configuration specifying
-         how to enable HTTPS for the custom domain - using CDN managed
-         certificate or user's own certificate. If not specified, enabling ssl
-         uses CDN managed certificate by default.
-        :type custom_domain_https_parameters:
-         ~azure.mgmt.cdn.models.CustomDomainHttpsParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -528,7 +522,6 @@ class CustomDomainsOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -536,14 +529,8 @@ class CustomDomainsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        if custom_domain_https_parameters is not None:
-            body_content = self._serialize.body(custom_domain_https_parameters, 'CustomDomainHttpsParameters')
-        else:
-            body_content = None
-
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:

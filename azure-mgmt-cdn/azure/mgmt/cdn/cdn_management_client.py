@@ -60,7 +60,7 @@ class CdnManagementClientConfiguration(AzureConfiguration):
 
 
 class CdnManagementClient(SDKClient):
-    """Use these APIs to manage Azure CDN resources through the Azure Resource Manager. You must make sure that requests made to these resources are secure.
+    """test - Use these APIs to manage Azure CDN resources through the Azure Resource Manager. You must make sure that requests made to these resources are secure.
 
     :ivar config: Configuration for client.
     :vartype config: CdnManagementClientConfiguration
@@ -95,7 +95,7 @@ class CdnManagementClient(SDKClient):
         super(CdnManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-10-12'
+        self.api_version = '2025-10-15'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
