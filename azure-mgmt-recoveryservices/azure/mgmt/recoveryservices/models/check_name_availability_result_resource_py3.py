@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
-class ResourceNameAvailabilityResultResource(Resource):
+class CheckNameAvailabilityResultResource(Resource):
     """Response for check name availability API. Resource provider will set
     availability as true | false.
 
@@ -28,9 +28,9 @@ class ResourceNameAvailabilityResultResource(Resource):
     :vartype type: str
     :param e_tag: Optional ETag.
     :type e_tag: str
-    :param properties: ResourceNameAvailabilityResultResource properties
+    :param properties: CheckNameAvailabilityResultResource properties
     :type properties:
-     ~azure.mgmt.recoveryservices.models.ResourceNameAvailabilityResult
+     ~azure.mgmt.recoveryservices.models.CheckNameAvailabilityResult
     """
 
     _validation = {
@@ -44,9 +44,9 @@ class ResourceNameAvailabilityResultResource(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ResourceNameAvailabilityResult'},
+        'properties': {'key': 'properties', 'type': 'CheckNameAvailabilityResult'},
     }
 
-    def __init__(self, **kwargs):
-        super(ResourceNameAvailabilityResultResource, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+    def __init__(self, *, e_tag: str=None, properties=None, **kwargs) -> None:
+        super(CheckNameAvailabilityResultResource, self).__init__(e_tag=e_tag, **kwargs)
+        self.properties = properties

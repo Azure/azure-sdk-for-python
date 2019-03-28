@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailabilityResult(Model):
+class CheckNameAvailabilityResult(Model):
     """Response for check name availability API. Resource provider will set
     availability as true | false.
 
@@ -30,8 +30,8 @@ class ResourceNameAvailabilityResult(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ResourceNameAvailabilityResult, self).__init__(**kwargs)
-        self.name_available = kwargs.get('name_available', None)
-        self.reason = kwargs.get('reason', None)
-        self.message = kwargs.get('message', None)
+    def __init__(self, *, name_available: bool=None, reason: str=None, message: str=None, **kwargs) -> None:
+        super(CheckNameAvailabilityResult, self).__init__(**kwargs)
+        self.name_available = name_available
+        self.reason = reason
+        self.message = message

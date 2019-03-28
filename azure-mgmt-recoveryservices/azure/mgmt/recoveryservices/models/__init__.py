@@ -19,6 +19,8 @@ try:
     from .jobs_summary_py3 import JobsSummary
     from .monitoring_summary_py3 import MonitoringSummary
     from .replication_usage_py3 import ReplicationUsage
+    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
+    from .check_name_availability_result_resource_py3 import CheckNameAvailabilityResultResource
     from .client_discovery_display_py3 import ClientDiscoveryDisplay
     from .client_discovery_for_log_specification_py3 import ClientDiscoveryForLogSpecification
     from .client_discovery_for_service_specification_py3 import ClientDiscoveryForServiceSpecification
@@ -26,8 +28,6 @@ try:
     from .client_discovery_value_for_single_api_py3 import ClientDiscoveryValueForSingleApi
     from .resource_py3 import Resource
     from .resource_name_availability_parameters_py3 import ResourceNameAvailabilityParameters
-    from .resource_name_availability_result_py3 import ResourceNameAvailabilityResult
-    from .resource_name_availability_result_resource_py3 import ResourceNameAvailabilityResultResource
     from .sku_py3 import Sku
     from .tracked_resource_py3 import TrackedResource
     from .patch_tracked_resource_py3 import PatchTrackedResource
@@ -48,6 +48,8 @@ except (SyntaxError, ImportError):
     from .jobs_summary import JobsSummary
     from .monitoring_summary import MonitoringSummary
     from .replication_usage import ReplicationUsage
+    from .check_name_availability_result import CheckNameAvailabilityResult
+    from .check_name_availability_result_resource import CheckNameAvailabilityResultResource
     from .client_discovery_display import ClientDiscoveryDisplay
     from .client_discovery_for_log_specification import ClientDiscoveryForLogSpecification
     from .client_discovery_for_service_specification import ClientDiscoveryForServiceSpecification
@@ -55,8 +57,6 @@ except (SyntaxError, ImportError):
     from .client_discovery_value_for_single_api import ClientDiscoveryValueForSingleApi
     from .resource import Resource
     from .resource_name_availability_parameters import ResourceNameAvailabilityParameters
-    from .resource_name_availability_result import ResourceNameAvailabilityResult
-    from .resource_name_availability_result_resource import ResourceNameAvailabilityResultResource
     from .sku import Sku
     from .tracked_resource import TrackedResource
     from .patch_tracked_resource import PatchTrackedResource
@@ -89,6 +89,8 @@ __all__ = [
     'JobsSummary',
     'MonitoringSummary',
     'ReplicationUsage',
+    'CheckNameAvailabilityResult',
+    'CheckNameAvailabilityResultResource',
     'ClientDiscoveryDisplay',
     'ClientDiscoveryForLogSpecification',
     'ClientDiscoveryForServiceSpecification',
@@ -96,8 +98,6 @@ __all__ = [
     'ClientDiscoveryValueForSingleApi',
     'Resource',
     'ResourceNameAvailabilityParameters',
-    'ResourceNameAvailabilityResult',
-    'ResourceNameAvailabilityResultResource',
     'Sku',
     'TrackedResource',
     'PatchTrackedResource',

@@ -42,7 +42,7 @@ class RecoveryServicesOperations(object):
         """API to check for resource name availability.
         A name is available if no other resource exists that has the same
         SubscriptionId, Resource Name and Type
-        or if one or more such resources exist, each of these must be GCed and
+        or if one or more such resources exist, each of these must be GC'd and
         their time of deletion be more than 24 Hours Ago.
 
         :param resource_group_name: The name of the resource group where the
@@ -60,10 +60,10 @@ class RecoveryServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ResourceNameAvailabilityResultResource or ClientRawResponse
-         if raw=true
+        :return: CheckNameAvailabilityResultResource or ClientRawResponse if
+         raw=true
         :rtype:
-         ~azure.mgmt.recoveryservices.models.ResourceNameAvailabilityResultResource
+         ~azure.mgmt.recoveryservices.models.CheckNameAvailabilityResultResource
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -108,7 +108,7 @@ class RecoveryServicesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ResourceNameAvailabilityResultResource', response)
+            deserialized = self._deserialize('CheckNameAvailabilityResultResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
