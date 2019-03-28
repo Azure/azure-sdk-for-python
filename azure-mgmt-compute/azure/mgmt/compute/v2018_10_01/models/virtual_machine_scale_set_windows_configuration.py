@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class WindowsConfiguration(Model):
+class VirtualMachineScaleSetWindowsConfiguration(Model):
     """Specifies Windows operating system settings on the virtual machine.
 
     :param provision_vm_agent: Indicates whether virtual machine agent should
@@ -21,8 +21,10 @@ class WindowsConfiguration(Model):
      This will ensure that VM Agent is installed on the VM so that extensions
      can be added to the VM later.
     :type provision_vm_agent: bool
-    :param enable_automatic_updates: Indicates whether virtual machine is
-     enabled for automatic windows updates. <br> <br> Default behavior is true.
+    :param enable_automatic_updates: Indicates whether Virtual Machine Scale
+     Set virtual machine is enabled for automatic windows updates. <br><br>
+     Default behavior is true. Updates to this property will take effect on OS
+     reprovisioning.
     :type enable_automatic_updates: bool
     :param time_zone: Specifies the time zone of the virtual machine. e.g.
      "Pacific Standard Time"
@@ -45,10 +47,10 @@ class WindowsConfiguration(Model):
         'win_rm': {'key': 'winRM', 'type': 'WinRMConfiguration'},
     }
 
-    def __init__(self, *, provision_vm_agent: bool=None, enable_automatic_updates: bool=None, time_zone: str=None, additional_unattend_content=None, win_rm=None, **kwargs) -> None:
-        super(WindowsConfiguration, self).__init__(**kwargs)
-        self.provision_vm_agent = provision_vm_agent
-        self.enable_automatic_updates = enable_automatic_updates
-        self.time_zone = time_zone
-        self.additional_unattend_content = additional_unattend_content
-        self.win_rm = win_rm
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetWindowsConfiguration, self).__init__(**kwargs)
+        self.provision_vm_agent = kwargs.get('provision_vm_agent', None)
+        self.enable_automatic_updates = kwargs.get('enable_automatic_updates', None)
+        self.time_zone = kwargs.get('time_zone', None)
+        self.additional_unattend_content = kwargs.get('additional_unattend_content', None)
+        self.win_rm = kwargs.get('win_rm', None)

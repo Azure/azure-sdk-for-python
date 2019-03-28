@@ -19,7 +19,7 @@ class VirtualMachineScaleSetUpdateOSProfile(Model):
     :type custom_data: str
     :param windows_configuration: The Windows Configuration of the OS profile.
     :type windows_configuration:
-     ~azure.mgmt.compute.v2018_10_01.models.WindowsConfiguration
+     ~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSetWindowsConfiguration
     :param linux_configuration: The Linux Configuration of the OS profile.
     :type linux_configuration:
      ~azure.mgmt.compute.v2018_10_01.models.LinuxConfiguration
@@ -30,7 +30,7 @@ class VirtualMachineScaleSetUpdateOSProfile(Model):
 
     _attribute_map = {
         'custom_data': {'key': 'customData', 'type': 'str'},
-        'windows_configuration': {'key': 'windowsConfiguration', 'type': 'WindowsConfiguration'},
+        'windows_configuration': {'key': 'windowsConfiguration', 'type': 'VirtualMachineScaleSetWindowsConfiguration'},
         'linux_configuration': {'key': 'linuxConfiguration', 'type': 'LinuxConfiguration'},
         'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
     }
