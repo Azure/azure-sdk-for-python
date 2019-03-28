@@ -11,10 +11,8 @@
 
 from ._configuration import AzureConfigurationClientImpConfiguration
 from ._azure_configuration_client_imp import AzureConfigurationClientImp
-from .aio import AzureConfigurationClientImp as AzureConfigurationClientAsyncImp
-from .models import *
 
-__all__ = ['AzureConfigurationClientImp', 'AzureConfigurationClientAsyncImp', 'AzureConfigurationClientImpConfiguration', 'KeyValue']
+__all__ = ['AzureConfigurationClientImp', 'AzureConfigurationClientImpConfiguration']
 
 from .version import VERSION
 

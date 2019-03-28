@@ -1,4 +1,4 @@
-from . import _generated
+from ._generated.aio import AzureConfigurationClientImp
 from .azure_configuration_requests import AzConfigRequestsCredentialsPolicy
 
 
@@ -28,7 +28,7 @@ class AzureConfigurationClientAsync(object):
             self, connection_string):
 
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
-        self._client = _generated.AzureConfigurationClientAsyncImp(connection_string, base_url)
+        self._client = AzureConfigurationClientImp(connection_string, base_url)
         self._client._client.config.pipeline = self._create_azconfig_pipeline()
     
     def _create_azconfig_pipeline(self):

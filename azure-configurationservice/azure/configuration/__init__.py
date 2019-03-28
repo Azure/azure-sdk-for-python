@@ -11,7 +11,7 @@
 
 from .azure_configuration_client import AzureConfigurationClient
 from .azure_configuration_client_async import AzureConfigurationClientAsync
-from ._generated import *
+from ._generated.models import *
 
 __all__ = [
     'AzureConfigurationClient',
