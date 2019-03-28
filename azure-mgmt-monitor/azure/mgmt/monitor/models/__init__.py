@@ -88,6 +88,11 @@ try:
     from .baseline_response_py3 import BaselineResponse
     from .time_series_information_py3 import TimeSeriesInformation
     from .calculate_baseline_response_py3 import CalculateBaselineResponse
+    from .metric_single_dimension_py3 import MetricSingleDimension
+    from .baseline_metadata_py3 import BaselineMetadata
+    from .time_series_baseline_py3 import TimeSeriesBaseline
+    from .metric_baseline_py3 import MetricBaseline
+    from .metric_baselines_response_py3 import MetricBaselinesResponse
     from .metric_alert_action_py3 import MetricAlertAction
     from .metric_alert_criteria_py3 import MetricAlertCriteria
     from .metric_alert_resource_py3 import MetricAlertResource
@@ -199,6 +204,11 @@ except (SyntaxError, ImportError):
     from .baseline_response import BaselineResponse
     from .time_series_information import TimeSeriesInformation
     from .calculate_baseline_response import CalculateBaselineResponse
+    from .metric_single_dimension import MetricSingleDimension
+    from .baseline_metadata import BaselineMetadata
+    from .time_series_baseline import TimeSeriesBaseline
+    from .metric_baseline import MetricBaseline
+    from .metric_baselines_response import MetricBaselinesResponse
     from .metric_alert_action import MetricAlertAction
     from .metric_alert_criteria import MetricAlertCriteria
     from .metric_alert_resource import MetricAlertResource
@@ -348,6 +358,11 @@ __all__ = [
     'BaselineResponse',
     'TimeSeriesInformation',
     'CalculateBaselineResponse',
+    'MetricSingleDimension',
+    'BaselineMetadata',
+    'TimeSeriesBaseline',
+    'MetricBaseline',
+    'MetricBaselinesResponse',
     'MetricAlertAction',
     'MetricAlertCriteria',
     'MetricAlertResource',
