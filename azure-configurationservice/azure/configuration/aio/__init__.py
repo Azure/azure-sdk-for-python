@@ -9,12 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_configuration_client import AzureConfigurationClient
-from ._generated.models import *
+from .azure_configuration_client_async import AzureConfigurationClientAsync
 
-__all__ = [
-    'AzureConfigurationClient',
-    'KeyValue'
-    ]
+__all__ = ['AzureConfigurationClientAsync']
 
 

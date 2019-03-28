@@ -1,8 +1,8 @@
-from ._generated.aio import AzureConfigurationClientImp
-from .azure_configuration_requests import AzConfigRequestsCredentialsPolicy
+from .._generated.aio import AzureConfigurationClientImp
+from ..azure_configuration_requests import AzConfigRequestsCredentialsPolicy
 
 
-from .azure_configuration_requests import AzConfigRequestsCredentialsPolicy
+from ..azure_configuration_requests import AzConfigRequestsCredentialsPolicy
 from msrest.pipeline.requests import RequestsPatchSession
 
 from msrest.pipeline import Request, Pipeline
@@ -12,7 +12,7 @@ from msrest.pipeline.async_requests import (
     AsyncPipelineRequestsHTTPSender
 )
 
-from .utils import get_endpoint_from_connection_string
+from ..utils import get_endpoint_from_connection_string
 
 class AzureConfigurationClientAsync(object):
     """Represents an azconfig client
