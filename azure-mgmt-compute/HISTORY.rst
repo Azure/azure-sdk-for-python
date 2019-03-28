@@ -3,6 +3,19 @@
 Release History
 ===============
 
+4.5.0 (2019-03-28)
+++++++++++++++++++
+
+**New version of Managed Disks**
+
+-	Disks/Snapshots have a new optional property HyperVGeneration which may be set to V1 or V2.
+-	EncryptionSettings on a disk are now a collection instead of a single value. This allows multiple volumes on an encrypted disk.
+-	There is a new CreateOption (Upload) for disks. To upload disks customers
+
+  -	PUT a disk with CreateOption.Upload.
+  - Use GrantAccess API with AccessLevel.Write to a get a write SAS to the disk. This is a new access level and it can only be used when uploading to a new disk. Customers can then use storage API to upload the bits for the disk.
+  - There are new DiskStates (DiskState.ReadyToUpload and DiskState.ActiveUpload) that are associated with the upload process.
+
 4.4.0 (2018-01-04)
 ++++++++++++++++++
 

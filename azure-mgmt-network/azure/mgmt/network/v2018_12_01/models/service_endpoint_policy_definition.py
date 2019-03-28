@@ -22,7 +22,7 @@ class ServiceEndpointPolicyDefinition(SubResource):
     :type id: str
     :param description: A description for this rule. Restricted to 140 chars.
     :type description: str
-    :param service: service endpoint name.
+    :param service: Service endpoint name.
     :type service: str
     :param service_resources: A list of service resources.
     :type service_resources: list[str]

@@ -29,9 +29,10 @@ class VaultCertificate(Model):
      on the Virtual Machine to which the certificate should be added. The
      specified certificate store is implicitly in the LocalMachine account.
      <br><br>For Linux VMs, the certificate file is placed under the
-     /var/lib/waagent directory, with the file name <UppercaseThumbprint>.crt
-     for the X509 certificate file and <UppercaseThumbprint>.prv for private
-     key. Both of these files are .pem formatted.
+     /var/lib/waagent directory, with the file name
+     &lt;UppercaseThumbprint&gt;.crt for the X509 certificate file and
+     &lt;UppercaseThumbprint&gt;.prv for private key. Both of these files are
+     .pem formatted.
     :type certificate_store: str
     """
 
