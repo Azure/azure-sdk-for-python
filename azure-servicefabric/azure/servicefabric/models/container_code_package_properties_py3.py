@@ -45,15 +45,23 @@ class ContainerCodePackageProperties(Model):
     :type labels: list[~azure.servicefabric.models.ContainerLabel]
     :param endpoints: The endpoints exposed by this container.
     :type endpoints: list[~azure.servicefabric.models.EndpointProperties]
-    :param resources: Required. This type describes the resource requirements
-     for a container or a service.
+    :param resources: Required. The resources required by this container.
     :type resources: ~azure.servicefabric.models.ResourceRequirements
-    :param volume_refs: The volumes to be attached to the container.
-    :type volume_refs: list[~azure.servicefabric.models.ContainerVolume]
-    :ivar instance_view: Runtime information of a container instance.
-    :vartype instance_view: ~azure.servicefabric.models.ContainerInstanceView
+    :param volume_refs: Volumes to be attached to the container. The lifetime
+     of these volumes is independent of the application's lifetime.
+    :type volume_refs: list[~azure.servicefabric.models.VolumeReference]
+    :param volumes: Volumes to be attached to the container. The lifetime of
+     these volumes is scoped to the application's lifetime.
+    :type volumes: list[~azure.servicefabric.models.ApplicationScopedVolume]
     :param diagnostics: Reference to sinks in DiagnosticsDescription.
     :type diagnostics: ~azure.servicefabric.models.DiagnosticsRef
+    :param reliable_collections_refs: A list of ReliableCollection resources
+     used by this particular code package. Please refer to
+     ReliablecollectionsRef for more details.
+    :type reliable_collections_refs:
+     list[~azure.servicefabric.models.ReliableCollectionsRef]
+    :ivar instance_view: Runtime information of a container instance.
+    :vartype instance_view: ~azure.servicefabric.models.ContainerInstanceView
     """
 
     _validation = {
@@ -74,12 +82,14 @@ class ContainerCodePackageProperties(Model):
         'labels': {'key': 'labels', 'type': '[ContainerLabel]'},
         'endpoints': {'key': 'endpoints', 'type': '[EndpointProperties]'},
         'resources': {'key': 'resources', 'type': 'ResourceRequirements'},
-        'volume_refs': {'key': 'volumeRefs', 'type': '[ContainerVolume]'},
-        'instance_view': {'key': 'instanceView', 'type': 'ContainerInstanceView'},
+        'volume_refs': {'key': 'volumeRefs', 'type': '[VolumeReference]'},
+        'volumes': {'key': 'volumes', 'type': '[ApplicationScopedVolume]'},
         'diagnostics': {'key': 'diagnostics', 'type': 'DiagnosticsRef'},
+        'reliable_collections_refs': {'key': 'reliableCollectionsRefs', 'type': '[ReliableCollectionsRef]'},
+        'instance_view': {'key': 'instanceView', 'type': 'ContainerInstanceView'},
     }
 
-    def __init__(self, *, name: str, image: str, resources, image_registry_credential=None, entrypoint: str=None, commands=None, environment_variables=None, settings=None, labels=None, endpoints=None, volume_refs=None, diagnostics=None, **kwargs) -> None:
+    def __init__(self, *, name: str, image: str, resources, image_registry_credential=None, entrypoint: str=None, commands=None, environment_variables=None, settings=None, labels=None, endpoints=None, volume_refs=None, volumes=None, diagnostics=None, reliable_collections_refs=None, **kwargs) -> None:
         super(ContainerCodePackageProperties, self).__init__(**kwargs)
         self.name = name
         self.image = image
@@ -92,5 +102,7 @@ class ContainerCodePackageProperties(Model):
         self.endpoints = endpoints
         self.resources = resources
         self.volume_refs = volume_refs
-        self.instance_view = None
+        self.volumes = volumes
         self.diagnostics = diagnostics
+        self.reliable_collections_refs = reliable_collections_refs
+        self.instance_view = None

@@ -24,7 +24,7 @@ class ApplicationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The HDInsight client API Version. Constant value: "2015-03-01-preview".
+    :ivar api_version: The HDInsight client API Version. Constant value: "2018-06-01-preview".
     """
 
     models = models
@@ -34,11 +34,11 @@ class ApplicationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-03-01-preview"
+        self.api_version = "2018-06-01-preview"
 
         self.config = config
 
-    def list(
+    def list_by_cluster(
             self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
         """Lists all of the applications for the HDInsight cluster.
 
@@ -61,7 +61,7 @@ class ApplicationsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_cluster.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -105,11 +105,11 @@ class ApplicationsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/applications'}
+    list_by_cluster.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/applications'}
 
     def get(
             self, resource_group_name, cluster_name, application_name, custom_headers=None, raw=False, **operation_config):
-        """Lists properties of the specified application.
+        """Gets properties of the specified application.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

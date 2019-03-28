@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ImageIdCreateEntry(Model):
     """ImageIdCreateEntry.
 
-    :param id:
+    :param id: Id of the image.
     :type id: str
     :param tag_ids:
     :type tag_ids: list[str]

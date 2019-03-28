@@ -11,10 +11,12 @@
 
 from .clusters_operations import ClustersOperations
 from .databases_operations import DatabasesOperations
+from .data_connections_operations import DataConnectionsOperations
 from .operations import Operations
 
 __all__ = [
     'ClustersOperations',
     'DatabasesOperations',
+    'DataConnectionsOperations',
     'Operations',
 ]

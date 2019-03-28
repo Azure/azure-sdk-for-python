@@ -35,6 +35,11 @@ try:
     from .origin_update_parameters_py3 import OriginUpdateParameters
     from .custom_domain_py3 import CustomDomain
     from .custom_domain_parameters_py3 import CustomDomainParameters
+    from .custom_domain_https_parameters_py3 import CustomDomainHttpsParameters
+    from .cdn_certificate_source_parameters_py3 import CdnCertificateSourceParameters
+    from .cdn_managed_https_parameters_py3 import CdnManagedHttpsParameters
+    from .key_vault_certificate_source_parameters_py3 import KeyVaultCertificateSourceParameters
+    from .user_managed_https_parameters_py3 import UserManagedHttpsParameters
     from .validate_custom_domain_input_py3 import ValidateCustomDomainInput
     from .validate_custom_domain_output_py3 import ValidateCustomDomainOutput
     from .check_name_availability_input_py3 import CheckNameAvailabilityInput
@@ -77,6 +82,11 @@ except (SyntaxError, ImportError):
     from .origin_update_parameters import OriginUpdateParameters
     from .custom_domain import CustomDomain
     from .custom_domain_parameters import CustomDomainParameters
+    from .custom_domain_https_parameters import CustomDomainHttpsParameters
+    from .cdn_certificate_source_parameters import CdnCertificateSourceParameters
+    from .cdn_managed_https_parameters import CdnManagedHttpsParameters
+    from .key_vault_certificate_source_parameters import KeyVaultCertificateSourceParameters
+    from .user_managed_https_parameters import UserManagedHttpsParameters
     from .validate_custom_domain_input import ValidateCustomDomainInput
     from .validate_custom_domain_output import ValidateCustomDomainOutput
     from .check_name_availability_input import CheckNameAvailabilityInput
@@ -111,6 +121,8 @@ from .cdn_management_client_enums import (
     CustomDomainResourceState,
     CustomHttpsProvisioningState,
     CustomHttpsProvisioningSubstate,
+    ProtocolType,
+    CertificateType,
     ResourceType,
 )
 
@@ -140,6 +152,11 @@ __all__ = [
     'OriginUpdateParameters',
     'CustomDomain',
     'CustomDomainParameters',
+    'CustomDomainHttpsParameters',
+    'CdnCertificateSourceParameters',
+    'CdnManagedHttpsParameters',
+    'KeyVaultCertificateSourceParameters',
+    'UserManagedHttpsParameters',
     'ValidateCustomDomainInput',
     'ValidateCustomDomainOutput',
     'CheckNameAvailabilityInput',
@@ -173,5 +190,7 @@ __all__ = [
     'CustomDomainResourceState',
     'CustomHttpsProvisioningState',
     'CustomHttpsProvisioningSubstate',
+    'ProtocolType',
+    'CertificateType',
     'ResourceType',
 ]

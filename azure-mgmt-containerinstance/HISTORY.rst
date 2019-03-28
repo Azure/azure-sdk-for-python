@@ -3,6 +3,22 @@
 Release History
 ===============
 
+1.4.0 (2018-11-12)
+++++++++++++++++++
+
+**Features**
+
+- Add container_groups.start
+
+1.3.0 (2018-11-05)
+++++++++++++++++++
+
+**Features**
+
+- Model ResourceLimits has a new parameter gpu
+- Model ResourceRequests has a new parameter gpu
+- Model ContainerGroup has a new parameter dns_config
+
 1.2.1 (2018-10-16)
 ++++++++++++++++++
 

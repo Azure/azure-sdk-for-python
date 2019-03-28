@@ -3,6 +3,13 @@
 Release History
 ===============
 
+3.1.0 (2019-03-05)
+++++++++++++++++++
+
+**Features**
+
+- Add custom_domain_https_parameters support
+
 3.0.0 (2018-05-25)
 ++++++++++++++++++
 
@@ -31,7 +38,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
   - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
   - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
-  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
     without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
   - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
     the response of the initial call will be returned without polling.
@@ -68,7 +75,7 @@ Api version changed from 2016-10-02 to 2017-04-02
 **Breaking changes**
 
 - Rename check_resource_usage to list_resource_usage
-- list EdgeNode now returns an iterator of EdgeNode, 
+- list EdgeNode now returns an iterator of EdgeNode,
   not a EdgenodeResult instance with an attribute "value" being a list of EdgeNode
 
 0.30.3 (2017-05-15)

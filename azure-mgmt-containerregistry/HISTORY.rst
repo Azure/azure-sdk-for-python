@@ -3,6 +3,47 @@
 Release History
 ===============
 
+2.7.0 (2019-01-25)
+++++++++++++++++++
+
+**Features**
+
+- Model Run has a new parameter custom_registries
+- Model Run has a new parameter source_registry_auth
+- Model DockerBuildStepUpdateParameters has a new parameter target
+- Model FileTaskRunRequest has a new parameter credentials
+- Model DockerBuildRequest has a new parameter credentials
+- Model DockerBuildRequest has a new parameter target
+- Model TaskUpdateParameters has a new parameter credentials
+- Model Task has a new parameter credentials
+- Model EncodedTaskRunRequest has a new parameter credentials
+- Model DockerBuildStep has a new parameter target
+
+2.6.0 (2019-01-02)
+++++++++++++++++++
+
+**Features**
+
+- Add IP rules
+
+**Bugfixes**
+
+- Rename incorrect "id" to "virtual_network_resource_id"
+
+2.5.0 (2018-12-10)
+++++++++++++++++++
+
+**Features**
+
+- Add network rule set to registry properties
+
+2.4.0 (2018-11-05)
+++++++++++++++++++
+
+**Features**
+
+- Add context token to task step
+
 2.3.0 (2018-10-17)
 ++++++++++++++++++
 

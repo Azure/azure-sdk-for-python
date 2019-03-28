@@ -54,6 +54,9 @@ class StreamingLocator(ProxyResource):
     :param alternative_media_id: Alternative Media ID of this Streaming
      Locator
     :type alternative_media_id: str
+    :param filters: A list of asset or account filters which apply to this
+     streaming locator
+    :type filters: list[str]
     """
 
     _validation = {
@@ -78,6 +81,7 @@ class StreamingLocator(ProxyResource):
         'default_content_key_policy_name': {'key': 'properties.defaultContentKeyPolicyName', 'type': 'str'},
         'content_keys': {'key': 'properties.contentKeys', 'type': '[StreamingLocatorContentKey]'},
         'alternative_media_id': {'key': 'properties.alternativeMediaId', 'type': 'str'},
+        'filters': {'key': 'properties.filters', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -91,3 +95,4 @@ class StreamingLocator(ProxyResource):
         self.default_content_key_policy_name = kwargs.get('default_content_key_policy_name', None)
         self.content_keys = kwargs.get('content_keys', None)
         self.alternative_media_id = kwargs.get('alternative_media_id', None)
+        self.filters = kwargs.get('filters', None)
