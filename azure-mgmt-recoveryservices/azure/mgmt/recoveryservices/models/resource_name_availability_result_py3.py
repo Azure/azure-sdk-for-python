@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailabilityResponse(Model):
+class ResourceNameAvailabilityResult(Model):
     """Response for check name availability API. Resource provider will set
     availability as true | false.
 
@@ -31,7 +31,7 @@ class ResourceNameAvailabilityResponse(Model):
     }
 
     def __init__(self, *, name_available: bool=None, reason: str=None, message: str=None, **kwargs) -> None:
-        super(ResourceNameAvailabilityResponse, self).__init__(**kwargs)
+        super(ResourceNameAvailabilityResult, self).__init__(**kwargs)
         self.name_available = name_available
         self.reason = reason
         self.message = message

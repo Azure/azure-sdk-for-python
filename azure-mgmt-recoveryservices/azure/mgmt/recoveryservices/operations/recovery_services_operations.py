@@ -60,10 +60,10 @@ class RecoveryServicesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ResourceNameAvailabilityResponseResource or ClientRawResponse
+        :return: ResourceNameAvailabilityResultResource or ClientRawResponse
          if raw=true
         :rtype:
-         ~azure.mgmt.recoveryservices.models.ResourceNameAvailabilityResponseResource
+         ~azure.mgmt.recoveryservices.models.ResourceNameAvailabilityResultResource
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -108,7 +108,7 @@ class RecoveryServicesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ResourceNameAvailabilityResponseResource', response)
+            deserialized = self._deserialize('ResourceNameAvailabilityResultResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

@@ -26,8 +26,8 @@ try:
     from .client_discovery_value_for_single_api_py3 import ClientDiscoveryValueForSingleApi
     from .resource_py3 import Resource
     from .resource_name_availability_parameters_py3 import ResourceNameAvailabilityParameters
-    from .resource_name_availability_response_py3 import ResourceNameAvailabilityResponse
-    from .resource_name_availability_response_resource_py3 import ResourceNameAvailabilityResponseResource
+    from .resource_name_availability_result_py3 import ResourceNameAvailabilityResult
+    from .resource_name_availability_result_resource_py3 import ResourceNameAvailabilityResultResource
     from .sku_py3 import Sku
     from .tracked_resource_py3 import TrackedResource
     from .patch_tracked_resource_py3 import PatchTrackedResource
@@ -55,8 +55,8 @@ except (SyntaxError, ImportError):
     from .client_discovery_value_for_single_api import ClientDiscoveryValueForSingleApi
     from .resource import Resource
     from .resource_name_availability_parameters import ResourceNameAvailabilityParameters
-    from .resource_name_availability_response import ResourceNameAvailabilityResponse
-    from .resource_name_availability_response_resource import ResourceNameAvailabilityResponseResource
+    from .resource_name_availability_result import ResourceNameAvailabilityResult
+    from .resource_name_availability_result_resource import ResourceNameAvailabilityResultResource
     from .sku import Sku
     from .tracked_resource import TrackedResource
     from .patch_tracked_resource import PatchTrackedResource
@@ -96,8 +96,8 @@ __all__ = [
     'ClientDiscoveryValueForSingleApi',
     'Resource',
     'ResourceNameAvailabilityParameters',
-    'ResourceNameAvailabilityResponse',
-    'ResourceNameAvailabilityResponseResource',
+    'ResourceNameAvailabilityResult',
+    'ResourceNameAvailabilityResultResource',
     'Sku',
     'TrackedResource',
     'PatchTrackedResource',

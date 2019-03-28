@@ -12,7 +12,7 @@
 from .resource import Resource
 
 
-class ResourceNameAvailabilityResponseResource(Resource):
+class ResourceNameAvailabilityResultResource(Resource):
     """Response for check name availability API. Resource provider will set
     availability as true | false.
 
@@ -28,9 +28,9 @@ class ResourceNameAvailabilityResponseResource(Resource):
     :vartype type: str
     :param e_tag: Optional ETag.
     :type e_tag: str
-    :param properties: ResourceNameAvailabilityResponseResource properties
+    :param properties: ResourceNameAvailabilityResultResource properties
     :type properties:
-     ~azure.mgmt.recoveryservices.models.ResourceNameAvailabilityResponse
+     ~azure.mgmt.recoveryservices.models.ResourceNameAvailabilityResult
     """
 
     _validation = {
@@ -44,9 +44,9 @@ class ResourceNameAvailabilityResponseResource(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ResourceNameAvailabilityResponse'},
+        'properties': {'key': 'properties', 'type': 'ResourceNameAvailabilityResult'},
     }
 
     def __init__(self, **kwargs):
-        super(ResourceNameAvailabilityResponseResource, self).__init__(**kwargs)
+        super(ResourceNameAvailabilityResultResource, self).__init__(**kwargs)
         self.properties = kwargs.get('properties', None)
