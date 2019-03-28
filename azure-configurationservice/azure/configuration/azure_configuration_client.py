@@ -66,10 +66,7 @@ class AzureConfigurationClient(object):
          ~azure.configurationservice.models.KeyValuePaged[~azure.configurationservice.models.KeyValue]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
-        return self._client.list_key_values(label=labels, key=keys, fields=fields, custom_headers=custom_headers)
+        return self._client.list_key_values(label=labels, key=keys, fields=fields, custom_headers=kwargs.get("headers"))
     
     def get_key_value(
             self, key, label=None, **kwargs):
@@ -86,10 +83,7 @@ class AzureConfigurationClient(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
-        return self._client.get_key_value(key=key, label=label, custom_headers=custom_headers)
+        return self._client.get_key_value(key=key, label=label, custom_headers=kwargs.get("headers"))
 
     def add_key_value(
             self, key_value, **kwargs):
@@ -111,9 +105,7 @@ class AzureConfigurationClient(object):
         if key is None:
             #throw?
             return None
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
+        custom_headers = kwargs.get("headers")
         if_none_match = {'If-None-Match':'"*"'}
         if custom_headers is None:
             custom_headers = if_none_match
@@ -147,9 +139,7 @@ class AzureConfigurationClient(object):
         if key is None:
             #throw?
             return None
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
+        custom_headers = kwargs.get("headers")
         current_key_value = self._client.get_key_value(key, label)
         if etag is not None:
             if_match = {'If-Match': '"' + etag + '"'}
@@ -191,9 +181,7 @@ class AzureConfigurationClient(object):
         if key is None:
             #throw?
             return None
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
+        custom_headers = kwargs.get("headers")
         etag = key_value.etag
         if etag is not None:
             if_match = {'If-Match': '"' + etag + '"'}
@@ -221,9 +209,7 @@ class AzureConfigurationClient(object):
         if key is None:
             #throw?
             return None
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
+        custom_headers = kwargs.get("headers")
         if etag is not None:
             if_match = {'If-Match': '"' + etag + '"'}
             if custom_headers is None:
@@ -248,10 +234,7 @@ class AzureConfigurationClient(object):
         if key is None:
             #throw?
             return None
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
-        return self._client.lock_key_value(key=key, label=label, custom_headers=custom_headers)
+        return self._client.lock_key_value(key=key, label=label, custom_headers=kwargs.get("headers"))
     
     def unlock_key_value(
             self, key, label=None, **kwargs):
@@ -269,10 +252,7 @@ class AzureConfigurationClient(object):
         if key is None:
             #throw?
             return None
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
-        return self._client.unlock_key_value(key=key, label=label, custom_headers=custom_headers)
+        return self._client.unlock_key_value(key=key, label=label, custom_headers=kwargs.get("headers"))
     
     def list_revisions(
             self, labels=None, keys=None, fields=None, **kwargs):
@@ -292,7 +272,4 @@ class AzureConfigurationClient(object):
          ~azure.configurationservice.models.KeyValuePaged[~azure.configurationservice.models.KeyValue]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
-        return self._client.list_revisions(label=labels, key=keys, fields=fields, custom_headers=custom_headers)
+        return self._client.list_revisions(label=labels, key=keys, fields=fields, custom_headers=kwargs.get("headers"))

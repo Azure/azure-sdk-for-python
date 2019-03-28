@@ -67,10 +67,7 @@ class AzureConfigurationClientAsync(object):
          ~azure.configurationservice.models.KeyValuePaged[~azure.configurationservice.models.KeyValue]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
-        return self._client.list_key_values(label=labels, key=keys, fields=fields, custom_headers=custom_headers)
+        return self._client.list_key_values(label=labels, key=keys, fields=fields, custom_headers=kwargs.get("headers"))
     
     async def get_key_value(
             self, key, label=None, **kwargs):
@@ -87,11 +84,7 @@ class AzureConfigurationClientAsync(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
-        data = await self._client.get_key_value(key=key, label=label, custom_headers=custom_headers)
-        return data
+        return await self._client.get_key_value(key=key, label=label, custom_headers=kwargs.get("headers"))
 
     async def add_key_value(
             self, key_value, **kwargs):
@@ -113,16 +106,13 @@ class AzureConfigurationClientAsync(object):
         if key is None:
             #throw?
             return None
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
+        custom_headers = kwargs.get("headers")
         if_none_match = {'If-None-Match':'"*"'}
         if custom_headers is None:
             custom_headers = if_none_match
         elif custom_headers.get('If-None-Match', '"*"') == '"*"':
             custom_headers.update(if_none_match)
-        data = await self._client.create_or_update_key_value(key_value=key_value, key=key, label=key_value.label, custom_headers=custom_headers)
-        return data
+        return await self._client.create_or_update_key_value(key_value=key_value, key=key, label=key_value.label, custom_headers=custom_headers)
     
     async def update_key_value(
             self, key, value=None, content_type=None, tags=None, label=None, etag=None, **kwargs):
@@ -150,9 +140,7 @@ class AzureConfigurationClientAsync(object):
         if key is None:
             #throw?
             return None
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
+        custom_headers = kwargs.get("headers")
         current_key_value = await self._client.get_key_value(key, label)
         if etag is not None:
             if_match = {'If-Match': '"' + etag + '"'}
@@ -168,8 +156,7 @@ class AzureConfigurationClientAsync(object):
             current_key_value.content_type = content_type
         if tags is not None:
             current_key_value.tags = tags
-        data = await self._client.create_or_update_key_value(key_value=current_key_value, key=key, label=label, custom_headers=custom_headers)
-        return data
+        return await self._client.create_or_update_key_value(key_value=current_key_value, key=key, label=label, custom_headers=custom_headers)
     
     async def set_key_value(
             self, key_value, **kwargs):
@@ -195,9 +182,7 @@ class AzureConfigurationClientAsync(object):
         if key is None:
             #throw?
             return None
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
+        custom_headers = kwargs.get("headers")
         etag = key_value.etag
         if etag is not None:
             if_match = {'If-Match': '"' + etag + '"'}
@@ -205,8 +190,7 @@ class AzureConfigurationClientAsync(object):
                 custom_headers = if_match
             else:
                 custom_headers.update(if_match)
-        data = await self._client.create_or_update_key_value(key_value=key_value, key=key, label=key_value.label, custom_headers=custom_headers)
-        return data
+        return await self._client.create_or_update_key_value(key_value=key_value, key=key, label=key_value.label, custom_headers=custom_headers)
     
     async def delete_key_value(
             self, key, label=None, etag=None, **kwargs):
@@ -226,17 +210,14 @@ class AzureConfigurationClientAsync(object):
         if key is None:
             #throw?
             return None
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
+        custom_headers = kwargs.get("headers")
         if etag is not None:
             if_match = {'If-Match': '"' + etag + '"'}
             if custom_headers is None:
                 custom_headers = if_match
             else:
                 custom_headers.update(if_match)
-        data = await self._client.delete_key_value(key=key, label=label, custom_headers=custom_headers)
-        return data
+        return await self._client.delete_key_value(key=key, label=label, custom_headers=custom_headers)
 
     async def lock_key_value(
             self, key, label=None, **kwargs):
@@ -254,11 +235,8 @@ class AzureConfigurationClientAsync(object):
         if key is None:
             #throw?
             return None
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
-        data = await self._client.lock_key_value(key=key, label=label, custom_headers=custom_headers)
-        return data
+        custom_headers = kwargs.get("headers")
+        return await self._client.lock_key_value(key=key, label=label, custom_headers=custom_headers)
     
     async def unlock_key_value(
             self, key, label=None, **kwargs):
@@ -276,11 +254,8 @@ class AzureConfigurationClientAsync(object):
         if key is None:
             #throw?
             return None
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
-        data = await self._client.unlock_key_value(key=key, label=label, custom_headers=custom_headers)
-        return data
+        custom_headers = kwargs.get("headers")
+        return await self._client.unlock_key_value(key=key, label=label, custom_headers=custom_headers)
     
     def list_revisions(
             self, labels=None, keys=None, fields=None, **kwargs):
@@ -300,7 +275,4 @@ class AzureConfigurationClientAsync(object):
          ~azure.configurationservice.models.KeyValuePaged[~azure.configurationservice.models.KeyValue]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        custom_headers = None
-        if 'headers' in kwargs:
-            custom_headers = kwargs.get("headers")
-        return self._client.list_revisions(label=labels, key=keys, fields=fields, custom_headers=custom_headers)
+        return self._client.list_revisions(label=labels, key=keys, fields=fields, custom_headers=kwargs.get("headers"))
