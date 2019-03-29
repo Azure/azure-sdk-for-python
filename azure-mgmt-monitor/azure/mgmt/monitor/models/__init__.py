@@ -91,7 +91,7 @@ try:
     from .metric_single_dimension_py3 import MetricSingleDimension
     from .baseline_metadata_py3 import BaselineMetadata
     from .time_series_baseline_py3 import TimeSeriesBaseline
-    from .metric_baseline_py3 import MetricBaseline
+    from .single_metric_baseline_py3 import SingleMetricBaseline
     from .metric_baselines_response_py3 import MetricBaselinesResponse
     from .metric_alert_action_py3 import MetricAlertAction
     from .metric_alert_criteria_py3 import MetricAlertCriteria
@@ -207,7 +207,7 @@ except (SyntaxError, ImportError):
     from .metric_single_dimension import MetricSingleDimension
     from .baseline_metadata import BaselineMetadata
     from .time_series_baseline import TimeSeriesBaseline
-    from .metric_baseline import MetricBaseline
+    from .single_metric_baseline import SingleMetricBaseline
     from .metric_baselines_response import MetricBaselinesResponse
     from .metric_alert_action import MetricAlertAction
     from .metric_alert_criteria import MetricAlertCriteria
@@ -361,7 +361,7 @@ __all__ = [
     'MetricSingleDimension',
     'BaselineMetadata',
     'TimeSeriesBaseline',
-    'MetricBaseline',
+    'SingleMetricBaseline',
     'MetricBaselinesResponse',
     'MetricAlertAction',
     'MetricAlertCriteria',

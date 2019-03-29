@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class MetricBaseline(Model):
-    """The baseline results of a specific metric.
+class SingleMetricBaseline(Model):
+    """The baseline results of a single metric.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -43,7 +43,7 @@ class MetricBaseline(Model):
     }
 
     def __init__(self, *, id: str, type: str, metric_name: str, baselines, **kwargs) -> None:
-        super(MetricBaseline, self).__init__(**kwargs)
+        super(SingleMetricBaseline, self).__init__(**kwargs)
         self.id = id
         self.type = type
         self.metric_name = metric_name
