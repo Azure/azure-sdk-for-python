@@ -9,26 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource_py3 import ProxyResource
+from msrest.serialization import Model
 
 
-class SqlContainerResource(ProxyResource):
-    """An Azure Cosmos DB SQL container.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+class SqlContainerResource(Model):
+    """Cosmos DB SQL container resource object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The unique resource identifier of the database account.
-    :vartype id: str
-    :ivar name: The name of the database account.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :param sql_container_resource_id: Required. Name of the Cosmos DB SQL
-     container
-    :type sql_container_resource_id: str
+    :param id: Required. Name of the Cosmos DB SQL container
+    :type id: str
     :param indexing_policy: The configuration of the indexing policy. By
      default, the indexing is automatic for all document paths within the SQL
      container
@@ -36,76 +26,36 @@ class SqlContainerResource(ProxyResource):
     :param partition_key: The configuration of the partition key to be used
      for partitioning data into multiple partitions
     :type partition_key: ~azure.mgmt.cosmosdb.models.PartitionKey
+    :param default_ttl: Default time to live
+    :type default_ttl: int
+    :param unique_key_policy: The unique key policy configuration for
+     specifying uniqueness constraints on documents in the collection in the
+     Azure Cosmos DB service.
+    :type unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
     :param conflict_resolution_policy: The conflict resolution policy for the
      SQL container.
     :type conflict_resolution_policy:
      ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
-    :param _rid: A system generated property. A unique identifier.
-    :type _rid: str
-    :param _ts: A system generated property that denotes the last updated
-     timestamp of the resource.
-    :type _ts: object
-    :param _self: A system generated property. It is the unique addressable
-     URI for the resource.
-    :type _self: str
-    :param _etag: A system generated property representing the resource etag
-     required for optimistic concurrency control.
-    :type _etag: str
-    :param _doc: A system generated property that specifies the addressable
-     path of the documents resource.
-    :type _doc: str
-    :param _sprocs: A system generated property that specifies the addressable
-     path of the stored procedures (sprocs) resource.
-    :type _sprocs: str
-    :param _triggers: A system generated property that specifies the
-     addressable path of the triggers resource.
-    :type _triggers: str
-    :param _udfs: A system generated property that specifies the addressable
-     path of the user-defined functions (udfs) resource.
-    :type _udfs: str
-    :param _conflicts: A system generated property that specifies the
-     addressable path of the conflicts resource.
-    :type _conflicts: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'sql_container_resource_id': {'required': True},
+        'id': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'sql_container_resource_id': {'key': 'properties.id', 'type': 'str'},
-        'indexing_policy': {'key': 'properties.indexingPolicy', 'type': 'IndexingPolicy'},
-        'partition_key': {'key': 'properties.partitionKey', 'type': 'PartitionKey'},
-        'conflict_resolution_policy': {'key': 'properties.conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
-        '_rid': {'key': 'properties._rid', 'type': 'str'},
-        '_ts': {'key': 'properties._ts', 'type': 'object'},
-        '_self': {'key': 'properties._self', 'type': 'str'},
-        '_etag': {'key': 'properties._etag', 'type': 'str'},
-        '_doc': {'key': 'properties._doc', 'type': 'str'},
-        '_sprocs': {'key': 'properties._sprocs', 'type': 'str'},
-        '_triggers': {'key': 'properties._triggers', 'type': 'str'},
-        '_udfs': {'key': 'properties._udfs', 'type': 'str'},
-        '_conflicts': {'key': 'properties._conflicts', 'type': 'str'},
+        'indexing_policy': {'key': 'indexingPolicy', 'type': 'IndexingPolicy'},
+        'partition_key': {'key': 'partitionKey', 'type': 'PartitionKey'},
+        'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
+        'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
+        'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
     }
 
-    def __init__(self, *, sql_container_resource_id: str, indexing_policy=None, partition_key=None, conflict_resolution_policy=None, _rid: str=None, _ts=None, _self: str=None, _etag: str=None, _doc: str=None, _sprocs: str=None, _triggers: str=None, _udfs: str=None, _conflicts: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, **kwargs) -> None:
         super(SqlContainerResource, self).__init__(**kwargs)
-        self.sql_container_resource_id = sql_container_resource_id
+        self.id = id
         self.indexing_policy = indexing_policy
         self.partition_key = partition_key
+        self.default_ttl = default_ttl
+        self.unique_key_policy = unique_key_policy
         self.conflict_resolution_policy = conflict_resolution_policy
-        self._rid = _rid
-        self._ts = _ts
-        self._self = _self
-        self._etag = _etag
-        self._doc = _doc
-        self._sprocs = _sprocs
-        self._triggers = _triggers
-        self._udfs = _udfs
-        self._conflicts = _conflicts

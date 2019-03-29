@@ -9,71 +9,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from msrest.serialization import Model
 
 
-class SqlDatabaseResource(ProxyResource):
-    """An Azure Cosmos DB SQL database.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+class SqlDatabaseResource(Model):
+    """Cosmos DB SQL database id object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The unique resource identifier of the database account.
-    :vartype id: str
-    :ivar name: The name of the database account.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :param sql_database_resource_id: Required. Name of the Cosmos DB SQL
-     database
-    :type sql_database_resource_id: str
-    :param _rid: A system generated property. A unique identifier.
-    :type _rid: str
-    :param _ts: A system generated property that denotes the last updated
-     timestamp of the resource.
-    :type _ts: object
-    :param _self: A system generated property. It is the unique addressable
-     URI for the resource.
-    :type _self: str
-    :param _etag: A system generated property representing the resource etag
-     required for optimistic concurrency control.
-    :type _etag: str
-    :param _colls: A system generated property that specified the addressable
-     path of the collections resource.
-    :type _colls: str
-    :param _users: A system generated property that specifies the addressable
-     path of the users resource.
-    :type _users: str
+    :param id: Required. Name of the Cosmos DB SQL database
+    :type id: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'sql_database_resource_id': {'required': True},
+        'id': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'sql_database_resource_id': {'key': 'properties.id', 'type': 'str'},
-        '_rid': {'key': 'properties._rid', 'type': 'str'},
-        '_ts': {'key': 'properties._ts', 'type': 'object'},
-        '_self': {'key': 'properties._self', 'type': 'str'},
-        '_etag': {'key': 'properties._etag', 'type': 'str'},
-        '_colls': {'key': 'properties._colls', 'type': 'str'},
-        '_users': {'key': 'properties._users', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(SqlDatabaseResource, self).__init__(**kwargs)
-        self.sql_database_resource_id = kwargs.get('sql_database_resource_id', None)
-        self._rid = kwargs.get('_rid', None)
-        self._ts = kwargs.get('_ts', None)
-        self._self = kwargs.get('_self', None)
-        self._etag = kwargs.get('_etag', None)
-        self._colls = kwargs.get('_colls', None)
-        self._users = kwargs.get('_users', None)
+        self.id = kwargs.get('id', None)

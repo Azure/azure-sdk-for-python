@@ -9,26 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from msrest.serialization import Model
 
 
-class SqlContainerResource(ProxyResource):
-    """An Azure Cosmos DB SQL container.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+class SqlContainerResource(Model):
+    """Cosmos DB SQL container resource object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The unique resource identifier of the database account.
-    :vartype id: str
-    :ivar name: The name of the database account.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :param sql_container_resource_id: Required. Name of the Cosmos DB SQL
-     container
-    :type sql_container_resource_id: str
+    :param id: Required. Name of the Cosmos DB SQL container
+    :type id: str
     :param indexing_policy: The configuration of the indexing policy. By
      default, the indexing is automatic for all document paths within the SQL
      container
@@ -36,76 +26,36 @@ class SqlContainerResource(ProxyResource):
     :param partition_key: The configuration of the partition key to be used
      for partitioning data into multiple partitions
     :type partition_key: ~azure.mgmt.cosmosdb.models.PartitionKey
+    :param default_ttl: Default time to live
+    :type default_ttl: int
+    :param unique_key_policy: The unique key policy configuration for
+     specifying uniqueness constraints on documents in the collection in the
+     Azure Cosmos DB service.
+    :type unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
     :param conflict_resolution_policy: The conflict resolution policy for the
      SQL container.
     :type conflict_resolution_policy:
      ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
-    :param _rid: A system generated property. A unique identifier.
-    :type _rid: str
-    :param _ts: A system generated property that denotes the last updated
-     timestamp of the resource.
-    :type _ts: object
-    :param _self: A system generated property. It is the unique addressable
-     URI for the resource.
-    :type _self: str
-    :param _etag: A system generated property representing the resource etag
-     required for optimistic concurrency control.
-    :type _etag: str
-    :param _doc: A system generated property that specifies the addressable
-     path of the documents resource.
-    :type _doc: str
-    :param _sprocs: A system generated property that specifies the addressable
-     path of the stored procedures (sprocs) resource.
-    :type _sprocs: str
-    :param _triggers: A system generated property that specifies the
-     addressable path of the triggers resource.
-    :type _triggers: str
-    :param _udfs: A system generated property that specifies the addressable
-     path of the user-defined functions (udfs) resource.
-    :type _udfs: str
-    :param _conflicts: A system generated property that specifies the
-     addressable path of the conflicts resource.
-    :type _conflicts: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'sql_container_resource_id': {'required': True},
+        'id': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'sql_container_resource_id': {'key': 'properties.id', 'type': 'str'},
-        'indexing_policy': {'key': 'properties.indexingPolicy', 'type': 'IndexingPolicy'},
-        'partition_key': {'key': 'properties.partitionKey', 'type': 'PartitionKey'},
-        'conflict_resolution_policy': {'key': 'properties.conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
-        '_rid': {'key': 'properties._rid', 'type': 'str'},
-        '_ts': {'key': 'properties._ts', 'type': 'object'},
-        '_self': {'key': 'properties._self', 'type': 'str'},
-        '_etag': {'key': 'properties._etag', 'type': 'str'},
-        '_doc': {'key': 'properties._doc', 'type': 'str'},
-        '_sprocs': {'key': 'properties._sprocs', 'type': 'str'},
-        '_triggers': {'key': 'properties._triggers', 'type': 'str'},
-        '_udfs': {'key': 'properties._udfs', 'type': 'str'},
-        '_conflicts': {'key': 'properties._conflicts', 'type': 'str'},
+        'indexing_policy': {'key': 'indexingPolicy', 'type': 'IndexingPolicy'},
+        'partition_key': {'key': 'partitionKey', 'type': 'PartitionKey'},
+        'default_ttl': {'key': 'defaultTtl', 'type': 'int'},
+        'unique_key_policy': {'key': 'uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
+        'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
     }
 
     def __init__(self, **kwargs):
         super(SqlContainerResource, self).__init__(**kwargs)
-        self.sql_container_resource_id = kwargs.get('sql_container_resource_id', None)
+        self.id = kwargs.get('id', None)
         self.indexing_policy = kwargs.get('indexing_policy', None)
         self.partition_key = kwargs.get('partition_key', None)
+        self.default_ttl = kwargs.get('default_ttl', None)
+        self.unique_key_policy = kwargs.get('unique_key_policy', None)
         self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
-        self._rid = kwargs.get('_rid', None)
-        self._ts = kwargs.get('_ts', None)
-        self._self = kwargs.get('_self', None)
-        self._etag = kwargs.get('_etag', None)
-        self._doc = kwargs.get('_doc', None)
-        self._sprocs = kwargs.get('_sprocs', None)
-        self._triggers = kwargs.get('_triggers', None)
-        self._udfs = kwargs.get('_udfs', None)
-        self._conflicts = kwargs.get('_conflicts', None)

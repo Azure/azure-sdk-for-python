@@ -18,8 +18,7 @@ class SqlContainerCreateUpdateParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param resource: Required. The standard JSON format of a SQL container
-    :type resource:
-     ~azure.mgmt.cosmosdb.models.SqlContainerCreateUpdateResource
+    :type resource: ~azure.mgmt.cosmosdb.models.SqlContainerResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -31,7 +30,7 @@ class SqlContainerCreateUpdateParameters(Model):
     }
 
     _attribute_map = {
-        'resource': {'key': 'properties.resource', 'type': 'SqlContainerCreateUpdateResource'},
+        'resource': {'key': 'properties.resource', 'type': 'SqlContainerResource'},
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 

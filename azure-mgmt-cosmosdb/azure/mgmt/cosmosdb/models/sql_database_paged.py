@@ -9,26 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class SqlDatabaseResource(Model):
-    """Cosmos DB SQL database id object.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. Name of the Cosmos DB SQL database
-    :type id: str
+class SqlDatabasePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SqlDatabase <azure.mgmt.cosmosdb.models.SqlDatabase>` object
     """
 
-    _validation = {
-        'id': {'required': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SqlDatabase]'}
     }
 
-    def __init__(self, *, id: str, **kwargs) -> None:
-        super(SqlDatabaseResource, self).__init__(**kwargs)
-        self.id = id
+    def __init__(self, *args, **kwargs):
+
+        super(SqlDatabasePaged, self).__init__(*args, **kwargs)

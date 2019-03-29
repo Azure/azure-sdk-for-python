@@ -9,19 +9,22 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class SqlContainerResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`SqlContainerResource <azure.mgmt.cosmosdb.models.SqlContainerResource>` object
+class UniqueKey(Model):
+    """The unique key on that enforces uniqueness constraint on documents in the
+    collection in the Azure Cosmos DB service.
+
+    :param paths: List of paths must be unique for each document in the Azure
+     Cosmos DB service
+    :type paths: list[str]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[SqlContainerResource]'}
+        'paths': {'key': 'paths', 'type': '[str]'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(SqlContainerResourcePaged, self).__init__(*args, **kwargs)
+    def __init__(self, **kwargs):
+        super(UniqueKey, self).__init__(**kwargs)
+        self.paths = kwargs.get('paths', None)

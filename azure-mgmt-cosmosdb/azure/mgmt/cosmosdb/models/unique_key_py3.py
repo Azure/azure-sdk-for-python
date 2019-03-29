@@ -12,23 +12,19 @@
 from msrest.serialization import Model
 
 
-class SqlDatabaseCreateUpdateResource(Model):
-    """Cosmos DB SQL database id object.
+class UniqueKey(Model):
+    """The unique key on that enforces uniqueness constraint on documents in the
+    collection in the Azure Cosmos DB service.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. Name of the Cosmos DB SQL database
-    :type id: str
+    :param paths: List of paths must be unique for each document in the Azure
+     Cosmos DB service
+    :type paths: list[str]
     """
 
-    _validation = {
-        'id': {'required': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        'paths': {'key': 'paths', 'type': '[str]'},
     }
 
-    def __init__(self, *, id: str, **kwargs) -> None:
-        super(SqlDatabaseCreateUpdateResource, self).__init__(**kwargs)
-        self.id = id
+    def __init__(self, *, paths=None, **kwargs) -> None:
+        super(UniqueKey, self).__init__(**kwargs)
+        self.paths = paths

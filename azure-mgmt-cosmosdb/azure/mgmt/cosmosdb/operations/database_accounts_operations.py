@@ -1432,9 +1432,9 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of SqlDatabaseResource
+        :return: An iterator like instance of SqlDatabase
         :rtype:
-         ~azure.mgmt.cosmosdb.models.SqlDatabaseResourcePaged[~azure.mgmt.cosmosdb.models.SqlDatabaseResource]
+         ~azure.mgmt.cosmosdb.models.SqlDatabasePaged[~azure.mgmt.cosmosdb.models.SqlDatabase]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1479,11 +1479,11 @@ class DatabaseAccountsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SqlDatabaseResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.SqlDatabasePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.SqlDatabaseResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.SqlDatabasePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -1533,7 +1533,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 201:
-            deserialized = self._deserialize('SqlDatabaseResource', response)
+            deserialized = self._deserialize('SqlDatabase', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1550,8 +1550,7 @@ class DatabaseAccountsOperations(object):
         :param account_name: Cosmos DB database account name.
         :type account_name: str
         :param resource: The standard JSON format of a SQL database
-        :type resource:
-         ~azure.mgmt.cosmosdb.models.SqlDatabaseCreateUpdateResource
+        :type resource: ~azure.mgmt.cosmosdb.models.SqlDatabaseResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
         :type options: dict[str, str]
@@ -1560,12 +1559,12 @@ class DatabaseAccountsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns SqlDatabaseResource or
-         ClientRawResponse<SqlDatabaseResource> if raw==True
+        :return: An instance of LROPoller that returns SqlDatabase or
+         ClientRawResponse<SqlDatabase> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlDatabaseResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlDatabase]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlDatabaseResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlDatabase]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_sql_database_initial(
@@ -1579,7 +1578,7 @@ class DatabaseAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('SqlDatabaseResource', response)
+            deserialized = self._deserialize('SqlDatabase', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -1612,8 +1611,8 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SqlDatabaseResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.SqlDatabaseResource or
+        :return: SqlDatabase or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.SqlDatabase or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1653,7 +1652,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SqlDatabaseResource', response)
+            deserialized = self._deserialize('SqlDatabase', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1707,7 +1706,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SqlDatabaseResource', response)
+            deserialized = self._deserialize('SqlDatabase', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1726,8 +1725,7 @@ class DatabaseAccountsOperations(object):
         :param database_rid: Cosmos DB database rid.
         :type database_rid: str
         :param resource: The standard JSON format of a SQL database
-        :type resource:
-         ~azure.mgmt.cosmosdb.models.SqlDatabaseCreateUpdateResource
+        :type resource: ~azure.mgmt.cosmosdb.models.SqlDatabaseResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
         :type options: dict[str, str]
@@ -1736,12 +1734,12 @@ class DatabaseAccountsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns SqlDatabaseResource or
-         ClientRawResponse<SqlDatabaseResource> if raw==True
+        :return: An instance of LROPoller that returns SqlDatabase or
+         ClientRawResponse<SqlDatabase> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlDatabaseResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlDatabase]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlDatabaseResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlDatabase]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_sql_database_initial(
@@ -1756,7 +1754,7 @@ class DatabaseAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('SqlDatabaseResource', response)
+            deserialized = self._deserialize('SqlDatabase', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -1872,9 +1870,9 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of SqlContainerResource
+        :return: An iterator like instance of SqlContainer
         :rtype:
-         ~azure.mgmt.cosmosdb.models.SqlContainerResourcePaged[~azure.mgmt.cosmosdb.models.SqlContainerResource]
+         ~azure.mgmt.cosmosdb.models.SqlContainerPaged[~azure.mgmt.cosmosdb.models.SqlContainer]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1920,11 +1918,11 @@ class DatabaseAccountsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SqlContainerResourcePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.SqlContainerPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.SqlContainerResourcePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.SqlContainerPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -1975,7 +1973,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 201:
-            deserialized = self._deserialize('SqlContainerResource', response)
+            deserialized = self._deserialize('SqlContainer', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1994,8 +1992,7 @@ class DatabaseAccountsOperations(object):
         :param database_rid: Cosmos DB database rid.
         :type database_rid: str
         :param resource: The standard JSON format of a SQL container
-        :type resource:
-         ~azure.mgmt.cosmosdb.models.SqlContainerCreateUpdateResource
+        :type resource: ~azure.mgmt.cosmosdb.models.SqlContainerResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
         :type options: dict[str, str]
@@ -2004,12 +2001,12 @@ class DatabaseAccountsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns SqlContainerResource or
-         ClientRawResponse<SqlContainerResource> if raw==True
+        :return: An instance of LROPoller that returns SqlContainer or
+         ClientRawResponse<SqlContainer> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlContainerResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlContainer]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlContainerResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlContainer]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_sql_container_initial(
@@ -2024,7 +2021,7 @@ class DatabaseAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('SqlContainerResource', response)
+            deserialized = self._deserialize('SqlContainer', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -2059,8 +2056,8 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: SqlContainerResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.SqlContainerResource or
+        :return: SqlContainer or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.SqlContainer or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -2101,7 +2098,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SqlContainerResource', response)
+            deserialized = self._deserialize('SqlContainer', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -2156,7 +2153,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SqlContainerResource', response)
+            deserialized = self._deserialize('SqlContainer', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -2177,8 +2174,7 @@ class DatabaseAccountsOperations(object):
         :param container_rid: Cosmos DB container rid.
         :type container_rid: str
         :param resource: The standard JSON format of a SQL container
-        :type resource:
-         ~azure.mgmt.cosmosdb.models.SqlContainerCreateUpdateResource
+        :type resource: ~azure.mgmt.cosmosdb.models.SqlContainerResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
         :type options: dict[str, str]
@@ -2187,12 +2183,12 @@ class DatabaseAccountsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns SqlContainerResource or
-         ClientRawResponse<SqlContainerResource> if raw==True
+        :return: An instance of LROPoller that returns SqlContainer or
+         ClientRawResponse<SqlContainer> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlContainerResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlContainer]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlContainerResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlContainer]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._update_sql_container_initial(
@@ -2208,7 +2204,7 @@ class DatabaseAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('SqlContainerResource', response)
+            deserialized = self._deserialize('SqlContainer', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
