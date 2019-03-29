@@ -51,6 +51,11 @@ class VirtualMachineScaleSet(Resource):
     :param overprovision: Specifies whether the Virtual Machine Scale Set
      should be overprovisioned.
     :type overprovision: bool
+    :param do_not_run_extensions_on_overprovisioned_vms: In case of
+     overprovisioning, determines whether extensions should be run immediately,
+     or if they should be delayed until after overprovisioning has finished and
+     the set of instances to keep have been selected.
+    :type do_not_run_extensions_on_overprovisioned_vms: bool
     :ivar unique_id: Specifies the ID which uniquely identifies a Virtual
      Machine Scale Set.
     :vartype unique_id: str
@@ -92,6 +97,7 @@ class VirtualMachineScaleSet(Resource):
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetVMProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
+        'do_not_run_extensions_on_overprovisioned_vms': {'key': 'properties.doNotRunExtensionsOnOverprovisionedVMs', 'type': 'bool'},
         'unique_id': {'key': 'properties.uniqueId', 'type': 'str'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'zone_balance': {'key': 'properties.zoneBalance', 'type': 'bool'},
@@ -108,6 +114,7 @@ class VirtualMachineScaleSet(Resource):
         self.virtual_machine_profile = kwargs.get('virtual_machine_profile', None)
         self.provisioning_state = None
         self.overprovision = kwargs.get('overprovision', None)
+        self.do_not_run_extensions_on_overprovisioned_vms = kwargs.get('do_not_run_extensions_on_overprovisioned_vms', None)
         self.unique_id = None
         self.single_placement_group = kwargs.get('single_placement_group', None)
         self.zone_balance = kwargs.get('zone_balance', None)
