@@ -22,7 +22,7 @@ class WorkbooksOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2015-05-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2015-05-01".
     """
 
     models = models
@@ -41,7 +41,8 @@ class WorkbooksOperations(object):
         """Get all Workbooks defined within a specified resource group and
         category.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param category: Category of workbook to return. Possible values
          include: 'workbook', 'TSG', 'performance', 'retention'
@@ -70,8 +71,8 @@ class WorkbooksOperations(object):
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -82,7 +83,7 @@ class WorkbooksOperations(object):
                     query_parameters['tags'] = self._serialize.query("tags", tags, '[str]', div=',')
                 if can_fetch_content is not None:
                     query_parameters['canFetchContent'] = self._serialize.query("can_fetch_content", can_fetch_content, 'bool')
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
             else:
                 url = next_link
@@ -122,7 +123,8 @@ class WorkbooksOperations(object):
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
         """Get a single workbook by its resourceName.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
@@ -141,15 +143,15 @@ class WorkbooksOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -184,7 +186,8 @@ class WorkbooksOperations(object):
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
         """Delete a workbook.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
@@ -202,15 +205,15 @@ class WorkbooksOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -237,7 +240,8 @@ class WorkbooksOperations(object):
             self, resource_group_name, resource_name, workbook_properties, custom_headers=None, raw=False, **operation_config):
         """Create a new workbook.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
@@ -260,15 +264,15 @@ class WorkbooksOperations(object):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -309,7 +313,8 @@ class WorkbooksOperations(object):
             self, resource_group_name, resource_name, workbook_properties, custom_headers=None, raw=False, **operation_config):
         """Updates a workbook that has already been added.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
@@ -332,15 +337,15 @@ class WorkbooksOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}

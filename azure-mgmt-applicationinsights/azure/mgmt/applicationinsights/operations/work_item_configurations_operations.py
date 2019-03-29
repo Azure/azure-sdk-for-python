@@ -23,7 +23,7 @@ class WorkItemConfigurationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2015-05-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2015-05-01".
     """
 
     models = models
@@ -41,7 +41,8 @@ class WorkItemConfigurationsOperations(object):
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
         """Gets the list work item configurations that exist for the application.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
@@ -63,15 +64,15 @@ class WorkItemConfigurationsOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
                     'resourceName': self._serialize.url("resource_name", resource_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
             else:
                 url = next_link
@@ -111,7 +112,8 @@ class WorkItemConfigurationsOperations(object):
             self, resource_group_name, resource_name, work_item_configuration_properties, custom_headers=None, raw=False, **operation_config):
         """Create a work item configuration for an Application Insights component.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
@@ -134,15 +136,15 @@ class WorkItemConfigurationsOperations(object):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -183,7 +185,8 @@ class WorkItemConfigurationsOperations(object):
             self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
         """Gets default work item configurations that exist for the application.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
@@ -201,15 +204,15 @@ class WorkItemConfigurationsOperations(object):
         # Construct URL
         url = self.get_default.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
@@ -246,7 +249,8 @@ class WorkItemConfigurationsOperations(object):
             self, resource_group_name, resource_name, work_item_config_id, custom_headers=None, raw=False, **operation_config):
         """Delete a work item configuration of an Application Insights component.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
@@ -267,8 +271,8 @@ class WorkItemConfigurationsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'workItemConfigId': self._serialize.url("work_item_config_id", work_item_config_id, 'str')
         }
@@ -276,7 +280,7 @@ class WorkItemConfigurationsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
 
         # Construct headers
         header_parameters = {}
