@@ -54,8 +54,6 @@ from .compute_management_client_enums import (
     SnapshotStorageAccountTypes,
     AccessLevel,
 )
-# Manual change to avoid major release until the next major release
-StorageAccountTypes = DiskStorageAccountTypes
 
 __all__ = [
     'Resource',
@@ -77,7 +75,6 @@ __all__ = [
     'DiskPaged',
     'SnapshotPaged',
     'DiskStorageAccountTypes',
-    'StorageAccountTypes',
     'OperatingSystemTypes',
     'HyperVGeneration',
     'DiskCreateOption',
