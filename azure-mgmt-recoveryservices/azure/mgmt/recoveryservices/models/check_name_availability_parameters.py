@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class ResourceNameAvailabilityParameters(Model):
+class CheckNameAvailabilityParameters(Model):
     """Resource Name availability input parameters - Resource type and resource
     name.
 
@@ -29,6 +29,6 @@ class ResourceNameAvailabilityParameters(Model):
     }
 
     def __init__(self, **kwargs):
-        super(ResourceNameAvailabilityParameters, self).__init__(**kwargs)
+        super(CheckNameAvailabilityParameters, self).__init__(**kwargs)
         self.type = kwargs.get('type', None)
         self.name = kwargs.get('name', None)

@@ -67,7 +67,7 @@ class RecoveryServicesOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        input = models.ResourceNameAvailabilityParameters(type=type, name=name)
+        input = models.CheckNameAvailabilityParameters(type=type, name=name)
 
         # Construct URL
         url = self.check_name_availability.metadata['url']
@@ -94,7 +94,7 @@ class RecoveryServicesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(input, 'ResourceNameAvailabilityParameters')
+        body_content = self._serialize.body(input, 'CheckNameAvailabilityParameters')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)

@@ -19,6 +19,7 @@ try:
     from .jobs_summary_py3 import JobsSummary
     from .monitoring_summary_py3 import MonitoringSummary
     from .replication_usage_py3 import ReplicationUsage
+    from .check_name_availability_parameters_py3 import CheckNameAvailabilityParameters
     from .check_name_availability_result_py3 import CheckNameAvailabilityResult
     from .check_name_availability_result_resource_py3 import CheckNameAvailabilityResultResource
     from .client_discovery_display_py3 import ClientDiscoveryDisplay
@@ -27,7 +28,6 @@ try:
     from .client_discovery_for_properties_py3 import ClientDiscoveryForProperties
     from .client_discovery_value_for_single_api_py3 import ClientDiscoveryValueForSingleApi
     from .resource_py3 import Resource
-    from .resource_name_availability_parameters_py3 import ResourceNameAvailabilityParameters
     from .sku_py3 import Sku
     from .tracked_resource_py3 import TrackedResource
     from .patch_tracked_resource_py3 import PatchTrackedResource
@@ -48,6 +48,7 @@ except (SyntaxError, ImportError):
     from .jobs_summary import JobsSummary
     from .monitoring_summary import MonitoringSummary
     from .replication_usage import ReplicationUsage
+    from .check_name_availability_parameters import CheckNameAvailabilityParameters
     from .check_name_availability_result import CheckNameAvailabilityResult
     from .check_name_availability_result_resource import CheckNameAvailabilityResultResource
     from .client_discovery_display import ClientDiscoveryDisplay
@@ -56,7 +57,6 @@ except (SyntaxError, ImportError):
     from .client_discovery_for_properties import ClientDiscoveryForProperties
     from .client_discovery_value_for_single_api import ClientDiscoveryValueForSingleApi
     from .resource import Resource
-    from .resource_name_availability_parameters import ResourceNameAvailabilityParameters
     from .sku import Sku
     from .tracked_resource import TrackedResource
     from .patch_tracked_resource import PatchTrackedResource
@@ -89,6 +89,7 @@ __all__ = [
     'JobsSummary',
     'MonitoringSummary',
     'ReplicationUsage',
+    'CheckNameAvailabilityParameters',
     'CheckNameAvailabilityResult',
     'CheckNameAvailabilityResultResource',
     'ClientDiscoveryDisplay',
@@ -97,7 +98,6 @@ __all__ = [
     'ClientDiscoveryForProperties',
     'ClientDiscoveryValueForSingleApi',
     'Resource',
-    'ResourceNameAvailabilityParameters',
     'Sku',
     'TrackedResource',
     'PatchTrackedResource',
