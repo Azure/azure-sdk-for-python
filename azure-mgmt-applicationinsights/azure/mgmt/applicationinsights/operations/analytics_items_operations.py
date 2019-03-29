@@ -23,7 +23,7 @@ class AnalyticsItemsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2015-05-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2015-05-01".
     """
 
     models = models
@@ -42,7 +42,8 @@ class AnalyticsItemsOperations(object):
         """Gets a list of Analytics Items defined within an Application Insights
         component.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
@@ -80,8 +81,8 @@ class AnalyticsItemsOperations(object):
         # Construct URL
         url = self.list.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'scopePath': self._serialize.url("scope_path", scope_path, 'str')
         }
@@ -89,7 +90,7 @@ class AnalyticsItemsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
         if scope is not None:
             query_parameters['scope'] = self._serialize.query("scope", scope, 'str')
         if type is not None:
@@ -133,7 +134,8 @@ class AnalyticsItemsOperations(object):
         """Gets a specific Analytics Items defined within an Application Insights
         component.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
@@ -165,8 +167,8 @@ class AnalyticsItemsOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'scopePath': self._serialize.url("scope_path", scope_path, 'str')
         }
@@ -174,7 +176,7 @@ class AnalyticsItemsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
         if id is not None:
             query_parameters['id'] = self._serialize.query("id", id, 'str')
         if name is not None:
@@ -216,7 +218,8 @@ class AnalyticsItemsOperations(object):
         """Adds or Updates a specific Analytics Item within an Application
         Insights component.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
@@ -249,8 +252,8 @@ class AnalyticsItemsOperations(object):
         # Construct URL
         url = self.put.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'scopePath': self._serialize.url("scope_path", scope_path, 'str')
         }
@@ -258,7 +261,7 @@ class AnalyticsItemsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
         if override_item is not None:
             query_parameters['overrideItem'] = self._serialize.query("override_item", override_item, 'bool')
 
@@ -302,7 +305,8 @@ class AnalyticsItemsOperations(object):
         """Deletes a specific Analytics Items defined within an Application
         Insights component.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param resource_name: The name of the Application Insights component
          resource.
@@ -331,8 +335,8 @@ class AnalyticsItemsOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
             'scopePath': self._serialize.url("scope_path", scope_path, 'str')
         }
@@ -340,7 +344,7 @@ class AnalyticsItemsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
         if id is not None:
             query_parameters['id'] = self._serialize.query("id", id, 'str')
         if name is not None:
