@@ -28,8 +28,8 @@ class CloudEndpoint(ProxyResource):
     :vartype type: str
     :param storage_account_resource_id: Storage Account Resource Id
     :type storage_account_resource_id: str
-    :param storage_account_share_name: Storage Account Share name
-    :type storage_account_share_name: str
+    :param azure_file_share_name: Azure file share name
+    :type azure_file_share_name: str
     :param storage_account_tenant_id: Storage Account Tenant Id
     :type storage_account_tenant_id: str
     :param partnership_id: Partnership Id
@@ -58,7 +58,7 @@ class CloudEndpoint(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'storage_account_resource_id': {'key': 'properties.storageAccountResourceId', 'type': 'str'},
-        'storage_account_share_name': {'key': 'properties.storageAccountShareName', 'type': 'str'},
+        'azure_file_share_name': {'key': 'properties.azureFileShareName', 'type': 'str'},
         'storage_account_tenant_id': {'key': 'properties.storageAccountTenantId', 'type': 'str'},
         'partnership_id': {'key': 'properties.partnershipId', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
@@ -68,10 +68,10 @@ class CloudEndpoint(ProxyResource):
         'last_operation_name': {'key': 'properties.lastOperationName', 'type': 'str'},
     }
 
-    def __init__(self, *, storage_account_resource_id: str=None, storage_account_share_name: str=None, storage_account_tenant_id: str=None, partnership_id: str=None, friendly_name: str=None, provisioning_state: str=None, last_workflow_id: str=None, last_operation_name: str=None, **kwargs) -> None:
+    def __init__(self, *, storage_account_resource_id: str=None, azure_file_share_name: str=None, storage_account_tenant_id: str=None, partnership_id: str=None, friendly_name: str=None, provisioning_state: str=None, last_workflow_id: str=None, last_operation_name: str=None, **kwargs) -> None:
         super(CloudEndpoint, self).__init__(**kwargs)
         self.storage_account_resource_id = storage_account_resource_id
-        self.storage_account_share_name = storage_account_share_name
+        self.azure_file_share_name = azure_file_share_name
         self.storage_account_tenant_id = storage_account_tenant_id
         self.partnership_id = partnership_id
         self.friendly_name = friendly_name

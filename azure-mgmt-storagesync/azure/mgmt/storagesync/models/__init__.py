@@ -25,9 +25,10 @@ try:
     from .trigger_rollover_request_py3 import TriggerRolloverRequest
     from .registered_server_create_parameters_py3 import RegisteredServerCreateParameters
     from .server_endpoint_update_parameters_py3 import ServerEndpointUpdateParameters
+    from .files_not_syncing_error_py3 import FilesNotSyncingError
     from .sync_session_status_py3 import SyncSessionStatus
-    from .sync_progress_status_py3 import SyncProgressStatus
-    from .server_endpoint_health_py3 import ServerEndpointHealth
+    from .sync_activity_status_py3 import SyncActivityStatus
+    from .server_endpoint_sync_status_py3 import ServerEndpointSyncStatus
     from .server_endpoint_py3 import ServerEndpoint
     from .registered_server_py3 import RegisteredServer
     from .resources_move_info_py3 import ResourcesMoveInfo
@@ -63,9 +64,10 @@ except (SyntaxError, ImportError):
     from .trigger_rollover_request import TriggerRolloverRequest
     from .registered_server_create_parameters import RegisteredServerCreateParameters
     from .server_endpoint_update_parameters import ServerEndpointUpdateParameters
+    from .files_not_syncing_error import FilesNotSyncingError
     from .sync_session_status import SyncSessionStatus
-    from .sync_progress_status import SyncProgressStatus
-    from .server_endpoint_health import ServerEndpointHealth
+    from .sync_activity_status import SyncActivityStatus
+    from .server_endpoint_sync_status import ServerEndpointSyncStatus
     from .server_endpoint import ServerEndpoint
     from .registered_server import RegisteredServer
     from .resources_move_info import ResourcesMoveInfo
@@ -113,9 +115,10 @@ __all__ = [
     'TriggerRolloverRequest',
     'RegisteredServerCreateParameters',
     'ServerEndpointUpdateParameters',
+    'FilesNotSyncingError',
     'SyncSessionStatus',
-    'SyncProgressStatus',
-    'ServerEndpointHealth',
+    'SyncActivityStatus',
+    'ServerEndpointSyncStatus',
     'ServerEndpoint',
     'RegisteredServer',
     'ResourcesMoveInfo',

@@ -28,8 +28,8 @@ class CloudEndpointCreateParameters(ProxyResource):
     :vartype type: str
     :param storage_account_resource_id: Storage Account Resource Id
     :type storage_account_resource_id: str
-    :param storage_account_share_name: Storage Account Share name
-    :type storage_account_share_name: str
+    :param azure_file_share_name: Azure file share name
+    :type azure_file_share_name: str
     :param storage_account_tenant_id: Storage Account Tenant Id
     :type storage_account_tenant_id: str
     """
@@ -45,12 +45,12 @@ class CloudEndpointCreateParameters(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'storage_account_resource_id': {'key': 'properties.storageAccountResourceId', 'type': 'str'},
-        'storage_account_share_name': {'key': 'properties.storageAccountShareName', 'type': 'str'},
+        'azure_file_share_name': {'key': 'properties.azureFileShareName', 'type': 'str'},
         'storage_account_tenant_id': {'key': 'properties.storageAccountTenantId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(CloudEndpointCreateParameters, self).__init__(**kwargs)
         self.storage_account_resource_id = kwargs.get('storage_account_resource_id', None)
-        self.storage_account_share_name = kwargs.get('storage_account_share_name', None)
+        self.azure_file_share_name = kwargs.get('azure_file_share_name', None)
         self.storage_account_tenant_id = kwargs.get('storage_account_tenant_id', None)
