@@ -13,15 +13,15 @@ from msrest.serialization import Model
 
 
 class AzureAccountInfoObject(Model):
-    """Defines the azure account information object.
+    """Defines the Azure account information object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param azure_subscription_id: Required. The id for the azure subscription.
+    :param azure_subscription_id: Required. The id for the Azure subscription.
     :type azure_subscription_id: str
-    :param resource_group: Required. The azure resource group name.
+    :param resource_group: Required. The Azure resource group name.
     :type resource_group: str
-    :param account_name: Required. The azure account name.
+    :param account_name: Required. The Azure account name.
     :type account_name: str
     """
 

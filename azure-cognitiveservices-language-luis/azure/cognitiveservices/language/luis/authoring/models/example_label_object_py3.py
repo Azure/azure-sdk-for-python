@@ -13,14 +13,16 @@ from msrest.serialization import Model
 
 
 class ExampleLabelObject(Model):
-    """A labeled example.
+    """A labeled example utterance.
 
-    :param text: The sample's utterance.
+    :param text: The example utterance.
     :type text: str
-    :param entity_labels: The identified entities within the utterance.
+    :param entity_labels: The identified entities within the example
+     utterance.
     :type entity_labels:
      list[~azure.cognitiveservices.language.luis.authoring.models.EntityLabelObject]
-    :param intent_name: The identified intent representing the utterance.
+    :param intent_name: The identified intent representing the example
+     utterance.
     :type intent_name: str
     """
 

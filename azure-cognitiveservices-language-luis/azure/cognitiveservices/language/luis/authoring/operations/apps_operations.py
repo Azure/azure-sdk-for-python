@@ -38,11 +38,11 @@ class AppsOperations(object):
             self, application_create_object, custom_headers=None, raw=False, **operation_config):
         """Creates a new LUIS app.
 
-        :param application_create_object: A model containing Name, Description
-         (optional), Culture, Usage Scenario (optional), Domain (optional) and
-         initial version ID (optional) of the application. Default value for
-         the version ID is 0.1. Note: the culture cannot be changed after the
-         app is created.
+        :param application_create_object: An application containing Name,
+         Description (optional), Culture, Usage Scenario (optional), Domain
+         (optional) and initial version ID (optional) of the application.
+         Default value for the version ID is "0.1". Note: the culture cannot be
+         changed after the app is created.
         :type application_create_object:
          ~azure.cognitiveservices.language.luis.authoring.models.ApplicationCreateObject
         :param dict custom_headers: headers that will be added to the request
@@ -96,7 +96,7 @@ class AppsOperations(object):
 
     def list(
             self, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the user applications.
+        """Lists all of the user's applications.
 
         :param skip: The number of entries to skip. Default value is 0.
         :type skip: int
@@ -156,14 +156,15 @@ class AppsOperations(object):
 
     def import_method(
             self, luis_app, app_name=None, custom_headers=None, raw=False, **operation_config):
-        """Imports an application to LUIS, the application's structure should be
-        included in the request body.
+        """Imports an application to LUIS, the application's structure is included
+        in the request body.
 
         :param luis_app: A LUIS application structure.
         :type luis_app:
          ~azure.cognitiveservices.language.luis.authoring.models.LuisApp
         :param app_name: The application name to create. If not specified, the
-         application name will be read from the imported object.
+         application name will be read from the imported object. If the
+         application name already exists, an error is returned.
         :type app_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -367,7 +368,9 @@ class AppsOperations(object):
 
     def list_supported_cultures(
             self, custom_headers=None, raw=False, **operation_config):
-        """Gets the supported application cultures.
+        """Gets a list of supported cultures. Cultures are equivalent to the
+        written language and locale. For example,"en-us" represents the U.S.
+        variation of English.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -418,7 +421,7 @@ class AppsOperations(object):
 
     def download_query_logs(
             self, app_id, custom_headers=None, raw=False, callback=None, **operation_config):
-        """Gets the query logs of the past month for the application.
+        """Gets the logs of the past month's endpoint queries for the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -719,7 +722,7 @@ class AppsOperations(object):
 
     def get_settings(
             self, app_id, custom_headers=None, raw=False, **operation_config):
-        """Get the application settings.
+        """Get the application settings including 'UseAllTrainingData'.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -772,14 +775,14 @@ class AppsOperations(object):
     get_settings.metadata = {'url': '/apps/{appId}/settings'}
 
     def update_settings(
-            self, app_id, public=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the application settings.
+            self, app_id, is_public=None, custom_headers=None, raw=False, **operation_config):
+        """Updates the application settings including 'UseAllTrainingData'.
 
         :param app_id: The application ID.
         :type app_id: str
-        :param public: Setting your application as public allows other people
-         to use your application's endpoint using their own keys.
-        :type public: bool
+        :param is_public: Setting your application as public allows other
+         people to use your application's endpoint using their own keys.
+        :type is_public: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -792,7 +795,7 @@ class AppsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
-        application_setting_update_object = models.ApplicationSettingUpdateObject(public=public)
+        application_setting_update_object = models.ApplicationSettingUpdateObject(is_public=is_public)
 
         # Construct URL
         url = self.update_settings.metadata['url']
@@ -836,7 +839,7 @@ class AppsOperations(object):
 
     def get_publish_settings(
             self, app_id, custom_headers=None, raw=False, **operation_config):
-        """Get the application publish settings.
+        """Get the application publish settings including 'UseAllTrainingData'.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -890,7 +893,8 @@ class AppsOperations(object):
 
     def update_publish_settings(
             self, app_id, publish_setting_update_object, custom_headers=None, raw=False, **operation_config):
-        """Updates the application publish settings.
+        """Updates the application publish settings including
+        'UseAllTrainingData'.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1055,7 +1059,8 @@ class AppsOperations(object):
 
     def add_custom_prebuilt_domain(
             self, domain_name=None, culture=None, custom_headers=None, raw=False, **operation_config):
-        """Adds a prebuilt domain along with its models as a new application.
+        """Adds a prebuilt domain along with its intent and entity models as a new
+        application.
 
         :param domain_name: The domain name.
         :type domain_name: str
@@ -1114,7 +1119,7 @@ class AppsOperations(object):
 
     def list_available_custom_prebuilt_domains_for_culture(
             self, culture, custom_headers=None, raw=False, **operation_config):
-        """Gets all the available custom prebuilt domains for a specific culture.
+        """Gets all the available prebuilt domains for a specific culture.
 
         :param culture: Culture.
         :type culture: str
@@ -1171,7 +1176,8 @@ class AppsOperations(object):
         """package - Gets published LUIS application package in binary stream GZip
         format.
 
-        Packages published LUIS application as GZip.
+        Packages a published LUIS application as a GZip file to be used in the
+        LUIS container.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -1234,7 +1240,8 @@ class AppsOperations(object):
         """package - Gets trained LUIS application package in binary stream GZip
         format.
 
-        Packages trained LUIS application as GZip.
+        Packages trained LUIS application as GZip file to be used in the LUIS
+        container.
 
         :param app_id: The application ID.
         :type app_id: str

@@ -25,9 +25,9 @@ class ModelInfoResponse(Model):
     :type type_id: int
     :param readable_type: Required. Possible values include: 'Entity
      Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child Entity
-     Extractor', 'Composite Entity Extractor', 'Closed List Entity Extractor',
+     Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
      'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
-     Extractor', 'Regex Entity Extractor'
+     Extractor', 'Regular Expression Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
     :param roles:
@@ -36,14 +36,14 @@ class ModelInfoResponse(Model):
     :param children: List of child entities.
     :type children:
      list[~azure.cognitiveservices.language.luis.authoring.models.ChildEntity]
-    :param sub_lists: List of sub-lists.
+    :param sub_lists: List of sublists.
     :type sub_lists:
      list[~azure.cognitiveservices.language.luis.authoring.models.SubClosedListResponse]
     :param custom_prebuilt_domain_name: The domain name.
     :type custom_prebuilt_domain_name: str
     :param custom_prebuilt_model_name: The intent name or entity name.
     :type custom_prebuilt_model_name: str
-    :param regex_pattern: The Regex entity pattern.
+    :param regex_pattern: The Regular Expression entity pattern.
     :type regex_pattern: str
     :param explicit_list:
     :type explicit_list:

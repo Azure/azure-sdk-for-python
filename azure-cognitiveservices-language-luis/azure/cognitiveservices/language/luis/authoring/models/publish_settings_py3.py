@@ -20,14 +20,13 @@ class PublishSettings(Model):
     :param id: Required. The application ID.
     :type id: str
     :param is_sentiment_analysis_enabled: Required. Setting sentiment analysis
-     as true returns the Sentiment of the input utterance along with the
+     as true returns the sentiment of the input utterance along with the
      response
     :type is_sentiment_analysis_enabled: bool
-    :param is_speech_enabled: Required. Setting speech as public enables
-     speech priming in your app
+    :param is_speech_enabled: Required. Enables speech priming in your app
     :type is_speech_enabled: bool
-    :param is_spell_checker_enabled: Required. Setting spell checker as public
-     enables spell checking the input utterance.
+    :param is_spell_checker_enabled: Required. Enables spell checking of the
+     utterance.
     :type is_spell_checker_enabled: bool
     """
 

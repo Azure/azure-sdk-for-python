@@ -35,13 +35,13 @@ class AzureAccountsOperations(object):
 
     def assign_to_app(
             self, app_id, azure_account_info_object=None, custom_headers=None, raw=False, **operation_config):
-        """apps - Assign a LUIS azure account to an application.
+        """apps - Assign a LUIS Azure account to an application.
 
-        Assigns an azure account to the application.
+        Assigns an Azure account to the application.
 
         :param app_id: The application ID.
         :type app_id: str
-        :param azure_account_info_object: The azure account information
+        :param azure_account_info_object: The Azure account information
          object.
         :type azure_account_info_object:
          ~azure.cognitiveservices.language.luis.authoring.models.AzureAccountInfoObject
@@ -102,9 +102,9 @@ class AzureAccountsOperations(object):
 
     def get_assigned(
             self, app_id, custom_headers=None, raw=False, **operation_config):
-        """apps - Get LUIS azure accounts assigned to the application.
+        """apps - Get LUIS Azure accounts assigned to the application.
 
-        Gets the LUIS azure accounts assigned to the application for the user
+        Gets the LUIS Azure accounts assigned to the application for the user
         using his ARM token.
 
         :param app_id: The application ID.
@@ -159,13 +159,13 @@ class AzureAccountsOperations(object):
 
     def remove_from_app(
             self, app_id, azure_account_info_object=None, custom_headers=None, raw=False, **operation_config):
-        """apps - Removes an assigned LUIS azure account from an application.
+        """apps - Removes an assigned LUIS Azure account from an application.
 
-        Removes assigned azure account from the application.
+        Removes assigned Azure account from the application.
 
         :param app_id: The application ID.
         :type app_id: str
-        :param azure_account_info_object: The azure account information
+        :param azure_account_info_object: The Azure account information
          object.
         :type azure_account_info_object:
          ~azure.cognitiveservices.language.luis.authoring.models.AzureAccountInfoObject
@@ -224,11 +224,11 @@ class AzureAccountsOperations(object):
         return deserialized
     remove_from_app.metadata = {'url': '/apps/{appId}/azureaccounts'}
 
-    def get_user_luis_accounts(
+    def list_user_luis_accounts(
             self, custom_headers=None, raw=False, **operation_config):
-        """user - Get LUIS azure accounts.
+        """user - Get LUIS Azure accounts.
 
-        Gets the LUIS azure accounts for the user using his ARM token.
+        Gets the LUIS Azure accounts for the user using his ARM token.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -243,7 +243,7 @@ class AzureAccountsOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_user_luis_accounts.metadata['url']
+        url = self.list_user_luis_accounts.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
@@ -275,4 +275,4 @@ class AzureAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_user_luis_accounts.metadata = {'url': '/azureaccounts'}
+    list_user_luis_accounts.metadata = {'url': '/azureaccounts'}

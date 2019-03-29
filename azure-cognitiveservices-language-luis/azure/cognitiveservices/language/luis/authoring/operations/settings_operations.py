@@ -35,7 +35,7 @@ class SettingsOperations(object):
 
     def list(
             self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the application version settings.
+        """Gets the settings in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -91,17 +91,17 @@ class SettingsOperations(object):
     list.metadata = {'url': '/apps/{appId}/versions/{versionId}/settings'}
 
     def update(
-            self, app_id, version_id, name=None, value=None, custom_headers=None, raw=False, **operation_config):
-        """Updates the application version settings.
+            self, app_id, version_id, list_of_app_version_setting_object, custom_headers=None, raw=False, **operation_config):
+        """Updates the settings in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param name: The application version setting name.
-        :type name: str
-        :param value: The application version setting value.
-        :type value: str
+        :param list_of_app_version_setting_object: A list of the updated
+         application version settings.
+        :type list_of_app_version_setting_object:
+         list[~azure.cognitiveservices.language.luis.authoring.models.AppVersionSettingObject]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -114,8 +114,6 @@ class SettingsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
-        list_of_app_version_setting_object = models.AppVersionSettingObject(name=name, value=value)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -136,7 +134,7 @@ class SettingsOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(list_of_app_version_setting_object, 'AppVersionSettingObject')
+        body_content = self._serialize.body(list_of_app_version_setting_object, '[AppVersionSettingObject]')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
