@@ -14,7 +14,8 @@ from .image_template_customizer_py3 import ImageTemplateCustomizer
 
 class ImageTemplatePowerShellCustomizer(ImageTemplateCustomizer):
     """Runs the specified PowerShell on the VM (Windows). Corresponds to Packer
-    powershell provisioner.
+    powershell provisioner. Exactly one of 'script' or 'inline' can be
+    specified.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -26,7 +27,10 @@ class ImageTemplatePowerShellCustomizer(ImageTemplateCustomizer):
     :param script: The PowerShell script to be run for customizing. It can be
      a github link, SAS URI for Azure Storage, etc
     :type script: str
-    :param valid_exit_codes:
+    :param inline: Array of PowerShell commands to execute
+    :type inline: list[str]
+    :param valid_exit_codes: Valid exit codes for the PowerShell script.
+     [Default: 0]
     :type valid_exit_codes: list[int]
     """
 
@@ -38,11 +42,13 @@ class ImageTemplatePowerShellCustomizer(ImageTemplateCustomizer):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'script': {'key': 'script', 'type': 'str'},
+        'inline': {'key': 'inline', 'type': '[str]'},
         'valid_exit_codes': {'key': 'validExitCodes', 'type': '[int]'},
     }
 
-    def __init__(self, *, name: str=None, script: str=None, valid_exit_codes=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, script: str=None, inline=None, valid_exit_codes=None, **kwargs) -> None:
         super(ImageTemplatePowerShellCustomizer, self).__init__(name=name, **kwargs)
         self.script = script
+        self.inline = inline
         self.valid_exit_codes = valid_exit_codes
         self.type = 'PowerShell'
