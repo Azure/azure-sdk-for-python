@@ -374,6 +374,7 @@ try:
     from .copy_sink_py3 import CopySink
     from .copy_activity_py3 import CopyActivity
     from .execution_activity_py3 import ExecutionActivity
+    from .web_hook_activity_py3 import WebHookActivity
     from .append_variable_activity_py3 import AppendVariableActivity
     from .set_variable_activity_py3 import SetVariableActivity
     from .filter_activity_py3 import FilterActivity
@@ -774,6 +775,7 @@ except (SyntaxError, ImportError):
     from .copy_sink import CopySink
     from .copy_activity import CopyActivity
     from .execution_activity import ExecutionActivity
+    from .web_hook_activity import WebHookActivity
     from .append_variable_activity import AppendVariableActivity
     from .set_variable_activity import SetVariableActivity
     from .filter_activity import FilterActivity
@@ -871,6 +873,7 @@ from .data_factory_management_client_enums import (
     CopyBehaviorType,
     PolybaseSettingsRejectType,
     SapCloudForCustomerSinkWriteBehavior,
+    WebHookActivityMethod,
     IntegrationRuntimeType,
     SelfHostedIntegrationRuntimeNodeStatus,
     IntegrationRuntimeUpdateResult,
@@ -1248,6 +1251,7 @@ __all__ = [
     'CopySink',
     'CopyActivity',
     'ExecutionActivity',
+    'WebHookActivity',
     'AppendVariableActivity',
     'SetVariableActivity',
     'FilterActivity',
@@ -1344,6 +1348,7 @@ __all__ = [
     'CopyBehaviorType',
     'PolybaseSettingsRejectType',
     'SapCloudForCustomerSinkWriteBehavior',
+    'WebHookActivityMethod',
     'IntegrationRuntimeType',
     'SelfHostedIntegrationRuntimeNodeStatus',
     'IntegrationRuntimeUpdateResult',
