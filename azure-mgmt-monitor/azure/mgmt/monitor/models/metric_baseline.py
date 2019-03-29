@@ -15,17 +15,14 @@ from msrest.serialization import Model
 class MetricBaseline(Model):
     """The baseline results of a specific metric.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param id: Required. the metric baseline Id.
     :type id: str
-    :ivar type: Required. the resource type of the metric baseline resource.
-    :vartype type: str
-    :ivar metric_name: Required. the name of the metric.
-    :vartype metric_name: str
+    :param type: Required. the resource type of the metric baseline resource.
+    :type type: str
+    :param metric_name: Required. the name of the metric.
+    :type metric_name: str
     :param baselines: Required. the baseline for each time series that was
      queried.
     :type baselines: list[~azure.mgmt.monitor.models.TimeSeriesBaseline]
@@ -33,8 +30,8 @@ class MetricBaseline(Model):
 
     _validation = {
         'id': {'required': True},
-        'type': {'required': True, 'readonly': True},
-        'metric_name': {'required': True, 'readonly': True},
+        'type': {'required': True},
+        'metric_name': {'required': True},
         'baselines': {'required': True},
     }
 
@@ -48,6 +45,6 @@ class MetricBaseline(Model):
     def __init__(self, **kwargs):
         super(MetricBaseline, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
-        self.type = None
-        self.metric_name = None
+        self.type = kwargs.get('type', None)
+        self.metric_name = kwargs.get('metric_name', None)
         self.baselines = kwargs.get('baselines', None)
