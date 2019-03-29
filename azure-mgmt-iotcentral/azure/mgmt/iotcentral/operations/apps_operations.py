@@ -653,9 +653,12 @@ class AppsOperations(object):
     check_subdomain_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.IoTCentral/checkSubdomainAvailability'}
 
     def template(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, application_template_id, custom_headers=None, raw=False, **operation_config):
         """Get a single application template.
 
+        :param application_template_id: The combination id of manifestId and
+         manifestVersion of the IoT Central application template.
+        :type application_template_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -671,7 +674,7 @@ class AppsOperations(object):
         url = self.template.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'applicationTemplateId': self._serialize.url("self.config.application_template_id", self.config.application_template_id, 'str')
+            'applicationTemplateId': self._serialize.url("application_template_id", application_template_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

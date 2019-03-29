@@ -28,21 +28,16 @@ class IotCentralClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription identifier.
     :type subscription_id: str
-    :param application_template_id: The combination id of manifestId and
-     manifestVersion of the IoT Central application template.
-    :type application_template_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, application_template_id, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if application_template_id is None:
-            raise ValueError("Parameter 'application_template_id' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -53,7 +48,6 @@ class IotCentralClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.application_template_id = application_template_id
 
 
 class IotCentralClient(SDKClient):
@@ -72,16 +66,13 @@ class IotCentralClient(SDKClient):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: The subscription identifier.
     :type subscription_id: str
-    :param application_template_id: The combination id of manifestId and
-     manifestVersion of the IoT Central application template.
-    :type application_template_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, application_template_id, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = IotCentralClientConfiguration(credentials, subscription_id, application_template_id, base_url)
+        self.config = IotCentralClientConfiguration(credentials, subscription_id, base_url)
         super(IotCentralClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
