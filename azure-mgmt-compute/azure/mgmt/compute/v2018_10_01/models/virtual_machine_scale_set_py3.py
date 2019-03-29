@@ -51,10 +51,10 @@ class VirtualMachineScaleSet(Resource):
     :param overprovision: Specifies whether the Virtual Machine Scale Set
      should be overprovisioned.
     :type overprovision: bool
-    :param do_not_run_extensions_on_overprovisioned_vms: In case of
-     overprovisioning, determines whether extensions should be run immediately,
-     or if they should be delayed until after overprovisioning has finished and
-     the set of instances to keep have been selected.
+    :param do_not_run_extensions_on_overprovisioned_vms: When Overprovision is
+     enabled, extensions are launched only on the requested number of VMs which
+     are finally kept. This property will hence ensure that the extensions do
+     not run on the extra overprovisioned VMs.
     :type do_not_run_extensions_on_overprovisioned_vms: bool
     :ivar unique_id: Specifies the ID which uniquely identifies a Virtual
      Machine Scale Set.
