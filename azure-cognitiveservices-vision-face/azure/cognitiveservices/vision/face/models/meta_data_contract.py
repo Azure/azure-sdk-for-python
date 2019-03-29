@@ -9,13 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .meta_data_contract import MetaDataContract
+from .name_and_user_data_contract import NameAndUserDataContract
 
 
-class PersonGroup(MetaDataContract):
-    """Person group object.
-
-    All required parameters must be populated in order to send to Azure.
+class MetaDataContract(NameAndUserDataContract):
+    """A combination of user defined name and user specified data and recognition
+    model name for largePersonGroup/personGroup, and largeFaceList/faceList.
 
     :param name: User defined name, maximum length is 128.
     :type name: str
@@ -25,24 +24,19 @@ class PersonGroup(MetaDataContract):
      'recognition_02'. Default value: "recognition_01" .
     :type recognition_model: str or
      ~azure.cognitiveservices.vision.face.models.RecognitionModel
-    :param person_group_id: Required. PersonGroupId of the target person
-     group.
-    :type person_group_id: str
     """
 
     _validation = {
         'name': {'max_length': 128},
         'user_data': {'max_length': 16384},
-        'person_group_id': {'required': True, 'max_length': 64, 'pattern': r'^[a-z0-9-_]+$'},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'user_data': {'key': 'userData', 'type': 'str'},
         'recognition_model': {'key': 'recognitionModel', 'type': 'str'},
-        'person_group_id': {'key': 'personGroupId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(PersonGroup, self).__init__(**kwargs)
-        self.person_group_id = kwargs.get('person_group_id', None)
+        super(MetaDataContract, self).__init__(**kwargs)
+        self.recognition_model = kwargs.get('recognition_model', "recognition_01")
