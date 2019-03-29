@@ -27,7 +27,8 @@ class ServerSecurityAlertPolicy(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param state: Required. Specifies the state of the policy, whether it is
-     enabled or disabled. Possible values include: 'New', 'Enabled', 'Disabled'
+     enabled or disabled or a policy has not been applied yet on the specific
+     database. Possible values include: 'New', 'Enabled', 'Disabled'
     :type state: str or ~azure.mgmt.sql.models.SecurityAlertPolicyState
     :param disabled_alerts: Specifies an array of alerts that are disabled.
      Allowed values are: Sql_Injection, Sql_Injection_Vulnerability,
@@ -49,6 +50,8 @@ class ServerSecurityAlertPolicy(ProxyResource):
     :param retention_days: Specifies the number of days to keep in the Threat
      Detection audit logs.
     :type retention_days: int
+    :ivar creation_time: Specifies the UTC creation time of the policy.
+    :vartype creation_time: datetime
     """
 
     _validation = {
@@ -56,6 +59,7 @@ class ServerSecurityAlertPolicy(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'state': {'required': True},
+        'creation_time': {'readonly': True},
     }
 
     _attribute_map = {
@@ -69,6 +73,7 @@ class ServerSecurityAlertPolicy(ProxyResource):
         'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
         'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
         'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
+        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
     }
 
     def __init__(self, **kwargs):
@@ -80,3 +85,4 @@ class ServerSecurityAlertPolicy(ProxyResource):
         self.storage_endpoint = kwargs.get('storage_endpoint', None)
         self.storage_account_access_key = kwargs.get('storage_account_access_key', None)
         self.retention_days = kwargs.get('retention_days', None)
+        self.creation_time = None

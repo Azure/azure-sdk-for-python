@@ -72,6 +72,8 @@ class ExpressRouteCircuit(Resource):
     :type gateway_manager_etag: str
     :param allow_global_reach: Flag to enable Global Reach on the circuit.
     :type allow_global_reach: bool
+    :param global_reach_enabled: Flag denoting Global reach status.
+    :type global_reach_enabled: bool
     :ivar etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :vartype etag: str
@@ -105,10 +107,11 @@ class ExpressRouteCircuit(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'gateway_manager_etag': {'key': 'properties.gatewayManagerEtag', 'type': 'str'},
         'allow_global_reach': {'key': 'properties.allowGlobalReach', 'type': 'bool'},
+        'global_reach_enabled': {'key': 'properties.globalReachEnabled', 'type': 'bool'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, allow_classic_operations: bool=None, circuit_provisioning_state: str=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key: str=None, service_provider_notes: str=None, service_provider_properties=None, express_route_port=None, bandwidth_in_gbps: float=None, provisioning_state: str=None, gateway_manager_etag: str=None, allow_global_reach: bool=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, allow_classic_operations: bool=None, circuit_provisioning_state: str=None, service_provider_provisioning_state=None, authorizations=None, peerings=None, service_key: str=None, service_provider_notes: str=None, service_provider_properties=None, express_route_port=None, bandwidth_in_gbps: float=None, provisioning_state: str=None, gateway_manager_etag: str=None, allow_global_reach: bool=None, global_reach_enabled: bool=None, **kwargs) -> None:
         super(ExpressRouteCircuit, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.allow_classic_operations = allow_classic_operations
@@ -125,4 +128,5 @@ class ExpressRouteCircuit(Resource):
         self.provisioning_state = provisioning_state
         self.gateway_manager_etag = gateway_manager_etag
         self.allow_global_reach = allow_global_reach
+        self.global_reach_enabled = global_reach_enabled
         self.etag = None
