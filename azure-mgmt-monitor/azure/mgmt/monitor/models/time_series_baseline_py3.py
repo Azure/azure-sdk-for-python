@@ -13,19 +13,19 @@ from msrest.serialization import Model
 
 
 class TimeSeriesBaseline(Model):
-    """The time series baseline class.
+    """The baseline values for a single time series.
 
     All required parameters must be populated in order to send to Azure.
 
     :param aggregation: Required. The aggregation type of the metric.
     :type aggregation: str
-    :param dimensions: the dimensions of this time series.
+    :param dimensions: The dimensions of this time series.
     :type dimensions: list[~azure.mgmt.monitor.models.MetricSingleDimension]
-    :param timestamps: Required. the array of timestamps of the baselines.
+    :param timestamps: Required. The list of timestamps of the baselines.
     :type timestamps: list[datetime]
-    :param data: Required. the baseline values for each sensitivity.
+    :param data: Required. The baseline values for each sensitivity.
     :type data: list[~azure.mgmt.monitor.models.Baseline]
-    :param metadata: the baseline metadata values.
+    :param metadata: The baseline metadata values.
     :type metadata: list[~azure.mgmt.monitor.models.BaselineMetadata]
     """
 

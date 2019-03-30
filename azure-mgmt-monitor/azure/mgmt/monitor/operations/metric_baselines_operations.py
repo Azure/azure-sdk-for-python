@@ -36,15 +36,11 @@ class MetricBaselinesOperations(object):
 
         self.config = config
 
-    def get(
+    def list(
             self, resource_uri, metricnames=None, metricnamespace=None, timespan=None, interval=None, aggregation=None, sensitivities=None, filter=None, result_type=None, custom_headers=None, raw=False, **operation_config):
-        """**Gets the metric baseline values**.
+        """**Lists the metric baseline values for a resource**.
 
-        :param resource_uri: The identifier of the resource. It has the
-         following structure:
-         subscriptions/{subscriptionName}/resourceGroups/{resourceGroupName}/providers/{providerName}/{resourceName}.
-         For example:
-         subscriptions/b368ca2f-e298-46b7-b0ab-012281956afa/resourceGroups/vms/providers/Microsoft.Compute/virtualMachines/vm1
+        :param resource_uri: The identifier of the resource.
         :type resource_uri: str
         :param metricnames: The names of the metrics (comma separated) to
          retrieve.
@@ -90,7 +86,7 @@ class MetricBaselinesOperations(object):
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True)
         }
@@ -143,4 +139,4 @@ class MetricBaselinesOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metricBaselines'}
+    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/metricBaselines'}

@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class BaselineOperations(object):
-    """BaselineOperations operations.
+class MetricBaselineOperations(object):
+    """MetricBaselineOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.

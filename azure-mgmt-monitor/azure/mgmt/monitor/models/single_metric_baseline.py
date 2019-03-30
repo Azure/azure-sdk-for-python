@@ -17,13 +17,13 @@ class SingleMetricBaseline(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. the metric baseline Id.
+    :param id: Required. The metric baseline Id.
     :type id: str
-    :param type: Required. the resource type of the metric baseline resource.
+    :param type: Required. The resource type of the metric baseline resource.
     :type type: str
-    :param metric_name: Required. the name of the metric.
+    :param metric_name: Required. The name of the metric.
     :type metric_name: str
-    :param baselines: Required. the baseline for each time series that was
+    :param baselines: Required. The baseline for each time series that was
      queried.
     :type baselines: list[~azure.mgmt.monitor.models.TimeSeriesBaseline]
     """

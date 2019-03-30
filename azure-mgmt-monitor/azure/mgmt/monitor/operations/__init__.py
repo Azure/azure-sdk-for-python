@@ -23,7 +23,7 @@ from .event_categories_operations import EventCategoriesOperations
 from .tenant_activity_logs_operations import TenantActivityLogsOperations
 from .metric_definitions_operations import MetricDefinitionsOperations
 from .metrics_operations import MetricsOperations
-from .baseline_operations import BaselineOperations
+from .metric_baseline_operations import MetricBaselineOperations
 from .metric_baselines_operations import MetricBaselinesOperations
 from .metric_alerts_operations import MetricAlertsOperations
 from .metric_alerts_status_operations import MetricAlertsStatusOperations
@@ -46,7 +46,7 @@ __all__ = [
     'TenantActivityLogsOperations',
     'MetricDefinitionsOperations',
     'MetricsOperations',
-    'BaselineOperations',
+    'MetricBaselineOperations',
     'MetricBaselinesOperations',
     'MetricAlertsOperations',
     'MetricAlertsStatusOperations',

@@ -29,8 +29,8 @@ class MetricBaselinesResponse(Model):
     :type interval: timedelta
     :param namespace: The namespace of the metrics been queried.
     :type namespace: str
-    :param value: Required. The baseline results of a single metric.
-    :type value: ~azure.mgmt.monitor.models.SingleMetricBaseline
+    :param value: Required. The list of baseline results for each metric.
+    :type value: list[~azure.mgmt.monitor.models.SingleMetricBaseline]
     """
 
     _validation = {
@@ -43,7 +43,7 @@ class MetricBaselinesResponse(Model):
         'timespan': {'key': 'timespan', 'type': 'str'},
         'interval': {'key': 'interval', 'type': 'duration'},
         'namespace': {'key': 'namespace', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'SingleMetricBaseline'},
+        'value': {'key': 'value', 'type': '[SingleMetricBaseline]'},
     }
 
     def __init__(self, **kwargs):
