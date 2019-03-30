@@ -42,6 +42,8 @@ from .operations.products_by_billing_account_operations import ProductsByBilling
 from .operations.products_by_invoice_section_operations import ProductsByInvoiceSectionOperations
 from .operations.products_operations import ProductsOperations
 from .operations.transactions_by_billing_account_operations import TransactionsByBillingAccountOperations
+from .operations.transactions_by_billing_profile_operations import TransactionsByBillingProfileOperations
+from .operations.transactions_by_invoice_section_operations import TransactionsByInvoiceSectionOperations
 from .operations.policy_operations import PolicyOperations
 from .operations.billing_property_operations import BillingPropertyOperations
 from .operations.transfers_operations import TransfersOperations
@@ -147,6 +149,10 @@ class BillingManagementClient(SDKClient):
     :vartype products: azure.mgmt.billing.operations.ProductsOperations
     :ivar transactions_by_billing_account: TransactionsByBillingAccount operations
     :vartype transactions_by_billing_account: azure.mgmt.billing.operations.TransactionsByBillingAccountOperations
+    :ivar transactions_by_billing_profile: TransactionsByBillingProfile operations
+    :vartype transactions_by_billing_profile: azure.mgmt.billing.operations.TransactionsByBillingProfileOperations
+    :ivar transactions_by_invoice_section: TransactionsByInvoiceSection operations
+    :vartype transactions_by_invoice_section: azure.mgmt.billing.operations.TransactionsByInvoiceSectionOperations
     :ivar policy: Policy operations
     :vartype policy: azure.mgmt.billing.operations.PolicyOperations
     :ivar billing_property: BillingProperty operations
@@ -245,6 +251,10 @@ class BillingManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.transactions_by_billing_account = TransactionsByBillingAccountOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.transactions_by_billing_profile = TransactionsByBillingProfileOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.transactions_by_invoice_section = TransactionsByInvoiceSectionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.policy = PolicyOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_property = BillingPropertyOperations(
@@ -273,80 +283,6 @@ class BillingManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_profile_billing_role_assignment = BillingProfileBillingRoleAssignmentOperations(
             self._client, self.config, self._serialize, self._deserialize)
-
-    def transactions_by_billing_profile(
-            self, billing_account_name, billing_profile_name, start_date, end_date, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the transactions by billingProfileName for given start date and
-        end date.
-
-        :param billing_account_name: billing Account Id.
-        :type billing_account_name: str
-        :param billing_profile_name: Billing Profile Id.
-        :type billing_profile_name: str
-        :param start_date: Start date
-        :type start_date: str
-        :param end_date: End date
-        :type end_date: str
-        :param filter: May be used to filter by transaction kind. The filter
-         supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
-         currently support 'ne', 'or', or 'not'. Tag filter is a key value pair
-         string where key and value is separated by a colon (:).
-        :type filter: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: TransactionsListResult or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.TransactionsListResult or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.transactions_by_billing_profile.metadata['url']
-        path_format_arguments = {
-            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
-            'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        query_parameters['startDate'] = self._serialize.query("start_date", start_date, 'str')
-        query_parameters['endDate'] = self._serialize.query("end_date", end_date, 'str')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('TransactionsListResult', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    transactions_by_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/transactions'}
 
     def update_auto_renew_for_billing_account(
             self, billing_account_name, product_name, auto_renew=None, custom_headers=None, raw=False, **operation_config):
