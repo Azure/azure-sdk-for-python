@@ -12,9 +12,11 @@
 from .azure_configuration_client import AzureConfigurationClient
 from ._generated.models import *
 
+__version__ = "0.0.1"
 __all__ = [
     'AzureConfigurationClient',
-    'KeyValue'
+    'ConfigurationSetting',
+    'ConfigurationSettingPaged'
     ]
 
 
