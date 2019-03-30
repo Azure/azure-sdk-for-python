@@ -24,7 +24,7 @@ from .tenant_activity_logs_operations import TenantActivityLogsOperations
 from .metric_definitions_operations import MetricDefinitionsOperations
 from .metrics_operations import MetricsOperations
 from .metric_baseline_operations import MetricBaselineOperations
-from .metric_baselines_operations import MetricBaselinesOperations
+from .baselines_operations import BaselinesOperations
 from .metric_alerts_operations import MetricAlertsOperations
 from .metric_alerts_status_operations import MetricAlertsStatusOperations
 from .scheduled_query_rules_operations import ScheduledQueryRulesOperations
@@ -47,7 +47,7 @@ __all__ = [
     'MetricDefinitionsOperations',
     'MetricsOperations',
     'MetricBaselineOperations',
-    'MetricBaselinesOperations',
+    'BaselinesOperations',
     'MetricAlertsOperations',
     'MetricAlertsStatusOperations',
     'ScheduledQueryRulesOperations',
