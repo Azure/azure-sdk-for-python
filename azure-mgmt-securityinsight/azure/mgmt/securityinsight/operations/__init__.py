@@ -18,6 +18,7 @@ from .data_connectors_operations import DataConnectorsOperations
 from .entities_operations import EntitiesOperations
 from .office_consents_operations import OfficeConsentsOperations
 from .product_settings_operations import ProductSettingsOperations
+from .cases_aggregations_operations import CasesAggregationsOperations
 
 __all__ = [
     'Operations',
@@ -29,4 +30,5 @@ __all__ = [
     'EntitiesOperations',
     'OfficeConsentsOperations',
     'ProductSettingsOperations',
+    'CasesAggregationsOperations',
 ]
