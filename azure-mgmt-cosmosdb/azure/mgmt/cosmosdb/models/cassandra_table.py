@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class Resource(Model):
-    """The core properties of ARM resources.
+class CassandraTable(Resource):
+    """An Azure Cosmos DB Cassandra table.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,6 +31,12 @@ class Resource(Model):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
+    :param cassandra_table_id: Required. Name of the Cosmos DB Cassandra table
+    :type cassandra_table_id: str
+    :param default_ttl: Time to live of the Cosmos DB Cassandra table
+    :type default_ttl: int
+    :param schema: Schema of the Cosmos DB Cassandra table
+    :type schema: ~azure.mgmt.cosmosdb.models.CassandraSchema
     """
 
     _validation = {
@@ -38,6 +44,7 @@ class Resource(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'cassandra_table_id': {'required': True},
     }
 
     _attribute_map = {
@@ -46,12 +53,13 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'cassandra_table_id': {'key': 'properties.id', 'type': 'str'},
+        'default_ttl': {'key': 'properties.defaultTtl', 'type': 'int'},
+        'schema': {'key': 'properties.schema', 'type': 'CassandraSchema'},
     }
 
     def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+        super(CassandraTable, self).__init__(**kwargs)
+        self.cassandra_table_id = kwargs.get('cassandra_table_id', None)
+        self.default_ttl = kwargs.get('default_ttl', None)
+        self.schema = kwargs.get('schema', None)

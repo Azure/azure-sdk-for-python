@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Resource(Model):
-    """A database account resource.
+    """The core properties of ARM resources.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

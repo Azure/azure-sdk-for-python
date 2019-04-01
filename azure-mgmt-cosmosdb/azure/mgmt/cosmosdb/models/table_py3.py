@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource_py3 import Resource
 
 
-class Resource(Model):
-    """The core properties of ARM resources.
+class Table(Resource):
+    """An Azure Cosmos DB Table.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,6 +31,8 @@ class Resource(Model):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
+    :param table_id: Required. Name of the Cosmos DB table
+    :type table_id: str
     """
 
     _validation = {
@@ -38,6 +40,7 @@ class Resource(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'table_id': {'required': True},
     }
 
     _attribute_map = {
@@ -46,12 +49,9 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'table_id': {'key': 'properties.id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+    def __init__(self, *, location: str, table_id: str, tags=None, **kwargs) -> None:
+        super(Table, self).__init__(location=location, tags=tags, **kwargs)
+        self.table_id = table_id

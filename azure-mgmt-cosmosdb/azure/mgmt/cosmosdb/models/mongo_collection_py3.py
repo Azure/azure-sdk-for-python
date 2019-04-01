@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource_py3 import Resource
 
 
-class Resource(Model):
-    """The core properties of ARM resources.
+class MongoCollection(Resource):
+    """An Azure Cosmos DB Mongo collection.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,6 +31,14 @@ class Resource(Model):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
+    :param mongo_collection_id: Required. Name of the Cosmos DB Mongo
+     collection
+    :type mongo_collection_id: str
+    :param shard_key: A key-value pair of shard keys to be applied for the
+     request.
+    :type shard_key: dict[str, str]
+    :param indexes: List of index keys
+    :type indexes: list[~azure.mgmt.cosmosdb.models.MongoIndex]
     """
 
     _validation = {
@@ -38,6 +46,7 @@ class Resource(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'mongo_collection_id': {'required': True},
     }
 
     _attribute_map = {
@@ -46,12 +55,13 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'mongo_collection_id': {'key': 'properties.id', 'type': 'str'},
+        'shard_key': {'key': 'properties.shardKey', 'type': '{str}'},
+        'indexes': {'key': 'properties.indexes', 'type': '[MongoIndex]'},
     }
 
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+    def __init__(self, *, location: str, mongo_collection_id: str, tags=None, shard_key=None, indexes=None, **kwargs) -> None:
+        super(MongoCollection, self).__init__(location=location, tags=tags, **kwargs)
+        self.mongo_collection_id = mongo_collection_id
+        self.shard_key = shard_key
+        self.indexes = indexes
