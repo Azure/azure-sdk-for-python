@@ -163,11 +163,11 @@ class PartitionKeyTests(unittest.TestCase):
         created_sproc = created_container.scripts.create_stored_procedure(body=sproc)
 
         # Partiton Key value same as what is specified in the stored procedure body
-        result = created_container.scripts.execute_stored_procedure(id=created_sproc['id'], partition_key=partition_key.NonePartitionKeyValue)
+        result = created_container.scripts.execute_stored_procedure(sproc=created_sproc['id'], partition_key=partition_key.NonePartitionKeyValue)
         self.assertEqual(result, 1)
 
         # 3 previous items + 1 created from the sproc
-        items = list(created_container.list_items())
+        items = list(created_container.list_item_properties())
         self.assertEquals(len(items), 4)
 
         created_container.delete_item(upserted_item['id'], partition_key=partition_key.NonePartitionKeyValue)
@@ -175,13 +175,13 @@ class PartitionKeyTests(unittest.TestCase):
         created_container.delete_item(document_created_by_sproc_id, partition_key=partition_key.NonePartitionKeyValue)
         created_container.delete_item(self.created_document['id'], partition_key=partition_key.NonePartitionKeyValue)
 
-        items = list(created_container.list_items())
+        items = list(created_container.list_item_properties())
         self.assertEquals(len(items), 0)
 
     def test_multi_partition_collection_read_document_with_no_pk(self):
         document_definition = {'id': str(uuid.uuid4())}
         self.created_collection.create_item(body=document_definition)
-        read_item = self.created_collection.get_item(id=document_definition['id'], partition_key=partition_key.NonePartitionKeyValue)
+        read_item = self.created_collection.get_item(item=document_definition['id'], partition_key=partition_key.NonePartitionKeyValue)
         self.assertEquals(read_item['id'], document_definition['id'])
         self.created_collection.delete_item(item=document_definition['id'], partition_key=partition_key.NonePartitionKeyValue)
 

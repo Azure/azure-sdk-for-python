@@ -209,7 +209,7 @@ class ContainerManagement:
         
         print('Containers:')
         
-        containers = list(db.list_containers())
+        containers = list(db.list_container_properties())
         
         if not containers:
             return

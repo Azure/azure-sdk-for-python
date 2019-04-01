@@ -39,6 +39,7 @@ from . import session
 from . import utils
 from .partition_key import _Undefined, _Empty
 
+
 class CosmosClientConnection(object):
     """Represents a document client.
 
@@ -2940,22 +2941,6 @@ class CosmosClientConnection(object):
         if is_session_consistency:
             # update session
             self.session.update_session(response_result, response_headers)
-
-    @staticmethod
-    def _get_database_link(database_or_id):
-        # type: (str) -> str
-        if isinstance(database_or_id, six.string_types):
-            return "dbs/{}".format(database_or_id)
-        try:
-            return cast("Database", database_or_id).database_link
-        except AttributeError:
-            pass
-
-        if isinstance(database_or_id, six.string_types):
-            database_id = database_or_id
-        else:
-            database_id = cast("Dict[str, str]", database_or_id)["id"]
-        return "dbs/{}".format(database_id)
 
     @staticmethod
     def _return_undefined_or_empty_partition_key(is_system_key):

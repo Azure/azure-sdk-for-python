@@ -54,12 +54,12 @@ class MultiMasterTests(unittest.TestCase):
         sproc = created_collection.scripts.create_stored_procedure(body=sproc_definition)
 
         created_collection.scripts.execute_stored_procedure(
-            id=sproc['id'],
+            sproc=sproc['id'],
             partition_key='pk'
         )
 
         created_collection.get_item(
-            id=created_document,
+            item=created_document,
             partition_key='pk'
         )
 

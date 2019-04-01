@@ -28,6 +28,7 @@ from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.database import Database
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos.partition_key import NonePartitionKeyValue
 try:
     import urllib3
     urllib3.disable_warnings()
@@ -38,7 +39,7 @@ class _test_config(object):
 
     #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
     masterKey = os.getenv('ACCOUNT_KEY', 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
-    host = os.getenv('ACCOUNT_HOST', 'https://localhost:443')
+    host = os.getenv('ACCOUNT_HOST', 'https://localhost:8081/')
 
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.DisableSSLVerification = True
@@ -154,7 +155,7 @@ class _test_config(object):
                         if cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY in document:
                             partition_key = document[cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY]
                         else:
-                            document_collection.client_connection.DeleteItem(document['_self'], {'partitionKey': None})
+                            partition_key = NonePartitionKeyValue
                     document_collection.delete_item(item=document, partition_key=partition_key)
                 if cls.IS_MULTIMASTER_ENABLED:
                     # sleep to ensure deletes are propagated for multimaster enabled accounts

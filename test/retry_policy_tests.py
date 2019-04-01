@@ -203,7 +203,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunctionConnectionReset
 
-        doc = self.created_collection.get_item(id=created_document['id'], partition_key=created_document['id'])
+        doc = self.created_collection.get_item(item=created_document['id'], partition_key=created_document['id'])
         self.assertEqual(doc['id'], 'doc')
         self.assertEqual(self.counter, 3)
         

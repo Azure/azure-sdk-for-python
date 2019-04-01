@@ -83,7 +83,7 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
         self.assertGreaterEqual(len(partition_key_ranges), 1)
 
         # sanity check: read documents after creation
-        queried_docs = list(self.created_collection.list_items())
+        queried_docs = list(self.created_collection.list_item_properties())
         self.assertEqual(
             len(queried_docs),
             len(self.document_definitions),

@@ -56,19 +56,19 @@ def Query_Entities(parent, entity_type, id = None):
     try:
         if entity_type == 'database':
             if id == None:
-                entities = list(parent.list_databases())
+                entities = list(parent.list_database_properties())
             else:
                 entities = list(parent.query_databases(find_entity_by_id_query))
 
         elif entity_type == 'collection':
             if id == None:
-                entities = list(parent.list_containers())
+                entities = list(parent.list_container_properties())
             else:
                 entities = list(parent.query_containers(find_entity_by_id_query))
 
         elif entity_type == 'document':
             if id == None:
-                entities = list(parent.list_items())
+                entities = list(parent.list_item_properties())
             else:
                 entities = list(parent.query_items(find_entity_by_id_query))
     except errors.CosmosError as e:
@@ -184,7 +184,7 @@ def ExplicitlyExcludeFromIndex(db):
                 }
         QueryDocumentsWithCustomQuery(created_Container, query)
 
-        docRead = created_Container.get_item(id="doc2", partition_key="doc2")
+        docRead = created_Container.get_item(item="doc2", partition_key="doc2")
         print("Document read by ID: \n", docRead["id"])
 
         # Cleanup
@@ -233,7 +233,7 @@ def UseManualIndexing(db):
             }
         QueryDocumentsWithCustomQuery(created_Container, query)
 
-        docRead = created_Container.get_item(id="doc1", partition_key="doc1")
+        docRead = created_Container.get_item(item="doc1", partition_key="doc1")
         print("Document read by ID: \n", docRead["id"])
 
         # Now create a document, passing in an IndexingDirective saying we want to specifically index this document
