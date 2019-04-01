@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class Granularity(Enum):
+class Granularity(str, Enum):
 
     yearly = "yearly"
     monthly = "monthly"

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
@@ -46,7 +46,7 @@ class AnomalyDetectorClientConfiguration(Configuration):
         self.credentials = credentials
 
 
-class AnomalyDetectorClient(object):
+class AnomalyDetectorClient(SDKClient):
     """The Anomaly Detector API detects anomalies automatically in time series data. It supports two functionalities, one is for detecting the whole series with model trained by the timeseries, another is detecting last point with model trained by points before. By using this service, business customers can discover incidents and establish a logic flow for root cause analysis.
 
     :ivar config: Configuration for client.
@@ -64,7 +64,7 @@ class AnomalyDetectorClient(object):
             self, endpoint, credentials):
 
         self.config = AnomalyDetectorClientConfiguration(endpoint, credentials)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(AnomalyDetectorClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'
@@ -108,6 +108,7 @@ class AnomalyDetectorClient(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -116,9 +117,8 @@ class AnomalyDetectorClient(object):
         body_content = self._serialize.body(body, 'Request')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -171,6 +171,7 @@ class AnomalyDetectorClient(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -179,9 +180,8 @@ class AnomalyDetectorClient(object):
         body_content = self._serialize.body(body, 'Request')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)

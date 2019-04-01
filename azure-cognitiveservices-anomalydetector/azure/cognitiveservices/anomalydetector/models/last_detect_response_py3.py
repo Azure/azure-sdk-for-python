@@ -72,13 +72,13 @@ class LastDetectResponse(Model):
         'is_positive_anomaly': {'key': 'isPositiveAnomaly', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, period: int, suggested_window: int, expected_value: float, upper_margin: float, lower_margin: float, is_anomaly: bool, is_negative_anomaly: bool, is_positive_anomaly: bool, **kwargs) -> None:
         super(LastDetectResponse, self).__init__(**kwargs)
-        self.period = kwargs.get('period', None)
-        self.suggested_window = kwargs.get('suggested_window', None)
-        self.expected_value = kwargs.get('expected_value', None)
-        self.upper_margin = kwargs.get('upper_margin', None)
-        self.lower_margin = kwargs.get('lower_margin', None)
-        self.is_anomaly = kwargs.get('is_anomaly', None)
-        self.is_negative_anomaly = kwargs.get('is_negative_anomaly', None)
-        self.is_positive_anomaly = kwargs.get('is_positive_anomaly', None)
+        self.period = period
+        self.suggested_window = suggested_window
+        self.expected_value = expected_value
+        self.upper_margin = upper_margin
+        self.lower_margin = lower_margin
+        self.is_anomaly = is_anomaly
+        self.is_negative_anomaly = is_negative_anomaly
+        self.is_positive_anomaly = is_positive_anomaly

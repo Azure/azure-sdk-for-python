@@ -9,11 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .api_error import APIError, APIErrorException
-from .point import Point
-from .request import Request
-from .entire_detect_response import EntireDetectResponse
-from .last_detect_response import LastDetectResponse
+try:
+    from .api_error_py3 import APIError, APIErrorException
+    from .point_py3 import Point
+    from .request_py3 import Request
+    from .entire_detect_response_py3 import EntireDetectResponse
+    from .last_detect_response_py3 import LastDetectResponse
+except (SyntaxError, ImportError):
+    from .api_error import APIError, APIErrorException
+    from .point import Point
+    from .request import Request
+    from .entire_detect_response import EntireDetectResponse
+    from .last_detect_response import LastDetectResponse
 from .anomaly_detector_client_enums import (
     Granularity,
 )

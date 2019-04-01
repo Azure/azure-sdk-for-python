@@ -33,7 +33,7 @@ class Point(Model):
         'value': {'key': 'value', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, timestamp, value: float, **kwargs) -> None:
         super(Point, self).__init__(**kwargs)
-        self.timestamp = kwargs.get('timestamp', None)
-        self.value = kwargs.get('value', None)
+        self.timestamp = timestamp
+        self.value = value

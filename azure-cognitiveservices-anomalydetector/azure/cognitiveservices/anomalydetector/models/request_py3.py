@@ -59,11 +59,11 @@ class Request(Model):
         'sensitivity': {'key': 'sensitivity', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, series, granularity, custom_interval: int=None, period: int=None, max_anomaly_ratio: float=None, sensitivity: int=None, **kwargs) -> None:
         super(Request, self).__init__(**kwargs)
-        self.series = kwargs.get('series', None)
-        self.granularity = kwargs.get('granularity', None)
-        self.custom_interval = kwargs.get('custom_interval', None)
-        self.period = kwargs.get('period', None)
-        self.max_anomaly_ratio = kwargs.get('max_anomaly_ratio', None)
-        self.sensitivity = kwargs.get('sensitivity', None)
+        self.series = series
+        self.granularity = granularity
+        self.custom_interval = custom_interval
+        self.period = period
+        self.max_anomaly_ratio = max_anomaly_ratio
+        self.sensitivity = sensitivity
