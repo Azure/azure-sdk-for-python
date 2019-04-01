@@ -1,18 +1,11 @@
+from msrest.pipeline.requests import PipelineRequestsHTTPSender, RequestsPatchSession
+from msrest.pipeline import Request, Pipeline
+from msrest.universal_http.requests import RequestsHTTPSender
 from . import _generated
 from .azure_configuration_requests import AzConfigRequestsCredentialsPolicy
-
-
-from msrest.pipeline.requests import (
-    PipelineRequestsHTTPSender,
-    RequestsPatchSession
-)
-
-from msrest.pipeline import Request, Pipeline
-from msrest.universal_http.requests import (
-    RequestsHTTPSender,
-)
-
 from .utils import get_endpoint_from_connection_string
+from .azure_configuration_client_validation import *
+
 
 class AzureConfigurationClient(object):
     """Represents an azconfig client
@@ -24,28 +17,32 @@ class AzureConfigurationClient(object):
     :type connection_string: str
     """
 
-    def __init__(
-            self, connection_string):
+    def __init__(self, connection_string):
 
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
-        self._client = _generated.AzureConfigurationClientImp(connection_string, base_url)
+        self._client = _generated.AzureConfigurationClientImp(
+            connection_string, base_url
+        )
         self._client._client.config.pipeline = self._create_azconfig_pipeline()
-    
+
     def _create_azconfig_pipeline(self):
         policies = [
             self._client.config.user_agent_policy,  # UserAgent policy
-            RequestsPatchSession(),         # Support deprecated operation config at the session level
+            RequestsPatchSession(),  # Support deprecated operation config at the session level
             self._client.config.http_logger_policy,  # HTTP request/response log
-            AzConfigRequestsCredentialsPolicy(self._client.config)
+            AzConfigRequestsCredentialsPolicy(self._client.config),
         ]
 
         return Pipeline(
             policies,
-            PipelineRequestsHTTPSender(RequestsHTTPSender(self._client.config))  # Send HTTP request using requests           
+            PipelineRequestsHTTPSender(
+                RequestsHTTPSender(self._client.config)
+            ),  # Send HTTP request using requests
         )
 
     def list_configuration_settings(
-            self, labels=None, keys=None, fields=None, **kwargs):
+        self, labels=None, keys=None, fields=None, **kwargs
+    ):
         """List key values.
 
         List the key values in the configuration store, optionally filtered by
@@ -65,10 +62,11 @@ class AzureConfigurationClient(object):
          ~azure.configurationservice.models.KeyValuePaged[~azure.configurationservice.models.KeyValue]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        return self._client.list_configuration_settings(label=labels, key=keys, fields=fields, custom_headers=kwargs.get("headers"))
-    
-    def get_configuration_setting(
-            self, key, label=None, **kwargs):
+        return self._client.list_configuration_settings(
+            label=labels, key=keys, fields=fields, custom_headers=kwargs.get("headers")
+        )
+
+    def get_configuration_setting(self, key, label=None, **kwargs):
         """Get a KeyValue.
 
         Get the KeyValue for the given key and label.
@@ -82,10 +80,12 @@ class AzureConfigurationClient(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        return self._client.get_configuration_setting(key=key, label=label, custom_headers=kwargs.get("headers"))
+        validate_get_configuration_setting(key)
+        return self._client.get_configuration_setting(
+            key=key, label=label, custom_headers=kwargs.get("headers")
+        )
 
-    def add_configuration_setting(
-            self, configuration_setting, **kwargs):
+    def add_configuration_setting(self, configuration_setting, **kwargs):
         """Create a KeyValue.
 
         Create a KeyValue.
@@ -97,23 +97,24 @@ class AzureConfigurationClient(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        if configuration_setting is None:
-            #throw?
-            return None
-        key = configuration_setting.key
-        if key is None:
-            #throw?
-            return None
-        custom_headers = kwargs.get("headers")
-        if_none_match = {'If-None-Match':'"*"'}
-        if custom_headers is None:
-            custom_headers = if_none_match
-        elif custom_headers.get('If-None-Match', '"*"') == '"*"':
-            custom_headers.update(if_none_match)
-        return self._client.create_or_update_configuration_setting(configuration_setting=configuration_setting, key=key, label=configuration_setting.label, custom_headers=custom_headers)
-    
+        custom_headers = validate_add_configuration_setting(configuration_setting, **kwargs)
+        return self._client.create_or_update_configuration_setting(
+            configuration_setting=configuration_setting,
+            key=configuration_setting.key,
+            label=configuration_setting.label,
+            custom_headers=custom_headers,
+        )
+
     def update_configuration_setting(
-            self, key, value=None, content_type=None, tags=None, label=None, etag=None, **kwargs):
+        self,
+        key,
+        value=None,
+        content_type=None,
+        tags=None,
+        label=None,
+        etag=None,
+        **kwargs
+    ):
         """Update a KeyValue.
 
         Update a KeyValue.
@@ -135,29 +136,26 @@ class AzureConfigurationClient(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        if key is None:
-            #throw?
-            return None
-        custom_headers = kwargs.get("headers")
-        current_configuration_setting = self._client.get_configuration_setting(key, label)
-        if etag is not None:
-            if_match = {'If-Match': '"' + etag + '"'}
-        else:
-            if_match = {'If-Match': '"*"'}
-        if custom_headers is None:
-            custom_headers = if_match
-        elif custom_headers.get('If-Match', '"*"') == '"*"':
-            custom_headers.update(if_match)
+
+        custom_headers = validate_update_configuration_setting(key, etag, **kwargs)
+
+        current_configuration_setting = self._client.get_configuration_setting(
+            key, label
+        )
         if value is not None:
             current_configuration_setting.value = value
         if content_type is not None:
             current_configuration_setting.content_type = content_type
         if tags is not None:
             current_configuration_setting.tags = tags
-        return self._client.create_or_update_configuration_setting(configuration_setting=current_configuration_setting, key=key, label=label, custom_headers=custom_headers)
-    
-    def set_configuration_setting(
-            self, configuration_setting, **kwargs):
+        return self._client.create_or_update_configuration_setting(
+            configuration_setting=current_configuration_setting,
+            key=key,
+            label=label,
+            custom_headers=custom_headers,
+        )
+
+    def set_configuration_setting(self, configuration_setting, **kwargs):
         """Set a KeyValue.
 
         Create or update a KeyValue.
@@ -173,25 +171,15 @@ class AzureConfigurationClient(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        if configuration_setting is None:
-            #throw?
-            return None
-        key = configuration_setting.key
-        if key is None:
-            #throw?
-            return None
-        custom_headers = kwargs.get("headers")
-        etag = configuration_setting.etag
-        if etag is not None:
-            if_match = {'If-Match': '"' + etag + '"'}
-            if custom_headers is None:
-                custom_headers = if_match
-            else:
-                custom_headers.update(if_match)
-        return self._client.create_or_update_configuration_setting(configuration_setting=configuration_setting, key=key, label=configuration_setting.label, custom_headers=custom_headers)
-    
-    def delete_configuration_setting(
-            self, key, label=None, etag=None, **kwargs):
+        custom_headers = validate_set_configuration_setting(configuration_setting, **kwargs)
+        return self._client.create_or_update_configuration_setting(
+            configuration_setting=configuration_setting,
+            key=configuration_setting.key,
+            label=configuration_setting.label,
+            custom_headers=custom_headers,
+        )
+
+    def delete_configuration_setting(self, key, label=None, etag=None, **kwargs):
         """Delete a KeyValue.
 
         :param key: string
@@ -205,20 +193,12 @@ class AzureConfigurationClient(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        if key is None:
-            #throw?
-            return None
-        custom_headers = kwargs.get("headers")
-        if etag is not None:
-            if_match = {'If-Match': '"' + etag + '"'}
-            if custom_headers is None:
-                custom_headers = if_match
-            else:
-                custom_headers.update(if_match)
-        return self._client.delete_configuration_setting(key=key, label=label, custom_headers=custom_headers)
+        custom_headers = validate_delete_configuration_setting(key, etag, **kwargs)
+        return self._client.delete_configuration_setting(
+            key=key, label=label, custom_headers=custom_headers
+        )
 
-    def lock_configuration_setting(
-            self, key, label=None, **kwargs):
+    def lock_configuration_setting(self, key, label=None, **kwargs):
         """
 
         :param key:
@@ -230,13 +210,12 @@ class AzureConfigurationClient(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        if key is None:
-            #throw?
-            return None
-        return self._client.lock_configuration_setting(key=key, label=label, custom_headers=kwargs.get("headers"))
-    
-    def unlock_configuration_setting(
-            self, key, label=None, **kwargs):
+        validate_lock_configuration_setting(key)
+        return self._client.lock_configuration_setting(
+            key=key, label=label, custom_headers=kwargs.get("headers")
+        )
+
+    def unlock_configuration_setting(self, key, label=None, **kwargs):
         """
 
         :param key:
@@ -248,13 +227,12 @@ class AzureConfigurationClient(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        if key is None:
-            #throw?
-            return None
-        return self._client.unlock_configuration_setting(key=key, label=label, custom_headers=kwargs.get("headers"))
-    
-    def list_revisions(
-            self, labels=None, keys=None, fields=None, **kwargs):
+        validate_unlock_configuration_setting(key)
+        return self._client.unlock_configuration_setting(
+            key=key, label=label, custom_headers=kwargs.get("headers")
+        )
+
+    def list_revisions(self, labels=None, keys=None, fields=None, **kwargs):
         """
 
         :param labels: Filter returned values based on their label. '*' can be
@@ -271,4 +249,6 @@ class AzureConfigurationClient(object):
          ~azure.configurationservice.models.KeyValuePaged[~azure.configurationservice.models.KeyValue]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        return self._client.list_revisions(label=labels, key=keys, fields=fields, custom_headers=kwargs.get("headers"))
+        return self._client.list_revisions(
+            label=labels, key=keys, fields=fields, custom_headers=kwargs.get("headers")
+        )
