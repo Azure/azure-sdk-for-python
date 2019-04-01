@@ -20,10 +20,11 @@ try:
     from .reservation_properties_py3 import ReservationProperties
     from .reservation_response_py3 import ReservationResponse
     from .reservation_order_response_py3 import ReservationOrderResponse
-    from .calculate_response_properties_billing_currency_total_py3 import CalculateResponsePropertiesBillingCurrencyTotal
+    from .calculate_price_response_properties_billing_currency_total_py3 import CalculatePriceResponsePropertiesBillingCurrencyTotal
+    from .purchase_request_properties_advanced_properties_py3 import PurchaseRequestPropertiesAdvancedProperties
     from .purchase_request_py3 import PurchaseRequest
-    from .calculate_response_properties_pricing_currency_total_py3 import CalculateResponsePropertiesPricingCurrencyTotal
-    from .calculate_response_properties_py3 import CalculateResponseProperties
+    from .calculate_price_response_properties_pricing_currency_total_py3 import CalculatePriceResponsePropertiesPricingCurrencyTotal
+    from .calculate_price_response_properties_py3 import CalculatePriceResponseProperties
     from .calculate_price_response_py3 import CalculatePriceResponse
     from .merge_request_py3 import MergeRequest
     from .patch_py3 import Patch
@@ -45,10 +46,11 @@ except (SyntaxError, ImportError):
     from .reservation_properties import ReservationProperties
     from .reservation_response import ReservationResponse
     from .reservation_order_response import ReservationOrderResponse
-    from .calculate_response_properties_billing_currency_total import CalculateResponsePropertiesBillingCurrencyTotal
+    from .calculate_price_response_properties_billing_currency_total import CalculatePriceResponsePropertiesBillingCurrencyTotal
+    from .purchase_request_properties_advanced_properties import PurchaseRequestPropertiesAdvancedProperties
     from .purchase_request import PurchaseRequest
-    from .calculate_response_properties_pricing_currency_total import CalculateResponsePropertiesPricingCurrencyTotal
-    from .calculate_response_properties import CalculateResponseProperties
+    from .calculate_price_response_properties_pricing_currency_total import CalculatePriceResponsePropertiesPricingCurrencyTotal
+    from .calculate_price_response_properties import CalculatePriceResponseProperties
     from .calculate_price_response import CalculatePriceResponse
     from .merge_request import MergeRequest
     from .patch import Patch
@@ -82,10 +84,11 @@ __all__ = [
     'ReservationProperties',
     'ReservationResponse',
     'ReservationOrderResponse',
-    'CalculateResponsePropertiesBillingCurrencyTotal',
+    'CalculatePriceResponsePropertiesBillingCurrencyTotal',
+    'PurchaseRequestPropertiesAdvancedProperties',
     'PurchaseRequest',
-    'CalculateResponsePropertiesPricingCurrencyTotal',
-    'CalculateResponseProperties',
+    'CalculatePriceResponsePropertiesPricingCurrencyTotal',
+    'CalculatePriceResponseProperties',
     'CalculatePriceResponse',
     'MergeRequest',
     'Patch',

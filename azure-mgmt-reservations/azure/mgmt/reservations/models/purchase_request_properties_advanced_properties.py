@@ -12,21 +12,18 @@
 from msrest.serialization import Model
 
 
-class CalculateResponsePropertiesBillingCurrencyTotal(Model):
-    """CalculateResponsePropertiesBillingCurrencyTotal.
+class PurchaseRequestPropertiesAdvancedProperties(Model):
+    """PurchaseRequestPropertiesAdvancedProperties.
 
-    :param currency_code:
-    :type currency_code: str
-    :param estimated_total:
-    :type estimated_total: float
+    :param instance_flexibility: Possible values include: 'true', 'false'
+    :type instance_flexibility: str or
+     ~azure.mgmt.reservations.models.InstanceFlexibility
     """
 
     _attribute_map = {
-        'currency_code': {'key': 'currencyCode', 'type': 'str'},
-        'estimated_total': {'key': 'estimatedTotal', 'type': 'float'},
+        'instance_flexibility': {'key': 'instanceFlexibility', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(CalculateResponsePropertiesBillingCurrencyTotal, self).__init__(**kwargs)
-        self.currency_code = kwargs.get('currency_code', None)
-        self.estimated_total = kwargs.get('estimated_total', None)
+        super(PurchaseRequestPropertiesAdvancedProperties, self).__init__(**kwargs)
+        self.instance_flexibility = kwargs.get('instance_flexibility', None)

@@ -17,11 +17,11 @@ class CalculatePriceResponse(Model):
 
     :param properties:
     :type properties:
-     ~azure.mgmt.reservations.models.CalculateResponseProperties
+     ~azure.mgmt.reservations.models.CalculatePriceResponseProperties
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'CalculateResponseProperties'},
+        'properties': {'key': 'properties', 'type': 'CalculatePriceResponseProperties'},
     }
 
     def __init__(self, **kwargs):

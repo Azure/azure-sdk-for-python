@@ -12,21 +12,21 @@
 from msrest.serialization import Model
 
 
-class CalculateResponsePropertiesPricingCurrencyTotal(Model):
-    """CalculateResponsePropertiesPricingCurrencyTotal.
+class CalculatePriceResponsePropertiesBillingCurrencyTotal(Model):
+    """CalculatePriceResponsePropertiesBillingCurrencyTotal.
 
     :param currency_code:
     :type currency_code: str
-    :param estimated_total:
-    :type estimated_total: float
+    :param amount:
+    :type amount: float
     """
 
     _attribute_map = {
         'currency_code': {'key': 'currencyCode', 'type': 'str'},
-        'estimated_total': {'key': 'estimatedTotal', 'type': 'float'},
+        'amount': {'key': 'amount', 'type': 'float'},
     }
 
-    def __init__(self, *, currency_code: str=None, estimated_total: float=None, **kwargs) -> None:
-        super(CalculateResponsePropertiesPricingCurrencyTotal, self).__init__(**kwargs)
-        self.currency_code = currency_code
-        self.estimated_total = estimated_total
+    def __init__(self, **kwargs):
+        super(CalculatePriceResponsePropertiesBillingCurrencyTotal, self).__init__(**kwargs)
+        self.currency_code = kwargs.get('currency_code', None)
+        self.amount = kwargs.get('amount', None)

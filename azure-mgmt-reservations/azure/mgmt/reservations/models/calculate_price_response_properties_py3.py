@@ -12,12 +12,12 @@
 from msrest.serialization import Model
 
 
-class CalculateResponseProperties(Model):
-    """CalculateResponseProperties.
+class CalculatePriceResponseProperties(Model):
+    """CalculatePriceResponseProperties.
 
     :param billing_currency_total:
     :type billing_currency_total:
-     ~azure.mgmt.reservations.models.CalculateResponsePropertiesBillingCurrencyTotal
+     ~azure.mgmt.reservations.models.CalculatePriceResponsePropertiesBillingCurrencyTotal
     :param is_tax_included:
     :type is_tax_included: bool
     :param purchase_request:
@@ -32,27 +32,27 @@ class CalculateResponseProperties(Model):
     :type sku_description: str
     :param pricing_currency_total:
     :type pricing_currency_total:
-     ~azure.mgmt.reservations.models.CalculateResponsePropertiesPricingCurrencyTotal
+     ~azure.mgmt.reservations.models.CalculatePriceResponsePropertiesPricingCurrencyTotal
     """
 
     _attribute_map = {
-        'billing_currency_total': {'key': 'billingCurrencyTotal', 'type': 'CalculateResponsePropertiesBillingCurrencyTotal'},
+        'billing_currency_total': {'key': 'billingCurrencyTotal', 'type': 'CalculatePriceResponsePropertiesBillingCurrencyTotal'},
         'is_tax_included': {'key': 'isTaxIncluded', 'type': 'bool'},
         'purchase_request': {'key': 'purchaseRequest', 'type': 'PurchaseRequest'},
         'is_billing_partner_managed': {'key': 'isBillingPartnerManaged', 'type': 'bool'},
         'reservation_order_id': {'key': 'reservationOrderId', 'type': 'str'},
         'sku_title': {'key': 'skuTitle', 'type': 'str'},
         'sku_description': {'key': 'skuDescription', 'type': 'str'},
-        'pricing_currency_total': {'key': 'pricingCurrencyTotal', 'type': 'CalculateResponsePropertiesPricingCurrencyTotal'},
+        'pricing_currency_total': {'key': 'pricingCurrencyTotal', 'type': 'CalculatePriceResponsePropertiesPricingCurrencyTotal'},
     }
 
-    def __init__(self, **kwargs):
-        super(CalculateResponseProperties, self).__init__(**kwargs)
-        self.billing_currency_total = kwargs.get('billing_currency_total', None)
-        self.is_tax_included = kwargs.get('is_tax_included', None)
-        self.purchase_request = kwargs.get('purchase_request', None)
-        self.is_billing_partner_managed = kwargs.get('is_billing_partner_managed', None)
-        self.reservation_order_id = kwargs.get('reservation_order_id', None)
-        self.sku_title = kwargs.get('sku_title', None)
-        self.sku_description = kwargs.get('sku_description', None)
-        self.pricing_currency_total = kwargs.get('pricing_currency_total', None)
+    def __init__(self, *, billing_currency_total=None, is_tax_included: bool=None, purchase_request=None, is_billing_partner_managed: bool=None, reservation_order_id: str=None, sku_title: str=None, sku_description: str=None, pricing_currency_total=None, **kwargs) -> None:
+        super(CalculatePriceResponseProperties, self).__init__(**kwargs)
+        self.billing_currency_total = billing_currency_total
+        self.is_tax_included = is_tax_included
+        self.purchase_request = purchase_request
+        self.is_billing_partner_managed = is_billing_partner_managed
+        self.reservation_order_id = reservation_order_id
+        self.sku_title = sku_title
+        self.sku_description = sku_description
+        self.pricing_currency_total = pricing_currency_total

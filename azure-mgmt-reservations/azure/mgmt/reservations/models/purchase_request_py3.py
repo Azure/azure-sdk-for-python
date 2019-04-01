@@ -20,7 +20,7 @@ class PurchaseRequest(Model):
     :param location: The Azure Region where the reserved resource lives.
     :type location: str
     :param reserved_resource_type: Possible values include: 'VirtualMachines',
-     'SqlDatabases', 'SuseLinux', 'CosmosDb', 'RedHat'
+     'SqlDatabases', 'SuseLinux', 'CosmosDb'
     :type reserved_resource_type: str or
      ~azure.mgmt.reservations.models.ReservedResourceType
     :param billing_scope_id:
@@ -36,10 +36,9 @@ class PurchaseRequest(Model):
      ~azure.mgmt.reservations.models.AppliedScopeType
     :param applied_scopes:
     :type applied_scopes: list[str]
-    :param instance_flexibility: Possible values include: 'true', 'false',
-     'NotSupported'
-    :type instance_flexibility: str or
-     ~azure.mgmt.reservations.models.InstanceFlexibility
+    :param advanced_properties:
+    :type advanced_properties:
+     ~azure.mgmt.reservations.models.PurchaseRequestPropertiesAdvancedProperties
     """
 
     _attribute_map = {
@@ -52,10 +51,10 @@ class PurchaseRequest(Model):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'applied_scope_type': {'key': 'properties.appliedScopeType', 'type': 'str'},
         'applied_scopes': {'key': 'properties.appliedScopes', 'type': '[str]'},
-        'instance_flexibility': {'key': 'properties.instanceFlexibility', 'type': 'str'},
+        'advanced_properties': {'key': 'properties.advancedProperties', 'type': 'PurchaseRequestPropertiesAdvancedProperties'},
     }
 
-    def __init__(self, *, sku=None, location: str=None, reserved_resource_type=None, billing_scope_id: str=None, term=None, quantity: int=None, display_name: str=None, applied_scope_type=None, applied_scopes=None, instance_flexibility=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, location: str=None, reserved_resource_type=None, billing_scope_id: str=None, term=None, quantity: int=None, display_name: str=None, applied_scope_type=None, applied_scopes=None, advanced_properties=None, **kwargs) -> None:
         super(PurchaseRequest, self).__init__(**kwargs)
         self.sku = sku
         self.location = location
@@ -66,4 +65,4 @@ class PurchaseRequest(Model):
         self.display_name = display_name
         self.applied_scope_type = applied_scope_type
         self.applied_scopes = applied_scopes
-        self.instance_flexibility = instance_flexibility
+        self.advanced_properties = advanced_properties
