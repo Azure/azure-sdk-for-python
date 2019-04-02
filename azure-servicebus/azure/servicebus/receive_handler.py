@@ -356,7 +356,7 @@ class Receiver(BaseHandler):  # pylint: disable=too-many-instance-attributes
     def fetch_next(self, max_batch_size=None, timeout=None):
         """Receive a batch of messages at once.
 
-        This approach it optimal if you wish to process multiple messages simultaneously. Note that the
+        This approach is optimal if you wish to process multiple messages simultaneously. Note that the
         number of messages retrieved in a single batch will be dependent on
         whether `prefetch` was set for the receiver. This call will prioritize returning
         quickly over meeting a specified batch size, and so will return as soon as at least
