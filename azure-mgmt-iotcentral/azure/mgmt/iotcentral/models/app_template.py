@@ -18,43 +18,32 @@ class AppTemplate(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar manifest_id: The ID of the template.
-    :vartype manifest_id: str
-    :ivar manifest_version: The version of the template.
-    :vartype manifest_version: str
-    :ivar name: The name of the template.
+    :ivar id: The application template identifier.
+    :vartype id: str
+    :ivar name: The application template name.
     :vartype name: str
-    :ivar title: The title of the template.
-    :vartype title: str
-    :ivar order: The order of the template in the templates list.
-    :vartype order: float
-    :ivar description: The description of the template.
-    :vartype description: str
+    :param properties: The extra template properties.
+    :type properties: dict[str, str]
+    :ivar type: the resource type.
+    :vartype type: str
     """
 
     _validation = {
-        'manifest_id': {'readonly': True},
-        'manifest_version': {'readonly': True},
+        'id': {'readonly': True},
         'name': {'readonly': True},
-        'title': {'readonly': True},
-        'order': {'readonly': True},
-        'description': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
-        'manifest_id': {'key': 'manifestId', 'type': 'str'},
-        'manifest_version': {'key': 'manifestVersion', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'title': {'key': 'title', 'type': 'str'},
-        'order': {'key': 'order', 'type': 'float'},
-        'description': {'key': 'description', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': '{str}'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(AppTemplate, self).__init__(**kwargs)
-        self.manifest_id = None
-        self.manifest_version = None
+        self.id = None
         self.name = None
-        self.title = None
-        self.order = None
-        self.description = None
+        self.properties = kwargs.get('properties', None)
+        self.type = None
