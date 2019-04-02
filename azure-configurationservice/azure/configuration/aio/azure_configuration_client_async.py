@@ -11,6 +11,7 @@ from msrest.universal_http.async_requests import AsyncRequestsHTTPSender
 from msrest.pipeline.async_requests import (
     AsyncPipelineRequestsHTTPSender
 )
+from ..azure_configuration_client_validation import *
 
 from ..utils import get_endpoint_from_connection_string
 
@@ -48,7 +49,7 @@ class AzureConfigurationClientAsync(object):
         )
 
     def list_configuration_settings(
-            self, labels=None, keys=None, fields=None, **kwargs):
+            self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs):
         """List key values.
 
         List the key values in the configuration store, optionally filtered by
@@ -60,6 +61,9 @@ class AzureConfigurationClientAsync(object):
         :param keys: Filter returned values based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
         :type keys: list[str]
+        :param accept_date_time: Obtain representation of the result related
+         to past time.
+        :type accept_date_time: datetime
         :param fields: Specify which fields to return
         :type fields: list[str]
         :param dict kwargs: if headers key exists, it will be added to the request
@@ -68,10 +72,10 @@ class AzureConfigurationClientAsync(object):
          ~azure.configurationservice.models.KeyValuePaged[~azure.configurationservice.models.KeyValue]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        return self._client.list_configuration_settings(label=labels, key=keys, fields=fields, custom_headers=kwargs.get("headers"))
+        return self._client.list_configuration_settings(label=labels, key=keys, accept_date_time=accept_date_time, fields=fields, custom_headers=kwargs.get("headers"))
     
     async def get_configuration_setting(
-            self, key, label=None, **kwargs):
+            self, key, label=None, accept_date_time=None, **kwargs):
         """Get a KeyValue.
 
         Get the KeyValue for the given key and label.
@@ -80,12 +84,16 @@ class AzureConfigurationClientAsync(object):
         :type key: str
         :param label: Label of key to retreive
         :type label: str
+        :param accept_date_time: Obtain representation of the result related
+         to past time.
+        :type accept_date_time: datetime
         :param dict kwargs: if headers key exists, it will be added to the request
         :return: KeyValue
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        return await self._client.get_configuration_setting(key=key, label=label, custom_headers=kwargs.get("headers"))
+        custom_headers = validate_get_configuration_setting(key)
+        return await self._client.get_configuration_setting(key=key, label=label, accept_date_time=accept_date_time, custom_headers=kwargs.get("headers"))
 
     async def add_configuration_setting(
             self, configuration_setting, **kwargs):
@@ -100,19 +108,8 @@ class AzureConfigurationClientAsync(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        if configuration_setting is None:
-            #throw?
-            return None
+        custom_headers = validate_add_configuration_setting(configuration_setting, **kwargs)
         key = configuration_setting.key
-        if key is None:
-            #throw?
-            return None
-        custom_headers = kwargs.get("headers")
-        if_none_match = {'If-None-Match':'"*"'}
-        if custom_headers is None:
-            custom_headers = if_none_match
-        elif custom_headers.get('If-None-Match', '"*"') == '"*"':
-            custom_headers.update(if_none_match)
         return await self._client.create_or_update_configuration_setting(configuration_setting=configuration_setting, key=key, label=configuration_setting.label, custom_headers=custom_headers)
     
     async def update_configuration_setting(
@@ -138,19 +135,8 @@ class AzureConfigurationClientAsync(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        if key is None:
-            #throw?
-            return None
-        custom_headers = kwargs.get("headers")
+        custom_headers = validate_update_configuration_setting(key, etag, **kwargs)
         current_configuration_setting = await self._client.get_configuration_setting(key, label)
-        if etag is not None:
-            if_match = {'If-Match': '"' + etag + '"'}
-        else:
-            if_match = {'If-Match': '"*"'}
-        if custom_headers is None:
-            custom_headers = if_match
-        elif custom_headers.get('If-Match', '"*"') == '"*"':
-            custom_headers.update(if_match)
         if value is not None:
             current_configuration_setting.value = value
         if content_type is not None:
@@ -176,21 +162,8 @@ class AzureConfigurationClientAsync(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        if configuration_setting is None:
-            #throw?
-            return None
+        custom_headers = validate_set_configuration_setting(configuration_setting, **kwargs)
         key = configuration_setting.key
-        if key is None:
-            #throw?
-            return None
-        custom_headers = kwargs.get("headers")
-        etag = configuration_setting.etag
-        if etag is not None:
-            if_match = {'If-Match': '"' + etag + '"'}
-            if custom_headers is None:
-                custom_headers = if_match
-            else:
-                custom_headers.update(if_match)
         return await self._client.create_or_update_configuration_setting(configuration_setting=configuration_setting, key=key, label=configuration_setting.label, custom_headers=custom_headers)
     
     async def delete_configuration_setting(
@@ -208,16 +181,7 @@ class AzureConfigurationClientAsync(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        if key is None:
-            #throw?
-            return None
-        custom_headers = kwargs.get("headers")
-        if etag is not None:
-            if_match = {'If-Match': '"' + etag + '"'}
-            if custom_headers is None:
-                custom_headers = if_match
-            else:
-                custom_headers.update(if_match)
+        custom_headers = validate_delete_configuration_setting(key, etag, **kwargs)
         return await self._client.delete_configuration_setting(key=key, label=label, custom_headers=custom_headers)
 
     async def lock_configuration_setting(
@@ -233,10 +197,7 @@ class AzureConfigurationClientAsync(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        if key is None:
-            #throw?
-            return None
-        custom_headers = kwargs.get("headers")
+        custom_headers = validate_lock_configuration_setting(key)
         return await self._client.lock_configuration_setting(key=key, label=label, custom_headers=custom_headers)
     
     async def unlock_configuration_setting(
@@ -252,14 +213,11 @@ class AzureConfigurationClientAsync(object):
         :rtype: ~azure.configurationservice.models.KeyValue
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        if key is None:
-            #throw?
-            return None
-        custom_headers = kwargs.get("headers")
+        custom_headers = validate_unlock_configuration_setting(key)
         return await self._client.unlock_configuration_setting(key=key, label=label, custom_headers=custom_headers)
     
     def list_revisions(
-            self, labels=None, keys=None, fields=None, **kwargs):
+            self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs):
         """
 
         :param labels: Filter returned values based on their label. '*' can be
@@ -268,6 +226,9 @@ class AzureConfigurationClientAsync(object):
         :param keys: Filter returned values based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
         :type keys: list[str]
+        :param accept_date_time: Obtain representation of the result related
+         to past time.
+        :type accept_date_time: datetime
         :param fields: Specify which fields to return
         :type fields: list[str]
         :param dict kwargs: if headers key exists, it will be added to the request
@@ -276,4 +237,4 @@ class AzureConfigurationClientAsync(object):
          ~azure.configurationservice.models.KeyValuePaged[~azure.configurationservice.models.KeyValue]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        return self._client.list_revisions(label=labels, key=keys, fields=fields, custom_headers=kwargs.get("headers"))
+        return self._client.list_revisions(label=labels, key=keys, accept_date_time=accept_date_time, fields=fields, custom_headers=kwargs.get("headers"))
