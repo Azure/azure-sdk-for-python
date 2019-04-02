@@ -13,27 +13,23 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
-from .operations.regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
-from .operations.regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
 from .operations.pricings_operations import PricingsOperations
-from .operations.security_contacts_operations import SecurityContactsOperations
-from .operations.workspace_settings_operations import WorkspaceSettingsOperations
+from .operations.alerts_operations import AlertsOperations
+from .operations.settings_operations import SettingsOperations
+from .operations.allowed_connections_operations import AllowedConnectionsOperations
+from .operations.discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
+from .operations.external_security_solutions_operations import ExternalSecuritySolutionsOperations
+from .operations.jit_network_access_policies_operations import JitNetworkAccessPoliciesOperations
+from .operations.locations_operations import LocationsOperations
+from .operations.operations import Operations
+from .operations.tasks_operations import TasksOperations
+from .operations.topology_operations import TopologyOperations
+from .operations.advanced_threat_protection_operations import AdvancedThreatProtectionOperations
 from .operations.auto_provisioning_settings_operations import AutoProvisioningSettingsOperations
 from .operations.compliances_operations import CompliancesOperations
-from .operations.advanced_threat_protection_operations import AdvancedThreatProtectionOperations
-from .operations.device_security_groups_operations import DeviceSecurityGroupsOperations
-from .operations.settings_operations import SettingsOperations
 from .operations.information_protection_policies_operations import InformationProtectionPoliciesOperations
-from .operations.operations import Operations
-from .operations.locations_operations import LocationsOperations
-from .operations.tasks_operations import TasksOperations
-from .operations.alerts_operations import AlertsOperations
-from .operations.discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
-from .operations.jit_network_access_policies_operations import JitNetworkAccessPoliciesOperations
-from .operations.external_security_solutions_operations import ExternalSecuritySolutionsOperations
-from .operations.topology_operations import TopologyOperations
-from .operations.allowed_connections_operations import AllowedConnectionsOperations
+from .operations.security_contacts_operations import SecurityContactsOperations
+from .operations.workspace_settings_operations import WorkspaceSettingsOperations
 from . import models
 
 
@@ -81,48 +77,40 @@ class SecurityCenter(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: SecurityCenterConfiguration
 
-    :ivar regulatory_compliance_standards: RegulatoryComplianceStandards operations
-    :vartype regulatory_compliance_standards: azure.mgmt.security.operations.RegulatoryComplianceStandardsOperations
-    :ivar regulatory_compliance_controls: RegulatoryComplianceControls operations
-    :vartype regulatory_compliance_controls: azure.mgmt.security.operations.RegulatoryComplianceControlsOperations
-    :ivar regulatory_compliance_assessments: RegulatoryComplianceAssessments operations
-    :vartype regulatory_compliance_assessments: azure.mgmt.security.operations.RegulatoryComplianceAssessmentsOperations
     :ivar pricings: Pricings operations
     :vartype pricings: azure.mgmt.security.operations.PricingsOperations
-    :ivar security_contacts: SecurityContacts operations
-    :vartype security_contacts: azure.mgmt.security.operations.SecurityContactsOperations
-    :ivar workspace_settings: WorkspaceSettings operations
-    :vartype workspace_settings: azure.mgmt.security.operations.WorkspaceSettingsOperations
+    :ivar alerts: Alerts operations
+    :vartype alerts: azure.mgmt.security.operations.AlertsOperations
+    :ivar settings: Settings operations
+    :vartype settings: azure.mgmt.security.operations.SettingsOperations
+    :ivar allowed_connections: AllowedConnections operations
+    :vartype allowed_connections: azure.mgmt.security.operations.AllowedConnectionsOperations
+    :ivar discovered_security_solutions: DiscoveredSecuritySolutions operations
+    :vartype discovered_security_solutions: azure.mgmt.security.operations.DiscoveredSecuritySolutionsOperations
+    :ivar external_security_solutions: ExternalSecuritySolutions operations
+    :vartype external_security_solutions: azure.mgmt.security.operations.ExternalSecuritySolutionsOperations
+    :ivar jit_network_access_policies: JitNetworkAccessPolicies operations
+    :vartype jit_network_access_policies: azure.mgmt.security.operations.JitNetworkAccessPoliciesOperations
+    :ivar locations: Locations operations
+    :vartype locations: azure.mgmt.security.operations.LocationsOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.security.operations.Operations
+    :ivar tasks: Tasks operations
+    :vartype tasks: azure.mgmt.security.operations.TasksOperations
+    :ivar topology: Topology operations
+    :vartype topology: azure.mgmt.security.operations.TopologyOperations
+    :ivar advanced_threat_protection: AdvancedThreatProtection operations
+    :vartype advanced_threat_protection: azure.mgmt.security.operations.AdvancedThreatProtectionOperations
     :ivar auto_provisioning_settings: AutoProvisioningSettings operations
     :vartype auto_provisioning_settings: azure.mgmt.security.operations.AutoProvisioningSettingsOperations
     :ivar compliances: Compliances operations
     :vartype compliances: azure.mgmt.security.operations.CompliancesOperations
-    :ivar advanced_threat_protection: AdvancedThreatProtection operations
-    :vartype advanced_threat_protection: azure.mgmt.security.operations.AdvancedThreatProtectionOperations
-    :ivar device_security_groups: DeviceSecurityGroups operations
-    :vartype device_security_groups: azure.mgmt.security.operations.DeviceSecurityGroupsOperations
-    :ivar settings: Settings operations
-    :vartype settings: azure.mgmt.security.operations.SettingsOperations
     :ivar information_protection_policies: InformationProtectionPolicies operations
     :vartype information_protection_policies: azure.mgmt.security.operations.InformationProtectionPoliciesOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.security.operations.Operations
-    :ivar locations: Locations operations
-    :vartype locations: azure.mgmt.security.operations.LocationsOperations
-    :ivar tasks: Tasks operations
-    :vartype tasks: azure.mgmt.security.operations.TasksOperations
-    :ivar alerts: Alerts operations
-    :vartype alerts: azure.mgmt.security.operations.AlertsOperations
-    :ivar discovered_security_solutions: DiscoveredSecuritySolutions operations
-    :vartype discovered_security_solutions: azure.mgmt.security.operations.DiscoveredSecuritySolutionsOperations
-    :ivar jit_network_access_policies: JitNetworkAccessPolicies operations
-    :vartype jit_network_access_policies: azure.mgmt.security.operations.JitNetworkAccessPoliciesOperations
-    :ivar external_security_solutions: ExternalSecuritySolutions operations
-    :vartype external_security_solutions: azure.mgmt.security.operations.ExternalSecuritySolutionsOperations
-    :ivar topology: Topology operations
-    :vartype topology: azure.mgmt.security.operations.TopologyOperations
-    :ivar allowed_connections: AllowedConnections operations
-    :vartype allowed_connections: azure.mgmt.security.operations.AllowedConnectionsOperations
+    :ivar security_contacts: SecurityContacts operations
+    :vartype security_contacts: azure.mgmt.security.operations.SecurityContactsOperations
+    :ivar workspace_settings: WorkspaceSettings operations
+    :vartype workspace_settings: azure.mgmt.security.operations.WorkspaceSettingsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -145,45 +133,37 @@ class SecurityCenter(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.regulatory_compliance_standards = RegulatoryComplianceStandardsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.regulatory_compliance_controls = RegulatoryComplianceControlsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.regulatory_compliance_assessments = RegulatoryComplianceAssessmentsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.pricings = PricingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.security_contacts = SecurityContactsOperations(
+        self.alerts = AlertsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.workspace_settings = WorkspaceSettingsOperations(
+        self.settings = SettingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.allowed_connections = AllowedConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.discovered_security_solutions = DiscoveredSecuritySolutionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.external_security_solutions = ExternalSecuritySolutionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.jit_network_access_policies = JitNetworkAccessPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.locations = LocationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.tasks = TasksOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.topology = TopologyOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.advanced_threat_protection = AdvancedThreatProtectionOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.auto_provisioning_settings = AutoProvisioningSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.compliances = CompliancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.advanced_threat_protection = AdvancedThreatProtectionOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.device_security_groups = DeviceSecurityGroupsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.settings = SettingsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.information_protection_policies = InformationProtectionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.operations = Operations(
+        self.security_contacts = SecurityContactsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.locations = LocationsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.tasks = TasksOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.alerts = AlertsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.discovered_security_solutions = DiscoveredSecuritySolutionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.jit_network_access_policies = JitNetworkAccessPoliciesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.external_security_solutions = ExternalSecuritySolutionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.topology = TopologyOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.allowed_connections = AllowedConnectionsOperations(
+        self.workspace_settings = WorkspaceSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
