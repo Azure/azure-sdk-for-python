@@ -9,7 +9,7 @@ from azure.core.exceptions import ClientRequestError
 
 from msrest import Serializer, Deserializer
 
-from ._models import Secret, SecretPaged, SecretAttributes
+from ._models import Secret, SecretAttributesPaged, SecretAttributes, _SecretManagementAttributes
 
 from .._internal import _BackupResult
 
@@ -66,6 +66,7 @@ class SecretClient:
         client_models = {
             'Secret': Secret,
             'SecretAttributes': SecretAttributes,
+            '_SecretManagementAttributes': _SecretManagementAttributes,
             '_BackupResult': _BackupResult
         }
         self._serialize = Serializer(client_models)
@@ -154,7 +155,7 @@ class SecretClient:
 
 
     def update_secret_attributes(self, name, version, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
-
+        # type: () -> SecretAttributes
         url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', name, version)])
 
         attributes = SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
@@ -178,7 +179,7 @@ class SecretClient:
         if response.status_code != 200:
             raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
 
-        return self._deserialize('Secret', response)
+        return self._deserialize('SecretAttributes', response)
 
 
     def list_secrets(self, max_page_size=None, **kwargs):
@@ -194,7 +195,7 @@ class SecretClient:
         :type maxresults: int
         :return: An iterator like instance of Secrets
         :rtype:
-         ~azure.keyvault.secrets.SecretPaged[~azure.keyvault.secret.Secret]
+         ~azure.keyvault.secrets.SecretAttributesPaged[~azure.keyvault.secret.Secret]
         :raises:
          :class:`ClientRequestError<azure.core.ClientRequestError>`
         """
@@ -228,7 +229,7 @@ class SecretClient:
 
             return response
 
-        return SecretPaged(internal_paging, self._deserialize.dependencies)
+        return SecretAttributesPaged(internal_paging, self._deserialize.dependencies)
 
     def list_secret_versions(self, name, max_page_size=None, **kwargs):
         """List all versions of the specified secret.
@@ -244,7 +245,7 @@ class SecretClient:
         :type maxresults: int
         :return: An iterator like instance of Secret
         :rtype:
-         ~azure.keyvault.secrets.SecretPaged[~azure.keyvault.secret.Secret]
+         ~azure.keyvault.secrets.SecretAttributesPaged[~azure.keyvault.secret.Secret]
         :raises:
          :class:`ClientRequestError<azure.core.ClientRequestError>`
         """
@@ -278,7 +279,7 @@ class SecretClient:
 
             return response
 
-        return SecretPaged(internal_paging, self._deserialize.dependencies)
+        return SecretAttributesPaged(internal_paging, self._deserialize.dependencies)
 
     def backup_secret(self, name, **kwargs):
         """Backs up the specified secret.
@@ -351,7 +352,7 @@ class SecretClient:
         # which implies the secret value would be present, but in fact this
         # does not appear to be the case; should we return a different model
         # to avoid value=None?
-        return self._deserialize('Secret', response)
+        return self._deserialize('SecretAttributes', response)
 
     def delete_secret(self, name, **kwargs):
         pass
