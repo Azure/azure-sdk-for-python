@@ -36,9 +36,10 @@ class PurchaseRequest(Model):
      ~azure.mgmt.reservations.models.AppliedScopeType
     :param applied_scopes:
     :type applied_scopes: list[str]
-    :param advanced_properties:
-    :type advanced_properties:
-     ~azure.mgmt.reservations.models.PurchaseRequestPropertiesAdvancedProperties
+    :param reserved_resource_properties: properties specific to each reserved
+     resource type.
+    :type reserved_resource_properties:
+     ~azure.mgmt.reservations.models.PurchaseRequestPropertiesReservedResourceProperties
     """
 
     _attribute_map = {
@@ -51,7 +52,7 @@ class PurchaseRequest(Model):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'applied_scope_type': {'key': 'properties.appliedScopeType', 'type': 'str'},
         'applied_scopes': {'key': 'properties.appliedScopes', 'type': '[str]'},
-        'advanced_properties': {'key': 'properties.advancedProperties', 'type': 'PurchaseRequestPropertiesAdvancedProperties'},
+        'reserved_resource_properties': {'key': 'properties.reservedResourceProperties', 'type': 'PurchaseRequestPropertiesReservedResourceProperties'},
     }
 
     def __init__(self, **kwargs):
@@ -65,4 +66,4 @@ class PurchaseRequest(Model):
         self.display_name = kwargs.get('display_name', None)
         self.applied_scope_type = kwargs.get('applied_scope_type', None)
         self.applied_scopes = kwargs.get('applied_scopes', None)
-        self.advanced_properties = kwargs.get('advanced_properties', None)
+        self.reserved_resource_properties = kwargs.get('reserved_resource_properties', None)

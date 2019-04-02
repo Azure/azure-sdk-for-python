@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class PurchaseRequestPropertiesAdvancedProperties(Model):
-    """PurchaseRequestPropertiesAdvancedProperties.
+class PurchaseRequestPropertiesReservedResourceProperties(Model):
+    """properties specific to each reserved resource type.
 
     :param instance_flexibility: Possible values include: 'true', 'false'
     :type instance_flexibility: str or
@@ -25,5 +25,5 @@ class PurchaseRequestPropertiesAdvancedProperties(Model):
     }
 
     def __init__(self, *, instance_flexibility=None, **kwargs) -> None:
-        super(PurchaseRequestPropertiesAdvancedProperties, self).__init__(**kwargs)
+        super(PurchaseRequestPropertiesReservedResourceProperties, self).__init__(**kwargs)
         self.instance_flexibility = instance_flexibility

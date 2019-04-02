@@ -13,7 +13,8 @@ from msrest.serialization import Model
 
 
 class CalculatePriceResponsePropertiesPricingCurrencyTotal(Model):
-    """CalculatePriceResponsePropertiesPricingCurrencyTotal.
+    """Amount that Microsoft uses for record. Used during refund for calculating
+    refund limit. Tax is not included.
 
     :param currency_code:
     :type currency_code: str

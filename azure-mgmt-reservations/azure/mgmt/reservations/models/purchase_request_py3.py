@@ -36,9 +36,10 @@ class PurchaseRequest(Model):
      ~azure.mgmt.reservations.models.AppliedScopeType
     :param applied_scopes:
     :type applied_scopes: list[str]
-    :param advanced_properties:
-    :type advanced_properties:
-     ~azure.mgmt.reservations.models.PurchaseRequestPropertiesAdvancedProperties
+    :param reserved_resource_properties: properties specific to each reserved
+     resource type.
+    :type reserved_resource_properties:
+     ~azure.mgmt.reservations.models.PurchaseRequestPropertiesReservedResourceProperties
     """
 
     _attribute_map = {
@@ -51,10 +52,10 @@ class PurchaseRequest(Model):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'applied_scope_type': {'key': 'properties.appliedScopeType', 'type': 'str'},
         'applied_scopes': {'key': 'properties.appliedScopes', 'type': '[str]'},
-        'advanced_properties': {'key': 'properties.advancedProperties', 'type': 'PurchaseRequestPropertiesAdvancedProperties'},
+        'reserved_resource_properties': {'key': 'properties.reservedResourceProperties', 'type': 'PurchaseRequestPropertiesReservedResourceProperties'},
     }
 
-    def __init__(self, *, sku=None, location: str=None, reserved_resource_type=None, billing_scope_id: str=None, term=None, quantity: int=None, display_name: str=None, applied_scope_type=None, applied_scopes=None, advanced_properties=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, location: str=None, reserved_resource_type=None, billing_scope_id: str=None, term=None, quantity: int=None, display_name: str=None, applied_scope_type=None, applied_scopes=None, reserved_resource_properties=None, **kwargs) -> None:
         super(PurchaseRequest, self).__init__(**kwargs)
         self.sku = sku
         self.location = location
@@ -65,4 +66,4 @@ class PurchaseRequest(Model):
         self.display_name = display_name
         self.applied_scope_type = applied_scope_type
         self.applied_scopes = applied_scopes
-        self.advanced_properties = advanced_properties
+        self.reserved_resource_properties = reserved_resource_properties

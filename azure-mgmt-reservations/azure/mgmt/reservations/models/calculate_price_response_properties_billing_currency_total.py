@@ -13,7 +13,8 @@ from msrest.serialization import Model
 
 
 class CalculatePriceResponsePropertiesBillingCurrencyTotal(Model):
-    """CalculatePriceResponsePropertiesBillingCurrencyTotal.
+    """Currency and amount that customer will be charged in customer's local
+    currency. Tax is not included.
 
     :param currency_code:
     :type currency_code: str

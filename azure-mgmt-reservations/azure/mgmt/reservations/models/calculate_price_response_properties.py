@@ -15,30 +15,27 @@ from msrest.serialization import Model
 class CalculatePriceResponseProperties(Model):
     """CalculatePriceResponseProperties.
 
-    :param billing_currency_total:
+    :param billing_currency_total: Currency and amount that customer will be
+     charged in customer's local currency. Tax is not included.
     :type billing_currency_total:
      ~azure.mgmt.reservations.models.CalculatePriceResponsePropertiesBillingCurrencyTotal
-    :param is_tax_included:
-    :type is_tax_included: bool
-    :param purchase_request:
-    :type purchase_request: ~azure.mgmt.reservations.models.PurchaseRequest
     :param is_billing_partner_managed:
     :type is_billing_partner_managed: bool
-    :param reservation_order_id:
+    :param reservation_order_id: GUID that represents reservation order that
+     can be placed after calculating price
     :type reservation_order_id: str
-    :param sku_title:
+    :param sku_title: Long name for the SKU that is being purchased
     :type sku_title: str
-    :param sku_description:
+    :param sku_description: Short name for the SKU that is being purchased
     :type sku_description: str
-    :param pricing_currency_total:
+    :param pricing_currency_total: Amount that Microsoft uses for record. Used
+     during refund for calculating refund limit. Tax is not included.
     :type pricing_currency_total:
      ~azure.mgmt.reservations.models.CalculatePriceResponsePropertiesPricingCurrencyTotal
     """
 
     _attribute_map = {
         'billing_currency_total': {'key': 'billingCurrencyTotal', 'type': 'CalculatePriceResponsePropertiesBillingCurrencyTotal'},
-        'is_tax_included': {'key': 'isTaxIncluded', 'type': 'bool'},
-        'purchase_request': {'key': 'purchaseRequest', 'type': 'PurchaseRequest'},
         'is_billing_partner_managed': {'key': 'isBillingPartnerManaged', 'type': 'bool'},
         'reservation_order_id': {'key': 'reservationOrderId', 'type': 'str'},
         'sku_title': {'key': 'skuTitle', 'type': 'str'},
@@ -49,8 +46,6 @@ class CalculatePriceResponseProperties(Model):
     def __init__(self, **kwargs):
         super(CalculatePriceResponseProperties, self).__init__(**kwargs)
         self.billing_currency_total = kwargs.get('billing_currency_total', None)
-        self.is_tax_included = kwargs.get('is_tax_included', None)
-        self.purchase_request = kwargs.get('purchase_request', None)
         self.is_billing_partner_managed = kwargs.get('is_billing_partner_managed', None)
         self.reservation_order_id = kwargs.get('reservation_order_id', None)
         self.sku_title = kwargs.get('sku_title', None)
