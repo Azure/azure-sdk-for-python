@@ -38,7 +38,7 @@ class SecretClient:
         config.redirect = RedirectPolicy(**kwargs)
         return config
 
-    def __init__(self, credentials, vault_url, config=None, **kwargs):
+    def __init__(self, vault_url, credentials, config=None, **kwargs):
         """Creates a SecretClient with the for managing secrets in the specified vault.
 
         :param credentials:  A credential or credential provider which can be used to authenticate to the vault
