@@ -8,7 +8,8 @@
 from msrest.serialization import Model
 from msrest.paging import Paged
 from .._internal import _parse_vault_id
-
+from datetime import datetime
+from typing import Any, Mapping
 
 class Secret(Model):
     """A secret consisting of a value, id and its attributes.
@@ -30,7 +31,7 @@ class Secret(Model):
     """
 
     _validation = {
-        'kid': {'readonly': True},
+        'key_id': {'readonly': True},
         'managed': {'readonly': True},
     }
 
@@ -38,45 +39,78 @@ class Secret(Model):
         'value': {'key': 'value', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'content_type': {'key': 'contentType', 'type': 'str'},
-        'attributes': {'key': 'attributes', 'type': 'SecretAttributes'},
+        '_attributes': {'key': 'attributes', 'type': 'SecretAttributes'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'key_id': {'key': 'kid', 'type': 'str'},
         'managed': {'key': 'managed', 'type': 'bool'},
     }
 
     @property
+    def enabled(self):
+        # type: () -> bool
+        """Gets the Secret's 'enabled' attribute"""
+        return self._attributes.enabled
+
+    @property
+    def not_before(self):
+        # type: () -> datetime
+        """Gets the Secret's 'not_before' attribute"""
+        return self._attributes.not_before
+
+    @property
+    def expires(self):
+        # type: () -> datetime
+        """Gets the Secret's 'expires' attribute"""
+        return self._attributes.expires
+
+    @property
+    def created(self):
+        # type: () -> datetime
+        """Gets the Secret's 'created' attribute"""
+        return self._attributes.created
+
+    @property
+    def updated(self):
+        # type: () -> datetime
+        """Gets the Secret's 'updated' attribute"""
+        return self._attributes.updated
+
+    @property
+    def recovery_level(self):
+        # type: () -> str
+        """Gets the Secret's 'recovery_level' attribute"""
+        return self._attributes.recovery_level
+
+    @property
     def vault_url(self):
-        """The url to the vault containing the secret"""
-        vault_id = self._get_vault_id()
-        return vault_id.vault_url if vault_id else None
+        # type: () -> str
+        """The url of the vault containing the secret"""
+        return self._vault_id.vault_url if self._vault_id else None
 
     @property
     def name(self):
+        # type: () -> str
         """The name of the secret"""
-        vault_id = self._get_vault_id()
-        return vault_id.name if vault_id else None
+        return self._vault_id.name if self._vault_id else None
 
     @property
     def version(self):
+        # type: () -> str
         """The version of the secret"""
-        vault_id = self._get_vault_id()
-        return vault_id.version if vault_id else None
+        return self._vault_id.version if self._vault_id else None
 
     def __init__(self, **kwargs):
+        # type: (Mapping[str, Any]) -> None
         super(Secret, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.id = kwargs.get('id', None)
+        if self.id:
+            self._vault_id = _parse_vault_id(self.id)
         self.content_type = kwargs.get('content_type', None)
-        self.attributes = kwargs.get('attributes', None)
+        self._attributes = kwargs.get('_attributes', None)
         self.tags = kwargs.get('tags', None)
         self.key_id = None
         self.managed = None
-        self._vault_id = None
-
-    def _get_vault_id(self):
-        if not self._vault_id and self.id:
-            self._vault_id = _parse_vault_id(self.id)
-        return self._vault_id
 
 
 class SecretAttributes(Model):

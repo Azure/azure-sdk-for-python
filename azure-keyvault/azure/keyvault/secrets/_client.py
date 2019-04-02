@@ -79,7 +79,7 @@ class SecretClient:
         Vault. This operation requires the secrets/get permission.
 
         :param str name: The name of the secret.
-        :param str version: The version of the secret.  If not specified the latest version of 
+        :param str version: The version of the secret.  If not specified the latest version of
             the secret is returned
         :return: Secret
         :rtype: ~azure.keyvault.secrets.Secret
@@ -106,7 +106,7 @@ class SecretClient:
 
         return self._deserialize('Secret', response)
 
-    def set_secret(self, name, value, content_type=None, attributes=None, tags=None, **kwargs):
+    def set_secret(self, name, value, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
         """Sets a secret in the vault.
 
         The SET operation adds a secret to the Azure Key Vault. If the named
@@ -127,6 +127,7 @@ class SecretClient:
         :raises:
         :class:`azure.core.ClientRequestError`
         """
+        attributes = SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
         secret = Secret(value=value, content_type=content_type, attributes=attributes, tags=tags)
 
         url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', name)])
@@ -152,10 +153,11 @@ class SecretClient:
         return self._deserialize('Secret', response)
 
 
-    def update_secret(self, name, version, content_type=None, attributes=None, tags=None, **kwargs):
+    def update_secret_attributes(self, name, version, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
 
         url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', name, version)])
 
+        attributes = SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
         secret = Secret(content_type=content_type, attributes=attributes, tags=tags)
 
         query_parameters = {'api-version': self._api_version}
@@ -184,7 +186,7 @@ class SecretClient:
 
         The Get Secrets operation is applicable to the entire vault. However,
         only the latest secret identifier and its attributes are provided in the
-        response. No secret values are returned and individual secret versions are 
+        response. No secret values are returned and individual secret versions are
         not listed in the response.  This operation requires the secrets/list permission.
 
         :param max_page_size: Maximum number of results to return in a page. If
@@ -345,6 +347,10 @@ class SecretClient:
         if response.status_code != 200:
             raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
 
+        # TODO: REST API documentation states response includes a SecretBundle,
+        # which implies the secret value would be present, but in fact this
+        # does not appear to be the case; should we return a different model
+        # to avoid value=None?
         return self._deserialize('Secret', response)
 
     def delete_secret(self, name, **kwargs):

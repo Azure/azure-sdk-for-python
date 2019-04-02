@@ -13,6 +13,17 @@ import pytest
 class KeyVaultSecretTest(KeyvaultTestCase):
 
 
+    def _assert_secret_attributes_equal(self, s1, s2):
+        self.assertEqual(s1.id , s2.id)
+        self.assertEqual(s1.content_type, s2.content_type)
+        self.assertEqual(s1.enabled, s2.enabled)
+        self.assertEqual(s1.not_before, s2.not_before)
+        self.assertEqual(s1.expires, s2.expires)
+        self.assertEqual(s1.created, s2.created)
+        self.assertEqual(s1.updated, s2.updated)
+        self.assertEqual(s1.recovery_level, s2.recovery_level)
+        self.assertEqual(s1.key_id, s2.key_id)
+
     def _validate_secret_bundle(self, bundle, vault, secret_name, secret_value):
         prefix = '{}secrets/{}/'.format(vault, secret_name)
         id = bundle.id
@@ -20,14 +31,15 @@ class KeyVaultSecretTest(KeyvaultTestCase):
                         "String should start with '{}', but value is '{}'".format(prefix, id))
         self.assertEqual(bundle.value, secret_value,
                          "value should be '{}', but is '{}'".format(secret_value, bundle.value))
-        self.assertTrue(bundle.attributes.created and bundle.attributes.updated,
+        self.assertTrue(bundle.created and bundle.updated,
                         'Missing required date attributes.')
 
     def _validate_secret_list(self, secrets, expected):
         for secret in secrets:
+            # TODO: what if secrets contains unexpected entries?)
             if secret.id in expected.keys():
-                attributes = expected[secret.id]
-                self.assertEqual(attributes, secret.attributes)
+                expected_secret = expected[secret.id]
+                self._assert_secret_attributes_equal(expected_secret, secret)
                 del expected[secret.id]
 
 
@@ -51,16 +63,17 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         self.assertEqual(created_bundle, client.secrets.get_secret(created_bundle.name, created_bundle.version))
 
         def _update_secret(secret):
-            updating_bundle = copy.deepcopy(created_bundle)
-            updating_bundle.content_type = 'text/plain'
-            updating_bundle.attributes.expires = date_parse.parse('2050-02-02T08:00:00.000Z')
-            updating_bundle.tags = {'foo': 'updated tag'}
-            secret_bundle = client.secrets.update_secret(
-                secret.name, secret.version, updating_bundle.content_type, updating_bundle.attributes,
-                updating_bundle.tags)
-            self.assertEqual(updating_bundle.tags, secret_bundle.tags)
-            self.assertEqual(updating_bundle.id, secret_bundle.id)
-            self.assertNotEqual(str(updating_bundle.attributes.updated), str(secret_bundle.attributes.updated))
+            content_type = 'text/plain'
+            expires = date_parse.parse('2050-02-02T08:00:00.000Z')
+            tags = {'foo': 'updated tag'}
+            secret_bundle = client.secrets.update_secret_attributes(
+                secret.name, secret.version,
+                content_type=content_type,
+                expires=expires,
+                tags=tags)
+            self.assertEqual(tags, secret_bundle.tags)
+            self.assertEqual(secret.id, secret_bundle.id)
+            self.assertNotEqual(str(secret.updated), str(secret_bundle.updated))
             return secret_bundle
 
         # update secret with version
@@ -97,7 +110,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
                 try:
                     secret_bundle = client.secrets.set_secret(secret_name, secret_value)
                     sid = secret_bundle.id
-                    expected[sid] = secret_bundle.attributes
+                    expected[sid] = secret_bundle
                 except Exception as ex:
                     if hasattr(ex, 'message') and 'Throttled' in ex.message:
                         error_count += 1
@@ -128,7 +141,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
             while not secret_bundle:
                 try:
                     secret_bundle = client.secrets.set_secret(secret_name, secret_value)
-                    expected[secret_bundle.id] = secret_bundle.attributes
+                    expected[secret_bundle.id] = secret_bundle
                 except Exception as ex:
                     if hasattr(ex, 'message') and 'Throttled' in ex.message:
                         error_count += 1
@@ -158,7 +171,8 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         client.secrets.delete_secret(created_bundle.name)
 
         # restore secret
-        self.assertEqual(created_bundle.attributes, client.secrets.restore_secret(secret_backup).attributes)
+        restored = client.secrets.restore_secret(secret_backup)
+        self._assert_secret_attributes_equal(created_bundle, restored)
 
     @pytest.mark.skip("recover/purge not yet implemented")
     @ResourceGroupPreparer()
