@@ -39,15 +39,14 @@ class ReservationOrderOperations(object):
         self.config = config
 
     def calculate(
-            self, parameters, custom_headers=None, raw=False, **operation_config):
+            self, body, custom_headers=None, raw=False, **operation_config):
         """Calculate price for a `ReservationOrder`.
 
         Calculate price for placing a `ReservationOrder`
         .
 
-        :param parameters: Information needed for calculate or purchase
-         reservation
-        :type parameters: ~azure.mgmt.reservations.models.PurchaseRequest
+        :param body: Information needed for calculate or purchase reservation
+        :type body: ~azure.mgmt.reservations.models.PurchaseRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -78,7 +77,7 @@ class ReservationOrderOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'PurchaseRequest')
+        body_content = self._serialize.body(body, 'PurchaseRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -163,7 +162,7 @@ class ReservationOrderOperations(object):
 
 
     def _purchase_initial(
-            self, reservation_order_id, parameters, custom_headers=None, raw=False, **operation_config):
+            self, reservation_order_id, body, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.purchase.metadata['url']
         path_format_arguments = {
@@ -187,7 +186,7 @@ class ReservationOrderOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'PurchaseRequest')
+        body_content = self._serialize.body(body, 'PurchaseRequest')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -210,7 +209,7 @@ class ReservationOrderOperations(object):
         return deserialized
 
     def purchase(
-            self, reservation_order_id, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, reservation_order_id, body, custom_headers=None, raw=False, polling=True, **operation_config):
         """Purchase `ReservationOrder`.
 
         Purchase `ReservationOrder` and create resource under the specificed
@@ -219,9 +218,8 @@ class ReservationOrderOperations(object):
 
         :param reservation_order_id: Order Id of the reservation
         :type reservation_order_id: str
-        :param parameters: Information needed for calculate or purchase
-         reservation
-        :type parameters: ~azure.mgmt.reservations.models.PurchaseRequest
+        :param body: Information needed for calculate or purchase reservation
+        :type body: ~azure.mgmt.reservations.models.PurchaseRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -239,7 +237,7 @@ class ReservationOrderOperations(object):
         """
         raw_result = self._purchase_initial(
             reservation_order_id=reservation_order_id,
-            parameters=parameters,
+            body=body,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
