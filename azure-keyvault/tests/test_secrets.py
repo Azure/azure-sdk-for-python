@@ -2,6 +2,7 @@ from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 from keyvault_preparer import KeyVaultPreparer
 from keyvault_testcase import KeyvaultTestCase
 from azure.keyvault import VaultClient
+from azure.core.exceptions import ClientRequestError
 
 import copy
 from dateutil import parser as date_parse
@@ -83,13 +84,15 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         client.secrets.delete_secret(secret_bundle.name)
 
         # get secret returns not found
-        try:
+        with self.assertRaises(ClientRequestError):
             client.secrets.get_secret(secret_bundle.name, '')
-        except Exception as ex:
-            # TODO ClientRequestError doesn't surface message
-            pass
-            # if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
-            #     raise ex
+        # TODO: ClientRequestError doesn't conveniently expose message
+        # try:
+        #     client.secrets.get_secret(secret_bundle.name, "")
+        # except Exception as ex:
+        #     if not hasattr(ex, "message") or "not found" not in ex.message.lower():
+        #         raise ex
+
 
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
@@ -123,6 +126,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         result = list(client.secrets.list_secrets(max_secrets))
         self._validate_secret_list(result, expected)
 
+
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
     def test_list_versions(self, vault, **kwargs):
@@ -153,6 +157,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         # list secret versions
         self._validate_secret_list(list(client.secrets.list_secret_versions(secret_name)), expected)
 
+
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
     def test_backup_restore(self, vault, **kwargs):
@@ -174,54 +179,55 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         restored = client.secrets.restore_secret(secret_backup)
         self._assert_secret_attributes_equal(created_bundle, restored)
 
-    @pytest.mark.skip("recover/purge not yet implemented")
     @ResourceGroupPreparer()
     @KeyVaultPreparer(enable_soft_delete=True)
     def test_recover_purge(self, vault, **kwargs):
         self.assertIsNotNone(vault)
-        vault_uri = vault.properties.vault_uri
+        client = VaultClient(vault.properties.vault_uri, self.settings.get_credentials())
 
         secrets = {}
 
+        list_test_size = 2
+
         # create secrets to recover
-        for i in range(0, self.list_test_size):
+        for i in range(0, list_test_size):
             secret_name = self.get_resource_name('secrec{}'.format(str(i)))
             secret_value = self.get_resource_name('secval{}'.format((str(i))))
             secrets[secret_name] = client.secrets.set_secret(secret_name, secret_value)
 
         # create secrets to purge
-        for i in range(0, self.list_test_size):
+        for i in range(0, list_test_size):
             secret_name = self.get_resource_name('secprg{}'.format(str(i)))
             secret_value = self.get_resource_name('secval{}'.format((str(i))))
             secrets[secret_name] = client.secrets.set_secret(secret_name, secret_value)
 
         # delete all secrets
         for secret_name in secrets.keys():
-            client.delete_secret(vault_uri, secret_name)
+            client.secrets.delete_secret(secret_name)
 
         if not self.is_playback():
             time.sleep(20)
 
-        # validate all our deleted secrets are returned by get_deleted_secrets
-        deleted = [KeyVaultId.parse_secret_id(s.id).name for s in client.get_deleted_secrets(vault_uri)]
+        # validate all our deleted secrets are returned by list_deleted_secrets
+        deleted = [s.name for s in client.secrets.list_deleted_secrets()]
         self.assertTrue(all(s in deleted for s in secrets.keys()))
 
         # recover select secrets
         for secret_name in [s for s in secrets.keys() if s.startswith('secrec')]:
-            client.recover_deleted_secret(vault_uri, secret_name)
+            client.secrets.recover_deleted_secret(secret_name)
 
         # purge select secrets
         for secret_name in [s for s in secrets.keys() if s.startswith('secprg')]:
-            client.purge_deleted_secret(vault_uri, secret_name)
+            client.secrets.purge_deleted_secret(secret_name)
 
         if not self.is_playback():
             time.sleep(20)
 
-        # validate none of our deleted secrets are returned by get_deleted_secrets
-        deleted = [KeyVaultId.parse_secret_id(s.id).name for s in client.get_deleted_secrets(vault_uri)]
+        # validate none of our purged secrets are returned by list_deleted_secrets
+        deleted = [s.name for s in client.secrets.list_deleted_secrets()]
         self.assertTrue(not any(s in deleted for s in secrets.keys()))
 
         # validate the recovered secrets
         expected = {k: v for k, v in secrets.items() if k.startswith('secrec')}
-        actual = {k: client.secrets.get_secret(vault_uri, k, KeyVaultId.version_none) for k in expected.keys()}
+        actual = {k: client.secrets.get_secret(k, "") for k in expected.keys()}
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))

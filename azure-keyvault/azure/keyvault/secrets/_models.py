@@ -236,17 +236,14 @@ class DeletedSecret(SecretAttributes):
         'deleted_date': {'readonly': True},
     }
 
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'attributes': {'key': 'attributes', 'type': '_SecretManagementAttributes'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'key_id': {'key': 'kid', 'type': 'str'},
-        'managed': {'key': 'managed', 'type': 'bool'},
-        'recovery_id': {'key': 'recoveryId', 'type': 'str'},
-        'scheduled_purge_date': {'key': 'scheduledPurgeDate', 'type': 'unix-time'},
-        'deleted_date': {'key': 'deletedDate', 'type': 'unix-time'},
-    }
+    _attribute_map = dict(
+        {
+            "recovery_id": {"key": "recoveryId", "type": "str"},
+            "scheduled_purge_date": {"key": "scheduledPurgeDate", "type": "unix-time"},
+            "deleted_date": {"key": "deletedDate", "type": "unix-time"},
+        },
+        **SecretAttributes._attribute_map
+    )
 
     def __init__(self, **kwargs):
         # type: (Mapping[str, Any]) -> None
@@ -254,3 +251,16 @@ class DeletedSecret(SecretAttributes):
         self.recovery_id = kwargs.get('recovery_id', None)
         # self.scheduled_purge_date = None
         # self.deleted_date = None
+
+
+class DeletedSecretPaged(Paged):
+    """A paging container for iterating over a list of :class:`DeletedSecret <azure.keyvault.secrets.DeletedSecret>` objects
+    """
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "current_page": {"key": "value", "type": "[DeletedSecret]"},
+    }
+
+    def __init__(self, *args, **kwargs):
+        super(DeletedSecretPaged, self).__init__(*args, **kwargs)

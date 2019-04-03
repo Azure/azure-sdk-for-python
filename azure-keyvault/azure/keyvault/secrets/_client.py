@@ -1,3 +1,4 @@
+import functools
 import uuid
 
 from azure.core.configuration import Configuration
@@ -9,7 +10,14 @@ from azure.core.exceptions import ClientRequestError
 
 from msrest import Serializer, Deserializer
 
-from ._models import Secret, SecretAttributesPaged, SecretAttributes, _SecretManagementAttributes
+from ._models import (
+    DeletedSecret,
+    DeletedSecretPaged,
+    Secret,
+    SecretAttributesPaged,
+    SecretAttributes,
+    _SecretManagementAttributes,
+)
 
 from .._internal import _BackupResult
 
@@ -64,6 +72,8 @@ class SecretClient:
             config.logging,
         ]
         client_models = {
+            "DeletedSecret": DeletedSecret,
+            "DeletedSecretPaged": DeletedSecretPaged,
             'Secret': Secret,
             'SecretAttributes': SecretAttributes,
             '_SecretManagementAttributes': _SecretManagementAttributes,
@@ -355,18 +365,83 @@ class SecretClient:
         return self._deserialize('SecretAttributes', response)
 
     def delete_secret(self, name, **kwargs):
-        pass
+        # type: (str, Mapping[str, Any]) -> DeletedSecret
+        url = "/".join([self.vault_url, "secrets", name])
+
+        request = HttpRequest("DELETE", url)
+        request.format_parameters({"api-version": self._api_version})
+        response = self._pipeline.run(request, **kwargs).http_response
+        if response.status_code != 200:
+            raise ClientRequestError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+        deleted_secret = self._deserialize("DeletedSecret", response)
+
+        return deleted_secret
 
     def get_deleted_secret(self, name, **kwargs):
-        pass
+        # type: (str, Mapping[str, Any]) -> DeletedSecret
+        url = "/".join([self.vault_url, "deletedsecrets", name])
+
+        request = HttpRequest("GET", url)
+        request.format_parameters({"api-version": self._api_version})
+        response = self._pipeline.run(request, **kwargs).http_response
+        if response.status_code != 200:
+            raise ClientRequestError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+        deleted_secret = self._deserialize("DeletedSecret", response)
+
+        return deleted_secret
 
     def list_deleted_secrets(self, max_page_size=None, **kwargs):
-        pass
+        # type: (Optional[int], Mapping[str, Any]) -> DeletedSecretPaged
+        url = "{}/{}".format(self.vault_url, "deletedsecrets")
+        paging = functools.partial(self._internal_paging, url, max_page_size)
+        return DeletedSecretPaged(paging, self._deserialize.dependencies)
 
     def purge_deleted_secret(self, name, **kwargs):
-        pass
+        # type: (str, Mapping[str, Any]) -> None
+        url = "/".join([self.vault_url, "deletedsecrets", name])
+
+        request = HttpRequest("DELETE", url)
+        request.format_parameters({"api-version": self._api_version})
+
+        response = self._pipeline.run(request, **kwargs).http_response
+        if response.status_code != 204:
+            raise ClientRequestError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+
+        return
 
     def recover_deleted_secret(self, name, **kwargs):
-        pass
+        # type: (str, Mapping[str, Any]) -> SecretAttributes
+        url = "/".join([self.vault_url, "deletedsecrets", name, "recover"])
 
+        request = HttpRequest("POST", url)
+        request.format_parameters({"api-version": self._api_version})
 
+        response = self._pipeline.run(request, **kwargs).http_response
+        if response.status_code != 200:
+            raise ClientRequestError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+
+        secret_attributes = self._deserialize("SecretAttributes", response)
+
+        return secret_attributes
+
+    def _internal_paging(self, url, max_page_size, next_link=None, raw=False, **kwargs):
+        # type: (str, int, Optional[str], Optional[bool], Mapping[str, Any]) -> HttpResponse
+        if next_link:
+            url = next_link
+            query_parameters = {}
+        else:
+            query_parameters = {"api-version": self._api_version}
+            if max_page_size is not None:
+                query_parameters["maxresults"] = str(max_page_size)
+
+        headers = {"x-ms-client-request-id": str(uuid.uuid1())}
+
+        request = HttpRequest("GET", url, headers)
+        request.format_parameters(query_parameters)
+
+        response = self._pipeline.run(request, **kwargs).http_response
+
+        if response.status_code != 200:
+            raise ClientRequestError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+
+        return response
