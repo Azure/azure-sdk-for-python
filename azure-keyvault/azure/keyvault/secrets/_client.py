@@ -16,16 +16,9 @@ from azure.core.exceptions import ClientRequestError
 
 from msrest import Serializer, Deserializer
 
-from ._models import (
-    DeletedSecret,
-    DeletedSecretPaged,
-    Secret,
-    SecretAttributesPaged,
-    SecretAttributes,
-    _SecretManagementAttributes,
-)
+from ._models import DeletedSecret, DeletedSecretPaged, Secret, SecretAttributesPaged, SecretAttributes
 
-from .._internal import _BackupResult
+from .._internal import _BackupResult, _SecretManagementAttributes
 
 
 class BearerTokenCredentialPolicy(HTTPPolicy):
