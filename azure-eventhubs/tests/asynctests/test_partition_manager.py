@@ -6,6 +6,7 @@
 import asyncio
 
 
+@pytest.mark.liveTest
 def test_get_partition_ids(partition_manager):
     """
     Test that partition manger returns all the partitions for an event hub

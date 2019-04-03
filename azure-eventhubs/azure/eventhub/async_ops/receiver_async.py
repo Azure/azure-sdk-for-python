@@ -20,6 +20,15 @@ log = logging.getLogger(__name__)
 class AsyncReceiver(Receiver):
     """
     Implements the async API of a Receiver.
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START create_eventhub_client_async_receiver_instance]
+            :end-before: [END create_eventhub_client_async_receiver_instance]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the Async Receiver.
+
     """
 
     def __init__(  # pylint: disable=super-init-not-called
@@ -81,6 +90,15 @@ class AsyncReceiver(Receiver):
 
         :param connection: The underlying client shared connection.
         :type: connection: ~uamqp.async_ops.connection_async.ConnectionAsync
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_async_receiver_open]
+                :end-before: [END eventhub_client_async_receiver_open]
+                :language: python
+                :dedent: 4
+                :caption: Open the Receiver using the supplied conneciton.
+
         """
         # pylint: disable=protected-access
         self.running = True
@@ -206,6 +224,15 @@ class AsyncReceiver(Receiver):
         :param exception: An optional exception if the handler is closing
          due to an error.
         :type exception: Exception
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_async_receiver_close]
+                :end-before: [END eventhub_client_async_receiver_close]
+                :language: python
+                :dedent: 4
+                :caption: Close down the handler.
+
         """
         self.running = False
         if self.error:
@@ -233,6 +260,16 @@ class AsyncReceiver(Receiver):
          size is supplied, the prefetch size will be the maximum.
         :type max_batch_size: int
         :rtype: list[~azure.eventhub.common.EventData]
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_async_receive]
+                :end-before: [END eventhub_client_async_receive]
+                :language: python
+                :dedent: 4
+                :caption: Sends an event data and asynchronously waits
+                 until acknowledgement is received or operation times out.
+
         """
         if self.error:
             raise self.error

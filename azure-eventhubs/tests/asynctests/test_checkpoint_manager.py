@@ -11,6 +11,7 @@ import json
 from azure.common import AzureException
 
 
+@pytest.mark.liveTest
 def test_create_store(storage_clm):
     """
     Test the store is created correctly if not exists
@@ -19,6 +20,7 @@ def test_create_store(storage_clm):
     loop.run_until_complete(storage_clm.create_checkpoint_store_if_not_exists_async())
 
 
+@pytest.mark.liveTest
 def test_create_lease(storage_clm):
     """
     Test lease creation
@@ -29,6 +31,7 @@ def test_create_lease(storage_clm):
     loop.run_until_complete(storage_clm.create_lease_if_not_exists_async("1"))
 
 
+@pytest.mark.liveTest
 def test_get_lease(storage_clm):
     """
     Test get lease
@@ -37,6 +40,7 @@ def test_get_lease(storage_clm):
     loop.run_until_complete(storage_clm.get_lease_async("1"))
 
 
+@pytest.mark.liveTest
 def test_aquire_renew_release_lease(storage_clm):
     """
     Test aquire lease
@@ -54,6 +58,7 @@ def test_aquire_renew_release_lease(storage_clm):
     assert loop.run_until_complete(lease.state()) == "available"
 
 
+@pytest.mark.liveTest
 def test_delete_lease(storage_clm):
     """
     Test delete lease
@@ -68,6 +73,7 @@ def test_delete_lease(storage_clm):
     assert lease == None
 
 
+@pytest.mark.liveTest
 def test_checkpointing(storage_clm):
     """
     Test checkpointing

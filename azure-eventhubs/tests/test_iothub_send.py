@@ -15,6 +15,7 @@ from azure import eventhub
 from azure.eventhub import EventData, EventHubClient
 
 
+@pytest.mark.liveTest
 def test_iothub_send_single_event(iot_connection_str, device_id):
     client = EventHubClient.from_iothub_connection_string(iot_connection_str, debug=True)
     sender = client.add_sender(operation='/messages/devicebound')

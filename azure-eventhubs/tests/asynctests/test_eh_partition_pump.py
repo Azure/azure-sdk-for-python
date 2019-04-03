@@ -17,6 +17,7 @@ async def wait_and_close(host):
     await host.close_async()
 
 
+@pytest.mark.liveTest
 def test_partition_pump_async(eh_partition_pump):
     """
     Test that event hub partition pump opens and processess messages sucessfully then closes

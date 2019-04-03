@@ -89,6 +89,15 @@ class EventHubClient(object):
     """
     The EventHubClient class defines a high level interface for sending
     events to and receiving events from the Azure Event Hubs service.
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START create_eventhub_client]
+            :end-before: [END create_eventhub_client]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the Event Hub client
+
     """
 
     def __init__(
@@ -165,6 +174,15 @@ class EventHubClient(object):
         :param auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
         :type auth_timeout: int
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START create_eventhub_client_sas_token]
+                :end-before: [END create_eventhub_client_sas_token]
+                :language: python
+                :dedent: 4
+                :caption: Create an EventHubClient from an existing auth token or token generator.
+
         """
         address = _build_uri(address, eventhub)
         return cls(address, sas_token=sas_token, **kwargs)
@@ -188,6 +206,15 @@ class EventHubClient(object):
         :param auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
         :type auth_timeout: int
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START create_eventhub_client_connstr]
+                :end-before: [END create_eventhub_client_connstr]
+                :language: python
+                :dedent: 4
+                :caption: Create an EventHubClient from a connection string.
+
         """
         address, policy, key, entity = _parse_conn_str(conn_str)
         entity = eventhub or entity
@@ -211,6 +238,15 @@ class EventHubClient(object):
         :param auth_timeout: The time in seconds to wait for a token to be authorized by the service.
          The default value is 60 seconds. If set to 0, no timeout will be enforced from the client.
         :type auth_timeout: int
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START create_eventhub_client_iot_connstr]
+                :end-before: [END create_eventhub_client_iot_connstr]
+                :language: python
+                :dedent: 4
+                :caption: Create an EventHubClient from an IoTHub connection string.
+
         """
         address, policy, key, _ = _parse_conn_str(conn_str)
         hub_name = address.split('.')[0]
@@ -311,6 +347,15 @@ class EventHubClient(object):
         If at least one client starts up successfully the run command will succeed.
 
         :rtype: list[~azure.eventhub.common.EventHubError]
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_run]
+                :end-before: [END eventhub_client_run]
+                :language: python
+                :dedent: 4
+                :caption: Run the EventHubClient in blocking mode.
+
         """
         log.info("%r: Starting %r clients", self.container_id, len(self.clients))
         try:
@@ -335,6 +380,15 @@ class EventHubClient(object):
     def stop(self):
         """
         Stop the EventHubClient and all its Sender/Receiver clients.
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_stop]
+                :end-before: [END eventhub_client_stop]
+                :language: python
+                :dedent: 4
+                :caption: Stop the EventHubClient and all its Sender/Receiver clients.
+
         """
         log.info("%r: Stopping %r clients", self.container_id, len(self.clients))
         self.stopped = True
@@ -344,6 +398,7 @@ class EventHubClient(object):
         """
         Get details on the specified EventHub.
         Keys in the details dictionary include:
+        
             -'name'
             -'type'
             -'created_at'
@@ -396,6 +451,15 @@ class EventHubClient(object):
          The value must start with `/` character.
         :type operation: str
         :rtype: ~azure.eventhub.receiver.Receiver
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START create_eventhub_client_receiver]
+                :end-before: [END create_eventhub_client_receiver]
+                :language: python
+                :dedent: 4
+                :caption: Add a receiver to the client for a particular consumer group and partition.
+
         """
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
@@ -427,6 +491,15 @@ class EventHubClient(object):
          The value must start with `/` character.
         :type operation: str
         :rtype: ~azure.eventhub.receiver.Receiver
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START create_eventhub_client_epoch_receiver]
+                :end-before: [END create_eventhub_client_epoch_receiver]
+                :language: python
+                :dedent: 4
+                :caption: Add a receiver to the client with an epoch value.
+
         """
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
@@ -439,7 +512,7 @@ class EventHubClient(object):
 
     def add_sender(self, partition=None, operation=None, send_timeout=60, keep_alive=30, auto_reconnect=True):
         """
-        Add a sender to the client to EventData object to an EventHub.
+        Add a sender to the client to send EventData object to an EventHub.
 
         :param partition: Optionally specify a particular partition to send to.
          If omitted, the events will be distributed to available partitions via
@@ -458,6 +531,15 @@ class EventHubClient(object):
         :param auto_reconnect: Whether to automatically reconnect the sender if a retryable error occurs.
          Default value is `True`.
         :rtype: ~azure.eventhub.sender.Sender
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START create_eventhub_client_sender]
+                :end-before: [END create_eventhub_client_sender]
+                :language: python
+                :dedent: 4
+                :caption: Add a sender to the client to send EventData object to an EventHub.
+
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if operation:

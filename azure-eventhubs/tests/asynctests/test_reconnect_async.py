@@ -17,6 +17,7 @@ from azure.eventhub import (
     EventHubError)
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_long_interval_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -47,6 +48,8 @@ def pump(receiver):
         messages.extend(batch)
     return messages
 
+
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_forced_conn_close_async(connstr_receivers):
     connection_str, receivers = connstr_receivers

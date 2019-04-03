@@ -135,6 +135,7 @@ async def pump(pid, sender, duration):
     print("{}: Final Sent total {}".format(pid, total))
 
 
+@pytest.mark.liveTest
 def test_long_running_eph(live_eventhub):
     parser = argparse.ArgumentParser()
     parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)

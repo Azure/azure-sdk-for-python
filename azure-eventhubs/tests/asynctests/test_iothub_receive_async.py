@@ -33,6 +33,7 @@ async def get_partitions(iot_connection_str):
         await client.stop_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_iothub_receive_multiple_async(iot_connection_str):
     partitions = await get_partitions(iot_connection_str)

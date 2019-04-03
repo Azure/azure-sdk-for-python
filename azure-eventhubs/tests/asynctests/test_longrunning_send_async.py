@@ -80,6 +80,7 @@ async def pump(pid, sender, args, duration):
     print("{}: Final Sent total {}".format(pid, total))
 
 
+@pytest.mark.liveTest
 def test_long_running_partition_send_async(connection_str):
     parser = argparse.ArgumentParser()
     parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)

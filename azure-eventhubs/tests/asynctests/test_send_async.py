@@ -14,6 +14,7 @@ import json
 from azure.eventhub import EventData, EventHubClientAsync
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_partition_key_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -42,6 +43,7 @@ async def test_send_with_partition_key_async(connstr_receivers):
                 found_partition_keys[message.partition_key] = index
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_and_receive_zero_length_body_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -63,6 +65,7 @@ async def test_send_and_receive_zero_length_body_async(connstr_receivers):
     assert list(received[0].body)[0] == b""
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_single_event_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -84,6 +87,7 @@ async def test_send_single_event_async(connstr_receivers):
     assert list(received[0].body)[0] == b"A single event"
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_batch_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -111,6 +115,7 @@ async def test_send_batch_async(connstr_receivers):
         assert list(message.body)[0] == "Event number {}".format(index).encode('utf-8')
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_partition_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -130,6 +135,7 @@ async def test_send_partition_async(connstr_receivers):
     assert len(partition_1) == 1
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_non_ascii_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -150,6 +156,7 @@ async def test_send_non_ascii_async(connstr_receivers):
     assert partition_0[1].body_as_json() == {"foo": "漢字"}
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_partition_batch_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -173,6 +180,7 @@ async def test_send_partition_batch_async(connstr_receivers):
     assert len(partition_1) == 10
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_array_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
@@ -194,6 +202,7 @@ async def test_send_array_async(connstr_receivers):
     assert list(received[0].body) == [b"A", b"B", b"C"]
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_multiple_clients_async(connstr_receivers):
     connection_str, receivers = connstr_receivers

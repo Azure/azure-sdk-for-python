@@ -34,6 +34,7 @@ from azure.eventhub import EventData, EventHubClient, Offset
 #         client.stop()
 
 
+@pytest.mark.liveTest
 def test_receive_end_of_stream(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)
@@ -55,6 +56,7 @@ def test_receive_end_of_stream(connstr_senders):
         client.stop()
 
 
+@pytest.mark.liveTest
 def test_receive_with_offset_sync(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)
@@ -89,6 +91,7 @@ def test_receive_with_offset_sync(connstr_senders):
         client.stop()
 
 
+@pytest.mark.liveTest
 def test_receive_with_inclusive_offset(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)
@@ -117,6 +120,7 @@ def test_receive_with_inclusive_offset(connstr_senders):
         client.stop()
 
 
+@pytest.mark.liveTest
 def test_receive_with_datetime_sync(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)
@@ -150,6 +154,7 @@ def test_receive_with_datetime_sync(connstr_senders):
         client.stop()
 
 
+@pytest.mark.liveTest
 def test_receive_with_custom_datetime_sync(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)
@@ -181,6 +186,7 @@ def test_receive_with_custom_datetime_sync(connstr_senders):
         client.stop()
 
 
+@pytest.mark.liveTest
 def test_receive_with_sequence_no(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)
@@ -210,6 +216,7 @@ def test_receive_with_sequence_no(connstr_senders):
         client.stop()
 
 
+@pytest.mark.liveTest
 def test_receive_with_inclusive_sequence_no(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)
@@ -234,6 +241,7 @@ def test_receive_with_inclusive_sequence_no(connstr_senders):
         client.stop()
 
 
+@pytest.mark.liveTest
 def test_receive_batch(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)

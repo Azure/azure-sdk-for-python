@@ -18,6 +18,7 @@ from azure.eventhub import (
     EventHubError)
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receivers):
     _, receivers = connstr_receivers
@@ -27,6 +28,7 @@ async def test_send_with_invalid_hostname_async(invalid_hostname, connstr_receiv
         await client.run_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_invalid_hostname_async(invalid_hostname):
     client = EventHubClientAsync.from_connection_string(invalid_hostname, debug=True)
@@ -35,6 +37,7 @@ async def test_receive_with_invalid_hostname_async(invalid_hostname):
         await client.run_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_invalid_key_async(invalid_key, connstr_receivers):
     _, receivers = connstr_receivers
@@ -44,6 +47,7 @@ async def test_send_with_invalid_key_async(invalid_key, connstr_receivers):
         await client.run_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_invalid_key_async(invalid_key):
     client = EventHubClientAsync.from_connection_string(invalid_key, debug=True)
@@ -52,6 +56,7 @@ async def test_receive_with_invalid_key_async(invalid_key):
         await client.run_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_with_invalid_policy_async(invalid_policy, connstr_receivers):
     _, receivers = connstr_receivers
@@ -61,6 +66,7 @@ async def test_send_with_invalid_policy_async(invalid_policy, connstr_receivers)
         await client.run_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_invalid_policy_async(invalid_policy):
     client = EventHubClientAsync.from_connection_string(invalid_policy, debug=True)
@@ -69,6 +75,7 @@ async def test_receive_with_invalid_policy_async(invalid_policy):
         await client.run_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_partition_key_with_partition_async(connection_str):
     client = EventHubClientAsync.from_connection_string(connection_str, debug=True)
@@ -83,6 +90,7 @@ async def test_send_partition_key_with_partition_async(connection_str):
         await client.stop_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_non_existing_entity_sender_async(connection_str):
     client = EventHubClientAsync.from_connection_string(connection_str, eventhub="nemo", debug=False)
@@ -91,6 +99,7 @@ async def test_non_existing_entity_sender_async(connection_str):
         await client.run_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_non_existing_entity_receiver_async(connection_str):
     client = EventHubClientAsync.from_connection_string(connection_str, eventhub="nemo", debug=False)
@@ -99,6 +108,7 @@ async def test_non_existing_entity_receiver_async(connection_str):
         await client.run_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_from_invalid_partitions_async(connection_str):
     partitions = ["XYZ", "-1", "1000", "-" ]
@@ -113,6 +123,7 @@ async def test_receive_from_invalid_partitions_async(connection_str):
             await client.stop_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_to_invalid_partitions_async(connection_str):
     partitions = ["XYZ", "-1", "1000", "-" ]
@@ -126,6 +137,7 @@ async def test_send_to_invalid_partitions_async(connection_str):
             await client.stop_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_too_large_message_async(connection_str):
     if sys.platform.startswith('darwin'):
@@ -141,6 +153,7 @@ async def test_send_too_large_message_async(connection_str):
         await client.stop_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_null_body_async(connection_str):
     client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
@@ -165,6 +178,7 @@ async def pump(receiver):
     return messages
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_max_receivers_async(connstr_senders):
     connection_str, senders = connstr_senders

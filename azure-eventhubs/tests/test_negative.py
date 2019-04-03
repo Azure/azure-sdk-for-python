@@ -17,6 +17,7 @@ from azure.eventhub import (
     EventHubClient)
 
 
+@pytest.mark.liveTest
 def test_send_with_invalid_hostname(invalid_hostname, connstr_receivers):
     _, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(invalid_hostname, debug=False)
@@ -25,6 +26,7 @@ def test_send_with_invalid_hostname(invalid_hostname, connstr_receivers):
         client.run()
 
 
+@pytest.mark.liveTest
 def test_receive_with_invalid_hostname_sync(invalid_hostname):
     client = EventHubClient.from_connection_string(invalid_hostname, debug=True)
     receiver = client.add_receiver("$default", "0")
@@ -32,6 +34,7 @@ def test_receive_with_invalid_hostname_sync(invalid_hostname):
         client.run()
 
 
+@pytest.mark.liveTest
 def test_send_with_invalid_key(invalid_key, connstr_receivers):
     _, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(invalid_key, debug=False)
@@ -40,6 +43,7 @@ def test_send_with_invalid_key(invalid_key, connstr_receivers):
         client.run()
 
 
+@pytest.mark.liveTest
 def test_receive_with_invalid_key_sync(invalid_key):
     client = EventHubClient.from_connection_string(invalid_key, debug=True)
     receiver = client.add_receiver("$default", "0")
@@ -47,6 +51,7 @@ def test_receive_with_invalid_key_sync(invalid_key):
         client.run()
 
 
+@pytest.mark.liveTest
 def test_send_with_invalid_policy(invalid_policy, connstr_receivers):
     _, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(invalid_policy, debug=False)
@@ -55,6 +60,7 @@ def test_send_with_invalid_policy(invalid_policy, connstr_receivers):
         client.run()
 
 
+@pytest.mark.liveTest
 def test_receive_with_invalid_policy_sync(invalid_policy):
     client = EventHubClient.from_connection_string(invalid_policy, debug=True)
     receiver = client.add_receiver("$default", "0")
@@ -62,6 +68,7 @@ def test_receive_with_invalid_policy_sync(invalid_policy):
         client.run()
 
 
+@pytest.mark.liveTest
 def test_send_partition_key_with_partition_sync(connection_str):
     client = EventHubClient.from_connection_string(connection_str, debug=True)
     sender = client.add_sender(partition="1")
@@ -75,6 +82,7 @@ def test_send_partition_key_with_partition_sync(connection_str):
         client.stop()
 
 
+@pytest.mark.liveTest
 def test_non_existing_entity_sender(connection_str):
     client = EventHubClient.from_connection_string(connection_str, eventhub="nemo", debug=False)
     sender = client.add_sender(partition="1")
@@ -82,6 +90,7 @@ def test_non_existing_entity_sender(connection_str):
         client.run()
 
 
+@pytest.mark.liveTest
 def test_non_existing_entity_receiver(connection_str):
     client = EventHubClient.from_connection_string(connection_str, eventhub="nemo", debug=False)
     receiver = client.add_receiver("$default", "0")
@@ -89,6 +98,7 @@ def test_non_existing_entity_receiver(connection_str):
         client.run()
 
 
+@pytest.mark.liveTest
 def test_receive_from_invalid_partitions_sync(connection_str):
     partitions = ["XYZ", "-1", "1000", "-" ]
     for p in partitions:
@@ -102,6 +112,7 @@ def test_receive_from_invalid_partitions_sync(connection_str):
             client.stop()
 
 
+@pytest.mark.liveTest
 def test_send_to_invalid_partitions(connection_str):
     partitions = ["XYZ", "-1", "1000", "-" ]
     for p in partitions:
@@ -114,6 +125,7 @@ def test_send_to_invalid_partitions(connection_str):
             client.stop()
 
 
+@pytest.mark.liveTest
 def test_send_too_large_message(connection_str):
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - open issue regarding message size")
@@ -128,6 +140,7 @@ def test_send_too_large_message(connection_str):
         client.stop()
 
 
+@pytest.mark.liveTest
 def test_send_null_body(connection_str):
     partitions = ["XYZ", "-1", "1000", "-" ]
     client = EventHubClient.from_connection_string(connection_str, debug=False)
@@ -141,6 +154,7 @@ def test_send_null_body(connection_str):
         client.stop()
 
 
+@pytest.mark.liveTest
 def test_message_body_types(connstr_senders):
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, debug=False)

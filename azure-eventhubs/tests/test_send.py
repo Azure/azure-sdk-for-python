@@ -15,6 +15,7 @@ from azure import eventhub
 from azure.eventhub import EventData, EventHubClient
 
 
+@pytest.mark.liveTest
 def test_send_with_partition_key(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, debug=False)
@@ -46,6 +47,7 @@ def test_send_with_partition_key(connstr_receivers):
                 found_partition_keys[message.partition_key] = index
 
 
+@pytest.mark.liveTest
 def test_send_and_receive_large_body_size(connstr_receivers):
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - open issue regarding message size")
@@ -69,6 +71,7 @@ def test_send_and_receive_large_body_size(connstr_receivers):
     assert len(list(received[0].body)[0]) == payload
 
 
+@pytest.mark.liveTest
 def test_send_and_receive_zero_length_body(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, debug=False)
@@ -89,6 +92,7 @@ def test_send_and_receive_zero_length_body(connstr_receivers):
     assert list(received[0].body)[0] == b""
 
 
+@pytest.mark.liveTest
 def test_send_single_event(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, debug=False)
@@ -109,6 +113,7 @@ def test_send_single_event(connstr_receivers):
     assert list(received[0].body)[0] == b"A single event"
 
 
+@pytest.mark.liveTest
 def test_send_batch_sync(connstr_receivers):
     connection_str, receivers = connstr_receivers
     def batched():
@@ -135,6 +140,7 @@ def test_send_batch_sync(connstr_receivers):
         assert list(message.body)[0] == "Event number {}".format(index).encode('utf-8')
 
 
+@pytest.mark.liveTest
 def test_send_partition(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, debug=False)
@@ -153,6 +159,7 @@ def test_send_partition(connstr_receivers):
     assert len(partition_1) == 1
 
 
+@pytest.mark.liveTest
 def test_send_non_ascii(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, debug=False)
@@ -172,6 +179,7 @@ def test_send_non_ascii(connstr_receivers):
     assert partition_0[1].body_as_json() == {"foo": u"漢字"}
 
 
+@pytest.mark.liveTest
 def test_send_partition_batch(connstr_receivers):
     connection_str, receivers = connstr_receivers
     def batched():
@@ -195,6 +203,7 @@ def test_send_partition_batch(connstr_receivers):
     assert len(partition_1) == 10
 
 
+@pytest.mark.liveTest
 def test_send_array_sync(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, debug=True)
@@ -215,6 +224,7 @@ def test_send_array_sync(connstr_receivers):
     assert list(received[0].body) == [b"A", b"B", b"C"]
 
 
+@pytest.mark.liveTest
 def test_send_multiple_clients(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, debug=False)

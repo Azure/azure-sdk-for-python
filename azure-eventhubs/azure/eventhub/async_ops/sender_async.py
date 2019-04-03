@@ -20,6 +20,15 @@ log = logging.getLogger(__name__)
 class AsyncSender(Sender):
     """
     Implements the async API of a Sender.
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START create_eventhub_client_async_sender_instance]
+            :end-before: [END create_eventhub_client_async_sender_instance]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the Async Sender.
+
     """
 
     def __init__(  # pylint: disable=super-init-not-called
@@ -83,6 +92,15 @@ class AsyncSender(Sender):
 
         :param connection: The underlying client shared connection.
         :type: connection: ~uamqp.async_ops.connection_async.ConnectionAsync
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_async_sender_open]
+                :end-before: [END eventhub_client_async_sender_open]
+                :language: python
+                :dedent: 4
+                :caption: Open the Sender using the supplied conneciton.
+
         """
         self.running = True
         if self.redirected:
@@ -191,6 +209,15 @@ class AsyncSender(Sender):
         :param exception: An optional exception if the handler is closing
          due to an error.
         :type exception: Exception
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_async_sender_close]
+                :end-before: [END eventhub_client_async_sender_close]
+                :language: python
+                :dedent: 4
+                :caption: Close down the handler.
+
         """
         self.running = False
         if self.error:
@@ -216,6 +243,16 @@ class AsyncSender(Sender):
         :type event_data: ~azure.eventhub.common.EventData
         :raises: ~azure.eventhub.common.EventHubError if the message fails to
          send.
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_async_send]
+                :end-before: [END eventhub_client_async_send]
+                :language: python
+                :dedent: 4
+                :caption: Sends an event data and asynchronously waits
+                 until acknowledgement is received or operation times out.
+
         """
         if self.error:
             raise self.error

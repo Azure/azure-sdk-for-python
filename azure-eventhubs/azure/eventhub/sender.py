@@ -19,6 +19,15 @@ log = logging.getLogger(__name__)
 class Sender(object):
     """
     Implements a Sender.
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START create_eventhub_client_sender_instance]
+            :end-before: [END create_eventhub_client_sender_instance]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the Sender.
+
     """
 
     def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True):
@@ -77,6 +86,15 @@ class Sender(object):
 
         :param connection: The underlying client shared connection.
         :type: connection: ~uamqp.connection.Connection
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_sender_open]
+                :end-before: [END eventhub_client_sender_open]
+                :language: python
+                :dedent: 4
+                :caption: Open the Sender using the supplied conneciton.
+
         """
         self.running = True
         if self.redirected:
@@ -194,6 +212,15 @@ class Sender(object):
         :param exception: An optional exception if the handler is closing
          due to an error.
         :type exception: Exception
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_sender_close]
+                :end-before: [END eventhub_client_sender_close]
+                :language: python
+                :dedent: 4
+                :caption: Close down the handler.
+
         """
         self.running = False
         if self.error:
@@ -219,6 +246,15 @@ class Sender(object):
          send.
         :return: The outcome of the message send.
         :rtype: ~uamqp.constants.MessageSendResult
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_sync_send]
+                :end-before: [END eventhub_client_sync_send]
+                :language: python
+                :dedent: 4
+                :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
+
         """
         if self.error:
             raise self.error
@@ -273,6 +309,15 @@ class Sender(object):
         :param callback: Callback to be run once the message has been send.
          This must be a function that accepts two arguments.
         :type callback: callable[~uamqp.constants.MessageSendResult, ~azure.eventhub.common.EventHubError]
+        
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_transfer]
+                :end-before: [END eventhub_client_transfer]
+                :language: python
+                :dedent: 4
+                :caption: Transfers an event data and notifies the callback when the operation is done.
+
         """
         if self.error:
             raise self.error
@@ -287,6 +332,15 @@ class Sender(object):
     def wait(self):
         """
         Wait until all transferred events have been sent.
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_transfer]
+                :end-before: [END eventhub_client_transfer]
+                :language: python
+                :dedent: 4
+                :caption: Wait until all transferred events have been sent.
+
         """
         if self.error:
             raise self.error

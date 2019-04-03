@@ -81,6 +81,7 @@ async def pump(_pid, receiver, _args, _dl):
         raise
 
 
+@pytest.mark.liveTest
 def test_long_running_receive_async(connection_str):
     parser = argparse.ArgumentParser()
     parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)

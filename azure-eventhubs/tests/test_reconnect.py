@@ -16,6 +16,7 @@ from azure.eventhub import (
     EventHubClient)
 
 
+@pytest.mark.liveTest
 def test_send_with_long_interval_sync(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, debug=True)
@@ -37,6 +38,7 @@ def test_send_with_long_interval_sync(connstr_receivers):
     assert list(received[0].body)[0] == b"A single event"
 
 
+@pytest.mark.liveTest
 def test_send_with_forced_conn_close_sync(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, debug=True)

@@ -13,6 +13,7 @@ from azure import eventhub
 from azure.eventhub import EventData, Offset, EventHubError, EventHubClientAsync
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_end_of_stream_async(connstr_senders):
     connection_str, senders = connstr_senders
@@ -33,6 +34,7 @@ async def test_receive_end_of_stream_async(connstr_senders):
         await client.stop_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_offset_async(connstr_senders):
     connection_str, senders = connstr_senders
@@ -61,6 +63,7 @@ async def test_receive_with_offset_async(connstr_senders):
         await client.stop_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_inclusive_offset_async(connstr_senders):
     connection_str, senders = connstr_senders
@@ -86,6 +89,7 @@ async def test_receive_with_inclusive_offset_async(connstr_senders):
         await client.stop_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_datetime_async(connstr_senders):
     connection_str, senders = connstr_senders
@@ -114,6 +118,7 @@ async def test_receive_with_datetime_async(connstr_senders):
         await client.stop_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_sequence_no_async(connstr_senders):
     connection_str, senders = connstr_senders
@@ -142,6 +147,7 @@ async def test_receive_with_sequence_no_async(connstr_senders):
         await client.stop_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_inclusive_sequence_no_async(connstr_senders):
     connection_str, senders = connstr_senders
@@ -166,6 +172,7 @@ async def test_receive_with_inclusive_sequence_no_async(connstr_senders):
         await client.stop_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_batch_async(connstr_senders):
     connection_str, senders = connstr_senders
@@ -200,6 +207,7 @@ async def pump(receiver, sleep=None):
     return messages
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_epoch_receiver_async(connstr_senders):
     connection_str, senders = connstr_senders
@@ -223,6 +231,7 @@ async def test_epoch_receiver_async(connstr_senders):
         await client.stop_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_multiple_receiver_async(connstr_senders):
     connection_str, senders = connstr_senders
@@ -250,6 +259,7 @@ async def test_multiple_receiver_async(connstr_senders):
         await client.stop_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_epoch_receiver_after_non_epoch_receiver_async(connstr_senders):
     connection_str, senders = connstr_senders
@@ -273,6 +283,7 @@ async def test_epoch_receiver_after_non_epoch_receiver_async(connstr_senders):
         await client.stop_async()
 
 
+@pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_non_epoch_receiver_after_epoch_receiver_async(connstr_senders):
     connection_str, senders = connstr_senders

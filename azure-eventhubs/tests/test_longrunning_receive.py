@@ -79,6 +79,7 @@ def pump(receivers, duration):
         raise
 
 
+@pytest.mark.liveTest
 def test_long_running_receive(connection_str):
     parser = argparse.ArgumentParser()
     parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)

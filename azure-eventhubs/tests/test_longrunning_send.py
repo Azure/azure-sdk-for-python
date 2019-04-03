@@ -82,6 +82,7 @@ def main(client, args):
     print("Sent total {}".format(total))
 
 
+@pytest.mark.liveTest
 def test_long_running_send(connection_str):
     if sys.platform.startswith('darwin'):
         import pytest

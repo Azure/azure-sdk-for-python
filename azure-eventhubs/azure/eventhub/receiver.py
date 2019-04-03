@@ -20,6 +20,15 @@ log = logging.getLogger(__name__)
 class Receiver(object):
     """
     Implements a Receiver.
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START create_eventhub_client_receiver_instance]
+            :end-before: [END create_eventhub_client_receiver_instance]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the Receiver.
+
     """
     timeout = 0
     _epoch = b'com.microsoft:epoch'
@@ -78,6 +87,15 @@ class Receiver(object):
 
         :param connection: The underlying client shared connection.
         :type: connection: ~uamqp.connection.Connection
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_receiver_open]
+                :end-before: [END eventhub_client_receiver_open]
+                :language: python
+                :dedent: 4
+                :caption: Open the Receiver using the supplied conneciton.
+
         """
         # pylint: disable=protected-access
         self.running = True
@@ -211,6 +229,15 @@ class Receiver(object):
         :param exception: An optional exception if the handler is closing
          due to an error.
         :type exception: Exception
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_receiver_close]
+                :end-before: [END eventhub_client_receiver_close]
+                :language: python
+                :dedent: 4
+                :caption: Close down the handler.
+
         """
         self.running = False
         if self.error:
@@ -248,6 +275,15 @@ class Receiver(object):
          size is supplied, the prefetch size will be the maximum.
         :type max_batch_size: int
         :rtype: list[~azure.eventhub.common.EventData]
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_sync_receive]
+                :end-before: [END eventhub_client_sync_receive]
+                :language: python
+                :dedent: 4
+                :caption: Receive events from the EventHub.
+
         """
         if self.error:
             raise self.error

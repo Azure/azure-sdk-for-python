@@ -36,6 +36,15 @@ class EventHubClientAsync(EventHubClient):
     """
     The EventHubClient class defines a high level interface for asynchronously
     sending events to and receiving events from the Azure Event Hubs service.
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START create_eventhub_client_async]
+            :end-before: [END create_eventhub_client_async]
+            :language: python
+            :dedent: 4
+            :caption: Create a new instance of the Event Hub client async.
+
     """
 
     def _create_auth(self, username=None, password=None):
@@ -113,6 +122,15 @@ class EventHubClientAsync(EventHubClient):
         If at least one client starts up successfully the run command will succeed.
 
         :rtype: list[~azure.eventhub.common.EventHubError]
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_run_async]
+                :end-before: [END eventhub_client_run_async]
+                :language: python
+                :dedent: 4
+                :caption: Run the EventHubClient asynchronously.
+
         """
         log.info("%r: Starting %r clients", self.container_id, len(self.clients))
         tasks = [self._start_client_async(c) for c in self.clients]
@@ -138,6 +156,15 @@ class EventHubClientAsync(EventHubClient):
     async def stop_async(self):
         """
         Stop the EventHubClient and all its Sender/Receiver clients.
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START eventhub_client_async_stop]
+                :end-before: [END eventhub_client_async_stop]
+                :language: python
+                :dedent: 4
+                :caption: Stop the EventHubClient and all its Sender/Receiver clients.
+
         """
         log.info("%r: Stopping %r clients", self.container_id, len(self.clients))
         self.stopped = True
@@ -193,6 +220,15 @@ class EventHubClientAsync(EventHubClient):
          The value must start with `/` character.
         :type operation: str
         :rtype: ~azure.eventhub.async_ops.receiver_async.ReceiverAsync
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START create_eventhub_client_async_receiver]
+                :end-before: [END create_eventhub_client_async_receiver]
+                :language: python
+                :dedent: 4
+                :caption: Add an async receiver to the client for a particular consumer group and partition.
+
         """
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
@@ -224,6 +260,15 @@ class EventHubClientAsync(EventHubClient):
          The value must start with `/` character.
         :type operation: str
         :rtype: ~azure.eventhub.async_ops.receiver_async.ReceiverAsync
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START create_eventhub_client_async_epoch_receiver]
+                :end-before: [END create_eventhub_client_async_epoch_receiver]
+                :language: python
+                :dedent: 4
+                :caption: Add an async receiver to the client with an epoch value.
+
         """
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
@@ -259,6 +304,16 @@ class EventHubClientAsync(EventHubClient):
          Default value is `True`.
         :type auto_reconnect: bool
         :rtype: ~azure.eventhub.async_ops.sender_async.SenderAsync
+
+        Example:
+            .. literalinclude:: ../examples/test_examples.py
+                :start-after: [START create_eventhub_client_async_sender]
+                :end-before: [END create_eventhub_client_async_sender]
+                :language: python
+                :dedent: 4
+                :caption: Add an async sender to the client to
+                 send ~azure.eventhub.common.EventData object to an EventHub.
+
         """
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if operation:

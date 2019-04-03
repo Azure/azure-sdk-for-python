@@ -66,6 +66,15 @@ class EventData(object):
     """
     The EventData class is a holder of event content.
     Acts as a wrapper to an uamqp.message.Message object.
+
+    Example:
+        .. literalinclude:: ../examples/test_examples.py
+            :start-after: [START create_event_data]
+            :end-before: [END create_event_data]
+            :language: python
+            :dedent: 4
+            :caption: Create instances of EventData
+
     """
 
     PROP_SEQ_NUMBER = b"x-opt-sequence-number"
