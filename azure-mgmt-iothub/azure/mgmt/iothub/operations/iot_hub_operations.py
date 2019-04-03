@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ResourceProviderCommonOperations(object):
-    """ResourceProviderCommonOperations operations.
+class IotHubOperations(object):
+    """IotHubOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,28 +36,37 @@ class ResourceProviderCommonOperations(object):
 
         self.config = config
 
-    def get_subscription_quota(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Get the number of iot hubs in the subscription.
+    def customer_initiated_failover(
+            self, iot_hub_name, resource_group_name, failover_region, custom_headers=None, raw=False, **operation_config):
+        """Customer Initiated Fail over.
 
-        Get the number of free and paid iot hubs in the subscription.
+        Perform customer initiated fail over of given hub.
 
+        :param iot_hub_name: IotHub to fail over
+        :type iot_hub_name: str
+        :param resource_group_name: resource group which Iot Hub belongs to
+        :type resource_group_name: str
+        :param failover_region: Region the hub will be failed over to
+        :type failover_region: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: UserSubscriptionQuotaListResult or ClientRawResponse if
-         raw=true
-        :rtype: ~azure.mgmt.iothub.models.UserSubscriptionQuotaListResult or
+        :return: IotHubDescription or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.iothub.models.IotHubDescription or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorDetailsException<azure.mgmt.iothub.models.ErrorDetailsException>`
         """
+        failover_input = models.FailoverInput(failover_region=failover_region)
+
         # Construct URL
-        url = self.get_subscription_quota.metadata['url']
+        url = self.customer_initiated_failover.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'iotHubName': self._serialize.url("iot_hub_name", iot_hub_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -68,6 +77,7 @@ class ResourceProviderCommonOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -75,8 +85,11 @@ class ResourceProviderCommonOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(failover_input, 'FailoverInput')
+
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -85,11 +98,11 @@ class ResourceProviderCommonOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('UserSubscriptionQuotaListResult', response)
+            deserialized = self._deserialize('IotHubDescription', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_subscription_quota.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Devices/usages'}
+    customer_initiated_failover.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{iotHubName}/failover'}

@@ -67,6 +67,7 @@ try:
     from .test_route_result_py3 import TestRouteResult
     from .export_devices_request_py3 import ExportDevicesRequest
     from .import_devices_request_py3 import ImportDevicesRequest
+    from .failover_input_py3 import FailoverInput
 except (SyntaxError, ImportError):
     from .certificate_verification_description import CertificateVerificationDescription
     from .certificate_properties import CertificateProperties
@@ -125,6 +126,7 @@ except (SyntaxError, ImportError):
     from .test_route_result import TestRouteResult
     from .export_devices_request import ExportDevicesRequest
     from .import_devices_request import ImportDevicesRequest
+    from .failover_input import FailoverInput
 from .operation_paged import OperationPaged
 from .iot_hub_description_paged import IotHubDescriptionPaged
 from .iot_hub_sku_description_paged import IotHubSkuDescriptionPaged
@@ -207,6 +209,7 @@ __all__ = [
     'TestRouteResult',
     'ExportDevicesRequest',
     'ImportDevicesRequest',
+    'FailoverInput',
     'OperationPaged',
     'IotHubDescriptionPaged',
     'IotHubSkuDescriptionPaged',
