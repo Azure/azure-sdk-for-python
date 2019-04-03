@@ -15,6 +15,7 @@ collect_ignore = []
 if sys.version_info < (3, 5):
     collect_ignore.append("tests/asynctests")
     collect_ignore.append("features")
+    collect_ignore.append("examples/async_examples")
 else:
     from tests.asynctests import MockEventProcessor
     from azure.eventprocessorhost import EventProcessorHost

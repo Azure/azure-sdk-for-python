@@ -4,7 +4,7 @@ Release History
 ===============
 
 1.3.1 (2019-02-28)
-++++++++++++++++++
+------------------
 
 **BugFixes**
 
@@ -13,7 +13,7 @@ Release History
 
 
 1.3.0 (2019-01-29)
-++++++++++++++++++
+------------------
 
 **Bugfixes**
 
@@ -27,20 +27,20 @@ Release History
 
 
 1.2.0 (2018-11-29)
-++++++++++++++++++
+------------------
 
 - Support for Python 2.7 in azure.eventhub module (azure.eventprocessorhost will not support Python 2.7).
 - Parse EventData.enqueued_time as a UTC timestamp (issue #72, thanks @vjrantal)
 
 
 1.1.1 (2018-10-03)
-++++++++++++++++++
+------------------
 
 - Fixed bug in Azure namespace package.
 
 
 1.1.0 (2018-09-21)
-++++++++++++++++++
+------------------
 
 - Changes to `AzureStorageCheckpointLeaseManager` parameters to support other connection options (issue #61):
 
@@ -55,7 +55,7 @@ Release History
 
 
 1.0.0 (2018-08-22)
-++++++++++++++++++
+------------------
 
 - API stable.
 - Renamed internal `_async` module to `async_ops` for docs generation.
@@ -67,7 +67,7 @@ Release History
 
 
 0.2.0 (2018-08-06)
-++++++++++++++++++
+------------------
 
 - Stability improvements for EPH.
 - Updated uAMQP version.
@@ -83,7 +83,7 @@ Release History
 
 
 0.2.0rc2 (2018-07-29)
-+++++++++++++++++++++
+---------------------
 
 - **Breaking change** `EventData.offset` will now return an object of type `~uamqp.common.Offset` rather than str.
   The original string value can be retrieved from `~uamqp.common.Offset.value`.
@@ -96,7 +96,7 @@ Release History
 
 
 0.2.0rc1 (2018-07-06)
-+++++++++++++++++++++
+---------------------
 
 - **Breaking change** Restructured library to support Python 3.7. Submodule `async` has been renamed and all classes from
   this module can now be imported from azure.eventhub directly.
@@ -111,7 +111,7 @@ Release History
 
 
 0.2.0b2 (2018-05-29)
-++++++++++++++++++++
+--------------------
 
 - Added `namespace_suffix` to EventHubConfig() to support national clouds.
 - Added `device_id` attribute to EventData to support IoT Hub use cases.
@@ -120,19 +120,19 @@ Release History
 
 
 0.2.0b1 (2018-04-20)
-++++++++++++++++++++
+--------------------
 
 - Updated uAMQP to latest version.
 - Further testing and minor bug fixes.
 
 
 0.2.0a2 (2018-04-02)
-++++++++++++++++++++
+--------------------
 
 - Updated uAQMP dependency.
 
 
 0.2.0a1 (unreleased)
-++++++++++++++++++++
+--------------------
 
 - Swapped out Proton dependency for uAMQP.

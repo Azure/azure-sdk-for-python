@@ -61,7 +61,7 @@ There are several ways to instantiate the EventHubClient object and the followin
         os.environ['EVENT_HUB_NAME'])
     client = EventHubClient.from_connection_string(connection_str)
 
-Key Concepts
+Key concepts
 ============
 
 - **Namespace:** An Event Hubs namespace provides a unique scoping container, referenced by its fully qualified domain name, in which you create one or more event hubs or Kafka topics.
@@ -210,7 +210,7 @@ Provide Feedback
 ----------------
 
 If you encounter any bugs or have suggestions, please file an issue in the
-`Issues <https://github.com/Azure/azure-uamqp-python/issues>`__
+`Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
 section of the project.
 
 Contributing

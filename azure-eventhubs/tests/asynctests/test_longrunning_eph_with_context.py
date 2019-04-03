@@ -10,6 +10,7 @@ import os
 import argparse
 import time
 import json
+import pytest
 from logging.handlers import RotatingFileHandler
 
 from azure.eventhub import EventHubClientAsync, EventData

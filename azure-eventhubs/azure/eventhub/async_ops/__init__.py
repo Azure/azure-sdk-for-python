@@ -38,7 +38,7 @@ class EventHubClientAsync(EventHubClient):
     sending events to and receiving events from the Azure Event Hubs service.
 
     Example:
-        .. literalinclude:: ../examples/test_examples.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START create_eventhub_client_async]
             :end-before: [END create_eventhub_client_async]
             :language: python
@@ -124,7 +124,7 @@ class EventHubClientAsync(EventHubClient):
         :rtype: list[~azure.eventhub.common.EventHubError]
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
                 :start-after: [START eventhub_client_run_async]
                 :end-before: [END eventhub_client_run_async]
                 :language: python
@@ -158,7 +158,7 @@ class EventHubClientAsync(EventHubClient):
         Stop the EventHubClient and all its Sender/Receiver clients.
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
                 :start-after: [START eventhub_client_async_stop]
                 :end-before: [END eventhub_client_async_stop]
                 :language: python
@@ -222,7 +222,7 @@ class EventHubClientAsync(EventHubClient):
         :rtype: ~azure.eventhub.async_ops.receiver_async.ReceiverAsync
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
                 :start-after: [START create_eventhub_client_async_receiver]
                 :end-before: [END create_eventhub_client_async_receiver]
                 :language: python
@@ -262,7 +262,7 @@ class EventHubClientAsync(EventHubClient):
         :rtype: ~azure.eventhub.async_ops.receiver_async.ReceiverAsync
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
                 :start-after: [START create_eventhub_client_async_epoch_receiver]
                 :end-before: [END create_eventhub_client_async_epoch_receiver]
                 :language: python
@@ -306,7 +306,7 @@ class EventHubClientAsync(EventHubClient):
         :rtype: ~azure.eventhub.async_ops.sender_async.SenderAsync
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
                 :start-after: [START create_eventhub_client_async_sender]
                 :end-before: [END create_eventhub_client_async_sender]
                 :language: python

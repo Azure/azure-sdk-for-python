@@ -22,7 +22,7 @@ class AsyncReceiver(Receiver):
     Implements the async API of a Receiver.
 
     Example:
-        .. literalinclude:: ../examples/test_examples.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START create_eventhub_client_async_receiver_instance]
             :end-before: [END create_eventhub_client_async_receiver_instance]
             :language: python
@@ -92,7 +92,7 @@ class AsyncReceiver(Receiver):
         :type: connection: ~uamqp.async_ops.connection_async.ConnectionAsync
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
                 :start-after: [START eventhub_client_async_receiver_open]
                 :end-before: [END eventhub_client_async_receiver_open]
                 :language: python
@@ -226,7 +226,7 @@ class AsyncReceiver(Receiver):
         :type exception: Exception
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
                 :start-after: [START eventhub_client_async_receiver_close]
                 :end-before: [END eventhub_client_async_receiver_close]
                 :language: python
@@ -262,7 +262,7 @@ class AsyncReceiver(Receiver):
         :rtype: list[~azure.eventhub.common.EventData]
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
                 :start-after: [START eventhub_client_async_receive]
                 :end-before: [END eventhub_client_async_receive]
                 :language: python

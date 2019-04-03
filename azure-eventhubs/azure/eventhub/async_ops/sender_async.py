@@ -22,7 +22,7 @@ class AsyncSender(Sender):
     Implements the async API of a Sender.
 
     Example:
-        .. literalinclude:: ../examples/test_examples.py
+        .. literalinclude:: ../examples/async_examples/test_examples_async.py
             :start-after: [START create_eventhub_client_async_sender_instance]
             :end-before: [END create_eventhub_client_async_sender_instance]
             :language: python
@@ -94,7 +94,7 @@ class AsyncSender(Sender):
         :type: connection: ~uamqp.async_ops.connection_async.ConnectionAsync
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
                 :start-after: [START eventhub_client_async_sender_open]
                 :end-before: [END eventhub_client_async_sender_open]
                 :language: python
@@ -211,7 +211,7 @@ class AsyncSender(Sender):
         :type exception: Exception
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
                 :start-after: [START eventhub_client_async_sender_close]
                 :end-before: [END eventhub_client_async_sender_close]
                 :language: python
@@ -245,7 +245,7 @@ class AsyncSender(Sender):
          send.
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/async_examples/test_examples_async.py
                 :start-after: [START eventhub_client_async_send]
                 :end-before: [END eventhub_client_async_send]
                 :language: python

@@ -14,6 +14,7 @@ import time
 import os
 import sys
 import logging
+import pytest
 from logging.handlers import RotatingFileHandler
 
 from azure.eventhub import EventHubClient, Sender, EventData
