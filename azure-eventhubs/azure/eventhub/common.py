@@ -68,7 +68,7 @@ class EventData(object):
     Acts as a wrapper to an uamqp.message.Message object.
 
     Example:
-        .. literalinclude:: ../examples/test_examples.py
+        .. literalinclude:: ../examples/test_examples_eventhub.py
             :start-after: [START create_event_data]
             :end-before: [END create_event_data]
             :language: python

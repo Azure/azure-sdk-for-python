@@ -91,7 +91,7 @@ class EventHubClient(object):
     events to and receiving events from the Azure Event Hubs service.
 
     Example:
-        .. literalinclude:: ../examples/test_examples.py
+        .. literalinclude:: ../examples/test_examples_eventhub.py
             :start-after: [START create_eventhub_client]
             :end-before: [END create_eventhub_client]
             :language: python
@@ -176,7 +176,7 @@ class EventHubClient(object):
         :type auth_timeout: int
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START create_eventhub_client_sas_token]
                 :end-before: [END create_eventhub_client_sas_token]
                 :language: python
@@ -208,7 +208,7 @@ class EventHubClient(object):
         :type auth_timeout: int
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START create_eventhub_client_connstr]
                 :end-before: [END create_eventhub_client_connstr]
                 :language: python
@@ -240,7 +240,7 @@ class EventHubClient(object):
         :type auth_timeout: int
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START create_eventhub_client_iot_connstr]
                 :end-before: [END create_eventhub_client_iot_connstr]
                 :language: python
@@ -349,7 +349,7 @@ class EventHubClient(object):
         :rtype: list[~azure.eventhub.common.EventHubError]
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START eventhub_client_run]
                 :end-before: [END eventhub_client_run]
                 :language: python
@@ -382,7 +382,7 @@ class EventHubClient(object):
         Stop the EventHubClient and all its Sender/Receiver clients.
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START eventhub_client_stop]
                 :end-before: [END eventhub_client_stop]
                 :language: python
@@ -398,7 +398,7 @@ class EventHubClient(object):
         """
         Get details on the specified EventHub.
         Keys in the details dictionary include:
-        
+
             -'name'
             -'type'
             -'created_at'
@@ -453,7 +453,7 @@ class EventHubClient(object):
         :rtype: ~azure.eventhub.receiver.Receiver
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START create_eventhub_client_receiver]
                 :end-before: [END create_eventhub_client_receiver]
                 :language: python
@@ -493,7 +493,7 @@ class EventHubClient(object):
         :rtype: ~azure.eventhub.receiver.Receiver
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START create_eventhub_client_epoch_receiver]
                 :end-before: [END create_eventhub_client_epoch_receiver]
                 :language: python
@@ -533,7 +533,7 @@ class EventHubClient(object):
         :rtype: ~azure.eventhub.sender.Sender
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START create_eventhub_client_sender]
                 :end-before: [END create_eventhub_client_sender]
                 :language: python

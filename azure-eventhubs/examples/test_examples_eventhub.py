@@ -9,7 +9,6 @@ import datetime
 import os
 import time
 import logging
-import asyncio
 
 from azure.eventhub import EventHubError
 

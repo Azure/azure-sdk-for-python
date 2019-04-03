@@ -21,7 +21,7 @@ class Sender(object):
     Implements a Sender.
 
     Example:
-        .. literalinclude:: ../examples/test_examples.py
+        .. literalinclude:: ../examples/test_examples_eventhub.py
             :start-after: [START create_eventhub_client_sender_instance]
             :end-before: [END create_eventhub_client_sender_instance]
             :language: python
@@ -88,7 +88,7 @@ class Sender(object):
         :type: connection: ~uamqp.connection.Connection
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START eventhub_client_sender_open]
                 :end-before: [END eventhub_client_sender_open]
                 :language: python
@@ -214,7 +214,7 @@ class Sender(object):
         :type exception: Exception
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START eventhub_client_sender_close]
                 :end-before: [END eventhub_client_sender_close]
                 :language: python
@@ -248,7 +248,7 @@ class Sender(object):
         :rtype: ~uamqp.constants.MessageSendResult
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START eventhub_client_sync_send]
                 :end-before: [END eventhub_client_sync_send]
                 :language: python
@@ -309,9 +309,9 @@ class Sender(object):
         :param callback: Callback to be run once the message has been send.
          This must be a function that accepts two arguments.
         :type callback: callable[~uamqp.constants.MessageSendResult, ~azure.eventhub.common.EventHubError]
-        
+
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START eventhub_client_transfer]
                 :end-before: [END eventhub_client_transfer]
                 :language: python
@@ -334,7 +334,7 @@ class Sender(object):
         Wait until all transferred events have been sent.
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START eventhub_client_transfer]
                 :end-before: [END eventhub_client_transfer]
                 :language: python

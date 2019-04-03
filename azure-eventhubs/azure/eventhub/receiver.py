@@ -22,7 +22,7 @@ class Receiver(object):
     Implements a Receiver.
 
     Example:
-        .. literalinclude:: ../examples/test_examples.py
+        .. literalinclude:: ../examples/test_examples_eventhub.py
             :start-after: [START create_eventhub_client_receiver_instance]
             :end-before: [END create_eventhub_client_receiver_instance]
             :language: python
@@ -89,7 +89,7 @@ class Receiver(object):
         :type: connection: ~uamqp.connection.Connection
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START eventhub_client_receiver_open]
                 :end-before: [END eventhub_client_receiver_open]
                 :language: python
@@ -231,7 +231,7 @@ class Receiver(object):
         :type exception: Exception
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START eventhub_client_receiver_close]
                 :end-before: [END eventhub_client_receiver_close]
                 :language: python
@@ -277,7 +277,7 @@ class Receiver(object):
         :rtype: list[~azure.eventhub.common.EventData]
 
         Example:
-            .. literalinclude:: ../examples/test_examples.py
+            .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START eventhub_client_sync_receive]
                 :end-before: [END eventhub_client_sync_receive]
                 :language: python
