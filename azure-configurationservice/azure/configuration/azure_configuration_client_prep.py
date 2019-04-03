@@ -24,79 +24,86 @@
 #
 # --------------------------------------------------------------------------
 
+"""
+The methods in this module preprocess the parameters for the methods in
+:class:`azure.configuration.AzureConfigurationClient` and
+:class:`azure.configuration.aio.AzureConfigurationClientSync`
+"""
 
-def validate_get_configuration_setting(key):
+
+from requests.structures import CaseInsensitiveDict
+
+
+def prep_get_configuration_setting(key, **kwargs):
     if not key:
         raise ValueError("key is mandatory to get a ConfigurationSetting object")
+    return kwargs.get("headers")
 
 
-def validate_add_configuration_setting(configuration_setting, **kwargs):
+def prep_add_configuration_setting(configuration_setting, **kwargs):
     if configuration_setting is None:
         raise ValueError("Object configuration_setting can not be None")
     if not configuration_setting.key:
         raise ValueError("key is mandatory to add a new ConfigurationSetting object")
 
-    custom_headers = kwargs.get("headers")
-    if custom_headers:
-        for header_key, header_value in custom_headers.items():
-            if header_key.lower() == "if-non-match":
-                custom_headers[header_key] = '"*"'
-                break
-        else:
-            custom_headers["If-None-Match"] = '"*"'
-    else:
-        custom_headers = {"If-None-Match": '"*"'}
-
+    custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
+    custom_headers["if-none-match"] = quote_etag('*')
     return custom_headers
 
 
-def validate_update_configuration_setting(key, etag=None, **kwargs):
-    # type: (str, str, dict) -> dict
-    if key is None:
+def prep_update_configuration_setting(key, etag=None, **kwargs):
+    # type: (str, str, dict) -> CaseInsensitiveDict
+    if not key:
         raise ValueError("key is mandatory to update a ConfigurationSetting")
 
-    return populate_http_header_if_match(etag, **kwargs)
-
-
-def validate_set_configuration_setting(configuration_setting, **kwargs):
-    if configuration_setting is None:
-        raise ValueError("Object configuration_setting can not be None")
-    key = configuration_setting.key
-    if key is None:
-        raise ValueError("key is mandatory to set a new ConfigurationSetting object")
-
-    return populate_http_header_if_match(configuration_setting.etag, **kwargs)
-
-
-def validate_delete_configuration_setting(key, etag=None, **kwargs):
-    if key is None:
-        raise ValueError("key is mandatory to delete a ConfigurationSetting object")
-
-    return populate_http_header_if_match(etag, **kwargs)
-
-
-def validate_lock_configuration_setting(key):
-    if key is None:
-        raise ValueError("key is mandatory to lock a ConfigurationSetting object")
-
-
-def validate_unlock_configuration_setting(key):
-    if key is None:
-        raise ValueError("key is mandatory to unlock a ConfigurationSetting object")
-
-
-def populate_http_header_if_match(etag, **kwargs):
-    custom_headers = kwargs.get("headers")
-    if custom_headers:
-        for header_key, header_value in custom_headers.items():
-            if header_key.lower() == "if-match":
-                custom_headers[header_key] = '"' + etag + '"' if etag else header_value
-                break
-        else:
-            if etag:
-                custom_headers["If-Match"] = '"' + etag + '"'
-    elif etag:
-        custom_headers = {"If-Match": '"'+etag+'"'}
+    custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
+    if etag:
+        custom_headers["if-match"] = quote_etag(etag)
+    elif "if-match" not in custom_headers:
+        custom_headers["if-match"] = quote_etag('*')
 
     return custom_headers
+
+
+def prep_set_configuration_setting(configuration_setting, **kwargs):
+    if configuration_setting is None:
+        raise ValueError("Object configuration_setting can not be None")
+    if not configuration_setting.key:
+        raise ValueError("key is mandatory to set a new ConfigurationSetting object")
+
+    custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
+    etag = configuration_setting.etag
+    if etag:
+        custom_headers["if-match"] = quote_etag(etag)
+
+    return custom_headers
+
+
+def prep_delete_configuration_setting(key: str, etag:str = None, **kwargs: dict) -> CaseInsensitiveDict:
+    if not key:
+        raise ValueError("key is mandatory to delete a ConfigurationSetting object")
+
+    custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
+    if etag:
+        custom_headers["if-match"] = quote_etag(etag)
+
+    return custom_headers
+
+
+def prep_lock_configuration_setting(key, **kwargs):
+    if not key:
+        raise ValueError("key is mandatory to lock a ConfigurationSetting object")
+
+    return kwargs.get("header")
+
+
+def prep_unlock_configuration_setting(key, **kwargs):
+    if not key:
+        raise ValueError("key is mandatory to unlock a ConfigurationSetting object")
+
+    return kwargs.get("header")
+
+
+def quote_etag(etag):
+    return '"' + etag + '"'
 

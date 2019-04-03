@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 
-import datetime
+from datetime import datetime
 
 from msrest.pipeline.requests import PipelineRequestsHTTPSender, RequestsPatchSession
 from msrest.pipeline import Request, Pipeline
@@ -34,17 +34,15 @@ from . import _generated
 from ._generated.models import ConfigurationSettingPaged, ConfigurationSetting
 
 from .azure_configuration_requests import AzConfigRequestsCredentialsPolicy
-from .azure_configuration_client_validation import *
+from .azure_configuration_client_prep import *
 from .utils import get_endpoint_from_connection_string
 
 
 class AzureConfigurationClient(object):
-    """Represents an azconfig client
+    """Represents an Azure App Configuration client
 
-    :ivar config: Configuration for client.
-    :vartype config: AzureConfigurationClient
-
-    :param connection_string: Credentials needed for the client to connect to Azure.
+    :param connection_string: Connection String used to access the Azure App Configuration. Looks like "Endpoint= \
+     https://appconfigname.azconfig.io;Id=1-l1-s0:gLY4fS/9qc8tXKudKsH6;Secret=c333C5sWw5B7PIDQeE8vd6k38SQFxiRbsTN0VmbjxfQ="
     :type connection_string: str
     """
 
@@ -76,10 +74,9 @@ class AzureConfigurationClient(object):
     ):
         # type: (list, list, datetime, list, dict) -> ConfigurationSettingPaged
 
-        """List configuration settings.
-
-        List the configuration settings in the configuration store, optionally filtered by
-        label.
+        """
+        List the configuration settings stored in the configuration service, optionally filtered by
+        label and accept_date_time
 
         :param labels: Filter returned values based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
@@ -87,15 +84,13 @@ class AzureConfigurationClient(object):
         :param keys: Filter returned values based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
         :type keys: list[str]
-        :param accept_date_time: Obtain representation of the result related
-         to past time.
+        :param accept_date_time: Filter out returned values created after this datetime
         :type accept_date_time: datetime
-        :param fields: Specify which fields to return
+        :param fields: Specify which fields to return. Leave None to return all fields
         :type fields: list[str]
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: An iterator like instance of ConfigurationSetting
-        :rtype:
-         ~azconfig.models.ConfigurationSettingPaged[~azconfig.models.ConfigurationSetting]
+        :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
+        :return: An iterator of :class:`ConfigurationSetting`
+        :rtype: :class:`azure.configuration.ConfigurationSettingPaged`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         return self._client.list_configuration_settings(
@@ -111,47 +106,47 @@ class AzureConfigurationClient(object):
     ):
         # type: (str, str, datetime, dict) -> ConfigurationSetting
 
-        """Get a ConfigurationSetting.
+        """Get the matched ConfigurationSetting from Azure App Configuration service
 
-        Get the ConfigurationSetting for the given key and label.
 
-        :param key: string
+        :param key: key of the ConfigurationSetting
         :type key: str
-        :param label: Label of key to retreive
+        :param label: label of the ConfigurationSetting
         :type label: str
-        :param accept_date_time: Obtain representation of the result related
-         to past time.
+        :param accept_date_time: The retrieved ConfigurationSetting must be created no later than this datetime
         :type accept_date_time: datetime
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: ConfigurationSetting
-        :rtype: ~azure.configurationservice.models.ConfigurationSetting
+        :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
+        :return: The matched ConfigurationSetting object
+        :rtype: :class:`azure.configuration.ConfigurationSetting`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        validate_get_configuration_setting(key)
+
+        custom_headers = prep_get_configuration_setting(key, **kwargs)
+
         return self._client.get_configuration_setting(
             key=key,
             label=label,
             accept_date_time=accept_date_time,
-            custom_headers=kwargs.get("headers"),
+            custom_headers=custom_headers,
         )
 
     def add_configuration_setting(self, configuration_setting, **kwargs):
         # type: (ConfigurationSetting, dict) -> ConfigurationSetting
 
-        """Create a ConfigurationSetting.
+        """Add a ConfigurationSetting into the Azure App Configuration service.
+        Exception is raised if it already exists.
 
-        Create a ConfigurationSetting.
+        .. seealso::
+            :meth:`set_configuration_setting`
 
         :param configuration_setting:
-        :type configuration_setting: ~azure.configurationservice.models.ConfigurationSetting
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: ConfigurationSetting
-        :rtype: ~azure.configurationservice.models.ConfigurationSetting
+        :type configuration_setting: :class:`ConfigurationSetting<azure.configuration.ConfigurationSetting>`
+        :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
+        :return: The ConfigurationSetting object returned from the App Configuration service.
+        :rtype: :class:`ConfigurationSetting`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        custom_headers = validate_add_configuration_setting(
-            configuration_setting, **kwargs
-        )
+        custom_headers = prep_add_configuration_setting(configuration_setting, **kwargs)
         return self._client.create_or_update_configuration_setting(
             configuration_setting=configuration_setting,
             key=configuration_setting.key,
@@ -171,11 +166,14 @@ class AzureConfigurationClient(object):
     ):
         # type: (str, str, str, dict, str, str, dict) -> ConfigurationSetting
 
-        """Update a ConfigurationSetting.
-
+        """
         Update a ConfigurationSetting.
+        Exception is raised if it doesn't exist.
 
-        :param key: string
+        .. seealso::
+            :meth:`set_configuration_setting`
+
+        :param key:
         :type key: str
         :param value:
         :type value: str
@@ -188,12 +186,12 @@ class AzureConfigurationClient(object):
         :param etag:
         :type etag: str
         :param dict kwargs: if headers key exists, it will be added to the request
-        :return: ConfigurationSetting
+        :return: :class:`ConfigurationSetting`
         :rtype: ~azure.configurationservice.models.ConfigurationSetting
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
 
-        custom_headers = validate_update_configuration_setting(key, etag, **kwargs)
+        custom_headers = prep_update_configuration_setting(key, etag, **kwargs)
 
         current_configuration_setting = self._client.get_configuration_setting(
             key, label
@@ -214,24 +212,25 @@ class AzureConfigurationClient(object):
     def set_configuration_setting(self, configuration_setting, **kwargs):
         # type: (ConfigurationSetting, dict) -> ConfigurationSetting
 
-        """Set a KeyValue.
+        """
+        Set a KeyValue. If the ConfigurationSetting already exists, it gets updated. Otherwise a new one is added.
 
-        Create or update a ConfigurationSetting.
+        .. seealso::
+            :meth:`update_configuration_setting`
+            :meth:`add_configuration_setting`
 
         :param configuration_setting:
-        :type configuration_setting: ~azure.configurationservice.models.KeyValue
-        :param key: string
+        :type configuration_setting: :class:`ConfigurationSetting`
+        :param key:
         :type key: str
         :param label:
         :type label: str
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: ConfigurationSetting
-        :rtype: ~azure.configurationservice.models.ConfigurationSetting
+        :param dict kwargs:
+        :return: The ConfigurationSetting returned from the service
+        :rtype: :class:`ConfigurationSetting`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        custom_headers = validate_set_configuration_setting(
-            configuration_setting, **kwargs
-        )
+        custom_headers = prep_set_configuration_setting(configuration_setting, **kwargs)
         return self._client.create_or_update_configuration_setting(
             configuration_setting=configuration_setting,
             key=configuration_setting.key,
@@ -242,20 +241,21 @@ class AzureConfigurationClient(object):
     def delete_configuration_setting(self, key, label=None, etag=None, **kwargs):
         # type: (str, str, str, dict) -> ConfigurationSetting
 
-        """Delete a ConfigurationSetting.
+        """
+        Delete a ConfigurationSetting if it exists. Otherwise raise an exception.
 
-        :param key: string
+        :param key:
         :type key: str
         :param label:
         :type label: str
         :param etag:
         :type etag: str
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: ConfigurationSetting
-        :rtype: ~azure.configurationservice.models.ConfigurationSetting
+        :param dict kwargs:
+        :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
+        :rtype: :class:`ConfigurationSetting`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        custom_headers = validate_delete_configuration_setting(key, etag, **kwargs)
+        custom_headers = prep_delete_configuration_setting(key, etag, **kwargs)
         return self._client.delete_configuration_setting(
             key=key, label=label, custom_headers=custom_headers
         )
@@ -263,20 +263,21 @@ class AzureConfigurationClient(object):
     def lock_configuration_setting(self, key, label=None, **kwargs):
         # type: (str, str, dict) -> ConfigurationSetting
 
-        """ Lock a ConfigurationSetting
+        """
+        Lock a ConfigurationSetting
 
         :param key:
         :type key: str
         :param label:
         :type label: str
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: ConfigurationSetting
-        :rtype: ~azure.configurationservice.models.ConfigurationSetting
+        :param dict kwargs:
+        :return: The locked ConfigurationSetting returned from the service
+        :rtype: :class:`ConfigurationSetting`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        validate_lock_configuration_setting(key)
+        custom_headers = prep_lock_configuration_setting(key, **kwargs)
         return self._client.lock_configuration_setting(
-            key=key, label=label, custom_headers=kwargs.get("headers")
+            key=key, label=label, custom_headers=custom_headers
         )
 
     def unlock_configuration_setting(self, key, label=None, **kwargs):
@@ -288,14 +289,14 @@ class AzureConfigurationClient(object):
         :type key: str
         :param label:
         :type label: str
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: ConfigurationSetting
-        :rtype: ~azure.configurationservice.models.ConfigurationSetting
+        :param dict kwargs:
+        :return: The locked ConfigurationSetting returned from the service.
+        :rtype: :class:`ConfigurationSetting`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        validate_unlock_configuration_setting(key)
+        custom_headers = prep_unlock_configuration_setting(key, **kwargs)
         return self._client.unlock_configuration_setting(
-            key=key, label=label, custom_headers=kwargs.get("headers")
+            key=key, label=label, custom_headers=custom_headers
         )
 
     def list_revisions(
@@ -304,6 +305,7 @@ class AzureConfigurationClient(object):
         # type: (list, list, datetime, list, dict) -> ConfigurationSettingPaged
 
         """
+        Find the ConfigurationSetting revision history.
 
         :param labels: Filter returned values based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
@@ -311,15 +313,13 @@ class AzureConfigurationClient(object):
         :param keys: Filter returned values based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
         :type keys: list[str]
-        :param accept_date_time: Obtain representation of the result related
-         to past time.
+        :param accept_date_time: Filter out returned values created after this datetime
         :type accept_date_time: datetime
-        :param fields: Specify which fields to return
+        :param fields: Specify which fields to return. Leave None to return all fields
         :type fields: list[str]
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: An iterator like instance of ConfigurationSetting
-        :rtype:
-         ~azconfig.models.ConfigurationSettingPaged[~azconfig.models.ConfigurationSetting]
+        :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
+        :return: An iterator of :class:`ConfigurationSetting`
+        :rtype: :class:`azure.configuration.ConfigurationSettingPaged`
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         return self._client.list_revisions(
