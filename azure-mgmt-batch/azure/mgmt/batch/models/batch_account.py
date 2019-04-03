@@ -48,13 +48,17 @@ class BatchAccount(Resource):
      associated with the Batch account.
     :vartype auto_storage: ~azure.mgmt.batch.models.AutoStorageProperties
     :ivar dedicated_core_quota: The dedicated core quota for the Batch
-     account.
+     account. For accounts with PoolAllocationMode set to UserSubscription,
+     quota is managed on the subscription so this value is null.
     :vartype dedicated_core_quota: int
     :ivar low_priority_core_quota: The low-priority core quota for the Batch
-     account.
+     account. For accounts with PoolAllocationMode set to UserSubscription,
+     quota is managed on the subscription so this value is null.
     :vartype low_priority_core_quota: int
     :ivar dedicated_core_quota_per_vm_family: A list of the dedicated core
-     quota per Virtual Machine family for the Batch account.
+     quota per Virtual Machine family for the Batch account. For accounts with
+     PoolAllocationMode set to UserSubscription, quota is managed on the
+     subscription so this value is null.
     :vartype dedicated_core_quota_per_vm_family:
      list[~azure.mgmt.batch.models.VirtualMachineFamilyCoreQuota]
     :ivar dedicated_core_quota_per_vm_family_enforced: A value indicating
