@@ -63,7 +63,7 @@ class Blueprint(AzureResourceBase):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'BlueprintStatus'},
-        'target_scope': {'key': 'properties.targetScope', 'type': 'BlueprintTargetScope'},
+        'target_scope': {'key': 'properties.targetScope', 'type': 'str'},
         'parameters': {'key': 'properties.parameters', 'type': '{ParameterDefinition}'},
         'resource_groups': {'key': 'properties.resourceGroups', 'type': '{ResourceGroupDefinition}'},
         'versions': {'key': 'properties.versions', 'type': 'object'},
