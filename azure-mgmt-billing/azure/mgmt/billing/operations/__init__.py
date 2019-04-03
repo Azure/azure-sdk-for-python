@@ -50,6 +50,7 @@ from .billing_profile_billing_role_definition_operations import BillingProfileBi
 from .billing_account_billing_role_assignment_operations import BillingAccountBillingRoleAssignmentOperations
 from .invoice_section_billing_role_assignment_operations import InvoiceSectionBillingRoleAssignmentOperations
 from .billing_profile_billing_role_assignment_operations import BillingProfileBillingRoleAssignmentOperations
+from .agreements_operations import AgreementsOperations
 
 __all__ = [
     'BillingAccountsOperations',
@@ -93,4 +94,5 @@ __all__ = [
     'BillingAccountBillingRoleAssignmentOperations',
     'InvoiceSectionBillingRoleAssignmentOperations',
     'BillingProfileBillingRoleAssignmentOperations',
+    'AgreementsOperations',
 ]

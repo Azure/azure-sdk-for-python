@@ -68,6 +68,9 @@ try:
     from .billing_permissions_list_result_py3 import BillingPermissionsListResult
     from .billing_role_definition_py3 import BillingRoleDefinition
     from .billing_role_definition_list_result_py3 import BillingRoleDefinitionListResult
+    from .participants_py3 import Participants
+    from .agreement_py3 import Agreement
+    from .agreement_list_result_py3 import AgreementListResult
 except (SyntaxError, ImportError):
     from .initiate_transfer_request import InitiateTransferRequest
     from .product_details import ProductDetails
@@ -127,6 +130,9 @@ except (SyntaxError, ImportError):
     from .billing_permissions_list_result import BillingPermissionsListResult
     from .billing_role_definition import BillingRoleDefinition
     from .billing_role_definition_list_result import BillingRoleDefinitionListResult
+    from .participants import Participants
+    from .agreement import Agreement
+    from .agreement_list_result import AgreementListResult
 from .payment_method_paged import PaymentMethodPaged
 from .billing_subscription_summary_paged import BillingSubscriptionSummaryPaged
 from .product_summary_paged import ProductSummaryPaged
@@ -207,6 +213,9 @@ __all__ = [
     'BillingPermissionsListResult',
     'BillingRoleDefinition',
     'BillingRoleDefinitionListResult',
+    'Participants',
+    'Agreement',
+    'AgreementListResult',
     'PaymentMethodPaged',
     'BillingSubscriptionSummaryPaged',
     'ProductSummaryPaged',
