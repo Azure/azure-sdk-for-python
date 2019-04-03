@@ -1,7 +1,7 @@
 Microsoft Azure SDK for Python
 ==============================
 
-This is the Microsoft Azure MyService Management Client Library.
+This is the Microsoft Azure Subscription Management Client Library.
 
 Azure Resource Manager (ARM) is the next generation of management APIs that
 replace the old Azure Service Management (ASM).
@@ -12,25 +12,6 @@ For the older Azure Service Management (ASM) libraries, see
 `azure-servicemanagement-legacy <https://pypi.python.org/pypi/azure-servicemanagement-legacy>`__ library.
 
 For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
-
-
-Compatibility
-=============
-
-**IMPORTANT**: If you have an earlier version of the azure package
-(version < 1.0), you should uninstall it before installing this package.
-
-You can check the version using pip:
-
-.. code:: shell
-
-    pip freeze
-
-If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
-
-.. code:: shell
-
-    pip uninstall azure
 
 
 Usage
