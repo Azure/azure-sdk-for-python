@@ -15,10 +15,11 @@ from msrest.serialization import Model
 class IntegrationAccountSku(Model):
     """The integration account sku.
 
-    :param name: The sku name. Possible values include: 'NotSpecified',
-     'Free', 'Standard'
-    :type name: str or :class:`IntegrationAccountSkuName
-     <azure.mgmt.logic.models.IntegrationAccountSkuName>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The sku name. Possible values include:
+     'NotSpecified', 'Free', 'Basic', 'Standard'
+    :type name: str or ~azure.mgmt.logic.models.IntegrationAccountSkuName
     """
 
     _validation = {
@@ -26,8 +27,9 @@ class IntegrationAccountSku(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'IntegrationAccountSkuName'},
+        'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, **kwargs):
+        super(IntegrationAccountSku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

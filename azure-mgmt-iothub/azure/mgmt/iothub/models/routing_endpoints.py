@@ -20,24 +20,21 @@ class RoutingEndpoints(Model):
 
     :param service_bus_queues: The list of Service Bus queue endpoints that
      IoT hub routes the messages to, based on the routing rules.
-    :type service_bus_queues: list of
-     :class:`RoutingServiceBusQueueEndpointProperties
-     <azure.mgmt.iothub.models.RoutingServiceBusQueueEndpointProperties>`
+    :type service_bus_queues:
+     list[~azure.mgmt.iothub.models.RoutingServiceBusQueueEndpointProperties]
     :param service_bus_topics: The list of Service Bus topic endpoints that
      the IoT hub routes the messages to, based on the routing rules.
-    :type service_bus_topics: list of
-     :class:`RoutingServiceBusTopicEndpointProperties
-     <azure.mgmt.iothub.models.RoutingServiceBusTopicEndpointProperties>`
+    :type service_bus_topics:
+     list[~azure.mgmt.iothub.models.RoutingServiceBusTopicEndpointProperties]
     :param event_hubs: The list of Event Hubs endpoints that IoT hub routes
      messages to, based on the routing rules. This list does not include the
      built-in Event Hubs endpoint.
-    :type event_hubs: list of :class:`RoutingEventHubProperties
-     <azure.mgmt.iothub.models.RoutingEventHubProperties>`
+    :type event_hubs:
+     list[~azure.mgmt.iothub.models.RoutingEventHubProperties]
     :param storage_containers: The list of storage container endpoints that
      IoT hub routes messages to, based on the routing rules.
-    :type storage_containers: list of
-     :class:`RoutingStorageContainerProperties
-     <azure.mgmt.iothub.models.RoutingStorageContainerProperties>`
+    :type storage_containers:
+     list[~azure.mgmt.iothub.models.RoutingStorageContainerProperties]
     """
 
     _attribute_map = {
@@ -47,8 +44,9 @@ class RoutingEndpoints(Model):
         'storage_containers': {'key': 'storageContainers', 'type': '[RoutingStorageContainerProperties]'},
     }
 
-    def __init__(self, service_bus_queues=None, service_bus_topics=None, event_hubs=None, storage_containers=None):
-        self.service_bus_queues = service_bus_queues
-        self.service_bus_topics = service_bus_topics
-        self.event_hubs = event_hubs
-        self.storage_containers = storage_containers
+    def __init__(self, **kwargs):
+        super(RoutingEndpoints, self).__init__(**kwargs)
+        self.service_bus_queues = kwargs.get('service_bus_queues', None)
+        self.service_bus_topics = kwargs.get('service_bus_topics', None)
+        self.event_hubs = kwargs.get('event_hubs', None)
+        self.storage_containers = kwargs.get('storage_containers', None)

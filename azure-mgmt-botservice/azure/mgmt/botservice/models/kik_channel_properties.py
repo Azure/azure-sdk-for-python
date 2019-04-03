@@ -15,13 +15,16 @@ from msrest.serialization import Model
 class KikChannelProperties(Model):
     """The parameters to provide for the Kik channel.
 
-    :param user_name: The Kik user name
+    All required parameters must be populated in order to send to Azure.
+
+    :param user_name: Required. The Kik user name
     :type user_name: str
-    :param api_key: Kik API key
+    :param api_key: Required. Kik API key. Value only returned through POST to
+     the action Channel List API, otherwise empty.
     :type api_key: str
     :param is_validated: Whether this channel is validated for the bot
     :type is_validated: bool
-    :param is_enabled: Whether this channel is enabled for the bot
+    :param is_enabled: Required. Whether this channel is enabled for the bot
     :type is_enabled: bool
     """
 
@@ -38,8 +41,9 @@ class KikChannelProperties(Model):
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, user_name, api_key, is_enabled, is_validated=None):
-        self.user_name = user_name
-        self.api_key = api_key
-        self.is_validated = is_validated
-        self.is_enabled = is_enabled
+    def __init__(self, **kwargs):
+        super(KikChannelProperties, self).__init__(**kwargs)
+        self.user_name = kwargs.get('user_name', None)
+        self.api_key = kwargs.get('api_key', None)
+        self.is_validated = kwargs.get('is_validated', None)
+        self.is_enabled = kwargs.get('is_enabled', None)

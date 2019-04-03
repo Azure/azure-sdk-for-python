@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EdifactEnvelopeOverride(Model):
-    """The Edifact enevlope override settings.
+    """The Edifact envelope override settings.
 
     :param message_id: The message id on which this envelope settings has to
      be applied.
@@ -70,19 +70,20 @@ class EdifactEnvelopeOverride(Model):
         'application_password': {'key': 'applicationPassword', 'type': 'str'},
     }
 
-    def __init__(self, message_id=None, message_version=None, message_release=None, message_association_assigned_code=None, target_namespace=None, functional_group_id=None, sender_application_qualifier=None, sender_application_id=None, receiver_application_qualifier=None, receiver_application_id=None, controlling_agency_code=None, group_header_message_version=None, group_header_message_release=None, association_assigned_code=None, application_password=None):
-        self.message_id = message_id
-        self.message_version = message_version
-        self.message_release = message_release
-        self.message_association_assigned_code = message_association_assigned_code
-        self.target_namespace = target_namespace
-        self.functional_group_id = functional_group_id
-        self.sender_application_qualifier = sender_application_qualifier
-        self.sender_application_id = sender_application_id
-        self.receiver_application_qualifier = receiver_application_qualifier
-        self.receiver_application_id = receiver_application_id
-        self.controlling_agency_code = controlling_agency_code
-        self.group_header_message_version = group_header_message_version
-        self.group_header_message_release = group_header_message_release
-        self.association_assigned_code = association_assigned_code
-        self.application_password = application_password
+    def __init__(self, **kwargs):
+        super(EdifactEnvelopeOverride, self).__init__(**kwargs)
+        self.message_id = kwargs.get('message_id', None)
+        self.message_version = kwargs.get('message_version', None)
+        self.message_release = kwargs.get('message_release', None)
+        self.message_association_assigned_code = kwargs.get('message_association_assigned_code', None)
+        self.target_namespace = kwargs.get('target_namespace', None)
+        self.functional_group_id = kwargs.get('functional_group_id', None)
+        self.sender_application_qualifier = kwargs.get('sender_application_qualifier', None)
+        self.sender_application_id = kwargs.get('sender_application_id', None)
+        self.receiver_application_qualifier = kwargs.get('receiver_application_qualifier', None)
+        self.receiver_application_id = kwargs.get('receiver_application_id', None)
+        self.controlling_agency_code = kwargs.get('controlling_agency_code', None)
+        self.group_header_message_version = kwargs.get('group_header_message_version', None)
+        self.group_header_message_release = kwargs.get('group_header_message_release', None)
+        self.association_assigned_code = kwargs.get('association_assigned_code', None)
+        self.application_password = kwargs.get('application_password', None)

@@ -31,7 +31,7 @@ class CognitiveServicesAccount(Model):
     :vartype name: str
     :ivar provisioning_state: Gets the status of the cognitive services
      account at the time the operation was called. Possible values include:
-     'Creating', 'ResolvingDNS', 'Succeeded', 'Failed'
+     'Creating', 'ResolvingDNS', 'Moving', 'Deleting', 'Succeeded', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.cognitiveservices.models.ProvisioningState
     :param endpoint: Endpoint of the created account.
@@ -63,7 +63,7 @@ class CognitiveServicesAccount(Model):
         'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
         'internal_id': {'key': 'properties.internalId', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
@@ -71,15 +71,16 @@ class CognitiveServicesAccount(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, etag=None, kind=None, location=None, endpoint=None, internal_id=None, sku=None, tags=None):
-        self.etag = etag
+    def __init__(self, **kwargs):
+        super(CognitiveServicesAccount, self).__init__(**kwargs)
+        self.etag = kwargs.get('etag', None)
         self.id = None
-        self.kind = kind
-        self.location = location
+        self.kind = kwargs.get('kind', None)
+        self.location = kwargs.get('location', None)
         self.name = None
         self.provisioning_state = None
-        self.endpoint = endpoint
-        self.internal_id = internal_id
-        self.sku = sku
-        self.tags = tags
+        self.endpoint = kwargs.get('endpoint', None)
+        self.internal_id = kwargs.get('internal_id', None)
+        self.sku = kwargs.get('sku', None)
+        self.tags = kwargs.get('tags', None)
         self.type = None

@@ -15,23 +15,25 @@ from msrest.serialization import Model
 class SearchSchemaValue(Model):
     """Value object for schema results.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param name: The name of the schema.
     :type name: str
     :param display_name: The display name of the schema.
     :type display_name: str
     :param type: The type.
     :type type: str
-    :param indexed: The boolean that indicates the field is searchable as free
-     text.
+    :param indexed: Required. The boolean that indicates the field is
+     searchable as free text.
     :type indexed: bool
-    :param stored: The boolean that indicates whether or not the field is
-     stored.
+    :param stored: Required. The boolean that indicates whether or not the
+     field is stored.
     :type stored: bool
-    :param facet: The boolean that indicates whether or not the field is a
-     facet.
+    :param facet: Required. The boolean that indicates whether or not the
+     field is a facet.
     :type facet: bool
     :param owner_type: The array of workflows containing the field.
-    :type owner_type: list of str
+    :type owner_type: list[str]
     """
 
     _validation = {
@@ -50,11 +52,12 @@ class SearchSchemaValue(Model):
         'owner_type': {'key': 'ownerType', 'type': '[str]'},
     }
 
-    def __init__(self, indexed, stored, facet, name=None, display_name=None, type=None, owner_type=None):
-        self.name = name
-        self.display_name = display_name
-        self.type = type
-        self.indexed = indexed
-        self.stored = stored
-        self.facet = facet
-        self.owner_type = owner_type
+    def __init__(self, **kwargs):
+        super(SearchSchemaValue, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.type = kwargs.get('type', None)
+        self.indexed = kwargs.get('indexed', None)
+        self.stored = kwargs.get('stored', None)
+        self.facet = kwargs.get('facet', None)
+        self.owner_type = kwargs.get('owner_type', None)

@@ -51,11 +51,11 @@ class UpdateClusterUpgradeDescription(Model):
         'application_health_policy_map': {'key': 'ApplicationHealthPolicyMap', 'type': 'ApplicationHealthPolicies'},
     }
 
-    def __init__(self, upgrade_kind="Rolling", update_description=None, cluster_health_policy=None, enable_delta_health_evaluation=None, cluster_upgrade_health_policy=None, application_health_policy_map=None):
-        super(UpdateClusterUpgradeDescription, self).__init__()
-        self.upgrade_kind = upgrade_kind
-        self.update_description = update_description
-        self.cluster_health_policy = cluster_health_policy
-        self.enable_delta_health_evaluation = enable_delta_health_evaluation
-        self.cluster_upgrade_health_policy = cluster_upgrade_health_policy
-        self.application_health_policy_map = application_health_policy_map
+    def __init__(self, **kwargs):
+        super(UpdateClusterUpgradeDescription, self).__init__(**kwargs)
+        self.upgrade_kind = kwargs.get('upgrade_kind', "Rolling")
+        self.update_description = kwargs.get('update_description', None)
+        self.cluster_health_policy = kwargs.get('cluster_health_policy', None)
+        self.enable_delta_health_evaluation = kwargs.get('enable_delta_health_evaluation', None)
+        self.cluster_upgrade_health_policy = kwargs.get('cluster_upgrade_health_policy', None)
+        self.application_health_policy_map = kwargs.get('application_health_policy_map', None)

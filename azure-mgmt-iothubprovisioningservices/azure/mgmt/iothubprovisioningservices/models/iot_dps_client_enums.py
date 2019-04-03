@@ -12,12 +12,12 @@
 from enum import Enum
 
 
-class IotDpsSku(Enum):
+class IotDpsSku(str, Enum):
 
     s1 = "S1"
 
 
-class State(Enum):
+class State(str, Enum):
 
     activating = "Activating"
     active = "Active"
@@ -33,14 +33,14 @@ class State(Enum):
     failover_failed = "FailoverFailed"
 
 
-class AllocationPolicy(Enum):
+class AllocationPolicy(str, Enum):
 
     hashed = "Hashed"
     geo_latency = "GeoLatency"
     static = "Static"
 
 
-class AccessRightsDescription(Enum):
+class AccessRightsDescription(str, Enum):
 
     service_config = "ServiceConfig"
     enrollment_read = "EnrollmentRead"
@@ -50,13 +50,13 @@ class AccessRightsDescription(Enum):
     registration_status_write = "RegistrationStatusWrite"
 
 
-class NameUnavailabilityReason(Enum):
+class NameUnavailabilityReason(str, Enum):
 
     invalid = "Invalid"
     already_exists = "AlreadyExists"
 
 
-class CertificatePurpose(Enum):
+class CertificatePurpose(str, Enum):
 
     client_authentication = "clientAuthentication"
     server_authentication = "serverAuthentication"

@@ -21,6 +21,8 @@ try:
     from .virtual_machine_image_resource_py3 import VirtualMachineImageResource
     from .virtual_machine_extension_instance_view_py3 import VirtualMachineExtensionInstanceView
     from .virtual_machine_extension_py3 import VirtualMachineExtension
+    from .virtual_machine_extension_update_py3 import VirtualMachineExtensionUpdate
+    from .virtual_machine_extensions_list_result_py3 import VirtualMachineExtensionsListResult
     from .purchase_plan_py3 import PurchasePlan
     from .os_disk_image_py3 import OSDiskImage
     from .data_disk_image_py3 import DataDiskImage
@@ -63,6 +65,7 @@ try:
     from .virtual_machine_instance_view_py3 import VirtualMachineInstanceView
     from .virtual_machine_py3 import VirtualMachine
     from .virtual_machine_update_py3 import VirtualMachineUpdate
+    from .auto_os_upgrade_policy_py3 import AutoOSUpgradePolicy
     from .rolling_upgrade_policy_py3 import RollingUpgradePolicy
     from .upgrade_policy_py3 import UpgradePolicy
     from .image_os_disk_py3 import ImageOSDisk
@@ -104,14 +107,18 @@ try:
     from .virtual_machine_scale_set_instance_view_py3 import VirtualMachineScaleSetInstanceView
     from .virtual_machine_scale_set_sku_capacity_py3 import VirtualMachineScaleSetSkuCapacity
     from .virtual_machine_scale_set_sku_py3 import VirtualMachineScaleSetSku
-    from .virtual_machine_scale_set_vm_py3 import VirtualMachineScaleSetVM
-    from .virtual_machine_health_status_py3 import VirtualMachineHealthStatus
-    from .virtual_machine_scale_set_vm_instance_view_py3 import VirtualMachineScaleSetVMInstanceView
-    from .rolling_upgrade_running_status_py3 import RollingUpgradeRunningStatus
-    from .rolling_upgrade_progress_info_py3 import RollingUpgradeProgressInfo
     from .api_error_base_py3 import ApiErrorBase
     from .inner_error_py3 import InnerError
     from .api_error_py3 import ApiError
+    from .rollback_status_info_py3 import RollbackStatusInfo
+    from .upgrade_operation_history_status_py3 import UpgradeOperationHistoryStatus
+    from .rolling_upgrade_progress_info_py3 import RollingUpgradeProgressInfo
+    from .upgrade_operation_historical_status_info_properties_py3 import UpgradeOperationHistoricalStatusInfoProperties
+    from .upgrade_operation_historical_status_info_py3 import UpgradeOperationHistoricalStatusInfo
+    from .virtual_machine_health_status_py3 import VirtualMachineHealthStatus
+    from .virtual_machine_scale_set_vm_instance_view_py3 import VirtualMachineScaleSetVMInstanceView
+    from .virtual_machine_scale_set_vm_py3 import VirtualMachineScaleSetVM
+    from .rolling_upgrade_running_status_py3 import RollingUpgradeRunningStatus
     from .rolling_upgrade_status_info_py3 import RollingUpgradeStatusInfo
     from .compute_long_running_operation_properties_py3 import ComputeLongRunningOperationProperties
     from .resource_py3 import Resource
@@ -142,6 +149,8 @@ except (SyntaxError, ImportError):
     from .virtual_machine_image_resource import VirtualMachineImageResource
     from .virtual_machine_extension_instance_view import VirtualMachineExtensionInstanceView
     from .virtual_machine_extension import VirtualMachineExtension
+    from .virtual_machine_extension_update import VirtualMachineExtensionUpdate
+    from .virtual_machine_extensions_list_result import VirtualMachineExtensionsListResult
     from .purchase_plan import PurchasePlan
     from .os_disk_image import OSDiskImage
     from .data_disk_image import DataDiskImage
@@ -184,6 +193,7 @@ except (SyntaxError, ImportError):
     from .virtual_machine_instance_view import VirtualMachineInstanceView
     from .virtual_machine import VirtualMachine
     from .virtual_machine_update import VirtualMachineUpdate
+    from .auto_os_upgrade_policy import AutoOSUpgradePolicy
     from .rolling_upgrade_policy import RollingUpgradePolicy
     from .upgrade_policy import UpgradePolicy
     from .image_os_disk import ImageOSDisk
@@ -225,14 +235,18 @@ except (SyntaxError, ImportError):
     from .virtual_machine_scale_set_instance_view import VirtualMachineScaleSetInstanceView
     from .virtual_machine_scale_set_sku_capacity import VirtualMachineScaleSetSkuCapacity
     from .virtual_machine_scale_set_sku import VirtualMachineScaleSetSku
-    from .virtual_machine_scale_set_vm import VirtualMachineScaleSetVM
-    from .virtual_machine_health_status import VirtualMachineHealthStatus
-    from .virtual_machine_scale_set_vm_instance_view import VirtualMachineScaleSetVMInstanceView
-    from .rolling_upgrade_running_status import RollingUpgradeRunningStatus
-    from .rolling_upgrade_progress_info import RollingUpgradeProgressInfo
     from .api_error_base import ApiErrorBase
     from .inner_error import InnerError
     from .api_error import ApiError
+    from .rollback_status_info import RollbackStatusInfo
+    from .upgrade_operation_history_status import UpgradeOperationHistoryStatus
+    from .rolling_upgrade_progress_info import RollingUpgradeProgressInfo
+    from .upgrade_operation_historical_status_info_properties import UpgradeOperationHistoricalStatusInfoProperties
+    from .upgrade_operation_historical_status_info import UpgradeOperationHistoricalStatusInfo
+    from .virtual_machine_health_status import VirtualMachineHealthStatus
+    from .virtual_machine_scale_set_vm_instance_view import VirtualMachineScaleSetVMInstanceView
+    from .virtual_machine_scale_set_vm import VirtualMachineScaleSetVM
+    from .rolling_upgrade_running_status import RollingUpgradeRunningStatus
     from .rolling_upgrade_status_info import RollingUpgradeStatusInfo
     from .compute_long_running_operation_properties import ComputeLongRunningOperationProperties
     from .resource import Resource
@@ -254,11 +268,12 @@ except (SyntaxError, ImportError):
 from .compute_operation_value_paged import ComputeOperationValuePaged
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
+from .virtual_machine_paged import VirtualMachinePaged
 from .usage_paged import UsagePaged
 from .image_paged import ImagePaged
-from .virtual_machine_paged import VirtualMachinePaged
 from .virtual_machine_scale_set_paged import VirtualMachineScaleSetPaged
 from .virtual_machine_scale_set_sku_paged import VirtualMachineScaleSetSkuPaged
+from .upgrade_operation_historical_status_info_paged import UpgradeOperationHistoricalStatusInfoPaged
 from .virtual_machine_scale_set_extension_paged import VirtualMachineScaleSetExtensionPaged
 from .virtual_machine_scale_set_vm_paged import VirtualMachineScaleSetVMPaged
 from .run_command_document_base_paged import RunCommandDocumentBasePaged
@@ -279,7 +294,10 @@ from .compute_management_client_enums import (
     OperatingSystemStateTypes,
     IPVersion,
     VirtualMachinePriorityTypes,
+    VirtualMachineEvictionPolicyTypes,
     VirtualMachineScaleSetSkuScaleType,
+    UpgradeState,
+    UpgradeOperationInvoker,
     RollingUpgradeStatusCode,
     RollingUpgradeActionType,
     IntervalInMins,
@@ -298,6 +316,8 @@ __all__ = [
     'VirtualMachineImageResource',
     'VirtualMachineExtensionInstanceView',
     'VirtualMachineExtension',
+    'VirtualMachineExtensionUpdate',
+    'VirtualMachineExtensionsListResult',
     'PurchasePlan',
     'OSDiskImage',
     'DataDiskImage',
@@ -340,6 +360,7 @@ __all__ = [
     'VirtualMachineInstanceView',
     'VirtualMachine',
     'VirtualMachineUpdate',
+    'AutoOSUpgradePolicy',
     'RollingUpgradePolicy',
     'UpgradePolicy',
     'ImageOSDisk',
@@ -381,14 +402,18 @@ __all__ = [
     'VirtualMachineScaleSetInstanceView',
     'VirtualMachineScaleSetSkuCapacity',
     'VirtualMachineScaleSetSku',
-    'VirtualMachineScaleSetVM',
-    'VirtualMachineHealthStatus',
-    'VirtualMachineScaleSetVMInstanceView',
-    'RollingUpgradeRunningStatus',
-    'RollingUpgradeProgressInfo',
     'ApiErrorBase',
     'InnerError',
     'ApiError',
+    'RollbackStatusInfo',
+    'UpgradeOperationHistoryStatus',
+    'RollingUpgradeProgressInfo',
+    'UpgradeOperationHistoricalStatusInfoProperties',
+    'UpgradeOperationHistoricalStatusInfo',
+    'VirtualMachineHealthStatus',
+    'VirtualMachineScaleSetVMInstanceView',
+    'VirtualMachineScaleSetVM',
+    'RollingUpgradeRunningStatus',
     'RollingUpgradeStatusInfo',
     'ComputeLongRunningOperationProperties',
     'Resource',
@@ -410,11 +435,12 @@ __all__ = [
     'ComputeOperationValuePaged',
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
+    'VirtualMachinePaged',
     'UsagePaged',
     'ImagePaged',
-    'VirtualMachinePaged',
     'VirtualMachineScaleSetPaged',
     'VirtualMachineScaleSetSkuPaged',
+    'UpgradeOperationHistoricalStatusInfoPaged',
     'VirtualMachineScaleSetExtensionPaged',
     'VirtualMachineScaleSetVMPaged',
     'RunCommandDocumentBasePaged',
@@ -434,7 +460,10 @@ __all__ = [
     'OperatingSystemStateTypes',
     'IPVersion',
     'VirtualMachinePriorityTypes',
+    'VirtualMachineEvictionPolicyTypes',
     'VirtualMachineScaleSetSkuScaleType',
+    'UpgradeState',
+    'UpgradeOperationInvoker',
     'RollingUpgradeStatusCode',
     'RollingUpgradeActionType',
     'IntervalInMins',

@@ -19,6 +19,8 @@ try:
     from .virtual_machine_image_resource_py3 import VirtualMachineImageResource
     from .virtual_machine_extension_instance_view_py3 import VirtualMachineExtensionInstanceView
     from .virtual_machine_extension_py3 import VirtualMachineExtension
+    from .virtual_machine_extension_update_py3 import VirtualMachineExtensionUpdate
+    from .virtual_machine_extensions_list_result_py3 import VirtualMachineExtensionsListResult
     from .purchase_plan_py3 import PurchasePlan
     from .os_disk_image_py3 import OSDiskImage
     from .data_disk_image_py3 import DataDiskImage
@@ -105,9 +107,9 @@ try:
     from .virtual_machine_scale_set_instance_view_py3 import VirtualMachineScaleSetInstanceView
     from .virtual_machine_scale_set_sku_capacity_py3 import VirtualMachineScaleSetSkuCapacity
     from .virtual_machine_scale_set_sku_py3 import VirtualMachineScaleSetSku
-    from .virtual_machine_scale_set_vm_py3 import VirtualMachineScaleSetVM
     from .virtual_machine_health_status_py3 import VirtualMachineHealthStatus
     from .virtual_machine_scale_set_vm_instance_view_py3 import VirtualMachineScaleSetVMInstanceView
+    from .virtual_machine_scale_set_vm_py3 import VirtualMachineScaleSetVM
     from .rolling_upgrade_running_status_py3 import RollingUpgradeRunningStatus
     from .rolling_upgrade_progress_info_py3 import RollingUpgradeProgressInfo
     from .api_error_base_py3 import ApiErrorBase
@@ -149,6 +151,8 @@ except (SyntaxError, ImportError):
     from .virtual_machine_image_resource import VirtualMachineImageResource
     from .virtual_machine_extension_instance_view import VirtualMachineExtensionInstanceView
     from .virtual_machine_extension import VirtualMachineExtension
+    from .virtual_machine_extension_update import VirtualMachineExtensionUpdate
+    from .virtual_machine_extensions_list_result import VirtualMachineExtensionsListResult
     from .purchase_plan import PurchasePlan
     from .os_disk_image import OSDiskImage
     from .data_disk_image import DataDiskImage
@@ -235,9 +239,9 @@ except (SyntaxError, ImportError):
     from .virtual_machine_scale_set_instance_view import VirtualMachineScaleSetInstanceView
     from .virtual_machine_scale_set_sku_capacity import VirtualMachineScaleSetSkuCapacity
     from .virtual_machine_scale_set_sku import VirtualMachineScaleSetSku
-    from .virtual_machine_scale_set_vm import VirtualMachineScaleSetVM
     from .virtual_machine_health_status import VirtualMachineHealthStatus
     from .virtual_machine_scale_set_vm_instance_view import VirtualMachineScaleSetVMInstanceView
+    from .virtual_machine_scale_set_vm import VirtualMachineScaleSetVM
     from .rolling_upgrade_running_status import RollingUpgradeRunningStatus
     from .rolling_upgrade_progress_info import RollingUpgradeProgressInfo
     from .api_error_base import ApiErrorBase
@@ -271,10 +275,10 @@ except (SyntaxError, ImportError):
     from .run_command_result import RunCommandResult
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
+from .virtual_machine_paged import VirtualMachinePaged
 from .usage_paged import UsagePaged
 from .image_paged import ImagePaged
 from .resource_sku_paged import ResourceSkuPaged
-from .virtual_machine_paged import VirtualMachinePaged
 from .virtual_machine_scale_set_paged import VirtualMachineScaleSetPaged
 from .virtual_machine_scale_set_sku_paged import VirtualMachineScaleSetSkuPaged
 from .virtual_machine_scale_set_extension_paged import VirtualMachineScaleSetExtensionPaged
@@ -319,6 +323,8 @@ __all__ = [
     'VirtualMachineImageResource',
     'VirtualMachineExtensionInstanceView',
     'VirtualMachineExtension',
+    'VirtualMachineExtensionUpdate',
+    'VirtualMachineExtensionsListResult',
     'PurchasePlan',
     'OSDiskImage',
     'DataDiskImage',
@@ -405,9 +411,9 @@ __all__ = [
     'VirtualMachineScaleSetInstanceView',
     'VirtualMachineScaleSetSkuCapacity',
     'VirtualMachineScaleSetSku',
-    'VirtualMachineScaleSetVM',
     'VirtualMachineHealthStatus',
     'VirtualMachineScaleSetVMInstanceView',
+    'VirtualMachineScaleSetVM',
     'RollingUpgradeRunningStatus',
     'RollingUpgradeProgressInfo',
     'ApiErrorBase',
@@ -441,10 +447,10 @@ __all__ = [
     'RunCommandResult',
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
+    'VirtualMachinePaged',
     'UsagePaged',
     'ImagePaged',
     'ResourceSkuPaged',
-    'VirtualMachinePaged',
     'VirtualMachineScaleSetPaged',
     'VirtualMachineScaleSetSkuPaged',
     'VirtualMachineScaleSetExtensionPaged',

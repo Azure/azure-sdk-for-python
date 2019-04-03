@@ -20,8 +20,9 @@ class Operation(Model):
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.managementgroups.models.OperationDisplay
+    :param display: Display.
+    :type display:
+     ~azure.mgmt.managementgroups.models.OperationDisplayProperties
     """
 
     _validation = {
@@ -30,10 +31,10 @@ class Operation(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'display': {'key': 'display', 'type': 'OperationDisplayProperties'},
     }
 
-    def __init__(self, display=None):
-        super(Operation, self).__init__()
+    def __init__(self, **kwargs):
+        super(Operation, self).__init__(**kwargs)
         self.name = None
-        self.display = display
+        self.display = kwargs.get('display', None)

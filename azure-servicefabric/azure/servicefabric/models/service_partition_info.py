@@ -19,6 +19,8 @@ class ServicePartitionInfo(Model):
     sub-classes are: StatefulServicePartitionInfo,
     StatelessServicePartitionInfo
 
+    All required parameters must be populated in order to send to Azure.
+
     :param health_state: The health state of a Service Fabric entity such as
      Cluster, Node, Application, Service, Partition, Replica etc. Possible
      values include: 'Invalid', 'Ok', 'Warning', 'Error', 'Unknown'
@@ -32,7 +34,7 @@ class ServicePartitionInfo(Model):
      partitioning scheme and keys supported by it.
     :type partition_information:
      ~azure.servicefabric.models.PartitionInformation
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     """
 
@@ -51,9 +53,9 @@ class ServicePartitionInfo(Model):
         'service_kind': {'Stateful': 'StatefulServicePartitionInfo', 'Stateless': 'StatelessServicePartitionInfo'}
     }
 
-    def __init__(self, health_state=None, partition_status=None, partition_information=None):
-        super(ServicePartitionInfo, self).__init__()
-        self.health_state = health_state
-        self.partition_status = partition_status
-        self.partition_information = partition_information
+    def __init__(self, **kwargs):
+        super(ServicePartitionInfo, self).__init__(**kwargs)
+        self.health_state = kwargs.get('health_state', None)
+        self.partition_status = kwargs.get('partition_status', None)
+        self.partition_information = kwargs.get('partition_information', None)
         self.service_kind = None

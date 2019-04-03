@@ -19,6 +19,8 @@ class DeployedServiceReplicaInfo(Model):
     sub-classes are: DeployedStatefulServiceReplicaInfo,
     DeployedStatelessServiceInstanceInfo
 
+    All required parameters must be populated in order to send to Azure.
+
     :param service_name: The full name of the service with 'fabric:' URI
      scheme.
     :type service_name: str
@@ -33,25 +35,14 @@ class DeployedServiceReplicaInfo(Model):
     :type code_package_name: str
     :param partition_id: An internal ID used by Service Fabric to uniquely
      identify a partition. This is a randomly generated GUID when the service
-     was created. The partition id is unique and does not change for the
+     was created. The partition ID is unique and does not change for the
      lifetime of the service. If the same service was deleted and recreated the
-     ids of its partitions would be different.
+     IDs of its partitions would be different.
     :type partition_id: str
     :param replica_status: The status of a replica of a service. Possible
-     values are following.
-     -Invalid - Indicates the replica status is invalid. All Service Fabric
-     enumerations have the invalid type. The value is zero.
-     -InBuild - The replica is being built. This means that a primary replica
-     is seeding this replica. The value is 1.
-     -Standby - The replica is in standby. The value is 2.
-     -Ready - The replica is ready. The value is 3.
-     -Down - The replica is down. The value is 4.
-     -Dropped - Replica is dropped. This means that the replica has been
-     removed from the replica set. If it is persisted, its state has been
-     deleted. The value is 5.
-     . Possible values include: 'Invalid', 'InBuild', 'Standby', 'Ready',
-     'Down', 'Dropped'
-    :type replica_status: str or ~azure.servicefabric.models.enum
+     values include: 'Invalid', 'InBuild', 'Standby', 'Ready', 'Down',
+     'Dropped'
+    :type replica_status: str or ~azure.servicefabric.models.ReplicaStatus
     :param address: The last address returned by the replica in Open or
      ChangeRole.
     :type address: str
@@ -62,11 +53,11 @@ class DeployedServiceReplicaInfo(Model):
      to 'SharedProcess'), then value of ServicePackageActivationId
      is always an empty string.
     :type service_package_activation_id: str
-    :param host_process_id: Host process id of the process that is hosting the
+    :param host_process_id: Host process ID of the process that is hosting the
      replica. This will be zero if the replica is down. In hyper-v containers
-     this host process id will be from different kernel.
+     this host process ID will be from different kernel.
     :type host_process_id: str
-    :param service_kind: Constant filled by server.
+    :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     """
 
@@ -91,15 +82,15 @@ class DeployedServiceReplicaInfo(Model):
         'service_kind': {'Stateful': 'DeployedStatefulServiceReplicaInfo', 'Stateless': 'DeployedStatelessServiceInstanceInfo'}
     }
 
-    def __init__(self, service_name=None, service_type_name=None, service_manifest_name=None, code_package_name=None, partition_id=None, replica_status=None, address=None, service_package_activation_id=None, host_process_id=None):
-        super(DeployedServiceReplicaInfo, self).__init__()
-        self.service_name = service_name
-        self.service_type_name = service_type_name
-        self.service_manifest_name = service_manifest_name
-        self.code_package_name = code_package_name
-        self.partition_id = partition_id
-        self.replica_status = replica_status
-        self.address = address
-        self.service_package_activation_id = service_package_activation_id
-        self.host_process_id = host_process_id
+    def __init__(self, **kwargs):
+        super(DeployedServiceReplicaInfo, self).__init__(**kwargs)
+        self.service_name = kwargs.get('service_name', None)
+        self.service_type_name = kwargs.get('service_type_name', None)
+        self.service_manifest_name = kwargs.get('service_manifest_name', None)
+        self.code_package_name = kwargs.get('code_package_name', None)
+        self.partition_id = kwargs.get('partition_id', None)
+        self.replica_status = kwargs.get('replica_status', None)
+        self.address = kwargs.get('address', None)
+        self.service_package_activation_id = kwargs.get('service_package_activation_id', None)
+        self.host_process_id = kwargs.get('host_process_id', None)
         self.service_kind = None

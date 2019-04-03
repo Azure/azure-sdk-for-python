@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operation_status_response import OperationStatusResponse
+from .operation_status_response_py3 import OperationStatusResponse
 
 
 class LogAnalyticsOperationResult(OperationStatusResponse):
@@ -52,5 +52,5 @@ class LogAnalyticsOperationResult(OperationStatusResponse):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(LogAnalyticsOperationResult, self).__init__(, **kwargs)
+        super(LogAnalyticsOperationResult, self).__init__(**kwargs)
         self.properties = None

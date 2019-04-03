@@ -35,10 +35,10 @@ class PlanPatchable(Model):
         'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, name=None, publisher=None, product=None, promotion_code=None, version=None):
-        super(PlanPatchable, self).__init__()
-        self.name = name
-        self.publisher = publisher
-        self.product = product
-        self.promotion_code = promotion_code
-        self.version = version
+    def __init__(self, **kwargs):
+        super(PlanPatchable, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.publisher = kwargs.get('publisher', None)
+        self.product = kwargs.get('product', None)
+        self.promotion_code = kwargs.get('promotion_code', None)
+        self.version = kwargs.get('version', None)

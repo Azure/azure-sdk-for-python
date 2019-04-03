@@ -10,6 +10,7 @@ import unittest
 from collections import namedtuple
 
 import azure.mgmt.compute
+import azure.mgmt.compute.models # Check that models compat still works
 import azure.mgmt.network.models
 import azure.mgmt.storage.models
 from devtools_testutils import (
@@ -51,7 +52,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
 
     def create_storage_account(self, group_name, location, storage_name):
         params_create = azure.mgmt.storage.models.StorageAccountCreateParameters(
-            sku=azure.mgmt.storage.models.Sku(azure.mgmt.storage.models.SkuName.standard_lrs),
+            sku=azure.mgmt.storage.models.Sku(name=azure.mgmt.storage.models.SkuName.standard_lrs),
             kind=azure.mgmt.storage.models.Kind.storage,
             location=location
         )
@@ -199,7 +200,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
         )
         vm_result = result_create.result()
         self.assertEqual(vm_result.name, names.vm)
-    
+
         # Get by name
         result_get = self.compute_client.virtual_machines.get(
             resource_group.name,
@@ -298,7 +299,7 @@ class MgmtComputeTest(AzureMgmtTestCase):
             }
         )
         capture_result = async_capture.result()
-        self.assertTrue(hasattr(capture_result, 'output'))
+        assert capture_result.content_version == "1.0.0.0"
 
     @ResourceGroupPreparer()
     def test_vm_extensions(self, resource_group, location):
@@ -517,6 +518,30 @@ class MgmtComputeTest(AzureMgmtTestCase):
         virtual_machine_sizes = list(self.compute_client.virtual_machine_sizes.list(location))
         self.assertGreater(len(virtual_machine_sizes), 0)
 
+    def test_run_command(self):
+        # FIXME, test unfinished
+        run_commands_models = self.compute_client.virtual_machines.models
+
+        run_command_parameters = run_commands_models.RunCommandInput(
+            command_id="RunShellScript",
+            script=[
+                'echo $1 $2'
+            ],
+            parameters=[
+                run_commands_models.RunCommandInputParameter(name="arg1", value="hello"),
+                run_commands_models.RunCommandInputParameter(name="arg2", value="world"),
+            ]
+        )
+
+        run_command_parameters = {
+            'command_id': 'RunShellScript',
+            'script': [
+                'echo $arg1'
+            ],
+            'parameters': [
+                {'name':"arg1", 'value':"hello world"}
+            ]
+        }
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

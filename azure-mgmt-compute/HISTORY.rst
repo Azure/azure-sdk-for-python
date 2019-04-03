@@ -3,13 +3,137 @@
 Release History
 ===============
 
-XXXXXXXXXXXX
-++++++++++++
+4.5.1 (2019-03-29)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix regression in direct import from models
+
+4.5.0 (2019-03-28)
+++++++++++++++++++
+
+**New version of Managed Disks**
+
+-	Disks/Snapshots have a new optional property HyperVGeneration which may be set to V1 or V2.
+-	EncryptionSettings on a disk are now a collection instead of a single value. This allows multiple volumes on an encrypted disk.
+-	There is a new CreateOption (Upload) for disks. To upload disks customers
+
+  -	PUT a disk with CreateOption.Upload.
+  - Use GrantAccess API with AccessLevel.Write to a get a write SAS to the disk. This is a new access level and it can only be used when uploading to a new disk. Customers can then use storage API to upload the bits for the disk.
+  - There are new DiskStates (DiskState.ReadyToUpload and DiskState.ActiveUpload) that are associated with the upload process.
+
+4.4.0 (2018-01-04)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSetExtension has a new parameter provision_after_extensions
+- Operation VirtualMachineScaleSetVMsOperations.reimage has a new parameter temp_disk
+- Operation VirtualMachineScaleSetsOperations.reimage has a new parameter temp_disk
+- Added operation VirtualMachinesOperations.reimage
+
+4.3.1 (2018-10-15)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix sdist broken in 4.3.0. No code change.
+
+4.3.0 (2018-10-02)
+++++++++++++++++++
+
+**Note**
+
+- Compute API version default is now 2018-10-01
+
+**Features/BreakingChanges**
+
+- This version updates the access to properties realted to automatic OS upgrade introduced in 4.0.0
+
+4.2.0 (2018-09-25)
+++++++++++++++++++
+
+**Features**
+
+- Model OSDisk has a new parameter diff_disk_settings
+- Model BootDiagnosticsInstanceView has a new parameter status
+- Model VirtualMachineScaleSetOSDisk has a new parameter diff_disk_settings
+- Added operation VirtualMachinesOperations.list_by_location
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
+4.1.0 (2018-09-12)
+++++++++++++++++++
+
+2018-06-01 for 'disks' and 'snapshots' (new default)
+
+**Features**
+
+- Model DiskUpdate has a new parameter disk_iops_read_write
+- Model DiskUpdate has a new parameter disk_mbps_read_write
+- Model VirtualMachineUpdate has a new parameter additional_capabilities (ultraSSDEnabled attribute)
+- Model VirtualMachineScaleSetVM has a new parameter additional_capabilities (ultraSSDEnabled attribute)
+- Model VirtualMachineScaleSetPublicIPAddressConfiguration has a new parameter public_ip_prefix
+- Model Disk has a new parameter disk_iops_read_write
+- Model Disk has a new parameter disk_mbps_read_write
+- Model VirtualMachineScaleSetVMProfile has a new parameter additional_capabilities (ultraSSDEnabled attribute)
+- Model VirtualMachine has a new parameter additional_capabilities (ultraSSDEnabled attribute)
+- Added operation VirtualMachineScaleSetRollingUpgradesOperations.start_extension_upgrade
+- New enum value UltraSSD_LRS for StorageAccountTypes
+
+4.0.1 (2018-07-23)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix incorrect import from azure.mgmt.compute.models
+
+4.0.0 (2018-07-20)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSetIdentity has a new parameter user_assigned_identities
+- Model VirtualMachineScaleSetIPConfiguration has a new parameter application_security_groups
+- Model VirtualMachineScaleSetUpdateIPConfiguration has a new parameter application_security_groups
+- Model VirtualMachineIdentity has a new parameter user_assigned_identities
+- Model LinuxConfiguration has a new parameter provision_vm_agent
+- Model OSProfile has a new parameter allow_extension_operations
+- Added operation group GalleryImagesOperations
+- Added operation group GalleryImageVersionsOperations
+- Added operation group GalleriesOperations
+- Model UpgradeOperationHistoricalStatusInfoProperties has a new parameter rollback_info
+- Model UpgradePolicy has a new parameter auto_os_upgrade_policy
+- Added operation AvailabilitySetsOperations.list_by_subscription
+
+**Breaking changes**
+
+- Model VirtualMachineScaleSetIdentity no longer has parameter identity_ids
+- Model VirtualMachineScaleSetOSDisk no longer has parameter disk_size_gb
+- Model VirtualMachineScaleSetVM no longer has parameter zones
+- Model VirtualMachineScaleSetUpdateOSDisk no longer has parameter disk_size_gb
+- Model VirtualMachineIdentity no longer has parameter identity_ids
+
+New default API Version is now 2018-06-01
+
+4.0.0rc2 (2018-04-17)
++++++++++++++++++++++
 
 **Features**
 
 - All clients now support Azure profiles.
+- Add update operation to VirtualMachineExtension operations (all ApiVersions)
+- Add get_extensions operation to VirtualMachine operations (all ApiVersions)
+- Support eviction policy for virtual machines inside a low priority scale set (2017-12-01)
+- Add get_os_upgrade_history to VMSS operations (2017-12-01)
 
+**Bugfixes**
+
+- Compatibility of the sdist with wheel 0.31.0
+- Fix some invalid models in Python 3 (introduced in 4.0.0rc1)
 
 4.0.0rc1 (2018-03-21)
 +++++++++++++++++++++
@@ -32,7 +156,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
   - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
   - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
-  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
     without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
   - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
     the response of the initial call will be returned without polling.
@@ -208,7 +332,7 @@ to use the new Managed Disk feature instead of Storage.
 
 New APIVersion for "container" 2016-09-30.
 
-* several parameters (e.g. "username") now dynamically check before REST calls validity 
+* several parameters (e.g. "username") now dynamically check before REST calls validity
   against a regexp. Exception will be TypeError and not CloudError anymore.
 
 0.31.0 (2016-11-01)

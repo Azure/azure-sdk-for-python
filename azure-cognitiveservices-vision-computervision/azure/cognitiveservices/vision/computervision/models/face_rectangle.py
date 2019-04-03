@@ -15,13 +15,15 @@ from msrest.serialization import Model
 class FaceRectangle(Model):
     """An object describing face rectangle.
 
-    :param left: X-coordinate of the top left point of the face.
+    :param left: X-coordinate of the top left point of the face, in pixels.
     :type left: int
-    :param top: Y-coordinate of the top left point of the face.
+    :param top: Y-coordinate of the top left point of the face, in pixels.
     :type top: int
-    :param width: Width measured from the top-left point of the face.
+    :param width: Width measured from the top-left point of the face, in
+     pixels.
     :type width: int
-    :param height: Height measured from the top-left point of the face.
+    :param height: Height measured from the top-left point of the face, in
+     pixels.
     :type height: int
     """
 
@@ -32,9 +34,9 @@ class FaceRectangle(Model):
         'height': {'key': 'height', 'type': 'int'},
     }
 
-    def __init__(self, left=None, top=None, width=None, height=None):
-        super(FaceRectangle, self).__init__()
-        self.left = left
-        self.top = top
-        self.width = width
-        self.height = height
+    def __init__(self, **kwargs):
+        super(FaceRectangle, self).__init__(**kwargs)
+        self.left = kwargs.get('left', None)
+        self.top = kwargs.get('top', None)
+        self.width = kwargs.get('width', None)
+        self.height = kwargs.get('height', None)

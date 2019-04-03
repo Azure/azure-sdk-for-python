@@ -15,13 +15,15 @@ from msrest.serialization import Model
 class X12SchemaReference(Model):
     """The X12 schema reference.
 
-    :param message_id: The message id.
+    All required parameters must be populated in order to send to Azure.
+
+    :param message_id: Required. The message id.
     :type message_id: str
     :param sender_application_id: The sender application id.
     :type sender_application_id: str
-    :param schema_version: The schema version.
+    :param schema_version: Required. The schema version.
     :type schema_version: str
-    :param schema_name: The schema name.
+    :param schema_name: Required. The schema name.
     :type schema_name: str
     """
 
@@ -38,8 +40,9 @@ class X12SchemaReference(Model):
         'schema_name': {'key': 'schemaName', 'type': 'str'},
     }
 
-    def __init__(self, message_id, schema_version, schema_name, sender_application_id=None):
-        self.message_id = message_id
-        self.sender_application_id = sender_application_id
-        self.schema_version = schema_version
-        self.schema_name = schema_name
+    def __init__(self, **kwargs):
+        super(X12SchemaReference, self).__init__(**kwargs)
+        self.message_id = kwargs.get('message_id', None)
+        self.sender_application_id = kwargs.get('sender_application_id', None)
+        self.schema_version = kwargs.get('schema_version', None)
+        self.schema_name = kwargs.get('schema_name', None)

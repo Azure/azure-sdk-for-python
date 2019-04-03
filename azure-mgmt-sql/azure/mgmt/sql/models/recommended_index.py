@@ -96,8 +96,8 @@ class RecommendedIndex(ProxyResource):
         'reported_impact': {'key': 'properties.reportedImpact', 'type': '[OperationImpact]'},
     }
 
-    def __init__(self):
-        super(RecommendedIndex, self).__init__()
+    def __init__(self, **kwargs):
+        super(RecommendedIndex, self).__init__(**kwargs)
         self.action = None
         self.state = None
         self.created = None

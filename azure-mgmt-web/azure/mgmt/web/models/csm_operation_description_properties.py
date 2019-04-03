@@ -23,6 +23,6 @@ class CsmOperationDescriptionProperties(Model):
         'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
     }
 
-    def __init__(self, service_specification=None):
-        super(CsmOperationDescriptionProperties, self).__init__()
-        self.service_specification = service_specification
+    def __init__(self, **kwargs):
+        super(CsmOperationDescriptionProperties, self).__init__(**kwargs)
+        self.service_specification = kwargs.get('service_specification', None)

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
 class Configuration(ProxyResource):
@@ -61,7 +61,7 @@ class Configuration(ProxyResource):
     }
 
     def __init__(self, *, value: str=None, source: str=None, **kwargs) -> None:
-        super(Configuration, self).__init__(, **kwargs)
+        super(Configuration, self).__init__(**kwargs)
         self.value = value
         self.description = None
         self.default_value = None

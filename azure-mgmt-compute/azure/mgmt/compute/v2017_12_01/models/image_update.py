@@ -13,9 +13,7 @@ from .update_resource import UpdateResource
 
 
 class ImageUpdate(UpdateResource):
-    """The source user image virtual hard disk. The virtual hard disk will be
-    copied before being attached to the virtual machine. If SourceImage is
-    provided, the destination virtual hard drive must not exist.
+    """The source user image virtual hard disk. Only tags may be updated.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

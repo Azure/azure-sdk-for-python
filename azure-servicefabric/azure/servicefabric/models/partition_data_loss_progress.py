@@ -30,7 +30,7 @@ class PartitionDataLossProgress(Model):
         'invoke_data_loss_result': {'key': 'InvokeDataLossResult', 'type': 'InvokeDataLossResult'},
     }
 
-    def __init__(self, state=None, invoke_data_loss_result=None):
-        super(PartitionDataLossProgress, self).__init__()
-        self.state = state
-        self.invoke_data_loss_result = invoke_data_loss_result
+    def __init__(self, **kwargs):
+        super(PartitionDataLossProgress, self).__init__(**kwargs)
+        self.state = kwargs.get('state', None)
+        self.invoke_data_loss_result = kwargs.get('invoke_data_loss_result', None)

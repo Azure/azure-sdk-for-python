@@ -17,7 +17,9 @@ class EnsureAvailabilitySafetyCheck(PartitionSafetyCheck):
     waits until there are replicas available such that bringing down this
     replica will not cause availability loss for the partition.
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param partition_id: Id of the partition which is undergoing the safety
      check.
@@ -28,6 +30,11 @@ class EnsureAvailabilitySafetyCheck(PartitionSafetyCheck):
         'kind': {'required': True},
     }
 
-    def __init__(self, partition_id=None):
-        super(EnsureAvailabilitySafetyCheck, self).__init__(partition_id=partition_id)
+    _attribute_map = {
+        'kind': {'key': 'Kind', 'type': 'str'},
+        'partition_id': {'key': 'PartitionId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EnsureAvailabilitySafetyCheck, self).__init__(**kwargs)
         self.kind = 'EnsureAvailability'

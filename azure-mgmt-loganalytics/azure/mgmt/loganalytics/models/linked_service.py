@@ -18,6 +18,8 @@ class LinkedService(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -25,9 +27,9 @@ class LinkedService(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags
-    :type tags: dict
-    :param resource_id: The resource id of the resource that will be linked to
-     the workspace.
+    :type tags: dict[str, str]
+    :param resource_id: Required. The resource id of the resource that will be
+     linked to the workspace.
     :type resource_id: str
     """
 
@@ -46,6 +48,6 @@ class LinkedService(ProxyResource):
         'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
     }
 
-    def __init__(self, resource_id, tags=None):
-        super(LinkedService, self).__init__(tags=tags)
-        self.resource_id = resource_id
+    def __init__(self, **kwargs):
+        super(LinkedService, self).__init__(**kwargs)
+        self.resource_id = kwargs.get('resource_id', None)

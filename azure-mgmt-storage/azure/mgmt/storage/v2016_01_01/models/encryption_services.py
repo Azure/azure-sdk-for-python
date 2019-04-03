@@ -23,6 +23,6 @@ class EncryptionServices(Model):
         'blob': {'key': 'blob', 'type': 'EncryptionService'},
     }
 
-    def __init__(self, blob=None):
-        super(EncryptionServices, self).__init__()
-        self.blob = blob
+    def __init__(self, **kwargs):
+        super(EncryptionServices, self).__init__(**kwargs)
+        self.blob = kwargs.get('blob', None)

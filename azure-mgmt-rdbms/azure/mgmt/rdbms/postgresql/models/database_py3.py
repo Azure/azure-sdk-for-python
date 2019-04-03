@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
 class Database(ProxyResource):
@@ -45,6 +45,6 @@ class Database(ProxyResource):
     }
 
     def __init__(self, *, charset: str=None, collation: str=None, **kwargs) -> None:
-        super(Database, self).__init__(, **kwargs)
+        super(Database, self).__init__(**kwargs)
         self.charset = charset
         self.collation = collation

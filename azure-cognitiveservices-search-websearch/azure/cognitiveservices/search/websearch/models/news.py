@@ -18,7 +18,9 @@ class News(SearchResultsAnswer):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -36,9 +38,9 @@ class News(SearchResultsAnswer):
     :vartype total_estimated_matches: long
     :ivar is_family_friendly:
     :vartype is_family_friendly: bool
-    :param value: An array of NewsArticle objects that contain information
-     about news articles that are relevant to the query. If there are no
-     results to return for the request, the array is empty.
+    :param value: Required. An array of NewsArticle objects that contain
+     information about news articles that are relevant to the query. If there
+     are no results to return for the request, the array is empty.
     :type value:
      list[~azure.cognitiveservices.search.websearch.models.NewsArticle]
     :ivar location:
@@ -69,8 +71,8 @@ class News(SearchResultsAnswer):
         'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, value):
-        super(News, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(News, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
         self.location = None
         self._type = 'News'

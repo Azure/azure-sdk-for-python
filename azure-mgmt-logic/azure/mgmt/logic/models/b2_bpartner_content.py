@@ -16,13 +16,13 @@ class B2BPartnerContent(Model):
     """The B2B partner content.
 
     :param business_identities: The list of partner business identities.
-    :type business_identities: list of :class:`BusinessIdentity
-     <azure.mgmt.logic.models.BusinessIdentity>`
+    :type business_identities: list[~azure.mgmt.logic.models.BusinessIdentity]
     """
 
     _attribute_map = {
         'business_identities': {'key': 'businessIdentities', 'type': '[BusinessIdentity]'},
     }
 
-    def __init__(self, business_identities=None):
-        self.business_identities = business_identities
+    def __init__(self, **kwargs):
+        super(B2BPartnerContent, self).__init__(**kwargs)
+        self.business_identities = kwargs.get('business_identities', None)

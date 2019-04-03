@@ -16,18 +16,18 @@ class ImageType(Model):
     """An object providing possible image types and matching confidence levels.
 
     :param clip_art_type: Confidence level that the image is a clip art.
-    :type clip_art_type: float
+    :type clip_art_type: int
     :param line_drawing_type: Confidence level that the image is a line
      drawing.
-    :type line_drawing_type: float
+    :type line_drawing_type: int
     """
 
     _attribute_map = {
-        'clip_art_type': {'key': 'clipArtType', 'type': 'float'},
-        'line_drawing_type': {'key': 'lineDrawingType', 'type': 'float'},
+        'clip_art_type': {'key': 'clipArtType', 'type': 'int'},
+        'line_drawing_type': {'key': 'lineDrawingType', 'type': 'int'},
     }
 
-    def __init__(self, clip_art_type=None, line_drawing_type=None):
-        super(ImageType, self).__init__()
-        self.clip_art_type = clip_art_type
-        self.line_drawing_type = line_drawing_type
+    def __init__(self, **kwargs):
+        super(ImageType, self).__init__(**kwargs)
+        self.clip_art_type = kwargs.get('clip_art_type', None)
+        self.line_drawing_type = kwargs.get('line_drawing_type', None)

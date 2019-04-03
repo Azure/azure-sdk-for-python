@@ -15,18 +15,14 @@ from msrest.serialization import Model
 class ClusterUpdateParameters(Model):
     """Parameters supplied to the Update operation.
 
-    :param tags: The user specified tags associated with the Cluster.
-    :type tags: dict[str, str]
     :param scale_settings: Desired scale for the cluster.
     :type scale_settings: ~azure.mgmt.batchai.models.ScaleSettings
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
         'scale_settings': {'key': 'properties.scaleSettings', 'type': 'ScaleSettings'},
     }
 
     def __init__(self, **kwargs):
         super(ClusterUpdateParameters, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
         self.scale_settings = kwargs.get('scale_settings', None)

@@ -19,7 +19,9 @@ class TrendingImages(Response):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -27,8 +29,8 @@ class TrendingImages(Response):
     :vartype read_link: str
     :ivar web_search_url: The URL To Bing's search result for this item.
     :vartype web_search_url: str
-    :param categories: A list that identifies categories of images and a list
-     of trending images in that category.
+    :param categories: Required. A list that identifies categories of images
+     and a list of trending images in that category.
     :type categories:
      list[~azure.cognitiveservices.search.imagesearch.models.TrendingImagesCategory]
     """
@@ -49,7 +51,7 @@ class TrendingImages(Response):
         'categories': {'key': 'categories', 'type': '[TrendingImagesCategory]'},
     }
 
-    def __init__(self, categories):
-        super(TrendingImages, self).__init__()
-        self.categories = categories
+    def __init__(self, **kwargs):
+        super(TrendingImages, self).__init__(**kwargs)
+        self.categories = kwargs.get('categories', None)
         self._type = 'TrendingImages'

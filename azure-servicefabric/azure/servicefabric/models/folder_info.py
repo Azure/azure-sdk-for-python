@@ -28,7 +28,7 @@ class FolderInfo(Model):
         'file_count': {'key': 'FileCount', 'type': 'str'},
     }
 
-    def __init__(self, store_relative_path=None, file_count=None):
-        super(FolderInfo, self).__init__()
-        self.store_relative_path = store_relative_path
-        self.file_count = file_count
+    def __init__(self, **kwargs):
+        super(FolderInfo, self).__init__(**kwargs)
+        self.store_relative_path = kwargs.get('store_relative_path', None)
+        self.file_count = kwargs.get('file_count', None)

@@ -32,6 +32,6 @@ class StorageAccountListKeysResult(Model):
         'keys': {'key': 'keys', 'type': '[StorageAccountKey]'},
     }
 
-    def __init__(self):
-        super(StorageAccountListKeysResult, self).__init__()
+    def __init__(self, **kwargs):
+        super(StorageAccountListKeysResult, self).__init__(**kwargs)
         self.keys = None

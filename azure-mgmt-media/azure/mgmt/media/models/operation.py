@@ -13,27 +13,34 @@ from msrest.serialization import Model
 
 
 class Operation(Model):
-    """A Media Services REST API operation.
+    """An operation.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Operation name: {provider}/{resource}/{operation}
-    :vartype name: str
-    :param display: The object that represents the operation.
-    :type display: :class:`OperationDisplay
-     <azure.mgmt.media.models.OperationDisplay>`
+    :param name: Required. The operation name.
+    :type name: str
+    :param display: The operation display name.
+    :type display: ~azure.mgmt.media.models.OperationDisplay
+    :param origin: Origin of the operation.
+    :type origin: str
+    :param properties: Operation properties format.
+    :type properties: ~azure.mgmt.media.models.MetricProperties
     """
 
     _validation = {
-        'name': {'readonly': True},
+        'name': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'MetricProperties'},
     }
 
-    def __init__(self, display=None):
-        self.name = None
-        self.display = display
+    def __init__(self, **kwargs):
+        super(Operation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)
+        self.origin = kwargs.get('origin', None)
+        self.properties = kwargs.get('properties', None)

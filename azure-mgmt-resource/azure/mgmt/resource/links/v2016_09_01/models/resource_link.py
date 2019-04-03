@@ -22,6 +22,8 @@ class ResourceLink(Model):
     :vartype id: str
     :ivar name: The name of the resource link.
     :vartype name: str
+    :ivar type: The resource link object.
+    :vartype type: object
     :param properties: Properties for resource link.
     :type properties:
      ~azure.mgmt.resource.links.v2016_09_01.models.ResourceLinkProperties
@@ -30,16 +32,19 @@ class ResourceLink(Model):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'object'},
         'properties': {'key': 'properties', 'type': 'ResourceLinkProperties'},
     }
 
-    def __init__(self, properties=None):
-        super(ResourceLink, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceLink, self).__init__(**kwargs)
         self.id = None
         self.name = None
-        self.properties = properties
+        self.type = None
+        self.properties = kwargs.get('properties', None)

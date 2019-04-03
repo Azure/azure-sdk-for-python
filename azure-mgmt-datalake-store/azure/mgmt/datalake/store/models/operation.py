@@ -38,8 +38,8 @@ class Operation(Model):
         'origin': {'key': 'origin', 'type': 'str'},
     }
 
-    def __init__(self, display=None):
-        super(Operation, self).__init__()
+    def __init__(self, **kwargs):
+        super(Operation, self).__init__(**kwargs)
         self.name = None
-        self.display = display
+        self.display = kwargs.get('display', None)
         self.origin = None

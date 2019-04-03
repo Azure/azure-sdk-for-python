@@ -15,18 +15,26 @@ from msrest.serialization import Model
 class UsageName(Model):
     """The Usage Names.
 
-    :param value: The name of the resource.
-    :type value: str
-    :param localized_value: The localized name of the resource.
-    :type localized_value: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The name of the resource.
+    :vartype value: str
+    :ivar localized_value: The localized name of the resource.
+    :vartype localized_value: str
     """
+
+    _validation = {
+        'value': {'readonly': True},
+        'localized_value': {'readonly': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': 'str'},
         'localized_value': {'key': 'localizedValue', 'type': 'str'},
     }
 
-    def __init__(self, *, value: str=None, localized_value: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(UsageName, self).__init__(**kwargs)
-        self.value = value
-        self.localized_value = localized_value
+        self.value = None
+        self.localized_value = None

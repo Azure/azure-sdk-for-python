@@ -15,12 +15,14 @@ from msrest.serialization import Model
 class TrendingImagesTile(Model):
     """Defines an image tile.
 
-    :param query: A query that returns a Bing search results page with more
-     images of the subject. For example, if the category is Popular People
-     Searches, then the thumbnail is of a popular person. The query would
-     return a Bing search results page with more images of that person.
+    All required parameters must be populated in order to send to Azure.
+
+    :param query: Required. A query that returns a Bing search results page
+     with more images of the subject. For example, if the category is Popular
+     People Searches, then the thumbnail is of a popular person. The query
+     would return a Bing search results page with more images of that person.
     :type query: ~azure.cognitiveservices.search.imagesearch.models.Query
-    :param image: The image's thumbnail.
+    :param image: Required. The image's thumbnail.
     :type image:
      ~azure.cognitiveservices.search.imagesearch.models.ImageObject
     """
@@ -35,7 +37,7 @@ class TrendingImagesTile(Model):
         'image': {'key': 'image', 'type': 'ImageObject'},
     }
 
-    def __init__(self, query, image):
-        super(TrendingImagesTile, self).__init__()
-        self.query = query
-        self.image = image
+    def __init__(self, **kwargs):
+        super(TrendingImagesTile, self).__init__(**kwargs)
+        self.query = kwargs.get('query', None)
+        self.image = kwargs.get('image', None)

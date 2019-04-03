@@ -21,13 +21,13 @@ class DataSourceFilter(Model):
      'CustomLog', 'CustomLogCollection', 'GenericDataSource', 'IISLogs',
      'LinuxPerformanceObject', 'LinuxPerformanceCollection', 'LinuxSyslog',
      'LinuxSyslogCollection', 'WindowsEvent', 'WindowsPerformanceCounter'
-    :type kind: str or :class:`DataSourceKind
-     <azure.mgmt.loganalytics.models.DataSourceKind>`
+    :type kind: str or ~azure.mgmt.loganalytics.models.DataSourceKind
     """
 
     _attribute_map = {
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, kind=None):
-        self.kind = kind
+    def __init__(self, **kwargs):
+        super(DataSourceFilter, self).__init__(**kwargs)
+        self.kind = kwargs.get('kind', None)

@@ -14,7 +14,7 @@ from msrest.exceptions import HttpOperationError
 
 
 class ErrorResponse(Model):
-    """Error reponse indicates CDN service is not able to process the incoming
+    """Error response indicates CDN service is not able to process the incoming
     request. The reason is provided in the error message.
 
     Variables are only populated by the server, and will be ignored when
@@ -36,8 +36,8 @@ class ErrorResponse(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ErrorResponse, self).__init__()
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
         self.code = None
         self.message = None
 

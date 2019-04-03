@@ -12,13 +12,13 @@
 from enum import Enum
 
 
-class Reason(Enum):
+class Reason(str, Enum):
 
     account_name_invalid = "AccountNameInvalid"
     already_exists = "AlreadyExists"
 
 
-class SkuName(Enum):
+class SkuName(str, Enum):
 
     standard_lrs = "Standard_LRS"
     standard_grs = "Standard_GRS"
@@ -27,44 +27,44 @@ class SkuName(Enum):
     premium_lrs = "Premium_LRS"
 
 
-class SkuTier(Enum):
+class SkuTier(str, Enum):
 
     standard = "Standard"
     premium = "Premium"
 
 
-class AccessTier(Enum):
+class AccessTier(str, Enum):
 
     hot = "Hot"
     cool = "Cool"
 
 
-class Kind(Enum):
+class Kind(str, Enum):
 
     storage = "Storage"
     blob_storage = "BlobStorage"
 
 
-class ProvisioningState(Enum):
+class ProvisioningState(str, Enum):
 
     creating = "Creating"
     resolving_dns = "ResolvingDNS"
     succeeded = "Succeeded"
 
 
-class AccountStatus(Enum):
+class AccountStatus(str, Enum):
 
     available = "Available"
     unavailable = "Unavailable"
 
 
-class KeyPermission(Enum):
+class KeyPermission(str, Enum):
 
     read = "READ"
     full = "FULL"
 
 
-class UsageUnit(Enum):
+class UsageUnit(str, Enum):
 
     count = "Count"
     bytes = "Bytes"

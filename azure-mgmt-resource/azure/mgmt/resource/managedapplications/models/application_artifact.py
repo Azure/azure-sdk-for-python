@@ -31,8 +31,8 @@ class ApplicationArtifact(Model):
         'type': {'key': 'type', 'type': 'ApplicationArtifactType'},
     }
 
-    def __init__(self, name=None, uri=None, type=None):
-        super(ApplicationArtifact, self).__init__()
-        self.name = name
-        self.uri = uri
-        self.type = type
+    def __init__(self, **kwargs):
+        super(ApplicationArtifact, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.uri = kwargs.get('uri', None)
+        self.type = kwargs.get('type', None)

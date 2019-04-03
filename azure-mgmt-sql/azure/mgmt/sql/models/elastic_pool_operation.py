@@ -96,8 +96,8 @@ class ElasticPoolOperation(ProxyResource):
         'is_cancellable': {'key': 'properties.isCancellable', 'type': 'bool'},
     }
 
-    def __init__(self):
-        super(ElasticPoolOperation, self).__init__()
+    def __init__(self, **kwargs):
+        super(ElasticPoolOperation, self).__init__(**kwargs)
         self.elastic_pool_name = None
         self.operation = None
         self.operation_friendly_name = None

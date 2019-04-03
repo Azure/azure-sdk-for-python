@@ -23,7 +23,9 @@ class SpellSuggestions(SearchResultsAnswer):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -41,8 +43,8 @@ class SpellSuggestions(SearchResultsAnswer):
     :vartype total_estimated_matches: long
     :ivar is_family_friendly:
     :vartype is_family_friendly: bool
-    :param value: A list of suggested query strings that may represent the
-     user's intention. The list contains only one Query object.
+    :param value: Required. A list of suggested query strings that may
+     represent the user's intention. The list contains only one Query object.
     :type value: list[~azure.cognitiveservices.search.websearch.models.Query]
     """
 
@@ -68,7 +70,7 @@ class SpellSuggestions(SearchResultsAnswer):
         'value': {'key': 'value', 'type': '[Query]'},
     }
 
-    def __init__(self, value):
-        super(SpellSuggestions, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(SpellSuggestions, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
         self._type = 'SpellSuggestions'

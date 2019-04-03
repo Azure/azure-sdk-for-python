@@ -59,11 +59,11 @@ class GatewayStatus(Model):
      of the encryption certificate.
     :type secondary_encryption_certificate_thumbprint: str
     :param encryption_jwk: The encryption certificate key.
-    :type encryption_jwk: :class:`EncryptionJwkResource
-     <azure.mgmt.servermanager.models.EncryptionJwkResource>`
+    :type encryption_jwk:
+     ~azure.mgmt.servermanager.models.EncryptionJwkResource
     :param secondary_encryption_jwk: The secondary encryption certificate key.
-    :type secondary_encryption_jwk: :class:`EncryptionJwkResource
-     <azure.mgmt.servermanager.models.EncryptionJwkResource>`
+    :type secondary_encryption_jwk:
+     ~azure.mgmt.servermanager.models.EncryptionJwkResource
     :param active_message_count: Active message count.
     :type active_message_count: int
     :param latest_published_msi_version: Latest published version of the
@@ -101,25 +101,26 @@ class GatewayStatus(Model):
         'published_time_utc': {'key': 'publishedTimeUtc', 'type': 'iso-8601'},
     }
 
-    def __init__(self, available_memory_mbyte=None, gateway_cpu_utilization_percent=None, total_cpu_utilization_percent=None, gateway_version=None, friendly_os_name=None, installed_date=None, logical_processor_count=None, name=None, gateway_id=None, gateway_working_set_mbyte=None, status_updated=None, group_policy_error=None, allow_gateway_group_policy_status=None, require_mfa_group_policy_status=None, encryption_certificate_thumbprint=None, secondary_encryption_certificate_thumbprint=None, encryption_jwk=None, secondary_encryption_jwk=None, active_message_count=None, latest_published_msi_version=None, published_time_utc=None):
-        self.available_memory_mbyte = available_memory_mbyte
-        self.gateway_cpu_utilization_percent = gateway_cpu_utilization_percent
-        self.total_cpu_utilization_percent = total_cpu_utilization_percent
-        self.gateway_version = gateway_version
-        self.friendly_os_name = friendly_os_name
-        self.installed_date = installed_date
-        self.logical_processor_count = logical_processor_count
-        self.name = name
-        self.gateway_id = gateway_id
-        self.gateway_working_set_mbyte = gateway_working_set_mbyte
-        self.status_updated = status_updated
-        self.group_policy_error = group_policy_error
-        self.allow_gateway_group_policy_status = allow_gateway_group_policy_status
-        self.require_mfa_group_policy_status = require_mfa_group_policy_status
-        self.encryption_certificate_thumbprint = encryption_certificate_thumbprint
-        self.secondary_encryption_certificate_thumbprint = secondary_encryption_certificate_thumbprint
-        self.encryption_jwk = encryption_jwk
-        self.secondary_encryption_jwk = secondary_encryption_jwk
-        self.active_message_count = active_message_count
-        self.latest_published_msi_version = latest_published_msi_version
-        self.published_time_utc = published_time_utc
+    def __init__(self, **kwargs):
+        super(GatewayStatus, self).__init__(**kwargs)
+        self.available_memory_mbyte = kwargs.get('available_memory_mbyte', None)
+        self.gateway_cpu_utilization_percent = kwargs.get('gateway_cpu_utilization_percent', None)
+        self.total_cpu_utilization_percent = kwargs.get('total_cpu_utilization_percent', None)
+        self.gateway_version = kwargs.get('gateway_version', None)
+        self.friendly_os_name = kwargs.get('friendly_os_name', None)
+        self.installed_date = kwargs.get('installed_date', None)
+        self.logical_processor_count = kwargs.get('logical_processor_count', None)
+        self.name = kwargs.get('name', None)
+        self.gateway_id = kwargs.get('gateway_id', None)
+        self.gateway_working_set_mbyte = kwargs.get('gateway_working_set_mbyte', None)
+        self.status_updated = kwargs.get('status_updated', None)
+        self.group_policy_error = kwargs.get('group_policy_error', None)
+        self.allow_gateway_group_policy_status = kwargs.get('allow_gateway_group_policy_status', None)
+        self.require_mfa_group_policy_status = kwargs.get('require_mfa_group_policy_status', None)
+        self.encryption_certificate_thumbprint = kwargs.get('encryption_certificate_thumbprint', None)
+        self.secondary_encryption_certificate_thumbprint = kwargs.get('secondary_encryption_certificate_thumbprint', None)
+        self.encryption_jwk = kwargs.get('encryption_jwk', None)
+        self.secondary_encryption_jwk = kwargs.get('secondary_encryption_jwk', None)
+        self.active_message_count = kwargs.get('active_message_count', None)
+        self.latest_published_msi_version = kwargs.get('latest_published_msi_version', None)
+        self.published_time_utc = kwargs.get('published_time_utc', None)

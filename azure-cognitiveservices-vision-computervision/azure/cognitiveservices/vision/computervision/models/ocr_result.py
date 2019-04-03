@@ -15,9 +15,8 @@ from msrest.serialization import Model
 class OcrResult(Model):
     """OcrResult.
 
-    :param language:
-    :type language:
-     ~azure.cognitiveservices.vision.computervision.models.OcrResult
+    :param language: The BCP-47 language code of the text in the image.
+    :type language: str
     :param text_angle: The angle, in degrees, of the detected text with
      respect to the closest horizontal or vertical direction. After rotating
      the input image clockwise by this angle, the recognized text lines become
@@ -30,8 +29,8 @@ class OcrResult(Model):
      recognized correctly.
     :type text_angle: float
     :param orientation: Orientation of the text recognized in the image. The
-     value (up,down,left, or right) refers to the direction that the top of the
-     recognized text is facing, after the image has been rotated around its
+     value (up, down, left, or right) refers to the direction that the top of
+     the recognized text is facing, after the image has been rotated around its
      center according to the detected text angle (see textAngle property).
     :type orientation: str
     :param regions: An array of objects, where each object represents a region
@@ -41,15 +40,15 @@ class OcrResult(Model):
     """
 
     _attribute_map = {
-        'language': {'key': 'language', 'type': 'OcrResult'},
+        'language': {'key': 'language', 'type': 'str'},
         'text_angle': {'key': 'textAngle', 'type': 'float'},
         'orientation': {'key': 'orientation', 'type': 'str'},
         'regions': {'key': 'regions', 'type': '[OcrRegion]'},
     }
 
-    def __init__(self, language=None, text_angle=None, orientation=None, regions=None):
-        super(OcrResult, self).__init__()
-        self.language = language
-        self.text_angle = text_angle
-        self.orientation = orientation
-        self.regions = regions
+    def __init__(self, **kwargs):
+        super(OcrResult, self).__init__(**kwargs)
+        self.language = kwargs.get('language', None)
+        self.text_angle = kwargs.get('text_angle', None)
+        self.orientation = kwargs.get('orientation', None)
+        self.regions = kwargs.get('regions', None)

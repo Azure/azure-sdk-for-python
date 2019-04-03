@@ -1,2 +1,6 @@
+recursive-include tests *.py *.yaml
 include *.rst
-include azure_bdist_wheel.py
+include azure/__init__.py
+include azure/cognitiveservices/__init__.py
+include azure/cognitiveservices/vision/__init__.py
+

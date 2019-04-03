@@ -16,11 +16,13 @@ class ImageStoreCopyDescription(Model):
     """Information about how to copy image store content from one image store
     relative path to another image store relative path.
 
-    :param remote_source: The relative path of source image store content to
-     be copied from.
+    All required parameters must be populated in order to send to Azure.
+
+    :param remote_source: Required. The relative path of source image store
+     content to be copied from.
     :type remote_source: str
-    :param remote_destination: The relative path of destination image store
-     content to be copied to.
+    :param remote_destination: Required. The relative path of destination
+     image store content to be copied to.
     :type remote_destination: str
     :param skip_files: The list of the file names to be skipped for copying.
     :type skip_files: list[str]
@@ -44,9 +46,9 @@ class ImageStoreCopyDescription(Model):
         'check_mark_file': {'key': 'CheckMarkFile', 'type': 'bool'},
     }
 
-    def __init__(self, remote_source, remote_destination, skip_files=None, check_mark_file=None):
-        super(ImageStoreCopyDescription, self).__init__()
-        self.remote_source = remote_source
-        self.remote_destination = remote_destination
-        self.skip_files = skip_files
-        self.check_mark_file = check_mark_file
+    def __init__(self, **kwargs):
+        super(ImageStoreCopyDescription, self).__init__(**kwargs)
+        self.remote_source = kwargs.get('remote_source', None)
+        self.remote_destination = kwargs.get('remote_destination', None)
+        self.skip_files = kwargs.get('skip_files', None)
+        self.check_mark_file = kwargs.get('check_mark_file', None)

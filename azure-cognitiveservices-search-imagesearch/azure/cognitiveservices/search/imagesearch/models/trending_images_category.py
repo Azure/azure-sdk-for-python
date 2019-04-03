@@ -15,13 +15,16 @@ from msrest.serialization import Model
 class TrendingImagesCategory(Model):
     """Defines the category of trending images.
 
-    :param title: The name of the image category. For example, Popular People
-     Searches.
+    All required parameters must be populated in order to send to Azure.
+
+    :param title: Required. The name of the image category. For example,
+     Popular People Searches.
     :type title: str
-    :param tiles: A list of images that are trending in the category. Each
-     tile contains an image and a URL that returns more images of the subject.
-     For example, if the category is Popular People Searches, the image is of a
-     popular person and the URL would return more images of that person.
+    :param tiles: Required. A list of images that are trending in the
+     category. Each tile contains an image and a URL that returns more images
+     of the subject. For example, if the category is Popular People Searches,
+     the image is of a popular person and the URL would return more images of
+     that person.
     :type tiles:
      list[~azure.cognitiveservices.search.imagesearch.models.TrendingImagesTile]
     """
@@ -36,7 +39,7 @@ class TrendingImagesCategory(Model):
         'tiles': {'key': 'tiles', 'type': '[TrendingImagesTile]'},
     }
 
-    def __init__(self, title, tiles):
-        super(TrendingImagesCategory, self).__init__()
-        self.title = title
-        self.tiles = tiles
+    def __init__(self, **kwargs):
+        super(TrendingImagesCategory, self).__init__(**kwargs)
+        self.title = kwargs.get('title', None)
+        self.tiles = kwargs.get('tiles', None)

@@ -13,16 +13,22 @@ from msrest.serialization import Model
 
 
 class ImageUrl(Model):
-    """ImageUrl.
+    """Image url.
 
-    :param url:
+    All required parameters must be populated in order to send to Azure.
+
+    :param url: Required. Url of the image.
     :type url: str
     """
 
-    _attribute_map = {
-        'url': {'key': 'Url', 'type': 'str'},
+    _validation = {
+        'url': {'required': True},
     }
 
-    def __init__(self, url=None):
-        super(ImageUrl, self).__init__()
-        self.url = url
+    _attribute_map = {
+        'url': {'key': 'url', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ImageUrl, self).__init__(**kwargs)
+        self.url = kwargs.get('url', None)

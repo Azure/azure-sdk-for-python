@@ -27,7 +27,7 @@ class NodeResult(Model):
         'node_instance_id': {'key': 'NodeInstanceId', 'type': 'str'},
     }
 
-    def __init__(self, node_name=None, node_instance_id=None):
-        super(NodeResult, self).__init__()
-        self.node_name = node_name
-        self.node_instance_id = node_instance_id
+    def __init__(self, **kwargs):
+        super(NodeResult, self).__init__(**kwargs)
+        self.node_name = kwargs.get('node_name', None)
+        self.node_instance_id = kwargs.get('node_instance_id', None)

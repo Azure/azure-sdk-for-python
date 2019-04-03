@@ -18,7 +18,9 @@ class WebAppCollection(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param value: Collection of resources.
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. Collection of resources.
     :type value: list[~azure.mgmt.web.models.Site]
     :ivar next_link: Link to next page of resources.
     :vartype next_link: str
@@ -34,7 +36,7 @@ class WebAppCollection(Model):
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, value):
-        super(WebAppCollection, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(WebAppCollection, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
         self.next_link = None

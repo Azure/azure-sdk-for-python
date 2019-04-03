@@ -97,8 +97,8 @@ class DatabaseOperation(ProxyResource):
         'is_cancellable': {'key': 'properties.isCancellable', 'type': 'bool'},
     }
 
-    def __init__(self):
-        super(DatabaseOperation, self).__init__()
+    def __init__(self, **kwargs):
+        super(DatabaseOperation, self).__init__(**kwargs)
         self.database_name = None
         self.operation = None
         self.operation_friendly_name = None

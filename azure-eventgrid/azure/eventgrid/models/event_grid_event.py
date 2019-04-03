@@ -18,21 +18,23 @@ class EventGridEvent(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param id: An unique identifier for the event.
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. An unique identifier for the event.
     :type id: str
     :param topic: The resource path of the event source.
     :type topic: str
-    :param subject: A resource path relative to the topic path.
+    :param subject: Required. A resource path relative to the topic path.
     :type subject: str
-    :param data: Event data specific to the event type.
+    :param data: Required. Event data specific to the event type.
     :type data: object
-    :param event_type: The type of the event that occurred.
+    :param event_type: Required. The type of the event that occurred.
     :type event_type: str
-    :param event_time: The time (in UTC) the event was generated.
+    :param event_time: Required. The time (in UTC) the event was generated.
     :type event_time: datetime
     :ivar metadata_version: The schema version of the event metadata.
     :vartype metadata_version: str
-    :param data_version: The schema version of the data object.
+    :param data_version: Required. The schema version of the data object.
     :type data_version: str
     """
 
@@ -57,13 +59,13 @@ class EventGridEvent(Model):
         'data_version': {'key': 'dataVersion', 'type': 'str'},
     }
 
-    def __init__(self, id, subject, data, event_type, event_time, data_version, topic=None):
-        super(EventGridEvent, self).__init__()
-        self.id = id
-        self.topic = topic
-        self.subject = subject
-        self.data = data
-        self.event_type = event_type
-        self.event_time = event_time
+    def __init__(self, **kwargs):
+        super(EventGridEvent, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.topic = kwargs.get('topic', None)
+        self.subject = kwargs.get('subject', None)
+        self.data = kwargs.get('data', None)
+        self.event_type = kwargs.get('event_type', None)
+        self.event_time = kwargs.get('event_time', None)
         self.metadata_version = None
-        self.data_version = data_version
+        self.data_version = kwargs.get('data_version', None)

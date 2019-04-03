@@ -16,8 +16,7 @@ class UsageMetric(Model):
     """A metric describing the usage of a resource.
 
     :param name: The name of the metric.
-    :type name: :class:`MetricName
-     <azure.mgmt.loganalytics.models.MetricName>`
+    :type name: ~azure.mgmt.loganalytics.models.MetricName
     :param unit: The units used for the metric.
     :type unit: str
     :param current_value: The current value of the metric.
@@ -40,10 +39,11 @@ class UsageMetric(Model):
         'quota_period': {'key': 'quotaPeriod', 'type': 'str'},
     }
 
-    def __init__(self, name=None, unit=None, current_value=None, limit=None, next_reset_time=None, quota_period=None):
-        self.name = name
-        self.unit = unit
-        self.current_value = current_value
-        self.limit = limit
-        self.next_reset_time = next_reset_time
-        self.quota_period = quota_period
+    def __init__(self, **kwargs):
+        super(UsageMetric, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.unit = kwargs.get('unit', None)
+        self.current_value = kwargs.get('current_value', None)
+        self.limit = kwargs.get('limit', None)
+        self.next_reset_time = kwargs.get('next_reset_time', None)
+        self.quota_period = kwargs.get('quota_period', None)

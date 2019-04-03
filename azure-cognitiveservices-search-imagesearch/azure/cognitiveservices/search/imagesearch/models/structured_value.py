@@ -21,7 +21,9 @@ class StructuredValue(Intangible):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -58,10 +60,23 @@ class StructuredValue(Intangible):
         'bing_id': {'readonly': True},
     }
 
+    _attribute_map = {
+        '_type': {'key': '_type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'read_link': {'key': 'readLink', 'type': 'str'},
+        'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'url': {'key': 'url', 'type': 'str'},
+        'image': {'key': 'image', 'type': 'ImageObject'},
+        'description': {'key': 'description', 'type': 'str'},
+        'alternate_name': {'key': 'alternateName', 'type': 'str'},
+        'bing_id': {'key': 'bingId', 'type': 'str'},
+    }
+
     _subtype_map = {
         '_type': {'NormalizedRectangle': 'NormalizedRectangle'}
     }
 
-    def __init__(self):
-        super(StructuredValue, self).__init__()
+    def __init__(self, **kwargs):
+        super(StructuredValue, self).__init__(**kwargs)
         self._type = 'StructuredValue'

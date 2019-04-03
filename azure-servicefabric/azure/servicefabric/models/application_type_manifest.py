@@ -24,6 +24,6 @@ class ApplicationTypeManifest(Model):
         'manifest': {'key': 'Manifest', 'type': 'str'},
     }
 
-    def __init__(self, manifest=None):
-        super(ApplicationTypeManifest, self).__init__()
-        self.manifest = manifest
+    def __init__(self, **kwargs):
+        super(ApplicationTypeManifest, self).__init__(**kwargs)
+        self.manifest = kwargs.get('manifest', None)

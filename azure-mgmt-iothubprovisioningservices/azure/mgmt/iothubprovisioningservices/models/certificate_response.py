@@ -46,9 +46,9 @@ class CertificateResponse(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, properties=None):
-        super(CertificateResponse, self).__init__()
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(CertificateResponse, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
         self.id = None
         self.name = None
         self.etag = None

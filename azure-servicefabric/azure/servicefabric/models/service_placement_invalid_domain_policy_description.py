@@ -17,7 +17,9 @@ class ServicePlacementInvalidDomainPolicyDescription(ServicePlacementPolicyDescr
     where a particular fault or upgrade domain should not be used for placement
     of the instances or replicas of that service.
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
     :param domain_name: The name of the domain that should not be used for
      placement.
@@ -33,7 +35,7 @@ class ServicePlacementInvalidDomainPolicyDescription(ServicePlacementPolicyDescr
         'domain_name': {'key': 'DomainName', 'type': 'str'},
     }
 
-    def __init__(self, domain_name=None):
-        super(ServicePlacementInvalidDomainPolicyDescription, self).__init__()
-        self.domain_name = domain_name
+    def __init__(self, **kwargs):
+        super(ServicePlacementInvalidDomainPolicyDescription, self).__init__(**kwargs)
+        self.domain_name = kwargs.get('domain_name', None)
         self.type = 'InvalidDomain'

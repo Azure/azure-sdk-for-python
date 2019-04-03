@@ -62,8 +62,8 @@ class RestorePoint(ProxyResource):
         'restore_point_label': {'key': 'properties.restorePointLabel', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(RestorePoint, self).__init__()
+    def __init__(self, **kwargs):
+        super(RestorePoint, self).__init__(**kwargs)
         self.location = None
         self.restore_point_type = None
         self.earliest_restore_date = None

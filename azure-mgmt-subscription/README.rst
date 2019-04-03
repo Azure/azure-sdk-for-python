@@ -36,7 +36,7 @@ If you see azure==0.11.0 (or any version below 1.0), uninstall it first:
 Usage
 =====
 
-For code examples, see `MyService Management
+For code examples, see `Subscription Management
 <https://docs.microsoft.com/python/api/overview/azure/>`__
 on docs.microsoft.com.
 
@@ -47,3 +47,6 @@ Provide Feedback
 If you encounter any bugs or have suggestions, please file an issue in the
 `Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
 section of the project.
+
+
+.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-subscription%2FREADME.png

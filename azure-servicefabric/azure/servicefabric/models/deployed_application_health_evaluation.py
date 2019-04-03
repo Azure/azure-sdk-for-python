@@ -16,7 +16,8 @@ class DeployedApplicationHealthEvaluation(HealthEvaluation):
     """Represents health evaluation for a deployed application, containing
     information about the data and the algorithm used by the health store to
     evaluate health.
-    .
+
+    All required parameters must be populated in order to send to Azure.
 
     :param aggregated_health_state: The health state of a Service Fabric
      entity such as Cluster, Node, Application, Service, Partition, Replica
@@ -27,7 +28,7 @@ class DeployedApplicationHealthEvaluation(HealthEvaluation):
     :param description: Description of the health evaluation, which represents
      a summary of the evaluation process.
     :type description: str
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param node_name: Name of the node where the application is deployed to.
     :type node_name: str
@@ -55,9 +56,9 @@ class DeployedApplicationHealthEvaluation(HealthEvaluation):
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
     }
 
-    def __init__(self, aggregated_health_state=None, description=None, node_name=None, application_name=None, unhealthy_evaluations=None):
-        super(DeployedApplicationHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description)
-        self.node_name = node_name
-        self.application_name = application_name
-        self.unhealthy_evaluations = unhealthy_evaluations
+    def __init__(self, **kwargs):
+        super(DeployedApplicationHealthEvaluation, self).__init__(**kwargs)
+        self.node_name = kwargs.get('node_name', None)
+        self.application_name = kwargs.get('application_name', None)
+        self.unhealthy_evaluations = kwargs.get('unhealthy_evaluations', None)
         self.kind = 'DeployedApplication'

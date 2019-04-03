@@ -18,6 +18,8 @@ class FailoverGroup(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -28,8 +30,8 @@ class FailoverGroup(ProxyResource):
     :vartype location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param read_write_endpoint: Read-write endpoint of the failover group
-     instance.
+    :param read_write_endpoint: Required. Read-write endpoint of the failover
+     group instance.
     :type read_write_endpoint:
      ~azure.mgmt.sql.models.FailoverGroupReadWriteEndpoint
     :param read_only_endpoint: Read-only endpoint of the failover group
@@ -42,8 +44,8 @@ class FailoverGroup(ProxyResource):
      ~azure.mgmt.sql.models.FailoverGroupReplicationRole
     :ivar replication_state: Replication state of the failover group instance.
     :vartype replication_state: str
-    :param partner_servers: List of partner server information for the
-     failover group.
+    :param partner_servers: Required. List of partner server information for
+     the failover group.
     :type partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
     :param databases: List of databases in the failover group.
     :type databases: list[str]
@@ -74,13 +76,13 @@ class FailoverGroup(ProxyResource):
         'databases': {'key': 'properties.databases', 'type': '[str]'},
     }
 
-    def __init__(self, read_write_endpoint, partner_servers, tags=None, read_only_endpoint=None, databases=None):
-        super(FailoverGroup, self).__init__()
+    def __init__(self, **kwargs):
+        super(FailoverGroup, self).__init__(**kwargs)
         self.location = None
-        self.tags = tags
-        self.read_write_endpoint = read_write_endpoint
-        self.read_only_endpoint = read_only_endpoint
+        self.tags = kwargs.get('tags', None)
+        self.read_write_endpoint = kwargs.get('read_write_endpoint', None)
+        self.read_only_endpoint = kwargs.get('read_only_endpoint', None)
         self.replication_role = None
         self.replication_state = None
-        self.partner_servers = partner_servers
-        self.databases = databases
+        self.partner_servers = kwargs.get('partner_servers', None)
+        self.databases = kwargs.get('databases', None)

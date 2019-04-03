@@ -31,6 +31,6 @@ class InsightsTag(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(InsightsTag, self).__init__()
+    def __init__(self, **kwargs):
+        super(InsightsTag, self).__init__(**kwargs)
         self.name = None

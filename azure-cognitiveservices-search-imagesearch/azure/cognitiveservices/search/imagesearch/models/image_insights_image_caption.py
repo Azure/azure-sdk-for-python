@@ -15,16 +15,19 @@ from msrest.serialization import Model
 class ImageInsightsImageCaption(Model):
     """Defines an image's caption.
 
-    :param caption: A caption about the image.
+    All required parameters must be populated in order to send to Azure.
+
+    :param caption: Required. A caption about the image.
     :type caption: str
-    :param data_source_url: The URL to the website where the caption was
-     found. You must attribute the caption to the source. For example, by
+    :param data_source_url: Required. The URL to the website where the caption
+     was found. You must attribute the caption to the source. For example, by
      displaying the domain name from the URL next to the caption and using the
      URL to link to the source website.
     :type data_source_url: str
-    :param related_searches: A list of entities found in the caption. Use the
-     contents of the Query object to find the entity in the caption and create
-     a link. The link takes the user to images of the entity.
+    :param related_searches: Required. A list of entities found in the
+     caption. Use the contents of the Query object to find the entity in the
+     caption and create a link. The link takes the user to images of the
+     entity.
     :type related_searches:
      list[~azure.cognitiveservices.search.imagesearch.models.Query]
     """
@@ -41,8 +44,8 @@ class ImageInsightsImageCaption(Model):
         'related_searches': {'key': 'relatedSearches', 'type': '[Query]'},
     }
 
-    def __init__(self, caption, data_source_url, related_searches):
-        super(ImageInsightsImageCaption, self).__init__()
-        self.caption = caption
-        self.data_source_url = data_source_url
-        self.related_searches = related_searches
+    def __init__(self, **kwargs):
+        super(ImageInsightsImageCaption, self).__init__(**kwargs)
+        self.caption = kwargs.get('caption', None)
+        self.data_source_url = kwargs.get('data_source_url', None)
+        self.related_searches = kwargs.get('related_searches', None)

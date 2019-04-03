@@ -15,7 +15,6 @@ from msrest.serialization import Model
 class ServiceHealthStateChunkList(Model):
     """The list of service health state chunks that respect the input filters in
     the chunk query. Returned by get cluster health state chunks query.
-    .
 
     :param items: The list of service health state chunks that respect the
      input filters in the chunk query.
@@ -26,6 +25,6 @@ class ServiceHealthStateChunkList(Model):
         'items': {'key': 'Items', 'type': '[ServiceHealthStateChunk]'},
     }
 
-    def __init__(self, items=None):
-        super(ServiceHealthStateChunkList, self).__init__()
-        self.items = items
+    def __init__(self, **kwargs):
+        super(ServiceHealthStateChunkList, self).__init__(**kwargs)
+        self.items = kwargs.get('items', None)

@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .rule_condition import RuleCondition
+from .rule_condition_py3 import RuleCondition
 
 
 class LocationThresholdRuleCondition(RuleCondition):

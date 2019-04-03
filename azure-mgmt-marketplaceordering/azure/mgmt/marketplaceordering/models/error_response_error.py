@@ -34,7 +34,7 @@ class ErrorResponseError(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ErrorResponseError, self).__init__()
+    def __init__(self, **kwargs):
+        super(ErrorResponseError, self).__init__(**kwargs)
         self.code = None
         self.message = None

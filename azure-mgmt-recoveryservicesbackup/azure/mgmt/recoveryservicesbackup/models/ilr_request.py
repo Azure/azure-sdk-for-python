@@ -15,7 +15,12 @@ from msrest.serialization import Model
 class ILRRequest(Model):
     """Parameters to restore file/folders API.
 
-    :param object_type: Polymorphic Discriminator
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: IaasVMILRRegistrationRequest
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     """
 
@@ -31,5 +36,6 @@ class ILRRequest(Model):
         'object_type': {'IaasVMILRRegistrationRequest': 'IaasVMILRRegistrationRequest'}
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(ILRRequest, self).__init__(**kwargs)
         self.object_type = None

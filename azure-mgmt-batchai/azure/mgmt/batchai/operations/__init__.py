@@ -10,15 +10,19 @@
 # --------------------------------------------------------------------------
 
 from .operations import Operations
-from .usage_operations import UsageOperations
-from .clusters_operations import ClustersOperations
+from .usages_operations import UsagesOperations
+from .workspaces_operations import WorkspacesOperations
+from .experiments_operations import ExperimentsOperations
 from .jobs_operations import JobsOperations
 from .file_servers_operations import FileServersOperations
+from .clusters_operations import ClustersOperations
 
 __all__ = [
     'Operations',
-    'UsageOperations',
-    'ClustersOperations',
+    'UsagesOperations',
+    'WorkspacesOperations',
+    'ExperimentsOperations',
     'JobsOperations',
     'FileServersOperations',
+    'ClustersOperations',
 ]

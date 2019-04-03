@@ -25,7 +25,7 @@ class ProxyResource(Model):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     """
 
     _validation = {
@@ -41,8 +41,9 @@ class ProxyResource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, tags=None):
+    def __init__(self, **kwargs):
+        super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.tags = tags
+        self.tags = kwargs.get('tags', None)

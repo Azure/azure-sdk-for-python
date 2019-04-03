@@ -23,6 +23,6 @@ class FabricCodeVersionInfo(Model):
         'code_version': {'key': 'CodeVersion', 'type': 'str'},
     }
 
-    def __init__(self, code_version=None):
-        super(FabricCodeVersionInfo, self).__init__()
-        self.code_version = code_version
+    def __init__(self, **kwargs):
+        super(FabricCodeVersionInfo, self).__init__(**kwargs)
+        self.code_version = kwargs.get('code_version', None)

@@ -17,11 +17,10 @@ class ReplicationUsage(Model):
 
     :param monitoring_summary: Summary of the replication monitoring data for
      this vault.
-    :type monitoring_summary: :class:`MonitoringSummary
-     <azure.mgmt.recoveryservices.models.MonitoringSummary>`
+    :type monitoring_summary:
+     ~azure.mgmt.recoveryservices.models.MonitoringSummary
     :param jobs_summary: Summary of the replication jobs data for this vault.
-    :type jobs_summary: :class:`JobsSummary
-     <azure.mgmt.recoveryservices.models.JobsSummary>`
+    :type jobs_summary: ~azure.mgmt.recoveryservices.models.JobsSummary
     :param protected_item_count: Number of replication protected items for
      this vault.
     :type protected_item_count: int
@@ -45,10 +44,11 @@ class ReplicationUsage(Model):
         'recovery_services_provider_auth_type': {'key': 'recoveryServicesProviderAuthType', 'type': 'int'},
     }
 
-    def __init__(self, monitoring_summary=None, jobs_summary=None, protected_item_count=None, recovery_plan_count=None, registered_servers_count=None, recovery_services_provider_auth_type=None):
-        self.monitoring_summary = monitoring_summary
-        self.jobs_summary = jobs_summary
-        self.protected_item_count = protected_item_count
-        self.recovery_plan_count = recovery_plan_count
-        self.registered_servers_count = registered_servers_count
-        self.recovery_services_provider_auth_type = recovery_services_provider_auth_type
+    def __init__(self, **kwargs):
+        super(ReplicationUsage, self).__init__(**kwargs)
+        self.monitoring_summary = kwargs.get('monitoring_summary', None)
+        self.jobs_summary = kwargs.get('jobs_summary', None)
+        self.protected_item_count = kwargs.get('protected_item_count', None)
+        self.recovery_plan_count = kwargs.get('recovery_plan_count', None)
+        self.registered_servers_count = kwargs.get('registered_servers_count', None)
+        self.recovery_services_provider_auth_type = kwargs.get('recovery_services_provider_auth_type', None)

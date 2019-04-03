@@ -29,7 +29,8 @@ class BaiduCredential(Model):
         'baidu_secret_key': {'key': 'properties.baiduSecretKey', 'type': 'str'},
     }
 
-    def __init__(self, baidu_api_key=None, baidu_end_point=None, baidu_secret_key=None):
-        self.baidu_api_key = baidu_api_key
-        self.baidu_end_point = baidu_end_point
-        self.baidu_secret_key = baidu_secret_key
+    def __init__(self, **kwargs):
+        super(BaiduCredential, self).__init__(**kwargs)
+        self.baidu_api_key = kwargs.get('baidu_api_key', None)
+        self.baidu_end_point = kwargs.get('baidu_end_point', None)
+        self.baidu_secret_key = kwargs.get('baidu_secret_key', None)

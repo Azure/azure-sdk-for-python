@@ -15,6 +15,8 @@ from msrest.serialization import Model
 class SkypeChannelProperties(Model):
     """The parameters to provide for the Microsoft Teams channel.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param enable_messaging: Enable messaging for Skype channel
     :type enable_messaging: bool
     :param enable_media_cards: Enable media cards for Skype channel
@@ -31,7 +33,7 @@ class SkypeChannelProperties(Model):
     :type groups_mode: str
     :param calling_web_hook: Calling web hook for Skype channel
     :type calling_web_hook: str
-    :param is_enabled: Whether this channel is enabled for the bot
+    :param is_enabled: Required. Whether this channel is enabled for the bot
     :type is_enabled: bool
     """
 
@@ -51,13 +53,14 @@ class SkypeChannelProperties(Model):
         'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, is_enabled, enable_messaging=None, enable_media_cards=None, enable_video=None, enable_calling=None, enable_screen_sharing=None, enable_groups=None, groups_mode=None, calling_web_hook=None):
-        self.enable_messaging = enable_messaging
-        self.enable_media_cards = enable_media_cards
-        self.enable_video = enable_video
-        self.enable_calling = enable_calling
-        self.enable_screen_sharing = enable_screen_sharing
-        self.enable_groups = enable_groups
-        self.groups_mode = groups_mode
-        self.calling_web_hook = calling_web_hook
-        self.is_enabled = is_enabled
+    def __init__(self, **kwargs):
+        super(SkypeChannelProperties, self).__init__(**kwargs)
+        self.enable_messaging = kwargs.get('enable_messaging', None)
+        self.enable_media_cards = kwargs.get('enable_media_cards', None)
+        self.enable_video = kwargs.get('enable_video', None)
+        self.enable_calling = kwargs.get('enable_calling', None)
+        self.enable_screen_sharing = kwargs.get('enable_screen_sharing', None)
+        self.enable_groups = kwargs.get('enable_groups', None)
+        self.groups_mode = kwargs.get('groups_mode', None)
+        self.calling_web_hook = kwargs.get('calling_web_hook', None)
+        self.is_enabled = kwargs.get('is_enabled', None)

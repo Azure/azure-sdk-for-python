@@ -17,9 +17,10 @@ class BMSBackupEnginesQueryObject(Model):
 
     :param backup_management_type: Backup management type for the backup
      engine. Possible values include: 'Invalid', 'AzureIaasVM', 'MAB', 'DPM',
-     'AzureBackupServer', 'AzureSql'
-    :type backup_management_type: str or :class:`BackupManagementType
-     <azure.mgmt.recoveryservicesbackup.models.BackupManagementType>`
+     'AzureBackupServer', 'AzureSql', 'AzureStorage', 'AzureWorkload',
+     'DefaultBackup'
+    :type backup_management_type: str or
+     ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param friendly_name: Friendly name of the backup engine.
     :type friendly_name: str
     :param expand: Attribute to add extended info.
@@ -32,7 +33,8 @@ class BMSBackupEnginesQueryObject(Model):
         'expand': {'key': 'expand', 'type': 'str'},
     }
 
-    def __init__(self, backup_management_type=None, friendly_name=None, expand=None):
-        self.backup_management_type = backup_management_type
-        self.friendly_name = friendly_name
-        self.expand = expand
+    def __init__(self, **kwargs):
+        super(BMSBackupEnginesQueryObject, self).__init__(**kwargs)
+        self.backup_management_type = kwargs.get('backup_management_type', None)
+        self.friendly_name = kwargs.get('friendly_name', None)
+        self.expand = kwargs.get('expand', None)

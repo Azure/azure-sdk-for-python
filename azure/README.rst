@@ -6,7 +6,7 @@ This is the Microsoft Azure bundle.
 This package does not contain any code in itself. It installs a set
 of packages that provide Microsoft Azure functionality.
 
-All packages in this bundle have been tested with Python 2.7, 3.4, 3.5 and 3.6.
+All packages in this bundle have been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7
 
 This package uses PEP440 syntax, and thus requires pip >= 6.0 and/or setuptools >= 8.0
 to be installed.
@@ -23,18 +23,20 @@ Features
 
 This version of the Azure package bundle consists of the following
 packages. Follow the links for more information on each package.
-Note that versions are fixed at the minor version number level 
+Note that versions are fixed at the minor version number level
 (i.e. no breaking changes can be introduced, but features are allowed)
 
--  `azure-mgmt v2.x <https://pypi.python.org/pypi/azure-mgmt>`__
+-  `azure-mgmt v4.x <https://pypi.python.org/pypi/azure-mgmt>`__
+-  `azure-applicationinsights v0.1.x <https://pypi.python.org/pypi/azure-applicationinsights>`__
 -  `azure-batch v4.x <https://pypi.python.org/pypi/azure-batch>`__
 -  `azure-cosmosb-table v1.x <https://pypi.python.org/pypi/azure-cosmosdb-table>`__
 -  `azure-datalake-store v0.0.x <https://pypi.python.org/pypi/azure-datalake-store>`__
--  `azure-eventgrid v0.1.x <https://pypi.python.org/pypi/azure-eventgrid>`__
+-  `azure-eventgrid v1.x <https://pypi.python.org/pypi/azure-eventgrid>`__
 -  `azure-graphrbac v0.40.x <https://pypi.python.org/pypi/azure-graphrbac>`__
--  `azure-keyvault v0.3.x <https://pypi.python.org/pypi/azure-keyvault>`__
+-  `azure-keyvault v1.x <https://pypi.python.org/pypi/azure-keyvault>`__
+-  `azure-loganalytics v0.1.x <https://pypi.python.org/pypi/azure-loganalytics>`__
 -  `azure-servicebus v0.21.x <https://pypi.python.org/pypi/azure-servicebus>`__
--  `azure-servicefabric v6.1.2.9 <https://pypi.python.org/pypi/azure-servicefabric>`__
+-  `azure-servicefabric v6.3.0.0 <https://pypi.python.org/pypi/azure-servicefabric>`__
 -  `azure-servicemanagement-legacy v0.20.x <https://pypi.python.org/pypi/azure-servicemanagement-legacy>`__
 -  `azure-storage-blob v1.x <https://pypi.python.org/pypi/azure-storage-blob>`__
 -  `azure-storage-queue v1.x <https://pypi.python.org/pypi/azure-storage-queue>`__
@@ -77,3 +79,6 @@ Compatibility
 =============
 
 For details on the breaking changes, see the PyPI page of each individual package.
+
+
+.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure%2FREADME.png

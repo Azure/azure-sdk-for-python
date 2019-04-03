@@ -28,7 +28,7 @@ class PowerShellSessionResource(Resource):
     :ivar location: Resource Manager Resource Location.
     :vartype location: str
     :param tags: Resource Manager Resource Tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param etag:
     :type etag: str
     :param session_id: The PowerShell Session ID.
@@ -43,7 +43,7 @@ class PowerShellSessionResource(Resource):
     :param expires_on: Timestamp when the runspace expires.
     :type expires_on: datetime
     :param version:
-    :type version: :class:`Version <azure.mgmt.servermanager.models.Version>`
+    :type version: ~azure.mgmt.servermanager.models.Version
     :param power_shell_session_resource_name: Name of the runspace.
     :type power_shell_session_resource_name: str
     """
@@ -71,12 +71,12 @@ class PowerShellSessionResource(Resource):
         'power_shell_session_resource_name': {'key': 'properties.name', 'type': 'str'},
     }
 
-    def __init__(self, tags=None, etag=None, session_id=None, state=None, runspace_availability=None, disconnected_on=None, expires_on=None, version=None, power_shell_session_resource_name=None):
-        super(PowerShellSessionResource, self).__init__(tags=tags, etag=etag)
-        self.session_id = session_id
-        self.state = state
-        self.runspace_availability = runspace_availability
-        self.disconnected_on = disconnected_on
-        self.expires_on = expires_on
-        self.version = version
-        self.power_shell_session_resource_name = power_shell_session_resource_name
+    def __init__(self, **kwargs):
+        super(PowerShellSessionResource, self).__init__(**kwargs)
+        self.session_id = kwargs.get('session_id', None)
+        self.state = kwargs.get('state', None)
+        self.runspace_availability = kwargs.get('runspace_availability', None)
+        self.disconnected_on = kwargs.get('disconnected_on', None)
+        self.expires_on = kwargs.get('expires_on', None)
+        self.version = kwargs.get('version', None)
+        self.power_shell_session_resource_name = kwargs.get('power_shell_session_resource_name', None)

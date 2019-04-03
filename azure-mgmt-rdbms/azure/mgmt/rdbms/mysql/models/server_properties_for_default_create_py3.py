@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .server_properties_for_create import ServerPropertiesForCreate
+from .server_properties_for_create_py3 import ServerPropertiesForCreate
 
 
 class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):

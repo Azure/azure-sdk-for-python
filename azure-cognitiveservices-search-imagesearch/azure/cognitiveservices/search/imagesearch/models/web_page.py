@@ -21,7 +21,9 @@ class WebPage(CreativeWork):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -71,10 +73,27 @@ class WebPage(CreativeWork):
         'text': {'readonly': True},
     }
 
+    _attribute_map = {
+        '_type': {'key': '_type', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'read_link': {'key': 'readLink', 'type': 'str'},
+        'web_search_url': {'key': 'webSearchUrl', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'url': {'key': 'url', 'type': 'str'},
+        'image': {'key': 'image', 'type': 'ImageObject'},
+        'description': {'key': 'description', 'type': 'str'},
+        'alternate_name': {'key': 'alternateName', 'type': 'str'},
+        'bing_id': {'key': 'bingId', 'type': 'str'},
+        'thumbnail_url': {'key': 'thumbnailUrl', 'type': 'str'},
+        'provider': {'key': 'provider', 'type': '[Thing]'},
+        'date_published': {'key': 'datePublished', 'type': 'str'},
+        'text': {'key': 'text', 'type': 'str'},
+    }
+
     _subtype_map = {
         '_type': {'CollectionPage': 'CollectionPage'}
     }
 
-    def __init__(self):
-        super(WebPage, self).__init__()
+    def __init__(self, **kwargs):
+        super(WebPage, self).__init__(**kwargs)
         self._type = 'WebPage'

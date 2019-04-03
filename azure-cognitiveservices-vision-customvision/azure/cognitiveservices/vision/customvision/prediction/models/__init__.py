@@ -9,12 +9,27 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .image_url import ImageUrl
-from .image_tag_prediction_model import ImageTagPredictionModel
-from .image_prediction_result_model import ImagePredictionResultModel
+try:
+    from .image_url_py3 import ImageUrl
+    from .bounding_box_py3 import BoundingBox
+    from .prediction_py3 import Prediction
+    from .image_prediction_py3 import ImagePrediction
+    from .custom_vision_error_py3 import CustomVisionError, CustomVisionErrorException
+except (SyntaxError, ImportError):
+    from .image_url import ImageUrl
+    from .bounding_box import BoundingBox
+    from .prediction import Prediction
+    from .image_prediction import ImagePrediction
+    from .custom_vision_error import CustomVisionError, CustomVisionErrorException
+from .custom_vision_prediction_client_enums import (
+    CustomVisionErrorCodes,
+)
 
 __all__ = [
     'ImageUrl',
-    'ImageTagPredictionModel',
-    'ImagePredictionResultModel',
+    'BoundingBox',
+    'Prediction',
+    'ImagePrediction',
+    'CustomVisionError', 'CustomVisionErrorException',
+    'CustomVisionErrorCodes',
 ]

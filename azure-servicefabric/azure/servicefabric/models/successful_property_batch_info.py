@@ -16,7 +16,9 @@ class SuccessfulPropertyBatchInfo(PropertyBatchInfo):
     """Derived from PropertyBatchInfo. Represents the property batch succeeding.
     Contains the results of any "Get" operations in the batch.
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param properties: A map containing the properties that were requested
      through any "Get" property batch operations. The key represents the index
@@ -34,7 +36,7 @@ class SuccessfulPropertyBatchInfo(PropertyBatchInfo):
         'properties': {'key': 'Properties', 'type': '{PropertyInfo}'},
     }
 
-    def __init__(self, properties=None):
-        super(SuccessfulPropertyBatchInfo, self).__init__()
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(SuccessfulPropertyBatchInfo, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
         self.kind = 'Successful'

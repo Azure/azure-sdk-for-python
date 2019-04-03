@@ -9,25 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource_py3 import ProxyResource
 
 
-class Cluster(Resource):
+class Cluster(ProxyResource):
     """Contains information about a Cluster.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The ID of the resource
+    :ivar id: The ID of the resource.
     :vartype id: str
-    :ivar name: The name of the resource
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource
+    :ivar type: The type of the resource.
     :vartype type: str
-    :ivar location: The location of the resource
-    :vartype location: str
-    :ivar tags: The tags of the resource
-    :vartype tags: dict[str, str]
     :param vm_size: The size of the virtual machines in the cluster. All
      virtual machines in a cluster are the same size. For information about
      available VM sizes for clusters using images from the Virtual Machines
@@ -81,10 +77,10 @@ class Cluster(Resource):
     :ivar allocation_state_transition_time: The time at which the cluster
      entered its current allocation state.
     :vartype allocation_state_transition_time: datetime
-    :param errors: Contains details of various errors on the cluster including
+    :ivar errors: Contains details of various errors on the cluster including
      resize and node setup task. This element contains all the errors
      encountered by various compute nodes during node setup.
-    :type errors: list[~azure.mgmt.batchai.models.BatchAIError]
+    :vartype errors: list[~azure.mgmt.batchai.models.BatchAIError]
     :ivar current_node_count: The number of compute nodes currently assigned
      to the cluster.
     :vartype current_node_count: int
@@ -96,13 +92,12 @@ class Cluster(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
-        'tags': {'readonly': True},
         'creation_time': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'provisioning_state_transition_time': {'readonly': True},
         'allocation_state': {'readonly': True},
         'allocation_state_transition_time': {'readonly': True},
+        'errors': {'readonly': True},
         'current_node_count': {'readonly': True},
         'node_state_counts': {'readonly': True},
     }
@@ -111,8 +106,6 @@ class Cluster(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'vm_size': {'key': 'properties.vmSize', 'type': 'str'},
         'vm_priority': {'key': 'properties.vmPriority', 'type': 'VmPriority'},
         'scale_settings': {'key': 'properties.scaleSettings', 'type': 'ScaleSettings'},
@@ -121,17 +114,17 @@ class Cluster(Resource):
         'user_account_settings': {'key': 'properties.userAccountSettings', 'type': 'UserAccountSettings'},
         'subnet': {'key': 'properties.subnet', 'type': 'ResourceId'},
         'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'ProvisioningState'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'provisioning_state_transition_time': {'key': 'properties.provisioningStateTransitionTime', 'type': 'iso-8601'},
-        'allocation_state': {'key': 'properties.allocationState', 'type': 'AllocationState'},
+        'allocation_state': {'key': 'properties.allocationState', 'type': 'str'},
         'allocation_state_transition_time': {'key': 'properties.allocationStateTransitionTime', 'type': 'iso-8601'},
         'errors': {'key': 'properties.errors', 'type': '[BatchAIError]'},
         'current_node_count': {'key': 'properties.currentNodeCount', 'type': 'int'},
         'node_state_counts': {'key': 'properties.nodeStateCounts', 'type': 'NodeStateCounts'},
     }
 
-    def __init__(self, *, vm_size: str=None, vm_priority="dedicated", scale_settings=None, virtual_machine_configuration=None, node_setup=None, user_account_settings=None, subnet=None, errors=None, **kwargs) -> None:
-        super(Cluster, self).__init__(, **kwargs)
+    def __init__(self, *, vm_size: str=None, vm_priority="dedicated", scale_settings=None, virtual_machine_configuration=None, node_setup=None, user_account_settings=None, subnet=None, **kwargs) -> None:
+        super(Cluster, self).__init__(**kwargs)
         self.vm_size = vm_size
         self.vm_priority = vm_priority
         self.scale_settings = scale_settings
@@ -144,6 +137,6 @@ class Cluster(Resource):
         self.provisioning_state_transition_time = None
         self.allocation_state = None
         self.allocation_state_transition_time = None
-        self.errors = errors
+        self.errors = None
         self.current_node_count = None
         self.node_state_counts = None

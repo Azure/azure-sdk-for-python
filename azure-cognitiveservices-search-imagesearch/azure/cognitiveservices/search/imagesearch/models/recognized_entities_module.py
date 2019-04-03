@@ -31,6 +31,6 @@ class RecognizedEntitiesModule(Model):
         'value': {'key': 'value', 'type': '[RecognizedEntityGroup]'},
     }
 
-    def __init__(self):
-        super(RecognizedEntitiesModule, self).__init__()
+    def __init__(self, **kwargs):
+        super(RecognizedEntitiesModule, self).__init__(**kwargs)
         self.value = None
