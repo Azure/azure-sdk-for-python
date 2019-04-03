@@ -22,8 +22,8 @@ class AppTemplate(Model):
     :vartype id: str
     :ivar name: The application template name.
     :vartype name: str
-    :param properties: The extra template properties.
-    :type properties: dict[str, str]
+    :param properties:
+    :type properties: ~azure.mgmt.iotcentral.models.AppTemplateProperties
     :ivar type: the resource type.
     :vartype type: str
     """
@@ -37,7 +37,7 @@ class AppTemplate(Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'AppTemplateProperties'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
