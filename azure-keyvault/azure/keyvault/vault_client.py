@@ -5,6 +5,7 @@ from .secrets._client import SecretClient
 class VaultClient(object):
 
     def __init__(self, vault_url, credentials, config=None, **kwargs):
+        self.vault_url = vault_url
         self._secrets = SecretClient(vault_url, credentials, config=config, **kwargs)
         self._keys = KeyClient(vault_url, credentials, config=config, **kwargs)
 
