@@ -27,8 +27,12 @@
 __version__ = "0.0.1"
 
 from .configuration import Configuration
+from .pipeline_client import PipelineClient
+from .pipeline_client_async import AsyncPipelineClient
 
 
 __all__ = [
-    "Configuration"
+    "Configuration",
+    "PipelineClient",
+    "AsyncPipelineClient"
 ]
