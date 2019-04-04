@@ -11,9 +11,8 @@ from azure.keyvault._internal import _VaultId as KeyVaultId
 class KeyClientTests(KeyvaultTestCase):
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
-    def test_new_client(self, vault, **kwargs):
-        url = vault.properties.vault_uri
-        client = KeyClient(vault_url=url, credentials=self.settings.get_credentials())
+    def test_new_client(self, vault_client, **kwargs):
+        client = vault_client.keys
 
         # get all the vault's keys
         key_ids_at_start = {key.kid for key in client.get_all_keys()}

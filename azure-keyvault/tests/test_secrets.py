@@ -43,7 +43,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
 
     def _validate_secret_list(self, secrets, expected):
         for secret in secrets:
-            # TODO: what if secrets contains unexpected entries?)
+            # TODO: what if secrets contains unexpected entries?
             if secret.id in expected.keys():
                 expected_secret = expected[secret.id]
                 self._assert_secret_attributes_equal(expected_secret, secret)
@@ -52,28 +52,28 @@ class KeyVaultSecretTest(KeyvaultTestCase):
 
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
-    def test_secret_crud_operations(self, vault, **kwargs):
-        self.assertIsNotNone(vault)
-        client = VaultClient(vault.properties.vault_uri, self.settings.get_credentials())
+    def test_secret_crud_operations(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.secrets
         secret_name = 'crud-secret'
         secret_value = self.get_resource_name('crud_secret_value')
 
         # create secret
-        secret_bundle = client.secrets.set_secret(secret_name, secret_value)
-        self._validate_secret_bundle(secret_bundle, vault.properties.vault_uri, secret_name, secret_value)
+        secret_bundle = client.set_secret(secret_name, secret_value)
+        self._validate_secret_bundle(secret_bundle, vault_client.vault_url, secret_name, secret_value)
         created_bundle = secret_bundle
 
         # get secret without version
-        self.assertEqual(created_bundle, client.secrets.get_secret(created_bundle.name, ''))
+        self.assertEqual(created_bundle, client.get_secret(created_bundle.name, ''))
 
         # get secret with version
-        self.assertEqual(created_bundle, client.secrets.get_secret(created_bundle.name, created_bundle.version))
+        self.assertEqual(created_bundle, client.get_secret(created_bundle.name, created_bundle.version))
 
         def _update_secret(secret):
             content_type = 'text/plain'
             expires = date_parse.parse('2050-02-02T08:00:00.000Z')
             tags = {'foo': 'updated tag'}
-            secret_bundle = client.secrets.update_secret_attributes(
+            secret_bundle = client.update_secret_attributes(
                 secret.name, secret.version,
                 content_type=content_type,
                 expires=expires,
@@ -87,20 +87,20 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         secret_bundle = _update_secret(created_bundle)
 
         # delete secret
-        client.secrets.delete_secret(secret_bundle.name)
+        client.delete_secret(secret_bundle.name)
 
         # get secret returns not found
         with self.assertRaisesRegexp(ClientRequestError, r"not found"):
-            client.secrets.get_secret(secret_bundle.name, '')
+            client.get_secret(secret_bundle.name, '')
 
 
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
-    def test_secret_list(self, vault, **kwargs):
-        self.assertIsNotNone(vault)
-        client = VaultClient(vault.properties.vault_uri, self.settings.get_credentials())
+    def test_secret_list(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.secrets
 
-        max_secrets = 2 #self.list_test_size
+        max_secrets = self.list_test_size
         expected = {}
 
         # create many secrets
@@ -111,7 +111,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
             error_count = 0
             while not secret_bundle:
                 try:
-                    secret_bundle = client.secrets.set_secret(secret_name, secret_value)
+                    secret_bundle = client.set_secret(secret_name, secret_value)
                     sid = secret_bundle.id
                     expected[sid] = secret_bundle
                 except Exception as ex:
@@ -123,19 +123,19 @@ class KeyVaultSecretTest(KeyvaultTestCase):
                         raise ex
 
         # list secrets
-        result = list(client.secrets.list_secrets(max_secrets))
+        result = list(client.list_secrets(max_secrets))
         self._validate_secret_list(result, expected)
 
 
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
-    def test_list_versions(self, vault, **kwargs):
-        self.assertIsNotNone(vault)
-        client = VaultClient(vault.properties.vault_uri, self.settings.get_credentials())
+    def test_list_versions(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.secrets
         secret_name = self.get_resource_name('sec')
         secret_value = self.get_resource_name('secVal')
 
-        max_secrets = 2 #self.list_test_size
+        max_secrets = self.list_test_size
         expected = {}
 
         # create many secret versions
@@ -144,7 +144,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
             error_count = 0
             while not secret_bundle:
                 try:
-                    secret_bundle = client.secrets.set_secret(secret_name, secret_value)
+                    secret_bundle = client.set_secret(secret_name, secret_value)
                     expected[secret_bundle.id] = secret_bundle
                 except Exception as ex:
                     if hasattr(ex, 'message') and 'Throttled' in ex.message:
@@ -155,79 +155,77 @@ class KeyVaultSecretTest(KeyvaultTestCase):
                         raise ex
 
         # list secret versions
-        self._validate_secret_list(list(client.secrets.list_secret_versions(secret_name)), expected)
+        self._validate_secret_list(list(client.list_secret_versions(secret_name)), expected)
 
 
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
-    def test_backup_restore(self, vault, **kwargs):
-        self.assertIsNotNone(vault)
-        client = VaultClient(vault.properties.vault_uri, self.settings.get_credentials())
+    def test_backup_restore(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.secrets
         secret_name = self.get_resource_name('secbak')
         secret_value = self.get_resource_name('secVal')
 
         # create secret
-        created_bundle = client.secrets.set_secret(secret_name, secret_value)
+        created_bundle = client.set_secret(secret_name, secret_value)
 
         # backup secret
-        secret_backup = client.secrets.backup_secret(created_bundle.name)
+        secret_backup = client.backup_secret(created_bundle.name)
 
         # delete secret
-        client.secrets.delete_secret(created_bundle.name)
+        client.delete_secret(created_bundle.name)
 
         # restore secret
-        restored = client.secrets.restore_secret(secret_backup)
+        restored = client.restore_secret(secret_backup)
         self._assert_secret_attributes_equal(created_bundle, restored)
 
     @ResourceGroupPreparer()
     @KeyVaultPreparer(enable_soft_delete=True)
-    def test_recover_purge(self, vault, **kwargs):
-        self.assertIsNotNone(vault)
-        client = VaultClient(vault.properties.vault_uri, self.settings.get_credentials())
+    def test_recover_purge(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.secrets
 
         secrets = {}
 
-        list_test_size = 2
-
         # create secrets to recover
-        for i in range(0, list_test_size):
+        for i in range(0, self.list_test_size):
             secret_name = self.get_resource_name('secrec{}'.format(str(i)))
             secret_value = self.get_resource_name('secval{}'.format((str(i))))
-            secrets[secret_name] = client.secrets.set_secret(secret_name, secret_value)
+            secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
         # create secrets to purge
-        for i in range(0, list_test_size):
+        for i in range(0, self.list_test_size):
             secret_name = self.get_resource_name('secprg{}'.format(str(i)))
             secret_value = self.get_resource_name('secval{}'.format((str(i))))
-            secrets[secret_name] = client.secrets.set_secret(secret_name, secret_value)
+            secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
         # delete all secrets
         for secret_name in secrets.keys():
-            client.secrets.delete_secret(secret_name)
+            client.delete_secret(secret_name)
 
         if not self.is_playback():
             time.sleep(20)
 
         # validate all our deleted secrets are returned by list_deleted_secrets
-        deleted = [s.name for s in client.secrets.list_deleted_secrets()]
+        deleted = [s.name for s in client.list_deleted_secrets()]
         self.assertTrue(all(s in deleted for s in secrets.keys()))
 
         # recover select secrets
         for secret_name in [s for s in secrets.keys() if s.startswith('secrec')]:
-            client.secrets.recover_deleted_secret(secret_name)
+            client.recover_deleted_secret(secret_name)
 
         # purge select secrets
         for secret_name in [s for s in secrets.keys() if s.startswith('secprg')]:
-            client.secrets.purge_deleted_secret(secret_name)
+            client.purge_deleted_secret(secret_name)
 
         if not self.is_playback():
             time.sleep(20)
 
         # validate none of our purged secrets are returned by list_deleted_secrets
-        deleted = [s.name for s in client.secrets.list_deleted_secrets()]
+        deleted = [s.name for s in client.list_deleted_secrets()]
         self.assertTrue(not any(s in deleted for s in secrets.keys()))
 
         # validate the recovered secrets
         expected = {k: v for k, v in secrets.items() if k.startswith('secrec')}
-        actual = {k: client.secrets.get_secret(k, "") for k in expected.keys()}
+        actual = {k: client.get_secret(k, "") for k in expected.keys()}
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
