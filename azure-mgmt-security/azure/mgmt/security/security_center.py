@@ -34,6 +34,7 @@ from .operations.jit_network_access_policies_operations import JitNetworkAccessP
 from .operations.external_security_solutions_operations import ExternalSecuritySolutionsOperations
 from .operations.topology_operations import TopologyOperations
 from .operations.allowed_connections_operations import AllowedConnectionsOperations
+from .operations.adaptive_network_hardenings_operations import AdaptiveNetworkHardeningsOperations
 from . import models
 
 
@@ -123,6 +124,8 @@ class SecurityCenter(SDKClient):
     :vartype topology: azure.mgmt.security.operations.TopologyOperations
     :ivar allowed_connections: AllowedConnections operations
     :vartype allowed_connections: azure.mgmt.security.operations.AllowedConnectionsOperations
+    :ivar adaptive_network_hardenings: AdaptiveNetworkHardenings operations
+    :vartype adaptive_network_hardenings: azure.mgmt.security.operations.AdaptiveNetworkHardeningsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -186,4 +189,6 @@ class SecurityCenter(SDKClient):
         self.topology = TopologyOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.allowed_connections = AllowedConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.adaptive_network_hardenings = AdaptiveNetworkHardeningsOperations(
             self._client, self.config, self._serialize, self._deserialize)

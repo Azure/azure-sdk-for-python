@@ -106,6 +106,18 @@ class ExternalSecuritySolutionKind(str, Enum):
     aad = "AAD"
 
 
+class Direction(str, Enum):
+
+    inbound = "Inbound"
+    outbound = "Outbound"
+
+
+class TransportProtocol(str, Enum):
+
+    tcp = "TCP"
+    udp = "UDP"
+
+
 class ConnectionType(str, Enum):
 
     internal = "Internal"

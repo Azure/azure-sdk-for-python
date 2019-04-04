@@ -30,6 +30,7 @@ from .jit_network_access_policies_operations import JitNetworkAccessPoliciesOper
 from .external_security_solutions_operations import ExternalSecuritySolutionsOperations
 from .topology_operations import TopologyOperations
 from .allowed_connections_operations import AllowedConnectionsOperations
+from .adaptive_network_hardenings_operations import AdaptiveNetworkHardeningsOperations
 
 __all__ = [
     'RegulatoryComplianceStandardsOperations',
@@ -53,4 +54,5 @@ __all__ = [
     'ExternalSecuritySolutionsOperations',
     'TopologyOperations',
     'AllowedConnectionsOperations',
+    'AdaptiveNetworkHardeningsOperations',
 ]
