@@ -58,6 +58,7 @@ from .operations.billing_profile_billing_role_definition_operations import Billi
 from .operations.billing_account_billing_role_assignment_operations import BillingAccountBillingRoleAssignmentOperations
 from .operations.invoice_section_billing_role_assignment_operations import InvoiceSectionBillingRoleAssignmentOperations
 from .operations.billing_profile_billing_role_assignment_operations import BillingProfileBillingRoleAssignmentOperations
+from .operations.agreements_operations import AgreementsOperations
 from . import models
 
 
@@ -181,6 +182,8 @@ class BillingManagementClient(SDKClient):
     :vartype invoice_section_billing_role_assignment: azure.mgmt.billing.operations.InvoiceSectionBillingRoleAssignmentOperations
     :ivar billing_profile_billing_role_assignment: BillingProfileBillingRoleAssignment operations
     :vartype billing_profile_billing_role_assignment: azure.mgmt.billing.operations.BillingProfileBillingRoleAssignmentOperations
+    :ivar agreements: Agreements operations
+    :vartype agreements: azure.mgmt.billing.operations.AgreementsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -282,6 +285,8 @@ class BillingManagementClient(SDKClient):
         self.invoice_section_billing_role_assignment = InvoiceSectionBillingRoleAssignmentOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_profile_billing_role_assignment = BillingProfileBillingRoleAssignmentOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.agreements = AgreementsOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def update_auto_renew_for_billing_account(
