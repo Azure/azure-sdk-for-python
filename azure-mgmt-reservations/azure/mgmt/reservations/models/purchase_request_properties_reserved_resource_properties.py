@@ -13,7 +13,8 @@ from msrest.serialization import Model
 
 
 class PurchaseRequestPropertiesReservedResourceProperties(Model):
-    """properties specific to each reserved resource type.
+    """Properties specific to each reserved resource type. Not required if not
+    applicable.
 
     :param instance_flexibility: Possible values include: 'true', 'false'
     :type instance_flexibility: str or

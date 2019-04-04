@@ -22,11 +22,11 @@ class CalculatePriceResponseProperties(Model):
     :param is_billing_partner_managed:
     :type is_billing_partner_managed: bool
     :param reservation_order_id: GUID that represents reservation order that
-     can be placed after calculating price
+     can be placed after calculating price.
     :type reservation_order_id: str
-    :param sku_title: Long name for the SKU that is being purchased
+    :param sku_title: Title of SKU that is being purchased.
     :type sku_title: str
-    :param sku_description: Short name for the SKU that is being purchased
+    :param sku_description: Description of SKU that is being purchased.
     :type sku_description: str
     :param pricing_currency_total: Amount that Microsoft uses for record. Used
      during refund for calculating refund limit. Tax is not included.

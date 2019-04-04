@@ -36,8 +36,8 @@ class PurchaseRequest(Model):
      ~azure.mgmt.reservations.models.AppliedScopeType
     :param applied_scopes:
     :type applied_scopes: list[str]
-    :param reserved_resource_properties: properties specific to each reserved
-     resource type.
+    :param reserved_resource_properties: Properties specific to each reserved
+     resource type. Not required if not applicable.
     :type reserved_resource_properties:
      ~azure.mgmt.reservations.models.PurchaseRequestPropertiesReservedResourceProperties
     """
