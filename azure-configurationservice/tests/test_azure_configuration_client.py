@@ -11,7 +11,6 @@ import unittest
 from msrestazure.azure_exceptions import CloudError
 from azure.configuration import AzureConfigurationClient
 from azure.configuration import ConfigurationSetting
-from devtools_testutils import AzureMgmtTestCase
 
 
 class AzConfigTestData:
@@ -32,7 +31,7 @@ class AzConfigurationClientTest(unittest.TestCase):
         self.working_folder = os.path.dirname(__file__)
         super(AzConfigurationClientTest, self).setUp()
 
-        connection_str = os.environ['APP_CONFIG_CONNECTION_STR']
+        connection_str = os.environ['AZ_CONFIG_CONNECTION']
         app_config_client = AzureConfigurationClient(connection_str)
         self.app_config_client = app_config_client
 

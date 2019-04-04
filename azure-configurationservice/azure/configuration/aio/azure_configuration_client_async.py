@@ -15,13 +15,10 @@ from ..utils import get_endpoint_from_connection_string
 
 
 class AzureConfigurationClientAsync(object):
-    """Represents an azconfig client
+    """
+    Represents an client that calls restful API of Azure App Configuration service asynchronously
+    This is the async version of :class:`azure.configuration.AzureConfigurationService`
 
-    :ivar config: Configuration for client.
-    :vartype config: AzureConfigurationClientConfiguration
-
-    :param connection_string: Credentials needed for the client to connect to Azure.
-    :type connection_string: str
     """
 
     def __init__(self, connection_string):
@@ -50,27 +47,11 @@ class AzureConfigurationClientAsync(object):
     def list_configuration_settings(
         self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
     ):
-        """List key values.
+        """List configuration settings.
 
-        List the key values in the configuration store, optionally filtered by
-        label.
+        The async version of :meth:`azure.configuration.AzureConfigurationClient.list_configuration_settings`
+        This method is sync. But the returned result is an async iterator.
 
-        :param labels: Filter returned values based on their label. '*' can be
-         used as wildcard in the beginning or end of the filter
-        :type labels: list[str]
-        :param keys: Filter returned values based on their keys. '*' can be
-         used as wildcard in the beginning or end of the filter
-        :type keys: list[str]
-        :param accept_date_time: Obtain representation of the result related
-         to past time.
-        :type accept_date_time: datetime
-        :param fields: Specify which fields to return
-        :type fields: list[str]
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: An iterator like instance of KeyValue
-        :rtype:
-         ~azure.configurationservice.models.KeyValuePaged[~azure.configurationservice.models.KeyValue]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         return self._client.list_configuration_settings(
             label=labels,
@@ -83,21 +64,10 @@ class AzureConfigurationClientAsync(object):
     async def get_configuration_setting(
         self, key, label=None, accept_date_time=None, **kwargs
     ):
-        """Get a KeyValue.
+        """Get a ConfigurationSetting asynchronously.
 
-        Get the KeyValue for the given key and label.
+        The async version of :meth:`azure.configuration.AzureConfigurationClient.get_configuration_setting`
 
-        :param key: string
-        :type key: str
-        :param label: Label of key to retreive
-        :type label: str
-        :param accept_date_time: Obtain representation of the result related
-         to past time.
-        :type accept_date_time: datetime
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: KeyValue
-        :rtype: ~azure.configurationservice.models.KeyValue
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         custom_headers = prep_get_configuration_setting(key)
         return await self._client.get_configuration_setting(
@@ -108,16 +78,9 @@ class AzureConfigurationClientAsync(object):
         )
 
     async def add_configuration_setting(self, configuration_setting, **kwargs):
-        """Create a KeyValue.
+        """Create a ConfigurationSetting asynchronously.
 
-        Create a KeyValue.
-
-        :param configuration_setting:
-        :type configuration_setting: ~azure.configurationservice.models.KeyValue
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: KeyValue
-        :rtype: ~azure.configurationservice.models.KeyValue
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        The async version of :meth:`azure.configuration.AzureConfigurationClient.add_configuration_setting`
         """
         custom_headers = prep_add_configuration_setting(configuration_setting, **kwargs)
         key = configuration_setting.key
@@ -138,26 +101,10 @@ class AzureConfigurationClientAsync(object):
         etag=None,
         **kwargs
     ):
-        """Update a KeyValue.
+        """Update a ConfigurationSetting asynchronously.
 
-        Update a KeyValue.
+        The async version of :meth:`azure.configuration.AzureConfigurationClient.update_configuration_setting`
 
-        :param key: string
-        :type key: str
-        :param value:
-        :type value: str
-        :param content_type:
-        :type content_type: str
-        :param tags:
-        :type tags: dict
-        :param label:
-        :type label: str
-        :param etag:
-        :type etag: str
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: KeyValue
-        :rtype: ~azure.configurationservice.models.KeyValue
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         custom_headers = prep_update_configuration_setting(key, etag, **kwargs)
         current_configuration_setting = await self._client.get_configuration_setting(
@@ -177,20 +124,10 @@ class AzureConfigurationClientAsync(object):
         )
 
     async def set_configuration_setting(self, configuration_setting, **kwargs):
-        """Set a KeyValue.
+        """Set a ConfigurationSetting asynchronously.
 
-        Create or update a KeyValue.
+        The async version of :meth:`azure.configuration.AzureConfigurationClient.set_configuration_setting`
 
-        :param configuration_setting:
-        :type configuration_setting: ~azure.configurationservice.models.KeyValue
-        :param key: string
-        :type key: str
-        :param label:
-        :type label: str
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: KeyValue
-        :rtype: ~azure.configurationservice.models.KeyValue
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         custom_headers = prep_set_configuration_setting(configuration_setting, **kwargs)
         key = configuration_setting.key
@@ -202,18 +139,9 @@ class AzureConfigurationClientAsync(object):
         )
 
     async def delete_configuration_setting(self, key, label=None, etag=None, **kwargs):
-        """Delete a KeyValue.
+        """Delete a ConfigurationSetting asynchronously.
 
-        :param key: string
-        :type key: str
-        :param label:
-        :type label: str
-        :param etag:
-        :type etag: str
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: KeyValue
-        :rtype: ~azure.configurationservice.models.KeyValue
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        The async version of :meth:`azure.configuration.AzureConfigurationClient.delete_configuration_setting`
         """
         custom_headers = prep_delete_configuration_setting(key, etag, **kwargs)
         return await self._client.delete_configuration_setting(
@@ -221,16 +149,9 @@ class AzureConfigurationClientAsync(object):
         )
 
     async def lock_configuration_setting(self, key, label=None, **kwargs):
-        """
+        """Lock a ConfigurationSetting asynchronously.
 
-        :param key:
-        :type key: str
-        :param label:
-        :type label: str
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: KeyValue
-        :rtype: ~azure.configurationservice.models.KeyValue
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        The async version of :meth:`azure.configuration.AzureConfigurationClient.lock_configuration_setting`
         """
         custom_headers = prep_lock_configuration_setting(key)
         return await self._client.lock_configuration_setting(
@@ -238,16 +159,9 @@ class AzureConfigurationClientAsync(object):
         )
 
     async def unlock_configuration_setting(self, key, label=None, **kwargs):
-        """
+        """Unlock a ConfigurationSetting asynchronously.
 
-        :param key:
-        :type key: str
-        :param label:
-        :type label: str
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: KeyValue
-        :rtype: ~azure.configurationservice.models.KeyValue
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        The async version of :meth:`azure.configuration.AzureConfigurationClient.unlock_configuration_setting`
         """
         custom_headers = prep_unlock_configuration_setting(key)
         return await self._client.unlock_configuration_setting(
@@ -257,24 +171,10 @@ class AzureConfigurationClientAsync(object):
     def list_revisions(
         self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
     ):
-        """
+        """List revisions of configuration settings.
 
-        :param labels: Filter returned values based on their label. '*' can be
-         used as wildcard in the beginning or end of the filter
-        :type labels: list[str]
-        :param keys: Filter returned values based on their keys. '*' can be
-         used as wildcard in the beginning or end of the filter
-        :type keys: list[str]
-        :param accept_date_time: Obtain representation of the result related
-         to past time.
-        :type accept_date_time: datetime
-        :param fields: Specify which fields to return
-        :type fields: list[str]
-        :param dict kwargs: if headers key exists, it will be added to the request
-        :return: An iterator like instance of KeyValue
-        :rtype:
-         ~azure.configurationservice.models.KeyValuePaged[~azure.configurationservice.models.KeyValue]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        The async version of :meth:`azure.configuration.AzureConfigurationClient.list_revisions`
+        This method is sync. But the returned result is an async iterator.
         """
         return self._client.list_revisions(
             label=labels,
