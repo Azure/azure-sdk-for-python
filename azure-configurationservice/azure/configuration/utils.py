@@ -1,8 +1,16 @@
+# ------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
+
 from datetime import datetime, timezone
+
 
 def get_endpoint_from_connection_string(connection_string):
     endpoint, _, _ = parse_connection_string(connection_string)
     return endpoint
+
 
 def parse_connection_string(connection_string):
     # connection_string looks like Endpoint=https://xxxxx;Id=xxxxx;Secret=xxxx
@@ -28,6 +36,7 @@ def parse_connection_string(connection_string):
         raise ValueError('Invalid connection string.')
 
     return endpoint, id_, secret
+
 
 def get_current_utc_time():
     return str(datetime.now(timezone.utc).strftime("%b, %d %Y %H:%M:%S ")) + "GMT"

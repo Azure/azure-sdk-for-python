@@ -1,17 +1,18 @@
-from .._generated.aio import AzureConfigurationClientImp
-from ..azure_configuration_requests import AzConfigRequestsCredentialsPolicy
+# ------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
 
-
-from ..azure_configuration_requests import AzConfigRequestsCredentialsPolicy
 from msrest.pipeline.requests import RequestsPatchSession
-
 from msrest.pipeline import Request, Pipeline
-
 from msrest.universal_http.async_requests import AsyncRequestsHTTPSender
 from msrest.pipeline.async_requests import AsyncPipelineRequestsHTTPSender
-from ..azure_configuration_client_prep import *
 
 from ..utils import get_endpoint_from_connection_string
+from .._generated.aio import AzureConfigurationClientImp
+from ..azure_configuration_requests import AzConfigRequestsCredentialsPolicy
+from ..azure_configuration_client_prep import *
 
 
 class AzureConfigurationClientAsync(object):
