@@ -9,6 +9,7 @@ import pytest
 import logging
 import sys
 import uuid
+from logging.handlers import RotatingFileHandler
 
 # Ignore async tests for Python < 3.5
 collect_ignore = []
@@ -17,7 +18,8 @@ if sys.version_info < (3, 5):
     collect_ignore.append("features")
     collect_ignore.append("examples/async_examples")
 else:
-    from tests.asynctests import MockEventProcessor
+    sys.path.append("tests")
+    from asynctests import MockEventProcessor
     from azure.eventprocessorhost import EventProcessorHost
     from azure.eventprocessorhost import EventHubPartitionPump
     from azure.eventprocessorhost import AzureStorageCheckpointLeaseManager
@@ -30,6 +32,28 @@ else:
 from tests import get_logger
 from azure import eventhub
 from azure.eventhub import EventHubClient, Receiver, Offset
+
+
+def get_logger(filename, level=logging.INFO):
+    azure_logger = logging.getLogger("azure.eventhub")
+    azure_logger.setLevel(level)
+    uamqp_logger = logging.getLogger("uamqp")
+    uamqp_logger.setLevel(logging.INFO)
+
+    formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+    console_handler = logging.StreamHandler(stream=sys.stdout)
+    console_handler.setFormatter(formatter)
+    if not azure_logger.handlers:
+        azure_logger.addHandler(console_handler)
+    if not uamqp_logger.handlers:
+        uamqp_logger.addHandler(console_handler)
+
+    if filename:
+        file_handler = RotatingFileHandler(filename, maxBytes=5*1024*1024, backupCount=2)
+        file_handler.setFormatter(formatter)
+        azure_logger.addHandler(file_handler)
+
+    return azure_logger
 
 
 log = get_logger(None, logging.DEBUG)
