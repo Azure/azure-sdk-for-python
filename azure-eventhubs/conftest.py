@@ -18,7 +18,7 @@ if sys.version_info < (3, 5):
     collect_ignore.append("features")
     collect_ignore.append("examples/async_examples")
 else:
-    sys.path.append("tests")
+    sys.path.append(os.path.join(os.path.dirname(__file__), "tests"))
     from asynctests import MockEventProcessor
     from azure.eventprocessorhost import EventProcessorHost
     from azure.eventprocessorhost import EventHubPartitionPump
@@ -29,7 +29,6 @@ else:
     from azure.eventprocessorhost.partition_pump import PartitionPump
     from azure.eventprocessorhost.partition_manager import PartitionManager
 
-from tests import get_logger
 from azure import eventhub
 from azure.eventhub import EventHubClient, Receiver, Offset
 
