@@ -8,7 +8,7 @@ Release History
 
 **Features**
 
-- Added operation group RecoveryServicesOperations
+- Added operation recovery_services.check_name_availability
 
 0.3.0 (2018-05-25)
 ++++++++++++++++++
