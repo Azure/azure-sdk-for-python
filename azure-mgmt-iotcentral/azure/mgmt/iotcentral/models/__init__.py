@@ -20,7 +20,6 @@ try:
     from .operation_py3 import Operation
     from .operation_inputs_py3 import OperationInputs
     from .app_availability_info_py3 import AppAvailabilityInfo
-    from .app_template_properties_py3 import AppTemplateProperties
     from .app_template_py3 import AppTemplate
 except (SyntaxError, ImportError):
     from .app_sku_info import AppSkuInfo
@@ -33,7 +32,6 @@ except (SyntaxError, ImportError):
     from .operation import Operation
     from .operation_inputs import OperationInputs
     from .app_availability_info import AppAvailabilityInfo
-    from .app_template_properties import AppTemplateProperties
     from .app_template import AppTemplate
 from .app_paged import AppPaged
 from .app_template_paged import AppTemplatePaged
@@ -53,7 +51,6 @@ __all__ = [
     'Operation',
     'OperationInputs',
     'AppAvailabilityInfo',
-    'AppTemplateProperties',
     'AppTemplate',
     'AppPaged',
     'AppTemplatePaged',

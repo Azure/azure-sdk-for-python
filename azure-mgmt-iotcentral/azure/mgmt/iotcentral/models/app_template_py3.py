@@ -18,32 +18,43 @@ class AppTemplate(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The application template identifier.
-    :vartype id: str
-    :ivar name: The application template name.
-    :vartype name: str
-    :param properties:
-    :type properties: ~azure.mgmt.iotcentral.models.AppTemplateProperties
-    :ivar type: the resource type.
-    :vartype type: str
+    :ivar manifest_id: The ID of the template.
+    :vartype manifest_id: str
+    :ivar manifest_version: The version of the template.
+    :vartype manifest_version: str
+    :ivar app_template_name: The name of the template.
+    :vartype app_template_name: str
+    :ivar title: The title of the template.
+    :vartype title: str
+    :ivar order: The order of the template in the templates list.
+    :vartype order: float
+    :ivar description: The description of the template.
+    :vartype description: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        'manifest_id': {'readonly': True},
+        'manifest_version': {'readonly': True},
+        'app_template_name': {'readonly': True},
+        'title': {'readonly': True},
+        'order': {'readonly': True},
+        'description': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'AppTemplateProperties'},
-        'type': {'key': 'type', 'type': 'str'},
+        'manifest_id': {'key': 'manifestId', 'type': 'str'},
+        'manifest_version': {'key': 'manifestVersion', 'type': 'str'},
+        'app_template_name': {'key': 'appTemplateName', 'type': 'str'},
+        'title': {'key': 'title', 'type': 'str'},
+        'order': {'key': 'order', 'type': 'float'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, *, properties=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(AppTemplate, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.properties = properties
-        self.type = None
+        self.manifest_id = None
+        self.manifest_version = None
+        self.app_template_name = None
+        self.title = None
+        self.order = None
+        self.description = None
