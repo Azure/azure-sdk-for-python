@@ -4,12 +4,12 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from msrest.pipeline import HTTPPolicy
-
-from .utils import parse_connection_string, get_current_utc_time
 import hashlib
 import base64
 import hmac
+from msrest.pipeline import HTTPPolicy
+from .utils import parse_connection_string, get_current_utc_time
+
 
 class AzConfigRequestsCredentialsPolicy(HTTPPolicy):
     """Implementation of request-oauthlib except and retry logic.
@@ -18,7 +18,6 @@ class AzConfigRequestsCredentialsPolicy(HTTPPolicy):
         super(AzConfigRequestsCredentialsPolicy, self).__init__()
         self._config = config
 
-    
     def _signed_request(self, request):
         verb = request.http_request.method.upper()
         host, credential, secret = parse_connection_string(self._config.credentials)
@@ -36,7 +35,7 @@ class AzConfigRequestsCredentialsPolicy(HTTPPolicy):
 
         string_to_sign = verb + '\n' + query_url + '\n' + utc_now + ';' + host + ';' + content_hash
 
-        #decode secret
+        # decode secret
         decoded_secret = base64.b64decode(secret, validate=True)
         digest = hmac.new(decoded_secret, bytes(string_to_sign, 'utf-8'), hashlib.sha256).digest()
         signature = base64.b64encode(digest).decode('utf-8')
@@ -54,4 +53,3 @@ class AzConfigRequestsCredentialsPolicy(HTTPPolicy):
     def send(self, request, **kwargs):
         self._signed_request(request)
         return self.next.send(request, **kwargs)
-        

@@ -10,7 +10,7 @@ The methods in this module preprocess the parameters for the methods in
 :class:`azure.configuration.aio.AzureConfigurationClientSync`
 """
 
-
+import re
 from requests.structures import CaseInsensitiveDict
 
 
@@ -86,4 +86,37 @@ def prep_unlock_configuration_setting(key, **kwargs):
 
 def quote_etag(etag):
     return '"' + etag + '"'
+
+
+def escape_reserved(value):
+    """
+    Reserved characters
+    *, \, ,
+    If a reserved character is part of the value, then it must be escaped using \{Reserved Character}. 
+    Non-reserved characters can also be escaped.
+
+    """
+    if not value:
+        return '\0'  # '\0' will be encoded to %00 in the url.
+    else:
+        value_type = type(value)
+        if value_type == str:
+            # precede all reserved characters with a backslash.
+            # But if a * is at the beginning or the end, don't add the backslash
+            return re.sub(r'((?!^)\*(?!$)|\\|,)', r'\\\1', value)
+        elif value_type == list:
+            return [escape_reserved(s) for s in value]
+        else:
+            raise ValueError(value_type + " can not be escaped. It must be a string or list of strings")
+
+
+def escape_and_tolist(value):
+    if value:
+        value = escape_reserved(value)
+        if type(value) == str:
+            return [value]
+        else:
+            return value
+    else:
+        return None
 

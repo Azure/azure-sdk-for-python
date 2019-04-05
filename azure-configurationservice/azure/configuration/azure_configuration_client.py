@@ -92,6 +92,8 @@ class AzureConfigurationClient(object):
             :dedent: 4
             :caption: List ConfigurationService
         """
+        labels = escape_and_tolist(labels)
+        keys = escape_and_tolist(keys)
         return self._client.list_configuration_settings(
             label=labels,
             key=keys,
@@ -193,7 +195,7 @@ class AzureConfigurationClient(object):
         .. seealso::
             :meth:`set_configuration_setting`
 
-        :param key: key used to identify the ConfigurationSetting
+        :param key: used to identify the ConfigurationSetting. Cannot be updated
         :type key: str
         :param value: value to be set to the ConfigurationSetting
         :type value: str
@@ -201,7 +203,7 @@ class AzureConfigurationClient(object):
         :type content_type: str
         :param tags: tags to be set to the ConfigurationSetting
         :type tags: dict
-        :param label: label used to identify the ConfigurationSetting
+        :param label: used to identify the ConfigurationSetting. Cannot be updated
         :type label: str
         :param etag: etag used to check if the ConfigurationSetting is changed. Set None to skip checking etag
         :type etag: str
@@ -242,7 +244,9 @@ class AzureConfigurationClient(object):
         # type: (ConfigurationSetting, dict) -> ConfigurationSetting
 
         """
-        Set a ConfigurationSetting. If the ConfigurationSetting already exists, it gets updated. Otherwise a new one is added.
+        Add or update a ConfigurationSetting.
+        If the configuration setting identified by key and label does not exist, this is a create. Otherwise this is an
+        update.
 
         .. seealso::
             :meth:`update_configuration_setting`
@@ -394,6 +398,9 @@ class AzureConfigurationClient(object):
             :dedent: 4
             :caption: List ConfigurationSetting revisions
         """
+
+        labels = escape_and_tolist(labels)
+        keys = escape_and_tolist(keys)
         return self._client.list_revisions(
             label=labels,
             key=keys,

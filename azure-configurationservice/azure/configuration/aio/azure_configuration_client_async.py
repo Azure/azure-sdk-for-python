@@ -54,6 +54,9 @@ class AzureConfigurationClientAsync(object):
         This method is sync. But the returned result is an async iterator.
 
         """
+
+        labels = escape_and_tolist(labels)
+        keys = escape_and_tolist(keys)
         return self._client.list_configuration_settings(
             label=labels,
             key=keys,
@@ -177,6 +180,9 @@ class AzureConfigurationClientAsync(object):
         The async version of :meth:`azure.configuration.AzureConfigurationClient.list_revisions`
         This method is sync. But the returned result is an async iterator.
         """
+
+        labels = escape_and_tolist(labels)
+        keys = escape_and_tolist(keys)
         return self._client.list_revisions(
             label=labels,
             key=keys,

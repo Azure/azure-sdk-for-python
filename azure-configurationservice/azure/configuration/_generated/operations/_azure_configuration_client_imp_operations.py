@@ -129,7 +129,7 @@ class AzureConfigurationClientImpOperationsMixin(object):
         # Construct parameters
         query_parameters = {}
         if label is not None:
-            query_parameters['label'] = self._serialize.query("label", label, 'str', skip_quote=True)
+            query_parameters['label'] = self._serialize.query("label", label, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -200,7 +200,7 @@ class AzureConfigurationClientImpOperationsMixin(object):
         # Construct parameters
         query_parameters = {}
         if label is not None:
-            query_parameters['label'] = self._serialize.query("label", label, 'str', skip_quote=True)
+            query_parameters['label'] = self._serialize.query("label", label, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -264,7 +264,7 @@ class AzureConfigurationClientImpOperationsMixin(object):
         # Construct parameters
         query_parameters = {}
         if label is not None:
-            query_parameters['label'] = self._serialize.query("label", label, 'str', skip_quote=True)
+            query_parameters['label'] = self._serialize.query("label", label, 'str')
 
         # Construct headers
         header_parameters = {}
