@@ -218,3 +218,9 @@ class NetworkPolicy(str, Enum):
 
     calico = "calico"
     azure = "azure"
+
+
+class LoadBalancerSku(str, Enum):
+
+    standard = "standard"
+    basic = "basic"
