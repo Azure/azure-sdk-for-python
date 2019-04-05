@@ -19,7 +19,8 @@ class CalculatePriceResponseProperties(Model):
      charged in customer's local currency. Tax is not included.
     :type billing_currency_total:
      ~azure.mgmt.reservations.models.CalculatePriceResponsePropertiesBillingCurrencyTotal
-    :param is_billing_partner_managed:
+    :param is_billing_partner_managed: True if billing is managed by Microsoft
+     Partner. Used only for CSP accounts.
     :type is_billing_partner_managed: bool
     :param reservation_order_id: GUID that represents reservation order that
      can be placed after calculating price.
