@@ -135,6 +135,13 @@ class Sensitivity(str, Enum):
     high = "High"
 
 
+class BaselineSensitivity(str, Enum):
+
+    low = "Low"
+    medium = "Medium"
+    high = "High"
+
+
 class Enabled(str, Enum):
 
     true = "true"

@@ -89,10 +89,10 @@ try:
     from .time_series_information_py3 import TimeSeriesInformation
     from .calculate_baseline_response_py3 import CalculateBaselineResponse
     from .metric_single_dimension_py3 import MetricSingleDimension
+    from .single_baseline_py3 import SingleBaseline
     from .baseline_metadata_py3 import BaselineMetadata
     from .time_series_baseline_py3 import TimeSeriesBaseline
     from .single_metric_baseline_py3 import SingleMetricBaseline
-    from .metric_baselines_response_py3 import MetricBaselinesResponse
     from .metric_alert_action_py3 import MetricAlertAction
     from .metric_alert_criteria_py3 import MetricAlertCriteria
     from .metric_alert_resource_py3 import MetricAlertResource
@@ -205,10 +205,10 @@ except (SyntaxError, ImportError):
     from .time_series_information import TimeSeriesInformation
     from .calculate_baseline_response import CalculateBaselineResponse
     from .metric_single_dimension import MetricSingleDimension
+    from .single_baseline import SingleBaseline
     from .baseline_metadata import BaselineMetadata
     from .time_series_baseline import TimeSeriesBaseline
     from .single_metric_baseline import SingleMetricBaseline
-    from .metric_baselines_response import MetricBaselinesResponse
     from .metric_alert_action import MetricAlertAction
     from .metric_alert_criteria import MetricAlertCriteria
     from .metric_alert_resource import MetricAlertResource
@@ -250,6 +250,7 @@ from .activity_log_alert_resource_paged import ActivityLogAlertResourcePaged
 from .event_data_paged import EventDataPaged
 from .localizable_string_paged import LocalizableStringPaged
 from .metric_definition_paged import MetricDefinitionPaged
+from .single_metric_baseline_paged import SingleMetricBaselinePaged
 from .metric_alert_resource_paged import MetricAlertResourcePaged
 from .log_search_rule_resource_paged import LogSearchRuleResourcePaged
 from .metric_namespace_paged import MetricNamespacePaged
@@ -268,6 +269,7 @@ from .monitor_management_client_enums import (
     Unit,
     AggregationType,
     Sensitivity,
+    BaselineSensitivity,
     Enabled,
     ProvisioningState,
     QueryType,
@@ -359,10 +361,10 @@ __all__ = [
     'TimeSeriesInformation',
     'CalculateBaselineResponse',
     'MetricSingleDimension',
+    'SingleBaseline',
     'BaselineMetadata',
     'TimeSeriesBaseline',
     'SingleMetricBaseline',
-    'MetricBaselinesResponse',
     'MetricAlertAction',
     'MetricAlertCriteria',
     'MetricAlertResource',
@@ -404,6 +406,7 @@ __all__ = [
     'EventDataPaged',
     'LocalizableStringPaged',
     'MetricDefinitionPaged',
+    'SingleMetricBaselinePaged',
     'MetricAlertResourcePaged',
     'LogSearchRuleResourcePaged',
     'MetricNamespacePaged',
@@ -421,6 +424,7 @@ __all__ = [
     'Unit',
     'AggregationType',
     'Sensitivity',
+    'BaselineSensitivity',
     'Enabled',
     'ProvisioningState',
     'QueryType',

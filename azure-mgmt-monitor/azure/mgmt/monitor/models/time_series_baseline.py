@@ -24,7 +24,7 @@ class TimeSeriesBaseline(Model):
     :param timestamps: Required. The list of timestamps of the baselines.
     :type timestamps: list[datetime]
     :param data: Required. The baseline values for each sensitivity.
-    :type data: list[~azure.mgmt.monitor.models.Baseline]
+    :type data: list[~azure.mgmt.monitor.models.SingleBaseline]
     :param metadata: The baseline metadata values.
     :type metadata: list[~azure.mgmt.monitor.models.BaselineMetadata]
     """
@@ -39,7 +39,7 @@ class TimeSeriesBaseline(Model):
         'aggregation': {'key': 'aggregation', 'type': 'str'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricSingleDimension]'},
         'timestamps': {'key': 'timestamps', 'type': '[iso-8601]'},
-        'data': {'key': 'data', 'type': '[Baseline]'},
+        'data': {'key': 'data', 'type': '[SingleBaseline]'},
         'metadata': {'key': 'metadata', 'type': '[BaselineMetadata]'},
     }
 

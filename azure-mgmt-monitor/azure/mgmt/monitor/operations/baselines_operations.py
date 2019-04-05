@@ -79,63 +79,71 @@ class BaselinesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: MetricBaselinesResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.monitor.models.MetricBaselinesResponse or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of SingleMetricBaseline
+        :rtype:
+         ~azure.mgmt.monitor.models.SingleMetricBaselinePaged[~azure.mgmt.monitor.models.SingleMetricBaseline]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
-        # Construct URL
-        url = self.list.metadata['url']
-        path_format_arguments = {
-            'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True)
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if metricnames is not None:
-            query_parameters['metricnames'] = self._serialize.query("metricnames", metricnames, 'str')
-        if metricnamespace is not None:
-            query_parameters['metricnamespace'] = self._serialize.query("metricnamespace", metricnamespace, 'str')
-        if timespan is not None:
-            query_parameters['timespan'] = self._serialize.query("timespan", timespan, 'str')
-        if interval is not None:
-            query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
-        if aggregation is not None:
-            query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, 'str')
-        if sensitivities is not None:
-            query_parameters['sensitivities'] = self._serialize.query("sensitivities", sensitivities, 'str')
-        if filter is not None:
-            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-        if result_type is not None:
-            query_parameters['resultType'] = self._serialize.query("result_type", result_type, 'ResultType')
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if metricnames is not None:
+                    query_parameters['metricnames'] = self._serialize.query("metricnames", metricnames, 'str')
+                if metricnamespace is not None:
+                    query_parameters['metricnamespace'] = self._serialize.query("metricnamespace", metricnamespace, 'str')
+                if timespan is not None:
+                    query_parameters['timespan'] = self._serialize.query("timespan", timespan, 'str')
+                if interval is not None:
+                    query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
+                if aggregation is not None:
+                    query_parameters['aggregation'] = self._serialize.query("aggregation", aggregation, 'str')
+                if sensitivities is not None:
+                    query_parameters['sensitivities'] = self._serialize.query("sensitivities", sensitivities, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if result_type is not None:
+                    query_parameters['resultType'] = self._serialize.query("result_type", result_type, 'ResultType')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('MetricBaselinesResponse', response)
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.SingleMetricBaselinePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            header_dict = {}
+            client_raw_response = models.SingleMetricBaselinePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

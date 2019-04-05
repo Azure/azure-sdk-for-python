@@ -21,8 +21,21 @@ class SingleMetricBaseline(Model):
     :type id: str
     :param type: Required. The resource type of the metric baseline resource.
     :type type: str
-    :param metric_name: Required. The name of the metric.
-    :type metric_name: str
+    :param name: Required. The name of the metric for which the baselines were
+     retrieved.
+    :type name: str
+    :param timespan: Required. The timespan for which the data was retrieved.
+     Its value consists of two datetimes concatenated, separated by '/'.  This
+     may be adjusted in the future and returned back from what was originally
+     requested.
+    :type timespan: str
+    :param interval: Required. The interval (window size) for which the metric
+     data was returned in.  This may be adjusted in the future and returned
+     back from what was originally requested.  This is not present if a
+     metadata request was made.
+    :type interval: timedelta
+    :param namespace: The namespace of the metrics been queried.
+    :type namespace: str
     :param baselines: Required. The baseline for each time series that was
      queried.
     :type baselines: list[~azure.mgmt.monitor.models.TimeSeriesBaseline]
@@ -31,20 +44,28 @@ class SingleMetricBaseline(Model):
     _validation = {
         'id': {'required': True},
         'type': {'required': True},
-        'metric_name': {'required': True},
+        'name': {'required': True},
+        'timespan': {'required': True},
+        'interval': {'required': True},
         'baselines': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'metric_name': {'key': 'metricName', 'type': 'str'},
-        'baselines': {'key': 'baselines', 'type': '[TimeSeriesBaseline]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'timespan': {'key': 'properties.timespan', 'type': 'str'},
+        'interval': {'key': 'properties.interval', 'type': 'duration'},
+        'namespace': {'key': 'properties.namespace', 'type': 'str'},
+        'baselines': {'key': 'properties.baselines', 'type': '[TimeSeriesBaseline]'},
     }
 
     def __init__(self, **kwargs):
         super(SingleMetricBaseline, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.type = kwargs.get('type', None)
-        self.metric_name = kwargs.get('metric_name', None)
+        self.name = kwargs.get('name', None)
+        self.timespan = kwargs.get('timespan', None)
+        self.interval = kwargs.get('interval', None)
+        self.namespace = kwargs.get('namespace', None)
         self.baselines = kwargs.get('baselines', None)
