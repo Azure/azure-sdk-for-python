@@ -42,14 +42,13 @@ class _TaskWorkflowManager(object):
             **kwargs):
         # Append operations thread safe - Only read once all threads have completed
         # List of tasks which failed to add due to a returned client error
-        self._failure_tasks = collections.deque()
+        self.failure_tasks = collections.deque()
         # List of unknown exceptions which occurred during requests.
-        self._errors = collections.deque()
+        self.errors = collections.deque()
 
         # synchronized through lock variables
-        self.error = None  # Only written once all threads have completed
         self._max_tasks_per_request = MAX_TASKS_PER_REQUEST
-        self._tasks_to_add = collections.deque(tasks_to_add)
+        self.tasks_to_add = collections.deque(tasks_to_add)
 
         self._error_lock = threading.Lock()
         self._max_tasks_lock = threading.Lock()
@@ -95,7 +94,7 @@ class _TaskWorkflowManager(object):
                 #   3) Sum of all cells exceeds max row limit
                 if len(chunk_tasks_to_add) == 1:
                     failed_task = chunk_tasks_to_add.pop()
-                    self._errors.appendleft(e)
+                    self.errors.appendleft(e)
                     _LOGGER.error("Failed to add task with ID %s due to the body"
                                   " exceeding the maximum request size", failed_task.id)
                 else:
@@ -116,21 +115,21 @@ class _TaskWorkflowManager(object):
                     # exception and have it work in all cases where tasks are well behaved
                     # Behavior retries as a smaller chunk and
                     # appends extra tasks to queue to be picked up by another thread .
-                    self._tasks_to_add.extendleft(chunk_tasks_to_add[midpoint:])
+                    self.tasks_to_add.extendleft(chunk_tasks_to_add[midpoint:])
                     self._bulk_add_tasks(results_queue, chunk_tasks_to_add[:midpoint])
             # Retry server side errors
             elif 500 <= e.response.status_code <= 599:
-                self._tasks_to_add.extendleft(chunk_tasks_to_add)
+                self.tasks_to_add.extendleft(chunk_tasks_to_add)
             else:
                 # Re-add to pending queue as unknown status / don't have result
-                self._tasks_to_add.extendleft(chunk_tasks_to_add)
+                self.tasks_to_add.extendleft(chunk_tasks_to_add)
                 # Unknown State - don't know if tasks failed to add or were successful
-                self._errors.appendleft(e)
+                self.errors.appendleft(e)
         except Exception as e:  # pylint: disable=broad-except
             # Re-add to pending queue as unknown status / don't have result
-            self._tasks_to_add.extendleft(chunk_tasks_to_add)
+            self.tasks_to_add.extendleft(chunk_tasks_to_add)
             # Unknown State - don't know if tasks failed to add or were successful
-            self._errors.appendleft(e)
+            self.errors.appendleft(e)
         else:
             try:
                 add_collection_response = add_collection_response.output
@@ -143,11 +142,11 @@ class _TaskWorkflowManager(object):
                     with self._pending_queue_lock:
                         for task in chunk_tasks_to_add:
                             if task.id == task_result.task_id:
-                                self._tasks_to_add.appendleft(task)
+                                self.tasks_to_add.appendleft(task)
                 elif (task_result.status == TaskAddStatus.client_error
                         and not task_result.error.code == "TaskExists"):
                     # Client error will be recorded unless Task already exists
-                    self._failure_tasks.appendleft(task_result)
+                    self.failure_tasks.appendleft(task_result)
                 else:
                     results_queue.appendleft(task_result)
 
@@ -159,24 +158,15 @@ class _TaskWorkflowManager(object):
         :param collections.deque results_queue: Queue for worker to output results to
         """
         # Add tasks until either we run out or we run into an unexpected error
-        while self._tasks_to_add and not self._errors:
+        while self.tasks_to_add and not self.errors:
             max_tasks = self._max_tasks_per_request  # local copy
             chunk_tasks_to_add = []
             with self._pending_queue_lock:
-                while len(chunk_tasks_to_add) < max_tasks and self._tasks_to_add:
-                    chunk_tasks_to_add.append(self._tasks_to_add.pop())
+                while len(chunk_tasks_to_add) < max_tasks and self.tasks_to_add:
+                    chunk_tasks_to_add.append(self.tasks_to_add.pop())
 
             if chunk_tasks_to_add:
                 self._bulk_add_tasks(results_queue, chunk_tasks_to_add)
-
-        # Only define error if all threads have finished and there were failures
-        with self._error_lock:
-            if threading.active_count() == 1 and (self._failure_tasks or self._errors):
-                self.error = CreateTasksErrorException(
-                    "One or more tasks failed to be added",
-                    self._failure_tasks,
-                    self._tasks_to_add,
-                    self._errors)
 
 
 def _handle_output(results_queue):
@@ -219,7 +209,11 @@ def build_new_add_collection(original_add_collection):
         will not create extra tasks unexpectedly. If the response contains any
         tasks which failed to add, a client can retry the request. In a retry,
         it is most efficient to resubmit only tasks that failed to add, and to
-        omit tasks that were successfully added on the first attempt.
+        omit tasks that were successfully added on the first attempt. The 
+        maximum lifetime of a task from addition to completion is 180 days.
+        If a task has not completed within 180 days of being added it will be
+        terminated by the Batch service and left in whatever state it was in at
+        that time.
 
         :param job_id: The ID of the job to which the task collection is to be
             added.
@@ -280,8 +274,13 @@ def build_new_add_collection(original_add_collection):
         else:
             task_workflow_manager.task_collection_thread_handler(results_queue)
 
-        if task_workflow_manager.error:
-            raise task_workflow_manager.error  # pylint: disable=raising-bad-type
+        # Only define error if all threads have finished and there were failures
+        if task_workflow_manager.failure_tasks or task_workflow_manager.errors:
+            raise CreateTasksErrorException(
+                    "One or more tasks failed to be added",
+                    task_workflow_manager.failure_tasks,
+                    task_workflow_manager.tasks_to_add,
+                    task_workflow_manager.errors)
         else:
             submitted_tasks = _handle_output(results_queue)
             return TaskAddCollectionResult(value=submitted_tasks)

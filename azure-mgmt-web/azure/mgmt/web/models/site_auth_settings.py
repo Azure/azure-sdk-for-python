@@ -82,6 +82,11 @@ class SiteAuthSettings(ProxyOnlyResource):
      More information on OpenID Connect:
      http://openid.net/specs/openid-connect-core-1_0.html
     :type client_secret: str
+    :param client_secret_certificate_thumbprint: An alternative to the client
+     secret, that is the thumbprint of a certificate used for signing purposes.
+     This property acts as
+     a replacement for the Client Secret. It is also optional.
+    :type client_secret_certificate_thumbprint: str
     :param issuer: The OpenID Connect Issuer URI that represents the entity
      which issues access tokens for this application.
      When using Azure Active Directory, this value is the URI of the directory
@@ -190,6 +195,7 @@ class SiteAuthSettings(ProxyOnlyResource):
         'token_refresh_extension_hours': {'key': 'properties.tokenRefreshExtensionHours', 'type': 'float'},
         'client_id': {'key': 'properties.clientId', 'type': 'str'},
         'client_secret': {'key': 'properties.clientSecret', 'type': 'str'},
+        'client_secret_certificate_thumbprint': {'key': 'properties.clientSecretCertificateThumbprint', 'type': 'str'},
         'issuer': {'key': 'properties.issuer', 'type': 'str'},
         'validate_issuer': {'key': 'properties.validateIssuer', 'type': 'bool'},
         'allowed_audiences': {'key': 'properties.allowedAudiences', 'type': '[str]'},
@@ -218,6 +224,7 @@ class SiteAuthSettings(ProxyOnlyResource):
         self.token_refresh_extension_hours = kwargs.get('token_refresh_extension_hours', None)
         self.client_id = kwargs.get('client_id', None)
         self.client_secret = kwargs.get('client_secret', None)
+        self.client_secret_certificate_thumbprint = kwargs.get('client_secret_certificate_thumbprint', None)
         self.issuer = kwargs.get('issuer', None)
         self.validate_issuer = kwargs.get('validate_issuer', None)
         self.allowed_audiences = kwargs.get('allowed_audiences', None)

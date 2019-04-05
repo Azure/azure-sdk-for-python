@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ImageUrlCreateEntry(Model):
     """ImageUrlCreateEntry.
 
-    :param url:
+    All required parameters must be populated in order to send to Azure.
+
+    :param url: Required. Url of the image.
     :type url: str
     :param tag_ids:
     :type tag_ids: list[str]
@@ -23,6 +25,10 @@ class ImageUrlCreateEntry(Model):
     :type regions:
      list[~azure.cognitiveservices.vision.customvision.training.models.Region]
     """
+
+    _validation = {
+        'url': {'required': True},
+    }
 
     _attribute_map = {
         'url': {'key': 'url', 'type': 'str'},

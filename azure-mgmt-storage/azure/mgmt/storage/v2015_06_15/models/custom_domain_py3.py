@@ -20,9 +20,9 @@ class CustomDomain(Model):
 
     :param name: Required. The custom domain name. Name is the CNAME source.
     :type name: str
-    :param use_sub_domain: Indicates whether indirect CName validation is
+    :param use_sub_domain_name: Indicates whether indirect CName validation is
      enabled. Default value is false. This should only be set on updates
-    :type use_sub_domain: bool
+    :type use_sub_domain_name: bool
     """
 
     _validation = {
@@ -31,10 +31,10 @@ class CustomDomain(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'use_sub_domain': {'key': 'useSubDomain', 'type': 'bool'},
+        'use_sub_domain_name': {'key': 'useSubDomainName', 'type': 'bool'},
     }
 
-    def __init__(self, *, name: str, use_sub_domain: bool=None, **kwargs) -> None:
+    def __init__(self, *, name: str, use_sub_domain_name: bool=None, **kwargs) -> None:
         super(CustomDomain, self).__init__(**kwargs)
         self.name = name
-        self.use_sub_domain = use_sub_domain
+        self.use_sub_domain_name = use_sub_domain_name

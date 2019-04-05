@@ -16,7 +16,7 @@ class DomainModelResults(Model):
     """Result of image analysis using a specific domain model including additional
     metadata.
 
-    :param result: Model-specific response
+    :param result: Model-specific response.
     :type result: object
     :param request_id: Id of the REST API request.
     :type request_id: str

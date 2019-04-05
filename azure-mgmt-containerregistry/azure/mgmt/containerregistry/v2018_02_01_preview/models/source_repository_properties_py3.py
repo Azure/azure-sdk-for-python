@@ -22,7 +22,7 @@ class SourceRepositoryProperties(Model):
     :type source_control_type: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceControlType
     :param repository_url: Required. The full URL to the source code
-     respository
+     repository
     :type repository_url: str
     :param is_commit_trigger_enabled: The value of this property indicates
      whether the source control commit trigger is enabled or not. Default

@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class CsmUsageQuota(Model):
     """Usage of the quota resource.
 
-    :param unit: Units of measurement for the quota resourse.
+    :param unit: Units of measurement for the quota resource.
     :type unit: str
     :param next_reset_time: Next reset time for the resource counter.
     :type next_reset_time: datetime

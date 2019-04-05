@@ -27,7 +27,7 @@ class IntegrationRuntimeNodeMonitoringData(Model):
      runtime node.
     :vartype available_memory_in_mb: int
     :ivar cpu_utilization: CPU percentage on the integration runtime node.
-    :vartype cpu_utilization: float
+    :vartype cpu_utilization: int
     :ivar concurrent_jobs_limit: Maximum concurrent jobs on the integration
      runtime node.
     :vartype concurrent_jobs_limit: int
@@ -58,7 +58,7 @@ class IntegrationRuntimeNodeMonitoringData(Model):
         'additional_properties': {'key': '', 'type': '{object}'},
         'node_name': {'key': 'nodeName', 'type': 'str'},
         'available_memory_in_mb': {'key': 'availableMemoryInMB', 'type': 'int'},
-        'cpu_utilization': {'key': 'cpuUtilization', 'type': 'float'},
+        'cpu_utilization': {'key': 'cpuUtilization', 'type': 'int'},
         'concurrent_jobs_limit': {'key': 'concurrentJobsLimit', 'type': 'int'},
         'concurrent_jobs_running': {'key': 'concurrentJobsRunning', 'type': 'int'},
         'max_concurrent_jobs': {'key': 'maxConcurrentJobs', 'type': 'int'},
@@ -66,9 +66,9 @@ class IntegrationRuntimeNodeMonitoringData(Model):
         'received_bytes': {'key': 'receivedBytes', 'type': 'float'},
     }
 
-    def __init__(self, additional_properties=None):
-        super(IntegrationRuntimeNodeMonitoringData, self).__init__()
-        self.additional_properties = additional_properties
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeNodeMonitoringData, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.node_name = None
         self.available_memory_in_mb = None
         self.cpu_utilization = None

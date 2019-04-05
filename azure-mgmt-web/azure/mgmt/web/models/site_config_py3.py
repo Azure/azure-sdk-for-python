@@ -100,7 +100,7 @@ class SiteConfig(Model):
      'WeightedRoundRobin', 'LeastRequests', 'LeastResponseTime',
      'WeightedTotalTraffic', 'RequestHash'
     :type load_balancing: str or ~azure.mgmt.web.models.SiteLoadBalancing
-    :param experiments: This is work around for polymophic types.
+    :param experiments: This is work around for polymorphic types.
     :type experiments: ~azure.mgmt.web.models.Experiments
     :param limits: Site limits.
     :type limits: ~azure.mgmt.web.models.SiteLimits
@@ -129,9 +129,15 @@ class SiteConfig(Model):
     :type managed_service_identity_id: int
     :param x_managed_service_identity_id: Explicit Managed Service Identity Id
     :type x_managed_service_identity_id: int
-    :param ip_security_restrictions: IP security restrictions.
+    :param ip_security_restrictions: IP security restrictions for main.
     :type ip_security_restrictions:
      list[~azure.mgmt.web.models.IpSecurityRestriction]
+    :param scm_ip_security_restrictions: IP security restrictions for scm.
+    :type scm_ip_security_restrictions:
+     list[~azure.mgmt.web.models.IpSecurityRestriction]
+    :param scm_ip_security_restrictions_use_main: IP security restrictions for
+     scm to use main.
+    :type scm_ip_security_restrictions_use_main: bool
     :param http20_enabled: Http20Enabled: configures a web site to allow
      clients to connect over http2.0. Default value: True .
     :type http20_enabled: bool
@@ -200,13 +206,15 @@ class SiteConfig(Model):
         'managed_service_identity_id': {'key': 'managedServiceIdentityId', 'type': 'int'},
         'x_managed_service_identity_id': {'key': 'xManagedServiceIdentityId', 'type': 'int'},
         'ip_security_restrictions': {'key': 'ipSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
+        'scm_ip_security_restrictions': {'key': 'scmIpSecurityRestrictions', 'type': '[IpSecurityRestriction]'},
+        'scm_ip_security_restrictions_use_main': {'key': 'scmIpSecurityRestrictionsUseMain', 'type': 'bool'},
         'http20_enabled': {'key': 'http20Enabled', 'type': 'bool'},
         'min_tls_version': {'key': 'minTlsVersion', 'type': 'str'},
         'ftps_state': {'key': 'ftpsState', 'type': 'str'},
         'reserved_instance_count': {'key': 'reservedInstanceCount', 'type': 'int'},
     }
 
-    def __init__(self, *, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, linux_fx_version: str=None, windows_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, azure_storage_accounts=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, cors=None, push=None, api_definition=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, managed_service_identity_id: int=None, x_managed_service_identity_id: int=None, ip_security_restrictions=None, http20_enabled: bool=True, min_tls_version=None, ftps_state=None, reserved_instance_count: int=None, **kwargs) -> None:
+    def __init__(self, *, number_of_workers: int=None, default_documents=None, net_framework_version: str="v4.6", php_version: str=None, python_version: str=None, node_version: str=None, linux_fx_version: str=None, windows_fx_version: str=None, request_tracing_enabled: bool=None, request_tracing_expiration_time=None, remote_debugging_enabled: bool=None, remote_debugging_version: str=None, http_logging_enabled: bool=None, logs_directory_size_limit: int=None, detailed_error_logging_enabled: bool=None, publishing_username: str=None, app_settings=None, azure_storage_accounts=None, connection_strings=None, handler_mappings=None, document_root: str=None, scm_type=None, use32_bit_worker_process: bool=None, web_sockets_enabled: bool=None, always_on: bool=None, java_version: str=None, java_container: str=None, java_container_version: str=None, app_command_line: str=None, managed_pipeline_mode=None, virtual_applications=None, load_balancing=None, experiments=None, limits=None, auto_heal_enabled: bool=None, auto_heal_rules=None, tracing_options: str=None, vnet_name: str=None, cors=None, push=None, api_definition=None, auto_swap_slot_name: str=None, local_my_sql_enabled: bool=False, managed_service_identity_id: int=None, x_managed_service_identity_id: int=None, ip_security_restrictions=None, scm_ip_security_restrictions=None, scm_ip_security_restrictions_use_main: bool=None, http20_enabled: bool=True, min_tls_version=None, ftps_state=None, reserved_instance_count: int=None, **kwargs) -> None:
         super(SiteConfig, self).__init__(**kwargs)
         self.number_of_workers = number_of_workers
         self.default_documents = default_documents
@@ -255,6 +263,8 @@ class SiteConfig(Model):
         self.managed_service_identity_id = managed_service_identity_id
         self.x_managed_service_identity_id = x_managed_service_identity_id
         self.ip_security_restrictions = ip_security_restrictions
+        self.scm_ip_security_restrictions = scm_ip_security_restrictions
+        self.scm_ip_security_restrictions_use_main = scm_ip_security_restrictions_use_main
         self.http20_enabled = http20_enabled
         self.min_tls_version = min_tls_version
         self.ftps_state = ftps_state

@@ -48,6 +48,7 @@ try:
     from .iteration_py3 import Iteration
     from .export_py3 import Export
     from .tag_py3 import Tag
+    from .custom_vision_error_py3 import CustomVisionError, CustomVisionErrorException
 except (SyntaxError, ImportError):
     from .domain import Domain
     from .image_tag_create_entry import ImageTagCreateEntry
@@ -87,15 +88,18 @@ except (SyntaxError, ImportError):
     from .iteration import Iteration
     from .export import Export
     from .tag import Tag
+    from .custom_vision_error import CustomVisionError, CustomVisionErrorException
 from .custom_vision_training_client_enums import (
     DomainType,
     ImageCreateStatus,
     OrderBy,
     Classifier,
-    ExportPlatformModel,
-    ExportStatusModel,
-    ExportFlavorModel,
+    TrainingType,
+    ExportPlatform,
+    ExportStatus,
+    ExportFlavor,
     TagType,
+    CustomVisionErrorCodes,
 )
 
 __all__ = [
@@ -137,12 +141,15 @@ __all__ = [
     'Iteration',
     'Export',
     'Tag',
+    'CustomVisionError', 'CustomVisionErrorException',
     'DomainType',
     'ImageCreateStatus',
     'OrderBy',
     'Classifier',
-    'ExportPlatformModel',
-    'ExportStatusModel',
-    'ExportFlavorModel',
+    'TrainingType',
+    'ExportPlatform',
+    'ExportStatus',
+    'ExportFlavor',
     'TagType',
+    'CustomVisionErrorCodes',
 ]

@@ -70,12 +70,13 @@ class EntitiesOperations(object):
          $search=ParentAndFirstLevelChildren the API will return the parent and
          first level of children that the user has either direct access to or
          indirect access via one of their descendants. Possible values include:
-         'AllowedParents', 'AllowedChildren', 'ParentAndFirstLevelChildren'
+         'AllowedParents', 'AllowedChildren', 'ParentAndFirstLevelChildren',
+         'ParentOnly', 'ChildrenOnly'
         :type search: str
-        :param filter: The filter parameter allows you to filter on the the
-         name or display name fields. You can check for equality on the name
-         field (e.g. name eq '{entityName}')  and you can check for substrings
-         on either the name or display name fields(e.g. contains(name,
+        :param filter: The filter parameter allows you to filter on the name
+         or display name fields. You can check for equality on the name field
+         (e.g. name eq '{entityName}')  and you can check for substrings on
+         either the name or display name fields(e.g. contains(name,
          '{substringToSearch}'), contains(displayName, '{substringToSearch')).
          Note that the '{entityName}' and '{substringToSearch}' fields are
          checked case insensitively.
@@ -133,7 +134,7 @@ class EntitiesOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -144,9 +145,8 @@ class EntitiesOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.post(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.post(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
