@@ -15,6 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.clusters_operations import ClustersOperations
+from .operations.cluster_operations import ClusterOperations
 from .operations.configuration_operations import ConfigurationOperations
 from .operations.namespaces_operations import NamespacesOperations
 from . import models
@@ -64,6 +65,8 @@ class EventHub2018PreviewManagementClient(SDKClient):
     :vartype operations: azure.mgmt.eventhub.v2018_01_01_preview.operations.Operations
     :ivar clusters: Clusters operations
     :vartype clusters: azure.mgmt.eventhub.v2018_01_01_preview.operations.ClustersOperations
+    :ivar cluster: Cluster operations
+    :vartype cluster: azure.mgmt.eventhub.v2018_01_01_preview.operations.ClusterOperations
     :ivar configuration: Configuration operations
     :vartype configuration: azure.mgmt.eventhub.v2018_01_01_preview.operations.ConfigurationOperations
     :ivar namespaces: Namespaces operations
@@ -93,6 +96,8 @@ class EventHub2018PreviewManagementClient(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.cluster = ClusterOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.configuration = ConfigurationOperations(
             self._client, self.config, self._serialize, self._deserialize)

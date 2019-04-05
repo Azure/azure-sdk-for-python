@@ -9,16 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .clusters_operations import ClustersOperations
-from .cluster_operations import ClusterOperations
-from .configuration_operations import ConfigurationOperations
-from .namespaces_operations import NamespacesOperations
+from msrest.serialization import Model
 
-__all__ = [
-    'Operations',
-    'ClustersOperations',
-    'ClusterOperations',
-    'ConfigurationOperations',
-    'NamespacesOperations',
-]
+
+class EHNamespaceIdListResult(Model):
+    """The response of the List Namespace IDs operation.
+
+    :param value: Result of the List Namespace IDs operation
+    :type value: list[str]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[str]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(EHNamespaceIdListResult, self).__init__(**kwargs)
+        self.value = value
