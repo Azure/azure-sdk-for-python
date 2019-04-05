@@ -94,8 +94,8 @@ If you encounter any bugs with the library please file an issue in the
 `Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
 section of the project.
 
-Tested Operating Systems and Python Versions
-============================================
+Tested Operating Systems and Python Versions for Client Libraries
+=================================================================
 
 +------------+------------------------+----------------------+-------------+ 
 |            | Linux (Ubuntu 16.04)   | Windows Server 2016  | Mac OS 10.13|
