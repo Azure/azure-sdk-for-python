@@ -8,24 +8,40 @@ import pytest
 from copy import copy
 import os
 import unittest
+import logging
+import datetime
+
 from msrestazure.azure_exceptions import CloudError
 from azure.configuration import AzureConfigurationClient
 from azure.configuration import ConfigurationSetting
+from devtools_testutils import AzureMgmtTestCase
+
+PAGE_SIZE = 100
 
 
 class AzConfigTestData:
     def __init__(self):
+        self.key_uuid = None
         self.label1 = None
-        self.label2 = None
+        self.label2 = None  # contains reserved chars *,\
         self.label_uuid = None
         self.label1_data = []
         self.label2_data = []
         self.no_label_data = []
-        self.quantity_each_label = 1  # three labels, each 34, 34 * 3 > 100. So the data will have multi pages to test
-        self.page_size = 100  # page size of AzConfig
 
 
-class AzConfigurationClientTest(unittest.TestCase):
+class AzConfigurationClientTest(AzureMgmtTestCase):
+    def _add_for_test(self, kv):
+        exist = bool(list(self.app_config_client.list_configuration_settings(keys=[kv.key], labels=[kv.label])))
+        if exist:
+            self._delete_from_test(key=kv.key, label=kv.label)
+        return self.app_config_client.add_configuration_setting(kv)
+
+    def _delete_from_test(self, key, label):
+        try:
+            self.app_config_client.delete_configuration_setting(key=key, label=label)
+        except CloudError:
+            logging.debug("Error occurred removing configuration setting %s %s" % (key, label))
 
     def setUp(self):
         self.working_folder = os.path.dirname(__file__)
@@ -35,71 +51,80 @@ class AzConfigurationClientTest(unittest.TestCase):
         app_config_client = AzureConfigurationClient(connection_str)
         self.app_config_client = app_config_client
 
-        label_uuid = str(uuid.uuid1())
+        key_uuid = "test_key_a6af8952-54a6-11e9-b600-2816a84d0309"
+        label_uuid = "1d7b2b28-549e-11e9-b51c-2816a84d0309"
         label1 = "test_label1_" + label_uuid
-        label2 = "test_label2_" + label_uuid
-        content_type = "test_content_type"
+        label2 = "test_label2_*, \\" + label_uuid
+        test_content_type = "test_content_type"
+        test_value = "test_value"
 
         test_data = AzConfigTestData()
         self.test_data = test_data
+        test_data.key_uuid = key_uuid
         test_data.label_uuid = label_uuid
         test_data.label1 = label1
         test_data.label2 = label2
 
-        for i in range(test_data.quantity_each_label):
-            kv = ConfigurationSetting()
-            kv.key = "test_key_" + str(uuid.uuid1())
-            kv.value = "test_value"
-            kv.label = label1
-            kv.content_type = content_type
-            kv.tags = {
-                "tag1": "tag1",
-                "tag2": "tag2"
-            }
-            test_data.label1_data.append(app_config_client.add_configuration_setting(kv))
-
-        for i in range(test_data.quantity_each_label):
-            kv = ConfigurationSetting()
-            kv.key = "test_key_" + str(uuid.uuid1())
-            kv.value = "test_value"
-            kv.label = label2
-            kv.content_type = content_type
-            kv.tags = {
-                "tag1": "tag1",
-                "tag2": "tag2"
-            }
-
-            test_data.label2_data.append(app_config_client.add_configuration_setting(kv))
+        test_data.label1_data.append(
+            self._add_for_test(
+                ConfigurationSetting(
+                    key=key_uuid + "_1",
+                    label=label1,
+                    value=test_value,
+                    tags={
+                        "tag1": "tag1",
+                        "tag2": "tag2"
+                    },
+                    content_type=test_content_type
+                )
+            )
+        )
+        test_data.label2_data.append(
+            self._add_for_test(
+                ConfigurationSetting(
+                    key=key_uuid + "_2",
+                    label=label2,
+                    value=test_value,
+                    tags={
+                        "tag1": "tag1",
+                        "tag2": "tag2"
+                    },
+                    content_type=test_content_type
+                )
+            )
+        )
 
         # create a configuration_setting object without label
-        for i in range(test_data.quantity_each_label):
-            kv = ConfigurationSetting()
-            kv.key = "test_key_" + str(uuid.uuid1())
-            kv.value = "test_value"
-            kv.content_type = content_type
-            kv.tags = {
-                "tag1": "tag1",
-                "tag2": "tag2"
-            }
-            test_data.no_label_data.append(app_config_client.add_configuration_setting(kv))
+        test_data.no_label_data.append(
+            self._add_for_test(
+                ConfigurationSetting(
+                    key=key_uuid + "_3",
+                    label=None,
+                    value=test_value,
+                    tags={
+                        "tag1": "tag1",
+                        "tag2": "tag2"
+                    },
+                    content_type=test_content_type
+                )
+            )
+        )
 
     def tearDown(self):
-        test_data = self.test_data
-        app_config_client = self.app_config_client
-        for kv in test_data.label1_data:
-            app_config_client.delete_configuration_setting(kv.key, label=kv.label)
-        for kv in test_data.label2_data:
-            app_config_client.delete_configuration_setting(kv.key, label=kv.label)
-        for kv in test_data.no_label_data:
-            app_config_client.delete_configuration_setting(kv.key)
+        for kv in self.test_data.label1_data:
+            self._delete_from_test(kv.key, label=kv.label)
+        for kv in self.test_data.label2_data:
+            self._delete_from_test(kv.key, label=kv.label)
+        for kv in self.test_data.no_label_data:
+            self._delete_from_test(kv.key, label=kv.label)
 
     # method: add_configuration_setting
     # @record
     def test_add_configuration_setting(self):
 
         kv = ConfigurationSetting()
-        kv.key = "unit_test_key_" + str(uuid.uuid1())
-        kv.label = str(uuid.uuid1())
+        kv.key = "unit_test_key_add_" + self.test_data.key_uuid
+        kv.label = self.test_data.label1
         kv.value = "test value"
         kv.content_type = "test content type"
         kv.tags = {"tag1": "tag1", "tag2": "tag2"}
@@ -131,7 +156,7 @@ class AzConfigurationClientTest(unittest.TestCase):
 
     def test_add_configuration_setting_no_label(self):
         kv = ConfigurationSetting()
-        kv.key = "unit_test_key_" + str(uuid.uuid1())
+        kv.key = "unit_test_key_add" + self.test_data.key_uuid
         # kv.label is None by default
         kv.value = "test value"
         kv.content_type = "test content type"
@@ -166,7 +191,7 @@ class AzConfigurationClientTest(unittest.TestCase):
         sample_kv = copy(self.test_data.no_label_data[-1])
 
         # create a new key value into AzConfig service
-        sample_kv.key = "unit_test_key_" + str(uuid.uuid1())
+        sample_kv.key = "unit_test_key_set_" + self.test_data.key_uuid
         to_set_kv = self.app_config_client.add_configuration_setting(sample_kv)
         to_set_kv.value = to_set_kv.value + "a"
         to_set_kv.tags = {"a": "b", "c": "d"}
@@ -186,7 +211,7 @@ class AzConfigurationClientTest(unittest.TestCase):
         sample_kv = copy(self.test_data.label1_data[-1])
 
         # create a new key value into AzConfig service
-        sample_kv.key = "unit_test_key_" + str(uuid.uuid1())
+        sample_kv.key = "unit_test_key_set" + self.test_data.key_uuid
         to_set_kv = self.app_config_client.add_configuration_setting(sample_kv)
         to_set_kv.value = to_set_kv.value + "a"
         to_set_kv.tags = {"a": "b", "c": "d"}
@@ -206,7 +231,7 @@ class AzConfigurationClientTest(unittest.TestCase):
         sample_kv = copy(self.test_data.label1_data[-1])
 
         # create a new key value into AzConfig service
-        sample_kv.key = "unit_test_key_" + str(uuid.uuid1())
+        sample_kv.key = "unit_test_key_set" + self.test_data.key_uuid
         to_set_kv = self.app_config_client.add_configuration_setting(sample_kv)
         to_set_kv.value = to_set_kv.value + "a"
         to_set_kv.tags = {"a": "b", "c": "d"}
@@ -217,23 +242,19 @@ class AzConfigurationClientTest(unittest.TestCase):
 
     def test_set_configuration_setting_no_label_etag(self):
         to_set_kv = copy(self.test_data.no_label_data[-1])
-        to_set_kv.key = "unit_test_key_" + str(uuid.uuid1())
+        to_set_kv.key = "unit_test_key_set" + self.test_data.key_uuid
         with pytest.raises(CloudError):
             self.app_config_client.set_configuration_setting(to_set_kv)
 
-    def test_set_configuration_setting_label_etag(
-        self
-    ):
+    def test_set_configuration_setting_label_etag(self):
         to_set_kv = copy(self.test_data.label1_data[-1])
-        to_set_kv.key = "unit_test_key_" + str(uuid.uuid1())
+        to_set_kv.key = "unit_test_key_set" + self.test_data.key_uuid
         with pytest.raises(CloudError):
             self.app_config_client.set_configuration_setting(to_set_kv)
 
-    def test_set_configuration_setting_no_label_no_etag(
-        self
-    ):
+    def test_set_configuration_setting_no_label_no_etag(self):
         to_set_kv = copy(self.test_data.no_label_data[-1])
-        to_set_kv.key = "unit_test_key_" + str(uuid.uuid1())
+        to_set_kv.key = "unit_test_key_set" + self.test_data.key_uuid
         to_set_kv.etag = None
         set_kv = self.app_config_client.set_configuration_setting(to_set_kv)
         # remove immediately from the AzConfig service
@@ -251,7 +272,7 @@ class AzConfigurationClientTest(unittest.TestCase):
         self
     ):
         to_set_kv = copy(self.test_data.label1_data[-1])
-        to_set_kv.key = "unit_test_key_" + str(uuid.uuid1())
+        to_set_kv.key = "unit_test_key_set" + self.test_data.key_uuid
         to_set_kv.etag = None
         set_kv = self.app_config_client.set_configuration_setting(to_set_kv)
         # remove immediately from the AzConfig service
@@ -272,7 +293,7 @@ class AzConfigurationClientTest(unittest.TestCase):
         sample_kv = copy(self.test_data.no_label_data[-1])
 
         # create a new key value into AzConfig service
-        sample_kv.key = "unit_test_key_" + str(uuid.uuid1())
+        sample_kv.key = "unit_test_key_" + self.test_data.key_uuid
         to_update_kv = self.app_config_client.add_configuration_setting(sample_kv)
         tags = {"a": "b", "c": "d"}
         updated_kv = self.app_config_client.update_configuration_setting(
@@ -295,7 +316,7 @@ class AzConfigurationClientTest(unittest.TestCase):
         sample_kv = copy(self.test_data.label1_data[-1])
 
         # create a new key value into AzConfig service
-        sample_kv.key = "unit_test_key_" + str(uuid.uuid1())
+        sample_kv.key = "unit_test_key_" + self.test_data.key_uuid
         to_update_kv = self.app_config_client.add_configuration_setting(sample_kv)
         tags = {"a": "b", "c": "d"}
         updated_kv = self.app_config_client.update_configuration_setting(
@@ -322,7 +343,7 @@ class AzConfigurationClientTest(unittest.TestCase):
         sample_kv = copy(self.test_data.label1_data[-1])
 
         # create a new key value into AzConfig service
-        sample_kv.key = "unit_test_key_" + str(uuid.uuid1())
+        sample_kv.key = "unit_test_key_" + self.test_data.key_uuid
         to_update_kv = self.app_config_client.add_configuration_setting(sample_kv)
         tags = {"a": "b", "c": "d"}
         updated_kv = self.app_config_client.update_configuration_setting(
@@ -345,7 +366,7 @@ class AzConfigurationClientTest(unittest.TestCase):
         sample_kv = copy(self.test_data.label1_data[-1])
 
         # create a new key value into AzConfig service
-        sample_kv.key = "unit_test_key_" + str(uuid.uuid1())
+        sample_kv.key = "unit_test_key_" + self.test_data.key_uuid
         to_update_kv = self.app_config_client.add_configuration_setting(sample_kv)
         tags = {"a": "b", "c": "d"}
         etag = "wrong etag"
@@ -362,7 +383,7 @@ class AzConfigurationClientTest(unittest.TestCase):
     def test_update_no_existing_configuration_setting_label_noetag(
         self
     ):
-        key = str(uuid.uuid1())
+        key = self.test_data.key_uuid
         label = "test_label1"
         with pytest.raises(CloudError):
             self.app_config_client.update_configuration_setting(key, label=label, value="some value")
@@ -417,10 +438,15 @@ class AzConfigurationClientTest(unittest.TestCase):
         with pytest.raises(CloudError):
             self.app_config_client.lock_configuration_setting(to_lock_kv.key, to_lock_kv.label + "a")
 
+    def test_unlock_no_existing(self):
+        to_lock_kv = self.test_data.label1_data[0]
+        with pytest.raises(CloudError):
+            self.app_config_client.unlock_configuration_setting(to_lock_kv.key, to_lock_kv.label + "a")
+
     # method: delete_configuration_setting
     def test_delete_with_key_no_label(self):
         to_delete_kv = copy(self.test_data.no_label_data[-1])
-        to_delete_kv.key = "unit_test_key_" + str(uuid.uuid1())
+        to_delete_kv.key = "unit_test_key_" + self.test_data.key_uuid
         to_delete_kv = self.app_config_client.add_configuration_setting(to_delete_kv)
         self.app_config_client.delete_configuration_setting(to_delete_kv.key)
         with pytest.raises(CloudError):
@@ -428,19 +454,19 @@ class AzConfigurationClientTest(unittest.TestCase):
 
     def test_delete_with_key_label(self):
         to_delete_kv = copy(self.test_data.label1_data[-1])
-        to_delete_kv.key = "unit_test_key_" + str(uuid.uuid1())
+        to_delete_kv.key = "unit_test_key_" + self.test_data.key_uuid
         to_delete_kv = self.app_config_client.add_configuration_setting(to_delete_kv)
         self.app_config_client.delete_configuration_setting(to_delete_kv.key, label=to_delete_kv.label)
         with pytest.raises(CloudError):
             self.app_config_client.get_configuration_setting(to_delete_kv.key, label=to_delete_kv.label)
 
     def test_delete_non_existing(self):
-        deleted_kv = self.app_config_client.delete_configuration_setting(str(uuid.uuid1()))
+        deleted_kv = self.app_config_client.delete_configuration_setting("not_exist_" + self.test_data.key_uuid)
         assert deleted_kv is None
 
     def test_delete_correct_etag(self):
         to_delete_kv = copy(self.test_data.no_label_data[-1])
-        to_delete_kv.key = "unit_test_key_" + str(uuid.uuid1())
+        to_delete_kv.key = "unit_test_key_" + self.test_data.key_uuid
         to_delete_kv = self.app_config_client.add_configuration_setting(to_delete_kv)
         deleted_kv = self.app_config_client.delete_configuration_setting(
             to_delete_kv.key, etag=to_delete_kv.etag
@@ -451,7 +477,7 @@ class AzConfigurationClientTest(unittest.TestCase):
 
     def test_delete_wrong_etag(self):
         to_delete_kv = copy(self.test_data.no_label_data[-1])
-        to_delete_kv.key = "unit_test_key_" + str(uuid.uuid1())
+        to_delete_kv.key = "unit_test_key_" + self.test_data.key_uuid
         to_delete_kv = self.app_config_client.add_configuration_setting(to_delete_kv)
         with pytest.raises(CloudError):
             self.app_config_client.delete_configuration_setting(to_delete_kv.key, etag="wrong etag")
@@ -479,16 +505,16 @@ class AzConfigurationClientTest(unittest.TestCase):
         for kv in items:
             assert kv.label == self.test_data.label1
             cnt += 1
-        assert cnt == self.test_data.quantity_each_label
+        assert cnt == 1
 
-    def test_list_configuration_settings_key_no_label(self):
+    def test_list_configuration_settings_only_key(self):
         to_list1 = self.test_data.no_label_data[0]
         items = self.app_config_client.list_configuration_settings(keys=[to_list1.key])
         cnt = 0
         for kv in items:
             assert kv.key == to_list1.key
             cnt += 1
-        assert cnt == 1
+        assert cnt >= 1
 
     def test_list_configuration_settings_fields(self):
         items = self.app_config_client.list_configuration_settings(
@@ -498,7 +524,27 @@ class AzConfigurationClientTest(unittest.TestCase):
         for kv in items:
             assert kv.key is not None and kv.label is None and kv.content_type is not None
             cnt += 1
-        assert cnt == self.test_data.quantity_each_label
+        assert cnt == 1
+
+    def test_list_configuration_settings_reserved_chars(self):
+        items = self.app_config_client.list_configuration_settings(
+            keys=None, labels=[self.test_data.label2]
+        )
+        cnt = 0
+        for kv in items:
+            assert kv.label == self.test_data.label2
+            cnt += 1
+        assert cnt == 1
+
+    def test_list_configuration_settings_contains(self):
+        items = self.app_config_client.list_configuration_settings(
+            keys=None, labels=["*"+self.test_data.label2+"*"]
+        )
+        cnt = 0
+        for kv in items:
+            assert kv.label == self.test_data.label2
+            cnt += 1
+        assert cnt == 1
 
     def test_list_configuration_settings_correct_etag(self):
         to_list_kv = self.test_data.label1_data[0]
@@ -512,23 +558,35 @@ class AzConfigurationClientTest(unittest.TestCase):
             cnt += 1
         assert cnt == 1
 
-    """
-    self.test_data.quantity_each_label*3 must be over page size (100 by default) to have multi page
-    """
-
     def test_list_configuration_settings_multi_pages(self):
+        # create PAGE_SIZE+1 configuration settings to have at least two pages
+        delete_me = [
+            self.app_config_client.add_configuration_setting(ConfigurationSetting(
+                key="multi_" + str(i) + self.test_data.key_uuid,
+                label="multi_label_" + str(i),
+                value="multi value"
+            )) for i in range(PAGE_SIZE + 1)
+        ]
+        items = self.app_config_client.list_configuration_settings(keys=["multi_*"])
+        assert len(list(items)) > PAGE_SIZE
+
+        # Remove the delete_me
+        for kv in delete_me:
+            self._delete_from_test(kv.key, kv.label)
+
+    def test_list_configuration_settings_null_label(self):
         items = self.app_config_client.list_configuration_settings(
-            keys=["*"], labels=[self.test_data.label1, self.test_data.label2, "\0"]
+            keys=None,
+            labels=[""]
         )
-        cnt = 0
-        for kv in items:
-            assert kv.label is None or kv.label in [
-                self.test_data.label1,
-                self.test_data.label2,
-                None,
-            ]
-            cnt += 1
-        assert cnt >= self.test_data.quantity_each_label * 3
+        assert len(list(items)) > 0
+
+    def test_list_configuration_settings_only_accept_time(self):
+        exclude_today = self.app_config_client.list_configuration_settings(
+            accept_date_time=datetime.datetime.today() + datetime.timedelta(days=-1)
+        )
+        all_inclusive = self.app_config_client.list_configuration_settings()
+        assert len(list(all_inclusive)) > len(list(exclude_today))
 
     # method: list_revisions
     def test_list_revisions_key_label(self):
@@ -552,7 +610,7 @@ class AzConfigurationClientTest(unittest.TestCase):
         for kv in items:
             assert kv.label == self.test_data.label1
             cnt += 1
-        assert cnt >= self.test_data.quantity_each_label
+        assert cnt >= 1
 
     def test_list_revisions_key_no_label(self):
         to_list1 = self.test_data.no_label_data[0]
@@ -587,15 +645,3 @@ class AzConfigurationClientTest(unittest.TestCase):
             assert kv.key == to_list_kv.key and kv.label == to_list_kv.label
             cnt += 1
         assert cnt > 0
-
-    def test_list_revisions_multi_pages(self):
-        items = self.app_config_client.list_revisions(
-            keys=["*"], labels=[self.test_data.label1, self.test_data.label2, "\0"]
-        )
-        cnt = 0
-        for kv in items:
-            assert kv.label in [self.test_data.label1, self.test_data.label2, None]
-            cnt += 1
-        assert (
-            cnt >= self.test_data.quantity_each_label * 3
-        ), "There is no way to list_configuration_settings with both label and no label"
