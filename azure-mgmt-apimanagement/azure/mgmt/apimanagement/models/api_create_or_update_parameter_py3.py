@@ -39,8 +39,8 @@ class ApiCreateOrUpdateParameter(Model):
     :param api_version: Indicates the Version identifier of the API if the API
      is versioned
     :type api_version: str
-    :ivar is_current: Indicates if API revision is current api revision.
-    :vartype is_current: bool
+    :param is_current: Indicates if API revision is current api revision.
+    :type is_current: bool
     :ivar is_online: Indicates if API revision is accessible via the gateway.
     :vartype is_online: bool
     :param api_revision_description: Description of the Api Revision.
@@ -50,10 +50,15 @@ class ApiCreateOrUpdateParameter(Model):
     :param api_version_set_id: A resource identifier for the related
      ApiVersionSet.
     :type api_version_set_id: str
-    :param display_name: API name.
+    :param subscription_required: Specifies whether an API or Product
+     subscription is required for accessing the API.
+    :type subscription_required: bool
+    :param source_api_id: API identifier of the source API.
+    :type source_api_id: str
+    :param display_name: API name. Must be 1 to 300 characters long.
     :type display_name: str
     :param service_url: Absolute URL of the backend service implementing this
-     API.
+     API. Cannot be more than 2000 characters long.
     :type service_url: str
     :param path: Required. Relative URL uniquely identifying this API and all
      of its resource paths within the API Management service instance. It is
@@ -63,16 +68,16 @@ class ApiCreateOrUpdateParameter(Model):
     :param protocols: Describes on which protocols the operations in this API
      can be invoked.
     :type protocols: list[str or ~azure.mgmt.apimanagement.models.Protocol]
-    :param api_version_set:
+    :param api_version_set: Version set details
     :type api_version_set:
      ~azure.mgmt.apimanagement.models.ApiVersionSetContractDetails
-    :param content_value: Content value when Importing an API.
-    :type content_value: str
-    :param content_format: Format of the Content in which the API is getting
-     imported. Possible values include: 'wadl-xml', 'wadl-link-json',
-     'swagger-json', 'swagger-link-json', 'wsdl', 'wsdl-link'
-    :type content_format: str or
-     ~azure.mgmt.apimanagement.models.ContentFormat
+    :param value: Content value when Importing an API.
+    :type value: str
+    :param format: Format of the Content in which the API is getting imported.
+     Possible values include: 'wadl-xml', 'wadl-link-json', 'swagger-json',
+     'swagger-link-json', 'wsdl', 'wsdl-link', 'openapi', 'openapi+json',
+     'openapi-link'
+    :type format: str or ~azure.mgmt.apimanagement.models.ContentFormat
     :param wsdl_selector: Criteria to limit import of WSDL to a subset of the
      document.
     :type wsdl_selector:
@@ -87,7 +92,6 @@ class ApiCreateOrUpdateParameter(Model):
     _validation = {
         'api_revision': {'max_length': 100, 'min_length': 1},
         'api_version': {'max_length': 100},
-        'is_current': {'readonly': True},
         'is_online': {'readonly': True},
         'api_revision_description': {'max_length': 256},
         'api_version_description': {'max_length': 256},
@@ -108,18 +112,20 @@ class ApiCreateOrUpdateParameter(Model):
         'api_revision_description': {'key': 'properties.apiRevisionDescription', 'type': 'str'},
         'api_version_description': {'key': 'properties.apiVersionDescription', 'type': 'str'},
         'api_version_set_id': {'key': 'properties.apiVersionSetId', 'type': 'str'},
+        'subscription_required': {'key': 'properties.subscriptionRequired', 'type': 'bool'},
+        'source_api_id': {'key': 'properties.sourceApiId', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'service_url': {'key': 'properties.serviceUrl', 'type': 'str'},
         'path': {'key': 'properties.path', 'type': 'str'},
         'protocols': {'key': 'properties.protocols', 'type': '[Protocol]'},
         'api_version_set': {'key': 'properties.apiVersionSet', 'type': 'ApiVersionSetContractDetails'},
-        'content_value': {'key': 'properties.contentValue', 'type': 'str'},
-        'content_format': {'key': 'properties.contentFormat', 'type': 'str'},
+        'value': {'key': 'properties.value', 'type': 'str'},
+        'format': {'key': 'properties.format', 'type': 'str'},
         'wsdl_selector': {'key': 'properties.wsdlSelector', 'type': 'ApiCreateOrUpdatePropertiesWsdlSelector'},
         'soap_api_type': {'key': 'properties.apiType', 'type': 'str'},
     }
 
-    def __init__(self, *, path: str, description: str=None, authentication_settings=None, subscription_key_parameter_names=None, api_type=None, api_revision: str=None, api_version: str=None, api_revision_description: str=None, api_version_description: str=None, api_version_set_id: str=None, display_name: str=None, service_url: str=None, protocols=None, api_version_set=None, content_value: str=None, content_format=None, wsdl_selector=None, soap_api_type=None, **kwargs) -> None:
+    def __init__(self, *, path: str, description: str=None, authentication_settings=None, subscription_key_parameter_names=None, api_type=None, api_revision: str=None, api_version: str=None, is_current: bool=None, api_revision_description: str=None, api_version_description: str=None, api_version_set_id: str=None, subscription_required: bool=None, source_api_id: str=None, display_name: str=None, service_url: str=None, protocols=None, api_version_set=None, value: str=None, format=None, wsdl_selector=None, soap_api_type=None, **kwargs) -> None:
         super(ApiCreateOrUpdateParameter, self).__init__(**kwargs)
         self.description = description
         self.authentication_settings = authentication_settings
@@ -127,17 +133,19 @@ class ApiCreateOrUpdateParameter(Model):
         self.api_type = api_type
         self.api_revision = api_revision
         self.api_version = api_version
-        self.is_current = None
+        self.is_current = is_current
         self.is_online = None
         self.api_revision_description = api_revision_description
         self.api_version_description = api_version_description
         self.api_version_set_id = api_version_set_id
+        self.subscription_required = subscription_required
+        self.source_api_id = source_api_id
         self.display_name = display_name
         self.service_url = service_url
         self.path = path
         self.protocols = protocols
         self.api_version_set = api_version_set
-        self.content_value = content_value
-        self.content_format = content_format
+        self.value = value
+        self.format = format
         self.wsdl_selector = wsdl_selector
         self.soap_api_type = soap_api_type

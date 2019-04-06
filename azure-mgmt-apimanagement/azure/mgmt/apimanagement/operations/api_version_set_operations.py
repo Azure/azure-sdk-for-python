@@ -22,7 +22,7 @@ class ApiVersionSetOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -32,7 +32,7 @@ class ApiVersionSetOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
@@ -45,23 +45,9 @@ class ApiVersionSetOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: | Field            | Supported operators    | Supported
-         functions               |
-         |------------------|------------------------|-----------------------------------|
-         | id               | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | firstName        | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | lastName         | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | email            | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | state            | eq                     | N/A
-         |
-         | registrationDate | ge, le, eq, ne, gt, lt | N/A
-         |
-         | note             | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -92,13 +78,13 @@ class ApiVersionSetOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -132,7 +118,7 @@ class ApiVersionSetOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/api-version-sets'}
+    list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apiVersionSets'}
 
     def get_entity_tag(
             self, resource_group_name, service_name, version_set_id, custom_headers=None, raw=False, **operation_config):
@@ -161,8 +147,8 @@ class ApiVersionSetOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'versionSetId': self._serialize.url("version_set_id", version_set_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)')
+            'versionSetId': self._serialize.url("version_set_id", version_set_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -192,7 +178,7 @@ class ApiVersionSetOperations(object):
                 'ETag': 'str',
             })
             return client_raw_response
-    get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/api-version-sets/{versionSetId}'}
+    get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apiVersionSets/{versionSetId}'}
 
     def get(
             self, resource_group_name, service_name, version_set_id, custom_headers=None, raw=False, **operation_config):
@@ -221,8 +207,8 @@ class ApiVersionSetOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'versionSetId': self._serialize.url("version_set_id", version_set_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)')
+            'versionSetId': self._serialize.url("version_set_id", version_set_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -262,7 +248,7 @@ class ApiVersionSetOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/api-version-sets/{versionSetId}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apiVersionSets/{versionSetId}'}
 
     def create_or_update(
             self, resource_group_name, service_name, version_set_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
@@ -297,8 +283,8 @@ class ApiVersionSetOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'versionSetId': self._serialize.url("version_set_id", version_set_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)')
+            'versionSetId': self._serialize.url("version_set_id", version_set_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -330,18 +316,26 @@ class ApiVersionSetOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
             deserialized = self._deserialize('ApiVersionSetContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
         if response.status_code == 201:
             deserialized = self._deserialize('ApiVersionSetContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/api-version-sets/{versionSetId}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apiVersionSets/{versionSetId}'}
 
     def update(
             self, resource_group_name, service_name, version_set_id, parameters, if_match, custom_headers=None, raw=False, **operation_config):
@@ -376,8 +370,8 @@ class ApiVersionSetOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'versionSetId': self._serialize.url("version_set_id", version_set_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)')
+            'versionSetId': self._serialize.url("version_set_id", version_set_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -409,7 +403,7 @@ class ApiVersionSetOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/api-version-sets/{versionSetId}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apiVersionSets/{versionSetId}'}
 
     def delete(
             self, resource_group_name, service_name, version_set_id, if_match, custom_headers=None, raw=False, **operation_config):
@@ -441,8 +435,8 @@ class ApiVersionSetOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'versionSetId': self._serialize.url("version_set_id", version_set_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)')
+            'versionSetId': self._serialize.url("version_set_id", version_set_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -470,4 +464,4 @@ class ApiVersionSetOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/api-version-sets/{versionSetId}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apiVersionSets/{versionSetId}'}

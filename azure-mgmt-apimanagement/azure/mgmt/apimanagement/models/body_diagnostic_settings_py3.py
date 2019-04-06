@@ -12,17 +12,21 @@
 from msrest.serialization import Model
 
 
-class CurrentUserIdentity(Model):
-    """CurrentUserIdentity.
+class BodyDiagnosticSettings(Model):
+    """Body logging settings.
 
-    :param id: API Management service user id.
-    :type id: str
+    :param bytes: Number of request body bytes to log.
+    :type bytes: int
     """
 
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+    _validation = {
+        'bytes': {'maximum': 8192},
     }
 
-    def __init__(self, *, id: str=None, **kwargs) -> None:
-        super(CurrentUserIdentity, self).__init__(**kwargs)
-        self.id = id
+    _attribute_map = {
+        'bytes': {'key': 'bytes', 'type': 'int'},
+    }
+
+    def __init__(self, *, bytes: int=None, **kwargs) -> None:
+        super(BodyDiagnosticSettings, self).__init__(**kwargs)
+        self.bytes = bytes

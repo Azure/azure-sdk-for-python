@@ -22,7 +22,7 @@ class NotificationRecipientEmailOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -32,7 +32,7 @@ class NotificationRecipientEmailOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
@@ -131,8 +131,8 @@ class NotificationRecipientEmailOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: bool or ClientRawResponse if raw=true
-        :rtype: bool or ~msrest.pipeline.ClientRawResponse
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
@@ -164,14 +164,12 @@ class NotificationRecipientEmailOperations(object):
         request = self._client.head(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204, 404]:
+        if response.status_code not in [204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        deserialized = (response.status_code == 204)
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-        return deserialized
     check_entity_exists.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/notifications/{notificationName}/recipientEmails/{email}'}
 
     def create_or_update(

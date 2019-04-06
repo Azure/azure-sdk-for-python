@@ -18,7 +18,7 @@ class ApiManagementServiceSkuProperties(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. Name of the Sku. Possible values include:
-     'Developer', 'Standard', 'Premium', 'Basic'
+     'Developer', 'Standard', 'Premium', 'Basic', 'Consumption'
     :type name: str or ~azure.mgmt.apimanagement.models.SkuType
     :param capacity: Capacity of the SKU (number of deployed units of the
      SKU). The default value is 1. Default value: 1 .

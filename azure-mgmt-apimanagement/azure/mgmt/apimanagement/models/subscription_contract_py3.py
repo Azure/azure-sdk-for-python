@@ -26,14 +26,13 @@ class SubscriptionContract(Resource):
     :vartype name: str
     :ivar type: Resource type for API Management resource.
     :vartype type: str
-    :param user_id: Required. The user resource identifier of the subscription
-     owner. The value is a valid relative URL in the format of /users/{uid}
-     where {uid} is a user identifier.
-    :type user_id: str
-    :param product_id: Required. The product resource identifier of the
-     subscribed product. The value is a valid relative URL in the format of
-     /products/{productId} where {productId} is a product identifier.
-    :type product_id: str
+    :param owner_id: The user resource identifier of the subscription owner.
+     The value is a valid relative URL in the format of /users/{userId} where
+     {userId} is a user identifier.
+    :type owner_id: str
+    :param scope: Required. Scope like /products/{productId} or /apis or
+     /apis/{apiId}.
+    :type scope: str
     :param display_name: The name of the subscription, or null if the
      subscription has no name.
     :type display_name: str
@@ -80,14 +79,15 @@ class SubscriptionContract(Resource):
     :param state_comment: Optional subscription comment added by an
      administrator.
     :type state_comment: str
+    :param allow_tracing: Determines whether tracing is enabled
+    :type allow_tracing: bool
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'user_id': {'required': True},
-        'product_id': {'required': True},
+        'scope': {'required': True},
         'display_name': {'max_length': 100, 'min_length': 0},
         'state': {'required': True},
         'created_date': {'readonly': True},
@@ -99,8 +99,8 @@ class SubscriptionContract(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'user_id': {'key': 'properties.userId', 'type': 'str'},
-        'product_id': {'key': 'properties.productId', 'type': 'str'},
+        'owner_id': {'key': 'properties.ownerId', 'type': 'str'},
+        'scope': {'key': 'properties.scope', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'SubscriptionState'},
         'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
@@ -111,12 +111,13 @@ class SubscriptionContract(Resource):
         'primary_key': {'key': 'properties.primaryKey', 'type': 'str'},
         'secondary_key': {'key': 'properties.secondaryKey', 'type': 'str'},
         'state_comment': {'key': 'properties.stateComment', 'type': 'str'},
+        'allow_tracing': {'key': 'properties.allowTracing', 'type': 'bool'},
     }
 
-    def __init__(self, *, user_id: str, product_id: str, state, primary_key: str, secondary_key: str, display_name: str=None, start_date=None, expiration_date=None, end_date=None, notification_date=None, state_comment: str=None, **kwargs) -> None:
+    def __init__(self, *, scope: str, state, primary_key: str, secondary_key: str, owner_id: str=None, display_name: str=None, start_date=None, expiration_date=None, end_date=None, notification_date=None, state_comment: str=None, allow_tracing: bool=None, **kwargs) -> None:
         super(SubscriptionContract, self).__init__(**kwargs)
-        self.user_id = user_id
-        self.product_id = product_id
+        self.owner_id = owner_id
+        self.scope = scope
         self.display_name = display_name
         self.state = state
         self.created_date = None
@@ -127,3 +128,4 @@ class SubscriptionContract(Resource):
         self.primary_key = primary_key
         self.secondary_key = secondary_key
         self.state_comment = state_comment
+        self.allow_tracing = allow_tracing

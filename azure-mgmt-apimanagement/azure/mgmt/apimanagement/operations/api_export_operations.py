@@ -23,7 +23,7 @@ class ApiExportOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar export: Query parameter required to export the API details. Constant value: "true".
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ApiExportOperations(object):
         self._serialize = serializer
         self._deserialize = deserializer
         self.export = "true"
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
@@ -53,7 +53,7 @@ class ApiExportOperations(object):
         :type api_id: str
         :param format: Format in which to export the Api Details to the
          Storage Blob with Sas Key valid for 5 minutes. Possible values
-         include: 'Swagger', 'Wsdl', 'Wadl'
+         include: 'Swagger', 'Wsdl', 'Wadl', 'OpenApi3'
         :type format: str or ~azure.mgmt.apimanagement.models.ExportFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

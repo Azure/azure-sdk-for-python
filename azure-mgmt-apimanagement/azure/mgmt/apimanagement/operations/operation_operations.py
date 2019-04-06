@@ -23,7 +23,7 @@ class OperationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -33,12 +33,12 @@ class OperationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
     def list_by_tags(
-            self, resource_group_name, service_name, api_id, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, api_id, filter=None, top=None, skip=None, include_not_tagged_operations=None, custom_headers=None, raw=False, **operation_config):
         """Lists a collection of operations associated with tags.
 
         :param resource_group_name: The name of the resource group.
@@ -49,26 +49,25 @@ class OperationOperations(object):
          API Management service instance. Non-current revision has ;rev=n as a
          suffix where n is the revision number.
         :type api_id: str
-        :param filter: | Field       | Supported operators    | Supported
-         functions                         |
-         |-------------|------------------------|---------------------------------------------|
-         | id          | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | name        | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | apiName     | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | description | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | method      | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | urlTemplate | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>| displayName | filter | ge, le, eq, ne,
+         gt, lt | substringof, contains, startswith, endswith | </br>| apiName
+         | filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
+         endswith | </br>| description | filter | ge, le, eq, ne, gt, lt |
+         substringof, contains, startswith, endswith | </br>| method | filter |
+         ge, le, eq, ne, gt, lt | substringof, contains, startswith, endswith |
+         </br>| urlTemplate | filter | ge, le, eq, ne, gt, lt | substringof,
+         contains, startswith, endswith | </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
         :param skip: Number of records to skip.
         :type skip: int
+        :param include_not_tagged_operations: Include not tagged Operations.
+        :type include_not_tagged_operations: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -100,6 +99,8 @@ class OperationOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                if include_not_tagged_operations is not None:
+                    query_parameters['includeNotTaggedOperations'] = self._serialize.query("include_not_tagged_operations", include_not_tagged_operations, 'bool')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:

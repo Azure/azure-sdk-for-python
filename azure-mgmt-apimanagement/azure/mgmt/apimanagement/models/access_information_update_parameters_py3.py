@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class AccessInformationUpdateParameters(Model):
     """Tenant access information update parameters of the API Management service.
 
-    :param enabled: Tenant access information of the API Management service.
+    :param enabled: Determines whether direct access is enabled.
     :type enabled: bool
     """
 

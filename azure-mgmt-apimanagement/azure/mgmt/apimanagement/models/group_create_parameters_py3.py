@@ -26,8 +26,8 @@ class GroupCreateParameters(Model):
     :type type: str or ~azure.mgmt.apimanagement.models.GroupType
     :param external_id: Identifier of the external groups, this property
      contains the id of the group from the external identity provider, e.g. for
-     Azure Active Directory aad://<tenant>.onmicrosoft.com/groups/<group object
-     id>; otherwise the value is null.
+     Azure Active Directory `aad://<tenant>.onmicrosoft.com/groups/<group
+     object id>`; otherwise the value is null.
     :type external_id: str
     """
 

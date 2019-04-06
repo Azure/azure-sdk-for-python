@@ -37,7 +37,7 @@ class ProductUpdateParameters(Model):
      subscriptionRequired property is present and has a value of false.
     :type approval_required: bool
     :param subscriptions_limit: Whether the number of subscriptions a user can
-     have to this product at the same time. Set to null or omit to allow
+     have to this product at the same time. Set to null or omit to allow
      unlimited per user subscriptions. Can be present only if
      subscriptionRequired property is present and has a value of false.
     :type subscriptions_limit: int

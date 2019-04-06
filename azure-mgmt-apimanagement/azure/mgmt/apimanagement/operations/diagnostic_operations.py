@@ -22,7 +22,7 @@ class DiagnosticOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -32,7 +32,7 @@ class DiagnosticOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
@@ -44,11 +44,11 @@ class DiagnosticOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: | Field       | Supported operators    | Supported
-         functions               |
-         |-------------|------------------------|-----------------------------------|
-         | id          | ge, le, eq, ne, gt, lt | substringof, startswith,
-         endswith |
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -79,13 +79,13 @@ class DiagnosticOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -148,7 +148,7 @@ class DiagnosticOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'diagnosticId': self._serialize.url("diagnostic_id", diagnostic_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'diagnosticId': self._serialize.url("diagnostic_id", diagnostic_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -208,7 +208,7 @@ class DiagnosticOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'diagnosticId': self._serialize.url("diagnostic_id", diagnostic_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'diagnosticId': self._serialize.url("diagnostic_id", diagnostic_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -252,7 +252,7 @@ class DiagnosticOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/diagnostics/{diagnosticId}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, diagnostic_id, enabled, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, diagnostic_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Creates a new Diagnostic or updates an existing one.
 
         :param resource_group_name: The name of the resource group.
@@ -262,9 +262,8 @@ class DiagnosticOperations(object):
         :param diagnostic_id: Diagnostic identifier. Must be unique in the
          current API Management service instance.
         :type diagnostic_id: str
-        :param enabled: Indicates whether a diagnostic should receive data or
-         not.
-        :type enabled: bool
+        :param parameters: Create parameters.
+        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract
         :param if_match: ETag of the Entity. Not required when creating an
          entity, but required when updating an entity.
         :type if_match: str
@@ -279,14 +278,12 @@ class DiagnosticOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
-        parameters = models.DiagnosticContract(enabled=enabled)
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'diagnosticId': self._serialize.url("diagnostic_id", diagnostic_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'diagnosticId': self._serialize.url("diagnostic_id", diagnostic_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -319,21 +316,29 @@ class DiagnosticOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
             deserialized = self._deserialize('DiagnosticContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
         if response.status_code == 201:
             deserialized = self._deserialize('DiagnosticContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/diagnostics/{diagnosticId}'}
 
     def update(
-            self, resource_group_name, service_name, diagnostic_id, if_match, enabled, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, diagnostic_id, parameters, if_match, custom_headers=None, raw=False, **operation_config):
         """Updates the details of the Diagnostic specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -343,13 +348,12 @@ class DiagnosticOperations(object):
         :param diagnostic_id: Diagnostic identifier. Must be unique in the
          current API Management service instance.
         :type diagnostic_id: str
+        :param parameters: Diagnostic Update parameters.
+        :type parameters: ~azure.mgmt.apimanagement.models.DiagnosticContract
         :param if_match: ETag of the Entity. ETag should match the current
          entity state from the header response of the GET request or it should
          be * for unconditional update.
         :type if_match: str
-        :param enabled: Indicates whether a diagnostic should receive data or
-         not.
-        :type enabled: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -360,14 +364,12 @@ class DiagnosticOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
-        parameters = models.DiagnosticContract(enabled=enabled)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'diagnosticId': self._serialize.url("diagnostic_id", diagnostic_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'diagnosticId': self._serialize.url("diagnostic_id", diagnostic_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -432,7 +434,7 @@ class DiagnosticOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'diagnosticId': self._serialize.url("diagnostic_id", diagnostic_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'diagnosticId': self._serialize.url("diagnostic_id", diagnostic_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

@@ -22,7 +22,7 @@ class BackendOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -32,7 +32,7 @@ class BackendOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
@@ -44,13 +44,14 @@ class BackendOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: | Field | Supported operators    | Supported functions
-         |
-         |-------|------------------------|---------------------------------------------|
-         | id    | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith |
-         | host  | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith |
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>| title | filter | ge, le, eq, ne, gt, lt
+         | substringof, contains, startswith, endswith | </br>| url | filter |
+         ge, le, eq, ne, gt, lt | substringof, contains, startswith, endswith |
+         </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -124,7 +125,7 @@ class BackendOperations(object):
     list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends'}
 
     def get_entity_tag(
-            self, resource_group_name, service_name, backendid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, backend_id, custom_headers=None, raw=False, **operation_config):
         """Gets the entity state (Etag) version of the backend specified by its
         identifier.
 
@@ -132,9 +133,9 @@ class BackendOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param backendid: Identifier of the Backend entity. Must be unique in
+        :param backend_id: Identifier of the Backend entity. Must be unique in
          the current API Management service instance.
-        :type backendid: str
+        :type backend_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -150,7 +151,7 @@ class BackendOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'backendid': self._serialize.url("backendid", backendid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -181,19 +182,19 @@ class BackendOperations(object):
                 'ETag': 'str',
             })
             return client_raw_response
-    get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends/{backendid}'}
+    get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends/{backendId}'}
 
     def get(
-            self, resource_group_name, service_name, backendid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, backend_id, custom_headers=None, raw=False, **operation_config):
         """Gets the details of the backend specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param backendid: Identifier of the Backend entity. Must be unique in
+        :param backend_id: Identifier of the Backend entity. Must be unique in
          the current API Management service instance.
-        :type backendid: str
+        :type backend_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -210,7 +211,7 @@ class BackendOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'backendid': self._serialize.url("backendid", backendid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -251,19 +252,19 @@ class BackendOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends/{backendid}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends/{backendId}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, backendid, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, backend_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Creates or Updates a backend.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param backendid: Identifier of the Backend entity. Must be unique in
+        :param backend_id: Identifier of the Backend entity. Must be unique in
          the current API Management service instance.
-        :type backendid: str
+        :type backend_id: str
         :param parameters: Create parameters.
         :type parameters: ~azure.mgmt.apimanagement.models.BackendContract
         :param if_match: ETag of the Entity. Not required when creating an
@@ -285,7 +286,7 @@ class BackendOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'backendid': self._serialize.url("backendid", backendid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -318,30 +319,38 @@ class BackendOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
             deserialized = self._deserialize('BackendContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
         if response.status_code == 201:
             deserialized = self._deserialize('BackendContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends/{backendid}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends/{backendId}'}
 
     def update(
-            self, resource_group_name, service_name, backendid, parameters, if_match, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, backend_id, parameters, if_match, custom_headers=None, raw=False, **operation_config):
         """Updates an existing backend.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param backendid: Identifier of the Backend entity. Must be unique in
+        :param backend_id: Identifier of the Backend entity. Must be unique in
          the current API Management service instance.
-        :type backendid: str
+        :type backend_id: str
         :param parameters: Update parameters.
         :type parameters:
          ~azure.mgmt.apimanagement.models.BackendUpdateParameters
@@ -364,7 +373,7 @@ class BackendOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'backendid': self._serialize.url("backendid", backendid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -397,19 +406,19 @@ class BackendOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends/{backendid}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends/{backendId}'}
 
     def delete(
-            self, resource_group_name, service_name, backendid, if_match, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, backend_id, if_match, custom_headers=None, raw=False, **operation_config):
         """Deletes the specified backend.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param backendid: Identifier of the Backend entity. Must be unique in
+        :param backend_id: Identifier of the Backend entity. Must be unique in
          the current API Management service instance.
-        :type backendid: str
+        :type backend_id: str
         :param if_match: ETag of the Entity. ETag should match the current
          entity state from the header response of the GET request or it should
          be * for unconditional update.
@@ -429,7 +438,7 @@ class BackendOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'backendid': self._serialize.url("backendid", backendid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -458,10 +467,10 @@ class BackendOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends/{backendid}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends/{backendId}'}
 
     def reconnect(
-            self, resource_group_name, service_name, backendid, after=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, backend_id, after=None, custom_headers=None, raw=False, **operation_config):
         """Notifies the APIM proxy to create a new connection to the backend after
         the specified timeout. If no timeout was specified, timeout of 2
         minutes is used.
@@ -470,9 +479,9 @@ class BackendOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param backendid: Identifier of the Backend entity. Must be unique in
+        :param backend_id: Identifier of the Backend entity. Must be unique in
          the current API Management service instance.
-        :type backendid: str
+        :type backend_id: str
         :param after: Duration in ISO8601 format after which reconnect will be
          initiated. Minimum duration of the Reconnect is PT2M.
         :type after: timedelta
@@ -495,7 +504,7 @@ class BackendOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'backendid': self._serialize.url("backendid", backendid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'backendId': self._serialize.url("backend_id", backend_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -530,4 +539,4 @@ class BackendOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    reconnect.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends/{backendid}/reconnect'}
+    reconnect.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/backends/{backendId}/reconnect'}

@@ -22,7 +22,7 @@ class ProductApiOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -32,7 +32,7 @@ class ProductApiOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
@@ -47,19 +47,17 @@ class ProductApiOperations(object):
         :param product_id: Product identifier. Must be unique in the current
          API Management service instance.
         :type product_id: str
-        :param filter: | Field       | Supported operators    | Supported
-         functions                         |
-         |-------------|------------------------|---------------------------------------------|
-         | id          | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | name        | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | description | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | serviceUrl  | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | path        | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>| displayName | filter | ge, le, eq, ne,
+         gt, lt | substringof, contains, startswith, endswith | </br>|
+         description | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>| serviceUrl | filter | ge, le, eq, ne,
+         gt, lt | substringof, contains, startswith, endswith | </br>| path |
+         filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
+         endswith | </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -84,7 +82,7 @@ class ProductApiOperations(object):
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-                    'productId': self._serialize.url("product_id", product_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+                    'productId': self._serialize.url("product_id", product_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -154,8 +152,8 @@ class ProductApiOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: bool or ClientRawResponse if raw=true
-        :rtype: bool or ~msrest.pipeline.ClientRawResponse
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
@@ -164,7 +162,7 @@ class ProductApiOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'productId': self._serialize.url("product_id", product_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'productId': self._serialize.url("product_id", product_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -187,14 +185,12 @@ class ProductApiOperations(object):
         request = self._client.head(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204, 404]:
+        if response.status_code not in [204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        deserialized = (response.status_code == 204)
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-        return deserialized
     check_entity_exists.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/apis/{apiId}'}
 
     def create_or_update(
@@ -228,7 +224,7 @@ class ProductApiOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'productId': self._serialize.url("product_id", product_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'productId': self._serialize.url("product_id", product_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -299,7 +295,7 @@ class ProductApiOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'productId': self._serialize.url("product_id", product_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'productId': self._serialize.url("product_id", product_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }

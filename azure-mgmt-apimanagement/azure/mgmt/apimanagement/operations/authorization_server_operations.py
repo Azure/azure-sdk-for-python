@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -23,7 +22,7 @@ class AuthorizationServerOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -33,7 +32,7 @@ class AuthorizationServerOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
@@ -46,13 +45,12 @@ class AuthorizationServerOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: | Field | Supported operators    | Supported functions
-         |
-         |-------|------------------------|---------------------------------------------|
-         | id    | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith |
-         | name  | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith |
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>| displayName | filter | ge, le, eq, ne,
+         gt, lt | substringof, contains, startswith, endswith | </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -66,7 +64,8 @@ class AuthorizationServerOperations(object):
         :return: An iterator like instance of AuthorizationServerContract
         :rtype:
          ~azure.mgmt.apimanagement.models.AuthorizationServerContractPaged[~azure.mgmt.apimanagement.models.AuthorizationServerContract]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -109,9 +108,7 @@ class AuthorizationServerOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -152,7 +149,7 @@ class AuthorizationServerOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'authsid': self._serialize.url("authsid", authsid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'authsid': self._serialize.url("authsid", authsid, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -212,7 +209,7 @@ class AuthorizationServerOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'authsid': self._serialize.url("authsid", authsid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'authsid': self._serialize.url("authsid", authsid, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -288,7 +285,7 @@ class AuthorizationServerOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'authsid': self._serialize.url("authsid", authsid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'authsid': self._serialize.url("authsid", authsid, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -321,14 +318,22 @@ class AuthorizationServerOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
             deserialized = self._deserialize('AuthorizationServerContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
         if response.status_code == 201:
             deserialized = self._deserialize('AuthorizationServerContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
@@ -367,7 +372,7 @@ class AuthorizationServerOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'authsid': self._serialize.url("authsid", authsid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'authsid': self._serialize.url("authsid", authsid, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -431,7 +436,7 @@ class AuthorizationServerOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'authsid': self._serialize.url("authsid", authsid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'authsid': self._serialize.url("authsid", authsid, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

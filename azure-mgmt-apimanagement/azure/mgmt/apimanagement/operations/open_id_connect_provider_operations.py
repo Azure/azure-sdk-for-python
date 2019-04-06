@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -23,7 +22,7 @@ class OpenIdConnectProviderOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -33,25 +32,24 @@ class OpenIdConnectProviderOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
     def list_by_service(
             self, resource_group_name, service_name, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all OpenID Connect Providers.
+        """Lists of all the OpenId Connect Providers.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: | Field | Supported operators    | Supported functions
-         |
-         |-------|------------------------|---------------------------------------------|
-         | id    | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith |
-         | name  | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
-         endswith |
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>| displayName | filter | ge, le, eq, ne,
+         gt, lt | substringof, contains, startswith, endswith | </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -65,7 +63,8 @@ class OpenIdConnectProviderOperations(object):
         :return: An iterator like instance of OpenidConnectProviderContract
         :rtype:
          ~azure.mgmt.apimanagement.models.OpenidConnectProviderContractPaged[~azure.mgmt.apimanagement.models.OpenidConnectProviderContract]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -108,9 +107,7 @@ class OpenIdConnectProviderOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -320,14 +317,22 @@ class OpenIdConnectProviderOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
             deserialized = self._deserialize('OpenidConnectProviderContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
         if response.status_code == 201:
             deserialized = self._deserialize('OpenidConnectProviderContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized

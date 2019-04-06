@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -23,7 +22,7 @@ class SignInSettingsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -33,7 +32,7 @@ class SignInSettingsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
@@ -94,7 +93,7 @@ class SignInSettingsOperations(object):
 
     def get(
             self, resource_group_name, service_name, custom_headers=None, raw=False, **operation_config):
-        """Get Sign-In settings.
+        """Get Sign In Settings for the Portal.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -108,7 +107,8 @@ class SignInSettingsOperations(object):
         :return: PortalSigninSettings or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.apimanagement.models.PortalSigninSettings or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -138,9 +138,7 @@ class SignInSettingsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         header_dict = {}
@@ -225,13 +223,16 @@ class SignInSettingsOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/portalsettings/signin'}
 
     def create_or_update(
-            self, resource_group_name, service_name, enabled=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, if_match=None, enabled=None, custom_headers=None, raw=False, **operation_config):
         """Create or Update Sign-In settings.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
+        :param if_match: ETag of the Entity. Not required when creating an
+         entity, but required when updating an entity.
+        :type if_match: str
         :param enabled: Redirect Anonymous users to the Sign-In page.
         :type enabled: bool
         :param dict custom_headers: headers that will be added to the request
@@ -268,6 +269,8 @@ class SignInSettingsOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 

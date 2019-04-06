@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -23,7 +22,7 @@ class NotificationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -33,7 +32,7 @@ class NotificationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
@@ -57,7 +56,8 @@ class NotificationOperations(object):
         :return: An iterator like instance of NotificationContract
         :rtype:
          ~azure.mgmt.apimanagement.models.NotificationContractPaged[~azure.mgmt.apimanagement.models.NotificationContract]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -98,9 +98,7 @@ class NotificationOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -187,7 +185,7 @@ class NotificationOperations(object):
 
     def create_or_update(
             self, resource_group_name, service_name, notification_name, if_match=None, custom_headers=None, raw=False, **operation_config):
-        """Updates an Notification.
+        """Create or Update API Management publisher notification.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

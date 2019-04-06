@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class ApiReleaseContract(Resource):
-    """Api Release details.
+    """ApiRelease details.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

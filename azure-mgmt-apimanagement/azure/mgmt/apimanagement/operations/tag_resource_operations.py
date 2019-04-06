@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -23,7 +22,7 @@ class TagResourceOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -33,7 +32,7 @@ class TagResourceOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
@@ -45,35 +44,27 @@ class TagResourceOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: | Field       | Supported operators    | Supported
-         functions                         |
-         |-------------|------------------------|---------------------------------------------|
-         | id          | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | name        | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | aid         | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | apiName     | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | apiRevision | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | path        | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | description | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | serviceUrl  | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | method      | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | urlTemplate | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | terms       | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | state       | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | isCurrent   | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         aid | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>| name | filter | ge, le, eq, ne, gt, lt |
+         substringof, contains, startswith, endswith | </br>| displayName |
+         filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
+         endswith | </br>| apiName | filter | ge, le, eq, ne, gt, lt |
+         substringof, contains, startswith, endswith | </br>| apiRevision |
+         filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
+         endswith | </br>| path | filter | ge, le, eq, ne, gt, lt |
+         substringof, contains, startswith, endswith | </br>| description |
+         filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
+         endswith | </br>| serviceUrl | filter | ge, le, eq, ne, gt, lt |
+         substringof, contains, startswith, endswith | </br>| method | filter |
+         ge, le, eq, ne, gt, lt | substringof, contains, startswith, endswith |
+         </br>| urlTemplate | filter | ge, le, eq, ne, gt, lt | substringof,
+         contains, startswith, endswith | </br>| terms | filter | ge, le, eq,
+         ne, gt, lt | substringof, contains, startswith, endswith | </br>|
+         state | filter | eq |     | </br>| isCurrent | filter | eq |     |
+         </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -87,7 +78,8 @@ class TagResourceOperations(object):
         :return: An iterator like instance of TagResourceContract
         :rtype:
          ~azure.mgmt.apimanagement.models.TagResourceContractPaged[~azure.mgmt.apimanagement.models.TagResourceContract]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -130,9 +122,7 @@ class TagResourceOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 

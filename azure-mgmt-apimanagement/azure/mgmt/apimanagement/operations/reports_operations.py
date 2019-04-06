@@ -23,7 +23,7 @@ class ReportsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -33,12 +33,12 @@ class ReportsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
     def list_by_api(
-            self, resource_group_name, service_name, filter, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, filter, top=None, skip=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """Lists report records by API.
 
         :param resource_group_name: The name of the resource group.
@@ -51,6 +51,8 @@ class ReportsOperations(object):
         :type top: int
         :param skip: Number of records to skip.
         :type skip: int
+        :param orderby: OData order by query option.
+        :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -80,6 +82,8 @@ class ReportsOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -119,19 +123,39 @@ class ReportsOperations(object):
     list_by_api.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byApi'}
 
     def list_by_user(
-            self, resource_group_name, service_name, filter, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, filter, top=None, skip=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """Lists report records by User.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: The filter to apply on the operation.
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         timestamp | filter | ge, le |     | </br>| displayName | select,
+         orderBy |     |     | </br>| userId | select, filter | eq |     |
+         </br>| apiRegion | filter | eq |     | </br>| productId | filter | eq
+         |     | </br>| subscriptionId | filter | eq |     | </br>| apiId |
+         filter | eq |     | </br>| operationId | filter | eq |     | </br>|
+         callCountSuccess | select, orderBy |     |     | </br>|
+         callCountBlocked | select, orderBy |     |     | </br>|
+         callCountFailed | select, orderBy |     |     | </br>| callCountOther
+         | select, orderBy |     |     | </br>| callCountTotal | select,
+         orderBy |     |     | </br>| bandwidth | select, orderBy |     |     |
+         </br>| cacheHitsCount | select |     |     | </br>| cacheMissCount |
+         select |     |     | </br>| apiTimeAvg | select, orderBy |     |     |
+         </br>| apiTimeMin | select |     |     | </br>| apiTimeMax | select |
+         |     | </br>| serviceTimeAvg | select |     |     | </br>|
+         serviceTimeMin | select |     |     | </br>| serviceTimeMax | select |
+         |     | </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
         :param skip: Number of records to skip.
         :type skip: int
+        :param orderby: OData order by query option.
+        :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -161,6 +185,8 @@ class ReportsOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -200,19 +226,39 @@ class ReportsOperations(object):
     list_by_user.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byUser'}
 
     def list_by_operation(
-            self, resource_group_name, service_name, filter, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, filter, top=None, skip=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """Lists report records by API Operations.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: The filter to apply on the operation.
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         timestamp | filter | ge, le |     | </br>| displayName | select,
+         orderBy |     |     | </br>| apiRegion | filter | eq |     | </br>|
+         userId | filter | eq |     | </br>| productId | filter | eq |     |
+         </br>| subscriptionId | filter | eq |     | </br>| apiId | filter | eq
+         |     | </br>| operationId | select, filter | eq |     | </br>|
+         callCountSuccess | select, orderBy |     |     | </br>|
+         callCountBlocked | select, orderBy |     |     | </br>|
+         callCountFailed | select, orderBy |     |     | </br>| callCountOther
+         | select, orderBy |     |     | </br>| callCountTotal | select,
+         orderBy |     |     | </br>| bandwidth | select, orderBy |     |     |
+         </br>| cacheHitsCount | select |     |     | </br>| cacheMissCount |
+         select |     |     | </br>| apiTimeAvg | select, orderBy |     |     |
+         </br>| apiTimeMin | select |     |     | </br>| apiTimeMax | select |
+         |     | </br>| serviceTimeAvg | select |     |     | </br>|
+         serviceTimeMin | select |     |     | </br>| serviceTimeMax | select |
+         |     | </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
         :param skip: Number of records to skip.
         :type skip: int
+        :param orderby: OData order by query option.
+        :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -242,6 +288,8 @@ class ReportsOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -281,19 +329,37 @@ class ReportsOperations(object):
     list_by_operation.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byOperation'}
 
     def list_by_product(
-            self, resource_group_name, service_name, filter, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, filter, top=None, skip=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """Lists report records by Product.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: The filter to apply on the operation.
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         timestamp | filter | ge, le |     | </br>| displayName | select,
+         orderBy |     |     | </br>| apiRegion | filter | eq |     | </br>|
+         userId | filter | eq |     | </br>| productId | select, filter | eq |
+         | </br>| subscriptionId | filter | eq |     | </br>| callCountSuccess
+         | select, orderBy |     |     | </br>| callCountBlocked | select,
+         orderBy |     |     | </br>| callCountFailed | select, orderBy |     |
+         | </br>| callCountOther | select, orderBy |     |     | </br>|
+         callCountTotal | select, orderBy |     |     | </br>| bandwidth |
+         select, orderBy |     |     | </br>| cacheHitsCount | select |     |
+         | </br>| cacheMissCount | select |     |     | </br>| apiTimeAvg |
+         select, orderBy |     |     | </br>| apiTimeMin | select |     |     |
+         </br>| apiTimeMax | select |     |     | </br>| serviceTimeAvg |
+         select |     |     | </br>| serviceTimeMin | select |     |     |
+         </br>| serviceTimeMax | select |     |     | </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
         :param skip: Number of records to skip.
         :type skip: int
+        :param orderby: OData order by query option.
+        :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -323,6 +389,8 @@ class ReportsOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -362,14 +430,30 @@ class ReportsOperations(object):
     list_by_product.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byProduct'}
 
     def list_by_geo(
-            self, resource_group_name, service_name, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, filter, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
         """Lists report records by geography.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: The filter to apply on the operation.
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         timestamp | filter | ge, le |     | </br>| country | select |     |
+         | </br>| region | select |     |     | </br>| zip | select |     |
+         | </br>| apiRegion | filter | eq |     | </br>| userId | filter | eq |
+         | </br>| productId | filter | eq |     | </br>| subscriptionId |
+         filter | eq |     | </br>| apiId | filter | eq |     | </br>|
+         operationId | filter | eq |     | </br>| callCountSuccess | select |
+         |     | </br>| callCountBlocked | select |     |     | </br>|
+         callCountFailed | select |     |     | </br>| callCountOther | select
+         |     |     | </br>| bandwidth | select, orderBy |     |     | </br>|
+         cacheHitsCount | select |     |     | </br>| cacheMissCount | select |
+         |     | </br>| apiTimeAvg | select |     |     | </br>| apiTimeMin |
+         select |     |     | </br>| apiTimeMax | select |     |     | </br>|
+         serviceTimeAvg | select |     |     | </br>| serviceTimeMin | select |
+         |     | </br>| serviceTimeMax | select |     |     | </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -399,8 +483,7 @@ class ReportsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
@@ -444,19 +527,38 @@ class ReportsOperations(object):
     list_by_geo.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/byGeo'}
 
     def list_by_subscription(
-            self, resource_group_name, service_name, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, filter, top=None, skip=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """Lists report records by subscription.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: The filter to apply on the operation.
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         timestamp | filter | ge, le |     | </br>| displayName | select,
+         orderBy |     |     | </br>| apiRegion | filter | eq |     | </br>|
+         userId | select, filter | eq |     | </br>| productId | select, filter
+         | eq |     | </br>| subscriptionId | select, filter | eq |     |
+         </br>| callCountSuccess | select, orderBy |     |     | </br>|
+         callCountBlocked | select, orderBy |     |     | </br>|
+         callCountFailed | select, orderBy |     |     | </br>| callCountOther
+         | select, orderBy |     |     | </br>| callCountTotal | select,
+         orderBy |     |     | </br>| bandwidth | select, orderBy |     |     |
+         </br>| cacheHitsCount | select |     |     | </br>| cacheMissCount |
+         select |     |     | </br>| apiTimeAvg | select, orderBy |     |     |
+         </br>| apiTimeMin | select |     |     | </br>| apiTimeMax | select |
+         |     | </br>| serviceTimeAvg | select |     |     | </br>|
+         serviceTimeMin | select |     |     | </br>| serviceTimeMax | select |
+         |     | </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
         :param skip: Number of records to skip.
         :type skip: int
+        :param orderby: OData order by query option.
+        :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -481,12 +583,13 @@ class ReportsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -526,25 +629,43 @@ class ReportsOperations(object):
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/reports/bySubscription'}
 
     def list_by_time(
-            self, resource_group_name, service_name, interval, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, filter, interval, top=None, skip=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """Lists report records by Time.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         timestamp | filter, select | ge, le |     | </br>| interval | select |
+         |     | </br>| apiRegion | filter | eq |     | </br>| userId | filter
+         | eq |     | </br>| productId | filter | eq |     | </br>|
+         subscriptionId | filter | eq |     | </br>| apiId | filter | eq |
+         | </br>| operationId | filter | eq |     | </br>| callCountSuccess |
+         select |     |     | </br>| callCountBlocked | select |     |     |
+         </br>| callCountFailed | select |     |     | </br>| callCountOther |
+         select |     |     | </br>| bandwidth | select, orderBy |     |     |
+         </br>| cacheHitsCount | select |     |     | </br>| cacheMissCount |
+         select |     |     | </br>| apiTimeAvg | select |     |     | </br>|
+         apiTimeMin | select |     |     | </br>| apiTimeMax | select |     |
+         | </br>| serviceTimeAvg | select |     |     | </br>| serviceTimeMin |
+         select |     |     | </br>| serviceTimeMax | select |     |     |
+         </br>
+        :type filter: str
         :param interval: By time interval. Interval must be multiple of 15
          minutes and may not be zero. The value should be in ISO  8601 format
          (http://en.wikipedia.org/wiki/ISO_8601#Durations).This code can be
          used to convert TimeSpan to a valid interval string:
-         XmlConvert.ToString(new TimeSpan(hours, minutes, seconds))
+         XmlConvert.ToString(new TimeSpan(hours, minutes, seconds)).
         :type interval: timedelta
-        :param filter: The filter to apply on the operation.
-        :type filter: str
         :param top: Number of records to return.
         :type top: int
         :param skip: Number of records to skip.
         :type skip: int
+        :param orderby: OData order by query option.
+        :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -569,12 +690,13 @@ class ReportsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
                 query_parameters['interval'] = self._serialize.query("interval", interval, 'duration')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
@@ -622,7 +744,13 @@ class ReportsOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: The filter to apply on the operation.
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         timestamp | filter | ge, le |     | </br>| apiId | filter | eq |     |
+         </br>| operationId | filter | eq |     | </br>| productId | filter |
+         eq |     | </br>| userId | filter | eq |     | </br>| apiRegion |
+         filter | eq |     | </br>| subscriptionId | filter | eq |     | </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int

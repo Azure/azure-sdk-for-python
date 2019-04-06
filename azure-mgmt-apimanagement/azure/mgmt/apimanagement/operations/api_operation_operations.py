@@ -22,7 +22,7 @@ class ApiOperationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -32,12 +32,12 @@ class ApiOperationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
     def list_by_api(
-            self, resource_group_name, service_name, api_id, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, api_id, filter=None, top=None, skip=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """Lists a collection of the operations for the specified API.
 
         :param resource_group_name: The name of the resource group.
@@ -48,22 +48,24 @@ class ApiOperationOperations(object):
          API Management service instance. Non-current revision has ;rev=n as a
          suffix where n is the revision number.
         :type api_id: str
-        :param filter: | Field       | Supported operators    | Supported
-         functions               |
-         |-------------|------------------------|-----------------------------------|
-         | name        | ge, le, eq, ne, gt, lt | substringof, startswith,
-         endswith |
-         | method      | ge, le, eq, ne, gt, lt | substringof, startswith,
-         endswith |
-         | description | ge, le, eq, ne, gt, lt | substringof, startswith,
-         endswith |
-         | urlTemplate | ge, le, eq, ne, gt, lt | substringof, startswith,
-         endswith |
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>| displayName | filter | ge, le, eq, ne,
+         gt, lt | substringof, contains, startswith, endswith | </br>| method |
+         filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
+         endswith | </br>| description | filter | ge, le, eq, ne, gt, lt |
+         substringof, contains, startswith, endswith | </br>| urlTemplate |
+         filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
+         endswith | </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
         :param skip: Number of records to skip.
         :type skip: int
+        :param tags: Include tags in the response.
+        :type tags: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -96,6 +98,8 @@ class ApiOperationOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                if tags is not None:
+                    query_parameters['tags'] = self._serialize.query("tags", tags, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -164,7 +168,7 @@ class ApiOperationOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -229,7 +233,7 @@ class ApiOperationOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -309,7 +313,7 @@ class ApiOperationOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -342,14 +346,22 @@ class ApiOperationOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
             deserialized = self._deserialize('OperationContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
         if response.status_code == 201:
             deserialized = self._deserialize('OperationContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
@@ -394,7 +406,7 @@ class ApiOperationOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -464,7 +476,7 @@ class ApiOperationOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)

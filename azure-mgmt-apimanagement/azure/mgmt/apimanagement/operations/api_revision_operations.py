@@ -11,19 +11,18 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
 
-class RegionsOperations(object):
-    """RegionsOperations operations.
+class ApiRevisionOperations(object):
+    """ApiRevisionOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -33,27 +32,41 @@ class RegionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
     def list_by_service(
-            self, resource_group_name, service_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all azure regions in which the service exists.
+            self, resource_group_name, service_name, api_id, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+        """Lists all revisions of an API.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
+        :param api_id: API identifier. Must be unique in the current API
+         Management service instance.
+        :type api_id: str
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         apiRevision | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>
+        :type filter: str
+        :param top: Number of records to return.
+        :type top: int
+        :param skip: Number of records to skip.
+        :type skip: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of RegionContract
+        :return: An iterator like instance of ApiRevisionContract
         :rtype:
-         ~azure.mgmt.apimanagement.models.RegionContractPaged[~azure.mgmt.apimanagement.models.RegionContract]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+         ~azure.mgmt.apimanagement.models.ApiRevisionContractPaged[~azure.mgmt.apimanagement.models.ApiRevisionContract]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -63,12 +76,19 @@ class RegionsOperations(object):
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+                    'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
+                if skip is not None:
+                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -90,19 +110,17 @@ class RegionsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
         # Deserialize response
-        deserialized = models.RegionContractPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ApiRevisionContractPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.RegionContractPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ApiRevisionContractPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/regions'}
+    list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/revisions'}

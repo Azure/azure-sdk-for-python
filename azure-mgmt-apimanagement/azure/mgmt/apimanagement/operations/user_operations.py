@@ -22,7 +22,7 @@ class UserOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -32,73 +32,12 @@ class UserOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
-    def get_identity(
-            self, resource_group_name, service_name, custom_headers=None, raw=False, **operation_config):
-        """Returns calling user identity information.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param service_name: The name of the API Management service.
-        :type service_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: CurrentUserIdentity or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.apimanagement.models.CurrentUserIdentity or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.get_identity.metadata['url']
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('CurrentUserIdentity', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get_identity.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/identity'}
-
     def list_by_service(
-            self, resource_group_name, service_name, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, filter=None, top=None, skip=None, expand_groups=None, custom_headers=None, raw=False, **operation_config):
         """Lists a collection of registered users in the specified service
         instance.
 
@@ -106,28 +45,26 @@ class UserOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param filter: | Field            | Supported operators    | Supported
-         functions               |
-         |------------------|------------------------|-----------------------------------|
-         | id               | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | firstName        | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | lastName         | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | email            | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | state            | eq                     | N/A
-         |
-         | registrationDate | ge, le, eq, ne, gt, lt | N/A
-         |
-         | note             | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>| firstName | filter | ge, le, eq, ne, gt,
+         lt | substringof, contains, startswith, endswith | </br>| lastName |
+         filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
+         endswith | </br>| email | filter | ge, le, eq, ne, gt, lt |
+         substringof, contains, startswith, endswith | </br>| state | filter |
+         eq |     | </br>| registrationDate | filter | ge, le, eq, ne, gt, lt |
+         | </br>| note | filter | ge, le, eq, ne, gt, lt | substringof,
+         contains, startswith, endswith | </br>| groups | expand |     |     |
+         </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
         :param skip: Number of records to skip.
         :type skip: int
+        :param expand_groups: Detailed Group in response.
+        :type expand_groups: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -159,6 +96,8 @@ class UserOperations(object):
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                if expand_groups is not None:
+                    query_parameters['expandGroups'] = self._serialize.query("expand_groups", expand_groups, 'bool')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -196,7 +135,7 @@ class UserOperations(object):
     list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users'}
 
     def get_entity_tag(
-            self, resource_group_name, service_name, uid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, user_id, custom_headers=None, raw=False, **operation_config):
         """Gets the entity state (Etag) version of the user specified by its
         identifier.
 
@@ -204,9 +143,9 @@ class UserOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param uid: User identifier. Must be unique in the current API
+        :param user_id: User identifier. Must be unique in the current API
          Management service instance.
-        :type uid: str
+        :type user_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -222,7 +161,7 @@ class UserOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'uid': self._serialize.url("uid", uid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'userId': self._serialize.url("user_id", user_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -253,19 +192,19 @@ class UserOperations(object):
                 'ETag': 'str',
             })
             return client_raw_response
-    get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}'}
+    get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}'}
 
     def get(
-            self, resource_group_name, service_name, uid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, user_id, custom_headers=None, raw=False, **operation_config):
         """Gets the details of the user specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param uid: User identifier. Must be unique in the current API
+        :param user_id: User identifier. Must be unique in the current API
          Management service instance.
-        :type uid: str
+        :type user_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -282,7 +221,7 @@ class UserOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'uid': self._serialize.url("uid", uid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'userId': self._serialize.url("user_id", user_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -323,19 +262,19 @@ class UserOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, uid, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, user_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
         """Creates or Updates a user.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param uid: User identifier. Must be unique in the current API
+        :param user_id: User identifier. Must be unique in the current API
          Management service instance.
-        :type uid: str
+        :type user_id: str
         :param parameters: Create or update parameters.
         :type parameters:
          ~azure.mgmt.apimanagement.models.UserCreateParameters
@@ -358,7 +297,7 @@ class UserOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'uid': self._serialize.url("uid", uid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'userId': self._serialize.url("user_id", user_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -391,30 +330,38 @@ class UserOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
             deserialized = self._deserialize('UserContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
         if response.status_code == 201:
             deserialized = self._deserialize('UserContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}'}
 
     def update(
-            self, resource_group_name, service_name, uid, parameters, if_match, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, user_id, parameters, if_match, custom_headers=None, raw=False, **operation_config):
         """Updates the details of the user specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param uid: User identifier. Must be unique in the current API
+        :param user_id: User identifier. Must be unique in the current API
          Management service instance.
-        :type uid: str
+        :type user_id: str
         :param parameters: Update parameters.
         :type parameters:
          ~azure.mgmt.apimanagement.models.UserUpdateParameters
@@ -437,7 +384,7 @@ class UserOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'uid': self._serialize.url("uid", uid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'userId': self._serialize.url("user_id", user_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -470,19 +417,19 @@ class UserOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}'}
 
     def delete(
-            self, resource_group_name, service_name, uid, if_match, delete_subscriptions=None, notify=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, user_id, if_match, delete_subscriptions=None, notify=None, custom_headers=None, raw=False, **operation_config):
         """Deletes specific user.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param uid: User identifier. Must be unique in the current API
+        :param user_id: User identifier. Must be unique in the current API
          Management service instance.
-        :type uid: str
+        :type user_id: str
         :param if_match: ETag of the Entity. ETag should match the current
          entity state from the header response of the GET request or it should
          be * for unconditional update.
@@ -507,7 +454,7 @@ class UserOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'uid': self._serialize.url("uid", uid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'userId': self._serialize.url("user_id", user_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -540,10 +487,10 @@ class UserOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}'}
 
     def generate_sso_url(
-            self, resource_group_name, service_name, uid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, user_id, custom_headers=None, raw=False, **operation_config):
         """Retrieves a redirection URL containing an authentication token for
         signing a given user into the developer portal.
 
@@ -551,9 +498,9 @@ class UserOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param uid: User identifier. Must be unique in the current API
+        :param user_id: User identifier. Must be unique in the current API
          Management service instance.
-        :type uid: str
+        :type user_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -570,7 +517,7 @@ class UserOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'uid': self._serialize.url("uid", uid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'userId': self._serialize.url("user_id", user_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -606,19 +553,19 @@ class UserOperations(object):
             return client_raw_response
 
         return deserialized
-    generate_sso_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}/generateSsoUrl'}
+    generate_sso_url.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}/generateSsoUrl'}
 
     def get_shared_access_token(
-            self, resource_group_name, service_name, uid, expiry, key_type="primary", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, user_id, expiry, key_type="primary", custom_headers=None, raw=False, **operation_config):
         """Gets the Shared Access Authorization Token for the User.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param uid: User identifier. Must be unique in the current API
+        :param user_id: User identifier. Must be unique in the current API
          Management service instance.
-        :type uid: str
+        :type user_id: str
         :param key_type: The Key to be used to generate token for user.
          Possible values include: 'primary', 'secondary'
         :type key_type: str or ~azure.mgmt.apimanagement.models.KeyType
@@ -644,7 +591,7 @@ class UserOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'uid': self._serialize.url("uid", uid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'userId': self._serialize.url("user_id", user_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -684,4 +631,4 @@ class UserOperations(object):
             return client_raw_response
 
         return deserialized
-    get_shared_access_token.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}/token'}
+    get_shared_access_token.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}/token'}

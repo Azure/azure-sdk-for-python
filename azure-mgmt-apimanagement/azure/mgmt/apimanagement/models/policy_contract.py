@@ -26,32 +26,29 @@ class PolicyContract(Resource):
     :vartype name: str
     :ivar type: Resource type for API Management resource.
     :vartype type: str
-    :param policy_content: Required. Json escaped Xml Encoded contents of the
-     Policy.
-    :type policy_content: str
-    :param content_format: Format of the policyContent. Possible values
-     include: 'xml', 'xml-link', 'rawxml', 'rawxml-link'. Default value: "xml"
-     .
-    :type content_format: str or
-     ~azure.mgmt.apimanagement.models.PolicyContentFormat
+    :param value: Required. Contents of the Policy as defined by the format.
+    :type value: str
+    :param format: Format of the policyContent. Possible values include:
+     'xml', 'xml-link', 'rawxml', 'rawxml-link'. Default value: "xml" .
+    :type format: str or ~azure.mgmt.apimanagement.models.PolicyContentFormat
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'policy_content': {'required': True},
+        'value': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'policy_content': {'key': 'properties.policyContent', 'type': 'str'},
-        'content_format': {'key': 'properties.contentFormat', 'type': 'str'},
+        'value': {'key': 'properties.value', 'type': 'str'},
+        'format': {'key': 'properties.format', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(PolicyContract, self).__init__(**kwargs)
-        self.policy_content = kwargs.get('policy_content', None)
-        self.content_format = kwargs.get('content_format', "xml")
+        self.value = kwargs.get('value', None)
+        self.format = kwargs.get('format', "xml")

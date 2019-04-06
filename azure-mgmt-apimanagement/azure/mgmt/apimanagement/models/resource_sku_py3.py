@@ -16,7 +16,7 @@ class ResourceSku(Model):
     """Describes an available API Management SKU.
 
     :param name: Name of the Sku. Possible values include: 'Developer',
-     'Standard', 'Premium', 'Basic'
+     'Standard', 'Premium', 'Basic', 'Consumption'
     :type name: str or ~azure.mgmt.apimanagement.models.SkuType
     """
 

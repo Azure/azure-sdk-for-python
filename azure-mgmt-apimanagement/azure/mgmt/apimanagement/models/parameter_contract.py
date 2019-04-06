@@ -25,7 +25,7 @@ class ParameterContract(Model):
     :type type: str
     :param default_value: Default parameter value.
     :type default_value: str
-    :param required: whether parameter is required or not.
+    :param required: Specifies whether parameter is required or not.
     :type required: bool
     :param values: Parameter values.
     :type values: list[str]
