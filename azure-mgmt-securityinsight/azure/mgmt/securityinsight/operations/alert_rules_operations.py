@@ -39,7 +39,7 @@ class AlertRulesOperations(object):
 
     def list(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, custom_headers=None, raw=False, **operation_config):
-        """Gets all alert rules.
+        """Gets all scheduled alert rules.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -54,9 +54,9 @@ class AlertRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of AlertRule
+        :return: An iterator like instance of ScheduledAlertRule
         :rtype:
-         ~azure.mgmt.securityinsight.models.AlertRulePaged[~azure.mgmt.securityinsight.models.AlertRule]
+         ~azure.mgmt.securityinsight.models.ScheduledAlertRulePaged[~azure.mgmt.securityinsight.models.ScheduledAlertRule]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -102,11 +102,11 @@ class AlertRulesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AlertRulePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ScheduledAlertRulePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.AlertRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ScheduledAlertRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -114,7 +114,7 @@ class AlertRulesOperations(object):
 
     def get(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, rule_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the alert rule.
+        """Gets the scheduled alert rule.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -131,8 +131,8 @@ class AlertRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AlertRule or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.securityinsight.models.AlertRule or
+        :return: ScheduledAlertRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.securityinsight.models.ScheduledAlertRule or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -173,7 +173,7 @@ class AlertRulesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AlertRule', response)
+            deserialized = self._deserialize('ScheduledAlertRule', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -183,8 +183,8 @@ class AlertRulesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{operationalInsightsResourceProvider}/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/alertRules/{ruleId}'}
 
     def create_or_update(
-            self, resource_group_name, operational_insights_resource_provider, workspace_name, rule_id, alert_rule, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates the alert rule.
+            self, resource_group_name, operational_insights_resource_provider, workspace_name, rule_id, scheduled_alert_rule, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates the scheduled alert rule.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -196,15 +196,16 @@ class AlertRulesOperations(object):
         :type workspace_name: str
         :param rule_id: Alert rule ID
         :type rule_id: str
-        :param alert_rule: The alert rule
-        :type alert_rule: ~azure.mgmt.securityinsight.models.AlertRule
+        :param scheduled_alert_rule: The scheduled alert rule
+        :type scheduled_alert_rule:
+         ~azure.mgmt.securityinsight.models.ScheduledAlertRule
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AlertRule or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.securityinsight.models.AlertRule or
+        :return: ScheduledAlertRule or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.securityinsight.models.ScheduledAlertRule or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -235,7 +236,7 @@ class AlertRulesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(alert_rule, 'AlertRule')
+        body_content = self._serialize.body(scheduled_alert_rule, 'ScheduledAlertRule')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -249,9 +250,9 @@ class AlertRulesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AlertRule', response)
+            deserialized = self._deserialize('ScheduledAlertRule', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('AlertRule', response)
+            deserialized = self._deserialize('ScheduledAlertRule', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
