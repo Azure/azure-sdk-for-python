@@ -39,7 +39,7 @@ class RecommendedElasticPoolsOperations(object):
 
     def get(
             self, resource_group_name, server_name, recommended_elastic_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a recommented elastic pool.
+        """Gets a recommended elastic pool.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
@@ -179,7 +179,7 @@ class RecommendedElasticPoolsOperations(object):
 
     def list_metrics(
             self, resource_group_name, server_name, recommended_elastic_pool_name, custom_headers=None, raw=False, **operation_config):
-        """Returns recommented elastic pool metrics.
+        """Returns recommended elastic pool metrics.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure
