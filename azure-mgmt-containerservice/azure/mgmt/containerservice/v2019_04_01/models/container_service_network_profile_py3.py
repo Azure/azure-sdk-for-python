@@ -39,6 +39,10 @@ class ContainerServiceNetworkProfile(Model):
      bridge network. It must not overlap with any Subnet IP ranges or the
      Kubernetes service address range. Default value: "172.17.0.1/16" .
     :type docker_bridge_cidr: str
+    :param load_balancer_sku: The load balancer sku for the managed cluster.
+     Possible values include: 'standard', 'basic'
+    :type load_balancer_sku: str or
+     ~azure.mgmt.containerservice.v2019_04_01.models.LoadBalancerSku
     """
 
     _validation = {
@@ -55,9 +59,10 @@ class ContainerServiceNetworkProfile(Model):
         'service_cidr': {'key': 'serviceCidr', 'type': 'str'},
         'dns_service_ip': {'key': 'dnsServiceIP', 'type': 'str'},
         'docker_bridge_cidr': {'key': 'dockerBridgeCidr', 'type': 'str'},
+        'load_balancer_sku': {'key': 'loadBalancerSku', 'type': 'str'},
     }
 
-    def __init__(self, *, network_plugin="kubenet", network_policy=None, pod_cidr: str="10.244.0.0/16", service_cidr: str="10.0.0.0/16", dns_service_ip: str="10.0.0.10", docker_bridge_cidr: str="172.17.0.1/16", **kwargs) -> None:
+    def __init__(self, *, network_plugin="kubenet", network_policy=None, pod_cidr: str="10.244.0.0/16", service_cidr: str="10.0.0.0/16", dns_service_ip: str="10.0.0.10", docker_bridge_cidr: str="172.17.0.1/16", load_balancer_sku=None, **kwargs) -> None:
         super(ContainerServiceNetworkProfile, self).__init__(**kwargs)
         self.network_plugin = network_plugin
         self.network_policy = network_policy
@@ -65,3 +70,4 @@ class ContainerServiceNetworkProfile(Model):
         self.service_cidr = service_cidr
         self.dns_service_ip = dns_service_ip
         self.docker_bridge_cidr = docker_bridge_cidr
+        self.load_balancer_sku = load_balancer_sku

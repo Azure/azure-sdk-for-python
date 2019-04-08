@@ -71,6 +71,7 @@ from .container_service_client_enums import (
     AgentPoolType,
     NetworkPlugin,
     NetworkPolicy,
+    LoadBalancerSku,
 )
 
 __all__ = [
@@ -108,4 +109,5 @@ __all__ = [
     'AgentPoolType',
     'NetworkPlugin',
     'NetworkPolicy',
+    'LoadBalancerSku',
 ]
