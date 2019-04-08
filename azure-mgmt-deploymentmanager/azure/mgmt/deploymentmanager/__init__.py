@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_deployment_manager import AzureDeploymentManager
+from .deployment_manager_client import DeploymentManagerClient
 from .version import VERSION
 
-__all__ = ['AzureDeploymentManager']
+__all__ = ['DeploymentManagerClient']
 
 __version__ = VERSION
 
