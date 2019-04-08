@@ -92,7 +92,6 @@ class ReservationOperations(object):
 
         Split a `Reservation` into two `Reservation`s with specified quantity
         distribution.
-        .
 
         :param reservation_order_id: Order Id of the reservation
         :type reservation_order_id: str
@@ -478,7 +477,6 @@ class ReservationOperations(object):
         """Get `Reservation` revisions.
 
         List of all the revisions for the `Reservation`.
-        .
 
         :param reservation_id: Id of the Reservation Item
         :type reservation_id: str
