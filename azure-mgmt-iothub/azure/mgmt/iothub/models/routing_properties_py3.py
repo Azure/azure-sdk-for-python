@@ -29,16 +29,22 @@ class RoutingProperties(Model):
      set, the messages which do not meet any of the conditions specified in the
      'routes' section get routed to the built-in eventhub endpoint.
     :type fallback_route: ~azure.mgmt.iothub.models.FallbackRouteProperties
+    :param enrichments: The list of user-provided enrichments that the IoT hub
+     applies to messages to be delivered to built-in and custom endpoints. See:
+     https://aka.ms/telemetryoneventgrid
+    :type enrichments: list[~azure.mgmt.iothub.models.EnrichmentProperties]
     """
 
     _attribute_map = {
         'endpoints': {'key': 'endpoints', 'type': 'RoutingEndpoints'},
         'routes': {'key': 'routes', 'type': '[RouteProperties]'},
         'fallback_route': {'key': 'fallbackRoute', 'type': 'FallbackRouteProperties'},
+        'enrichments': {'key': 'enrichments', 'type': '[EnrichmentProperties]'},
     }
 
-    def __init__(self, *, endpoints=None, routes=None, fallback_route=None, **kwargs) -> None:
+    def __init__(self, *, endpoints=None, routes=None, fallback_route=None, enrichments=None, **kwargs) -> None:
         super(RoutingProperties, self).__init__(**kwargs)
         self.endpoints = endpoints
         self.routes = routes
         self.fallback_route = fallback_route
+        self.enrichments = enrichments

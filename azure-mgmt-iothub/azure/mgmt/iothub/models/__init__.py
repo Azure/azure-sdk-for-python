@@ -27,6 +27,7 @@ try:
     from .routing_endpoints_py3 import RoutingEndpoints
     from .route_properties_py3 import RouteProperties
     from .fallback_route_properties_py3 import FallbackRouteProperties
+    from .enrichment_properties_py3 import EnrichmentProperties
     from .routing_properties_py3 import RoutingProperties
     from .storage_endpoint_properties_py3 import StorageEndpointProperties
     from .messaging_endpoint_properties_py3 import MessagingEndpointProperties
@@ -86,6 +87,7 @@ except (SyntaxError, ImportError):
     from .routing_endpoints import RoutingEndpoints
     from .route_properties import RouteProperties
     from .fallback_route_properties import FallbackRouteProperties
+    from .enrichment_properties import EnrichmentProperties
     from .routing_properties import RoutingProperties
     from .storage_endpoint_properties import StorageEndpointProperties
     from .messaging_endpoint_properties import MessagingEndpointProperties
@@ -169,6 +171,7 @@ __all__ = [
     'RoutingEndpoints',
     'RouteProperties',
     'FallbackRouteProperties',
+    'EnrichmentProperties',
     'RoutingProperties',
     'StorageEndpointProperties',
     'MessagingEndpointProperties',
