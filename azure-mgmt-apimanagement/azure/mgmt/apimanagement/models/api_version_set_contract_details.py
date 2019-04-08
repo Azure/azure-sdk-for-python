@@ -19,6 +19,8 @@ class ApiVersionSetContractDetails(Model):
     :param id: Identifier for existing API Version Set. Omit this value to
      create a new Version Set.
     :type id: str
+    :param name: The display Name of the API Version Set.
+    :type name: str
     :param description: Description of API Version Set.
     :type description: str
     :param versioning_scheme: An value that determines where the API Version
@@ -35,6 +37,7 @@ class ApiVersionSetContractDetails(Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'versioning_scheme': {'key': 'versioningScheme', 'type': 'str'},
         'version_query_name': {'key': 'versionQueryName', 'type': 'str'},
@@ -44,6 +47,7 @@ class ApiVersionSetContractDetails(Model):
     def __init__(self, **kwargs):
         super(ApiVersionSetContractDetails, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
         self.versioning_scheme = kwargs.get('versioning_scheme', None)
         self.version_query_name = kwargs.get('version_query_name', None)
