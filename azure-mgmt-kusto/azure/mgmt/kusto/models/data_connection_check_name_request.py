@@ -12,40 +12,35 @@
 from msrest.serialization import Model
 
 
-class AzureSku(Model):
-    """Azure SKU definition.
+class DataConnectionCheckNameRequest(Model):
+    """The result returned from a data connections check name availability
+    request.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. SKU name. Possible values include:
-     'Standard_DS13_v2+1TB_PS', 'Standard_DS13_v2+2TB_PS',
-     'Standard_DS14_v2+3TB_PS', 'Standard_DS14_v2+4TB_PS', 'Standard_D13_v2',
-     'Standard_D14_v2', 'Standard_L8s', 'Standard_L16s', 'Standard_D11_v2',
-     'Standard_D12_v2', 'Standard_L4s', 'Dev(No SLA)_Standard_D11_v2'
-    :type name: str or ~azure.mgmt.kusto.models.AzureSkuName
-    :param capacity: SKU capacity.
-    :type capacity: int
-    :ivar tier: Required. SKU tier. Default value: "Standard" .
-    :vartype tier: str
+    :param name: Required. Data Connection name.
+    :type name: str
+    :ivar type: Required. The type of resource,
+     Microsoft.Kusto/clusters/databases/dataConnections. Default value:
+     "Microsoft.Kusto/clusters/databases/dataConnections" .
+    :vartype type: str
     """
 
     _validation = {
         'name': {'required': True},
-        'tier': {'required': True, 'constant': True},
+        'type': {'required': True, 'constant': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    tier = "Standard"
+    type = "Microsoft.Kusto/clusters/databases/dataConnections"
 
     def __init__(self, **kwargs):
-        super(AzureSku, self).__init__(**kwargs)
+        super(DataConnectionCheckNameRequest, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.capacity = kwargs.get('capacity', None)

@@ -691,9 +691,9 @@ class ClustersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of AzureSku
+        :return: An iterator like instance of SkuDescription
         :rtype:
-         ~azure.mgmt.kusto.models.AzureSkuPaged[~azure.mgmt.kusto.models.AzureSku]
+         ~azure.mgmt.kusto.models.SkuDescriptionPaged[~azure.mgmt.kusto.models.SkuDescription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -736,11 +736,11 @@ class ClustersOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AzureSkuPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.SkuDescriptionPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.AzureSkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.SkuDescriptionPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

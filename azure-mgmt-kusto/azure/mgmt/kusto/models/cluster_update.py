@@ -37,7 +37,8 @@ class ClusterUpdate(Resource):
      'Stopped', 'Starting', 'Updating'
     :vartype state: str or ~azure.mgmt.kusto.models.State
     :ivar provisioning_state: The provisioned state of the resource. Possible
-     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
+     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
+     'Moving'
     :vartype provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
     :ivar uri: The cluster URI.
@@ -47,6 +48,8 @@ class ClusterUpdate(Resource):
     :param trusted_external_tenants: The cluster's external tenants.
     :type trusted_external_tenants:
      list[~azure.mgmt.kusto.models.TrustedExternalTenant]
+    :param intelligent_autoscale: Intelligent auto scale definition.
+    :type intelligent_autoscale: ~azure.mgmt.kusto.models.IntelligentAutoscale
     """
 
     _validation = {
@@ -71,6 +74,7 @@ class ClusterUpdate(Resource):
         'uri': {'key': 'properties.uri', 'type': 'str'},
         'data_ingestion_uri': {'key': 'properties.dataIngestionUri', 'type': 'str'},
         'trusted_external_tenants': {'key': 'properties.trustedExternalTenants', 'type': '[TrustedExternalTenant]'},
+        'intelligent_autoscale': {'key': 'properties.intelligentAutoscale', 'type': 'IntelligentAutoscale'},
     }
 
     def __init__(self, **kwargs):
@@ -83,3 +87,4 @@ class ClusterUpdate(Resource):
         self.uri = None
         self.data_ingestion_uri = None
         self.trusted_external_tenants = kwargs.get('trusted_external_tenants', None)
+        self.intelligent_autoscale = kwargs.get('intelligent_autoscale', None)

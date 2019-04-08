@@ -11,9 +11,12 @@
 
 try:
     from .trusted_external_tenant_py3 import TrustedExternalTenant
+    from .intelligent_autoscale_py3 import IntelligentAutoscale
     from .azure_sku_py3 import AzureSku
     from .azure_capacity_py3 import AzureCapacity
     from .azure_resource_sku_py3 import AzureResourceSku
+    from .sku_location_info_item_py3 import SkuLocationInfoItem
+    from .sku_description_py3 import SkuDescription
     from .database_statistics_py3 import DatabaseStatistics
     from .cluster_py3 import Cluster
     from .cluster_update_py3 import ClusterUpdate
@@ -30,7 +33,9 @@ try:
     from .data_connection_validation_list_result_py3 import DataConnectionValidationListResult
     from .cluster_check_name_request_py3 import ClusterCheckNameRequest
     from .database_check_name_request_py3 import DatabaseCheckNameRequest
+    from .data_connection_check_name_request_py3 import DataConnectionCheckNameRequest
     from .check_name_result_py3 import CheckNameResult
+    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
     from .tracked_resource_py3 import TrackedResource
@@ -39,9 +44,12 @@ try:
     from .proxy_resource_py3 import ProxyResource
 except (SyntaxError, ImportError):
     from .trusted_external_tenant import TrustedExternalTenant
+    from .intelligent_autoscale import IntelligentAutoscale
     from .azure_sku import AzureSku
     from .azure_capacity import AzureCapacity
     from .azure_resource_sku import AzureResourceSku
+    from .sku_location_info_item import SkuLocationInfoItem
+    from .sku_description import SkuDescription
     from .database_statistics import DatabaseStatistics
     from .cluster import Cluster
     from .cluster_update import ClusterUpdate
@@ -58,7 +66,9 @@ except (SyntaxError, ImportError):
     from .data_connection_validation_list_result import DataConnectionValidationListResult
     from .cluster_check_name_request import ClusterCheckNameRequest
     from .database_check_name_request import DatabaseCheckNameRequest
+    from .data_connection_check_name_request import DataConnectionCheckNameRequest
     from .check_name_result import CheckNameResult
+    from .check_name_availability_result import CheckNameAvailabilityResult
     from .operation_display import OperationDisplay
     from .operation import Operation
     from .tracked_resource import TrackedResource
@@ -66,7 +76,7 @@ except (SyntaxError, ImportError):
     from .resource import Resource
     from .proxy_resource import ProxyResource
 from .cluster_paged import ClusterPaged
-from .azure_sku_paged import AzureSkuPaged
+from .sku_description_paged import SkuDescriptionPaged
 from .azure_resource_sku_paged import AzureResourceSkuPaged
 from .database_paged import DatabasePaged
 from .database_principal_paged import DatabasePrincipalPaged
@@ -80,13 +90,17 @@ from .kusto_management_client_enums import (
     DataFormat,
     DatabasePrincipalRole,
     DatabasePrincipalType,
+    NameAvailable,
 )
 
 __all__ = [
     'TrustedExternalTenant',
+    'IntelligentAutoscale',
     'AzureSku',
     'AzureCapacity',
     'AzureResourceSku',
+    'SkuLocationInfoItem',
+    'SkuDescription',
     'DatabaseStatistics',
     'Cluster',
     'ClusterUpdate',
@@ -103,7 +117,9 @@ __all__ = [
     'DataConnectionValidationListResult',
     'ClusterCheckNameRequest',
     'DatabaseCheckNameRequest',
+    'DataConnectionCheckNameRequest',
     'CheckNameResult',
+    'CheckNameAvailabilityResult',
     'OperationDisplay',
     'Operation',
     'TrackedResource',
@@ -111,7 +127,7 @@ __all__ = [
     'Resource',
     'ProxyResource',
     'ClusterPaged',
-    'AzureSkuPaged',
+    'SkuDescriptionPaged',
     'AzureResourceSkuPaged',
     'DatabasePaged',
     'DatabasePrincipalPaged',
@@ -124,4 +140,5 @@ __all__ = [
     'DataFormat',
     'DatabasePrincipalRole',
     'DatabasePrincipalType',
+    'NameAvailable',
 ]
