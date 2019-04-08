@@ -13,8 +13,7 @@ from msrest.serialization import Model
 
 
 class FailoverInput(Model):
-    """Use to provide failover region when requesting Customer Initiated Fail over
-    for a hub.
+    """Use to provide failover region when requesting manual Failover for a hub.
 
     All required parameters must be populated in order to send to Azure.
 

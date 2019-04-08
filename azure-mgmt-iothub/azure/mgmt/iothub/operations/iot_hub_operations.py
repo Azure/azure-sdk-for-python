@@ -36,11 +36,11 @@ class IotHubOperations(object):
 
         self.config = config
 
-    def customer_initiated_failover(
+    def manual_failover(
             self, iot_hub_name, resource_group_name, failover_region, custom_headers=None, raw=False, **operation_config):
-        """Customer Initiated Fail over.
+        """Manual Failover Fail over.
 
-        Perform customer initiated fail over of given hub.
+        Perform manual fail over of given hub.
 
         :param iot_hub_name: IotHub to fail over
         :type iot_hub_name: str
@@ -62,7 +62,7 @@ class IotHubOperations(object):
         failover_input = models.FailoverInput(failover_region=failover_region)
 
         # Construct URL
-        url = self.customer_initiated_failover.metadata['url']
+        url = self.manual_failover.metadata['url']
         path_format_arguments = {
             'iotHubName': self._serialize.url("iot_hub_name", iot_hub_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
@@ -105,4 +105,4 @@ class IotHubOperations(object):
             return client_raw_response
 
         return deserialized
-    customer_initiated_failover.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{iotHubName}/failover'}
+    manual_failover.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/IotHubs/{iotHubName}/failover'}
