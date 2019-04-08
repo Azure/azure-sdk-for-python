@@ -18,7 +18,7 @@ Usage
 =====
 
 For code examples, see `Resource Graph
-<https://docs.microsoft.com/python/api/overview/azure/>`__
+<https://docs.microsoft.com/python/api/overview/azure/resourcegraph>`__
 on docs.microsoft.com.
 
 

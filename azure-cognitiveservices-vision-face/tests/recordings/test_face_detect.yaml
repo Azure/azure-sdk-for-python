@@ -266,18 +266,19 @@ interactions:
       Connection: [keep-alive]
       Content-Type: [application/octet-stream]
       Transfer-Encoding: [chunked]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
-          faceapi/1.0]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.17134-SP0) requests/2.19.1 msrest/0.5.4
+          azure-cognitiveservices-vision-face/0.3.0]
+      X-BingApis-SDK-Client: [Python-SDK]
     method: POST
-    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceId=true&returnFaceLandmarks=false&returnFaceAttributes=age%2Cgender%2CheadPose%2Csmile%2CfacialHair%2Cglasses%2Cemotion%2Chair%2Cmakeup%2Cocclusion%2Caccessories%2Cblur%2Cexposure%2Cnoise
+    uri: https://westus2.api.cognitive.microsoft.com/face/v1.0/detect?returnFaceId=true&returnFaceLandmarks=false&returnFaceAttributes=age%2Cgender%2CheadPose%2Csmile%2CfacialHair%2Cglasses%2Cemotion%2Chair%2Cmakeup%2Cocclusion%2Caccessories%2Cblur%2Cexposure%2Cnoise&recognitionModel=recognition_01&returnRecognitionModel=false
   response:
-    body: {string: '[{"faceId":"7636c821-f976-4aac-8374-0bcfeaafe139","faceRectangle":{"top":84,"left":31,"width":97,"height":97},"faceAttributes":{"smile":1.0,"headPose":{"pitch":0.0,"roll":-0.7,"yaw":-2.4},"gender":"female","age":52.4,"facialHair":{"moustache":0.0,"beard":0.0,"sideburns":0.0},"glasses":"NoGlasses","emotion":{"anger":0.0,"contempt":0.0,"disgust":0.0,"fear":0.0,"happiness":1.0,"neutral":0.0,"sadness":0.0,"surprise":0.0},"blur":{"blurLevel":"low","value":0.0},"exposure":{"exposureLevel":"goodExposure","value":0.72},"noise":{"noiseLevel":"low","value":0.03},"makeup":{"eyeMakeup":true,"lipMakeup":true},"accessories":[],"occlusion":{"foreheadOccluded":false,"eyeOccluded":false,"mouthOccluded":false},"hair":{"bald":0.04,"invisible":false,"hairColor":[{"color":"blond","confidence":1.0},{"color":"gray","confidence":0.47},{"color":"other","confidence":0.41},{"color":"black","confidence":0.19},{"color":"brown","confidence":0.16},{"color":"red","confidence":0.14}]}}}]'}
+    body: {string: '[{"faceId":"62b7416d-5fe0-444b-a880-7c8864802144","faceRectangle":{"top":84,"left":31,"width":97,"height":97},"faceAttributes":{"smile":1.0,"headPose":{"pitch":0.0,"roll":-0.7,"yaw":-2.4},"gender":"female","age":47.0,"facialHair":{"moustache":0.0,"beard":0.0,"sideburns":0.0},"glasses":"NoGlasses","emotion":{"anger":0.0,"contempt":0.0,"disgust":0.0,"fear":0.0,"happiness":1.0,"neutral":0.0,"sadness":0.0,"surprise":0.0},"blur":{"blurLevel":"low","value":0.0},"exposure":{"exposureLevel":"goodExposure","value":0.72},"noise":{"noiseLevel":"low","value":0.03},"makeup":{"eyeMakeup":true,"lipMakeup":true},"accessories":[],"occlusion":{"foreheadOccluded":false,"eyeOccluded":false,"mouthOccluded":false},"hair":{"bald":0.66,"invisible":false,"hairColor":[{"color":"blond","confidence":1.0},{"color":"gray","confidence":0.93},{"color":"other","confidence":0.48},{"color":"red","confidence":0.05},{"color":"black","confidence":0.04},{"color":"brown","confidence":0.02}]}}}]'}
     headers:
-      apim-request-id: [afc7e3a8-047c-49fa-a7e8-d1783f103da6]
+      apim-request-id: [2982fda4-a4d4-419a-af72-12f2ba2ddfd2]
       cache-control: [no-cache]
       content-length: ['969']
       content-type: [application/json; charset=utf-8]
-      date: ['Thu, 19 Oct 2017 22:59:15 GMT']
+      date: ['Fri, 29 Mar 2019 23:06:29 GMT']
       expires: ['-1']
       pragma: [no-cache]
       strict-transport-security: [max-age=31536000; includeSubDomains; preload]
