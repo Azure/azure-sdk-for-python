@@ -70,6 +70,7 @@ try:
     from .codec_py3 import Codec
     from .audio_py3 import Audio
     from .aac_audio_py3 import AacAudio
+    from .face_detector_preset_py3 import FaceDetectorPreset
     from .audio_analyzer_preset_py3 import AudioAnalyzerPreset
     from .overlay_py3 import Overlay
     from .audio_overlay_py3 import AudioOverlay
@@ -212,6 +213,7 @@ except (SyntaxError, ImportError):
     from .codec import Codec
     from .audio import Audio
     from .aac_audio import AacAudio
+    from .face_detector_preset import FaceDetectorPreset
     from .audio_analyzer_preset import AudioAnalyzerPreset
     from .overlay import Overlay
     from .audio_overlay import AudioOverlay
@@ -321,6 +323,7 @@ from .azure_media_services_enums import (
     ContentKeyPolicyRestrictionTokenType,
     ContentKeyPolicyFairPlayRentalAndLeaseKeyType,
     AacAudioProfile,
+    AnalysisResolution,
     StretchMode,
     DeinterlaceParity,
     DeinterlaceMode,
@@ -410,6 +413,7 @@ __all__ = [
     'Codec',
     'Audio',
     'AacAudio',
+    'FaceDetectorPreset',
     'AudioAnalyzerPreset',
     'Overlay',
     'AudioOverlay',
@@ -518,6 +522,7 @@ __all__ = [
     'ContentKeyPolicyRestrictionTokenType',
     'ContentKeyPolicyFairPlayRentalAndLeaseKeyType',
     'AacAudioProfile',
+    'AnalysisResolution',
     'StretchMode',
     'DeinterlaceParity',
     'DeinterlaceMode',

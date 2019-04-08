@@ -37,7 +37,7 @@ class CapacityPool(Model):
      value: 4398046511104 .
     :type size: long
     :param service_level: serviceLevel. The service level of the file system.
-     Possible values include: 'Standard', 'Premium', 'Extreme'. Default value:
+     Possible values include: 'Standard', 'Premium', 'Ultra'. Default value:
      "Premium" .
     :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar provisioning_state: Azure lifecycle management

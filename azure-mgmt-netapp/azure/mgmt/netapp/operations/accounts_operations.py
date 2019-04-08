@@ -167,9 +167,7 @@ class AccountsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, account_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
-        body = models.NetAppAccount(location=location, tags=tags)
-
+            self, body, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -201,11 +199,13 @@ class AccountsOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201, 202]:
+        if response.status_code not in [200, 201, 202]:
             raise models.ErrorException(self._deserialize, response)
 
         deserialized = None
 
+        if response.status_code == 200:
+            deserialized = self._deserialize('NetAppAccount', response)
         if response.status_code == 201:
             deserialized = self._deserialize('NetAppAccount', response)
 
@@ -216,17 +216,16 @@ class AccountsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, account_name, location, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, body, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update a NetApp account.
 
+        :param body: NetApp Account object supplied in the body of the
+         operation.
+        :type body: ~azure.mgmt.netapp.models.NetAppAccount
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
-        :param location: Resource location
-        :type location: str
-        :param tags: Resource tags
-        :type tags: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -242,10 +241,9 @@ class AccountsOperations(object):
          :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
         """
         raw_result = self._create_or_update_initial(
+            body=body,
             resource_group_name=resource_group_name,
             account_name=account_name,
-            location=location,
-            tags=tags,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -348,15 +346,16 @@ class AccountsOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}
 
     def update(
-            self, resource_group_name, account_name, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, body, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """Patch a NetApp account.
 
+        :param body: NetApp Account object supplied in the body of the
+         operation.
+        :type body: ~azure.mgmt.netapp.models.NetAppAccountPatch
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
-        :param tags: Resource tags
-        :type tags: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -368,8 +367,6 @@ class AccountsOperations(object):
         :raises:
          :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
         """
-        body = models.NetAppAccountPatch(tags=tags)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

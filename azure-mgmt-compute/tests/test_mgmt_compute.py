@@ -10,6 +10,7 @@ import unittest
 from collections import namedtuple
 
 import azure.mgmt.compute
+import azure.mgmt.compute.models # Check that models compat still works
 import azure.mgmt.network.models
 import azure.mgmt.storage.models
 from devtools_testutils import (
