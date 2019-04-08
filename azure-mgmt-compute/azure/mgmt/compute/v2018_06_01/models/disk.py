@@ -59,11 +59,15 @@ class Disk(Resource):
     :vartype provisioning_state: str
     :param disk_iops_read_write: The number of IOPS allowed for this disk;
      only settable for UltraSSD disks. One operation can transfer between 4k
-     and 256k bytes.
+     and 256k bytes. For a description of the range of values you can set, see
+     [Ultra SSD Managed Disk
+     Offerings](https://docs.microsoft.com/azure/virtual-machines/windows/disks-ultra-ssd#ultra-ssd-managed-disk-offerings).
     :type disk_iops_read_write: long
     :param disk_mbps_read_write: The bandwidth allowed for this disk; only
      settable for UltraSSD disks. MBps means millions of bytes per second - MB
-     here uses the ISO notation, of powers of 10.
+     here uses the ISO notation, of powers of 10. For a description of the
+     range of values you can set, see [Ultra SSD Managed Disk
+     Offerings](https://docs.microsoft.com/azure/virtual-machines/windows/disks-ultra-ssd#ultra-ssd-managed-disk-offerings).
     :type disk_mbps_read_write: int
     """
 
