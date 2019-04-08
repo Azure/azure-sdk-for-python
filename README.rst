@@ -50,12 +50,6 @@ You can also install a set of Azure libraries in a single line using the ``azure
 
    $ pip install azure
 
-We publish a preview version of this package, which you can access using the `--pre` flag:
-
-.. code-block:: console
-
-   $ pip install --pre azure
-
 The full list of available packages and their latest version can be found on our 
 `documentation on docs.microsoft.com <https://docs.microsoft.com/python/azure/>`__
 
