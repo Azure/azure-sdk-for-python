@@ -49,9 +49,11 @@ class SecretAttributes(Model):
             self._vault_id = _parse_vault_id(self.id)
         self.content_type = kwargs.get('content_type', None)
         self._management_attributes = kwargs.get('_management_attributes', None)
+        if not self._management_attributes:
+            self._management_attributes = _SecretManagementAttributes(**kwargs)
         self.tags = kwargs.get('tags', None)
-        # self.key_id = None
-        # self.managed = None
+        self.key_id = None
+        self.managed = None
 
     @property
     def enabled(self):
@@ -140,6 +142,7 @@ class Secret(SecretAttributes):
     def __init__(self, **kwargs):
         # type: (Mapping[str, Any]) -> None
         super(Secret, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
 
 
 class SecretAttributesPaged(Paged):

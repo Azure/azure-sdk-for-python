@@ -95,6 +95,6 @@ class _SecretManagementAttributes(Model):
         self.enabled = kwargs.get("enabled", None)
         self.not_before = kwargs.get("not_before", None)
         self.expires = kwargs.get("expires", None)
-        # self.created = None
-        # self.updated = None
-        # self.recovery_level = None
+        self.created = None
+        self.updated = None
+        self.recovery_level = None
