@@ -30,7 +30,7 @@ class CustomRegistryCredentials(Model):
      be `system`. In
      the case of a system-assigned identity, the Client ID will be determined
      by the runner. This
-     identity may be used to authenticate to key vault to retreive credentials
+     identity may be used to authenticate to key vault to retrieve credentials
      or it may be the only
      source of authentication used for accessing the registry.
     :type identity: str
