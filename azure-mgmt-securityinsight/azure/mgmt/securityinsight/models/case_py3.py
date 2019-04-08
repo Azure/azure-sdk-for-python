@@ -18,8 +18,6 @@ class Case(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: Azure resource Id
     :vartype id: str
     :ivar type: Azure resource type
@@ -40,15 +38,15 @@ class Case(Resource):
     :type labels: list[str]
     :param description: The description of the case
     :type description: str
-    :param title: Required. The title of the case
+    :param title: The title of the case
     :type title: str
     :param assigned_to: Describes a user that the case is assigned to
     :type assigned_to: ~azure.mgmt.securityinsight.models.UserInfo
-    :param severity: Required. The severity of the case. Possible values
-     include: 'Critical', 'High', 'Medium', 'Low', 'Informational'
+    :param severity: The severity of the case. Possible values include:
+     'Critical', 'High', 'Medium', 'Low', 'Informational'
     :type severity: str or ~azure.mgmt.securityinsight.models.CaseSeverity
-    :param status: Required. The status of the case. Possible values include:
-     'Draft', 'Open', 'InProgress', 'Closed'
+    :param status: The status of the case. Possible values include: 'Draft',
+     'Open', 'InProgress', 'Closed'
     :type status: str or ~azure.mgmt.securityinsight.models.CaseStatus
     :param close_reason: The reason the case was closed. Possible values
      include: 'Resolved', 'Dismissed', 'Other'
@@ -59,9 +57,6 @@ class Case(Resource):
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
-        'title': {'required': True},
-        'severity': {'required': True},
-        'status': {'required': True},
     }
 
     _attribute_map = {
@@ -69,20 +64,20 @@ class Case(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'last_updated_time_utc': {'key': 'properties.lastUpdatedTimeUtc', 'type': 'iso-8601'},
-        'created_time_utc': {'key': 'properties.createdTimeUtc', 'type': 'iso-8601'},
-        'end_time_utc': {'key': 'properties.endTimeUtc', 'type': 'iso-8601'},
-        'start_time_utc': {'key': 'properties.startTimeUtc', 'type': 'iso-8601'},
-        'labels': {'key': 'properties.labels', 'type': '[str]'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'title': {'key': 'properties.title', 'type': 'str'},
-        'assigned_to': {'key': 'properties.assignedTo', 'type': 'UserInfo'},
-        'severity': {'key': 'properties.severity', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'close_reason': {'key': 'properties.closeReason', 'type': 'str'},
+        'last_updated_time_utc': {'key': 'properties.LastUpdatedTimeUtc', 'type': 'iso-8601'},
+        'created_time_utc': {'key': 'properties.CreatedTimeUtc', 'type': 'iso-8601'},
+        'end_time_utc': {'key': 'properties.EndTimeUtc', 'type': 'iso-8601'},
+        'start_time_utc': {'key': 'properties.StartTimeUtc', 'type': 'iso-8601'},
+        'labels': {'key': 'properties.Labels', 'type': '[str]'},
+        'description': {'key': 'properties.Description', 'type': 'str'},
+        'title': {'key': 'properties.Title', 'type': 'str'},
+        'assigned_to': {'key': 'properties.AssignedTo', 'type': 'UserInfo'},
+        'severity': {'key': 'properties.Severity', 'type': 'str'},
+        'status': {'key': 'properties.Status', 'type': 'str'},
+        'close_reason': {'key': 'properties.CloseReason', 'type': 'str'},
     }
 
-    def __init__(self, *, title: str, severity, status, etag: str=None, last_updated_time_utc=None, created_time_utc=None, end_time_utc=None, start_time_utc=None, labels=None, description: str=None, assigned_to=None, close_reason=None, **kwargs) -> None:
+    def __init__(self, *, etag: str=None, last_updated_time_utc=None, created_time_utc=None, end_time_utc=None, start_time_utc=None, labels=None, description: str=None, title: str=None, assigned_to=None, severity=None, status=None, close_reason=None, **kwargs) -> None:
         super(Case, self).__init__(**kwargs)
         self.etag = etag
         self.last_updated_time_utc = last_updated_time_utc

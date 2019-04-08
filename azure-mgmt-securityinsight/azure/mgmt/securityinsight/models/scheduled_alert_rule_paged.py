@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class AlertRulePaged(Paged):
+class ScheduledAlertRulePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`AlertRule <azure.mgmt.securityinsight.models.AlertRule>` object
+    A paging container for iterating over a list of :class:`ScheduledAlertRule <azure.mgmt.securityinsight.models.ScheduledAlertRule>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[AlertRule]'}
+        'current_page': {'key': 'value', 'type': '[ScheduledAlertRule]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(AlertRulePaged, self).__init__(*args, **kwargs)
+        super(ScheduledAlertRulePaged, self).__init__(*args, **kwargs)

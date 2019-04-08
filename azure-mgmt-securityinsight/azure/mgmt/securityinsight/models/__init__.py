@@ -13,6 +13,7 @@ try:
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
     from .alert_rule_py3 import AlertRule
+    from .alert_rules_list_py3 import AlertRulesList
     from .alert_rule_kind1_py3 import AlertRuleKind1
     from .scheduled_alert_rule_py3 import ScheduledAlertRule
     from .action_py3 import Action
@@ -53,6 +54,7 @@ except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .operation import Operation
     from .alert_rule import AlertRule
+    from .alert_rules_list import AlertRulesList
     from .alert_rule_kind1 import AlertRuleKind1
     from .scheduled_alert_rule import ScheduledAlertRule
     from .action import Action
@@ -90,7 +92,7 @@ except (SyntaxError, ImportError):
     from .aggregations import Aggregations
     from .aggregations_kind1 import AggregationsKind1
 from .operation_paged import OperationPaged
-from .alert_rule_paged import AlertRulePaged
+from .scheduled_alert_rule_paged import ScheduledAlertRulePaged
 from .action_paged import ActionPaged
 from .case_paged import CasePaged
 from .bookmark_paged import BookmarkPaged
@@ -117,6 +119,7 @@ __all__ = [
     'OperationDisplay',
     'Operation',
     'AlertRule',
+    'AlertRulesList',
     'AlertRuleKind1',
     'ScheduledAlertRule',
     'Action',
@@ -154,7 +157,7 @@ __all__ = [
     'Aggregations',
     'AggregationsKind1',
     'OperationPaged',
-    'AlertRulePaged',
+    'ScheduledAlertRulePaged',
     'ActionPaged',
     'CasePaged',
     'BookmarkPaged',
