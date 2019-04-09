@@ -12,6 +12,7 @@ import time
 import json
 
 from azure.eventhub import EventData, EventHubClientAsync
+from uamqp import Message
 
 
 @pytest.mark.liveTest
@@ -222,3 +223,44 @@ async def test_send_multiple_clients_async(connstr_receivers):
     assert len(partition_0) == 1
     partition_1 = receivers[1].receive(timeout=2)
     assert len(partition_1) == 1
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_send_batch_with_app_prop_async(connstr_receivers):
+    connection_str, receivers = connstr_receivers
+
+    def batched():
+        for i in range(10):
+            yield "Event number {}".format(i)
+        for i in range(10, 20):
+            yield Message(body=("Event number {}".format(i)))
+
+    client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
+    sender = client.add_async_sender()
+    try:
+        await client.run_async()
+
+        app_prop_key = "raw_prop"
+        app_prop_value = "raw_value"
+        batch_app_prop = {app_prop_key:app_prop_value}
+        batch_event = EventData(batch=batched())
+        batch_event.application_properties = batch_app_prop
+
+        await sender.send(batch_event)
+    except:
+        raise
+    finally:
+        await client.stop_async()
+
+    time.sleep(1)
+
+    received = []
+    for r in receivers:
+        received.extend(r.receive(timeout=3))
+
+    assert len(received) == 20
+    for index, message in enumerate(received):
+        assert list(message.body)[0] == "Event number {}".format(index).encode('utf-8')
+        assert (app_prop_key.encode('utf-8') in message.application_properties) \
+            and (dict(message.application_properties)[app_prop_key.encode('utf-8')] == app_prop_value.encode('utf-8'))

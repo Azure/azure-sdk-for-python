@@ -11,7 +11,7 @@ import time
 
 from azure import eventhub
 from azure.eventhub import EventData, Offset, EventHubError, EventHubClientAsync
-
+from uamqp import Message
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
@@ -306,3 +306,44 @@ async def test_non_epoch_receiver_after_epoch_receiver_async(connstr_senders):
     finally:
         await client.stop_async()
 
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_receive_batch_with_app_prop_async(connstr_senders):
+    connection_str, senders = connstr_senders
+
+    def batched():
+        for i in range(10):
+            yield "Event Data {}".format(i)
+        for i in range(10, 20):
+            yield Message(body=("Event Data {}".format(i)))
+
+    client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
+    receiver = client.add_async_receiver("$default", "0", prefetch=500, offset=Offset('@latest'))
+    try:
+        await client.run_async()
+
+        received = await receiver.receive(timeout=5)
+        assert len(received) == 0
+
+        app_prop_key = "raw_prop"
+        app_prop_value = "raw_value"
+        batch_app_prop = {app_prop_key:app_prop_value}
+        batch_event = EventData(batch=batched())
+        batch_event.application_properties = batch_app_prop
+
+        senders[0].send(batch_event)
+
+        await asyncio.sleep(1)
+
+        received = await receiver.receive(max_batch_size=15, timeout=5)
+        assert len(received) == 15
+
+        for index, message in enumerate(received):
+            assert list(message.body)[0] == "Event Data {}".format(index).encode('utf-8')
+            assert (app_prop_key.encode('utf-8') in message.application_properties) \
+                and (dict(message.application_properties)[app_prop_key.encode('utf-8')] == app_prop_value.encode('utf-8'))
+    except:
+        raise
+    finally:
+        await client.stop_async()
