@@ -25,6 +25,9 @@ class OpenShiftManagedClusterAADIdentityProvider(OpenShiftManagedClusterBaseIden
     :type secret: str
     :param tenant_id: The tenantId associated with the provider.
     :type tenant_id: str
+    :param customer_admin_group_id: The groupId to be granted cluster admin
+     role.
+    :type customer_admin_group_id: str
     """
 
     _validation = {
@@ -36,6 +39,7 @@ class OpenShiftManagedClusterAADIdentityProvider(OpenShiftManagedClusterBaseIden
         'client_id': {'key': 'clientId', 'type': 'str'},
         'secret': {'key': 'secret', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'customer_admin_group_id': {'key': 'customerAdminGroupId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -43,4 +47,5 @@ class OpenShiftManagedClusterAADIdentityProvider(OpenShiftManagedClusterBaseIden
         self.client_id = kwargs.get('client_id', None)
         self.secret = kwargs.get('secret', None)
         self.tenant_id = kwargs.get('tenant_id', None)
+        self.customer_admin_group_id = kwargs.get('customer_admin_group_id', None)
         self.kind = 'AADIdentityProvider'

@@ -3,6 +3,23 @@
 Release History
 ===============
 
+1.0.0 (2019-03-22)
+++++++++++++++++++
+
+This is a stable release of the Cognitive Services Custom Vision SDK.
+
+**Training**
+
+- Added an advanced training option to set a budget to train longer for improved iteration performance.
+- Added additional export options targetting Vision AI Dev Kit and Docker ARM for Raspberry Pi.
+
+**Prediction**
+
+- PredictImage and PredictImageUrl have been replaced with project type specific calls.
+  ClassifyImage and ClassifyImageUrl for image classification projects.
+  DetectImage and DetectImageUrl for object detection projects .
+- Prediction methods now take a name to designate which published iteration to use. Iterations can be published using the Custom Vision Training SDK.
+
 0.4.0 (2018-11-13)
 ++++++++++++++++++
 
