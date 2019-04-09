@@ -217,6 +217,7 @@ class AzureFirewallRCActionType(str, Enum):
 
     allow = "Allow"
     deny = "Deny"
+    alert = "Alert"
 
 
 class AzureFirewallApplicationRuleProtocolType(str, Enum):
@@ -372,6 +373,12 @@ class LoadBalancerOutboundRuleProtocol(str, Enum):
     tcp = "Tcp"
     udp = "Udp"
     all = "All"
+
+
+class NatGatewaySkuName(str, Enum):
+
+    basic = "Basic"
+    standard = "Standard"
 
 
 class NetworkOperationStatus(str, Enum):

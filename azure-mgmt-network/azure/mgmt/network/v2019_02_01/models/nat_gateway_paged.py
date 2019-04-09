@@ -9,22 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class AzureFirewallRCAction(Model):
-    """Properties of the AzureFirewallRCAction.
-
-    :param type: The type of action. Possible values include: 'Allow', 'Deny',
-     'Alert'
-    :type type: str or
-     ~azure.mgmt.network.v2019_02_01.models.AzureFirewallRCActionType
+class NatGatewayPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`NatGateway <azure.mgmt.network.v2019_02_01.models.NatGateway>` object
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[NatGateway]'}
     }
 
-    def __init__(self, **kwargs):
-        super(AzureFirewallRCAction, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
+    def __init__(self, *args, **kwargs):
+
+        super(NatGatewayPaged, self).__init__(*args, **kwargs)

@@ -30,6 +30,8 @@ class Subnet(SubResource):
      ~azure.mgmt.network.v2019_02_01.models.NetworkSecurityGroup
     :param route_table: The reference of the RouteTable resource.
     :type route_table: ~azure.mgmt.network.v2019_02_01.models.RouteTable
+    :param nat_gateway: Nat gateway associated with this subnet.
+    :type nat_gateway: ~azure.mgmt.network.v2019_02_01.models.SubResource
     :param service_endpoints: An array of service endpoints.
     :type service_endpoints:
      list[~azure.mgmt.network.v2019_02_01.models.ServiceEndpointPropertiesFormat]
@@ -84,6 +86,7 @@ class Subnet(SubResource):
         'address_prefixes': {'key': 'properties.addressPrefixes', 'type': '[str]'},
         'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
         'route_table': {'key': 'properties.routeTable', 'type': 'RouteTable'},
+        'nat_gateway': {'key': 'properties.natGateway', 'type': 'SubResource'},
         'service_endpoints': {'key': 'properties.serviceEndpoints', 'type': '[ServiceEndpointPropertiesFormat]'},
         'service_endpoint_policies': {'key': 'properties.serviceEndpointPolicies', 'type': '[ServiceEndpointPolicy]'},
         'interface_endpoints': {'key': 'properties.interfaceEndpoints', 'type': '[InterfaceEndpoint]'},
@@ -98,12 +101,13 @@ class Subnet(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, address_prefix: str=None, address_prefixes=None, network_security_group=None, route_table=None, service_endpoints=None, service_endpoint_policies=None, resource_navigation_links=None, service_association_links=None, delegations=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, address_prefix: str=None, address_prefixes=None, network_security_group=None, route_table=None, nat_gateway=None, service_endpoints=None, service_endpoint_policies=None, resource_navigation_links=None, service_association_links=None, delegations=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
         super(Subnet, self).__init__(id=id, **kwargs)
         self.address_prefix = address_prefix
         self.address_prefixes = address_prefixes
         self.network_security_group = network_security_group
         self.route_table = route_table
+        self.nat_gateway = nat_gateway
         self.service_endpoints = service_endpoints
         self.service_endpoint_policies = service_endpoint_policies
         self.interface_endpoints = None

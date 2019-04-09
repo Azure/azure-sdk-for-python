@@ -40,6 +40,7 @@ from .load_balancer_load_balancing_rules_operations import LoadBalancerLoadBalan
 from .load_balancer_outbound_rules_operations import LoadBalancerOutboundRulesOperations
 from .load_balancer_network_interfaces_operations import LoadBalancerNetworkInterfacesOperations
 from .load_balancer_probes_operations import LoadBalancerProbesOperations
+from .nat_gateways_operations import NatGatewaysOperations
 from .network_interfaces_operations import NetworkInterfacesOperations
 from .network_interface_ip_configurations_operations import NetworkInterfaceIPConfigurationsOperations
 from .network_interface_load_balancers_operations import NetworkInterfaceLoadBalancersOperations
@@ -112,6 +113,7 @@ __all__ = [
     'LoadBalancerOutboundRulesOperations',
     'LoadBalancerNetworkInterfacesOperations',
     'LoadBalancerProbesOperations',
+    'NatGatewaysOperations',
     'NetworkInterfacesOperations',
     'NetworkInterfaceIPConfigurationsOperations',
     'NetworkInterfaceLoadBalancersOperations',

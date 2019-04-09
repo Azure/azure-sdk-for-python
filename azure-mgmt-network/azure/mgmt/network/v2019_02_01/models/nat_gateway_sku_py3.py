@@ -12,19 +12,19 @@
 from msrest.serialization import Model
 
 
-class AzureFirewallRCAction(Model):
-    """Properties of the AzureFirewallRCAction.
+class NatGatewaySku(Model):
+    """SKU of nat gateway.
 
-    :param type: The type of action. Possible values include: 'Allow', 'Deny',
-     'Alert'
-    :type type: str or
-     ~azure.mgmt.network.v2019_02_01.models.AzureFirewallRCActionType
+    :param name: Name of Nat Gateway SKU. Possible values include: 'Basic',
+     'Standard'
+    :type name: str or
+     ~azure.mgmt.network.v2019_02_01.models.NatGatewaySkuName
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(AzureFirewallRCAction, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
+    def __init__(self, *, name=None, **kwargs) -> None:
+        super(NatGatewaySku, self).__init__(**kwargs)
+        self.name = name
