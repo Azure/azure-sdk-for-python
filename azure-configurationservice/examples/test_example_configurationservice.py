@@ -46,6 +46,7 @@ class AzConfigurationClientExamples(unittest.TestCase):
         self._delete_from_test("MyKey", "MyLabel")
 
     def test_azconfig_client_sample(self):
+        # This is not unit test code. Just to verify if these sample code snippets work.
 
         client = self.client
         # [START add_configuration_setting]

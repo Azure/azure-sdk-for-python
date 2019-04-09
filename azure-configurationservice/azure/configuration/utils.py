@@ -14,26 +14,26 @@ def get_endpoint_from_connection_string(connection_string):
 
 def parse_connection_string(connection_string):
     # connection_string looks like Endpoint=https://xxxxx;Id=xxxxx;Secret=xxxx
-    segments = connection_string.split(';')
+    segments = connection_string.split(";")
     if len(segments) != 3:
-        raise ValueError('Invalid connection string.')
-    
-    endpoint = ''
-    id_ = ''
-    secret = ''
+        raise ValueError("Invalid connection string.")
+
+    endpoint = ""
+    id_ = ""
+    secret = ""
     for segment in segments:
         segment = segment.strip()
-        if segment.startswith('Endpoint'):
+        if segment.startswith("Endpoint"):
             endpoint = str(segment[17:])
-        elif segment.startswith('Id'):
+        elif segment.startswith("Id"):
             id_ = str(segment[3:])
-        elif segment.startswith('Secret'):
+        elif segment.startswith("Secret"):
             secret = str(segment[7:])
         else:
-            raise ValueError('Invalid connection string.')
-    
+            raise ValueError("Invalid connection string.")
+
     if not endpoint or not id_ or not secret:
-        raise ValueError('Invalid connection string.')
+        raise ValueError("Invalid connection string.")
 
     return endpoint, id_, secret
 

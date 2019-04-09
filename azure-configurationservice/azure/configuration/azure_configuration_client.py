@@ -39,23 +39,23 @@ class AzureConfigurationClient(object):
     def __init__(self, connection_string):
 
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
-        self._client = _generated.AzureConfigurationClientImp(
+        self._impl = _generated.AzureConfigurationClientImp(
             connection_string, base_url
         )
-        self._client._client.config.pipeline = self._create_azconfig_pipeline()
+        self._impl._client.config.pipeline = self._create_azconfig_pipeline()
 
     def _create_azconfig_pipeline(self):
         policies = [
-            self._client.config.user_agent_policy,  # UserAgent policy
+            self._impl.config.user_agent_policy,  # UserAgent policy
             RequestsPatchSession(),  # Support deprecated operation config at the session level
-            self._client.config.http_logger_policy,  # HTTP request/response log
-            AzConfigRequestsCredentialsPolicy(self._client.config),
+            self._impl.config.http_logger_policy,  # HTTP request/response log
+            AzConfigRequestsCredentialsPolicy(self._impl.config),
         ]
 
         return Pipeline(
             policies,
             PipelineRequestsHTTPSender(
-                RequestsHTTPSender(self._client.config)
+                RequestsHTTPSender(self._impl.config)
             ),  # Send HTTP request using requests
         )
 
@@ -94,7 +94,7 @@ class AzureConfigurationClient(object):
         """
         labels = escape_and_tolist(labels)
         keys = escape_and_tolist(keys)
-        return self._client.list_configuration_settings(
+        return self._impl.list_configuration_settings(
             label=labels,
             key=keys,
             fields=fields,
@@ -134,7 +134,7 @@ class AzureConfigurationClient(object):
 
         custom_headers = prep_get_configuration_setting(key, **kwargs)
 
-        return self._client.get_configuration_setting(
+        return self._impl.get_configuration_setting(
             key=key,
             label=label,
             accept_date_time=accept_date_time,
@@ -167,9 +167,8 @@ class AzureConfigurationClient(object):
             :caption: Add a new ConfigurationService
         """
 
-
         custom_headers = prep_add_configuration_setting(configuration_setting, **kwargs)
-        return self._client.create_or_update_configuration_setting(
+        return self._impl.create_or_update_configuration_setting(
             configuration_setting=configuration_setting,
             key=configuration_setting.key,
             label=configuration_setting.label,
@@ -224,7 +223,7 @@ class AzureConfigurationClient(object):
 
         custom_headers = prep_update_configuration_setting(key, etag, **kwargs)
 
-        current_configuration_setting = self._client.get_configuration_setting(
+        current_configuration_setting = self._impl.get_configuration_setting(
             key, label
         )
         if value is not None:
@@ -233,7 +232,7 @@ class AzureConfigurationClient(object):
             current_configuration_setting.content_type = content_type
         if tags is not None:
             current_configuration_setting.tags = tags
-        return self._client.create_or_update_configuration_setting(
+        return self._impl.create_or_update_configuration_setting(
             configuration_setting=current_configuration_setting,
             key=key,
             label=label,
@@ -270,7 +269,7 @@ class AzureConfigurationClient(object):
             :caption: Set a ConfigurationSetting
         """
         custom_headers = prep_set_configuration_setting(configuration_setting, **kwargs)
-        return self._client.create_or_update_configuration_setting(
+        return self._impl.create_or_update_configuration_setting(
             configuration_setting=configuration_setting,
             key=configuration_setting.key,
             label=configuration_setting.label,
@@ -305,7 +304,7 @@ class AzureConfigurationClient(object):
             :caption: Delete a ConfigurationSetting
         """
         custom_headers = prep_delete_configuration_setting(key, etag, **kwargs)
-        return self._client.delete_configuration_setting(
+        return self._impl.delete_configuration_setting(
             key=key, label=label, custom_headers=custom_headers
         )
 
@@ -334,7 +333,7 @@ class AzureConfigurationClient(object):
             :caption: Lock a ConfigurationSetting
         """
         custom_headers = prep_lock_configuration_setting(key, **kwargs)
-        return self._client.lock_configuration_setting(
+        return self._impl.lock_configuration_setting(
             key=key, label=label, custom_headers=custom_headers
         )
 
@@ -362,7 +361,7 @@ class AzureConfigurationClient(object):
             :caption: Unlock a ConfigurationSetting
         """
         custom_headers = prep_unlock_configuration_setting(key, **kwargs)
-        return self._client.unlock_configuration_setting(
+        return self._impl.unlock_configuration_setting(
             key=key, label=label, custom_headers=custom_headers
         )
 
@@ -401,7 +400,7 @@ class AzureConfigurationClient(object):
 
         labels = escape_and_tolist(labels)
         keys = escape_and_tolist(keys)
-        return self._client.list_revisions(
+        return self._impl.list_revisions(
             label=labels,
             key=keys,
             fields=fields,

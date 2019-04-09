@@ -14,7 +14,7 @@ from azure.configuration import AzureConfigurationClient
 from azure.configuration import ConfigurationSetting
 from devtools_testutils import AzureMgmtTestCase
 
-from .conftest import setup_data, teardown_data, PAGE_SIZE
+import conftest
 
 
 class AzConfigTestData:
@@ -33,12 +33,12 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         self.working_folder = os.path.dirname(__file__)
         super(AzConfigurationClientTest, self).setUp()
 
-        connection_str = os.environ['AZ_CONFIG_CONNECTION']
+        connection_str = os.environ["AZ_CONFIG_CONNECTION"]
         self.app_config_client = AzureConfigurationClient(connection_str)
-        self.test_data = setup_data()
+        self.test_data = conftest.setup_data()
 
     def tearDown(self):
-        teardown_data(self.test_data)
+        conftest.teardown_data(self.test_data)
 
     # method: add_configuration_setting
     def test_add_configuration_setting(self):
@@ -138,7 +138,9 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         to_set_kv.tags = {"a": "b", "c": "d"}
         set_kv = self.app_config_client.set_configuration_setting(to_set_kv)
         # remove the new key value from the service
-        self.app_config_client.delete_configuration_setting(set_kv.key, label=set_kv.label)
+        self.app_config_client.delete_configuration_setting(
+            set_kv.key, label=set_kv.label
+        )
         assert (
             to_set_kv.key == set_kv.key
             and to_set_kv.label == to_set_kv.label
@@ -159,7 +161,9 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         to_set_kv.etag = "wrong etag"
         with pytest.raises(CloudError):
             self.app_config_client.set_configuration_setting(to_set_kv)
-        self.app_config_client.delete_configuration_setting(to_set_kv.key, label=to_set_kv.label)
+        self.app_config_client.delete_configuration_setting(
+            to_set_kv.key, label=to_set_kv.label
+        )
 
     def test_set_configuration_setting_no_label_etag(self):
         to_set_kv = copy(self.test_data.no_label_data[-1])
@@ -189,15 +193,15 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
             and to_set_kv.etag != set_kv.etag
         )
 
-    def test_set_configuration_setting_label_no_etag(
-        self
-    ):
+    def test_set_configuration_setting_label_no_etag(self):
         to_set_kv = copy(self.test_data.label1_data[-1])
         to_set_kv.key = "unit_test_key_set" + self.test_data.key_uuid
         to_set_kv.etag = None
         set_kv = self.app_config_client.set_configuration_setting(to_set_kv)
         # remove immediately from the AzConfig service
-        self.app_config_client.delete_configuration_setting(set_kv.key, label=set_kv.label)
+        self.app_config_client.delete_configuration_setting(
+            set_kv.key, label=set_kv.label
+        )
         assert (
             to_set_kv.key == set_kv.key
             and to_set_kv.label == set_kv.label
@@ -208,9 +212,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         )
 
     # method: update_configuration_setting
-    def test_update_existing_configuration_setting_no_label_etag(
-        self
-    ):
+    def test_update_existing_configuration_setting_no_label_etag(self):
         sample_kv = copy(self.test_data.no_label_data[-1])
 
         # create a new key value into AzConfig service
@@ -231,9 +233,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
             and to_update_kv.etag != updated_kv.etag
         )
 
-    def test_update_existing_configuration_setting_label_etag(
-        self
-    ):
+    def test_update_existing_configuration_setting_label_etag(self):
         sample_kv = copy(self.test_data.label1_data[-1])
 
         # create a new key value into AzConfig service
@@ -248,7 +248,9 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
             etag=to_update_kv.etag,
         )
         # remove the new key value from the service
-        self.app_config_client.delete_configuration_setting(updated_kv.key, label=updated_kv.label)
+        self.app_config_client.delete_configuration_setting(
+            updated_kv.key, label=updated_kv.label
+        )
         assert (
             to_update_kv.key == updated_kv.key
             and to_update_kv.label == updated_kv.label
@@ -258,9 +260,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
             and to_update_kv.etag != updated_kv.etag
         )
 
-    def test_update_existing_configuration_setting_label_noetag(
-        self
-    ):
+    def test_update_existing_configuration_setting_label_noetag(self):
         sample_kv = copy(self.test_data.label1_data[-1])
 
         # create a new key value into AzConfig service
@@ -271,7 +271,9 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
             to_update_kv.key, label=to_update_kv.label, value="updated_value", tags=tags
         )
         # remove the new key value from the service
-        self.app_config_client.delete_configuration_setting(updated_kv.key, label=updated_kv.label)
+        self.app_config_client.delete_configuration_setting(
+            updated_kv.key, label=updated_kv.label
+        )
         assert (
             to_update_kv.key == updated_kv.key
             and to_update_kv.label == updated_kv.label
@@ -281,9 +283,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
             and to_update_kv.etag != updated_kv.etag
         )
 
-    def test_update_existing_configuration_setting_label_wrong_etag(
-        self
-    ):
+    def test_update_existing_configuration_setting_label_wrong_etag(self):
         sample_kv = copy(self.test_data.label1_data[-1])
 
         # create a new key value into AzConfig service
@@ -299,15 +299,17 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
                 tags=tags,
                 etag=etag,
             )
-        self.app_config_client.delete_configuration_setting(to_update_kv.key, label=to_update_kv.label)
+        self.app_config_client.delete_configuration_setting(
+            to_update_kv.key, label=to_update_kv.label
+        )
 
-    def test_update_no_existing_configuration_setting_label_noetag(
-        self
-    ):
+    def test_update_no_existing_configuration_setting_label_noetag(self):
         key = self.test_data.key_uuid
         label = "test_label1"
         with pytest.raises(CloudError):
-            self.app_config_client.update_configuration_setting(key, label=label, value="some value")
+            self.app_config_client.update_configuration_setting(
+                key, label=label, value="some value"
+            )
 
     # method: get_configuration_setting
     def test_get_configuration_setting_no_label(self):
@@ -323,7 +325,9 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
 
     def test_get_configuration_setting_label(self):
         compare_kv = self.test_data.label1_data[0]
-        fetched_kv = self.app_config_client.get_configuration_setting(compare_kv.key, compare_kv.label)
+        fetched_kv = self.app_config_client.get_configuration_setting(
+            compare_kv.key, compare_kv.label
+        )
         assert (
             fetched_kv.key == compare_kv.key
             and fetched_kv.value == compare_kv.value
@@ -335,7 +339,9 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
     def test_get_non_existing_configuration_setting(self):
         compare_kv = self.test_data.label1_data[0]
         with pytest.raises(CloudError):
-            self.app_config_client.get_configuration_setting(compare_kv.key, compare_kv.label + "a")
+            self.app_config_client.get_configuration_setting(
+                compare_kv.key, compare_kv.label + "a"
+            )
 
     # method: lock_configuration_setting and unlock_configuration_setting
     def test_lock_unlock_no_label(self):
@@ -343,26 +349,36 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         to_lock_kv = self.test_data.no_label_data[0]
         locked_kv = self.app_config_client.lock_configuration_setting(to_lock_kv.key)
         assert locked_kv.locked is True
-        unlocked_kv = self.app_config_client.unlock_configuration_setting(to_lock_kv.key)
+        unlocked_kv = self.app_config_client.unlock_configuration_setting(
+            to_lock_kv.key
+        )
         assert unlocked_kv.locked is False
 
     def test_lock_unlock_with_label(self):
         # lock, assert locked, then unlock and assert locked
         to_lock_kv = self.test_data.label1_data[0]
-        locked_kv = self.app_config_client.lock_configuration_setting(to_lock_kv.key, to_lock_kv.label)
+        locked_kv = self.app_config_client.lock_configuration_setting(
+            to_lock_kv.key, to_lock_kv.label
+        )
         assert locked_kv.locked is True
-        unlocked_kv = self.app_config_client.unlock_configuration_setting(to_lock_kv.key, to_lock_kv.label)
+        unlocked_kv = self.app_config_client.unlock_configuration_setting(
+            to_lock_kv.key, to_lock_kv.label
+        )
         assert unlocked_kv.locked is False
 
     def test_lock_no_existing(self):
         to_lock_kv = self.test_data.label1_data[0]
         with pytest.raises(CloudError):
-            self.app_config_client.lock_configuration_setting(to_lock_kv.key, to_lock_kv.label + "a")
+            self.app_config_client.lock_configuration_setting(
+                to_lock_kv.key, to_lock_kv.label + "a"
+            )
 
     def test_unlock_no_existing(self):
         to_lock_kv = self.test_data.label1_data[0]
         with pytest.raises(CloudError):
-            self.app_config_client.unlock_configuration_setting(to_lock_kv.key, to_lock_kv.label + "a")
+            self.app_config_client.unlock_configuration_setting(
+                to_lock_kv.key, to_lock_kv.label + "a"
+            )
 
     # method: delete_configuration_setting
     def test_delete_with_key_no_label(self):
@@ -377,12 +393,18 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         to_delete_kv = copy(self.test_data.label1_data[-1])
         to_delete_kv.key = "unit_test_key_" + self.test_data.key_uuid
         to_delete_kv = self.app_config_client.add_configuration_setting(to_delete_kv)
-        self.app_config_client.delete_configuration_setting(to_delete_kv.key, label=to_delete_kv.label)
+        self.app_config_client.delete_configuration_setting(
+            to_delete_kv.key, label=to_delete_kv.label
+        )
         with pytest.raises(CloudError):
-            self.app_config_client.get_configuration_setting(to_delete_kv.key, label=to_delete_kv.label)
+            self.app_config_client.get_configuration_setting(
+                to_delete_kv.key, label=to_delete_kv.label
+            )
 
     def test_delete_non_existing(self):
-        deleted_kv = self.app_config_client.delete_configuration_setting("not_exist_" + self.test_data.key_uuid)
+        deleted_kv = self.app_config_client.delete_configuration_setting(
+            "not_exist_" + self.test_data.key_uuid
+        )
         assert deleted_kv is None
 
     def test_delete_correct_etag(self):
@@ -401,7 +423,9 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         to_delete_kv.key = "unit_test_key_" + self.test_data.key_uuid
         to_delete_kv = self.app_config_client.add_configuration_setting(to_delete_kv)
         with pytest.raises(CloudError):
-            self.app_config_client.delete_configuration_setting(to_delete_kv.key, etag="wrong etag")
+            self.app_config_client.delete_configuration_setting(
+                to_delete_kv.key, etag="wrong etag"
+            )
         self.app_config_client.delete_configuration_setting(to_delete_kv.key)
 
     # method: list_configuration_settings
@@ -421,7 +445,9 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         assert cnt == 2
 
     def test_list_configuration_settings_only_label(self):
-        items = self.app_config_client.list_configuration_settings(labels=[self.test_data.label1])
+        items = self.app_config_client.list_configuration_settings(
+            labels=[self.test_data.label1]
+        )
         cnt = 0
         for kv in items:
             assert kv.label == self.test_data.label1
@@ -443,13 +469,15 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         )
         cnt = 0
         for kv in items:
-            assert kv.key is not None and kv.label is None and kv.content_type is not None
+            assert (
+                kv.key is not None and kv.label is None and kv.content_type is not None
+            )
             cnt += 1
         assert cnt == 1
 
     def test_list_configuration_settings_reserved_chars(self):
         items = self.app_config_client.list_configuration_settings(
-            keys=None, labels=[self.test_data.label2]
+            labels=[self.test_data.label2]
         )
         cnt = 0
         for kv in items:
@@ -459,7 +487,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
 
     def test_list_configuration_settings_contains(self):
         items = self.app_config_client.list_configuration_settings(
-            keys=None, labels=["*"+self.test_data.label2+"*"]
+            labels=["*" + self.test_data.label2 + "*"]
         )
         cnt = 0
         for kv in items:
@@ -482,14 +510,17 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
     def test_list_configuration_settings_multi_pages(self):
         # create PAGE_SIZE+1 configuration settings to have at least two pages
         delete_me = [
-            self.app_config_client.add_configuration_setting(ConfigurationSetting(
-                key="multi_" + str(i) + self.test_data.key_uuid,
-                label="multi_label_" + str(i),
-                value="multi value"
-            )) for i in range(PAGE_SIZE + 1)
+            self.app_config_client.add_configuration_setting(
+                ConfigurationSetting(
+                    key="multi_" + str(i) + self.test_data.key_uuid,
+                    label="multi_label_" + str(i),
+                    value="multi value",
+                )
+            )
+            for i in range(conftest.PAGE_SIZE + 1)
         ]
         items = self.app_config_client.list_configuration_settings(keys=["multi_*"])
-        assert len(list(items)) > PAGE_SIZE
+        assert len(list(items)) > conftest.PAGE_SIZE
 
         # Remove the delete_me
         for kv in delete_me:
@@ -500,7 +531,6 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
 
     def test_list_configuration_settings_null_label(self):
         items = self.app_config_client.list_configuration_settings(
-            keys=None,
             labels=[""]
         )
         assert len(list(items)) > 0

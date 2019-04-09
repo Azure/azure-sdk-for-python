@@ -25,22 +25,22 @@ class AzureConfigurationClientAsync(object):
     def __init__(self, connection_string):
 
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
-        self._client = AzureConfigurationClientImp(connection_string, base_url)
-        self._client._client.config.pipeline = self._create_azconfig_pipeline()
+        self._impl = AzureConfigurationClientImp(connection_string, base_url)
+        self._impl._client.config.pipeline = self._create_azconfig_pipeline()
 
     def _create_azconfig_pipeline(self):
         policies = [
-            self._client.config.user_agent_policy,  # UserAgent policy
+            self._impl.config.user_agent_policy,  # UserAgent policy
             RequestsPatchSession(),  # Support deprecated operation config at the session level
-            self._client.config.http_logger_policy,  # HTTP request/response log
-            AzConfigRequestsCredentialsPolicy(self._client.config),
+            self._impl.config.http_logger_policy,  # HTTP request/response log
+            AzConfigRequestsCredentialsPolicy(self._impl.config),
         ]
 
         return Pipeline(
             policies,
             AsyncPipelineRequestsHTTPSender(
                 AsyncRequestsHTTPSender(
-                    self._client.config
+                    self._impl.config
                 )  # Send HTTP request using requests
             ),
         )
@@ -57,7 +57,7 @@ class AzureConfigurationClientAsync(object):
 
         labels = escape_and_tolist(labels)
         keys = escape_and_tolist(keys)
-        return self._client.list_configuration_settings(
+        return self._impl.list_configuration_settings(
             label=labels,
             key=keys,
             accept_date_time=accept_date_time,
@@ -74,7 +74,7 @@ class AzureConfigurationClientAsync(object):
 
         """
         custom_headers = prep_get_configuration_setting(key)
-        return await self._client.get_configuration_setting(
+        return await self._impl.get_configuration_setting(
             key=key,
             label=label,
             accept_date_time=accept_date_time,
@@ -88,7 +88,7 @@ class AzureConfigurationClientAsync(object):
         """
         custom_headers = prep_add_configuration_setting(configuration_setting, **kwargs)
         key = configuration_setting.key
-        return await self._client.create_or_update_configuration_setting(
+        return await self._impl.create_or_update_configuration_setting(
             configuration_setting=configuration_setting,
             key=key,
             label=configuration_setting.label,
@@ -111,7 +111,7 @@ class AzureConfigurationClientAsync(object):
 
         """
         custom_headers = prep_update_configuration_setting(key, etag, **kwargs)
-        current_configuration_setting = await self._client.get_configuration_setting(
+        current_configuration_setting = await self._impl.get_configuration_setting(
             key, label
         )
         if value is not None:
@@ -120,7 +120,7 @@ class AzureConfigurationClientAsync(object):
             current_configuration_setting.content_type = content_type
         if tags is not None:
             current_configuration_setting.tags = tags
-        return await self._client.create_or_update_configuration_setting(
+        return await self._impl.create_or_update_configuration_setting(
             configuration_setting=current_configuration_setting,
             key=key,
             label=label,
@@ -135,7 +135,7 @@ class AzureConfigurationClientAsync(object):
         """
         custom_headers = prep_set_configuration_setting(configuration_setting, **kwargs)
         key = configuration_setting.key
-        return await self._client.create_or_update_configuration_setting(
+        return await self._impl.create_or_update_configuration_setting(
             configuration_setting=configuration_setting,
             key=key,
             label=configuration_setting.label,
@@ -148,7 +148,7 @@ class AzureConfigurationClientAsync(object):
         The async version of :meth:`azure.configuration.AzureConfigurationClient.delete_configuration_setting`
         """
         custom_headers = prep_delete_configuration_setting(key, etag, **kwargs)
-        return await self._client.delete_configuration_setting(
+        return await self._impl.delete_configuration_setting(
             key=key, label=label, custom_headers=custom_headers
         )
 
@@ -158,7 +158,7 @@ class AzureConfigurationClientAsync(object):
         The async version of :meth:`azure.configuration.AzureConfigurationClient.lock_configuration_setting`
         """
         custom_headers = prep_lock_configuration_setting(key)
-        return await self._client.lock_configuration_setting(
+        return await self._impl.lock_configuration_setting(
             key=key, label=label, custom_headers=custom_headers
         )
 
@@ -168,7 +168,7 @@ class AzureConfigurationClientAsync(object):
         The async version of :meth:`azure.configuration.AzureConfigurationClient.unlock_configuration_setting`
         """
         custom_headers = prep_unlock_configuration_setting(key)
-        return await self._client.unlock_configuration_setting(
+        return await self._impl.unlock_configuration_setting(
             key=key, label=label, custom_headers=custom_headers
         )
 
@@ -183,7 +183,7 @@ class AzureConfigurationClientAsync(object):
 
         labels = escape_and_tolist(labels)
         keys = escape_and_tolist(keys)
-        return self._client.list_revisions(
+        return self._impl.list_revisions(
             label=labels,
             key=keys,
             accept_date_time=accept_date_time,

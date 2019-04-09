@@ -14,6 +14,7 @@ from .utils import parse_connection_string, get_current_utc_time
 class AzConfigRequestsCredentialsPolicy(HTTPPolicy):
     """Implementation of request-oauthlib except and retry logic.
     """
+
     def __init__(self, config):
         super(AzConfigRequestsCredentialsPolicy, self).__init__()
         self._config = config
@@ -23,27 +24,38 @@ class AzConfigRequestsCredentialsPolicy(HTTPPolicy):
         host, credential, secret = parse_connection_string(self._config.credentials)
 
         # Get the path and query from url, which looks like https://host/path/query
-        query_url = str(request.http_request.url[len(host) + 8:])
+        query_url = str(request.http_request.url[len(host) + 8 :])
 
         signed_headers = "x-ms-date;host;x-ms-content-sha256"
 
         utc_now = get_current_utc_time()
         if request.http_request.body is None:
-            request.http_request.body = ''
-        content_digest = hashlib.sha256((bytes(request.http_request.body, 'utf-8'))).digest()
-        content_hash = base64.b64encode(content_digest).decode('utf-8')
+            request.http_request.body = ""
+        content_digest = hashlib.sha256(
+            (bytes(request.http_request.body, "utf-8"))
+        ).digest()
+        content_hash = base64.b64encode(content_digest).decode("utf-8")
 
-        string_to_sign = verb + '\n' + query_url + '\n' + utc_now + ';' + host + ';' + content_hash
+        string_to_sign = (
+            verb + "\n" + query_url + "\n" + utc_now + ";" + host + ";" + content_hash
+        )
 
         # decode secret
         decoded_secret = base64.b64decode(secret, validate=True)
-        digest = hmac.new(decoded_secret, bytes(string_to_sign, 'utf-8'), hashlib.sha256).digest()
-        signature = base64.b64encode(digest).decode('utf-8')
+        digest = hmac.new(
+            decoded_secret, bytes(string_to_sign, "utf-8"), hashlib.sha256
+        ).digest()
+        signature = base64.b64encode(digest).decode("utf-8")
 
         signature_header = {
             "x-ms-date": utc_now,
             "x-ms-content-sha256": content_hash,
-            "Authorization": "HMAC-SHA256 Credential=" + credential + ", SignedHeaders=" + signed_headers + ", Signature=" + signature
+            "Authorization": "HMAC-SHA256 Credential="
+            + credential
+            + ", SignedHeaders="
+            + signed_headers
+            + ", Signature="
+            + signature,
         }
 
         request.http_request.headers.update(signature_header)

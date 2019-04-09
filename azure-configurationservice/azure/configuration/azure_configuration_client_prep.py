@@ -27,7 +27,7 @@ def prep_add_configuration_setting(configuration_setting, **kwargs):
         raise ValueError("key is mandatory to add a new ConfigurationSetting object")
 
     custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
-    custom_headers["if-none-match"] = quote_etag('*')
+    custom_headers["if-none-match"] = quote_etag("*")
     return custom_headers
 
 
@@ -40,7 +40,7 @@ def prep_update_configuration_setting(key, etag=None, **kwargs):
     if etag:
         custom_headers["if-match"] = quote_etag(etag)
     elif "if-match" not in custom_headers:
-        custom_headers["if-match"] = quote_etag('*')
+        custom_headers["if-match"] = quote_etag("*")
 
     return custom_headers
 
@@ -59,7 +59,7 @@ def prep_set_configuration_setting(configuration_setting, **kwargs):
     return custom_headers
 
 
-def prep_delete_configuration_setting(key: str, etag:str = None, **kwargs: dict) -> CaseInsensitiveDict:
+def prep_delete_configuration_setting(key, etag=None, **kwargs: dict):
     if not key:
         raise ValueError("key is mandatory to delete a ConfigurationSetting object")
 
@@ -90,24 +90,26 @@ def quote_etag(etag):
 
 def escape_reserved(value):
     """
-    Reserved characters
-    *, \, ,
-    If a reserved character is part of the value, then it must be escaped using \{Reserved Character}. 
+    Reserved characters are star(*), comma(,) and backslash(\\)
+    If a reserved character is part of the value, then it must be escaped using \\{Reserved Character}.
     Non-reserved characters can also be escaped.
 
     """
     if not value:
-        return '\0'  # '\0' will be encoded to %00 in the url.
+        return "\0"  # '\0' will be encoded to %00 in the url.
     else:
         value_type = type(value)
         if value_type == str:
             # precede all reserved characters with a backslash.
             # But if a * is at the beginning or the end, don't add the backslash
-            return re.sub(r'((?!^)\*(?!$)|\\|,)', r'\\\1', value)
+            return re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", value)
         elif value_type == list:
             return [escape_reserved(s) for s in value]
         else:
-            raise ValueError(value_type + " can not be escaped. It must be a string or list of strings")
+            raise ValueError(
+                value_type
+                + " can not be escaped. It must be a string or list of strings"
+            )
 
 
 def escape_and_tolist(value):
@@ -119,4 +121,3 @@ def escape_and_tolist(value):
             return value
     else:
         return None
-
