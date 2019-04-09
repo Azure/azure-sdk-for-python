@@ -13,13 +13,14 @@ from msrest.serialization import Model
 
 
 class MetricDimension(Model):
-    """MetricDimension.
+    """Specifies a metric dimension.
 
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. Name of the dimension.
     :type name: str
-    :param operator: Required. the dimension operator.
+    :param operator: Required. the dimension operator. Only 'Include' and
+     'Exclude' are supported
     :type operator: str
     :param values: Required. list of dimension values.
     :type values: list[str]

@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.4.0 (2019-02-21)
+++++++++++++++++++
+
+**Features**
+
+- Model HanaInstance has a new parameter hw_revision
+
 0.3.2 (2019-01-29)
 ++++++++++++++++++
 

@@ -17,7 +17,7 @@ from .service_principals_operations import ServicePrincipalsOperations
 from .users_operations import UsersOperations
 from .objects_operations import ObjectsOperations
 from .domains_operations import DomainsOperations
-from .oauth2_operations import OAuth2Operations
+from .oauth2_permission_grant_operations import OAuth2PermissionGrantOperations
 
 __all__ = [
     'SignedInUserOperations',
@@ -28,5 +28,5 @@ __all__ = [
     'UsersOperations',
     'ObjectsOperations',
     'DomainsOperations',
-    'OAuth2Operations',
+    'OAuth2PermissionGrantOperations',
 ]

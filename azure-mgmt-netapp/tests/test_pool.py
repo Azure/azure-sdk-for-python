@@ -111,10 +111,10 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)
 
         tag = {'Tag2': 'Value1'}
-        capacity_pool_patch = CapacityPoolPatch(tags=tag)
+        capacity_pool_patch = CapacityPoolPatch(service_level="Standard", tags=tag)
 
-        pool = self.client.pools.update(TEST_RG, TEST_ACC_1, TEST_POOL_1, tags=capacity_pool_patch.tags)
-
+        pool = self.client.pools.update(capacity_pool_patch, TEST_RG, TEST_ACC_1, TEST_POOL_1)
+        self.assertEqual(pool.service_level, "Standard")
         self.assertTrue(pool.tags['Tag2'] == 'Value1')
 
         self.client.pools.delete(TEST_RG, TEST_ACC_1, TEST_POOL_1).wait()
