@@ -30,6 +30,7 @@ try:
     from .iot_hub_device_deleted_event_data_py3 import IotHubDeviceDeletedEventData
     from .iot_hub_device_connected_event_data_py3 import IotHubDeviceConnectedEventData
     from .iot_hub_device_disconnected_event_data_py3 import IotHubDeviceDisconnectedEventData
+    from .iot_hub_device_telemetry_event_data_py3 import IotHubDeviceTelemetryEventData
     from .device_twin_metadata_py3 import DeviceTwinMetadata
     from .device_twin_properties_py3 import DeviceTwinProperties
     from .device_twin_info_properties_py3 import DeviceTwinInfoProperties
@@ -38,6 +39,7 @@ try:
     from .device_life_cycle_event_properties_py3 import DeviceLifeCycleEventProperties
     from .device_connection_state_event_info_py3 import DeviceConnectionStateEventInfo
     from .device_connection_state_event_properties_py3 import DeviceConnectionStateEventProperties
+    from .device_telemetry_event_properties_py3 import DeviceTelemetryEventProperties
     from .container_registry_image_pushed_event_data_py3 import ContainerRegistryImagePushedEventData
     from .container_registry_image_deleted_event_data_py3 import ContainerRegistryImageDeletedEventData
     from .container_registry_chart_pushed_event_data_py3 import ContainerRegistryChartPushedEventData
@@ -107,6 +109,7 @@ except (SyntaxError, ImportError):
     from .iot_hub_device_deleted_event_data import IotHubDeviceDeletedEventData
     from .iot_hub_device_connected_event_data import IotHubDeviceConnectedEventData
     from .iot_hub_device_disconnected_event_data import IotHubDeviceDisconnectedEventData
+    from .iot_hub_device_telemetry_event_data import IotHubDeviceTelemetryEventData
     from .device_twin_metadata import DeviceTwinMetadata
     from .device_twin_properties import DeviceTwinProperties
     from .device_twin_info_properties import DeviceTwinInfoProperties
@@ -115,6 +118,7 @@ except (SyntaxError, ImportError):
     from .device_life_cycle_event_properties import DeviceLifeCycleEventProperties
     from .device_connection_state_event_info import DeviceConnectionStateEventInfo
     from .device_connection_state_event_properties import DeviceConnectionStateEventProperties
+    from .device_telemetry_event_properties import DeviceTelemetryEventProperties
     from .container_registry_image_pushed_event_data import ContainerRegistryImagePushedEventData
     from .container_registry_image_deleted_event_data import ContainerRegistryImageDeletedEventData
     from .container_registry_chart_pushed_event_data import ContainerRegistryChartPushedEventData
@@ -191,6 +195,7 @@ __all__ = [
     'IotHubDeviceDeletedEventData',
     'IotHubDeviceConnectedEventData',
     'IotHubDeviceDisconnectedEventData',
+    'IotHubDeviceTelemetryEventData',
     'DeviceTwinMetadata',
     'DeviceTwinProperties',
     'DeviceTwinInfoProperties',
@@ -199,6 +204,7 @@ __all__ = [
     'DeviceLifeCycleEventProperties',
     'DeviceConnectionStateEventInfo',
     'DeviceConnectionStateEventProperties',
+    'DeviceTelemetryEventProperties',
     'ContainerRegistryImagePushedEventData',
     'ContainerRegistryImageDeletedEventData',
     'ContainerRegistryChartPushedEventData',
