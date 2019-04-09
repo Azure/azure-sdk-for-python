@@ -22,14 +22,19 @@ class ProjectSettings(Model):
      project. Possible values include: 'Multiclass', 'Multilabel'
     :type classification_type: str or
      ~azure.cognitiveservices.vision.customvision.training.models.Classifier
+    :param target_export_platforms: A list of ExportPlatform that the trained
+     model should be able to support.
+    :type target_export_platforms: list[str]
     """
 
     _attribute_map = {
         'domain_id': {'key': 'domainId', 'type': 'str'},
         'classification_type': {'key': 'classificationType', 'type': 'str'},
+        'target_export_platforms': {'key': 'targetExportPlatforms', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
         super(ProjectSettings, self).__init__(**kwargs)
         self.domain_id = kwargs.get('domain_id', None)
         self.classification_type = kwargs.get('classification_type', None)
+        self.target_export_platforms = kwargs.get('target_export_platforms', None)

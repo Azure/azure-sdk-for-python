@@ -17,9 +17,10 @@ class CelebritiesModel(Model):
 
     :param name: Name of the celebrity.
     :type name: str
-    :param confidence: Level of confidence ranging from 0 to 1.
+    :param confidence: Confidence level for the celebrity recognition as a
+     value ranging from 0 to 1.
     :type confidence: float
-    :param face_rectangle:
+    :param face_rectangle: Location of the identified face in the image.
     :type face_rectangle:
      ~azure.cognitiveservices.vision.computervision.models.FaceRectangle
     """

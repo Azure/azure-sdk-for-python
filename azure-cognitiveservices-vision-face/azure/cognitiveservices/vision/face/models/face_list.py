@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .name_and_user_data_contract import NameAndUserDataContract
+from .meta_data_contract import MetaDataContract
 
 
-class FaceList(NameAndUserDataContract):
+class FaceList(MetaDataContract):
     """Face list object.
 
     All required parameters must be populated in order to send to Azure.
@@ -21,6 +21,10 @@ class FaceList(NameAndUserDataContract):
     :type name: str
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
+    :param recognition_model: Possible values include: 'recognition_01',
+     'recognition_02'. Default value: "recognition_01" .
+    :type recognition_model: str or
+     ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param face_list_id: Required. FaceListId of the target face list.
     :type face_list_id: str
     :param persisted_faces: Persisted faces within the face list.
@@ -37,6 +41,7 @@ class FaceList(NameAndUserDataContract):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'user_data': {'key': 'userData', 'type': 'str'},
+        'recognition_model': {'key': 'recognitionModel', 'type': 'str'},
         'face_list_id': {'key': 'faceListId', 'type': 'str'},
         'persisted_faces': {'key': 'persistedFaces', 'type': '[PersistedFace]'},
     }

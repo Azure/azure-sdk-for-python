@@ -16,3 +16,9 @@ class UserType(str, Enum):
 
     member = "Member"
     guest = "Guest"
+
+
+class ConsentType(str, Enum):
+
+    all_principals = "AllPrincipals"
+    principal = "Principal"
