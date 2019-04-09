@@ -22,7 +22,7 @@ class ApiIssueCommentOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -32,7 +32,7 @@ class ApiIssueCommentOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
@@ -50,13 +50,12 @@ class ApiIssueCommentOperations(object):
         :param issue_id: Issue identifier. Must be unique in the current API
          Management service instance.
         :type issue_id: str
-        :param filter: | Field       | Supported operators    | Supported
-         functions               |
-         |-------------|------------------------|-----------------------------------|
-         | id          | ge, le, eq, ne, gt, lt | substringof, startswith,
-         endswith |
-         | userId          | ge, le, eq, ne, gt, lt | substringof, startswith,
-         endswith |
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>| userId | filter | ge, le, eq, ne, gt, lt
+         | substringof, contains, startswith, endswith | </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -81,7 +80,7 @@ class ApiIssueCommentOperations(object):
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-                    'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+                    'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
                     'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
@@ -89,13 +88,13 @@ class ApiIssueCommentOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -164,7 +163,7 @@ class ApiIssueCommentOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'commentId': self._serialize.url("comment_id", comment_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -233,7 +232,7 @@ class ApiIssueCommentOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'commentId': self._serialize.url("comment_id", comment_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -299,9 +298,8 @@ class ApiIssueCommentOperations(object):
         :param parameters: Create parameters.
         :type parameters:
          ~azure.mgmt.apimanagement.models.IssueCommentContract
-        :param if_match: ETag of the Issue Entity. ETag should match the
-         current entity state from the header response of the GET request or it
-         should be * for unconditional update.
+        :param if_match: ETag of the Entity. Not required when creating an
+         entity, but required when updating an entity.
         :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -319,7 +317,7 @@ class ApiIssueCommentOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'commentId': self._serialize.url("comment_id", comment_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
@@ -354,14 +352,22 @@ class ApiIssueCommentOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
             deserialized = self._deserialize('IssueCommentContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
         if response.status_code == 201:
             deserialized = self._deserialize('IssueCommentContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
@@ -384,9 +390,9 @@ class ApiIssueCommentOperations(object):
         :param comment_id: Comment identifier within an Issue. Must be unique
          in the current Issue.
         :type comment_id: str
-        :param if_match: ETag of the Issue Entity. ETag should match the
-         current entity state from the header response of the GET request or it
-         should be * for unconditional update.
+        :param if_match: ETag of the Entity. ETag should match the current
+         entity state from the header response of the GET request or it should
+         be * for unconditional update.
         :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -403,7 +409,7 @@ class ApiIssueCommentOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'commentId': self._serialize.url("comment_id", comment_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')

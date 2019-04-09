@@ -22,7 +22,7 @@ class ApiIssueOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -32,12 +32,12 @@ class ApiIssueOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
     def list_by_service(
-            self, resource_group_name, service_name, api_id, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, api_id, filter=None, expand_comments_attachments=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
         """Lists all issues associated with the specified API.
 
         :param resource_group_name: The name of the resource group.
@@ -47,16 +47,16 @@ class ApiIssueOperations(object):
         :param api_id: API identifier. Must be unique in the current API
          Management service instance.
         :type api_id: str
-        :param filter: | Field       | Supported operators    | Supported
-         functions               |
-         |-------------|------------------------|-----------------------------------|
-         | id          | ge, le, eq, ne, gt, lt | substringof, startswith,
-         endswith |
-         | state        | eq                     |
-         |
-         | userId          | ge, le, eq, ne, gt, lt | substringof, startswith,
-         endswith |
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>| userId | filter | ge, le, eq, ne, gt, lt
+         | substringof, contains, startswith, endswith | </br>| state | filter
+         | eq |     | </br>
         :type filter: str
+        :param expand_comments_attachments: Expand the comment attachments.
+        :type expand_comments_attachments: bool
         :param top: Number of records to return.
         :type top: int
         :param skip: Number of records to skip.
@@ -80,20 +80,22 @@ class ApiIssueOperations(object):
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-                    'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+                    'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if expand_comments_attachments is not None:
+                    query_parameters['expandCommentsAttachments'] = self._serialize.query("expand_comments_attachments", expand_comments_attachments, 'bool')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
                     query_parameters['$skip'] = self._serialize.query("skip", skip, 'int', minimum=0)
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -159,7 +161,7 @@ class ApiIssueOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -194,7 +196,7 @@ class ApiIssueOperations(object):
     get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}'}
 
     def get(
-            self, resource_group_name, service_name, api_id, issue_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, api_id, issue_id, expand_comments_attachments=None, custom_headers=None, raw=False, **operation_config):
         """Gets the details of the Issue for an API specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
@@ -207,6 +209,8 @@ class ApiIssueOperations(object):
         :param issue_id: Issue identifier. Must be unique in the current API
          Management service instance.
         :type issue_id: str
+        :param expand_comments_attachments: Expand the comment attachments.
+        :type expand_comments_attachments: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -223,7 +227,7 @@ class ApiIssueOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -231,6 +235,8 @@ class ApiIssueOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if expand_comments_attachments is not None:
+            query_parameters['expandCommentsAttachments'] = self._serialize.query("expand_comments_attachments", expand_comments_attachments, 'bool')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -283,9 +289,8 @@ class ApiIssueOperations(object):
         :type issue_id: str
         :param parameters: Create parameters.
         :type parameters: ~azure.mgmt.apimanagement.models.IssueContract
-        :param if_match: ETag of the Issue Entity. ETag should match the
-         current entity state from the header response of the GET request or it
-         should be * for unconditional update.
+        :param if_match: ETag of the Entity. Not required when creating an
+         entity, but required when updating an entity.
         :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -303,7 +308,7 @@ class ApiIssueOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -337,21 +342,29 @@ class ApiIssueOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
             deserialized = self._deserialize('IssueContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
         if response.status_code == 201:
             deserialized = self._deserialize('IssueContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/issues/{issueId}'}
 
     def update(
-            self, resource_group_name, service_name, api_id, issue_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, api_id, issue_id, parameters, if_match, custom_headers=None, raw=False, **operation_config):
         """Updates an existing issue for an API.
 
         :param resource_group_name: The name of the resource group.
@@ -366,9 +379,9 @@ class ApiIssueOperations(object):
         :type issue_id: str
         :param parameters: Update parameters.
         :type parameters: ~azure.mgmt.apimanagement.models.IssueUpdateContract
-        :param if_match: ETag of the Issue Entity. ETag should match the
-         current entity state from the header response of the GET request or it
-         should be * for unconditional update.
+        :param if_match: ETag of the Entity. ETag should match the current
+         entity state from the header response of the GET request or it should
+         be * for unconditional update.
         :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -385,7 +398,7 @@ class ApiIssueOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -402,8 +415,7 @@ class ApiIssueOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -436,9 +448,9 @@ class ApiIssueOperations(object):
         :param issue_id: Issue identifier. Must be unique in the current API
          Management service instance.
         :type issue_id: str
-        :param if_match: ETag of the Issue Entity. ETag should match the
-         current entity state from the header response of the GET request or it
-         should be * for unconditional update.
+        :param if_match: ETag of the Entity. ETag should match the current
+         entity state from the header response of the GET request or it should
+         be * for unconditional update.
         :type if_match: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -455,7 +467,7 @@ class ApiIssueOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'issueId': self._serialize.url("issue_id", issue_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }

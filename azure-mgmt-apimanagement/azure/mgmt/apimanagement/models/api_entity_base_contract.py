@@ -37,8 +37,8 @@ class ApiEntityBaseContract(Model):
     :param api_version: Indicates the Version identifier of the API if the API
      is versioned
     :type api_version: str
-    :ivar is_current: Indicates if API revision is current api revision.
-    :vartype is_current: bool
+    :param is_current: Indicates if API revision is current api revision.
+    :type is_current: bool
     :ivar is_online: Indicates if API revision is accessible via the gateway.
     :vartype is_online: bool
     :param api_revision_description: Description of the Api Revision.
@@ -48,12 +48,14 @@ class ApiEntityBaseContract(Model):
     :param api_version_set_id: A resource identifier for the related
      ApiVersionSet.
     :type api_version_set_id: str
+    :param subscription_required: Specifies whether an API or Product
+     subscription is required for accessing the API.
+    :type subscription_required: bool
     """
 
     _validation = {
         'api_revision': {'max_length': 100, 'min_length': 1},
         'api_version': {'max_length': 100},
-        'is_current': {'readonly': True},
         'is_online': {'readonly': True},
         'api_revision_description': {'max_length': 256},
         'api_version_description': {'max_length': 256},
@@ -71,6 +73,7 @@ class ApiEntityBaseContract(Model):
         'api_revision_description': {'key': 'apiRevisionDescription', 'type': 'str'},
         'api_version_description': {'key': 'apiVersionDescription', 'type': 'str'},
         'api_version_set_id': {'key': 'apiVersionSetId', 'type': 'str'},
+        'subscription_required': {'key': 'subscriptionRequired', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -81,8 +84,9 @@ class ApiEntityBaseContract(Model):
         self.api_type = kwargs.get('api_type', None)
         self.api_revision = kwargs.get('api_revision', None)
         self.api_version = kwargs.get('api_version', None)
-        self.is_current = None
+        self.is_current = kwargs.get('is_current', None)
         self.is_online = None
         self.api_revision_description = kwargs.get('api_revision_description', None)
         self.api_version_description = kwargs.get('api_version_description', None)
         self.api_version_set_id = kwargs.get('api_version_set_id', None)
+        self.subscription_required = kwargs.get('subscription_required', None)

@@ -22,7 +22,7 @@ class UserSubscriptionOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -32,36 +32,35 @@ class UserSubscriptionOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
     def list(
-            self, resource_group_name, service_name, uid, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, user_id, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
         """Lists the collection of subscriptions of the specified user.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param uid: User identifier. Must be unique in the current API
+        :param user_id: User identifier. Must be unique in the current API
          Management service instance.
-        :type uid: str
-        :param filter: | Field        | Supported operators    | Supported
-         functions                         |
-         |--------------|------------------------|---------------------------------------------|
-         | id           | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | name         | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | stateComment | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | userId       | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | productId    | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | state        | eq                     |
-         |
+        :type user_id: str
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>| displayName | filter | ge, le, eq, ne,
+         gt, lt | substringof, contains, startswith, endswith | </br>|
+         stateComment | filter | ge, le, eq, ne, gt, lt | substringof,
+         contains, startswith, endswith | </br>| ownerId | filter | ge, le, eq,
+         ne, gt, lt | substringof, contains, startswith, endswith | </br>|
+         scope | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>| userId | filter | ge, le, eq, ne, gt, lt
+         | substringof, contains, startswith, endswith | </br>| productId |
+         filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
+         endswith | </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -86,7 +85,7 @@ class UserSubscriptionOperations(object):
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-                    'uid': self._serialize.url("uid", uid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+                    'userId': self._serialize.url("user_id", user_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -133,4 +132,4 @@ class UserSubscriptionOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{uid}/subscriptions'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/users/{userId}/subscriptions'}

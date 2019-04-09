@@ -15,10 +15,10 @@ from msrest.serialization import Model
 class SubscriptionUpdateParameters(Model):
     """Subscription update details.
 
-    :param user_id: User identifier path: /users/{uid}
-    :type user_id: str
-    :param product_id: Product identifier path: /products/{productId}
-    :type product_id: str
+    :param owner_id: User identifier path: /users/{userId}
+    :type owner_id: str
+    :param scope: Scope like /products/{productId} or /apis or /apis/{apiId}
+    :type scope: str
     :param expiration_date: Subscription expiration date. The setting is for
      audit purposes only and the subscription is not automatically expired. The
      subscription lifecycle can be managed by using the `state` property. The
@@ -44,6 +44,8 @@ class SubscriptionUpdateParameters(Model):
     :param state_comment: Comments describing subscription state change by the
      administrator.
     :type state_comment: str
+    :param allow_tracing: Determines whether tracing can be enabled
+    :type allow_tracing: bool
     """
 
     _validation = {
@@ -52,23 +54,25 @@ class SubscriptionUpdateParameters(Model):
     }
 
     _attribute_map = {
-        'user_id': {'key': 'properties.userId', 'type': 'str'},
-        'product_id': {'key': 'properties.productId', 'type': 'str'},
+        'owner_id': {'key': 'properties.ownerId', 'type': 'str'},
+        'scope': {'key': 'properties.scope', 'type': 'str'},
         'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'primary_key': {'key': 'properties.primaryKey', 'type': 'str'},
         'secondary_key': {'key': 'properties.secondaryKey', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'SubscriptionState'},
         'state_comment': {'key': 'properties.stateComment', 'type': 'str'},
+        'allow_tracing': {'key': 'properties.allowTracing', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(SubscriptionUpdateParameters, self).__init__(**kwargs)
-        self.user_id = kwargs.get('user_id', None)
-        self.product_id = kwargs.get('product_id', None)
+        self.owner_id = kwargs.get('owner_id', None)
+        self.scope = kwargs.get('scope', None)
         self.expiration_date = kwargs.get('expiration_date', None)
         self.display_name = kwargs.get('display_name', None)
         self.primary_key = kwargs.get('primary_key', None)
         self.secondary_key = kwargs.get('secondary_key', None)
         self.state = kwargs.get('state', None)
         self.state_comment = kwargs.get('state_comment', None)
+        self.allow_tracing = kwargs.get('allow_tracing', None)

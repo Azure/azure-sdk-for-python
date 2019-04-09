@@ -15,14 +15,14 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class TagDescriptionOperations(object):
-    """TagDescriptionOperations operations.
+class CacheOperations(object):
+    """CacheOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -32,32 +32,19 @@ class TagDescriptionOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
-    def list_by_api(
-            self, resource_group_name, service_name, api_id, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all Tags descriptions in scope of API. Model similar to swagger -
-        tagDescription is defined on API level but tag may be assigned to the
-        Operations.
+    def list_by_service(
+            self, resource_group_name, service_name, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+        """Lists a collection of all external Caches in the specified service
+        instance.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param api_id: API revision identifier. Must be unique in the current
-         API Management service instance. Non-current revision has ;rev=n as a
-         suffix where n is the revision number.
-        :type api_id: str
-        :param filter: | Field       | Supported operators    | Supported
-         functions                         |
-         |-------------|------------------------|---------------------------------------------|
-         | id          | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | name        | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-        :type filter: str
         :param top: Number of records to return.
         :type top: int
         :param skip: Number of records to skip.
@@ -67,9 +54,9 @@ class TagDescriptionOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of TagDescriptionContract
+        :return: An iterator like instance of CacheContract
         :rtype:
-         ~azure.mgmt.apimanagement.models.TagDescriptionContractPaged[~azure.mgmt.apimanagement.models.TagDescriptionContract]
+         ~azure.mgmt.apimanagement.models.CacheContractPaged[~azure.mgmt.apimanagement.models.CacheContract]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
@@ -77,19 +64,16 @@ class TagDescriptionOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list_by_api.metadata['url']
+                url = self.list_by_service.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-                    'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int', minimum=1)
                 if skip is not None:
@@ -120,31 +104,28 @@ class TagDescriptionOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.TagDescriptionContractPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.CacheContractPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.TagDescriptionContractPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.CacheContractPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_api.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions'}
+    list_by_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/caches'}
 
-    def get_entity_state(
-            self, resource_group_name, service_name, api_id, tag_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the entity state version of the tag specified by its identifier.
+    def get_entity_tag(
+            self, resource_group_name, service_name, cache_id, custom_headers=None, raw=False, **operation_config):
+        """Gets the entity state (Etag) version of the Cache specified by its
+        identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param api_id: API revision identifier. Must be unique in the current
-         API Management service instance. Non-current revision has ;rev=n as a
-         suffix where n is the revision number.
-        :type api_id: str
-        :param tag_id: Tag identifier. Must be unique in the current API
-         Management service instance.
-        :type tag_id: str
+        :param cache_id: Identifier of the Cache entity. Cache identifier
+         (should be either 'default' or valid Azure region identifier).
+        :type cache_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -156,12 +137,11 @@ class TagDescriptionOperations(object):
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_entity_state.metadata['url']
+        url = self.get_entity_tag.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'tagId': self._serialize.url("tag_id", tag_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'cacheId': self._serialize.url("cache_id", cache_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -192,30 +172,26 @@ class TagDescriptionOperations(object):
                 'ETag': 'str',
             })
             return client_raw_response
-    get_entity_state.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions/{tagId}'}
+    get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/caches/{cacheId}'}
 
     def get(
-            self, resource_group_name, service_name, api_id, tag_id, custom_headers=None, raw=False, **operation_config):
-        """Get tag associated with the API.
+            self, resource_group_name, service_name, cache_id, custom_headers=None, raw=False, **operation_config):
+        """Gets the details of the Cache specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param api_id: API revision identifier. Must be unique in the current
-         API Management service instance. Non-current revision has ;rev=n as a
-         suffix where n is the revision number.
-        :type api_id: str
-        :param tag_id: Tag identifier. Must be unique in the current API
-         Management service instance.
-        :type tag_id: str
+        :param cache_id: Identifier of the Cache entity. Cache identifier
+         (should be either 'default' or valid Azure region identifier).
+        :type cache_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TagDescriptionContract or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.apimanagement.models.TagDescriptionContract or
+        :return: CacheContract or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.apimanagement.models.CacheContract or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
@@ -225,8 +201,7 @@ class TagDescriptionOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'tagId': self._serialize.url("tag_id", tag_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'cacheId': self._serialize.url("cache_id", cache_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -256,7 +231,7 @@ class TagDescriptionOperations(object):
         header_dict = {}
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TagDescriptionContract', response)
+            deserialized = self._deserialize('CacheContract', response)
             header_dict = {
                 'ETag': 'str',
             }
@@ -267,26 +242,22 @@ class TagDescriptionOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions/{tagId}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/caches/{cacheId}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, api_id, tag_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
-        """Create/Update tag description in scope of the Api.
+            self, resource_group_name, service_name, cache_id, parameters, if_match=None, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates an External Cache to be used in Api Management
+        instance.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param api_id: API revision identifier. Must be unique in the current
-         API Management service instance. Non-current revision has ;rev=n as a
-         suffix where n is the revision number.
-        :type api_id: str
-        :param tag_id: Tag identifier. Must be unique in the current API
-         Management service instance.
-        :type tag_id: str
-        :param parameters: Create parameters.
-        :type parameters:
-         ~azure.mgmt.apimanagement.models.TagDescriptionCreateParameters
+        :param cache_id: Identifier of the Cache entity. Cache identifier
+         (should be either 'default' or valid Azure region identifier).
+        :type cache_id: str
+        :param parameters: Create or Update parameters.
+        :type parameters: ~azure.mgmt.apimanagement.models.CacheContract
         :param if_match: ETag of the Entity. Not required when creating an
          entity, but required when updating an entity.
         :type if_match: str
@@ -295,8 +266,8 @@ class TagDescriptionOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: TagDescriptionContract or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.apimanagement.models.TagDescriptionContract or
+        :return: CacheContract or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.apimanagement.models.CacheContract or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
@@ -306,8 +277,7 @@ class TagDescriptionOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'tagId': self._serialize.url("tag_id", tag_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'cacheId': self._serialize.url("cache_id", cache_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -330,7 +300,7 @@ class TagDescriptionOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'TagDescriptionCreateParameters')
+        body_content = self._serialize.body(parameters, 'CacheContract')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -340,34 +310,106 @@ class TagDescriptionOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
-            deserialized = self._deserialize('TagDescriptionContract', response)
+            deserialized = self._deserialize('CacheContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
         if response.status_code == 201:
-            deserialized = self._deserialize('TagDescriptionContract', response)
+            deserialized = self._deserialize('CacheContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions/{tagId}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/caches/{cacheId}'}
 
-    def delete(
-            self, resource_group_name, service_name, api_id, tag_id, if_match, custom_headers=None, raw=False, **operation_config):
-        """Delete tag description for the Api.
+    def update(
+            self, resource_group_name, service_name, cache_id, parameters, if_match, custom_headers=None, raw=False, **operation_config):
+        """Updates the details of the cache specified by its identifier.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param api_id: API revision identifier. Must be unique in the current
-         API Management service instance. Non-current revision has ;rev=n as a
-         suffix where n is the revision number.
-        :type api_id: str
-        :param tag_id: Tag identifier. Must be unique in the current API
-         Management service instance.
-        :type tag_id: str
+        :param cache_id: Identifier of the Cache entity. Cache identifier
+         (should be either 'default' or valid Azure region identifier).
+        :type cache_id: str
+        :param parameters: Update parameters.
+        :type parameters:
+         ~azure.mgmt.apimanagement.models.CacheUpdateParameters
+        :param if_match: ETag of the Entity. ETag should match the current
+         entity state from the header response of the GET request or it should
+         be * for unconditional update.
+        :type if_match: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
+            'cacheId': self._serialize.url("cache_id", cache_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'CacheUpdateParameters')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/caches/{cacheId}'}
+
+    def delete(
+            self, resource_group_name, service_name, cache_id, if_match, custom_headers=None, raw=False, **operation_config):
+        """Deletes specific Cache.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param service_name: The name of the API Management service.
+        :type service_name: str
+        :param cache_id: Identifier of the Cache entity. Cache identifier
+         (should be either 'default' or valid Azure region identifier).
+        :type cache_id: str
         :param if_match: ETag of the Entity. ETag should match the current
          entity state from the header response of the GET request or it should
          be * for unconditional update.
@@ -387,8 +429,7 @@ class TagDescriptionOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'tagId': self._serialize.url("tag_id", tag_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'cacheId': self._serialize.url("cache_id", cache_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -417,4 +458,4 @@ class TagDescriptionOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/tagDescriptions/{tagId}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/caches/{cacheId}'}

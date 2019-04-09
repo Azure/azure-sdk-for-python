@@ -17,12 +17,12 @@ class SubscriptionCreateParameters(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param user_id: Required. User (user id path) for whom subscription is
-     being created in form /users/{uid}
-    :type user_id: str
-    :param product_id: Required. Product (product id path) for which
-     subscription is being created in form /products/{productId}
-    :type product_id: str
+    :param owner_id: User (user id path) for whom subscription is being
+     created in form /users/{userId}
+    :type owner_id: str
+    :param scope: Required. Scope like /products/{productId} or /apis or
+     /apis/{apiId}.
+    :type scope: str
     :param display_name: Required. Subscription name.
     :type display_name: str
     :param primary_key: Primary subscription key. If not specified during
@@ -42,30 +42,33 @@ class SubscriptionCreateParameters(Model):
      reached its expiration date and was deactivated. Possible values include:
      'suspended', 'active', 'expired', 'submitted', 'rejected', 'cancelled'
     :type state: str or ~azure.mgmt.apimanagement.models.SubscriptionState
+    :param allow_tracing: Determines whether tracing can be enabled
+    :type allow_tracing: bool
     """
 
     _validation = {
-        'user_id': {'required': True},
-        'product_id': {'required': True},
+        'scope': {'required': True},
         'display_name': {'required': True, 'max_length': 100, 'min_length': 1},
         'primary_key': {'max_length': 256, 'min_length': 1},
         'secondary_key': {'max_length': 256, 'min_length': 1},
     }
 
     _attribute_map = {
-        'user_id': {'key': 'properties.userId', 'type': 'str'},
-        'product_id': {'key': 'properties.productId', 'type': 'str'},
+        'owner_id': {'key': 'properties.ownerId', 'type': 'str'},
+        'scope': {'key': 'properties.scope', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'primary_key': {'key': 'properties.primaryKey', 'type': 'str'},
         'secondary_key': {'key': 'properties.secondaryKey', 'type': 'str'},
         'state': {'key': 'properties.state', 'type': 'SubscriptionState'},
+        'allow_tracing': {'key': 'properties.allowTracing', 'type': 'bool'},
     }
 
-    def __init__(self, *, user_id: str, product_id: str, display_name: str, primary_key: str=None, secondary_key: str=None, state=None, **kwargs) -> None:
+    def __init__(self, *, scope: str, display_name: str, owner_id: str=None, primary_key: str=None, secondary_key: str=None, state=None, allow_tracing: bool=None, **kwargs) -> None:
         super(SubscriptionCreateParameters, self).__init__(**kwargs)
-        self.user_id = user_id
-        self.product_id = product_id
+        self.owner_id = owner_id
+        self.scope = scope
         self.display_name = display_name
         self.primary_key = primary_key
         self.secondary_key = secondary_key
         self.state = state
+        self.allow_tracing = allow_tracing

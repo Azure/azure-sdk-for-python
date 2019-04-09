@@ -21,7 +21,7 @@ class AccessInformationContract(Model):
     :type primary_key: str
     :param secondary_key: Secondary access key.
     :type secondary_key: str
-    :param enabled: Tenant access information of the API Management service.
+    :param enabled: Determines whether direct access is enabled.
     :type enabled: bool
     """
 

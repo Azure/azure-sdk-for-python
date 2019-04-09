@@ -22,7 +22,7 @@ class ApiOperationPolicyOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     :ivar policy_id: The identifier of the Policy. Constant value: "policy".
     """
 
@@ -33,7 +33,7 @@ class ApiOperationPolicyOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
         self.policy_id = "policy"
 
         self.config = config
@@ -70,7 +70,7 @@ class ApiOperationPolicyOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -140,7 +140,7 @@ class ApiOperationPolicyOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'policyId': self._serialize.url("self.policy_id", self.policy_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -206,7 +206,7 @@ class ApiOperationPolicyOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'policyId': self._serialize.url("self.policy_id", self.policy_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -251,7 +251,7 @@ class ApiOperationPolicyOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/operations/{operationId}/policies/{policyId}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, api_id, operation_id, policy_content, if_match=None, content_format="xml", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, api_id, operation_id, value, if_match=None, format="xml", custom_headers=None, raw=False, **operation_config):
         """Creates or updates policy configuration for the API Operation level.
 
         :param resource_group_name: The name of the resource group.
@@ -265,15 +265,14 @@ class ApiOperationPolicyOperations(object):
         :param operation_id: Operation identifier within an API. Must be
          unique in the current API Management service instance.
         :type operation_id: str
-        :param policy_content: Json escaped Xml Encoded contents of the
-         Policy.
-        :type policy_content: str
+        :param value: Contents of the Policy as defined by the format.
+        :type value: str
         :param if_match: ETag of the Entity. Not required when creating an
          entity, but required when updating an entity.
         :type if_match: str
-        :param content_format: Format of the policyContent. Possible values
-         include: 'xml', 'xml-link', 'rawxml', 'rawxml-link'
-        :type content_format: str or
+        :param format: Format of the policyContent. Possible values include:
+         'xml', 'xml-link', 'rawxml', 'rawxml-link'
+        :type format: str or
          ~azure.mgmt.apimanagement.models.PolicyContentFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -286,7 +285,7 @@ class ApiOperationPolicyOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
-        parameters = models.PolicyContract(policy_content=policy_content, content_format=content_format)
+        parameters = models.PolicyContract(value=value, format=format)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -294,7 +293,7 @@ class ApiOperationPolicyOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'policyId': self._serialize.url("self.policy_id", self.policy_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -328,14 +327,22 @@ class ApiOperationPolicyOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
         if response.status_code == 201:
             deserialized = self._deserialize('PolicyContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
@@ -376,7 +383,7 @@ class ApiOperationPolicyOperations(object):
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
             'apiId': self._serialize.url("api_id", api_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'policyId': self._serialize.url("self.policy_id", self.policy_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }

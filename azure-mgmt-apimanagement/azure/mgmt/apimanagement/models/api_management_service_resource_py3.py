@@ -93,6 +93,11 @@ class ApiManagementServiceResource(ApimResource):
      is 10.
     :type certificates:
      list[~azure.mgmt.apimanagement.models.CertificateConfiguration]
+    :param enable_client_certificate: Property only meant to be used for
+     Consumption SKU Service. This enforces a client certificate to be
+     presented on each request to the gateway and enabled ability to
+     authenticate the certificate in the policy. Default value: False .
+    :type enable_client_certificate: bool
     :param virtual_network_type: The type of VPN in which API Management
      service needs to be configured in. None (Default Value) means the API
      Management service is not part of any Virtual Network, External means the
@@ -162,6 +167,7 @@ class ApiManagementServiceResource(ApimResource):
         'additional_locations': {'key': 'properties.additionalLocations', 'type': '[AdditionalLocation]'},
         'custom_properties': {'key': 'properties.customProperties', 'type': '{str}'},
         'certificates': {'key': 'properties.certificates', 'type': '[CertificateConfiguration]'},
+        'enable_client_certificate': {'key': 'properties.enableClientCertificate', 'type': 'bool'},
         'virtual_network_type': {'key': 'properties.virtualNetworkType', 'type': 'str'},
         'publisher_email': {'key': 'properties.publisherEmail', 'type': 'str'},
         'publisher_name': {'key': 'properties.publisherName', 'type': 'str'},
@@ -171,7 +177,7 @@ class ApiManagementServiceResource(ApimResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, publisher_email: str, publisher_name: str, sku, location: str, tags=None, notification_sender_email: str=None, hostname_configurations=None, virtual_network_configuration=None, additional_locations=None, custom_properties=None, certificates=None, virtual_network_type="None", identity=None, **kwargs) -> None:
+    def __init__(self, *, publisher_email: str, publisher_name: str, sku, location: str, tags=None, notification_sender_email: str=None, hostname_configurations=None, virtual_network_configuration=None, additional_locations=None, custom_properties=None, certificates=None, enable_client_certificate: bool=False, virtual_network_type="None", identity=None, **kwargs) -> None:
         super(ApiManagementServiceResource, self).__init__(tags=tags, **kwargs)
         self.notification_sender_email = notification_sender_email
         self.provisioning_state = None
@@ -189,6 +195,7 @@ class ApiManagementServiceResource(ApimResource):
         self.additional_locations = additional_locations
         self.custom_properties = custom_properties
         self.certificates = certificates
+        self.enable_client_certificate = enable_client_certificate
         self.virtual_network_type = virtual_network_type
         self.publisher_email = publisher_email
         self.publisher_name = publisher_name

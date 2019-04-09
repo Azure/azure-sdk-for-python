@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -23,7 +22,7 @@ class PolicyOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     :ivar policy_id: The identifier of the Policy. Constant value: "policy".
     """
 
@@ -34,23 +33,19 @@ class PolicyOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
         self.policy_id = "policy"
 
         self.config = config
 
     def list_by_service(
-            self, resource_group_name, service_name, scope=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, custom_headers=None, raw=False, **operation_config):
         """Lists all the Global Policy definitions of the Api Management service.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param scope: Policy scope. Possible values include: 'Tenant',
-         'Product', 'Api', 'Operation', 'All'
-        :type scope: str or
-         ~azure.mgmt.apimanagement.models.PolicyScopeContract
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -59,7 +54,8 @@ class PolicyOperations(object):
         :return: PolicyCollection or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.apimanagement.models.PolicyCollection or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.list_by_service.metadata['url']
@@ -72,8 +68,6 @@ class PolicyOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        if scope is not None:
-            query_parameters['scope'] = self._serialize.query("scope", scope, 'PolicyScopeContract')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -91,9 +85,7 @@ class PolicyOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -232,7 +224,7 @@ class PolicyOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/policies/{policyId}'}
 
     def create_or_update(
-            self, resource_group_name, service_name, policy_content, content_format="xml", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, value, if_match=None, format="xml", custom_headers=None, raw=False, **operation_config):
         """Creates or updates the global policy configuration of the Api
         Management service.
 
@@ -240,12 +232,14 @@ class PolicyOperations(object):
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
-        :param policy_content: Json escaped Xml Encoded contents of the
-         Policy.
-        :type policy_content: str
-        :param content_format: Format of the policyContent. Possible values
-         include: 'xml', 'xml-link', 'rawxml', 'rawxml-link'
-        :type content_format: str or
+        :param value: Contents of the Policy as defined by the format.
+        :type value: str
+        :param if_match: ETag of the Entity. Not required when creating an
+         entity, but required when updating an entity.
+        :type if_match: str
+        :param format: Format of the policyContent. Possible values include:
+         'xml', 'xml-link', 'rawxml', 'rawxml-link'
+        :type format: str or
          ~azure.mgmt.apimanagement.models.PolicyContentFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -258,7 +252,7 @@ class PolicyOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.apimanagement.models.ErrorResponseException>`
         """
-        parameters = models.PolicyContract(policy_content=policy_content, content_format=content_format)
+        parameters = models.PolicyContract(value=value, format=format)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -282,6 +276,8 @@ class PolicyOperations(object):
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
@@ -296,14 +292,22 @@ class PolicyOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
+        header_dict = {}
 
         if response.status_code == 200:
             deserialized = self._deserialize('PolicyContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
         if response.status_code == 201:
             deserialized = self._deserialize('PolicyContract', response)
+            header_dict = {
+                'ETag': 'str',
+            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized

@@ -9,40 +9,43 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .policy_operations import PolicyOperations
-from .policy_snippets_operations import PolicySnippetsOperations
-from .regions_operations import RegionsOperations
 from .api_operations import ApiOperations
-from .api_revisions_operations import ApiRevisionsOperations
+from .api_revision_operations import ApiRevisionOperations
 from .api_release_operations import ApiReleaseOperations
 from .api_operation_operations import ApiOperationOperations
 from .api_operation_policy_operations import ApiOperationPolicyOperations
+from .tag_operations import TagOperations
 from .api_product_operations import ApiProductOperations
 from .api_policy_operations import ApiPolicyOperations
 from .api_schema_operations import ApiSchemaOperations
 from .api_diagnostic_operations import ApiDiagnosticOperations
-from .api_diagnostic_logger_operations import ApiDiagnosticLoggerOperations
 from .api_issue_operations import ApiIssueOperations
 from .api_issue_comment_operations import ApiIssueCommentOperations
 from .api_issue_attachment_operations import ApiIssueAttachmentOperations
+from .api_tag_description_operations import ApiTagDescriptionOperations
+from .operation_operations import OperationOperations
+from .api_version_set_operations import ApiVersionSetOperations
 from .authorization_server_operations import AuthorizationServerOperations
 from .backend_operations import BackendOperations
+from .cache_operations import CacheOperations
 from .certificate_operations import CertificateOperations
 from .api_management_operations import ApiManagementOperations
 from .api_management_service_skus_operations import ApiManagementServiceSkusOperations
 from .api_management_service_operations import ApiManagementServiceOperations
 from .diagnostic_operations import DiagnosticOperations
-from .diagnostic_logger_operations import DiagnosticLoggerOperations
 from .email_template_operations import EmailTemplateOperations
 from .group_operations import GroupOperations
 from .group_user_operations import GroupUserOperations
 from .identity_provider_operations import IdentityProviderOperations
+from .issue_operations import IssueOperations
 from .logger_operations import LoggerOperations
+from .network_status_operations import NetworkStatusOperations
 from .notification_operations import NotificationOperations
 from .notification_recipient_user_operations import NotificationRecipientUserOperations
 from .notification_recipient_email_operations import NotificationRecipientEmailOperations
-from .network_status_operations import NetworkStatusOperations
 from .open_id_connect_provider_operations import OpenIdConnectProviderOperations
+from .policy_operations import PolicyOperations
+from .policy_snippet_operations import PolicySnippetOperations
 from .sign_in_settings_operations import SignInSettingsOperations
 from .sign_up_settings_operations import SignUpSettingsOperations
 from .delegation_settings_operations import DelegationSettingsOperations
@@ -54,12 +57,10 @@ from .product_policy_operations import ProductPolicyOperations
 from .property_operations import PropertyOperations
 from .quota_by_counter_keys_operations import QuotaByCounterKeysOperations
 from .quota_by_period_keys_operations import QuotaByPeriodKeysOperations
+from .region_operations import RegionOperations
 from .reports_operations import ReportsOperations
 from .subscription_operations import SubscriptionOperations
 from .tag_resource_operations import TagResourceOperations
-from .tag_operations import TagOperations
-from .tag_description_operations import TagDescriptionOperations
-from .operation_operations import OperationOperations
 from .tenant_access_operations import TenantAccessOperations
 from .tenant_access_git_operations import TenantAccessGitOperations
 from .tenant_configuration_operations import TenantConfigurationOperations
@@ -67,44 +68,47 @@ from .user_operations import UserOperations
 from .user_group_operations import UserGroupOperations
 from .user_subscription_operations import UserSubscriptionOperations
 from .user_identities_operations import UserIdentitiesOperations
-from .api_version_set_operations import ApiVersionSetOperations
+from .user_confirmation_password_operations import UserConfirmationPasswordOperations
 from .api_export_operations import ApiExportOperations
 
 __all__ = [
-    'PolicyOperations',
-    'PolicySnippetsOperations',
-    'RegionsOperations',
     'ApiOperations',
-    'ApiRevisionsOperations',
+    'ApiRevisionOperations',
     'ApiReleaseOperations',
     'ApiOperationOperations',
     'ApiOperationPolicyOperations',
+    'TagOperations',
     'ApiProductOperations',
     'ApiPolicyOperations',
     'ApiSchemaOperations',
     'ApiDiagnosticOperations',
-    'ApiDiagnosticLoggerOperations',
     'ApiIssueOperations',
     'ApiIssueCommentOperations',
     'ApiIssueAttachmentOperations',
+    'ApiTagDescriptionOperations',
+    'OperationOperations',
+    'ApiVersionSetOperations',
     'AuthorizationServerOperations',
     'BackendOperations',
+    'CacheOperations',
     'CertificateOperations',
     'ApiManagementOperations',
     'ApiManagementServiceSkusOperations',
     'ApiManagementServiceOperations',
     'DiagnosticOperations',
-    'DiagnosticLoggerOperations',
     'EmailTemplateOperations',
     'GroupOperations',
     'GroupUserOperations',
     'IdentityProviderOperations',
+    'IssueOperations',
     'LoggerOperations',
+    'NetworkStatusOperations',
     'NotificationOperations',
     'NotificationRecipientUserOperations',
     'NotificationRecipientEmailOperations',
-    'NetworkStatusOperations',
     'OpenIdConnectProviderOperations',
+    'PolicyOperations',
+    'PolicySnippetOperations',
     'SignInSettingsOperations',
     'SignUpSettingsOperations',
     'DelegationSettingsOperations',
@@ -116,12 +120,10 @@ __all__ = [
     'PropertyOperations',
     'QuotaByCounterKeysOperations',
     'QuotaByPeriodKeysOperations',
+    'RegionOperations',
     'ReportsOperations',
     'SubscriptionOperations',
     'TagResourceOperations',
-    'TagOperations',
-    'TagDescriptionOperations',
-    'OperationOperations',
     'TenantAccessOperations',
     'TenantAccessGitOperations',
     'TenantConfigurationOperations',
@@ -129,6 +131,6 @@ __all__ = [
     'UserGroupOperations',
     'UserSubscriptionOperations',
     'UserIdentitiesOperations',
-    'ApiVersionSetOperations',
+    'UserConfirmationPasswordOperations',
     'ApiExportOperations',
 ]

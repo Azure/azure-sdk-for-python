@@ -26,25 +26,50 @@ class DiagnosticContract(Resource):
     :vartype name: str
     :ivar type: Resource type for API Management resource.
     :vartype type: str
-    :param enabled: Required. Indicates whether a diagnostic should receive
-     data or not.
-    :type enabled: bool
+    :param always_log: Specifies for what type of messages sampling settings
+     should not apply. Possible values include: 'allErrors'
+    :type always_log: str or ~azure.mgmt.apimanagement.models.AlwaysLog
+    :param logger_id: Required. Resource Id of a target logger.
+    :type logger_id: str
+    :param sampling: Sampling settings for Diagnostic.
+    :type sampling: ~azure.mgmt.apimanagement.models.SamplingSettings
+    :param frontend: Diagnostic settings for incoming/outgoing HTTP messages
+     to the Gateway.
+    :type frontend:
+     ~azure.mgmt.apimanagement.models.PipelineDiagnosticSettings
+    :param backend: Diagnostic settings for incoming/outgoing HTTP messages to
+     the Backend
+    :type backend: ~azure.mgmt.apimanagement.models.PipelineDiagnosticSettings
+    :param enable_http_correlation_headers: Whether to process Correlation
+     Headers coming to Api Management Service. Only applicable to Application
+     Insights diagnostics. Default is true.
+    :type enable_http_correlation_headers: bool
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'enabled': {'required': True},
+        'logger_id': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'always_log': {'key': 'properties.alwaysLog', 'type': 'str'},
+        'logger_id': {'key': 'properties.loggerId', 'type': 'str'},
+        'sampling': {'key': 'properties.sampling', 'type': 'SamplingSettings'},
+        'frontend': {'key': 'properties.frontend', 'type': 'PipelineDiagnosticSettings'},
+        'backend': {'key': 'properties.backend', 'type': 'PipelineDiagnosticSettings'},
+        'enable_http_correlation_headers': {'key': 'properties.enableHttpCorrelationHeaders', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(DiagnosticContract, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
+        self.always_log = kwargs.get('always_log', None)
+        self.logger_id = kwargs.get('logger_id', None)
+        self.sampling = kwargs.get('sampling', None)
+        self.frontend = kwargs.get('frontend', None)
+        self.backend = kwargs.get('backend', None)
+        self.enable_http_correlation_headers = kwargs.get('enable_http_correlation_headers', None)

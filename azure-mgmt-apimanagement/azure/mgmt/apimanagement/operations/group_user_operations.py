@@ -22,7 +22,7 @@ class GroupUserOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-01-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-01-01".
     """
 
     models = models
@@ -32,14 +32,13 @@ class GroupUserOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-01-01"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
     def list(
             self, resource_group_name, service_name, group_id, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
-        """Lists a collection of the members of the group, specified by its
-        identifier.
+        """Lists a collection of user entities associated with the group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -48,23 +47,18 @@ class GroupUserOperations(object):
         :param group_id: Group identifier. Must be unique in the current API
          Management service instance.
         :type group_id: str
-        :param filter: | Field            | Supported operators    | Supported
-         functions               |
-         |------------------|------------------------|-----------------------------------|
-         | id               | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | firstName        | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | lastName         | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | email            | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
-         | state            | eq                     | N/A
-         |
-         | registrationDate | ge, le, eq, ne, gt, lt | N/A
-         |
-         | note             | ge, le, eq, ne, gt, lt | substringof, contains,
-         startswith, endswith |
+        :param filter: |   Field     |     Usage     |     Supported operators
+         |     Supported functions
+         |</br>|-------------|-------------|-------------|-------------|</br>|
+         name | filter | ge, le, eq, ne, gt, lt | substringof, contains,
+         startswith, endswith | </br>| firstName | filter | ge, le, eq, ne, gt,
+         lt | substringof, contains, startswith, endswith | </br>| lastName |
+         filter | ge, le, eq, ne, gt, lt | substringof, contains, startswith,
+         endswith | </br>| email | filter | ge, le, eq, ne, gt, lt |
+         substringof, contains, startswith, endswith | </br>| registrationDate
+         | filter | ge, le, eq, ne, gt, lt |     | </br>| note | filter | ge,
+         le, eq, ne, gt, lt | substringof, contains, startswith, endswith |
+         </br>
         :type filter: str
         :param top: Number of records to return.
         :type top: int
@@ -89,7 +83,7 @@ class GroupUserOperations(object):
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-                    'groupId': self._serialize.url("group_id", group_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+                    'groupId': self._serialize.url("group_id", group_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -139,7 +133,7 @@ class GroupUserOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/groups/{groupId}/users'}
 
     def check_entity_exists(
-            self, resource_group_name, service_name, group_id, uid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, group_id, user_id, custom_headers=None, raw=False, **operation_config):
         """Checks that user entity specified by identifier is associated with the
         group entity.
 
@@ -150,9 +144,9 @@ class GroupUserOperations(object):
         :param group_id: Group identifier. Must be unique in the current API
          Management service instance.
         :type group_id: str
-        :param uid: User identifier. Must be unique in the current API
+        :param user_id: User identifier. Must be unique in the current API
          Management service instance.
-        :type uid: str
+        :type user_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -168,8 +162,8 @@ class GroupUserOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'groupId': self._serialize.url("group_id", group_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
-            'uid': self._serialize.url("uid", uid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'groupId': self._serialize.url("group_id", group_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'userId': self._serialize.url("user_id", user_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -199,11 +193,11 @@ class GroupUserOperations(object):
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
         return deserialized
-    check_entity_exists.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/groups/{groupId}/users/{uid}'}
+    check_entity_exists.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/groups/{groupId}/users/{userId}'}
 
     def create(
-            self, resource_group_name, service_name, group_id, uid, custom_headers=None, raw=False, **operation_config):
-        """Adds a user to the specified group.
+            self, resource_group_name, service_name, group_id, user_id, custom_headers=None, raw=False, **operation_config):
+        """Add existing user to existing group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -212,9 +206,9 @@ class GroupUserOperations(object):
         :param group_id: Group identifier. Must be unique in the current API
          Management service instance.
         :type group_id: str
-        :param uid: User identifier. Must be unique in the current API
+        :param user_id: User identifier. Must be unique in the current API
          Management service instance.
-        :type uid: str
+        :type user_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -231,8 +225,8 @@ class GroupUserOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'groupId': self._serialize.url("group_id", group_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
-            'uid': self._serialize.url("uid", uid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'groupId': self._serialize.url("group_id", group_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'userId': self._serialize.url("user_id", user_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -270,10 +264,10 @@ class GroupUserOperations(object):
             return client_raw_response
 
         return deserialized
-    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/groups/{groupId}/users/{uid}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/groups/{groupId}/users/{userId}'}
 
     def delete(
-            self, resource_group_name, service_name, group_id, uid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, group_id, user_id, custom_headers=None, raw=False, **operation_config):
         """Remove existing user from existing group.
 
         :param resource_group_name: The name of the resource group.
@@ -283,9 +277,9 @@ class GroupUserOperations(object):
         :param group_id: Group identifier. Must be unique in the current API
          Management service instance.
         :type group_id: str
-        :param uid: User identifier. Must be unique in the current API
+        :param user_id: User identifier. Must be unique in the current API
          Management service instance.
-        :type uid: str
+        :type user_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -301,8 +295,8 @@ class GroupUserOperations(object):
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'serviceName': self._serialize.url("service_name", service_name, 'str', max_length=50, min_length=1, pattern=r'^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$'),
-            'groupId': self._serialize.url("group_id", group_id, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
-            'uid': self._serialize.url("uid", uid, 'str', max_length=80, min_length=1, pattern=r'(^[\w]+$)|(^[\w][\w\-]+[\w]$)'),
+            'groupId': self._serialize.url("group_id", group_id, 'str', max_length=256, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
+            'userId': self._serialize.url("user_id", user_id, 'str', max_length=80, min_length=1, pattern=r'^[^*#&+:<>?]+$'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -330,4 +324,4 @@ class GroupUserOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/groups/{groupId}/users/{uid}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/groups/{groupId}/users/{userId}'}

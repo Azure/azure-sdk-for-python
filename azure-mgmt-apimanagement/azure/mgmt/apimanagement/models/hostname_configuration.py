@@ -18,7 +18,7 @@ class HostnameConfiguration(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param type: Required. Hostname type. Possible values include: 'Proxy',
-     'Portal', 'Management', 'Scm'
+     'Portal', 'Management', 'Scm', 'DeveloperPortal'
     :type type: str or ~azure.mgmt.apimanagement.models.HostnameType
     :param host_name: Required. Hostname to configure on the Api Management
      service.
@@ -54,7 +54,7 @@ class HostnameConfiguration(Model):
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'HostnameType'},
+        'type': {'key': 'type', 'type': 'str'},
         'host_name': {'key': 'hostName', 'type': 'str'},
         'key_vault_id': {'key': 'keyVaultId', 'type': 'str'},
         'encoded_certificate': {'key': 'encodedCertificate', 'type': 'str'},

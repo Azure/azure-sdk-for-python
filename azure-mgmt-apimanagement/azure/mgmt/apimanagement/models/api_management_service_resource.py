@@ -93,6 +93,11 @@ class ApiManagementServiceResource(ApimResource):
      is 10.
     :type certificates:
      list[~azure.mgmt.apimanagement.models.CertificateConfiguration]
+    :param enable_client_certificate: Property only meant to be used for
+     Consumption SKU Service. This enforces a client certificate to be
+     presented on each request to the gateway and enabled ability to
+     authenticate the certificate in the policy. Default value: False .
+    :type enable_client_certificate: bool
     :param virtual_network_type: The type of VPN in which API Management
      service needs to be configured in. None (Default Value) means the API
      Management service is not part of any Virtual Network, External means the
@@ -162,6 +167,7 @@ class ApiManagementServiceResource(ApimResource):
         'additional_locations': {'key': 'properties.additionalLocations', 'type': '[AdditionalLocation]'},
         'custom_properties': {'key': 'properties.customProperties', 'type': '{str}'},
         'certificates': {'key': 'properties.certificates', 'type': '[CertificateConfiguration]'},
+        'enable_client_certificate': {'key': 'properties.enableClientCertificate', 'type': 'bool'},
         'virtual_network_type': {'key': 'properties.virtualNetworkType', 'type': 'str'},
         'publisher_email': {'key': 'properties.publisherEmail', 'type': 'str'},
         'publisher_name': {'key': 'properties.publisherName', 'type': 'str'},
@@ -189,6 +195,7 @@ class ApiManagementServiceResource(ApimResource):
         self.additional_locations = kwargs.get('additional_locations', None)
         self.custom_properties = kwargs.get('custom_properties', None)
         self.certificates = kwargs.get('certificates', None)
+        self.enable_client_certificate = kwargs.get('enable_client_certificate', False)
         self.virtual_network_type = kwargs.get('virtual_network_type', "None")
         self.publisher_email = kwargs.get('publisher_email', None)
         self.publisher_name = kwargs.get('publisher_name', None)

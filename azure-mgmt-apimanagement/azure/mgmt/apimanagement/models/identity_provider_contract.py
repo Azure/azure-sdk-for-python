@@ -34,6 +34,9 @@ class IdentityProviderContract(Resource):
     :param allowed_tenants: List of Allowed Tenants when configuring Azure
      Active Directory login.
     :type allowed_tenants: list[str]
+    :param authority: OpenID Connect discovery endpoint hostname for AAD or
+     AAD B2C.
+    :type authority: str
     :param signup_policy_name: Signup Policy Name. Only applies to AAD B2C
      Identity Provider.
     :type signup_policy_name: str
@@ -76,6 +79,7 @@ class IdentityProviderContract(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'identity_provider_contract_type': {'key': 'properties.type', 'type': 'str'},
         'allowed_tenants': {'key': 'properties.allowedTenants', 'type': '[str]'},
+        'authority': {'key': 'properties.authority', 'type': 'str'},
         'signup_policy_name': {'key': 'properties.signupPolicyName', 'type': 'str'},
         'signin_policy_name': {'key': 'properties.signinPolicyName', 'type': 'str'},
         'profile_editing_policy_name': {'key': 'properties.profileEditingPolicyName', 'type': 'str'},
@@ -88,6 +92,7 @@ class IdentityProviderContract(Resource):
         super(IdentityProviderContract, self).__init__(**kwargs)
         self.identity_provider_contract_type = kwargs.get('identity_provider_contract_type', None)
         self.allowed_tenants = kwargs.get('allowed_tenants', None)
+        self.authority = kwargs.get('authority', None)
         self.signup_policy_name = kwargs.get('signup_policy_name', None)
         self.signin_policy_name = kwargs.get('signin_policy_name', None)
         self.profile_editing_policy_name = kwargs.get('profile_editing_policy_name', None)

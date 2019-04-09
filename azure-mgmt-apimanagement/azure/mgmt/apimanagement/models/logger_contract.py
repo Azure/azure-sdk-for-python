@@ -38,6 +38,9 @@ class LoggerContract(Resource):
     :param is_buffered: Whether records are buffered in the logger before
      publishing. Default is assumed to be true.
     :type is_buffered: bool
+    :param resource_id: Azure Resource Id of a log target (either Azure Event
+     Hub resource or Azure Application Insights resource).
+    :type resource_id: str
     """
 
     _validation = {
@@ -57,6 +60,7 @@ class LoggerContract(Resource):
         'description': {'key': 'properties.description', 'type': 'str'},
         'credentials': {'key': 'properties.credentials', 'type': '{str}'},
         'is_buffered': {'key': 'properties.isBuffered', 'type': 'bool'},
+        'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -65,3 +69,4 @@ class LoggerContract(Resource):
         self.description = kwargs.get('description', None)
         self.credentials = kwargs.get('credentials', None)
         self.is_buffered = kwargs.get('is_buffered', None)
+        self.resource_id = kwargs.get('resource_id', None)
