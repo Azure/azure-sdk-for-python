@@ -3,6 +3,13 @@
 Release History
 ===============
 
+5.1.0 (2019-04-08)
+++++++++++++++++++
+
+**Features**
+
+- Model OpenShiftManagedClusterAADIdentityProvider has a new parameter customer_admin_group_id
+
 5.0.0 (2019-03-19)
 ++++++++++++++++++
 
