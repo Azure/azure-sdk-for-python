@@ -12,26 +12,23 @@
 from msrest.serialization import Model
 
 
-class CheckNameAvailability(Model):
-    """Description of a Check Name availability request properties.
+class Subnet(Model):
+    """Properties supplied for Subnet.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The Name to check the namespace name availability
-     and The namespace name can contain only letters, numbers, and hyphens. The
-     namespace must start with a letter, and it must end with a letter or
-     number.
-    :type name: str
+    :param id: Required. Resource ID of Virtual Network Subnet
+    :type id: str
     """
 
     _validation = {
-        'name': {'required': True},
+        'id': {'required': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(CheckNameAvailability, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        super(Subnet, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
