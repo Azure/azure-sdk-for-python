@@ -20,8 +20,8 @@ class SSISLogLocation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param log_path: The SSIS package execution log path. Type: string (or
-     Expression with resultType string).
+    :param log_path: Required. The SSIS package execution log path. Type:
+     string (or Expression with resultType string).
     :type log_path: object
     :ivar type: Required. The type of SSIS log location. Default value: "File"
      .
@@ -32,6 +32,7 @@ class SSISLogLocation(Model):
     """
 
     _validation = {
+        'log_path': {'required': True},
         'type': {'required': True, 'constant': True},
     }
 
@@ -43,7 +44,7 @@ class SSISLogLocation(Model):
 
     type = "File"
 
-    def __init__(self, *, log_path=None, access_credential=None, **kwargs) -> None:
+    def __init__(self, *, log_path, access_credential=None, **kwargs) -> None:
         super(SSISLogLocation, self).__init__(**kwargs)
         self.log_path = log_path
         self.access_credential = access_credential
