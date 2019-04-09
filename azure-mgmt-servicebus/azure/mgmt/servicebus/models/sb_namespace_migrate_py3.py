@@ -12,26 +12,26 @@
 from msrest.serialization import Model
 
 
-class CheckNameAvailability(Model):
-    """Description of a Check Name availability request properties.
+class SBNamespaceMigrate(Model):
+    """Namespace Migrate Object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The Name to check the namespace name availability
-     and The namespace name can contain only letters, numbers, and hyphens. The
-     namespace must start with a letter, and it must end with a letter or
-     number.
-    :type name: str
+    :param target_namespace_type: Required. Type of namespaces. Possible
+     values include: 'Messaging', 'NotificationHub', 'Mixed', 'EventHub',
+     'Relay'
+    :type target_namespace_type: str or
+     ~azure.mgmt.servicebus.models.NameSpaceType
     """
 
     _validation = {
-        'name': {'required': True},
+        'target_namespace_type': {'required': True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        'target_namespace_type': {'key': 'targetNamespaceType', 'type': 'NameSpaceType'},
     }
 
-    def __init__(self, **kwargs):
-        super(CheckNameAvailability, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+    def __init__(self, *, target_namespace_type, **kwargs) -> None:
+        super(SBNamespaceMigrate, self).__init__(**kwargs)
+        self.target_namespace_type = target_namespace_type
