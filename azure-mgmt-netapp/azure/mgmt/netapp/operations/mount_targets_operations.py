@@ -37,11 +37,11 @@ class MountTargetsOperations(object):
         self.config = config
 
     def list(
-            self, resource_group, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
         """List mount targets.
 
-        :param resource_group: The name of the resource group.
-        :type resource_group: str
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
         :param pool_name: The name of the capacity pool
@@ -66,7 +66,7 @@ class MountTargetsOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'accountName': self._serialize.url("account_name", account_name, 'str'),
                     'poolName': self._serialize.url("pool_name", pool_name, 'str'),
                     'volumeName': self._serialize.url("volume_name", volume_name, 'str')
@@ -109,4 +109,4 @@ class MountTargetsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/mountTargets'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/mountTargets'}

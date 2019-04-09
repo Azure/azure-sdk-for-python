@@ -48,6 +48,8 @@ class HanaInstance(Resource):
      ~azure.mgmt.hanaonazure.models.HanaInstancePowerStateEnum
     :ivar proximity_placement_group: Resource proximity placement group
     :vartype proximity_placement_group: str
+    :ivar hw_revision: Hardware revision of a HANA instance
+    :vartype hw_revision: str
     """
 
     _validation = {
@@ -59,6 +61,7 @@ class HanaInstance(Resource):
         'hana_instance_id': {'readonly': True},
         'power_state': {'readonly': True},
         'proximity_placement_group': {'readonly': True},
+        'hw_revision': {'readonly': True},
     }
 
     _attribute_map = {
@@ -74,6 +77,7 @@ class HanaInstance(Resource):
         'hana_instance_id': {'key': 'properties.hanaInstanceId', 'type': 'str'},
         'power_state': {'key': 'properties.powerState', 'type': 'str'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'str'},
+        'hw_revision': {'key': 'properties.hwRevision', 'type': 'str'},
     }
 
     def __init__(self, *, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, **kwargs) -> None:
@@ -85,3 +89,4 @@ class HanaInstance(Resource):
         self.hana_instance_id = None
         self.power_state = None
         self.proximity_placement_group = None
+        self.hw_revision = None
