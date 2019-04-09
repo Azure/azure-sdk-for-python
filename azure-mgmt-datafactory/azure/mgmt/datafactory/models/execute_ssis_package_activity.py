@@ -73,6 +73,8 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
      package.
     :type property_overrides: dict[str,
      ~azure.mgmt.datafactory.models.SSISPropertyOverride]
+    :param log_location: SSIS package exection log location.
+    :type log_location: ~azure.mgmt.datafactory.models.SSISLogLocation
     """
 
     _validation = {
@@ -102,6 +104,7 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         'project_connection_managers': {'key': 'typeProperties.projectConnectionManagers', 'type': '{{SSISExecutionParameter}}'},
         'package_connection_managers': {'key': 'typeProperties.packageConnectionManagers', 'type': '{{SSISExecutionParameter}}'},
         'property_overrides': {'key': 'typeProperties.propertyOverrides', 'type': '{SSISPropertyOverride}'},
+        'log_location': {'key': 'typeProperties.logLocation', 'type': 'SSISLogLocation'},
     }
 
     def __init__(self, **kwargs):
@@ -117,4 +120,5 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         self.project_connection_managers = kwargs.get('project_connection_managers', None)
         self.package_connection_managers = kwargs.get('package_connection_managers', None)
         self.property_overrides = kwargs.get('property_overrides', None)
+        self.log_location = kwargs.get('log_location', None)
         self.type = 'ExecuteSSISPackage'

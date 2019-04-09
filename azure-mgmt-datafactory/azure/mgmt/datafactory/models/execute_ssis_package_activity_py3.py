@@ -73,6 +73,8 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
      package.
     :type property_overrides: dict[str,
      ~azure.mgmt.datafactory.models.SSISPropertyOverride]
+    :param log_location: SSIS package exection log location.
+    :type log_location: ~azure.mgmt.datafactory.models.SSISLogLocation
     """
 
     _validation = {
@@ -102,9 +104,10 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         'project_connection_managers': {'key': 'typeProperties.projectConnectionManagers', 'type': '{{SSISExecutionParameter}}'},
         'package_connection_managers': {'key': 'typeProperties.packageConnectionManagers', 'type': '{{SSISExecutionParameter}}'},
         'property_overrides': {'key': 'typeProperties.propertyOverrides', 'type': '{SSISPropertyOverride}'},
+        'log_location': {'key': 'typeProperties.logLocation', 'type': 'SSISLogLocation'},
     }
 
-    def __init__(self, *, name: str, package_location, connect_via, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, runtime=None, logging_level=None, environment_path=None, execution_credential=None, project_parameters=None, package_parameters=None, project_connection_managers=None, package_connection_managers=None, property_overrides=None, **kwargs) -> None:
+    def __init__(self, *, name: str, package_location, connect_via, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, runtime=None, logging_level=None, environment_path=None, execution_credential=None, project_parameters=None, package_parameters=None, project_connection_managers=None, package_connection_managers=None, property_overrides=None, log_location=None, **kwargs) -> None:
         super(ExecuteSSISPackageActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.package_location = package_location
         self.runtime = runtime
@@ -117,4 +120,5 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         self.project_connection_managers = project_connection_managers
         self.package_connection_managers = package_connection_managers
         self.property_overrides = property_overrides
+        self.log_location = log_location
         self.type = 'ExecuteSSISPackage'

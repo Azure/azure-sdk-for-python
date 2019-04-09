@@ -382,6 +382,12 @@ class SalesforceSourceReadBehavior(str, Enum):
     query_all = "QueryAll"
 
 
+class SsisPackageLocationType(str, Enum):
+
+    ssisdb = "SSISDB"
+    file = "File"
+
+
 class HDInsightActivityDebugInfoOption(str, Enum):
 
     none = "None"

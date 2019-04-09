@@ -339,6 +339,8 @@ try:
     from .sql_server_stored_procedure_activity_py3 import SqlServerStoredProcedureActivity
     from .custom_activity_reference_object_py3 import CustomActivityReferenceObject
     from .custom_activity_py3 import CustomActivity
+    from .ssis_access_credential_py3 import SSISAccessCredential
+    from .ssis_log_location_py3 import SSISLogLocation
     from .ssis_property_override_py3 import SSISPropertyOverride
     from .ssis_execution_parameter_py3 import SSISExecutionParameter
     from .ssis_execution_credential_py3 import SSISExecutionCredential
@@ -378,6 +380,7 @@ try:
     from .append_variable_activity_py3 import AppendVariableActivity
     from .set_variable_activity_py3 import SetVariableActivity
     from .filter_activity_py3 import FilterActivity
+    from .validation_activity_py3 import ValidationActivity
     from .until_activity_py3 import UntilActivity
     from .wait_activity_py3 import WaitActivity
     from .for_each_activity_py3 import ForEachActivity
@@ -739,6 +742,8 @@ except (SyntaxError, ImportError):
     from .sql_server_stored_procedure_activity import SqlServerStoredProcedureActivity
     from .custom_activity_reference_object import CustomActivityReferenceObject
     from .custom_activity import CustomActivity
+    from .ssis_access_credential import SSISAccessCredential
+    from .ssis_log_location import SSISLogLocation
     from .ssis_property_override import SSISPropertyOverride
     from .ssis_execution_parameter import SSISExecutionParameter
     from .ssis_execution_credential import SSISExecutionCredential
@@ -778,6 +783,7 @@ except (SyntaxError, ImportError):
     from .append_variable_activity import AppendVariableActivity
     from .set_variable_activity import SetVariableActivity
     from .filter_activity import FilterActivity
+    from .validation_activity import ValidationActivity
     from .until_activity import UntilActivity
     from .wait_activity import WaitActivity
     from .for_each_activity import ForEachActivity
@@ -865,6 +871,7 @@ from .data_factory_management_client_enums import (
     CassandraSourceReadConsistencyLevels,
     StoredProcedureParameterType,
     SalesforceSourceReadBehavior,
+    SsisPackageLocationType,
     HDInsightActivityDebugInfoOption,
     SalesforceSinkWriteBehavior,
     AzureSearchIndexWriteBehaviorType,
@@ -1214,6 +1221,8 @@ __all__ = [
     'SqlServerStoredProcedureActivity',
     'CustomActivityReferenceObject',
     'CustomActivity',
+    'SSISAccessCredential',
+    'SSISLogLocation',
     'SSISPropertyOverride',
     'SSISExecutionParameter',
     'SSISExecutionCredential',
@@ -1253,6 +1262,7 @@ __all__ = [
     'AppendVariableActivity',
     'SetVariableActivity',
     'FilterActivity',
+    'ValidationActivity',
     'UntilActivity',
     'WaitActivity',
     'ForEachActivity',
@@ -1339,6 +1349,7 @@ __all__ = [
     'CassandraSourceReadConsistencyLevels',
     'StoredProcedureParameterType',
     'SalesforceSourceReadBehavior',
+    'SsisPackageLocationType',
     'HDInsightActivityDebugInfoOption',
     'SalesforceSinkWriteBehavior',
     'AzureSearchIndexWriteBehaviorType',
