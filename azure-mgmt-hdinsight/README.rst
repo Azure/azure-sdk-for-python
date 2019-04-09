@@ -18,7 +18,7 @@ Usage
 =====
 
 For code examples, see `HDInsight Management
-<https://docs.microsoft.com/python/api/overview/azure/>`__
+<https://docs.microsoft.com/python/api/overview/azure/hdinsight>`__
 on docs.microsoft.com.
 
 
