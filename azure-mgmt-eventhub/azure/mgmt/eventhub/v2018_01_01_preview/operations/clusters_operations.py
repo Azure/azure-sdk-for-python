@@ -38,6 +38,59 @@ class ClustersOperations(object):
 
         self.config = config
 
+    def list_available_clusters(
+            self, custom_headers=None, raw=False, **operation_config):
+        """List the quantity of available pre-provisioned Event Hubs Clusters,
+        indexed by Azure region.
+
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: AvailableClustersList or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.eventhub.v2018_01_01_preview.models.AvailableClustersList
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.list_available_clusters.metadata['url']
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('AvailableClustersList', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    list_available_clusters.metadata = {'url': '/providers/Microsoft.EventHub/availableClusters'}
+
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
         """Lists the available Event Hubs Clusters within an ARM resource group.
@@ -446,7 +499,7 @@ class ClustersOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}'}
 
-    def namespace_list(
+    def list_namespaces(
             self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
         """List all Event Hubs Namespace IDs in an Event Hubs Dedicated Cluster.
 
@@ -468,7 +521,7 @@ class ClustersOperations(object):
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.namespace_list.metadata['url']
+        url = self.list_namespaces.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -507,4 +560,4 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
-    namespace_list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}/namespaces'}
+    list_namespaces.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}/namespaces'}
