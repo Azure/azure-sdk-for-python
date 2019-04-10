@@ -3,6 +3,13 @@
 Release History
 ===============
 
+3.2.0 (2019-04-10)
+++++++++++++++++++
+
+**Features**
+
+- Added operation BlobContainersOperations.lease for API versions 2018_02_01 and later
+
 3.1.1 (2019-01-02)
 ++++++++++++++++++
 
