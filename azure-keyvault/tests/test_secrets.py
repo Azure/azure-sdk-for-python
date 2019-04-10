@@ -177,6 +177,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
 
         # backup secret
         secret_backup = client.backup_secret(created_bundle.name)
+        self.assertIsNotNone(secret_backup, 'secret_backup')
 
         # delete secret
         client.delete_secret(created_bundle.name)

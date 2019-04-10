@@ -48,6 +48,7 @@ class _BackupResult(Model):
     """
 
     _validation = {
+        'value': {'readonly': True},
     }
 
     _attribute_map = {
