@@ -47,6 +47,9 @@ class ClusterGetProperties(Model):
     :param connectivity_endpoints: The list of connectivity endpoints.
     :type connectivity_endpoints:
      list[~azure.mgmt.hdinsight.models.ConnectivityEndpoint]
+    :param disk_encryption_properties: The disk encryption properties.
+    :type disk_encryption_properties:
+     ~azure.mgmt.hdinsight.models.DiskEncryptionProperties
     """
 
     _validation = {
@@ -66,6 +69,7 @@ class ClusterGetProperties(Model):
         'quota_info': {'key': 'quotaInfo', 'type': 'QuotaInfo'},
         'errors': {'key': 'errors', 'type': '[Errors]'},
         'connectivity_endpoints': {'key': 'connectivityEndpoints', 'type': '[ConnectivityEndpoint]'},
+        'disk_encryption_properties': {'key': 'diskEncryptionProperties', 'type': 'DiskEncryptionProperties'},
     }
 
     def __init__(self, **kwargs):
@@ -82,3 +86,4 @@ class ClusterGetProperties(Model):
         self.quota_info = kwargs.get('quota_info', None)
         self.errors = kwargs.get('errors', None)
         self.connectivity_endpoints = kwargs.get('connectivity_endpoints', None)
+        self.disk_encryption_properties = kwargs.get('disk_encryption_properties', None)

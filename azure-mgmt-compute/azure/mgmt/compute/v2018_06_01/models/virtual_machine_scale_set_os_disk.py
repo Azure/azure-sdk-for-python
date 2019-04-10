@@ -36,6 +36,10 @@ class VirtualMachineScaleSetOSDisk(Model):
      Possible values include: 'FromImage', 'Empty', 'Attach'
     :type create_option: str or
      ~azure.mgmt.compute.v2018_06_01.models.DiskCreateOptionTypes
+    :param diff_disk_settings: Specifies the ephemeral disk Settings for the
+     operating system disk used by the virtual machine scale set.
+    :type diff_disk_settings:
+     ~azure.mgmt.compute.v2018_06_01.models.DiffDiskSettings
     :param disk_size_gb: Specifies the size of the operating system disk in
      gigabytes. This element can be used to overwrite the size of the disk in a
      virtual machine image. <br><br> This value cannot be larger than 1023 GB
@@ -66,6 +70,7 @@ class VirtualMachineScaleSetOSDisk(Model):
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
         'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
         'create_option': {'key': 'createOption', 'type': 'str'},
+        'diff_disk_settings': {'key': 'diffDiskSettings', 'type': 'DiffDiskSettings'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
         'os_type': {'key': 'osType', 'type': 'OperatingSystemTypes'},
         'image': {'key': 'image', 'type': 'VirtualHardDisk'},
@@ -79,6 +84,7 @@ class VirtualMachineScaleSetOSDisk(Model):
         self.caching = kwargs.get('caching', None)
         self.write_accelerator_enabled = kwargs.get('write_accelerator_enabled', None)
         self.create_option = kwargs.get('create_option', None)
+        self.diff_disk_settings = kwargs.get('diff_disk_settings', None)
         self.disk_size_gb = kwargs.get('disk_size_gb', None)
         self.os_type = kwargs.get('os_type', None)
         self.image = kwargs.get('image', None)

@@ -13,7 +13,8 @@ from msrest.serialization import Model
 
 
 class RecommendedMachineConfiguration(Model):
-    """Describes the recommended machine configuration.
+    """The properties describe the recommended machine configuration for this
+    Image Definition. These properties are updatable.
 
     :param v_cp_us:
     :type v_cp_us: ~azure.mgmt.compute.v2018_06_01.models.ResourceRange

@@ -47,8 +47,8 @@ class Job(ProxyResource):
      priority jobs are processed before lower priority jobs. If not set, the
      default is normal. Possible values include: 'Low', 'Normal', 'High'
     :type priority: str or ~azure.mgmt.media.models.Priority
-    :param correlation_data: Customer provided correlation data that will be
-     returned in Job completed events.
+    :param correlation_data: Customer provided key, value pairs that will be
+     returned in Job and JobOutput state events.
     :type correlation_data: dict[str, str]
     """
 
@@ -68,12 +68,12 @@ class Job(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
-        'state': {'key': 'properties.state', 'type': 'JobState'},
+        'state': {'key': 'properties.state', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'input': {'key': 'properties.input', 'type': 'JobInput'},
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
         'outputs': {'key': 'properties.outputs', 'type': '[JobOutput]'},
-        'priority': {'key': 'properties.priority', 'type': 'Priority'},
+        'priority': {'key': 'properties.priority', 'type': 'str'},
         'correlation_data': {'key': 'properties.correlationData', 'type': '{str}'},
     }
 

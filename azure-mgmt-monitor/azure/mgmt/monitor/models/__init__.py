@@ -62,6 +62,7 @@ try:
     from .voice_receiver_py3 import VoiceReceiver
     from .logic_app_receiver_py3 import LogicAppReceiver
     from .azure_function_receiver_py3 import AzureFunctionReceiver
+    from .arm_role_receiver_py3 import ArmRoleReceiver
     from .action_group_resource_py3 import ActionGroupResource
     from .enable_request_py3 import EnableRequest
     from .action_group_patch_body_py3 import ActionGroupPatchBody
@@ -97,6 +98,8 @@ try:
     from .metric_dimension_py3 import MetricDimension
     from .metric_criteria_py3 import MetricCriteria
     from .metric_alert_single_resource_multiple_metric_criteria_py3 import MetricAlertSingleResourceMultipleMetricCriteria
+    from .multi_metric_criteria_py3 import MultiMetricCriteria
+    from .metric_alert_multiple_resource_multiple_metric_criteria_py3 import MetricAlertMultipleResourceMultipleMetricCriteria
     from .source_py3 import Source
     from .schedule_py3 import Schedule
     from .action_py3 import Action
@@ -106,6 +109,17 @@ try:
     from .trigger_condition_py3 import TriggerCondition
     from .az_ns_action_group_py3 import AzNsActionGroup
     from .alerting_action_py3 import AlertingAction
+    from .dimension_py3 import Dimension
+    from .criteria_py3 import Criteria
+    from .log_to_metric_action_py3 import LogToMetricAction
+    from .metric_namespace_name_py3 import MetricNamespaceName
+    from .metric_namespace_py3 import MetricNamespace
+    from .proxy_resource_py3 import ProxyResource
+    from .error_py3 import Error
+    from .response_with_error_py3 import ResponseWithError, ResponseWithErrorException
+    from .workspace_info_py3 import WorkspaceInfo
+    from .data_container_py3 import DataContainer
+    from .vm_insights_onboarding_status_py3 import VMInsightsOnboardingStatus
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .scale_capacity import ScaleCapacity
@@ -159,6 +173,7 @@ except (SyntaxError, ImportError):
     from .voice_receiver import VoiceReceiver
     from .logic_app_receiver import LogicAppReceiver
     from .azure_function_receiver import AzureFunctionReceiver
+    from .arm_role_receiver import ArmRoleReceiver
     from .action_group_resource import ActionGroupResource
     from .enable_request import EnableRequest
     from .action_group_patch_body import ActionGroupPatchBody
@@ -194,6 +209,8 @@ except (SyntaxError, ImportError):
     from .metric_dimension import MetricDimension
     from .metric_criteria import MetricCriteria
     from .metric_alert_single_resource_multiple_metric_criteria import MetricAlertSingleResourceMultipleMetricCriteria
+    from .multi_metric_criteria import MultiMetricCriteria
+    from .metric_alert_multiple_resource_multiple_metric_criteria import MetricAlertMultipleResourceMultipleMetricCriteria
     from .source import Source
     from .schedule import Schedule
     from .action import Action
@@ -203,6 +220,17 @@ except (SyntaxError, ImportError):
     from .trigger_condition import TriggerCondition
     from .az_ns_action_group import AzNsActionGroup
     from .alerting_action import AlertingAction
+    from .dimension import Dimension
+    from .criteria import Criteria
+    from .log_to_metric_action import LogToMetricAction
+    from .metric_namespace_name import MetricNamespaceName
+    from .metric_namespace import MetricNamespace
+    from .proxy_resource import ProxyResource
+    from .error import Error
+    from .response_with_error import ResponseWithError, ResponseWithErrorException
+    from .workspace_info import WorkspaceInfo
+    from .data_container import DataContainer
+    from .vm_insights_onboarding_status import VMInsightsOnboardingStatus
 from .autoscale_setting_resource_paged import AutoscaleSettingResourcePaged
 from .incident_paged import IncidentPaged
 from .alert_rule_resource_paged import AlertRuleResourcePaged
@@ -214,6 +242,7 @@ from .localizable_string_paged import LocalizableStringPaged
 from .metric_definition_paged import MetricDefinitionPaged
 from .metric_alert_resource_paged import MetricAlertResourcePaged
 from .log_search_rule_resource_paged import LogSearchRuleResourcePaged
+from .metric_namespace_paged import MetricNamespacePaged
 from .monitor_management_client_enums import (
     MetricStatisticType,
     TimeAggregationType,
@@ -235,6 +264,8 @@ from .monitor_management_client_enums import (
     ConditionalOperator,
     MetricTriggerType,
     AlertSeverity,
+    OnboardingStatus,
+    DataStatus,
     ResultType,
 )
 
@@ -291,6 +322,7 @@ __all__ = [
     'VoiceReceiver',
     'LogicAppReceiver',
     'AzureFunctionReceiver',
+    'ArmRoleReceiver',
     'ActionGroupResource',
     'EnableRequest',
     'ActionGroupPatchBody',
@@ -326,6 +358,8 @@ __all__ = [
     'MetricDimension',
     'MetricCriteria',
     'MetricAlertSingleResourceMultipleMetricCriteria',
+    'MultiMetricCriteria',
+    'MetricAlertMultipleResourceMultipleMetricCriteria',
     'Source',
     'Schedule',
     'Action',
@@ -335,6 +369,17 @@ __all__ = [
     'TriggerCondition',
     'AzNsActionGroup',
     'AlertingAction',
+    'Dimension',
+    'Criteria',
+    'LogToMetricAction',
+    'MetricNamespaceName',
+    'MetricNamespace',
+    'ProxyResource',
+    'Error',
+    'ResponseWithError', 'ResponseWithErrorException',
+    'WorkspaceInfo',
+    'DataContainer',
+    'VMInsightsOnboardingStatus',
     'AutoscaleSettingResourcePaged',
     'IncidentPaged',
     'AlertRuleResourcePaged',
@@ -346,6 +391,7 @@ __all__ = [
     'MetricDefinitionPaged',
     'MetricAlertResourcePaged',
     'LogSearchRuleResourcePaged',
+    'MetricNamespacePaged',
     'MetricStatisticType',
     'TimeAggregationType',
     'ComparisonOperationType',
@@ -366,5 +412,7 @@ __all__ = [
     'ConditionalOperator',
     'MetricTriggerType',
     'AlertSeverity',
+    'OnboardingStatus',
+    'DataStatus',
     'ResultType',
 ]

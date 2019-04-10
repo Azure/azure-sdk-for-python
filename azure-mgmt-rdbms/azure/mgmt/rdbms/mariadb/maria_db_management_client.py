@@ -14,7 +14,9 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.servers_operations import ServersOperations
+from .operations.replicas_operations import ReplicasOperations
 from .operations.firewall_rules_operations import FirewallRulesOperations
+from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.databases_operations import DatabasesOperations
 from .operations.configurations_operations import ConfigurationsOperations
 from .operations.log_files_operations import LogFilesOperations
@@ -66,8 +68,12 @@ class MariaDBManagementClient(SDKClient):
 
     :ivar servers: Servers operations
     :vartype servers: azure.mgmt.rdbms.mariadb.operations.ServersOperations
+    :ivar replicas: Replicas operations
+    :vartype replicas: azure.mgmt.rdbms.mariadb.operations.ReplicasOperations
     :ivar firewall_rules: FirewallRules operations
     :vartype firewall_rules: azure.mgmt.rdbms.mariadb.operations.FirewallRulesOperations
+    :ivar virtual_network_rules: VirtualNetworkRules operations
+    :vartype virtual_network_rules: azure.mgmt.rdbms.mariadb.operations.VirtualNetworkRulesOperations
     :ivar databases: Databases operations
     :vartype databases: azure.mgmt.rdbms.mariadb.operations.DatabasesOperations
     :ivar configurations: Configurations operations
@@ -99,13 +105,17 @@ class MariaDBManagementClient(SDKClient):
         super(MariaDBManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-06-01-preview'
+        self.api_version = '2018-06-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.servers = ServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.replicas = ReplicasOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_network_rules = VirtualNetworkRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)

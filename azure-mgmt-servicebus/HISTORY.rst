@@ -3,6 +3,40 @@
 Release History
 ===============
 
+0.6.0 (2019-04-09)
+++++++++++++++++++
+
+**Features**
+
+- Added operation NamespacesOperations.get_network_rule_set
+- Added operation NamespacesOperations.migrate
+- Added operation NamespacesOperations.create_or_update_network_rule_set
+
+0.5.4 (2019-02-15)
+++++++++++++++++++
+
+**Features**
+
+- Added operation NamespacesOperations.migrate
+
+0.5.3 (2018-10-29)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix sdist broken in 0.5.2. No code change.
+
+0.5.2 (2018-09-28)
+++++++++++++++++++
+
+**Features**
+
+- Model MigrationConfigProperties has a new parameter migration_state
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
 0.5.1 (2018-07-09)
 ++++++++++++++++++
 

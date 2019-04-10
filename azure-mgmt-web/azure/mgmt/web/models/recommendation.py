@@ -60,7 +60,7 @@ class Recommendation(ProxyOnlyResource):
      "actionable"). False if it is invalid.
     :type enabled: int
     :param states: The list of states of this recommendation. If it's null
-     then it shoud be considered "Active".
+     then it should be considered "Active".
     :type states: list[str]
     :param start_time: The beginning time in UTC of a range that the
      recommendation refers to.
