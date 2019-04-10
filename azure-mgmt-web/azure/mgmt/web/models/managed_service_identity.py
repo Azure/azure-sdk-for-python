@@ -19,7 +19,7 @@ class ManagedServiceIdentity(Model):
     sending a request.
 
     :param type: Type of managed service identity. Possible values include:
-     'SystemAssigned', 'UserAssigned'
+     'SystemAssigned', 'UserAssigned', 'SystemAssigned, UserAssigned', 'None'
     :type type: str or ~azure.mgmt.web.models.ManagedServiceIdentityType
     :ivar tenant_id: Tenant of managed service identity.
     :vartype tenant_id: str
