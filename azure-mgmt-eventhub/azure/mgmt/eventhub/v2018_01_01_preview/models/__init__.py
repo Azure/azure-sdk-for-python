@@ -18,6 +18,7 @@ try:
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .tracked_resource_py3 import TrackedResource
     from .resource_py3 import Resource
+    from .eh_namespace_id_list_result_py3 import EHNamespaceIdListResult
     from .sku_py3 import Sku
     from .eh_namespace_py3 import EHNamespace
     from .ip_filter_rule_py3 import IpFilterRule
@@ -35,6 +36,7 @@ except (SyntaxError, ImportError):
     from .error_response import ErrorResponse, ErrorResponseException
     from .tracked_resource import TrackedResource
     from .resource import Resource
+    from .eh_namespace_id_list_result import EHNamespaceIdListResult
     from .sku import Sku
     from .eh_namespace import EHNamespace
     from .ip_filter_rule import IpFilterRule
@@ -65,6 +67,7 @@ __all__ = [
     'ErrorResponse', 'ErrorResponseException',
     'TrackedResource',
     'Resource',
+    'EHNamespaceIdListResult',
     'Sku',
     'EHNamespace',
     'IpFilterRule',
