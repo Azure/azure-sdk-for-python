@@ -27,6 +27,7 @@ try:
     from .routing_endpoints_py3 import RoutingEndpoints
     from .route_properties_py3 import RouteProperties
     from .fallback_route_properties_py3 import FallbackRouteProperties
+    from .enrichment_properties_py3 import EnrichmentProperties
     from .routing_properties_py3 import RoutingProperties
     from .storage_endpoint_properties_py3 import StorageEndpointProperties
     from .messaging_endpoint_properties_py3 import MessagingEndpointProperties
@@ -67,6 +68,7 @@ try:
     from .test_route_result_py3 import TestRouteResult
     from .export_devices_request_py3 import ExportDevicesRequest
     from .import_devices_request_py3 import ImportDevicesRequest
+    from .failover_input_py3 import FailoverInput
 except (SyntaxError, ImportError):
     from .certificate_verification_description import CertificateVerificationDescription
     from .certificate_properties import CertificateProperties
@@ -85,6 +87,7 @@ except (SyntaxError, ImportError):
     from .routing_endpoints import RoutingEndpoints
     from .route_properties import RouteProperties
     from .fallback_route_properties import FallbackRouteProperties
+    from .enrichment_properties import EnrichmentProperties
     from .routing_properties import RoutingProperties
     from .storage_endpoint_properties import StorageEndpointProperties
     from .messaging_endpoint_properties import MessagingEndpointProperties
@@ -125,6 +128,7 @@ except (SyntaxError, ImportError):
     from .test_route_result import TestRouteResult
     from .export_devices_request import ExportDevicesRequest
     from .import_devices_request import ImportDevicesRequest
+    from .failover_input import FailoverInput
 from .operation_paged import OperationPaged
 from .iot_hub_description_paged import IotHubDescriptionPaged
 from .iot_hub_sku_description_paged import IotHubSkuDescriptionPaged
@@ -167,6 +171,7 @@ __all__ = [
     'RoutingEndpoints',
     'RouteProperties',
     'FallbackRouteProperties',
+    'EnrichmentProperties',
     'RoutingProperties',
     'StorageEndpointProperties',
     'MessagingEndpointProperties',
@@ -207,6 +212,7 @@ __all__ = [
     'TestRouteResult',
     'ExportDevicesRequest',
     'ImportDevicesRequest',
+    'FailoverInput',
     'OperationPaged',
     'IotHubDescriptionPaged',
     'IotHubSkuDescriptionPaged',

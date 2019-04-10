@@ -17,6 +17,7 @@ from .operations.operations import Operations
 from .operations.iot_hub_resource_operations import IotHubResourceOperations
 from .operations.resource_provider_common_operations import ResourceProviderCommonOperations
 from .operations.certificates_operations import CertificatesOperations
+from .operations.iot_hub_operations import IotHubOperations
 from . import models
 
 
@@ -66,6 +67,8 @@ class IotHubClient(SDKClient):
     :vartype resource_provider_common: azure.mgmt.iothub.operations.ResourceProviderCommonOperations
     :ivar certificates: Certificates operations
     :vartype certificates: azure.mgmt.iothub.operations.CertificatesOperations
+    :ivar iot_hub: IotHub operations
+    :vartype iot_hub: azure.mgmt.iothub.operations.IotHubOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -82,7 +85,7 @@ class IotHubClient(SDKClient):
         super(IotHubClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-12-01-preview'
+        self.api_version = '2019-03-22-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -93,4 +96,6 @@ class IotHubClient(SDKClient):
         self.resource_provider_common = ResourceProviderCommonOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.certificates = CertificatesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.iot_hub = IotHubOperations(
             self._client, self.config, self._serialize, self._deserialize)
