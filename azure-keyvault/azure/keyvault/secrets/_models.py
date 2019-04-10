@@ -127,11 +127,6 @@ class Secret(SecretAttributes):
      this is a secret backing a certificate, then managed will be true.
     """
 
-    _validation = {
-        'key_id': {'readonly': True},
-        'managed': {'readonly': True},
-    }
-
     # i.e., Secret is SecretAttributes plus a value
     _attribute_map = dict({
         'value': {'key': 'value', 'type': 'str'}
@@ -186,13 +181,15 @@ class DeletedSecret(SecretAttributes):
     :vartype deleted_date: datetime
     """
 
-    _validation = {
-        'kid': {'readonly': True},
-        'managed': {'readonly': True},
+    _validation = dict(
+        {
         'scheduled_purge_date': {'readonly': True},
         'deleted_date': {'readonly': True},
-    }
+        },
+        **SecretAttributes._validation
+    )
 
+    # DeletedSecret is SecretAttributes plus deletion info
     _attribute_map = dict(
         {
             "recovery_id": {"key": "recoveryId", "type": "str"},
@@ -206,8 +203,8 @@ class DeletedSecret(SecretAttributes):
         # type: (Mapping[str, Any]) -> None
         super(DeletedSecret, self).__init__(**kwargs)
         self.recovery_id = kwargs.get('recovery_id', None)
-        # self.scheduled_purge_date = None
-        # self.deleted_date = None
+        self.scheduled_purge_date = None
+        self.deleted_date = None
 
 
 class DeletedSecretPaged(Paged):
