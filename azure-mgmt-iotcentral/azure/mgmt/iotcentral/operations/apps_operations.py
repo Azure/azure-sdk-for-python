@@ -713,4 +713,4 @@ class AppsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_templates.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.IoTCentral/IoTAppTemplates'}
+    list_templates.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.IoTCentral/appTemplates'}
