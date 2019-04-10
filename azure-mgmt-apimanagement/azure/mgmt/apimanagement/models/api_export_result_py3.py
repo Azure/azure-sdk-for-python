@@ -13,17 +13,26 @@ from msrest.serialization import Model
 
 
 class ApiExportResult(Model):
-    """API Export result Blob Uri.
+    """API Export result.
 
-    :param link: Link to the Storage Blob containing the result of the export
-     operation. The Blob Uri is only valid for 5 minutes.
-    :type link: str
+    :param id: ResourceId of the API which was exported.
+    :type id: str
+    :param export_format: Format in which the Api Details are exported to the
+     Storage Blob with Sas Key valid for 5 minutes. Possible values include:
+     'Swagger', 'Wsdl', 'Wadl', 'OpenApi'
+    :type export_format: str or ~azure.mgmt.apimanagement.models.ExportFormat
+    :param value: The object defining the schema of the exported Api Detail
+    :type value: ~azure.mgmt.apimanagement.models.ApiExportResultValue
     """
 
     _attribute_map = {
-        'link': {'key': 'link', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'export_format': {'key': 'format', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'ApiExportResultValue'},
     }
 
-    def __init__(self, *, link: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, export_format=None, value=None, **kwargs) -> None:
         super(ApiExportResult, self).__init__(**kwargs)
-        self.link = link
+        self.id = id
+        self.export_format = export_format
+        self.value = value
