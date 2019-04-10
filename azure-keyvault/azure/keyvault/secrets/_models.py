@@ -49,8 +49,6 @@ class SecretAttributes(Model):
             self._vault_id = _parse_vault_id(self.id)
         self.content_type = kwargs.get('content_type', None)
         self._management_attributes = kwargs.get('_management_attributes', None)
-        if not self._management_attributes:
-            self._management_attributes = _SecretManagementAttributes(**kwargs)
         self.tags = kwargs.get('tags', None)
         self.key_id = None
         self.managed = None

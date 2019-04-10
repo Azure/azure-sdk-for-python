@@ -142,7 +142,10 @@ class SecretClient:
         :raises:
         :class:`azure.core.ClientRequestError`
         """
-        management_attributes = _SecretManagementAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        if enabled or not_before or expires:
+            management_attributes = _SecretManagementAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        else:
+            management_attributes = None
         secret = Secret(value=value, content_type=content_type, _management_attributes=management_attributes, tags=tags)
 
         url = "/".join([s.strip("/") for s in (self.vault_url, "secrets", name)])
@@ -170,7 +173,10 @@ class SecretClient:
         # type: () -> SecretAttributes
         url = "/".join([s.strip("/") for s in (self.vault_url, "secrets", name, version)])
 
-        management_attributes = _SecretManagementAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        if enabled or not_before or expires:
+            management_attributes = _SecretManagementAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        else:
+            management_attributes = None
         secret = Secret(content_type=content_type, _management_attributes=management_attributes, tags=tags)
 
         query_parameters = {"api-version": self._api_version}
