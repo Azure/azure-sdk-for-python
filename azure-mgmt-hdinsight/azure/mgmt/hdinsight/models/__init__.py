@@ -43,6 +43,8 @@ try:
     from .cluster_list_runtime_script_action_detail_result_py3 import ClusterListRuntimeScriptActionDetailResult
     from .cluster_resize_parameters_py3 import ClusterResizeParameters
     from .cluster_disk_encryption_parameters_py3 import ClusterDiskEncryptionParameters
+    from .update_gateway_settings_parameters_py3 import UpdateGatewaySettingsParameters
+    from .gateway_settings_py3 import GatewaySettings
     from .operation_resource_py3 import OperationResource
     from .resource_py3 import Resource
     from .tracked_resource_py3 import TrackedResource
@@ -55,6 +57,7 @@ try:
     from .localized_name_py3 import LocalizedName
     from .usage_py3 import Usage
     from .usages_list_result_py3 import UsagesListResult
+    from .cluster_configurations_py3 import ClusterConfigurations
     from .extension_py3 import Extension
     from .cluster_monitoring_response_py3 import ClusterMonitoringResponse
     from .cluster_monitoring_request_py3 import ClusterMonitoringRequest
@@ -95,6 +98,8 @@ except (SyntaxError, ImportError):
     from .cluster_list_runtime_script_action_detail_result import ClusterListRuntimeScriptActionDetailResult
     from .cluster_resize_parameters import ClusterResizeParameters
     from .cluster_disk_encryption_parameters import ClusterDiskEncryptionParameters
+    from .update_gateway_settings_parameters import UpdateGatewaySettingsParameters
+    from .gateway_settings import GatewaySettings
     from .operation_resource import OperationResource
     from .resource import Resource
     from .tracked_resource import TrackedResource
@@ -107,6 +112,7 @@ except (SyntaxError, ImportError):
     from .localized_name import LocalizedName
     from .usage import Usage
     from .usages_list_result import UsagesListResult
+    from .cluster_configurations import ClusterConfigurations
     from .extension import Extension
     from .cluster_monitoring_response import ClusterMonitoringResponse
     from .cluster_monitoring_request import ClusterMonitoringRequest
@@ -161,6 +167,8 @@ __all__ = [
     'ClusterListRuntimeScriptActionDetailResult',
     'ClusterResizeParameters',
     'ClusterDiskEncryptionParameters',
+    'UpdateGatewaySettingsParameters',
+    'GatewaySettings',
     'OperationResource',
     'Resource',
     'TrackedResource',
@@ -173,6 +181,7 @@ __all__ = [
     'LocalizedName',
     'Usage',
     'UsagesListResult',
+    'ClusterConfigurations',
     'Extension',
     'ClusterMonitoringResponse',
     'ClusterMonitoringRequest',
