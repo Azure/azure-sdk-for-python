@@ -54,21 +54,16 @@ jobs:
       vmImage: 'ubuntu-16.04'
 
     steps:
-      # sudo is required for pip install, as a console_entrypoint shim needs to be placed in bin
-      - script: |
-          pip install setuptools wheel
-          sudo pip install doc-warden
-          ward scan -d $(Build.SourcesDirectory)
-        displayName: 'Verify Readmes'
-
       - task: UsePythonVersion@0
         displayName: 'Use Python $(PythonVersion)'
         inputs:
           versionSpec: '$(PythonVersion)'
 
       - script: |
-          pip install wheel Jinja2
-        displayName: 'Prep Environment'
+          pip install setuptools wheel Jinja2
+          pip install doc-warden
+          ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
+        displayName: 'Verify Readmes'
 
       - task: PythonScript@0
         displayName: 'Analyze dependencies'
@@ -130,10 +125,22 @@ jobs:
       vmImage: '$(OSVmImage)'
 
     steps:
+      - powershell: |
+            Invoke-WebRequest -Uri "https://github.com/Azure/azure-sdk-tools/releases/download/sdk-tools_14793/sdk-tools.zip" `
+            -OutFile "sdk-tools.zip" | Wait-Process; Expand-Archive -Path "sdk-tools.zip" -DestinationPath "./sdk-tools/"
+        workingDirectory: '$(Build.BinariesDirectory)'
+        displayName: 'Download Tools Archive From Github Release and Extract it'
+
       - task: UsePythonVersion@0
         displayName: 'Use Python $(PythonVersion)'
         inputs:
           versionSpec: '$(PythonVersion)'
+
+      - task: PythonScript@0
+        displayName: 'Run VerifyAgentOS script'
+        inputs:
+          scriptPath: '$(Build.BinariesDirectory)/sdk-tools/scripts/python/verify_agent_os.py'
+          arguments: $(OSName)
 
       - script: |
           pip install pathlib twine codecov beautifulsoup4
@@ -236,6 +243,8 @@ jobs:
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
           pypy3 -m ensurepip
-          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)"
+          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)" --disablecov
         displayName: 'Setup and Run Filtered Tests PyPy3'
         continueOnError: true
+
+

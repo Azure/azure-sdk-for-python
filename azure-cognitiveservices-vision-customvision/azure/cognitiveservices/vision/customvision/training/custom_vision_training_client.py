@@ -13,7 +13,6 @@ from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
-from msrest.exceptions import HttpOperationError
 from . import models
 
 
@@ -22,9 +21,9 @@ class CustomVisionTrainingClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param api_key:
+    :param api_key: API key.
     :type api_key: str
-    :param endpoint: Supported Cognitive Services endpoints
+    :param endpoint: Supported Cognitive Services endpoints.
     :type endpoint: str
     """
 
@@ -35,7 +34,7 @@ class CustomVisionTrainingClientConfiguration(Configuration):
             raise ValueError("Parameter 'api_key' must not be None.")
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        base_url = '{Endpoint}/customvision/v2.2/Training'
+        base_url = '{Endpoint}/customvision/v3.0/training'
 
         super(CustomVisionTrainingClientConfiguration, self).__init__(base_url)
 
@@ -51,9 +50,9 @@ class CustomVisionTrainingClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: CustomVisionTrainingClientConfiguration
 
-    :param api_key:
+    :param api_key: API key.
     :type api_key: str
-    :param endpoint: Supported Cognitive Services endpoints
+    :param endpoint: Supported Cognitive Services endpoints.
     :type endpoint: str
     """
 
@@ -64,7 +63,7 @@ class CustomVisionTrainingClient(SDKClient):
         super(CustomVisionTrainingClient, self).__init__(None, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2.2'
+        self.api_version = '3.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -83,7 +82,7 @@ class CustomVisionTrainingClient(SDKClient):
          list[~azure.cognitiveservices.vision.customvision.training.models.Domain]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_domains.metadata['url']
@@ -107,7 +106,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -137,7 +136,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.Domain or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_domain.metadata['url']
@@ -162,7 +161,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -200,7 +199,7 @@ class CustomVisionTrainingClient(SDKClient):
         :return: int or ClientRawResponse if raw=true
         :rtype: int or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_tagged_image_count.metadata['url']
@@ -229,7 +228,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -263,7 +262,7 @@ class CustomVisionTrainingClient(SDKClient):
         :return: int or ClientRawResponse if raw=true
         :rtype: int or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_untagged_image_count.metadata['url']
@@ -290,7 +289,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -323,7 +322,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.ImageTagCreateSummary
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         batch = models.ImageTagCreateBatch(tags=tags)
 
@@ -354,7 +353,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -387,7 +386,7 @@ class CustomVisionTrainingClient(SDKClient):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.delete_image_tags.metadata['url']
@@ -399,8 +398,8 @@ class CustomVisionTrainingClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['imageIds'] = self._serialize.query("image_ids", image_ids, '[str]', div=',')
-        query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',')
+        query_parameters['imageIds'] = self._serialize.query("image_ids", image_ids, '[str]', div=',', max_items=64, min_items=0)
+        query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',', max_items=20, min_items=0)
 
         # Construct headers
         header_parameters = {}
@@ -413,7 +412,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -443,7 +442,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.ImageRegionCreateSummary
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         batch = models.ImageRegionCreateBatch(regions=regions)
 
@@ -474,7 +473,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -504,7 +503,7 @@ class CustomVisionTrainingClient(SDKClient):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.delete_image_regions.metadata['url']
@@ -516,7 +515,7 @@ class CustomVisionTrainingClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['regionIds'] = self._serialize.query("region_ids", region_ids, '[str]', div=',')
+        query_parameters['regionIds'] = self._serialize.query("region_ids", region_ids, '[str]', div=',', max_items=64, min_items=0)
 
         # Construct headers
         header_parameters = {}
@@ -529,7 +528,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -575,7 +574,7 @@ class CustomVisionTrainingClient(SDKClient):
          list[~azure.cognitiveservices.vision.customvision.training.models.Image]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_tagged_images.metadata['url']
@@ -590,11 +589,11 @@ class CustomVisionTrainingClient(SDKClient):
         if iteration_id is not None:
             query_parameters['iterationId'] = self._serialize.query("iteration_id", iteration_id, 'str')
         if tag_ids is not None:
-            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',')
+            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',', max_items=20, min_items=0)
         if order_by is not None:
             query_parameters['orderBy'] = self._serialize.query("order_by", order_by, 'str')
         if take is not None:
-            query_parameters['take'] = self._serialize.query("take", take, 'int')
+            query_parameters['take'] = self._serialize.query("take", take, 'int', maximum=256, minimum=0)
         if skip is not None:
             query_parameters['skip'] = self._serialize.query("skip", skip, 'int')
 
@@ -610,7 +609,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -656,7 +655,7 @@ class CustomVisionTrainingClient(SDKClient):
          list[~azure.cognitiveservices.vision.customvision.training.models.Image]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_untagged_images.metadata['url']
@@ -673,7 +672,7 @@ class CustomVisionTrainingClient(SDKClient):
         if order_by is not None:
             query_parameters['orderBy'] = self._serialize.query("order_by", order_by, 'str')
         if take is not None:
-            query_parameters['take'] = self._serialize.query("take", take, 'int')
+            query_parameters['take'] = self._serialize.query("take", take, 'int', maximum=256, minimum=0)
         if skip is not None:
             query_parameters['skip'] = self._serialize.query("skip", skip, 'int')
 
@@ -689,7 +688,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -727,7 +726,7 @@ class CustomVisionTrainingClient(SDKClient):
          list[~azure.cognitiveservices.vision.customvision.training.models.Image]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_images_by_ids.metadata['url']
@@ -740,7 +739,7 @@ class CustomVisionTrainingClient(SDKClient):
         # Construct parameters
         query_parameters = {}
         if image_ids is not None:
-            query_parameters['imageIds'] = self._serialize.query("image_ids", image_ids, '[str]', div=',')
+            query_parameters['imageIds'] = self._serialize.query("image_ids", image_ids, '[str]', div=',', max_items=256, min_items=0)
         if iteration_id is not None:
             query_parameters['iterationId'] = self._serialize.query("iteration_id", iteration_id, 'str')
 
@@ -756,7 +755,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -780,7 +779,8 @@ class CustomVisionTrainingClient(SDKClient):
 
         :param project_id: The project id.
         :type project_id: str
-        :param image_data: Binary image data.
+        :param image_data: Binary image data. Supported formats are JPEG, GIF,
+         PNG, and BMP. Supports images up to 6MB.
         :type image_data: Generator
         :param tag_ids: The tags ids with which to tag each image. Limited to
          20.
@@ -795,7 +795,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.ImageCreateSummary
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.create_images_from_data.metadata['url']
@@ -808,7 +808,7 @@ class CustomVisionTrainingClient(SDKClient):
         # Construct parameters
         query_parameters = {}
         if tag_ids is not None:
-            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',')
+            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',', max_items=20, min_items=0)
 
         # Construct headers
         header_parameters = {}
@@ -828,7 +828,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -859,7 +859,7 @@ class CustomVisionTrainingClient(SDKClient):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.delete_images.metadata['url']
@@ -871,7 +871,7 @@ class CustomVisionTrainingClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['imageIds'] = self._serialize.query("image_ids", image_ids, '[str]', div=',')
+        query_parameters['imageIds'] = self._serialize.query("image_ids", image_ids, '[str]', div=',', max_items=256, min_items=0)
 
         # Construct headers
         header_parameters = {}
@@ -884,7 +884,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -915,7 +915,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.ImageCreateSummary
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         batch = models.ImageFileCreateBatch(images=images, tag_ids=tag_ids)
 
@@ -946,7 +946,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -984,7 +984,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.ImageCreateSummary
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         batch = models.ImageUrlCreateBatch(images=images, tag_ids=tag_ids)
 
@@ -1015,7 +1015,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1053,7 +1053,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.ImageCreateSummary
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         batch = models.ImageIdCreateBatch(images=images, tag_ids=tag_ids)
 
@@ -1084,7 +1084,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1120,7 +1120,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.ImageRegionProposal
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_image_region_proposals.metadata['url']
@@ -1146,7 +1146,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1158,7 +1158,7 @@ class CustomVisionTrainingClient(SDKClient):
             return client_raw_response
 
         return deserialized
-    get_image_region_proposals.metadata = {'url': '/{projectId}/images/{imageId}/regionproposals'}
+    get_image_region_proposals.metadata = {'url': '/projects/{projectId}/images/{imageId}/regionproposals'}
 
     def delete_prediction(
             self, project_id, ids, custom_headers=None, raw=False, **operation_config):
@@ -1177,7 +1177,7 @@ class CustomVisionTrainingClient(SDKClient):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.delete_prediction.metadata['url']
@@ -1189,7 +1189,7 @@ class CustomVisionTrainingClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['ids'] = self._serialize.query("ids", ids, '[str]', div=',')
+        query_parameters['ids'] = self._serialize.query("ids", ids, '[str]', div=',', max_items=64, min_items=0)
 
         # Construct headers
         header_parameters = {}
@@ -1202,7 +1202,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -1210,17 +1210,17 @@ class CustomVisionTrainingClient(SDKClient):
     delete_prediction.metadata = {'url': '/projects/{projectId}/predictions'}
 
     def quick_test_image_url(
-            self, project_id, iteration_id=None, url=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, url, iteration_id=None, custom_headers=None, raw=False, **operation_config):
         """Quick test an image url.
 
         :param project_id: The project to evaluate against.
         :type project_id: str
+        :param url: Url of the image.
+        :type url: str
         :param iteration_id: Optional. Specifies the id of a particular
          iteration to evaluate against.
          The default iteration for the project will be used when not specified.
         :type iteration_id: str
-        :param url:
-        :type url: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1231,7 +1231,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.ImagePrediction
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         image_url = models.ImageUrl(url=url)
 
@@ -1264,7 +1264,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1284,7 +1284,8 @@ class CustomVisionTrainingClient(SDKClient):
 
         :param project_id: The project id.
         :type project_id: str
-        :param image_data: Binary image data.
+        :param image_data: Binary image data. Supported formats are JPEG, GIF,
+         PNG, and BMP. Supports images up to 6MB.
         :type image_data: Generator
         :param iteration_id: Optional. Specifies the id of a particular
          iteration to evaluate against.
@@ -1300,7 +1301,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.ImagePrediction
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.quick_test_image.metadata['url']
@@ -1333,7 +1334,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1367,7 +1368,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.PredictionQueryResult
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.query_predictions.metadata['url']
@@ -1396,7 +1397,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1433,7 +1434,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.IterationPerformance
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_iteration_performance.metadata['url']
@@ -1463,7 +1464,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1516,7 +1517,7 @@ class CustomVisionTrainingClient(SDKClient):
          list[~azure.cognitiveservices.vision.customvision.training.models.ImagePerformance]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_image_performances.metadata['url']
@@ -1530,11 +1531,11 @@ class CustomVisionTrainingClient(SDKClient):
         # Construct parameters
         query_parameters = {}
         if tag_ids is not None:
-            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',')
+            query_parameters['tagIds'] = self._serialize.query("tag_ids", tag_ids, '[str]', div=',', max_items=20, min_items=0)
         if order_by is not None:
             query_parameters['orderBy'] = self._serialize.query("order_by", order_by, 'str')
         if take is not None:
-            query_parameters['take'] = self._serialize.query("take", take, 'int')
+            query_parameters['take'] = self._serialize.query("take", take, 'int', maximum=256, minimum=0)
         if skip is not None:
             query_parameters['skip'] = self._serialize.query("skip", skip, 'int')
 
@@ -1550,7 +1551,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1590,7 +1591,7 @@ class CustomVisionTrainingClient(SDKClient):
         :return: int or ClientRawResponse if raw=true
         :rtype: int or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_image_performance_count.metadata['url']
@@ -1618,7 +1619,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1646,7 +1647,7 @@ class CustomVisionTrainingClient(SDKClient):
          list[~azure.cognitiveservices.vision.customvision.training.models.Project]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_projects.metadata['url']
@@ -1670,7 +1671,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1685,7 +1686,7 @@ class CustomVisionTrainingClient(SDKClient):
     get_projects.metadata = {'url': '/projects'}
 
     def create_project(
-            self, name, description=None, domain_id=None, classification_type=None, custom_headers=None, raw=False, **operation_config):
+            self, name, description=None, domain_id=None, classification_type=None, target_export_platforms=None, custom_headers=None, raw=False, **operation_config):
         """Create a project.
 
         :param name: Name of the project.
@@ -1698,6 +1699,9 @@ class CustomVisionTrainingClient(SDKClient):
         :param classification_type: The type of classifier to create for this
          project. Possible values include: 'Multiclass', 'Multilabel'
         :type classification_type: str
+        :param target_export_platforms: List of platforms the trained model is
+         intending exporting to.
+        :type target_export_platforms: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1708,7 +1712,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.Project
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.create_project.metadata['url']
@@ -1726,6 +1730,8 @@ class CustomVisionTrainingClient(SDKClient):
             query_parameters['domainId'] = self._serialize.query("domain_id", domain_id, 'str')
         if classification_type is not None:
             query_parameters['classificationType'] = self._serialize.query("classification_type", classification_type, 'str')
+        if target_export_platforms is not None:
+            query_parameters['targetExportPlatforms'] = self._serialize.query("target_export_platforms", target_export_platforms, '[str]', div=',')
 
         # Construct headers
         header_parameters = {}
@@ -1739,7 +1745,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1769,7 +1775,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.Project
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_project.metadata['url']
@@ -1794,7 +1800,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1822,7 +1828,7 @@ class CustomVisionTrainingClient(SDKClient):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.delete_project.metadata['url']
@@ -1846,7 +1852,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -1872,7 +1878,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.Project
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.update_project.metadata['url']
@@ -1901,7 +1907,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1914,6 +1920,81 @@ class CustomVisionTrainingClient(SDKClient):
 
         return deserialized
     update_project.metadata = {'url': '/projects/{projectId}'}
+
+    def train_project(
+            self, project_id, training_type=None, reserved_budget_in_hours=0, force_train=False, notification_email_address=None, custom_headers=None, raw=False, **operation_config):
+        """Queues project for training.
+
+        :param project_id: The project id.
+        :type project_id: str
+        :param training_type: The type of training to use to train the project
+         (default: Regular). Possible values include: 'Regular', 'Advanced'
+        :type training_type: str
+        :param reserved_budget_in_hours: The number of hours reserved as
+         budget for training (if applicable).
+        :type reserved_budget_in_hours: int
+        :param force_train: Whether to force train even if dataset and
+         configuration does not change (default: false).
+        :type force_train: bool
+        :param notification_email_address: The email address to send
+         notification to when training finishes (default: null).
+        :type notification_email_address: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Iteration or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.vision.customvision.training.models.Iteration
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
+        """
+        # Construct URL
+        url = self.train_project.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if training_type is not None:
+            query_parameters['trainingType'] = self._serialize.query("training_type", training_type, 'str')
+        if reserved_budget_in_hours is not None:
+            query_parameters['reservedBudgetInHours'] = self._serialize.query("reserved_budget_in_hours", reserved_budget_in_hours, 'int')
+        if force_train is not None:
+            query_parameters['forceTrain'] = self._serialize.query("force_train", force_train, 'bool')
+        if notification_email_address is not None:
+            query_parameters['notificationEmailAddress'] = self._serialize.query("notification_email_address", notification_email_address, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.CustomVisionErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Iteration', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    train_project.metadata = {'url': '/projects/{projectId}/train'}
 
     def get_iterations(
             self, project_id, custom_headers=None, raw=False, **operation_config):
@@ -1931,7 +2012,7 @@ class CustomVisionTrainingClient(SDKClient):
          list[~azure.cognitiveservices.vision.customvision.training.models.Iteration]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_iterations.metadata['url']
@@ -1956,7 +2037,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -1988,7 +2069,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.Iteration
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_iteration.metadata['url']
@@ -2014,7 +2095,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -2044,7 +2125,7 @@ class CustomVisionTrainingClient(SDKClient):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.delete_iteration.metadata['url']
@@ -2069,7 +2150,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -2077,7 +2158,7 @@ class CustomVisionTrainingClient(SDKClient):
     delete_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}'}
 
     def update_iteration(
-            self, project_id, iteration_id, name=None, is_default=None, custom_headers=None, raw=False, **operation_config):
+            self, project_id, iteration_id, name, custom_headers=None, raw=False, **operation_config):
         """Update a specific iteration.
 
         :param project_id: Project id.
@@ -2086,9 +2167,6 @@ class CustomVisionTrainingClient(SDKClient):
         :type iteration_id: str
         :param name: Gets or sets the name of the iteration.
         :type name: str
-        :param is_default: Gets or sets a value indicating whether the
-         iteration is the default iteration for the project.
-        :type is_default: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2099,9 +2177,9 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.Iteration
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
-        updated_iteration = models.Iteration(name=name, is_default=is_default)
+        updated_iteration = models.Iteration(name=name)
 
         # Construct URL
         url = self.update_iteration.metadata['url']
@@ -2131,7 +2209,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -2145,34 +2223,41 @@ class CustomVisionTrainingClient(SDKClient):
         return deserialized
     update_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}'}
 
-    def train_project(
-            self, project_id, custom_headers=None, raw=False, **operation_config):
-        """Queues project for training.
+    def publish_iteration(
+            self, project_id, iteration_id, publish_name, prediction_id, custom_headers=None, raw=False, **operation_config):
+        """Publish a specific iteration.
 
         :param project_id: The project id.
         :type project_id: str
+        :param iteration_id: The iteration id.
+        :type iteration_id: str
+        :param publish_name: The name to give the published iteration.
+        :type publish_name: str
+        :param prediction_id: The id of the prediction resource to publish to.
+        :type prediction_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Iteration or ClientRawResponse if raw=true
-        :rtype:
-         ~azure.cognitiveservices.vision.customvision.training.models.Iteration
-         or ~msrest.pipeline.ClientRawResponse
+        :return: bool or ClientRawResponse if raw=true
+        :rtype: bool or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
-        url = self.train_project.metadata['url']
+        url = self.publish_iteration.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'projectId': self._serialize.url("project_id", project_id, 'str')
+            'projectId': self._serialize.url("project_id", project_id, 'str'),
+            'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        query_parameters['publishName'] = self._serialize.query("publish_name", publish_name, 'str')
+        query_parameters['predictionId'] = self._serialize.query("prediction_id", prediction_id, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -2186,19 +2271,67 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Iteration', response)
+            deserialized = self._deserialize('bool', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    train_project.metadata = {'url': '/projects/{projectId}/train'}
+    publish_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}/publish'}
+
+    def unpublish_iteration(
+            self, project_id, iteration_id, custom_headers=None, raw=False, **operation_config):
+        """Unpublish a specific iteration.
+
+        :param project_id: The project id.
+        :type project_id: str
+        :param iteration_id: The iteration id.
+        :type iteration_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
+        """
+        # Construct URL
+        url = self.unpublish_iteration.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'projectId': self._serialize.url("project_id", project_id, 'str'),
+            'iterationId': self._serialize.url("iteration_id", iteration_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        header_parameters['Training-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [204]:
+            raise models.CustomVisionErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    unpublish_iteration.metadata = {'url': '/projects/{projectId}/iterations/{iterationId}/publish'}
 
     def get_exports(
             self, project_id, iteration_id, custom_headers=None, raw=False, **operation_config):
@@ -2218,7 +2351,7 @@ class CustomVisionTrainingClient(SDKClient):
          list[~azure.cognitiveservices.vision.customvision.training.models.Export]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_exports.metadata['url']
@@ -2244,7 +2377,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -2267,10 +2400,10 @@ class CustomVisionTrainingClient(SDKClient):
         :param iteration_id: The iteration id.
         :type iteration_id: str
         :param platform: The target platform. Possible values include:
-         'CoreML', 'TensorFlow', 'DockerFile', 'ONNX'
+         'CoreML', 'TensorFlow', 'DockerFile', 'ONNX', 'VAIDK'
         :type platform: str
         :param flavor: The flavor of the target platform. Possible values
-         include: 'Linux', 'Windows', 'ONNX10', 'ONNX12'
+         include: 'Linux', 'Windows', 'ONNX10', 'ONNX12', 'ARM'
         :type flavor: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -2282,7 +2415,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.Export or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.export_iteration.metadata['url']
@@ -2311,7 +2444,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -2346,7 +2479,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.Tag or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_tag.metadata['url']
@@ -2374,7 +2507,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -2404,7 +2537,7 @@ class CustomVisionTrainingClient(SDKClient):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.delete_tag.metadata['url']
@@ -2429,7 +2562,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [204]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -2457,7 +2590,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.Tag or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.update_tag.metadata['url']
@@ -2487,7 +2620,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -2519,7 +2652,7 @@ class CustomVisionTrainingClient(SDKClient):
          list[~azure.cognitiveservices.vision.customvision.training.models.Tag]
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.get_tags.metadata['url']
@@ -2546,7 +2679,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 
@@ -2583,7 +2716,7 @@ class CustomVisionTrainingClient(SDKClient):
          ~azure.cognitiveservices.vision.customvision.training.models.Tag or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`HttpOperationError<msrest.exceptions.HttpOperationError>`
+         :class:`CustomVisionErrorException<azure.cognitiveservices.vision.customvision.training.models.CustomVisionErrorException>`
         """
         # Construct URL
         url = self.create_tag.metadata['url']
@@ -2613,7 +2746,7 @@ class CustomVisionTrainingClient(SDKClient):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise HttpOperationError(self._deserialize, response)
+            raise models.CustomVisionErrorException(self._deserialize, response)
 
         deserialized = None
 

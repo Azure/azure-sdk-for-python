@@ -3,6 +3,14 @@
 Release History
 ===============
 
+2.5.0 (2019-04-09)
+++++++++++++++++++
+
+**Features**
+
+- Added operation NamespacesOperations.create_or_update_network_rule_set for the 2017-04-01 API version
+- Added operation NamespacesOperations.get_network_rule_set for the 2017-04-01 API version
+
 2.4.0 (2019-03-06)
 ++++++++++++++++++
 

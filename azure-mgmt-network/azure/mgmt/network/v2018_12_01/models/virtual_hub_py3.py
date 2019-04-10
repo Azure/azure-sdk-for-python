@@ -38,7 +38,7 @@ class VirtualHub(Resource):
      VirtualHub
     :type express_route_gateway:
      ~azure.mgmt.network.v2018_12_01.models.SubResource
-    :param virtual_network_connections: list of all vnet connections with this
+    :param virtual_network_connections: List of all vnet connections with this
      VirtualHub.
     :type virtual_network_connections:
      list[~azure.mgmt.network.v2018_12_01.models.HubVirtualNetworkConnection]

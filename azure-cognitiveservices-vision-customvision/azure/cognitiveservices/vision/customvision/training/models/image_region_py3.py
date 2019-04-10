@@ -18,21 +18,23 @@ class ImageRegion(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar region_id:
     :vartype region_id: str
     :ivar tag_name:
     :vartype tag_name: str
     :ivar created:
     :vartype created: datetime
-    :param tag_id: Id of the tag associated with this region.
+    :param tag_id: Required. Id of the tag associated with this region.
     :type tag_id: str
-    :param left:
+    :param left: Required. Coordinate of the left boundary.
     :type left: float
-    :param top:
+    :param top: Required. Coordinate of the top boundary.
     :type top: float
-    :param width:
+    :param width: Required. Width.
     :type width: float
-    :param height:
+    :param height: Required. Height.
     :type height: float
     """
 
@@ -40,6 +42,11 @@ class ImageRegion(Model):
         'region_id': {'readonly': True},
         'tag_name': {'readonly': True},
         'created': {'readonly': True},
+        'tag_id': {'required': True},
+        'left': {'required': True},
+        'top': {'required': True},
+        'width': {'required': True},
+        'height': {'required': True},
     }
 
     _attribute_map = {
@@ -53,7 +60,7 @@ class ImageRegion(Model):
         'height': {'key': 'height', 'type': 'float'},
     }
 
-    def __init__(self, *, tag_id: str=None, left: float=None, top: float=None, width: float=None, height: float=None, **kwargs) -> None:
+    def __init__(self, *, tag_id: str, left: float, top: float, width: float, height: float, **kwargs) -> None:
         super(ImageRegion, self).__init__(**kwargs)
         self.region_id = None
         self.tag_name = None
