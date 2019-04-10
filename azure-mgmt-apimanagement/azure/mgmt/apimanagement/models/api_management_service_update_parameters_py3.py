@@ -93,8 +93,9 @@ class ApiManagementServiceUpdateParameters(ApimResource):
      list[~azure.mgmt.apimanagement.models.CertificateConfiguration]
     :param enable_client_certificate: Property only meant to be used for
      Consumption SKU Service. This enforces a client certificate to be
-     presented on each request to the gateway and enabled ability to
-     authenticate the certificate in the policy. Default value: False .
+     presented on each request to the gateway. This also enable the ability to
+     authenticate the certificate in the policy on the gateway. Default value:
+     False .
     :type enable_client_certificate: bool
     :param virtual_network_type: The type of VPN in which API Management
      service needs to be configured in. None (Default Value) means the API

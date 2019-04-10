@@ -277,4 +277,4 @@ class ExportFormat(str, Enum):
     swagger = "swagger-link"  #: Export the Api Definition in OpenApi Specification 2.0 format to the Storage Blob.
     wsdl = "wsdl-link"  #: Export the Api Definition in WSDL Schema to Storage Blob. This is only supported for APIs of Type `soap`
     wadl = "wadl-link"  #: Export the Api Definition in WADL Schema to Storage Blob.
-    open_api3 = "openapi-link"  #: Export the Api Definition in OpenApi Specification 3.0 to Storage Blob.
+    open_api = "openapi-link"  #: Export the Api Definition in OpenApi Specification 3.0 to Storage Blob.
