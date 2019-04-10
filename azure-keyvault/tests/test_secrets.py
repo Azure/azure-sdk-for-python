@@ -89,8 +89,14 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         # delete secret
         client.delete_secret(secret_bundle.name)
 
-        # get secret returns not found
-        with self.assertRaisesRegexp(ClientRequestError, r"not found"):
+        # TestCase.assertRaisesRegexp was deprecated in 3.2
+        if hasattr(self, "assertRaisesRegex"):
+            assertRaises = self.assertRaisesRegex
+        else:
+            assertRaises = self.assertRaisesRegexp
+
+        # deleted secret isn't found
+        with assertRaises(ClientRequestError, r"not found"):
             client.get_secret(secret_bundle.name, '')
 
 
