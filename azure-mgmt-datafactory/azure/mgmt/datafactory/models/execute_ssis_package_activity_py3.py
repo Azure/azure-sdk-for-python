@@ -73,7 +73,7 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
      package.
     :type property_overrides: dict[str,
      ~azure.mgmt.datafactory.models.SSISPropertyOverride]
-    :param log_location: SSIS package exection log location.
+    :param log_location: SSIS package execution log location.
     :type log_location: ~azure.mgmt.datafactory.models.SSISLogLocation
     """
 

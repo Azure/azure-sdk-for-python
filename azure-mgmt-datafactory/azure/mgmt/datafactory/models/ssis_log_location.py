@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class SSISLogLocation(Model):
-    """SSIS package exection log location.
+    """SSIS package execution log location.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
