@@ -53,7 +53,7 @@ class ApiExportOperations(object):
         :type api_id: str
         :param format: Format in which to export the Api Details to the
          Storage Blob with Sas Key valid for 5 minutes. Possible values
-         include: 'Swagger', 'Wsdl', 'Wadl', 'OpenApi'
+         include: 'Swagger', 'Wsdl', 'Wadl', 'Openapi'
         :type format: str or ~azure.mgmt.apimanagement.models.ExportFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

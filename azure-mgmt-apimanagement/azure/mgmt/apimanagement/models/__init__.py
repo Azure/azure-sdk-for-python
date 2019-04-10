@@ -354,7 +354,7 @@ from .report_record_contract_paged import ReportRecordContractPaged
 from .request_report_record_contract_paged import RequestReportRecordContractPaged
 from .user_identity_contract_paged import UserIdentityContractPaged
 from .api_management_client_enums import (
-    ExportFormat,
+    ExportResultFormat,
     ProductState,
     BearerTokenSendingMethods,
     Protocol,
@@ -388,6 +388,7 @@ from .api_management_client_enums import (
     NotificationName,
     TemplateName,
     PolicyScopeContract,
+    ExportFormat,
 )
 
 __all__ = [
@@ -579,7 +580,7 @@ __all__ = [
     'ReportRecordContractPaged',
     'RequestReportRecordContractPaged',
     'UserIdentityContractPaged',
-    'ExportFormat',
+    'ExportResultFormat',
     'ProductState',
     'BearerTokenSendingMethods',
     'Protocol',
@@ -613,4 +614,5 @@ __all__ = [
     'NotificationName',
     'TemplateName',
     'PolicyScopeContract',
+    'ExportFormat',
 ]
