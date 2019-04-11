@@ -51,7 +51,7 @@ _LOGGER = logging.getLogger(__name__)
 class RedirectPolicy(HTTPPolicy):
     """A redirect policy"""
 
-    REDIRECT_STATUSES = frozenset([301, 302, 303, 307, 308])
+    REDIRECT_STATUSES = frozenset([300, 301, 302, 303, 307, 308])
 
     REDIRECT_HEADERS_BLACKLIST = frozenset(['Authorization'])
 
@@ -68,10 +68,10 @@ class RedirectPolicy(HTTPPolicy):
     def no_redirects(cls):
         return cls(redirects_allow=False)
 
-    def configure_redirects(self, **kwargs):
+    def configure_redirects(self, options):
         return {
-            'allow': kwargs.pop("redirects_allow", self.max_redirects),
-            'redirects': kwargs.pop("redirect_max", self.max_redirects),
+            'allow': options.pop("redirects_allow", self.max_redirects),
+            'redirects': options.pop("redirect_max", self.max_redirects),
             'history': []
         }
 
@@ -82,8 +82,12 @@ class RedirectPolicy(HTTPPolicy):
             code and valid location. ``None`` if redirect status and no
             location. ``False`` if not a redirect status code.
         """
-        if response.http_response.status_code in self._redirect_on_status_codes \
-                and response.http_request.method in ['GET', 'HEAD']:
+        if response.http_response.status_code in [301, 302]:
+            if response.http_request.method in ['GET', 'HEAD', ]:
+                return response.http_response.headers.get('location')
+            return False
+
+        elif response.http_response.status_code in self._redirect_on_status_codes:
             return response.http_response.headers.get('location')
 
         return False
@@ -115,11 +119,11 @@ class RedirectPolicy(HTTPPolicy):
             response.http_request.headers.pop(non_redirect_header, None)
         return settings['redirects'] > 0 or not settings['allow']
 
-    def send(self, request, **kwargs):
+    def send(self, request):
         retryable = True
-        redirect_settings = self.configure_redirects(**kwargs)
+        redirect_settings = self.configure_redirects(request.context.options)
         while retryable:
-            response = self.next.send(request, **kwargs)
+            response = self.next.send(request)
             redirect_location = self.get_redirect_location(response)
             if redirect_location:
                 retryable = self.increment(redirect_settings, response, redirect_location)

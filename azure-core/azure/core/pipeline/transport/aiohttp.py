@@ -35,9 +35,10 @@ CONTENT_CHUNK_SIZE = 10 * 1024
 
 
 class AioHttpContext(object):
-    def __init__(self, session, transport):
+    def __init__(self, session, transport, **kwargs):
         self.session = session
         self.transport = transport
+        self.options = kwargs
 
 
 class AioHttpTransport(AsyncHttpTransport):
@@ -59,12 +60,9 @@ class AioHttpTransport(AsyncHttpTransport):
     def _init_session(self, session):
         pass  # configure sesison
 
-    def build_context(self):
+    def build_context(self, **kwargs):
         # type: () -> AioHttpContext
-        return AioHttpContext(
-            session=self.session,
-            transport=self,
-        )
+        return AioHttpContext(session=self.session, transport=self, **kwargs)
 
     async def send(self, request: HttpRequest, **config: Any) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.

@@ -118,6 +118,23 @@ class ClientRequestError(ServiceRequestError):
     """An error response with status code 4xx.
     This will not be raised directly by the Azure core pipeline."""
 
+    def __init__(self, response):
+        # TODO: This is a place holder for generated clients.
+        self.status_code = response.status_code
+        self.reason = response.reason
+        message = "Operation returned an invalid status code {!r}".format(self.reason)
+        try:
+            try:
+                if self.error.error.code or self.error.error.message:
+                    message = "({}) {}".format(
+                        self.error.error.code,
+                        self.error.error.message)
+            except AttributeError:
+                if self.error.message:
+                    message = self.error.message
+        except AttributeError:
+            pass
+        super(ClientRequestError, self).__init__(message, response=response)
 
 class ResourceExistsError(ClientRequestError):
     """An error response with status code 4xx.

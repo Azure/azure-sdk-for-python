@@ -49,9 +49,23 @@ HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 
+class _ResponseStopIteration(Exception):
+    pass
+
+
+def _iterate_response_content(iterator):
+    """"To avoid:
+    TypeError: StopIteration interacts badly with generators and cannot be raised into a Future
+    """
+    try:
+        return next(iterator)
+    except StopIteration:
+        raise _ResponseStopIteration()
+
+
 class AsyncHttpResponse(_HttpResponseBase):
 
-    def stream_download(self, chunk_size: Optional[int] = None, callback: Optional[Callable] = None) -> AsyncIterator[bytes]:
+    def stream_download(self) -> AsyncIterator[bytes]:
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download
@@ -68,12 +82,12 @@ class AsyncHttpTransport(AbstractAsyncContextManager, abc.ABC, Generic[HTTPReque
     """
 
     @abc.abstractmethod
-    async def send(self, request, **config: Any):
+    async def send(self, request, **kwargs):
         """Send the request using this HTTP sender.
         """
         pass
 
-    def build_context(self) -> Any:
+    def build_context(self, **kwargs) -> Any:
         """Allow the sender to build a context that will be passed
         across the pipeline with the request.
 
