@@ -40,7 +40,7 @@ class NatGateway(Resource):
      the nat gateway resource.
     :type public_ip_prefixes:
      list[~azure.mgmt.network.v2019_02_01.models.SubResource]
-    :ivar subnets: Gets an array of references to the subnets using this nat
+    :ivar subnets: An array of references to the subnets using this nat
      gateway resource.
     :vartype subnets: list[~azure.mgmt.network.v2019_02_01.models.SubResource]
     :param resource_guid: The resource GUID property of the nat gateway
