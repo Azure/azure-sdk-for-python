@@ -32,20 +32,20 @@ class BearerTokenCredentialPolicy(HTTPPolicy):
         self._credentials = credentials
 
     def send(self, request, **kwargs):
-        auth_header = "Bearer " + self._credentials.token["access_token"]
-        request.http_request.headers["Authorization"] = auth_header
+        auth_header = 'Bearer ' + self._credentials.token['access_token']
+        request.http_request.headers['Authorization'] = auth_header
 
         return self.next.send(request, **kwargs)
 
 
 class SecretClient:
 
-    _api_version = "7.0"
+    _api_version = '7.0'
 
     @staticmethod
     def create_config(**kwargs):
         config = Configuration(**kwargs)
-        config.user_agent = UserAgentPolicy("SecretClient", **kwargs)
+        config.user_agent = UserAgentPolicy('SecretClient', **kwargs)
         config.headers = None
         config.retry = RetryPolicy(**kwargs)
         config.redirect = RedirectPolicy(**kwargs)
@@ -60,10 +60,10 @@ class SecretClient:
         :param azure.core.configuration.Configuration config:  The configuration for the SecretClient
         """
         if not credentials:
-            raise ValueError("credentials")
+            raise ValueError('credentials')
 
         if not vault_url:
-            raise ValueError("vault_url")
+            raise ValueError('vault_url')
 
         self.vault_url = vault_url
         config = config or SecretClient.create_config(**kwargs)
@@ -77,12 +77,12 @@ class SecretClient:
             config.logging,
         ]
         client_models = {
-            "DeletedSecret": DeletedSecret,
-            "DeletedSecretPaged": DeletedSecretPaged,
-            "Secret": Secret,
-            "SecretAttributes": SecretAttributes,
-            "_SecretManagementAttributes": _SecretManagementAttributes,
-            "_BackupResult": _BackupResult,
+            'DeletedSecret': DeletedSecret,
+            'DeletedSecretPaged': DeletedSecretPaged,
+            'Secret': Secret,
+            'SecretAttributes': SecretAttributes,
+            '_SecretManagementAttributes': _SecretManagementAttributes,
+            '_BackupResult': _BackupResult,
         }
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
@@ -102,22 +102,25 @@ class SecretClient:
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.KeyVaultErrorException>`
         """
-        url = "/".join([s.strip("/") for s in (self.vault_url, "secrets", name, version or "")])
+        url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', name, version or '')])
 
-        query_parameters = {"api-version": self._api_version}
+        query_parameters = {'api-version': self._api_version}
 
-        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
+        headers = {
+            'Content-Type': 'application/json; charset=utf-8',
+            'x-ms-client-request-id': str(uuid.uuid1())
+        }
 
-        request = HttpRequest("GET", url, headers)
+        request = HttpRequest('GET', url, headers)
 
         request.format_parameters(query_parameters)
 
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise ClientRequestError("Request failed status code {}.  {}".format(response.status_code, response.text()))
+            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
 
-        return self._deserialize("Secret", response)
+        return self._deserialize('Secret', response)
 
     def set_secret(
         self, name, value, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
@@ -148,30 +151,33 @@ class SecretClient:
             management_attributes = None
         secret = Secret(value=value, content_type=content_type, _management_attributes=management_attributes, tags=tags)
 
-        url = "/".join([s.strip("/") for s in (self.vault_url, "secrets", name)])
+        url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', name)])
 
-        query_parameters = {"api-version": self._api_version}
+        query_parameters = {'api-version': self._api_version}
 
-        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
+        headers = {
+            'Content-Type': 'application/json; charset=utf-8',
+            'x-ms-client-request-id': str(uuid.uuid1())
+        }
 
-        request_body = self._serialize.body(secret, "Secret")
+        request_body = self._serialize.body(secret, 'Secret')
 
-        request = HttpRequest("PUT", url, headers, data=request_body)
+        request = HttpRequest('PUT', url, headers, data=request_body)
 
         request.format_parameters(query_parameters)
 
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise ClientRequestError("Request failed status code {}.  {}".format(response.status_code, response.text()))
+            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
 
-        return self._deserialize("Secret", response)
+        return self._deserialize('Secret', response)
 
     def update_secret_attributes(
         self, name, version, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
     ):
         # type: () -> SecretAttributes
-        url = "/".join([s.strip("/") for s in (self.vault_url, "secrets", name, version)])
+        url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', name, version)])
 
         if enabled or not_before or expires:
             management_attributes = _SecretManagementAttributes(enabled=enabled, not_before=not_before, expires=expires)
@@ -179,22 +185,25 @@ class SecretClient:
             management_attributes = None
         secret = Secret(content_type=content_type, _management_attributes=management_attributes, tags=tags)
 
-        query_parameters = {"api-version": self._api_version}
+        query_parameters = {'api-version': self._api_version}
 
-        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
+        headers = {
+            'Content-Type': 'application/json; charset=utf-8',
+            'x-ms-client-request-id': str(uuid.uuid1())
+        }
 
-        request_body = self._serialize.body(secret, "Secret")
+        request_body = self._serialize.body(secret, 'Secret')
 
-        request = HttpRequest("PATCH", url, headers, data=request_body)
+        request = HttpRequest('PATCH', url, headers, data=request_body)
 
         request.format_parameters(query_parameters)
 
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise ClientRequestError("Request failed status code {}.  {}".format(response.status_code, response.text()))
+            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
 
-        return self._deserialize("SecretAttributes", response)
+        return self._deserialize('SecretAttributes', response)
 
     def list_secrets(self, max_page_size=None, **kwargs):
         """List secrets in the vault.
@@ -213,7 +222,7 @@ class SecretClient:
         :raises:
          :class:`ClientRequestError<azure.core.ClientRequestError>`
         """
-        url = "{}/secrets".format(self.vault_url)
+        url = '{}/secrets'.format(self.vault_url)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         return SecretAttributesPaged(paging, self._deserialize.dependencies)
 
@@ -236,7 +245,7 @@ class SecretClient:
          :class:`ClientRequestError<azure.core.ClientRequestError>`
         """
 
-        url = "{}/secrets/{}/versions".format(self.vault_url, name)
+        url = '{}/secrets/{}/versions'.format(self.vault_url, name)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         return SecretAttributesPaged(paging, self._deserialize.dependencies)
 
@@ -253,22 +262,25 @@ class SecretClient:
         :raises:
          :class:azure.core.ClientRequestError
         """
-        url = "/".join([s.strip("/") for s in (self.vault_url, "secrets", name, "backup")])
+        url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', name, 'backup')])
 
-        query_parameters = {"api-version": self._api_version}
+        query_parameters = {'api-version': self._api_version}
 
-        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
+        headers = {
+            'Content-Type': 'application/json; charset=utf-8',
+            'x-ms-client-request-id': str(uuid.uuid1())
+        }
 
-        request = HttpRequest("POST", url, headers)
+        request = HttpRequest('POST', url, headers)
 
         request.format_parameters(query_parameters)
 
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise ClientRequestError("Request failed status code {}.  {}".format(response.status_code, response.text()))
+            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
 
-        return self._deserialize("_BackupResult", response).value
+        return self._deserialize('_BackupResult', response).value
 
     def restore_secret(self, backup, **kwargs):
         """Restores a backed up secret to a vault.
@@ -284,67 +296,66 @@ class SecretClient:
         """
         backup = _BackupResult(value=backup)
 
-        url = "/".join([s.strip("/") for s in (self.vault_url, "secrets", "restore")])
+        url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', 'restore')])
 
-        query_parameters = {"api-version": self._api_version}
+        query_parameters = {'api-version': self._api_version}
 
-        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
+        headers = {
+            'Content-Type': 'application/json; charset=utf-8',
+            'x-ms-client-request-id': str(uuid.uuid1())
+        }
 
-        request_body = self._serialize.body(backup, "_BackupResult")
+        request_body = self._serialize.body(backup, '_BackupResult')
 
-        request = HttpRequest("POST", url, headers, data=request_body)
+        request = HttpRequest('POST', url, headers, data=request_body)
 
         request.format_parameters(query_parameters)
 
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise ClientRequestError("Request failed status code {}.  {}".format(response.status_code, response.text()))
+            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
 
-        # TODO: REST API documentation states response includes a SecretBundle,
-        # which implies the secret value would be present, but in fact this
-        # does not appear to be the case; should we return a different model
-        # to avoid value=None?
-        return self._deserialize("SecretAttributes", response)
+        return self._deserialize('SecretAttributes', response)
 
     def delete_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> DeletedSecret
-        url = "/".join([self.vault_url, "secrets", name])
+        url = '/'.join([self.vault_url, 'secrets', name])
 
-        request = HttpRequest("DELETE", url)
-        request.format_parameters({"api-version": self._api_version})
+        request = HttpRequest('DELETE', url)
+        request.format_parameters({'api-version': self._api_version})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
             raise ClientRequestError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
-        deleted_secret = self._deserialize("DeletedSecret", response)
+        deleted_secret = self._deserialize('DeletedSecret', response)
 
         return deleted_secret
 
     def get_deleted_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> DeletedSecret
-        url = "/".join([self.vault_url, "deletedsecrets", name])
+        url = '/'.join([self.vault_url, 'deletedsecrets', name])
 
-        request = HttpRequest("GET", url)
-        request.format_parameters({"api-version": self._api_version})
+        request = HttpRequest('GET', url)
+        request.format_parameters({'api-version': self._api_version})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
             raise ClientRequestError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
-        deleted_secret = self._deserialize("DeletedSecret", response)
+        deleted_secret = self._deserialize('DeletedSecret', response)
 
         return deleted_secret
 
     def list_deleted_secrets(self, max_page_size=None, **kwargs):
         # type: (Optional[int], Mapping[str, Any]) -> DeletedSecretPaged
-        url = "{}/deletedsecrets".format(self.vault_url)
+        url = '{}/deletedsecrets'.format(self.vault_url)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         return DeletedSecretPaged(paging, self._deserialize.dependencies)
 
     def purge_deleted_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> None
-        url = "/".join([self.vault_url, "deletedsecrets", name])
+        url = '/'.join([self.vault_url, 'deletedsecrets', name])
 
-        request = HttpRequest("DELETE", url)
-        request.format_parameters({"api-version": self._api_version})
+        request = HttpRequest('DELETE', url)
+        request.format_parameters({'api-version': self._api_version})
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 204:
@@ -354,16 +365,16 @@ class SecretClient:
 
     def recover_deleted_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> SecretAttributes
-        url = "/".join([self.vault_url, "deletedsecrets", name, "recover"])
+        url = '/'.join([self.vault_url, 'deletedsecrets', name, 'recover'])
 
-        request = HttpRequest("POST", url)
-        request.format_parameters({"api-version": self._api_version})
+        request = HttpRequest('POST', url)
+        request.format_parameters({'api-version': self._api_version})
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
             raise ClientRequestError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
 
-        secret_attributes = self._deserialize("SecretAttributes", response)
+        secret_attributes = self._deserialize('SecretAttributes', response)
 
         return secret_attributes
 
@@ -373,13 +384,13 @@ class SecretClient:
             url = next_link
             query_parameters = {}
         else:
-            query_parameters = {"api-version": self._api_version}
+            query_parameters = {'api-version': self._api_version}
             if max_page_size is not None:
-                query_parameters["maxresults"] = str(max_page_size)
+                query_parameters['maxresults'] = str(max_page_size)
 
-        headers = {"x-ms-client-request-id": str(uuid.uuid1())}
+        headers = {'x-ms-client-request-id': str(uuid.uuid1())}
 
-        request = HttpRequest("GET", url, headers)
+        request = HttpRequest('GET', url, headers)
         request.format_parameters(query_parameters)
 
         response = self._pipeline.run(request, **kwargs).http_response
