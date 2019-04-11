@@ -45,19 +45,18 @@ from azure.core.exceptions import (
     raise_with_traceback
 )
 
-# Matching requests, because why not?
-CONTENT_CHUNK_SIZE = 10 * 1024
 
 class RequestsContext(object):
-    def __init__(self, session, transport):
+    def __init__(self, session, transport, **kwargs):
         self.session = session
         self.transport = transport
+        self.options = kwargs
 
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
 
-    def __init__(self, request, requests_response):
-        super(_RequestsTransportResponseBase, self).__init__(request, requests_response)
+    def __init__(self, request, requests_response, block_size):
+        super(_RequestsTransportResponseBase, self).__init__(request, requests_response, block_size)
         self.status_code = requests_response.status_code
         self.headers = requests_response.headers
         self.reason = requests_response.reason
@@ -71,24 +70,41 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
         return self.internal_response.text
 
 
+class StreamDownloadGenerator(object):
+
+    def __init__(self, response, block_size):
+        self.response = response
+        self.block_size = block_size
+        self.iter_content_func = self.response.iter_content(self.block_size)
+        self.content_length = int(response.headers.get('Content-Length', 0))
+
+    def __len__(self):
+        return self.content_length
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        try:
+            chunk = next(self.iter_content_func)
+            if not chunk:
+                raise StopIteration()
+            return chunk
+        except StopIteration:
+            self.response.close()
+            raise StopIteration()
+        except Exception as err:
+            _LOGGER.warning("Unable to stream download: %s", err)
+            self.response.close()
+            raise
+
+
 class RequestsTransportResponse(_RequestsTransportResponseBase, HttpResponse):
 
-    def stream_download(self, chunk_size=None, callback=None):
+    def stream_download(self):
         # type: (Optional[int], Optional[Callable]) -> Iterator[bytes]
-        """Generator for streaming request body data.
-
-        :param callback: Custom callback for monitoring progress.
-        :param int chunk_size:
-        """
-        chunk_size = chunk_size or CONTENT_CHUNK_SIZE
-        with contextlib.closing(self.internal_response) as response:
-            # https://github.com/PyCQA/pylint/issues/1437
-            for chunk in response.iter_content(chunk_size):  # pylint: disable=no-member
-                if not chunk:
-                    break
-                if callback and callable(callback):
-                    callback(chunk, response=response)
-                yield chunk
+        """Generator for streaming request body data."""
+        return StreamDownloadGenerator(self.internal_response, self.block_size)
 
 
 class RequestsTransport(HttpTransport):
@@ -147,12 +163,9 @@ class RequestsTransport(HttpTransport):
         self._init_session(value)
         self._session_mapping.session = value
 
-    def build_context(self):
+    def build_context(self, **kwargs):
         # type: () -> RequestsContext
-        return RequestsContext(
-            session=self.session,
-            transport=self,
-        )
+        return RequestsContext(session=self.session, transport=self, **kwargs)
 
     def close(self):
         self.session.close()
@@ -171,6 +184,7 @@ class RequestsTransport(HttpTransport):
         error = None
         if self.config.proxy_policy and 'proxies' not in kwargs:
             kwargs['proxies'] = self.config.proxy_policy.proxies
+
         try:
             response = self.session.request(
                 request.method,
@@ -201,4 +215,4 @@ class RequestsTransport(HttpTransport):
 
         if error:
             raise error
-        return RequestsTransportResponse(request, response)
+        return RequestsTransportResponse(request, response, self.config.connection.data_block_size)

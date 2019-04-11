@@ -72,12 +72,11 @@ class HeadersPolicy(SansIOHTTPPolicy):
         """Add a header to the configuration to be applied to all requests."""
         self._headers[key] = value
 
-    def on_request(self, request, **kwargs):
+    def on_request(self, request):
         # type: (PipelineRequest, Any) -> None
-        additional_headers = kwargs.pop('headers', {})
-        http_request = request.http_request
-        http_request.headers.update(self.headers)
-        http_request.headers.update(additional_headers)
+        additional_headers = request.context.options.pop('headers', {})
+        request.http_request.headers.update(self.headers)
+        request.http_request.headers.update(additional_headers)
 
 
 class UserAgentPolicy(SansIOHTTPPolicy):
@@ -116,12 +115,13 @@ class UserAgentPolicy(SansIOHTTPPolicy):
         """
         self._user_agent = "{} {}".format(self._user_agent, value)
 
-    def on_request(self, request, **kwargs):
+    def on_request(self, request):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
-        if 'user_agent' in kwargs:
-            user_agent = kwargs.pop('user_agent')
-            if kwargs.pop('user_agent_overwrite', self.overwrite):
+        options = request.context.options
+        if 'user_agent' in options:
+            user_agent = options.pop('user_agent')
+            if options.pop('user_agent_overwrite', self.overwrite):
                 http_request.headers[self._USERAGENT] = user_agent
             else:
                 user_agent = "{} {}".format(self.user_agent, user_agent)
@@ -139,10 +139,10 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
     def __init__(self, logging_enable=False, **kwargs):
         self.enable_http_logger = logging_enable
 
-    def on_request(self, request, **kwargs):
+    def on_request(self, request):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
-        if kwargs.get("logging_enable", self.enable_http_logger):
+        if request.context.options.pop("logging_enable", self.enable_http_logger):
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 
@@ -164,9 +164,9 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
-    def on_response(self, request, response, **kwargs):
+    def on_response(self, request, response):
         # type: (PipelineRequest, PipelineResponse, Any) -> None
-        if kwargs.get("logging_enable", self.enable_http_logger):
+        if request.context.options.pop("logging_enable", self.enable_http_logger):
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 
@@ -285,7 +285,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
             return cls.deserialize_from_text(body_bytes, content_type)
         return None
 
-    def on_response(self, request, response, **kwargs):
+    def on_response(self, request, response):
         # type: (PipelineRequest, PipelineResponse, Any) -> None
         """Extract data from the body of a REST response object.
 
@@ -301,7 +301,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         :raises xml.etree.ElementTree.ParseError: If bytes is not valid XML
         """
         # If response was asked as stream, do NOT read anything and quit now
-        if kwargs.get("stream", True):
+        if request.context.options.get("stream", True):
             return
 
         http_response = response.http_response

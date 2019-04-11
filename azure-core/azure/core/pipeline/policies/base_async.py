@@ -57,7 +57,7 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
         self.next = None  # type: Optional[Union[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType], AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]]]
 
     @abc.abstractmethod
-    async def send(self, request: PipelineRequest, **kwargs: Any):
+    async def send(self, request: PipelineRequest):
         """Mutate the request.
 
         Context content is dependent on the HttpTransport.

@@ -45,8 +45,8 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
         self.next = None
 
     @abc.abstractmethod
-    def send(self, request, **kwargs):
-        # type: (PipelineRequest[HTTPRequestType], Any) -> PipelineResponse[HTTPRequestType, HTTPResponseType]
+    def send(self, request):
+        # type: (PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]
         """Mutate the request.
 
         Context content is dependent on the HttpTransport.

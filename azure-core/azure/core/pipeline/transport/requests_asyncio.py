@@ -31,18 +31,20 @@ import urllib3
 from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
 
 import requests
-from requests.models import CONTENT_CHUNK_SIZE
 
 from .base import HttpRequest
-from .base_async import AsyncHttpTransport, AsyncHttpResponse
+from .base_async import (
+    AsyncHttpTransport,
+    AsyncHttpResponse,
+    _ResponseStopIteration,
+    _iterate_response_content)
 from .requests_basic import RequestsTransport, RequestsTransportResponse
 from azure.core.exceptions import (
     ServiceRequestError,
     ConnectionError,
     ConnectionReadError,
     ReadTimeoutError,
-    raise_with_traceback
-)
+    raise_with_traceback)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -107,30 +109,19 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
         if error:
             raise error
 
-        return AsyncioRequestsTransportResponse(request, response)
-
-
-
-class _ResponseStopIteration(Exception):
-    pass
-
-def _iterate_response_content(iterator):
-    """"To avoid:
-    TypeError: StopIteration interacts badly with generators and cannot be raised into a Future
-    """
-    try:
-        return next(iterator)
-    except StopIteration:
-        raise _ResponseStopIteration()
+        return AsyncioRequestsTransportResponse(request, response, self.config.connection.data_block_size)
 
 
 class AsyncioStreamDownloadGenerator(AsyncIterator):
 
-    def __init__(self, response: requests.Response, user_callback: Optional[Callable] = None, block: Optional[int] = None) -> None:
+    def __init__(self, response: requests.Response, block_size: int) -> None:
         self.response = response
-        self.block = block or CONTENT_CHUNK_SIZE
-        self.user_callback = user_callback
-        self.iter_content_func = self.response.iter_content(self.block)
+        self.block_size = block_size
+        self.iter_content_func = self.response.iter_content(self.block_size)
+        self.content_length = int(response.headers.get('Content-Length', 0))
+
+    def __len__(self):
+        return self.content_length
 
     async def __anext__(self):
         loop = _get_running_loop()
@@ -142,8 +133,6 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
             )
             if not chunk:
                 raise _ResponseStopIteration()
-            if self.user_callback and callable(self.user_callback):
-                self.user_callback(chunk, self.response)
             return chunk
         except _ResponseStopIteration:
             self.response.close()
@@ -156,14 +145,6 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 
 class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):
 
-    def stream_download(self, chunk_size: Optional[int] = None, callback: Optional[Callable] = None) -> AsyncIteratorType[bytes]:
-        """Generator for streaming request body data.
-
-        :param callback: Custom callback for monitoring progress.
-        :param int chunk_size:
-        """
-        return AsyncioStreamDownloadGenerator(
-            self.internal_response,
-            callback,
-            chunk_size
-        )
+    def stream_download(self) -> AsyncIteratorType[bytes]:
+        """Generator for streaming request body data."""
+        return AsyncioStreamDownloadGenerator(self.internal_response, self.block_size)

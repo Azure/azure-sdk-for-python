@@ -89,15 +89,15 @@ class RetryPolicy(HTTPPolicy):
     def no_retries(cls):
         return cls(retry_count_total=0)
 
-    def configure_retries(self, **kwargs):
+    def configure_retries(self, options):
         return {
-            'total': kwargs.pop("retry_total", self.total_retries),
-            'connect': kwargs.pop("retry_connect", self.connect_retries),
-            'read': kwargs.pop("retry_read", self.read_retries),
-            'status': kwargs.pop("retry_status", self.status_retries),
-            'backoff': kwargs.pop("retry_backoff_factor", self.backoff_factor),
-            'max_backoff': kwargs.pop("retry_backoff_max", self.BACKOFF_MAX),
-            'methods': kwargs.pop("retry_on_methods", self._method_whitelist),
+            'total': options.pop("retry_total", self.total_retries),
+            'connect': options.pop("retry_connect", self.connect_retries),
+            'read': options.pop("retry_read", self.read_retries),
+            'status': options.pop("retry_status", self.status_retries),
+            'backoff': options.pop("retry_backoff_factor", self.backoff_factor),
+            'max_backoff': options.pop("retry_backoff_max", self.BACKOFF_MAX),
+            'methods': options.pop("retry_on_methods", self._method_whitelist),
             'history': []
         }
 
@@ -240,13 +240,13 @@ class RetryPolicy(HTTPPolicy):
 
         return not self.is_exhausted(settings)
 
-    def send(self, request, **kwargs):
+    def send(self, request):
         retries_remaining = True
         response = None
-        retry_settings = self.configure_retries(**kwargs)
+        retry_settings = self.configure_retries(request.context.options)
         while retries_remaining:
             try:
-                response = self.next.send(request, **kwargs)
+                response = self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retries_remaining = self.increment(retry_settings, response=response)
                     if retries_remaining:

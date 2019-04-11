@@ -32,6 +32,7 @@ try:
 except ImportError:
     from urllib.parse import urljoin, urlparse
 import warnings
+import xml.etree.ElementTree as ET
 
 from typing import List, Any, Dict, Union, IO, Tuple, Optional, Callable, Iterator, cast, TYPE_CHECKING  # pylint: disable=unused-import
 
@@ -71,11 +72,13 @@ class PipelineClient(object):
             request.headers.update(headers)
 
         if content is not None:
-            # By default, assume JSON
-            try:
-                request.set_json_body(content)
-            except TypeError:
-                request.data = content
+            if isinstance(content, ET.Element):
+                request.set_xml_body(content)
+            else:
+                try:
+                    request.set_json_body(content)
+                except TypeError:
+                    request.data = content
 
         if form_content:
             request.set_formdata_body(form_content)
