@@ -82,23 +82,51 @@ class JsonWebKey(Model):
         self.x = kwargs.get("x", None)
         self.y = kwargs.get("y", None)
 
+class ExposeKeyAttributesMixin:
+    @property
+    def created(self):
+        return self._attributes.created
 
-class Key(Model):
+    @property
+    def enabled(self):
+        return self._attributes.enabled
+
+    @property
+    def expires(self):
+        return self._attributes.expires
+
+    @property
+    def not_before(self):
+        return self._attributes.not_before
+
+    @property
+    def recovery_level(self):
+        return self._attributes.recovery_level
+
+    @property
+    def updated(self):
+        return self._attributes.updated
+
+
+class Key(Model, ExposeKeyAttributesMixin):
     _validation = {"managed": {"readonly": True}}
 
     _attribute_map = {
         "key_material": {"key": "key", "type": "JsonWebKey"},
-        "attributes": {"key": "attributes", "type": "KeyAttributes"},
+        "_attributes": {"key": "attributes", "type": "KeyAttributes"},
         "tags": {"key": "tags", "type": "{str}"},
         "managed": {"key": "managed", "type": "bool"},
     }
 
     def __init__(self, **kwargs):
         super(Key, self).__init__(**kwargs)
-        self.attributes = kwargs.get("attributes", None)
+        self._attributes = kwargs.get("_attributes", None)
         self.tags = kwargs.get("tags", None)
         self.managed = None
-        self._vault_id = None
+        try:
+            self._vault_id = _parse_vault_id(self.key_material.kid)
+        except AttributeError:
+            self._vault_id = None
 
     @property
     def id(self):
@@ -106,23 +134,15 @@ class Key(Model):
 
     @property
     def name(self):
-        vault_id = self._get_vault_id()
-        return vault_id.name if vault_id else None
+        return self._vault_id.name if self._vault_id else None
 
     @property
     def vault_url(self):
-        vault_id = self._get_vault_id()
-        return vault_id.vault_url if vault_id else None
+        return self._vault_id.vault_url if self._vault_id else None
 
     @property
     def version(self):
-        vault_id = self._get_vault_id()
-        return vault_id.version if vault_id else None
-
-    def _get_vault_id(self):
-        if not self._vault_id and self.key_material and self.key_material.kid:
-            self._vault_id = _parse_vault_id(self.key_material.kid)
-        return self._vault_id
+        return self._vault_id.version if self._vault_id else None
 
 
 class DeletedKey(Key):
@@ -152,19 +172,16 @@ class DeletedKey(Key):
     """
 
     _validation = {
-        "managed": {"readonly": True},
         "scheduled_purge_date": {"readonly": True},
         "deleted_date": {"readonly": True},
+        **Key._validation
     }
 
     _attribute_map = {
-        "key": {"key": "key", "type": "JsonWebKey"},
-        "attributes": {"key": "attributes", "type": "KeyAttributes"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "managed": {"key": "managed", "type": "bool"},
         "recovery_id": {"key": "recoveryId", "type": "str"},
         "scheduled_purge_date": {"key": "scheduledPurgeDate", "type": "unix-time"},
         "deleted_date": {"key": "deletedDate", "type": "unix-time"},
+        **Key._attribute_map
     }
 
     def __init__(self, **kwargs):
@@ -296,7 +313,7 @@ class KeyCreateParameters(Model):
         self.curve = kwargs.get("curve", None)
 
 
-class KeyItem(Model):
+class KeyItem(Model, ExposeKeyAttributesMixin):
     """The key item containing key metadata.
 
     Variables are only populated by the server, and will be ignored when
@@ -317,7 +334,7 @@ class KeyItem(Model):
 
     _attribute_map = {
         "kid": {"key": "kid", "type": "str"},
-        "attributes": {"key": "attributes", "type": "KeyAttributes"},
+        "_attributes": {"key": "attributes", "type": "KeyAttributes"},
         "tags": {"key": "tags", "type": "{str}"},
         "managed": {"key": "managed", "type": "bool"},
     }
@@ -325,12 +342,12 @@ class KeyItem(Model):
     def __init__(self, **kwargs):
         super(KeyItem, self).__init__(**kwargs)
         self.kid = kwargs.get("kid", None)
-        self.attributes = kwargs.get("attributes", None)
+        self._attributes = kwargs.get("attributes", None)
         self.tags = kwargs.get("tags", None)
         self.managed = None
 
 
-class DeletedKeyItem(KeyItem):
+class DeletedKeyItem(KeyItem, ExposeKeyAttributesMixin):
     """The deleted key item containing the deleted key metadata and information
     about deletion.
     Variables are only populated by the server, and will be ignored when
@@ -362,7 +379,7 @@ class DeletedKeyItem(KeyItem):
 
     _attribute_map = {
         "kid": {"key": "kid", "type": "str"},
-        "attributes": {"key": "attributes", "type": "KeyAttributes"},
+        "_attributes": {"key": "attributes", "type": "KeyAttributes"},
         "tags": {"key": "tags", "type": "{str}"},
         "managed": {"key": "managed", "type": "bool"},
         "recovery_id": {"key": "recoveryId", "type": "str"},
