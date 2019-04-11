@@ -50,7 +50,7 @@ class Configuration(object):
         self.user_agent_policy = None
 
         # HTTP Transport
-        self.transport = None
+        self.transport = transport
 
     def get_transport(self, **kwargs):
         if self.transport:

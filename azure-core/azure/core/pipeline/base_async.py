@@ -97,7 +97,7 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         for policy in (policies or []):
             if isinstance(policy, SansIOHTTPPolicy):
                 self._impl_policies.append(_SansIOAsyncHTTPPolicyRunner(policy))
-            else:
+            elif policy:
                 self._impl_policies.append(policy)
         for index in range(len(self._impl_policies)-1):
             self._impl_policies[index].next = self._impl_policies[index+1]

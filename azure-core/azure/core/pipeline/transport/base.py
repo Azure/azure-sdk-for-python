@@ -147,6 +147,13 @@ class HttpRequest(object):
         query = '?' + '&'.join(query_params)
         self.url = self.url + query
 
+    def set_streamed_data_body(self, data):
+        """Set a streamable data body."""
+        if not hasattr(data, ('__iter__', '__aiter__')):
+            raise TypeError("A streamable data source must be an open file-like object or iterable.")
+        self.data = data
+        self.files = None
+
     def set_xml_body(self, data):
         """Set an XML element tree as the body of the request."""
         if data is None:
@@ -166,7 +173,7 @@ class HttpRequest(object):
             self.headers['Content-Length'] = str(len(self.data))
         self.files = None
 
-    def set_multipart_body(self, data=None):
+    def set_formdata_body(self, data=None):
         """Set form-encoded data as the body of the request."""
         if data is None:
             data = {}

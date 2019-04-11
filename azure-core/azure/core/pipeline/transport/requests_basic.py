@@ -113,9 +113,11 @@ class RequestsTransport(HttpTransport):
 
     def __enter__(self):
         # type: () -> RequestsTransport
+        self.config.connection.keep_alive = True
         return self
 
     def __exit__(self, *exc_details):  # pylint: disable=arguments-differ
+        self.config.connection.keep_alive = False
         self.close()
 
     def _init_session(self, session):
