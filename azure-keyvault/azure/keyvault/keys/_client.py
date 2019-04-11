@@ -157,7 +157,7 @@ class KeyClient:
 
         return deleted_key
 
-    def get_key(self, name, version="", **kwargs):
+    def get_key(self, name, version, **kwargs):
         # type: (str, str, Any) -> Key
         """Gets the public part of a stored key.
 
