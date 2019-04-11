@@ -38,11 +38,11 @@ from azure.core.exceptions import TooManyRedirectsError
 class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):
     """An async redirect policy."""
 
-    async def send(self, request, **kwargs):
+    async def send(self, request):
         redirects_remaining = True
-        redirect_settings = self.configure_redirects(**kwargs)
+        redirect_settings = self.configure_redirects(request.context.options)
         while redirects_remaining:
-            response = await self.next.send(request, **kwargs)
+            response = await self.next.send(request)
             redirect_location = self.get_redirect_location(response)
             if redirect_location:
                 redirects_remaining = self.increment(redirect_settings, response, redirect_location)

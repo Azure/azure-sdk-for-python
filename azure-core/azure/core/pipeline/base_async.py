@@ -57,15 +57,15 @@ class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPRes
         super(_SansIOAsyncHTTPPolicyRunner, self).__init__()
         self._policy = policy
 
-    async def send(self, request: PipelineRequest, **kwargs: Any):
-        self._policy.on_request(request, **kwargs)
+    async def send(self, request: PipelineRequest):
+        self._policy.on_request(request)
         try:
-            response = await self.next.send(request, **kwargs)  # type: ignore
+            response = await self.next.send(request)  # type: ignore
         except Exception:
-            if not self._policy.on_exception(request, **kwargs):
+            if not self._policy.on_exception(request):
                 raise
         else:
-            self._policy.on_response(request, response, **kwargs)
+            self._policy.on_response(request, response)
         return response
 
 
@@ -75,10 +75,10 @@ class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseTy
         super(_AsyncTransportRunner, self).__init__()
         self._sender = sender
 
-    async def send(self, request, **kwargs):
+    async def send(self, request):
         return PipelineResponse(
             request.http_request,
-            await self._sender.send(request.http_request, **kwargs),
+            await self._sender.send(request, **request.context.options),
             #context=request.context
         )
 
@@ -119,8 +119,8 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         await self._transport.__aexit__(*exc_details)
 
     async def run(self, request: PipelineRequest, **kwargs: Any):
-        context = self._transport.build_context()
+        context = self._transport.build_context(**kwargs)
         pipeline_request = PipelineRequest(request, context)
         first_node = self._impl_policies[0] if self._impl_policies else _AsyncTransportRunner(self._transport)
-        return await first_node.send(pipeline_request, **kwargs)  # type: ignore
+        return await first_node.send(pipeline_request)  # type: ignore
 

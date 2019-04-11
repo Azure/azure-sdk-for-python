@@ -73,13 +73,13 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):
                 return
         await self._sleep_backoff(settings, transport)
 
-    async def send(self, request, **kwargs):
+    async def send(self, request):
         retries_remaining = True
         response = None
-        retry_settings = self.configure_retries(**kwargs)
+        retry_settings = self.configure_retries(request.context.options)
         while retries_remaining:
             try:
-                response = await self.next.send(request, **kwargs)
+                response = await self.next.send(request)
                 if self.is_retry(retry_settings, response):
                     retries_remaining = self.increment(retry_settings, response=response)
                     if retries_remaining:

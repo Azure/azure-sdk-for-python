@@ -56,13 +56,13 @@ class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPRe
     """
 
     @abc.abstractmethod
-    def send(self, request, **config):
+    def send(self, request, **kwargs):
         # type: (PipelineRequest[HTTPRequestType], Any) -> PipelineResponse[HTTPRequestType, HTTPResponseType]
         """Send the request using this HTTP sender.
         """
         pass
 
-    def build_context(self):
+    def build_context(self, **kwargs):
         # type: () -> Any
         """Allow the sender to build a context that will be passed
         across the pipeline with the request.
@@ -149,7 +149,7 @@ class HttpRequest(object):
 
     def set_streamed_data_body(self, data):
         """Set a streamable data body."""
-        if not hasattr(data, ('__iter__', '__aiter__')):
+        if not any(hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]):
             raise TypeError("A streamable data source must be an open file-like object or iterable.")
         self.data = data
         self.files = None
@@ -201,13 +201,15 @@ class _HttpResponseBase(object):
     will provide async ways to access the body
     Full in-memory using "body" as bytes.
     """
-    def __init__(self, request, internal_response):
+    def __init__(self, request, internal_response, block_size):
         # type: (HttpRequest, Any) -> None
         self.request = request
         self.internal_response = internal_response
         self.status_code = None  # type: Optional[int]
         self.headers = {}  # type: Dict[str, str]
         self.reason = None  # type: Optional[str]
+        self.block_size = block_size
+
 
     def body(self):
         # type: () -> bytes
@@ -228,15 +230,12 @@ class _HttpResponseBase(object):
 class HttpResponse(_HttpResponseBase):
 
 
-    def stream_download(self, chunk_size=None, callback=None):
+    def stream_download(self):
 
-        # type: (Optional[int], Optional[Callable]) -> Iterator[bytes]
+        # type: () -> Iterator[bytes]
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download
         is supported.
-
-        :param callback: Custom callback for monitoring progress.
-        :param int chunk_size:
         """
         pass

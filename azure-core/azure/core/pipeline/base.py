@@ -51,16 +51,16 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseT
         super(_SansIOHTTPPolicyRunner, self).__init__()
         self._policy = policy
 
-    def send(self, request, **kwargs):
+    def send(self, request):
         # type: (PipelineRequest[HTTPRequestType], Any) -> PipelineResponse[HTTPRequestType, HTTPResponseType]
-        self._policy.on_request(request, **kwargs)
+        self._policy.on_request(request)
         try:
-            response = self.next.send(request, **kwargs)
+            response = self.next.send(request)
         except Exception:
-            if not self._policy.on_exception(request, **kwargs):
+            if not self._policy.on_exception(request):
                 raise
         else:
-            self._policy.on_response(request, response, **kwargs)
+            self._policy.on_response(request, response)
         return response
 
 
@@ -71,10 +71,10 @@ class _TransportRunner(HTTPPolicy):
         super(_TransportRunner, self).__init__()
         self._sender = sender
 
-    def send(self, request, **kwargs):
+    def send(self, request):
         return PipelineResponse(
             request.http_request,
-            self._sender.send(request.http_request, **kwargs),
+            self._sender.send(request.http_request, **request.context.options),
             #context=request.context
         )
 
@@ -111,7 +111,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
     def run(self, request, **kwargs):
         # type: (HTTPRequestType, Any) -> PipelineResponse
-        context = self._transport.build_context()
+        context = self._transport.build_context(**kwargs)
         pipeline_request = PipelineRequest(request, context)  # type: PipelineRequest[HTTPRequestType]
         first_node = self._impl_policies[0] if self._impl_policies else _TransportRunner(self._transport)
-        return first_node.send(pipeline_request, **kwargs)  # type: ignore
+        return first_node.send(pipeline_request)  # type: ignore
