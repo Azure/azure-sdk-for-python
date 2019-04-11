@@ -78,6 +78,7 @@ class AioHttpTransport(AsyncHttpTransport):
         #    import ssl
          #   ssl_ctx = ssl.create_default_context(cafile=self.config.connection.verify)
 
+        stream_response = config.pop("stream", False)
         result = await self.session.request(
             request.method,
             request.url,
@@ -90,8 +91,9 @@ class AioHttpTransport(AsyncHttpTransport):
             allow_redirects=False,
             **config
         )
+        config['stream'] = stream_response
         response = AioHttpTransportResponse(request, result)
-        if not config.get("stream", False):
+        if not stream_response:
             await response.load_body()
         return response
 

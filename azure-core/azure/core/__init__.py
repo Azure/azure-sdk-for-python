@@ -26,9 +26,12 @@
 
 __version__ = "0.0.1"
 
+from .pipeline_client import PipelineClient
 from .configuration import Configuration
+from .pipeline.transport import HttpRequest
 
 
 __all__ = [
-    "Configuration"
+    "Configuration",
+    "PipelineClient",
 ]
