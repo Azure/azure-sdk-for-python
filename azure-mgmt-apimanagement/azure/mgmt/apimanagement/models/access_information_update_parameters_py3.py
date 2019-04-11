@@ -13,14 +13,14 @@ from msrest.serialization import Model
 
 
 class AccessInformationUpdateParameters(Model):
-    """Tenant access information update parameters of the API Management service.
+    """Tenant access information update parameters.
 
     :param enabled: Determines whether direct access is enabled.
     :type enabled: bool
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
     def __init__(self, *, enabled: bool=None, **kwargs) -> None:
