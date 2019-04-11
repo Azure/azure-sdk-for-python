@@ -97,7 +97,9 @@ class KeyClient:
         key_type,
         size=None,
         key_ops=None,
-        attributes=None,
+        enabled=None,
+        expires=None,
+        not_before=None,
         tags=None,
         curve=None,
         **kwargs
@@ -108,11 +110,16 @@ class KeyClient:
             "Content-Type": "application/json; charset=utf-8",
             "x-ms-client-request-id": str(uuid.uuid1()),
         }
+
+        if enabled or not_before or expires:
+            key_attributes = KeyAttributes(enabled=enabled, expires=expires, not_before=not_before)
+        else:
+            key_attributes = None
         create_params = KeyCreateParameters(
             kty=key_type,
             key_size=size,
             key_ops=key_ops,
-            key_attributes=attributes,
+            key_attributes=key_attributes,
             tags=tags,
             curve=curve,
             **kwargs
@@ -254,9 +261,8 @@ class KeyClient:
         return key
 
     def update_key(
-        self, name, version, key_ops=None, attributes=None, tags=None, **kwargs
+        self, name, version, key_ops=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs
     ):
-        # type: (str, str, Optional[List[str]], Mapping[str, str], Mapping[str, str], Any) -> Key
         url = "/".join([self.vault_url, "keys", name, version])
 
         headers = {
@@ -264,8 +270,12 @@ class KeyClient:
             "x-ms-client-request-id": str(uuid.uuid1()),
         }
 
+        if enabled or not_before or expires:
+            key_attributes = KeyAttributes(enabled=enabled, expires=expires, not_before=not_before)
+        else:
+            key_attributes = None
         update_params = KeyUpdateParameters(
-            key_ops=key_ops, key_attributes=attributes, tags=tags
+            key_ops=key_ops, key_attributes=key_attributes, tags=tags
         )
         body = self._serialize.body(update_params, "KeyUpdateParameters")
         request = HttpRequest("PATCH", url, headers=headers, data=body)
