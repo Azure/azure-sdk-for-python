@@ -206,19 +206,19 @@ class KeyClient:
 
         return deleted_key
 
-    def get_all_deleted_keys(self, max_page_size=None, **kwargs):
+    def list_deleted_keys(self, max_page_size=None, **kwargs):
         # type: (Optional[int], Any) -> DeletedKeyItemPaged
-        url = "{}/{}".format(self.vault_url, "deletedkeys")
+        url = self.vault_url + "/deletedkeys"
         paging = functools.partial(self._internal_paging, url, max_page_size)
         return DeletedKeyItemPaged(paging, self._deserialize.dependencies)
 
-    def get_all_keys(self, max_page_size=None, **kwargs):
+    def list_keys(self, max_page_size=None, **kwargs):
         # type: (Optional[int], Any) -> KeyItemPaged
-        url = "{}/{}".format(self.vault_url, "keys")
+        url = self.vault_url + "/keys"
         paging = functools.partial(self._internal_paging, url, max_page_size)
         return KeyItemPaged(paging, self._deserialize.dependencies)
 
-    def get_key_versions(self, name, max_page_size=None, **kwargs):
+    def list_key_versions(self, name, max_page_size=None, **kwargs):
         # type: (Optional[int], Any) -> KeyItemPaged
         url = "/".join([self.vault_url, "keys", name, "versions"])
         paging = functools.partial(self._internal_paging, url, max_page_size)
