@@ -17,9 +17,8 @@ class ApplicationGatewayRedirectConfiguration(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param redirect_type: Supported http redirection types - Permanent,
-     Temporary, Found, SeeOther. Possible values include: 'Permanent', 'Found',
-     'SeeOther', 'Temporary'
+    :param redirect_type: HTTP redirection type. Possible values include:
+     'Permanent', 'Found', 'SeeOther', 'Temporary'
     :type redirect_type: str or
      ~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayRedirectType
     :param target_listener: Reference to a listener to redirect the request
