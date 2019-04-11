@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class SaveConfigurationParameter(Model):
-    """Parameters supplied to the Save Tenant Configuration operation.
+    """Save Tenant Configuration Contract details.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -31,8 +31,8 @@ class SaveConfigurationParameter(Model):
     }
 
     _attribute_map = {
-        'branch': {'key': 'branch', 'type': 'str'},
-        'force': {'key': 'force', 'type': 'bool'},
+        'branch': {'key': 'properties.branch', 'type': 'str'},
+        'force': {'key': 'properties.force', 'type': 'bool'},
     }
 
     def __init__(self, *, branch: str, force: bool=None, **kwargs) -> None:

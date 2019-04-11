@@ -15,6 +15,7 @@ try:
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .region_contract_py3 import RegionContract
     from .resource_py3 import Resource
+    from .api_export_result_value_py3 import ApiExportResultValue
     from .api_export_result_py3 import ApiExportResult
     from .product_entity_base_parameters_py3 import ProductEntityBaseParameters
     from .product_tag_resource_contract_properties_py3 import ProductTagResourceContractProperties
@@ -169,6 +170,7 @@ except (SyntaxError, ImportError):
     from .error_response import ErrorResponse, ErrorResponseException
     from .region_contract import RegionContract
     from .resource import Resource
+    from .api_export_result_value import ApiExportResultValue
     from .api_export_result import ApiExportResult
     from .product_entity_base_parameters import ProductEntityBaseParameters
     from .product_tag_resource_contract_properties import ProductTagResourceContractProperties
@@ -352,6 +354,7 @@ from .report_record_contract_paged import ReportRecordContractPaged
 from .request_report_record_contract_paged import RequestReportRecordContractPaged
 from .user_identity_contract_paged import UserIdentityContractPaged
 from .api_management_client_enums import (
+    ExportResultFormat,
     ProductState,
     BearerTokenSendingMethods,
     Protocol,
@@ -394,6 +397,7 @@ __all__ = [
     'ErrorResponse', 'ErrorResponseException',
     'RegionContract',
     'Resource',
+    'ApiExportResultValue',
     'ApiExportResult',
     'ProductEntityBaseParameters',
     'ProductTagResourceContractProperties',
@@ -576,6 +580,7 @@ __all__ = [
     'ReportRecordContractPaged',
     'RequestReportRecordContractPaged',
     'UserIdentityContractPaged',
+    'ExportResultFormat',
     'ProductState',
     'BearerTokenSendingMethods',
     'Protocol',

@@ -12,17 +12,18 @@
 from msrest.serialization import Model
 
 
-class AccessInformationUpdateParameters(Model):
-    """Tenant access information update parameters.
+class ApiExportResultValue(Model):
+    """The object defining the schema of the exported Api Detail.
 
-    :param enabled: Determines whether direct access is enabled.
-    :type enabled: bool
+    :param link: Link to the Storage Blob containing the result of the export
+     operation. The Blob Uri is only valid for 5 minutes.
+    :type link: str
     """
 
     _attribute_map = {
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        'link': {'key': 'link', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(AccessInformationUpdateParameters, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
+    def __init__(self, *, link: str=None, **kwargs) -> None:
+        super(ApiExportResultValue, self).__init__(**kwargs)
+        self.link = link
