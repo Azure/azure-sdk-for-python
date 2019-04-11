@@ -93,7 +93,7 @@ class ApiManagementServiceUpdateParameters(ApimResource):
      list[~azure.mgmt.apimanagement.models.CertificateConfiguration]
     :param enable_client_certificate: Property only meant to be used for
      Consumption SKU Service. This enforces a client certificate to be
-     presented on each request to the gateway. This also enable the ability to
+     presented on each request to the gateway. This also enables the ability to
      authenticate the certificate in the policy on the gateway. Default value:
      False .
     :type enable_client_certificate: bool
