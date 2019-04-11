@@ -2,6 +2,7 @@ import functools
 from typing import Any, List, Mapping, Optional
 import uuid
 
+from .._internal import _BackupResult
 from ._models import (
     DeletedKey,
     DeletedKeyItem,
@@ -78,6 +79,7 @@ class KeyClient:
         ]
         self._pipeline = Pipeline(transport, policies=policies)
         models = {
+            "_BackupResult": _BackupResult,
             "DeletedKey": DeletedKey,
             "DeletedKeyItem": DeletedKeyItem,
             "DeletedKeyItemPaged": DeletedKeyItemPaged,
@@ -321,11 +323,26 @@ class KeyClient:
     # def import_key(self, name, key, hsm=None, attributes=None, tags=None, **kwargs):
     #     pass
 
-    # def backup_key(self, name, **kwargs):
-    #     pass
+    def backup_key(self, name, **kwargs):
+        url = "/".join([self.vault_url, "keys", name, "backup"])
+        request = HttpRequest("POST", url)
+        request.format_parameters({"api-version": self.API_VERSION})
+        response = self._pipeline.run(request, **kwargs).http_response
+        if response.status_code != 200:
+            raise ClientRequestError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
 
-    # def restore_key(self, key_bundle_backup, **kwargs):
-    #     pass
+        return self._deserialize("_BackupResult", response).value
+
+    def restore_key(self, key_backup, **kwargs):
+        url = self.vault_url + "/keys/restore"
+        request = HttpRequest("POST", url)
+        request.body = "{'value':'{}'}".format(key_backup)
+        request.format_parameters({"api-version": self.API_VERSION})
+        response = self._pipeline.run(request, **kwargs).http_response
+        if response.status_code != 200:
+            raise ClientRequestError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+
+        return self._deserialize("Key", response)
 
     # def wrap_key(self, name, version, algorithm, value, **kwargs):
     #     pass
