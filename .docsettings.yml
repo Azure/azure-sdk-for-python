@@ -46,6 +46,7 @@ known_content_issues:
   - ['azure-loganalytics/README.rst', '#4554']
   - ['azure-servicefabric/README.rst', '#4554']
   - ['azure-servicemanagement-legacy/README.rst', '#4554']
+  - ['azure-cognitiveservices-anomalydetector/README.rst', '#4554']
 
   # nspckg and common. 
   - ['azure-cognitiveservices-nspkg/README.rst', 'nspkg and common']
