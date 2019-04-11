@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class UserTokenParameters(Model):
-    """Parameters supplied to the Get User Token operation.
+    """Get User Token parameters.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -33,8 +33,8 @@ class UserTokenParameters(Model):
     }
 
     _attribute_map = {
-        'key_type': {'key': 'keyType', 'type': 'KeyType'},
-        'expiry': {'key': 'expiry', 'type': 'iso-8601'},
+        'key_type': {'key': 'properties.keyType', 'type': 'KeyType'},
+        'expiry': {'key': 'properties.expiry', 'type': 'iso-8601'},
     }
 
     def __init__(self, *, expiry, key_type="primary", **kwargs) -> None:
