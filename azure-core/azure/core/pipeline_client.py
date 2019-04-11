@@ -51,7 +51,7 @@ class PipelineClient(object):
             raise ValueError("Config is a required parameter")
         self.config = config
         self.base_url = base_url
-        self.pipeline = pipeline or self._build_pipeline(config, credentials)
+        self.pipeline = pipeline
 
     def _request(self, method, url, params, headers, content, form_content, stream_content):
         # type: (str, str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
