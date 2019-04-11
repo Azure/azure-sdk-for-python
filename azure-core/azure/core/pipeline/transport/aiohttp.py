@@ -89,8 +89,7 @@ class AioHttpTransport(AsyncHttpTransport):
             allow_redirects=False,
             **config
         )
-        config['stream'] = stream_response
-        response = AioHttpTransportResponse(request, result)
+        response = AioHttpTransportResponse(request, result, self.config.connection.data_block_size)
         if not stream_response:
             await response.load_body()
         return response
@@ -98,8 +97,8 @@ class AioHttpTransport(AsyncHttpTransport):
 
 class AioHttpTransportResponse(AsyncHttpResponse):
 
-    def __init__(self, request: HttpRequest, aiohttp_response: aiohttp.ClientResponse) -> None:
-        super(AioHttpTransportResponse, self).__init__(request, aiohttp_response)
+    def __init__(self, request: HttpRequest, aiohttp_response: aiohttp.ClientResponse, blob_size: int) -> None:
+        super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, blob_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         self.status_code = aiohttp_response.status
         self.headers = aiohttp_response.headers
@@ -109,7 +108,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
     def body(self) -> bytes:
         """Return the whole body as bytes in memory.
         """
-        if not self._body:
+        if self._body is None:
             raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")
         return self._body
 
