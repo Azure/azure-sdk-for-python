@@ -217,6 +217,7 @@ class AzureFirewallRCActionType(str, Enum):
 
     allow = "Allow"
     deny = "Deny"
+    alert = "Alert"
 
 
 class AzureFirewallApplicationRuleProtocolType(str, Enum):
