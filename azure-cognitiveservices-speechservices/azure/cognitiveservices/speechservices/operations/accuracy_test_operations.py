@@ -72,7 +72,7 @@ class AccuracyTestOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [401, 403, 415, 429]:
+        if response.status_code not in [204, 401, 403, 415, 429]:
             raise HttpOperationError(self._deserialize, response)
 
         deserialized = None

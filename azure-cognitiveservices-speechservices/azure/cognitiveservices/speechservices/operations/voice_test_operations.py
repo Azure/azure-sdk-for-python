@@ -247,7 +247,7 @@ class VoiceTestOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202, 400, 401, 403, 429]:
+        if response.status_code not in [201, 400, 401, 403, 429]:
             raise HttpOperationError(self._deserialize, response)
 
         deserialized = None

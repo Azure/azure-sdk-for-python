@@ -81,13 +81,13 @@ class EndpointDataExportOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202, 400, 401, 403, 404, 429]:
+        if response.status_code not in [201, 400, 401, 403, 404, 429]:
             raise HttpOperationError(self._deserialize, response)
 
         deserialized = None
         header_dict = {}
 
-        if response.status_code == 202:
+        if response.status_code == 201:
             deserialized = self._deserialize('ErrorContent', response)
             header_dict = {
                 'Location': 'str',
