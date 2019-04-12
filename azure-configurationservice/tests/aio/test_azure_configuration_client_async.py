@@ -6,7 +6,7 @@ import pytest
 import logging
 
 from msrestazure.azure_exceptions import CloudError
-from azure.configuration.aio import AzureConfigurationClientAsync
+from azure.configuration.aio import AzureConfigurationClient
 from azure.configuration import ConfigurationSetting
 from devtools_testutils import AzureMgmtTestCase
 
@@ -20,7 +20,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
         super(AzConfigurationClientAsyncTest, self).setUp()
 
         connection_str = os.environ["AZ_CONFIG_CONNECTION"]
-        self.app_config_client = AzureConfigurationClientAsync(connection_str)
+        self.app_config_client = AzureConfigurationClient(connection_str)
         self.test_data = conftest.setup_data()
 
     def tearDown(self):

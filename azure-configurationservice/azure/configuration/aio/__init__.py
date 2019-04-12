@@ -9,8 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_configuration_client_async import AzureConfigurationClientAsync
+from .azure_configuration_client_async import AzureConfigurationClient
 
-__all__ = ['AzureConfigurationClientAsync']
+__all__ = ['AzureConfigurationClient']
 
 
