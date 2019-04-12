@@ -80,13 +80,14 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2018-10-01'
+    DEFAULT_API_VERSION = '2019-03-01'
     _PROFILE_TAG = "azure.mgmt.compute.ComputeManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             'resource_skus': '2017-09-01',
             'disks': '2018-09-30',
             'snapshots': '2018-09-30',
+            'proximity_placement_groups': '2018-10-01',
             None: DEFAULT_API_VERSION
         }},
         _PROFILE_TAG + " latest"
