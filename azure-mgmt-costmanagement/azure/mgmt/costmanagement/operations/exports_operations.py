@@ -41,7 +41,7 @@ class ExportsOperations(object):
         """Lists all exports at the given scope.
 
         :param scope: The scope associated with export operations. This
-         includes '/subscriptions/{subscriptionId}/' for subscription scope,
+         includes '/subscriptions/{subscriptionId}' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -107,7 +107,7 @@ class ExportsOperations(object):
         """Gets the export for the defined scope by export name.
 
         :param scope: The scope associated with export operations. This
-         includes '/subscriptions/{subscriptionId}/' for subscription scope,
+         includes '/subscriptions/{subscriptionId}' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -178,7 +178,7 @@ class ExportsOperations(object):
         performing a get operation. Create operation does not require eTag.
 
         :param scope: The scope associated with export operations. This
-         includes '/subscriptions/{subscriptionId}/' for subscription scope,
+         includes '/subscriptions/{subscriptionId}' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -256,7 +256,7 @@ class ExportsOperations(object):
         """The operation to delete a export.
 
         :param scope: The scope associated with export operations. This
-         includes '/subscriptions/{subscriptionId}/' for subscription scope,
+         includes '/subscriptions/{subscriptionId}' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -316,7 +316,7 @@ class ExportsOperations(object):
         """The operation to execute a export.
 
         :param scope: The scope associated with export operations. This
-         includes '/subscriptions/{subscriptionId}/' for subscription scope,
+         includes '/subscriptions/{subscriptionId}' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -377,7 +377,7 @@ class ExportsOperations(object):
         name.
 
         :param scope: The scope associated with export operations. This
-         includes '/subscriptions/{subscriptionId}/' for subscription scope,
+         includes '/subscriptions/{subscriptionId}' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
