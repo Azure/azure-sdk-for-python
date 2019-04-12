@@ -21,7 +21,6 @@ from .images_operations import ImagesOperations
 from .virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
 from .virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
 from .virtual_machine_scale_set_rolling_upgrades_operations import VirtualMachineScaleSetRollingUpgradesOperations
-from .virtual_machine_scale_set_operations import VirtualMachineScaleSetOperations
 from .virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
 from .log_analytics_operations import LogAnalyticsOperations
 from .virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
@@ -42,7 +41,6 @@ __all__ = [
     'VirtualMachineScaleSetsOperations',
     'VirtualMachineScaleSetExtensionsOperations',
     'VirtualMachineScaleSetRollingUpgradesOperations',
-    'VirtualMachineScaleSetOperations',
     'VirtualMachineScaleSetVMsOperations',
     'LogAnalyticsOperations',
     'VirtualMachineRunCommandsOperations',

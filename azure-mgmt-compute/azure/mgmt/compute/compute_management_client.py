@@ -587,19 +587,6 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
-    def virtual_machine_scale_set(self):
-        """Instance depends on the API version:
-
-           * 2019-03-01: :class:`VirtualMachineScaleSetOperations<azure.mgmt.compute.v2019_03_01.operations.VirtualMachineScaleSetOperations>`
-        """
-        api_version = self._get_api_version('virtual_machine_scale_set')
-        if api_version == '2019-03-01':
-            from .v2019_03_01.operations import VirtualMachineScaleSetOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
     def virtual_machine_scale_set_extensions(self):
         """Instance depends on the API version:
 

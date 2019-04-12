@@ -25,7 +25,6 @@ from .operations.images_operations import ImagesOperations
 from .operations.virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
 from .operations.virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
 from .operations.virtual_machine_scale_set_rolling_upgrades_operations import VirtualMachineScaleSetRollingUpgradesOperations
-from .operations.virtual_machine_scale_set_operations import VirtualMachineScaleSetOperations
 from .operations.virtual_machine_scale_set_vms_operations import VirtualMachineScaleSetVMsOperations
 from .operations.log_analytics_operations import LogAnalyticsOperations
 from .operations.virtual_machine_run_commands_operations import VirtualMachineRunCommandsOperations
@@ -99,8 +98,6 @@ class ComputeManagementClient(SDKClient):
     :vartype virtual_machine_scale_set_extensions: azure.mgmt.compute.v2019_03_01.operations.VirtualMachineScaleSetExtensionsOperations
     :ivar virtual_machine_scale_set_rolling_upgrades: VirtualMachineScaleSetRollingUpgrades operations
     :vartype virtual_machine_scale_set_rolling_upgrades: azure.mgmt.compute.v2019_03_01.operations.VirtualMachineScaleSetRollingUpgradesOperations
-    :ivar virtual_machine_scale_set: VirtualMachineScaleSet operations
-    :vartype virtual_machine_scale_set: azure.mgmt.compute.v2019_03_01.operations.VirtualMachineScaleSetOperations
     :ivar virtual_machine_scale_set_vms: VirtualMachineScaleSetVMs operations
     :vartype virtual_machine_scale_set_vms: azure.mgmt.compute.v2019_03_01.operations.VirtualMachineScaleSetVMsOperations
     :ivar log_analytics: LogAnalytics operations
@@ -158,8 +155,6 @@ class ComputeManagementClient(SDKClient):
         self.virtual_machine_scale_set_extensions = VirtualMachineScaleSetExtensionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_scale_set_rolling_upgrades = VirtualMachineScaleSetRollingUpgradesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.virtual_machine_scale_set = VirtualMachineScaleSetOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
             self._client, self.config, self._serialize, self._deserialize)
