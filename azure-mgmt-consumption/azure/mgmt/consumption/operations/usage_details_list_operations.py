@@ -40,7 +40,7 @@ class UsageDetailsListOperations(object):
 
 
     def _download_initial(
-            self, scope, custom_headers=None, raw=False, **operation_config):
+            self, scope, metric=None, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.download.metadata['url']
         path_format_arguments = {
@@ -51,6 +51,8 @@ class UsageDetailsListOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if metric is not None:
+            query_parameters['metric'] = self._serialize.query("metric", metric, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -89,7 +91,7 @@ class UsageDetailsListOperations(object):
         return deserialized
 
     def download(
-            self, scope, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, scope, metric=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Download usage details data.
 
         :param scope: The scope associated with usage details operations. This
@@ -110,6 +112,10 @@ class UsageDetailsListOperations(object):
          e.g. to specify billing period at department scope use
          '/providers/Microsoft.Billing/departments/{departmentId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'
         :type scope: str
+        :param metric: Allows to select different type of cost/usage records.
+         Allowed values: Usage, ActualCost, AmortizedCost. Default is
+         ActualCost.
+        :type metric: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -127,6 +133,7 @@ class UsageDetailsListOperations(object):
         """
         raw_result = self._download_initial(
             scope=scope,
+            metric=metric,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
