@@ -46,7 +46,7 @@ class PipelineClient(object):
     :param Configuration config: Service configuration.
     """
 
-    def __init__(self, base_url, config=None, pipeline=None):
+    def __init__(self, base_url, config, pipeline=None):
         if config is None:
             raise ValueError("Config is a required parameter")
         self._config = config
