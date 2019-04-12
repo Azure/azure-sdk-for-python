@@ -14,6 +14,9 @@ Release History
 **Breaking changes**
 
 - Model SubscriptionCreationParameters has a new signature
+
+**Deprecation**
+
 - Removed operation SubscriptionFactoryOperations.create_subscription_in_enrollment_account
 - Removed operation group SubscriptionOperations
 
