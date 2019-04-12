@@ -79,8 +79,8 @@ class UsageDetailsOperations(object):
          recent N usageDetails.
         :type top: int
         :param metric: Allows to select different type of cost/usage records.
-         Allowed values: Usage, ActualCost, AmortizedCost,
-         ActualAndAmortizedCost. Default is ActualCost.
+         Allowed values: Usage, ActualCost, AmortizedCost. Default is
+         ActualCost.
         :type metric: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

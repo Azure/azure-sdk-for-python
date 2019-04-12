@@ -126,16 +126,6 @@ class UsageDetail(Resource):
     :vartype publisher_type: str
     :ivar plan_name: Plan Name.
     :vartype plan_name: str
-    :ivar is_amortized_cost: Indicates if the record represents amortized
-     costs. A record may be actual and amortized, if amortization is not
-     applicable (e.g. non-reservation usage) or not supported (e.g. Marketplace
-     purchases).
-    :vartype is_amortized_cost: bool
-    :ivar is_actual_cost: Indicates if the record represents actual, billed
-     charges (as opposed to an amortized cost). A record may be actual and
-     amortized, if amortization is not applicable (e.g. non-reservation usage)
-     or not supported (e.g. Marketplace purchases).
-    :vartype is_actual_cost: bool
     :ivar charge_type: Indicates a charge represents credits, usage, a
      Marketplace purchase, a reservation fee, or a refund.
     :vartype charge_type: str
@@ -190,8 +180,6 @@ class UsageDetail(Resource):
         'publisher_name': {'readonly': True},
         'publisher_type': {'readonly': True},
         'plan_name': {'readonly': True},
-        'is_amortized_cost': {'readonly': True},
-        'is_actual_cost': {'readonly': True},
         'charge_type': {'readonly': True},
         'frequency': {'readonly': True},
     }
@@ -241,8 +229,6 @@ class UsageDetail(Resource):
         'publisher_name': {'key': 'properties.publisherName', 'type': 'str'},
         'publisher_type': {'key': 'properties.publisherType', 'type': 'str'},
         'plan_name': {'key': 'properties.planName', 'type': 'str'},
-        'is_amortized_cost': {'key': 'properties.isAmortizedCost', 'type': 'bool'},
-        'is_actual_cost': {'key': 'properties.isActualCost', 'type': 'bool'},
         'charge_type': {'key': 'properties.chargeType', 'type': 'str'},
         'frequency': {'key': 'properties.frequency', 'type': 'str'},
     }
@@ -289,7 +275,5 @@ class UsageDetail(Resource):
         self.publisher_name = None
         self.publisher_type = None
         self.plan_name = None
-        self.is_amortized_cost = None
-        self.is_actual_cost = None
         self.charge_type = None
         self.frequency = None
