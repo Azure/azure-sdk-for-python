@@ -11,6 +11,7 @@
 
 from .signed_in_user_operations import SignedInUserOperations
 from .applications_operations import ApplicationsOperations
+from .application_operations import ApplicationOperations
 from .deleted_applications_operations import DeletedApplicationsOperations
 from .groups_operations import GroupsOperations
 from .service_principals_operations import ServicePrincipalsOperations
@@ -22,6 +23,7 @@ from .oauth2_permission_grant_operations import OAuth2PermissionGrantOperations
 __all__ = [
     'SignedInUserOperations',
     'ApplicationsOperations',
+    'ApplicationOperations',
     'DeletedApplicationsOperations',
     'GroupsOperations',
     'ServicePrincipalsOperations',
