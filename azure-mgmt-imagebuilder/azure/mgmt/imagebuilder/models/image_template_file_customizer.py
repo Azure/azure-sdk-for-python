@@ -9,16 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .image_template_customizer import ImageTemplateCustomizer
 
 
-class ImageTemplateCustomizer(Model):
-    """ImageTemplateCustomizer.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ImageTemplateShellCustomizer,
-    ImageTemplateRestartCustomizer, ImageTemplatePowerShellCustomizer,
-    ImageTemplateFileCustomizer
+class ImageTemplateFileCustomizer(ImageTemplateCustomizer):
+    """Uploads files to VMs (Linux, Windows). Corresponds to Packer file
+    provisioner.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -27,6 +23,12 @@ class ImageTemplateCustomizer(Model):
     :type name: str
     :param type: Required. Constant filled by server.
     :type type: str
+    :param source_uri: The URI of the file to be uploaded for customizing the
+     VM. It can be a github link, SAS URI for Azure Storage, etc
+    :type source_uri: str
+    :param destination: The absolute path (with existing directory structure)
+     where the file will be uploaded to in the VM
+    :type destination: str
     """
 
     _validation = {
@@ -36,13 +38,12 @@ class ImageTemplateCustomizer(Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'Shell': 'ImageTemplateShellCustomizer', 'WindowsRestart': 'ImageTemplateRestartCustomizer', 'PowerShell': 'ImageTemplatePowerShellCustomizer', 'File': 'ImageTemplateFileCustomizer'}
+        'source_uri': {'key': 'sourceUri', 'type': 'str'},
+        'destination': {'key': 'destination', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ImageTemplateCustomizer, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = None
+        super(ImageTemplateFileCustomizer, self).__init__(**kwargs)
+        self.source_uri = kwargs.get('source_uri', None)
+        self.destination = kwargs.get('destination', None)
+        self.type = 'File'

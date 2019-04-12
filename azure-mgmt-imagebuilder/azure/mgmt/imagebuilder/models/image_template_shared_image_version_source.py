@@ -9,34 +9,33 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .image_template_source import ImageTemplateSource
 
 
-class ImageTemplateSource(Model):
-    """ImageTemplateSource.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ImageTemplateIsoSource, ImageTemplatePlatformImageSource,
-    ImageTemplateManagedImageSource, ImageTemplateSharedImageVersionSource
+class ImageTemplateSharedImageVersionSource(ImageTemplateSource):
+    """Describes an image source that is an image version in a shared image
+    gallery.
 
     All required parameters must be populated in order to send to Azure.
 
     :param type: Required. Constant filled by server.
     :type type: str
+    :param image_version_id: Required. ARM resource id of the image version in
+     the shared image gallery
+    :type image_version_id: str
     """
 
     _validation = {
         'type': {'required': True},
+        'image_version_id': {'required': True},
     }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
+        'image_version_id': {'key': 'imageVersionId', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'type': {'ISO': 'ImageTemplateIsoSource', 'PlatformImage': 'ImageTemplatePlatformImageSource', 'ManagedImage': 'ImageTemplateManagedImageSource', 'SharedImageVersion': 'ImageTemplateSharedImageVersionSource'}
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(ImageTemplateSource, self).__init__(**kwargs)
-        self.type = None
+    def __init__(self, **kwargs):
+        super(ImageTemplateSharedImageVersionSource, self).__init__(**kwargs)
+        self.image_version_id = kwargs.get('image_version_id', None)
+        self.type = 'SharedImageVersion'

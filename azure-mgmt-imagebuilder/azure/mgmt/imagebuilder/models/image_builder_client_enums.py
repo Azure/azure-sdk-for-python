@@ -9,5 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.2.0"
+from enum import Enum
 
+
+class ResourceIdentityType(str, Enum):
+
+    user_assigned = "UserAssigned"
+    none = "None"
