@@ -48,8 +48,8 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos.murmur_hash as murmur_hash
 import azure.cosmos.range_partition_resolver as range_partition_resolver
 import azure.cosmos.range as partition_range
-import test.test_config as test_config
-import test.test_partition_resolver as test_partition_resolver
+import test_config
+import test_partition_resolver
 import azure.cosmos.base as base
 
 
