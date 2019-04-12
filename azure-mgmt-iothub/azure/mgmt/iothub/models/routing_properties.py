@@ -31,7 +31,7 @@ class RoutingProperties(Model):
     :type fallback_route: ~azure.mgmt.iothub.models.FallbackRouteProperties
     :param enrichments: The list of user-provided enrichments that the IoT hub
      applies to messages to be delivered to built-in and custom endpoints. See:
-     https://aka.ms/telemetryoneventgrid
+     https://aka.ms/iotmsgenrich
     :type enrichments: list[~azure.mgmt.iothub.models.EnrichmentProperties]
     """
 
