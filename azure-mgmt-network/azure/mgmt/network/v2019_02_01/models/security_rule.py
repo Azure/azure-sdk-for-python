@@ -22,8 +22,8 @@ class SecurityRule(SubResource):
     :param description: A description for this rule. Restricted to 140 chars.
     :type description: str
     :param protocol: Required. Network protocol this rule applies to. Possible
-     values are 'Tcp', 'Udp', 'Icmp', 'Esp', 'Ah', and '*'. Possible values
-     include: 'Tcp', 'Udp', 'Icmp', 'Esp', 'Ah', '*'
+     values are 'Tcp', 'Udp', 'Icmp', 'Esp', and '*'. Possible values include:
+     'Tcp', 'Udp', 'Icmp', 'Esp', '*'
     :type protocol: str or
      ~azure.mgmt.network.v2019_02_01.models.SecurityRuleProtocol
     :param source_port_range: The source port or range. Integer or range

@@ -24,7 +24,6 @@ class SecurityRuleProtocol(str, Enum):
     udp = "Udp"
     icmp = "Icmp"
     esp = "Esp"
-    ah = "Ah"
     asterisk = "*"
 
 
