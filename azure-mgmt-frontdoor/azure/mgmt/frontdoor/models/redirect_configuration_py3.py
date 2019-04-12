@@ -29,8 +29,8 @@ class RedirectConfiguration(RouteConfiguration):
      'MatchRequest'
     :type redirect_protocol: str or
      ~azure.mgmt.frontdoor.models.FrontDoorRedirectProtocol
-    :param custom_host: Host to redirect. Leave empty to use use the incoming
-     host as the destination host.
+    :param custom_host: Host to redirect. Leave empty to use the incoming host
+     as the destination host.
     :type custom_host: str
     :param custom_path: The full path to redirect. Path cannot be empty and
      must start with /. Leave empty to use the incoming path as destination
