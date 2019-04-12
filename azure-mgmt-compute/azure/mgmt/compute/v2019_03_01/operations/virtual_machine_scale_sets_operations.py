@@ -1762,3 +1762,69 @@ class VirtualMachineScaleSetsOperations(object):
 
         return deserialized
     force_recovery_service_fabric_platform_update_domain_walk.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/forceRecoveryServiceFabricPlatformUpdateDomainWalk'}
+
+    def convert_to_single_placement_group(
+            self, resource_group_name, vm_scale_set_name, active_placement_group_id=None, custom_headers=None, raw=False, **operation_config):
+        """Converts SinglePlacementGroup property to false for a existing virtual
+        machine scale set.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param vm_scale_set_name: The name of the virtual machine scale set to
+         create or update.
+        :type vm_scale_set_name: str
+        :param active_placement_group_id: Id of the placement group in which
+         you want future virtual machine instances to be placed. To query
+         placement group Id, please use Virtual Machine Scale Set VMs - Get
+         API. If not provided, the platform will choose one with maximum number
+         of virtual machine instances.
+        :type active_placement_group_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        parameters = models.VMScaleSetConvertToSinglePlacementGroupInput(active_placement_group_id=active_placement_group_id)
+
+        # Construct URL
+        url = self.convert_to_single_placement_group.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'vmScaleSetName': self._serialize.url("vm_scale_set_name", vm_scale_set_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'VMScaleSetConvertToSinglePlacementGroupInput')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    convert_to_single_placement_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmScaleSetName}/convertToSinglePlacementGroup'}
