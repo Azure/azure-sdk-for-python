@@ -30,7 +30,7 @@ import azure.cosmos.constants as constants
 from azure.cosmos.http_constants import StatusCodes
 import azure.cosmos.global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.retry_utility as retry_utility
-import test.test_config as test_config
+import test_config
 
 location_changed = False
 

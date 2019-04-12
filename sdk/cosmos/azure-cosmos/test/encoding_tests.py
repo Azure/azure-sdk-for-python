@@ -5,7 +5,7 @@ import uuid
 import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
-import test.test_config as test_config
+import test_config
 
 @pytest.mark.usefixtures("teardown")
 class EncodingTest(unittest.TestCase):

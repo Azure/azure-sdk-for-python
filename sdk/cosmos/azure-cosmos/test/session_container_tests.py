@@ -30,7 +30,7 @@ import azure.cosmos.base as base
 import azure.cosmos.http_constants as http_constants
 import azure.cosmos.constants as constants
 import azure.cosmos.session as session
-import test.test_config as test_config
+import test_config
 
 @pytest.mark.usefixtures("teardown")
 class Test_session_container(unittest.TestCase):

@@ -27,7 +27,7 @@ import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes
-import test.test_config as test_config
+import test_config
 
 
 #IMPORTANT NOTES:
