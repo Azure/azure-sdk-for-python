@@ -35,7 +35,7 @@ class SBTopic(Resource):
     :vartype accessed_at: datetime
     :ivar subscription_count: Number of subscriptions.
     :vartype subscription_count: int
-    :ivar count_details: Message count deatils
+    :ivar count_details: Message count details
     :vartype count_details: ~azure.mgmt.servicebus.models.MessageCountDetails
     :param default_message_time_to_live: ISO 8601 Default message timespan to
      live value. This is the duration after which the message expires, starting

@@ -45,7 +45,7 @@ class DisasterRecoveryConfigsOperations(object):
         :type resource_group_name: str
         :param namespace_name: The namespace name
         :type namespace_name: str
-        :param name: The Name to check the namespce name availability and The
+        :param name: The Name to check the namespace name availability and The
          namespace name can contain only letters, numbers, and hyphens. The
          namespace must start with a letter, and it must end with a letter or
          number.
@@ -191,10 +191,10 @@ class DisasterRecoveryConfigsOperations(object):
         :param alias: The Disaster Recovery configuration name
         :type alias: str
         :param partner_namespace: ARM Id of the Primary/Secondary eventhub
-         namespace name, which is part of GEO DR pairning
+         namespace name, which is part of GEO DR pairing
         :type partner_namespace: str
         :param alternate_name: Primary/Secondary eventhub namespace name,
-         which is part of GEO DR pairning
+         which is part of GEO DR pairing
         :type alternate_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -437,7 +437,7 @@ class DisasterRecoveryConfigsOperations(object):
 
     def fail_over(
             self, resource_group_name, namespace_name, alias, custom_headers=None, raw=False, **operation_config):
-        """envokes GEO DR failover and reconfigure the alias to point to the
+        """Invokes GEO DR failover and reconfigure the alias to point to the
         secondary namespace.
 
         :param resource_group_name: Name of the Resource group within the
@@ -576,7 +576,7 @@ class DisasterRecoveryConfigsOperations(object):
         :type namespace_name: str
         :param alias: The Disaster Recovery configuration name
         :type alias: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -644,7 +644,7 @@ class DisasterRecoveryConfigsOperations(object):
         :type namespace_name: str
         :param alias: The Disaster Recovery configuration name
         :type alias: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
