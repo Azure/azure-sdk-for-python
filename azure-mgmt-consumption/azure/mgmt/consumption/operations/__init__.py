@@ -9,24 +9,34 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .usage_details_operations import UsageDetailsOperations
+from .usage_details_list_operations import UsageDetailsListOperations
+from .marketplaces_operations import MarketplacesOperations
+from .budgets_operations import BudgetsOperations
+from .tags_operations import TagsOperations
+from .charges_operations import ChargesOperations
+from .balances_operations import BalancesOperations
+from .reservations_summaries_operations import ReservationsSummariesOperations
+from .reservations_details_operations import ReservationsDetailsOperations
+from .reservation_recommendations_operations import ReservationRecommendationsOperations
+from .price_sheet_operations import PriceSheetOperations
+from .forecasts_operations import ForecastsOperations
 from .operations import Operations
-from .credit_summary_by_billing_profile_operations import CreditSummaryByBillingProfileOperations
-from .events_by_billing_profile_operations import EventsByBillingProfileOperations
-from .lots_by_billing_profile_operations import LotsByBillingProfileOperations
-from .invoice_pricesheet_operations import InvoicePricesheetOperations
-from .billing_profile_pricesheet_operations import BillingProfilePricesheetOperations
-from .charges_by_billing_account_operations import ChargesByBillingAccountOperations
-from .charges_by_billing_profile_operations import ChargesByBillingProfileOperations
-from .charges_by_invoice_section_operations import ChargesByInvoiceSectionOperations
+from .aggregated_cost_operations import AggregatedCostOperations
 
 __all__ = [
+    'UsageDetailsOperations',
+    'UsageDetailsListOperations',
+    'MarketplacesOperations',
+    'BudgetsOperations',
+    'TagsOperations',
+    'ChargesOperations',
+    'BalancesOperations',
+    'ReservationsSummariesOperations',
+    'ReservationsDetailsOperations',
+    'ReservationRecommendationsOperations',
+    'PriceSheetOperations',
+    'ForecastsOperations',
     'Operations',
-    'CreditSummaryByBillingProfileOperations',
-    'EventsByBillingProfileOperations',
-    'LotsByBillingProfileOperations',
-    'InvoicePricesheetOperations',
-    'BillingProfilePricesheetOperations',
-    'ChargesByBillingAccountOperations',
-    'ChargesByBillingProfileOperations',
-    'ChargesByInvoiceSectionOperations',
+    'AggregatedCostOperations',
 ]
