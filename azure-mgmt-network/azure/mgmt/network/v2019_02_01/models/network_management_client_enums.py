@@ -373,6 +373,11 @@ class LoadBalancerOutboundRuleProtocol(str, Enum):
     all = "All"
 
 
+class NatGatewaySkuName(str, Enum):
+
+    standard = "Standard"
+
+
 class NetworkOperationStatus(str, Enum):
 
     in_progress = "InProgress"

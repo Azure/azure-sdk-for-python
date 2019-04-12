@@ -30,6 +30,8 @@ class Subnet(SubResource):
      ~azure.mgmt.network.v2019_02_01.models.NetworkSecurityGroup
     :param route_table: The reference of the RouteTable resource.
     :type route_table: ~azure.mgmt.network.v2019_02_01.models.RouteTable
+    :param nat_gateway: Nat gateway associated with this subnet.
+    :type nat_gateway: ~azure.mgmt.network.v2019_02_01.models.SubResource
     :param service_endpoints: An array of service endpoints.
     :type service_endpoints:
      list[~azure.mgmt.network.v2019_02_01.models.ServiceEndpointPropertiesFormat]
@@ -84,6 +86,7 @@ class Subnet(SubResource):
         'address_prefixes': {'key': 'properties.addressPrefixes', 'type': '[str]'},
         'network_security_group': {'key': 'properties.networkSecurityGroup', 'type': 'NetworkSecurityGroup'},
         'route_table': {'key': 'properties.routeTable', 'type': 'RouteTable'},
+        'nat_gateway': {'key': 'properties.natGateway', 'type': 'SubResource'},
         'service_endpoints': {'key': 'properties.serviceEndpoints', 'type': '[ServiceEndpointPropertiesFormat]'},
         'service_endpoint_policies': {'key': 'properties.serviceEndpointPolicies', 'type': '[ServiceEndpointPolicy]'},
         'interface_endpoints': {'key': 'properties.interfaceEndpoints', 'type': '[InterfaceEndpoint]'},
@@ -104,6 +107,7 @@ class Subnet(SubResource):
         self.address_prefixes = kwargs.get('address_prefixes', None)
         self.network_security_group = kwargs.get('network_security_group', None)
         self.route_table = kwargs.get('route_table', None)
+        self.nat_gateway = kwargs.get('nat_gateway', None)
         self.service_endpoints = kwargs.get('service_endpoints', None)
         self.service_endpoint_policies = kwargs.get('service_endpoint_policies', None)
         self.interface_endpoints = None

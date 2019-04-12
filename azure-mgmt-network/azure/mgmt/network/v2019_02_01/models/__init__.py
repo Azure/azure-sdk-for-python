@@ -148,6 +148,8 @@ try:
     from .inbound_nat_pool_py3 import InboundNatPool
     from .outbound_rule_py3 import OutboundRule
     from .load_balancer_py3 import LoadBalancer
+    from .nat_gateway_sku_py3 import NatGatewaySku
+    from .nat_gateway_py3 import NatGateway
     from .azure_async_operation_result_py3 import AzureAsyncOperationResult
     from .effective_network_security_group_association_py3 import EffectiveNetworkSecurityGroupAssociation
     from .effective_network_security_rule_py3 import EffectiveNetworkSecurityRule
@@ -441,6 +443,8 @@ except (SyntaxError, ImportError):
     from .inbound_nat_pool import InboundNatPool
     from .outbound_rule import OutboundRule
     from .load_balancer import LoadBalancer
+    from .nat_gateway_sku import NatGatewaySku
+    from .nat_gateway import NatGateway
     from .azure_async_operation_result import AzureAsyncOperationResult
     from .effective_network_security_group_association import EffectiveNetworkSecurityGroupAssociation
     from .effective_network_security_rule import EffectiveNetworkSecurityRule
@@ -623,6 +627,7 @@ from .load_balancing_rule_paged import LoadBalancingRulePaged
 from .outbound_rule_paged import OutboundRulePaged
 from .network_interface_paged import NetworkInterfacePaged
 from .probe_paged import ProbePaged
+from .nat_gateway_paged import NatGatewayPaged
 from .network_interface_ip_configuration_paged import NetworkInterfaceIPConfigurationPaged
 from .network_interface_tap_configuration_paged import NetworkInterfaceTapConfigurationPaged
 from .network_profile_paged import NetworkProfilePaged
@@ -710,6 +715,7 @@ from .network_management_client_enums import (
     LoadDistribution,
     ProbeProtocol,
     LoadBalancerOutboundRuleProtocol,
+    NatGatewaySkuName,
     NetworkOperationStatus,
     EffectiveSecurityRuleProtocol,
     EffectiveRouteSource,
@@ -906,6 +912,8 @@ __all__ = [
     'InboundNatPool',
     'OutboundRule',
     'LoadBalancer',
+    'NatGatewaySku',
+    'NatGateway',
     'AzureAsyncOperationResult',
     'EffectiveNetworkSecurityGroupAssociation',
     'EffectiveNetworkSecurityRule',
@@ -1088,6 +1096,7 @@ __all__ = [
     'OutboundRulePaged',
     'NetworkInterfacePaged',
     'ProbePaged',
+    'NatGatewayPaged',
     'NetworkInterfaceIPConfigurationPaged',
     'NetworkInterfaceTapConfigurationPaged',
     'NetworkProfilePaged',
@@ -1174,6 +1183,7 @@ __all__ = [
     'LoadDistribution',
     'ProbeProtocol',
     'LoadBalancerOutboundRuleProtocol',
+    'NatGatewaySkuName',
     'NetworkOperationStatus',
     'EffectiveSecurityRuleProtocol',
     'EffectiveRouteSource',

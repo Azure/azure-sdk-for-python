@@ -49,6 +49,7 @@ from .operations.load_balancer_load_balancing_rules_operations import LoadBalanc
 from .operations.load_balancer_outbound_rules_operations import LoadBalancerOutboundRulesOperations
 from .operations.load_balancer_network_interfaces_operations import LoadBalancerNetworkInterfacesOperations
 from .operations.load_balancer_probes_operations import LoadBalancerProbesOperations
+from .operations.nat_gateways_operations import NatGatewaysOperations
 from .operations.network_interfaces_operations import NetworkInterfacesOperations
 from .operations.network_interface_ip_configurations_operations import NetworkInterfaceIPConfigurationsOperations
 from .operations.network_interface_load_balancers_operations import NetworkInterfaceLoadBalancersOperations
@@ -193,6 +194,8 @@ class NetworkManagementClient(SDKClient):
     :vartype load_balancer_network_interfaces: azure.mgmt.network.v2019_02_01.operations.LoadBalancerNetworkInterfacesOperations
     :ivar load_balancer_probes: LoadBalancerProbes operations
     :vartype load_balancer_probes: azure.mgmt.network.v2019_02_01.operations.LoadBalancerProbesOperations
+    :ivar nat_gateways: NatGateways operations
+    :vartype nat_gateways: azure.mgmt.network.v2019_02_01.operations.NatGatewaysOperations
     :ivar network_interfaces: NetworkInterfaces operations
     :vartype network_interfaces: azure.mgmt.network.v2019_02_01.operations.NetworkInterfacesOperations
     :ivar network_interface_ip_configurations: NetworkInterfaceIPConfigurations operations
@@ -353,6 +356,8 @@ class NetworkManagementClient(SDKClient):
         self.load_balancer_network_interfaces = LoadBalancerNetworkInterfacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.load_balancer_probes = LoadBalancerProbesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.nat_gateways = NatGatewaysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.network_interfaces = NetworkInterfacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
