@@ -29,6 +29,11 @@ class AvailabilitySetUpdate(UpdateResource):
      the availability set.
     :type virtual_machines:
      list[~azure.mgmt.compute.v2018_10_01.models.SubResource]
+    :param proximity_placement_group: Specifies information about the
+     proximity placement group that the availability set should be assigned to.
+     <br><br>Minimum api-version: 2018-04-01.
+    :type proximity_placement_group:
+     ~azure.mgmt.compute.v2018_10_01.models.SubResource
     :ivar statuses: The resource status information.
     :vartype statuses:
      list[~azure.mgmt.compute.v2018_10_01.models.InstanceViewStatus]
@@ -45,6 +50,7 @@ class AvailabilitySetUpdate(UpdateResource):
         'platform_update_domain_count': {'key': 'properties.platformUpdateDomainCount', 'type': 'int'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResource]'},
+        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'statuses': {'key': 'properties.statuses', 'type': '[InstanceViewStatus]'},
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
@@ -54,5 +60,6 @@ class AvailabilitySetUpdate(UpdateResource):
         self.platform_update_domain_count = kwargs.get('platform_update_domain_count', None)
         self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
         self.virtual_machines = kwargs.get('virtual_machines', None)
+        self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
         self.statuses = None
         self.sku = kwargs.get('sku', None)
