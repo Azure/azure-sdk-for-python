@@ -49,9 +49,9 @@ class PipelineClient(object):
     def __init__(self, base_url, config=None, pipeline=None):
         if config is None:
             raise ValueError("Config is a required parameter")
-        self.config = config
-        self.base_url = base_url
-        self.pipeline = pipeline
+        self._config = config
+        self._base_url = base_url
+        self._pipeline = pipeline
 
     def _request(self, method, url, params, headers, content, form_content, stream_content):
         # type: (str, str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
@@ -95,7 +95,7 @@ class PipelineClient(object):
         parsed = urlparse(url)
         if not parsed.scheme or not parsed.netloc:
             url = url.lstrip('/')
-            base = self.base_url.format(**kwargs).rstrip('/')
+            base = self._base_url.format(**kwargs).rstrip('/')
             url = urljoin(base + '/', url)
         return url
 
