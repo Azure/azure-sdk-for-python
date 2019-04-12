@@ -155,4 +155,4 @@ class UsageDetailsListOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    download.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/usagedetails/download'}
+    download.metadata = {'url': '/{scope}/providers/Microsoft.Consumption/usageDetails/download'}
