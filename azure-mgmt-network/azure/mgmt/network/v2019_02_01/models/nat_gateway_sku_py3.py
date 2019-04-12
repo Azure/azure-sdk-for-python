@@ -15,8 +15,7 @@ from msrest.serialization import Model
 class NatGatewaySku(Model):
     """SKU of nat gateway.
 
-    :param name: Name of Nat Gateway SKU. Possible values include: 'Basic',
-     'Standard'
+    :param name: Name of Nat Gateway SKU. Possible values include: 'Standard'
     :type name: str or
      ~azure.mgmt.network.v2019_02_01.models.NatGatewaySkuName
     """

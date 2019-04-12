@@ -376,7 +376,6 @@ class LoadBalancerOutboundRuleProtocol(str, Enum):
 
 class NatGatewaySkuName(str, Enum):
 
-    basic = "Basic"
     standard = "Standard"
 
 
