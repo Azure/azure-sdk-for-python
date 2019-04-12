@@ -40,9 +40,8 @@ class QueryOperations(object):
             self, scope, parameters, custom_headers=None, raw=False, **operation_config):
         """Query the usage data for scope defined.
 
-        :param scope: The scope associated with query and export operations.
-         This includes '/subscriptions/{subscriptionId}/' for subscription
-         scope,
+        :param scope: The scope associated with query operations. This
+         includes '/subscriptions/{subscriptionId}/' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
