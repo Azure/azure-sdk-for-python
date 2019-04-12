@@ -10,14 +10,14 @@
 # --------------------------------------------------------------------------
 
 from .operations import Operations
-from .subscription_operations import SubscriptionOperations
+from .subscription_operation_operations import SubscriptionOperationOperations
 from .subscription_factory_operations import SubscriptionFactoryOperations
 from .subscriptions_operations import SubscriptionsOperations
 from .tenants_operations import TenantsOperations
 
 __all__ = [
     'Operations',
-    'SubscriptionOperations',
+    'SubscriptionOperationOperations',
     'SubscriptionFactoryOperations',
     'SubscriptionsOperations',
     'TenantsOperations',
