@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .iread_only_dictionary_py3 import IReadOnlyDictionary
     from .dataset_py3 import Dataset
     from .model_py3 import Model
     from .test_py3 import Test
@@ -40,8 +41,8 @@ try:
     from .dataset_definition_py3 import DatasetDefinition
     from .voice_test_py3 import VoiceTest
     from .voice_test_definition_py3 import VoiceTestDefinition
-    from .iread_only_dictionary2_py3 import IReadOnlyDictionary2
 except (SyntaxError, ImportError):
+    from .iread_only_dictionary import IReadOnlyDictionary
     from .dataset import Dataset
     from .model import Model
     from .test import Test
@@ -72,9 +73,9 @@ except (SyntaxError, ImportError):
     from .dataset_definition import DatasetDefinition
     from .voice_test import VoiceTest
     from .voice_test_definition import VoiceTestDefinition
-    from .iread_only_dictionary2 import IReadOnlyDictionary2
 
 __all__ = [
+    'IReadOnlyDictionary',
     'Dataset',
     'Model',
     'Test',
@@ -105,5 +106,4 @@ __all__ = [
     'DatasetDefinition',
     'VoiceTest',
     'VoiceTestDefinition',
-    'IReadOnlyDictionary2',
 ]

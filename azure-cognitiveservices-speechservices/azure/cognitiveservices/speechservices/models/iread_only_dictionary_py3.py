@@ -12,20 +12,20 @@
 from msrest.serialization import Model
 
 
-class IReadOnlyDictionary2(Model):
-    """IReadOnlyDictionary`2.
+class IReadOnlyDictionary(Model):
+    """IReadOnlyDictionary.
 
     :param none:
     :type none: list[str]
-    :param language:
+    :param language: language data information
     :type language: list[str]
-    :param acoustic:
+    :param acoustic: acoustic data information
     :type acoustic: list[str]
-    :param pronunciation:
+    :param pronunciation: pronunciation data information
     :type pronunciation: list[str]
-    :param custom_voice:
+    :param custom_voice: voice data information
     :type custom_voice: list[str]
-    :param language_generation:
+    :param language_generation: language information
     :type language_generation: list[str]
     """
 
@@ -39,7 +39,7 @@ class IReadOnlyDictionary2(Model):
     }
 
     def __init__(self, *, none=None, language=None, acoustic=None, pronunciation=None, custom_voice=None, language_generation=None, **kwargs) -> None:
-        super(IReadOnlyDictionary2, self).__init__(**kwargs)
+        super(IReadOnlyDictionary, self).__init__(**kwargs)
         self.none = none
         self.language = language
         self.acoustic = acoustic
