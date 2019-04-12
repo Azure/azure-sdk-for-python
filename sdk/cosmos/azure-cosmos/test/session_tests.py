@@ -6,7 +6,7 @@ import pytest
 from azure.cosmos.http_constants import HttpHeaders
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
-import test.test_config as test_config
+import test_config
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 import azure.cosmos.synchronized_request as synchronized_request

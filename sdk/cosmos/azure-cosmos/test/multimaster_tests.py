@@ -11,7 +11,7 @@ import azure.cosmos.constants as constants
 import azure.cosmos.retry_options as retry_options
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos.retry_utility as retry_utility
-import test.test_config as test_config
+import test_config
 
 @pytest.mark.usefixtures("teardown")
 class MultiMasterTests(unittest.TestCase):

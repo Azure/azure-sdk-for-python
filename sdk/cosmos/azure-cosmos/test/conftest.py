@@ -22,7 +22,7 @@
 # pytest fixture 'teardown' is called at the end of a test run to clean up resources
 import pytest
 import azure.cosmos.cosmos_client as cosmos_client
-import test.test_config as test_config
+import test_config
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes
 
