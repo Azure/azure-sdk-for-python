@@ -5,19 +5,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.async_client import SDKClientAsync
+from azure.core import PipelineClient
 from msrest import Serializer, Deserializer
 
-from .._configuration import AzureConfigurationClientImpConfiguration
+from ._configuration_async import AzureConfigurationClientImpConfiguration
 from .operations_async import AzureConfigurationClientImpOperationsMixin
 from .. import models
 
 
-class AzureConfigurationClientImp(AzureConfigurationClientImpOperationsMixin, SDKClientAsync):
+class AzureConfigurationClientImp(AzureConfigurationClientImpOperationsMixin, PipelineClient):
     """Represents an azconfig client
 
-    :ivar config: Configuration for client.
-    :vartype config: AzureConfigurationClientImpConfiguration
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -26,10 +24,10 @@ class AzureConfigurationClientImp(AzureConfigurationClientImpOperationsMixin, SD
     """
 
     def __init__(
-            self, credentials, base_url=None):
+            self, credentials, base_url=None, config=None, **kwargs):
 
-        self.config = AzureConfigurationClientImpConfiguration(credentials, base_url)
-        super(AzureConfigurationClientImp, self).__init__(self.config)
+        self._config = config or AzureConfigurationClientImpConfiguration(credentials, **kwargs)
+        super(AzureConfigurationClientImp, self).__init__(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'

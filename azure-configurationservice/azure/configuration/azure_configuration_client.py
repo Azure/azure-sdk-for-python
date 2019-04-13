@@ -4,11 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from datetime import datetime
-
-from msrest.pipeline.requests import PipelineRequestsHTTPSender, RequestsPatchSession
-from msrest.pipeline import Request, Pipeline
-from msrest.universal_http.requests import RequestsHTTPSender
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline.transport import RequestsTransport
 
 from . import _generated
 from ._generated.models import ConfigurationSetting
@@ -27,21 +24,20 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
         self._impl = _generated.AzureConfigurationClientImp(
             connection_string, base_url
         )
-        self._impl._client.config.pipeline = self._create_azconfig_pipeline()
+        self._impl.pipeline = self._create_azconfig_pipeline()
 
     def _create_azconfig_pipeline(self):
         policies = [
-            self._impl.config.user_agent_policy,  # UserAgent policy
-            RequestsPatchSession(),  # Support deprecated operation config at the session level
-            self._impl.config.http_logger_policy,  # HTTP request/response log
-            AzConfigRequestsCredentialsPolicy(self._impl.config),
+            self._impl._config.user_agent_policy,  # UserAgent policy
+            self._impl._config.logging_policy,  # HTTP request/response log
+            AzConfigRequestsCredentialsPolicy(self._impl._config.credentials),
         ]
 
         return Pipeline(
-            policies,
-            PipelineRequestsHTTPSender(
-                RequestsHTTPSender(self._impl.config)
+            RequestsTransport(
+                self._impl._config
             ),  # Send HTTP request using requests
+            policies,
         )
 
     def update_configuration_setting(

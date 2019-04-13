@@ -7,7 +7,7 @@
 from azure.core.configuration import Configuration, ConnectionConfiguration
 from azure.core.pipeline import policies
 
-from .version import VERSION
+from ..version import VERSION
 
 
 class AzureConfigurationClientImpConfiguration(Configuration):
@@ -41,5 +41,5 @@ class AzureConfigurationClientImpConfiguration(Configuration):
         self.headers_policy = policies.HeadersPolicy(**kwargs)
         self.proxy_policy = policies.ProxyPolicy(**kwargs)
         self.logging_policy = policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.retry_policy = policies.RetryPolicy(**kwargs)
-        self.redirect_policy = policies.RedirectPolicy(**kwargs)
+        self.retry_policy = policies.AsyncRetryPolicy(**kwargs)
+        self.redirect_policy = policies.AsyncRedirectPolicy(**kwargs)

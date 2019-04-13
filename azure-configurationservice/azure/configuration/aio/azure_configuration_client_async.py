@@ -4,10 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from msrest.pipeline.requests import RequestsPatchSession
-from msrest.pipeline import Request, Pipeline
-from msrest.universal_http.async_requests import AsyncRequestsHTTPSender
-from msrest.pipeline.async_requests import AsyncPipelineRequestsHTTPSender
+from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline.transport import AsyncioRequestsTransport
 
 from ..utils import get_endpoint_from_connection_string
 from .._generated.aio import AzureConfigurationClientImp
@@ -22,23 +20,18 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
 
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         self._impl = AzureConfigurationClientImp(connection_string, base_url)
-        self._impl._client.config.pipeline = self._create_azconfig_pipeline()
+        self._impl.pipeline = self._create_azconfig_pipeline()
 
     def _create_azconfig_pipeline(self):
         policies = [
-            self._impl.config.user_agent_policy,  # UserAgent policy
-            RequestsPatchSession(),  # Support deprecated operation config at the session level
-            self._impl.config.http_logger_policy,  # HTTP request/response log
-            AzConfigRequestsCredentialsPolicy(self._impl.config),
+            self._impl._config.user_agent_policy,  # UserAgent policy
+            self._impl._config.logging_policy,  # HTTP request/response log
+            AzConfigRequestsCredentialsPolicy(self._impl._config.credentials)
         ]
 
-        return Pipeline(
-            policies,
-            AsyncPipelineRequestsHTTPSender(
-                AsyncRequestsHTTPSender(
-                    self._impl.config
-                )  # Send HTTP request using requests
-            ),
+        return AsyncPipeline(
+            AsyncioRequestsTransport(self._impl._config),  # Send HTTP request using requests
+            policies
         )
 
     async def update_configuration_setting(

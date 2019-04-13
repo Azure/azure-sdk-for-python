@@ -62,23 +62,24 @@ class AzureConfigurationClientImpOperationsMixin(object):
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
+            if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if accept_date_time is not None:
                 header_parameters['Accept-DateTime'] = self._serialize.header("accept_date_time", accept_date_time, 'iso-8601')
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            if self._config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+            request = self.get(url, query_parameters, header_parameters)
             return request
 
         def internal_paging(next_link=None):
             request = prepare_request(next_link)
 
-            response = self._client.send(request, stream=False, **operation_config)
+            pipeline_response = self.pipeline.run(request)
+            response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -124,7 +125,7 @@ class AzureConfigurationClientImpOperationsMixin(object):
         path_format_arguments = {
             'key': self._serialize.url("key", key, 'str')
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        url = self.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -134,18 +135,19 @@ class AzureConfigurationClientImpOperationsMixin(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
+        if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if accept_date_time is not None:
             header_parameters['Accept-DateTime'] = self._serialize.header("accept_date_time", accept_date_time, 'iso-8601')
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if self._config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+        request = self.get(url, query_parameters, header_parameters)
+        pipeline_response = self.pipeline.run(request)
+        response = pipeline_response.http_response.internal_response
 
         if response.status_code not in [200, 304]:
             exp = CloudError(response)
@@ -195,7 +197,7 @@ class AzureConfigurationClientImpOperationsMixin(object):
         path_format_arguments = {
             'key': self._serialize.url("key", key, 'str')
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        url = self.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -206,19 +208,20 @@ class AzureConfigurationClientImpOperationsMixin(object):
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
+        if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if self._config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct body
         body_content = self._serialize.body(configuration_setting, 'ConfigurationSetting')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
+        request = self.put(url, query_parameters, header_parameters, body_content)
+        pipeline_response = self.pipeline.run(request)
+        response = pipeline_response.http_response.internal_response
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -259,7 +262,7 @@ class AzureConfigurationClientImpOperationsMixin(object):
         path_format_arguments = {
             'key': self._serialize.url("key", key, 'str')
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        url = self.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -269,16 +272,17 @@ class AzureConfigurationClientImpOperationsMixin(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
+        if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if self._config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+        request = self.delete(url, query_parameters, header_parameters)
+        pipeline_response = self.pipeline.run(request)
+        response = pipeline_response.http_response.internal_response
 
         if response.status_code not in [200, 204]:
             exp = CloudError(response)
@@ -331,23 +335,24 @@ class AzureConfigurationClientImpOperationsMixin(object):
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
+            if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if accept_date_time is not None:
                 header_parameters['Accept-DateTime'] = self._serialize.header("accept_date_time", accept_date_time, 'iso-8601')
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            if self._config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+            request = self.get(url, query_parameters, header_parameters)
             return request
 
         def internal_paging(next_link=None):
             request = prepare_request(next_link)
 
-            response = self._client.send(request, stream=False, **operation_config)
+            pipeline_response = self.pipeline.run(request)
+            response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -404,23 +409,24 @@ class AzureConfigurationClientImpOperationsMixin(object):
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
+            if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if accept_date_time is not None:
                 header_parameters['Accept-DateTime'] = self._serialize.header("accept_date_time", accept_date_time, 'iso-8601')
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            if self._config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+            request = self.get(url, query_parameters, header_parameters)
             return request
 
         def internal_paging(next_link=None):
             request = prepare_request(next_link)
 
-            response = self._client.send(request, stream=False, **operation_config)
+            pipeline_response = self.pipeline.run(request)
+            response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -461,7 +467,7 @@ class AzureConfigurationClientImpOperationsMixin(object):
         path_format_arguments = {
             'key': self._serialize.url("key", key, 'str')
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        url = self.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -471,16 +477,17 @@ class AzureConfigurationClientImpOperationsMixin(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
+        if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if self._config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+        request = self.put(url, query_parameters, header_parameters)
+        pipeline_response = self.pipeline.run(request)
+        response = pipeline_response.http_response.internal_response
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -521,7 +528,7 @@ class AzureConfigurationClientImpOperationsMixin(object):
         path_format_arguments = {
             'key': self._serialize.url("key", key, 'str')
         }
-        url = self._client.format_url(url, **path_format_arguments)
+        url = self.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -531,16 +538,17 @@ class AzureConfigurationClientImpOperationsMixin(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
+        if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        if self._config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+        request = self.delete(url, query_parameters, header_parameters)
+        pipeline_response = self.pipeline.run(request)
+        response = pipeline_response.http_response.internal_response
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -604,23 +612,24 @@ class AzureConfigurationClientImpOperationsMixin(object):
             # Construct headers
             header_parameters = {}
             header_parameters['Accept'] = 'application/json'
-            if self.config.generate_client_request_id:
+            if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if accept_date_time is not None:
                 header_parameters['Accept-DateTime'] = self._serialize.header("accept_date_time", accept_date_time, 'iso-8601')
-            if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            if self._config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
+            request = self.get(url, query_parameters, header_parameters)
             return request
 
         def internal_paging(next_link=None):
             request = prepare_request(next_link)
 
-            response = self._client.send(request, stream=False, **operation_config)
+            pipeline_response = self.pipeline.run(request)
+            response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
                 exp = CloudError(response)

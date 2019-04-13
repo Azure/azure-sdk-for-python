@@ -7,7 +7,7 @@
 import hashlib
 import base64
 import hmac
-from msrest.pipeline import HTTPPolicy
+from azure.core.pipeline.policies import HTTPPolicy
 from .utils import parse_connection_string, get_current_utc_time
 
 
@@ -21,7 +21,7 @@ class AzConfigRequestsCredentialsPolicy(HTTPPolicy):
 
     def _signed_request(self, request):
         verb = request.http_request.method.upper()
-        host, credential, secret = parse_connection_string(self._config.credentials)
+        host, credential, secret = parse_connection_string(self._config)
 
         # Get the path and query from url, which looks like https://host/path/query
         query_url = str(request.http_request.url[len(host) + 8 :])
