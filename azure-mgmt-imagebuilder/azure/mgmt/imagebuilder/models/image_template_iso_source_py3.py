@@ -36,7 +36,7 @@ class ImageTemplateIsoSource(ImageTemplateSource):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
-        'source_uri': {'key': 'sourceURI', 'type': 'str'},
+        'source_uri': {'key': 'sourceUri', 'type': 'str'},
         'sha256_checksum': {'key': 'sha256Checksum', 'type': 'str'},
     }
 
