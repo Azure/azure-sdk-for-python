@@ -3,6 +3,13 @@
 Release History
 ===============
 
+4.5.1 (2019-03-29)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix regression in direct import from models
+
 4.5.0 (2019-03-28)
 ++++++++++++++++++
 
