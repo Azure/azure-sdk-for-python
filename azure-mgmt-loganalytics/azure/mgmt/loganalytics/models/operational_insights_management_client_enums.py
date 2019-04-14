@@ -36,7 +36,6 @@ class SkuNameEnum(str, Enum):
     free = "Free"
     standard = "Standard"
     premium = "Premium"
-    unlimited = "Unlimited"
     per_node = "PerNode"
     per_gb2018 = "PerGB2018"
     standalone = "Standalone"
