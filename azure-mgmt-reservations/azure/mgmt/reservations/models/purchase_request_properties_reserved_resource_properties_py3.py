@@ -16,7 +16,7 @@ class PurchaseRequestPropertiesReservedResourceProperties(Model):
     """Properties specific to each reserved resource type. Not required if not
     applicable.
 
-    :param instance_flexibility: Possible values include: 'true', 'false'
+    :param instance_flexibility: Possible values include: 'On', 'Off'
     :type instance_flexibility: str or
      ~azure.mgmt.reservations.models.InstanceFlexibility
     """

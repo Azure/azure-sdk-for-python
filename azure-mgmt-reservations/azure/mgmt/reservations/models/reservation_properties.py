@@ -22,7 +22,7 @@ class ReservationProperties(Model):
      'SqlDatabases', 'SuseLinux', 'CosmosDb'
     :type reserved_resource_type: str or
      ~azure.mgmt.reservations.models.ReservedResourceType
-    :param instance_flexibility: Possible values include: 'true', 'false'
+    :param instance_flexibility: Possible values include: 'On', 'Off'
     :type instance_flexibility: str or
      ~azure.mgmt.reservations.models.InstanceFlexibility
     :param display_name: Friendly name for user to easily identify the
