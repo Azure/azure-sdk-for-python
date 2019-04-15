@@ -7,7 +7,7 @@
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
 
-from . import _generated
+from ._generated import AzureConfigurationClientImp
 from ._generated.models import ConfigurationSetting
 
 from .azure_configuration_requests import AzConfigRequestsCredentialsPolicy
@@ -21,7 +21,7 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
     def __init__(self, connection_string):
 
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
-        self._impl = _generated.AzureConfigurationClientImp(
+        self._impl = AzureConfigurationClientImp(
             connection_string, base_url
         )
         self._impl.pipeline = self._create_azconfig_pipeline()
@@ -52,7 +52,7 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
     ):
         # type: (str, str, str, dict, str, str, dict) -> ConfigurationSetting
 
-        __doc__ = super().__class__.__doc__
+        __doc__ = super(AzureConfigurationClient, self).__class__.__doc__
 
         custom_headers = AzureConfigurationClientAbstract.prep_update_configuration_setting(key, etag, **kwargs)
 

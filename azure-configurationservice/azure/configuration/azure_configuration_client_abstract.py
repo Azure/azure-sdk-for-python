@@ -16,7 +16,7 @@ from requests.structures import CaseInsensitiveDict
 from msrest.paging import Paged
 
 
-class AzureConfigurationClientAbstract():
+class AzureConfigurationClientAbstract(object):
     """
     Represents an client that calls restful API of Azure App Configuration service
 
@@ -215,7 +215,7 @@ class AzureConfigurationClientAbstract():
         :type label: str
         :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :type etag: str
-        :param kwargs: if “headers” exists, its value (a dict) will be added to the http request
+        :param kwargs: if "headers" exists, its value (a dict) will be added to the http request
         :type kwargs: dict
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
         :rtype: :class:`ConfigurationSetting`
@@ -370,17 +370,13 @@ class AzureConfigurationClientAbstract():
         elif value == "":
             return "\0"  # '\0' will be encoded to %00 in the url.
         else:
-            if isinstance(value, str):
+            if isinstance(value, list):
+                return [AzureConfigurationClientAbstract.escape_reserved(s) for s in value]
+            else:
+                value = str(value)  # value is unicode for Python 2.7
                 # precede all reserved characters with a backslash.
                 # But if a * is at the beginning or the end, don't add the backslash
                 return re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", value)
-            elif isinstance(value, list):
-                return [AzureConfigurationClientAbstract.escape_reserved(s) for s in value]
-            else:
-                raise ValueError(
-                    type(value)
-                    + " can not be escaped. It must be a string or list of strings"
-                )
 
     @staticmethod
     def escape_and_tolist(value):

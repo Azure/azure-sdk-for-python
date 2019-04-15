@@ -8,7 +8,7 @@ import hashlib
 import base64
 import hmac
 from azure.core.pipeline.policies import HTTPPolicy
-from .utils import parse_connection_string, get_current_utc_time
+from azure.configuration.utils import parse_connection_string, get_current_utc_time
 
 
 class AzConfigRequestsCredentialsPolicy(HTTPPolicy):
@@ -32,7 +32,7 @@ class AzConfigRequestsCredentialsPolicy(HTTPPolicy):
         if request.http_request.body is None:
             request.http_request.body = ""
         content_digest = hashlib.sha256(
-            (bytes(request.http_request.body, "utf-8"))
+            (request.http_request.body.encode("utf-8"))
         ).digest()
         content_hash = base64.b64encode(content_digest).decode("utf-8")
 
@@ -41,9 +41,10 @@ class AzConfigRequestsCredentialsPolicy(HTTPPolicy):
         )
 
         # decode secret
-        decoded_secret = base64.b64decode(secret, validate=True)
+        # decoded_secret = base64.b64decode(secret, validate=True)
+        decoded_secret = base64.b64decode(secret)
         digest = hmac.new(
-            decoded_secret, bytes(string_to_sign, "utf-8"), hashlib.sha256
+            decoded_secret, string_to_sign.encode("utf-8"), hashlib.sha256
         ).digest()
         signature = base64.b64encode(digest).decode("utf-8")
 
