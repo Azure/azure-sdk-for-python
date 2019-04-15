@@ -31,7 +31,7 @@ class PublicIPPrefix(Resource):
     :param sku: The public IP prefix SKU.
     :type sku: ~azure.mgmt.network.v2019_02_01.models.PublicIPPrefixSku
     :param public_ip_address_version: The public IP address version. Possible
-     values are: 'IPv4' and 'IPv6'. Possible values include: 'IPv4', 'IPv6'
+     values include: 'IPv4', 'IPv6'
     :type public_ip_address_version: str or
      ~azure.mgmt.network.v2019_02_01.models.IPVersion
     :param ip_tags: The list of tags associated with the public IP prefix.

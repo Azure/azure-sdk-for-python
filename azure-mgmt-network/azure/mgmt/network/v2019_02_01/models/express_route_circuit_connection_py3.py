@@ -33,9 +33,8 @@ class ExpressRouteCircuitConnection(SubResource):
     :type address_prefix: str
     :param authorization_key: The authorization key.
     :type authorization_key: str
-    :ivar circuit_connection_status: Express Route Circuit Connection State.
-     Possible values are: 'Connected' and 'Disconnected'. Possible values
-     include: 'Connected', 'Connecting', 'Disconnected'
+    :ivar circuit_connection_status: Express Route Circuit connection state.
+     Possible values include: 'Connected', 'Connecting', 'Disconnected'
     :vartype circuit_connection_status: str or
      ~azure.mgmt.network.v2019_02_01.models.CircuitConnectionStatus
     :ivar provisioning_state: Provisioning state of the circuit connection

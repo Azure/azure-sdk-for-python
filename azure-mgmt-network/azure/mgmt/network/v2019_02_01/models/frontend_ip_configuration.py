@@ -39,8 +39,7 @@ class FrontendIPConfiguration(SubResource):
     :param private_ip_address: The private IP address of the IP configuration.
     :type private_ip_address: str
     :param private_ip_allocation_method: The Private IP allocation method.
-     Possible values are: 'Static' and 'Dynamic'. Possible values include:
-     'Static', 'Dynamic'
+     Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_02_01.models.IPAllocationMethod
     :param subnet: The reference of the subnet resource.

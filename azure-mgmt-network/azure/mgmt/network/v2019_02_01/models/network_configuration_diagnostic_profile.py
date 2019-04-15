@@ -17,9 +17,8 @@ class NetworkConfigurationDiagnosticProfile(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param direction: Required. The direction of the traffic. Accepted values
-     are 'Inbound' and 'Outbound'. Possible values include: 'Inbound',
-     'Outbound'
+    :param direction: Required. The direction of the traffic. Possible values
+     include: 'Inbound', 'Outbound'
     :type direction: str or ~azure.mgmt.network.v2019_02_01.models.Direction
     :param protocol: Required. Protocol to be verified on. Accepted values are
      '*', TCP, UDP.

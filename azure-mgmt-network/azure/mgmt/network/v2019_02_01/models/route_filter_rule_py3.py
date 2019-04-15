@@ -22,8 +22,8 @@ class RouteFilterRule(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param access: Required. The access type of the rule. Valid values are:
-     'Allow', 'Deny'. Possible values include: 'Allow', 'Deny'
+    :param access: Required. The access type of the rule. Possible values
+     include: 'Allow', 'Deny'
     :type access: str or ~azure.mgmt.network.v2019_02_01.models.Access
     :ivar route_filter_rule_type: Required. The rule type of the rule. Valid
      value is: 'Community'. Default value: "Community" .

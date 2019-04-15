@@ -20,8 +20,7 @@ class NetworkSecurityGroupResult(Model):
     sending a request.
 
     :param security_rule_access_result: The network traffic is allowed or
-     denied. Possible values are 'Allow' and 'Deny'. Possible values include:
-     'Allow', 'Deny'
+     denied. Possible values include: 'Allow', 'Deny'
     :type security_rule_access_result: str or
      ~azure.mgmt.network.v2019_02_01.models.SecurityRuleAccess
     :ivar evaluated_network_security_groups: List of results network security

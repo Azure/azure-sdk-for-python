@@ -32,9 +32,8 @@ class PeerExpressRouteCircuitConnection(SubResource):
     :param address_prefix: /29 IP address space to carve out Customer
      addresses for tunnels.
     :type address_prefix: str
-    :ivar circuit_connection_status: Express Route Circuit Connection State.
-     Possible values are: 'Connected' and 'Disconnected'. Possible values
-     include: 'Connected', 'Connecting', 'Disconnected'
+    :ivar circuit_connection_status: Express Route Circuit connection state.
+     Possible values include: 'Connected', 'Connecting', 'Disconnected'
     :vartype circuit_connection_status: str or
      ~azure.mgmt.network.v2019_02_01.models.CircuitConnectionStatus
     :param connection_name: The name of the express route circuit connection

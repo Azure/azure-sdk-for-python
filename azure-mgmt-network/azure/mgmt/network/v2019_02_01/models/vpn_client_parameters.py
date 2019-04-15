@@ -19,9 +19,8 @@ class VpnClientParameters(Model):
      values are: 'AMD64' and 'X86'. Possible values include: 'Amd64', 'X86'
     :type processor_architecture: str or
      ~azure.mgmt.network.v2019_02_01.models.ProcessorArchitecture
-    :param authentication_method: VPN client Authentication Method. Possible
-     values are: 'EAPTLS' and 'EAPMSCHAPv2'. Possible values include: 'EAPTLS',
-     'EAPMSCHAPv2'
+    :param authentication_method: VPN client authentication method. Possible
+     values include: 'EAPTLS', 'EAPMSCHAPv2'
     :type authentication_method: str or
      ~azure.mgmt.network.v2019_02_01.models.AuthenticationMethod
     :param radius_server_auth_certificate: The public certificate data for the

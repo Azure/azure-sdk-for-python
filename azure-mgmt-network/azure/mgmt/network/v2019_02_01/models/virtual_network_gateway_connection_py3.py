@@ -45,7 +45,6 @@ class VirtualNetworkGatewayConnection(Resource):
     :type local_network_gateway2:
      ~azure.mgmt.network.v2019_02_01.models.LocalNetworkGateway
     :param connection_type: Required. Gateway connection type. Possible values
-     are: 'Ipsec','Vnet2Vnet','ExpressRoute', and 'VPNClient. Possible values
      include: 'IPsec', 'Vnet2Vnet', 'ExpressRoute', 'VPNClient'
     :type connection_type: str or
      ~azure.mgmt.network.v2019_02_01.models.VirtualNetworkGatewayConnectionType
@@ -57,10 +56,9 @@ class VirtualNetworkGatewayConnection(Resource):
     :type routing_weight: int
     :param shared_key: The IPSec shared key.
     :type shared_key: str
-    :ivar connection_status: Virtual network Gateway connection status.
-     Possible values are 'Unknown', 'Connecting', 'Connected' and
-     'NotConnected'. Possible values include: 'Unknown', 'Connecting',
-     'Connected', 'NotConnected'
+    :ivar connection_status: Virtual Network Gateway connection status.
+     Possible values include: 'Unknown', 'Connecting', 'Connected',
+     'NotConnected'
     :vartype connection_status: str or
      ~azure.mgmt.network.v2019_02_01.models.VirtualNetworkGatewayConnectionStatus
     :ivar tunnel_connection_status: Collection of all tunnels' connection

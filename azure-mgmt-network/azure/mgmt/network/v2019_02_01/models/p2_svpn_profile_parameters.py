@@ -15,9 +15,8 @@ from msrest.serialization import Model
 class P2SVpnProfileParameters(Model):
     """Vpn Client Parameters for package generation.
 
-    :param authentication_method: VPN client Authentication Method. Possible
-     values are: 'EAPTLS' and 'EAPMSCHAPv2'. Possible values include: 'EAPTLS',
-     'EAPMSCHAPv2'
+    :param authentication_method: VPN client authentication method. Possible
+     values include: 'EAPTLS', 'EAPMSCHAPv2'
     :type authentication_method: str or
      ~azure.mgmt.network.v2019_02_01.models.AuthenticationMethod
     """
