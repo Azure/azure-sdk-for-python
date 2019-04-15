@@ -79,6 +79,8 @@ try:
     from .sync_group_py3 import SyncGroup
     from .sync_member_py3 import SyncMember
     from .subscription_usage_py3 import SubscriptionUsage
+    from .virtual_cluster_py3 import VirtualCluster
+    from .virtual_cluster_update_py3 import VirtualClusterUpdate
     from .virtual_network_rule_py3 import VirtualNetworkRule
     from .extended_database_blob_auditing_policy_py3 import ExtendedDatabaseBlobAuditingPolicy
     from .extended_server_blob_auditing_policy_py3 import ExtendedServerBlobAuditingPolicy
@@ -113,8 +115,12 @@ try:
     from .server_dns_alias_py3 import ServerDnsAlias
     from .server_dns_alias_acquisition_py3 import ServerDnsAliasAcquisition
     from .server_security_alert_policy_py3 import ServerSecurityAlertPolicy
+    from .restorable_dropped_managed_database_py3 import RestorableDroppedManagedDatabase
     from .restore_point_py3 import RestorePoint
     from .create_database_restore_point_definition_py3 import CreateDatabaseRestorePointDefinition
+    from .managed_database_security_alert_policy_py3 import ManagedDatabaseSecurityAlertPolicy
+    from .managed_server_security_alert_policy_py3 import ManagedServerSecurityAlertPolicy
+    from .sensitivity_label_py3 import SensitivityLabel
     from .database_operation_py3 import DatabaseOperation
     from .elastic_pool_operation_py3 import ElasticPoolOperation
     from .max_size_capability_py3 import MaxSizeCapability
@@ -152,6 +158,9 @@ try:
     from .tde_certificate_py3 import TdeCertificate
     from .managed_instance_key_py3 import ManagedInstanceKey
     from .managed_instance_encryption_protector_py3 import ManagedInstanceEncryptionProtector
+    from .recoverable_managed_database_py3 import RecoverableManagedDatabase
+    from .managed_instance_vulnerability_assessment_py3 import ManagedInstanceVulnerabilityAssessment
+    from .server_vulnerability_assessment_py3 import ServerVulnerabilityAssessment
 except (SyntaxError, ImportError):
     from .recoverable_database import RecoverableDatabase
     from .restorable_dropped_database import RestorableDroppedDatabase
@@ -222,6 +231,8 @@ except (SyntaxError, ImportError):
     from .sync_group import SyncGroup
     from .sync_member import SyncMember
     from .subscription_usage import SubscriptionUsage
+    from .virtual_cluster import VirtualCluster
+    from .virtual_cluster_update import VirtualClusterUpdate
     from .virtual_network_rule import VirtualNetworkRule
     from .extended_database_blob_auditing_policy import ExtendedDatabaseBlobAuditingPolicy
     from .extended_server_blob_auditing_policy import ExtendedServerBlobAuditingPolicy
@@ -256,8 +267,12 @@ except (SyntaxError, ImportError):
     from .server_dns_alias import ServerDnsAlias
     from .server_dns_alias_acquisition import ServerDnsAliasAcquisition
     from .server_security_alert_policy import ServerSecurityAlertPolicy
+    from .restorable_dropped_managed_database import RestorableDroppedManagedDatabase
     from .restore_point import RestorePoint
     from .create_database_restore_point_definition import CreateDatabaseRestorePointDefinition
+    from .managed_database_security_alert_policy import ManagedDatabaseSecurityAlertPolicy
+    from .managed_server_security_alert_policy import ManagedServerSecurityAlertPolicy
+    from .sensitivity_label import SensitivityLabel
     from .database_operation import DatabaseOperation
     from .elastic_pool_operation import ElasticPoolOperation
     from .max_size_capability import MaxSizeCapability
@@ -295,6 +310,9 @@ except (SyntaxError, ImportError):
     from .tde_certificate import TdeCertificate
     from .managed_instance_key import ManagedInstanceKey
     from .managed_instance_encryption_protector import ManagedInstanceEncryptionProtector
+    from .recoverable_managed_database import RecoverableManagedDatabase
+    from .managed_instance_vulnerability_assessment import ManagedInstanceVulnerabilityAssessment
+    from .server_vulnerability_assessment import ServerVulnerabilityAssessment
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .server_paged import ServerPaged
@@ -330,6 +348,7 @@ from .sync_group_log_properties_paged import SyncGroupLogPropertiesPaged
 from .sync_group_paged import SyncGroupPaged
 from .sync_member_paged import SyncMemberPaged
 from .subscription_usage_paged import SubscriptionUsagePaged
+from .virtual_cluster_paged import VirtualClusterPaged
 from .virtual_network_rule_paged import VirtualNetworkRulePaged
 from .database_vulnerability_assessment_paged import DatabaseVulnerabilityAssessmentPaged
 from .job_agent_paged import JobAgentPaged
@@ -343,7 +362,12 @@ from .long_term_retention_backup_paged import LongTermRetentionBackupPaged
 from .managed_backup_short_term_retention_policy_paged import ManagedBackupShortTermRetentionPolicyPaged
 from .managed_database_paged import ManagedDatabasePaged
 from .server_dns_alias_paged import ServerDnsAliasPaged
+from .server_security_alert_policy_paged import ServerSecurityAlertPolicyPaged
+from .restorable_dropped_managed_database_paged import RestorableDroppedManagedDatabasePaged
 from .restore_point_paged import RestorePointPaged
+from .managed_database_security_alert_policy_paged import ManagedDatabaseSecurityAlertPolicyPaged
+from .managed_server_security_alert_policy_paged import ManagedServerSecurityAlertPolicyPaged
+from .sensitivity_label_paged import SensitivityLabelPaged
 from .database_operation_paged import DatabaseOperationPaged
 from .elastic_pool_operation_paged import ElasticPoolOperationPaged
 from .vulnerability_assessment_scan_record_paged import VulnerabilityAssessmentScanRecordPaged
@@ -351,6 +375,9 @@ from .instance_failover_group_paged import InstanceFailoverGroupPaged
 from .backup_short_term_retention_policy_paged import BackupShortTermRetentionPolicyPaged
 from .managed_instance_key_paged import ManagedInstanceKeyPaged
 from .managed_instance_encryption_protector_paged import ManagedInstanceEncryptionProtectorPaged
+from .recoverable_managed_database_paged import RecoverableManagedDatabasePaged
+from .managed_instance_vulnerability_assessment_paged import ManagedInstanceVulnerabilityAssessmentPaged
+from .server_vulnerability_assessment_paged import ServerVulnerabilityAssessmentPaged
 from .sql_management_client_enums import (
     CheckNameAvailabilityReason,
     ServerConnectionType,
@@ -385,6 +412,7 @@ from .sql_management_client_enums import (
     ReadOnlyEndpointFailoverPolicy,
     FailoverGroupReplicationRole,
     IdentityType,
+    ManagedInstanceProxyOverride,
     OperationOrigin,
     SyncAgentState,
     SyncMemberDbType,
@@ -427,6 +455,7 @@ from .sql_management_client_enums import (
     InstanceFailoverGroupReplicationRole,
     LongTermRetentionDatabaseState,
     VulnerabilityAssessmentPolicyBaselineName,
+    SensitivityLabelSource,
     CapabilityGroup,
 )
 
@@ -500,6 +529,8 @@ __all__ = [
     'SyncGroup',
     'SyncMember',
     'SubscriptionUsage',
+    'VirtualCluster',
+    'VirtualClusterUpdate',
     'VirtualNetworkRule',
     'ExtendedDatabaseBlobAuditingPolicy',
     'ExtendedServerBlobAuditingPolicy',
@@ -534,8 +565,12 @@ __all__ = [
     'ServerDnsAlias',
     'ServerDnsAliasAcquisition',
     'ServerSecurityAlertPolicy',
+    'RestorableDroppedManagedDatabase',
     'RestorePoint',
     'CreateDatabaseRestorePointDefinition',
+    'ManagedDatabaseSecurityAlertPolicy',
+    'ManagedServerSecurityAlertPolicy',
+    'SensitivityLabel',
     'DatabaseOperation',
     'ElasticPoolOperation',
     'MaxSizeCapability',
@@ -573,6 +608,9 @@ __all__ = [
     'TdeCertificate',
     'ManagedInstanceKey',
     'ManagedInstanceEncryptionProtector',
+    'RecoverableManagedDatabase',
+    'ManagedInstanceVulnerabilityAssessment',
+    'ServerVulnerabilityAssessment',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -608,6 +646,7 @@ __all__ = [
     'SyncGroupPaged',
     'SyncMemberPaged',
     'SubscriptionUsagePaged',
+    'VirtualClusterPaged',
     'VirtualNetworkRulePaged',
     'DatabaseVulnerabilityAssessmentPaged',
     'JobAgentPaged',
@@ -621,7 +660,12 @@ __all__ = [
     'ManagedBackupShortTermRetentionPolicyPaged',
     'ManagedDatabasePaged',
     'ServerDnsAliasPaged',
+    'ServerSecurityAlertPolicyPaged',
+    'RestorableDroppedManagedDatabasePaged',
     'RestorePointPaged',
+    'ManagedDatabaseSecurityAlertPolicyPaged',
+    'ManagedServerSecurityAlertPolicyPaged',
+    'SensitivityLabelPaged',
     'DatabaseOperationPaged',
     'ElasticPoolOperationPaged',
     'VulnerabilityAssessmentScanRecordPaged',
@@ -629,6 +673,9 @@ __all__ = [
     'BackupShortTermRetentionPolicyPaged',
     'ManagedInstanceKeyPaged',
     'ManagedInstanceEncryptionProtectorPaged',
+    'RecoverableManagedDatabasePaged',
+    'ManagedInstanceVulnerabilityAssessmentPaged',
+    'ServerVulnerabilityAssessmentPaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
@@ -662,6 +709,7 @@ __all__ = [
     'ReadOnlyEndpointFailoverPolicy',
     'FailoverGroupReplicationRole',
     'IdentityType',
+    'ManagedInstanceProxyOverride',
     'OperationOrigin',
     'SyncAgentState',
     'SyncMemberDbType',
@@ -704,5 +752,6 @@ __all__ = [
     'InstanceFailoverGroupReplicationRole',
     'LongTermRetentionDatabaseState',
     'VulnerabilityAssessmentPolicyBaselineName',
+    'SensitivityLabelSource',
     'CapabilityGroup',
 ]

@@ -46,6 +46,7 @@ from .operations.sync_agents_operations import SyncAgentsOperations
 from .operations.sync_groups_operations import SyncGroupsOperations
 from .operations.sync_members_operations import SyncMembersOperations
 from .operations.subscription_usages_operations import SubscriptionUsagesOperations
+from .operations.virtual_clusters_operations import VirtualClustersOperations
 from .operations.virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .operations.extended_database_blob_auditing_policies_operations import ExtendedDatabaseBlobAuditingPoliciesOperations
 from .operations.extended_server_blob_auditing_policies_operations import ExtendedServerBlobAuditingPoliciesOperations
@@ -66,10 +67,15 @@ from .operations.long_term_retention_backups_operations import LongTermRetention
 from .operations.backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from .operations.managed_backup_short_term_retention_policies_operations import ManagedBackupShortTermRetentionPoliciesOperations
 from .operations.managed_databases_operations import ManagedDatabasesOperations
+from .operations.managed_restorable_dropped_database_backup_short_term_retention_policies_operations import ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
 from .operations.server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .operations.server_dns_aliases_operations import ServerDnsAliasesOperations
 from .operations.server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
+from .operations.restorable_dropped_managed_databases_operations import RestorableDroppedManagedDatabasesOperations
 from .operations.restore_points_operations import RestorePointsOperations
+from .operations.managed_database_security_alert_policies_operations import ManagedDatabaseSecurityAlertPoliciesOperations
+from .operations.managed_server_security_alert_policies_operations import ManagedServerSecurityAlertPoliciesOperations
+from .operations.sensitivity_labels_operations import SensitivityLabelsOperations
 from .operations.database_operations import DatabaseOperations
 from .operations.elastic_pool_operations import ElasticPoolOperations
 from .operations.capabilities_operations import CapabilitiesOperations
@@ -83,6 +89,10 @@ from .operations.tde_certificates_operations import TdeCertificatesOperations
 from .operations.managed_instance_tde_certificates_operations import ManagedInstanceTdeCertificatesOperations
 from .operations.managed_instance_keys_operations import ManagedInstanceKeysOperations
 from .operations.managed_instance_encryption_protectors_operations import ManagedInstanceEncryptionProtectorsOperations
+from .operations.recoverable_managed_databases_operations import RecoverableManagedDatabasesOperations
+from .operations.managed_instance_vulnerability_assessments_operations import ManagedInstanceVulnerabilityAssessmentsOperations
+from .operations.server_vulnerability_assessments_operations import ServerVulnerabilityAssessmentsOperations
+from .operations.managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
 from . import models
 
 
@@ -191,6 +201,8 @@ class SqlManagementClient(SDKClient):
     :vartype sync_members: azure.mgmt.sql.operations.SyncMembersOperations
     :ivar subscription_usages: SubscriptionUsages operations
     :vartype subscription_usages: azure.mgmt.sql.operations.SubscriptionUsagesOperations
+    :ivar virtual_clusters: VirtualClusters operations
+    :vartype virtual_clusters: azure.mgmt.sql.operations.VirtualClustersOperations
     :ivar virtual_network_rules: VirtualNetworkRules operations
     :vartype virtual_network_rules: azure.mgmt.sql.operations.VirtualNetworkRulesOperations
     :ivar extended_database_blob_auditing_policies: ExtendedDatabaseBlobAuditingPolicies operations
@@ -231,14 +243,24 @@ class SqlManagementClient(SDKClient):
     :vartype managed_backup_short_term_retention_policies: azure.mgmt.sql.operations.ManagedBackupShortTermRetentionPoliciesOperations
     :ivar managed_databases: ManagedDatabases operations
     :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
+    :ivar managed_restorable_dropped_database_backup_short_term_retention_policies: ManagedRestorableDroppedDatabaseBackupShortTermRetentionPolicies operations
+    :vartype managed_restorable_dropped_database_backup_short_term_retention_policies: azure.mgmt.sql.operations.ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
     :ivar server_automatic_tuning: ServerAutomaticTuning operations
     :vartype server_automatic_tuning: azure.mgmt.sql.operations.ServerAutomaticTuningOperations
     :ivar server_dns_aliases: ServerDnsAliases operations
     :vartype server_dns_aliases: azure.mgmt.sql.operations.ServerDnsAliasesOperations
     :ivar server_security_alert_policies: ServerSecurityAlertPolicies operations
     :vartype server_security_alert_policies: azure.mgmt.sql.operations.ServerSecurityAlertPoliciesOperations
+    :ivar restorable_dropped_managed_databases: RestorableDroppedManagedDatabases operations
+    :vartype restorable_dropped_managed_databases: azure.mgmt.sql.operations.RestorableDroppedManagedDatabasesOperations
     :ivar restore_points: RestorePoints operations
     :vartype restore_points: azure.mgmt.sql.operations.RestorePointsOperations
+    :ivar managed_database_security_alert_policies: ManagedDatabaseSecurityAlertPolicies operations
+    :vartype managed_database_security_alert_policies: azure.mgmt.sql.operations.ManagedDatabaseSecurityAlertPoliciesOperations
+    :ivar managed_server_security_alert_policies: ManagedServerSecurityAlertPolicies operations
+    :vartype managed_server_security_alert_policies: azure.mgmt.sql.operations.ManagedServerSecurityAlertPoliciesOperations
+    :ivar sensitivity_labels: SensitivityLabels operations
+    :vartype sensitivity_labels: azure.mgmt.sql.operations.SensitivityLabelsOperations
     :ivar database_operations: DatabaseOperations operations
     :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
     :ivar elastic_pool_operations: ElasticPoolOperations operations
@@ -265,6 +287,14 @@ class SqlManagementClient(SDKClient):
     :vartype managed_instance_keys: azure.mgmt.sql.operations.ManagedInstanceKeysOperations
     :ivar managed_instance_encryption_protectors: ManagedInstanceEncryptionProtectors operations
     :vartype managed_instance_encryption_protectors: azure.mgmt.sql.operations.ManagedInstanceEncryptionProtectorsOperations
+    :ivar recoverable_managed_databases: RecoverableManagedDatabases operations
+    :vartype recoverable_managed_databases: azure.mgmt.sql.operations.RecoverableManagedDatabasesOperations
+    :ivar managed_instance_vulnerability_assessments: ManagedInstanceVulnerabilityAssessments operations
+    :vartype managed_instance_vulnerability_assessments: azure.mgmt.sql.operations.ManagedInstanceVulnerabilityAssessmentsOperations
+    :ivar server_vulnerability_assessments: ServerVulnerabilityAssessments operations
+    :vartype server_vulnerability_assessments: azure.mgmt.sql.operations.ServerVulnerabilityAssessmentsOperations
+    :ivar managed_database_sensitivity_labels: ManagedDatabaseSensitivityLabels operations
+    :vartype managed_database_sensitivity_labels: azure.mgmt.sql.operations.ManagedDatabaseSensitivityLabelsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -351,6 +381,8 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.subscription_usages = SubscriptionUsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_clusters = VirtualClustersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.virtual_network_rules = VirtualNetworkRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.extended_database_blob_auditing_policies = ExtendedDatabaseBlobAuditingPoliciesOperations(
@@ -391,13 +423,23 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_databases = ManagedDatabasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.managed_restorable_dropped_database_backup_short_term_retention_policies = ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.server_automatic_tuning = ServerAutomaticTuningOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_dns_aliases = ServerDnsAliasesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_security_alert_policies = ServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.restorable_dropped_managed_databases = RestorableDroppedManagedDatabasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.restore_points = RestorePointsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_database_security_alert_policies = ManagedDatabaseSecurityAlertPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_server_security_alert_policies = ManagedServerSecurityAlertPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.sensitivity_labels = SensitivityLabelsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.database_operations = DatabaseOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -424,4 +466,12 @@ class SqlManagementClient(SDKClient):
         self.managed_instance_keys = ManagedInstanceKeysOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_instance_encryption_protectors = ManagedInstanceEncryptionProtectorsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.recoverable_managed_databases = RecoverableManagedDatabasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_instance_vulnerability_assessments = ManagedInstanceVulnerabilityAssessmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.server_vulnerability_assessments = ServerVulnerabilityAssessmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_database_sensitivity_labels = ManagedDatabaseSensitivityLabelsOperations(
             self._client, self.config, self._serialize, self._deserialize)
