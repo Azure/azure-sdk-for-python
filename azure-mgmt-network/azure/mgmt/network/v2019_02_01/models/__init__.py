@@ -10,6 +10,8 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .application_gateway_probe_health_response_match_py3 import ApplicationGatewayProbeHealthResponseMatch
+    from .application_gateway_on_demand_probe_py3 import ApplicationGatewayOnDemandProbe
     from .network_interface_tap_configuration_py3 import NetworkInterfaceTapConfiguration
     from .sub_resource_py3 import SubResource
     from .application_security_group_py3 import ApplicationSecurityGroup
@@ -46,6 +48,7 @@ try:
     from .application_gateway_backend_http_settings_py3 import ApplicationGatewayBackendHttpSettings
     from .application_gateway_backend_health_server_py3 import ApplicationGatewayBackendHealthServer
     from .application_gateway_backend_health_http_settings_py3 import ApplicationGatewayBackendHealthHttpSettings
+    from .application_gateway_backend_health_on_demand_py3 import ApplicationGatewayBackendHealthOnDemand
     from .application_gateway_backend_health_pool_py3 import ApplicationGatewayBackendHealthPool
     from .application_gateway_backend_health_py3 import ApplicationGatewayBackendHealth
     from .application_gateway_sku_py3 import ApplicationGatewaySku
@@ -59,7 +62,6 @@ try:
     from .application_gateway_custom_error_py3 import ApplicationGatewayCustomError
     from .application_gateway_http_listener_py3 import ApplicationGatewayHttpListener
     from .application_gateway_path_rule_py3 import ApplicationGatewayPathRule
-    from .application_gateway_probe_health_response_match_py3 import ApplicationGatewayProbeHealthResponseMatch
     from .application_gateway_probe_py3 import ApplicationGatewayProbe
     from .application_gateway_request_routing_rule_py3 import ApplicationGatewayRequestRoutingRule
     from .application_gateway_rewrite_rule_condition_py3 import ApplicationGatewayRewriteRuleCondition
@@ -305,6 +307,8 @@ try:
     from .web_application_firewall_custom_rule_py3 import WebApplicationFirewallCustomRule
     from .web_application_firewall_policy_py3 import WebApplicationFirewallPolicy
 except (SyntaxError, ImportError):
+    from .application_gateway_probe_health_response_match import ApplicationGatewayProbeHealthResponseMatch
+    from .application_gateway_on_demand_probe import ApplicationGatewayOnDemandProbe
     from .network_interface_tap_configuration import NetworkInterfaceTapConfiguration
     from .sub_resource import SubResource
     from .application_security_group import ApplicationSecurityGroup
@@ -341,6 +345,7 @@ except (SyntaxError, ImportError):
     from .application_gateway_backend_http_settings import ApplicationGatewayBackendHttpSettings
     from .application_gateway_backend_health_server import ApplicationGatewayBackendHealthServer
     from .application_gateway_backend_health_http_settings import ApplicationGatewayBackendHealthHttpSettings
+    from .application_gateway_backend_health_on_demand import ApplicationGatewayBackendHealthOnDemand
     from .application_gateway_backend_health_pool import ApplicationGatewayBackendHealthPool
     from .application_gateway_backend_health import ApplicationGatewayBackendHealth
     from .application_gateway_sku import ApplicationGatewaySku
@@ -354,7 +359,6 @@ except (SyntaxError, ImportError):
     from .application_gateway_custom_error import ApplicationGatewayCustomError
     from .application_gateway_http_listener import ApplicationGatewayHttpListener
     from .application_gateway_path_rule import ApplicationGatewayPathRule
-    from .application_gateway_probe_health_response_match import ApplicationGatewayProbeHealthResponseMatch
     from .application_gateway_probe import ApplicationGatewayProbe
     from .application_gateway_request_routing_rule import ApplicationGatewayRequestRoutingRule
     from .application_gateway_rewrite_rule_condition import ApplicationGatewayRewriteRuleCondition
@@ -666,6 +670,7 @@ from .p2_svpn_server_configuration_paged import P2SVpnServerConfigurationPaged
 from .p2_svpn_gateway_paged import P2SVpnGatewayPaged
 from .web_application_firewall_policy_paged import WebApplicationFirewallPolicyPaged
 from .network_management_client_enums import (
+    ApplicationGatewayProtocol,
     IPAllocationMethod,
     SecurityRuleProtocol,
     SecurityRuleAccess,
@@ -675,7 +680,6 @@ from .network_management_client_enums import (
     IPVersion,
     DdosSettingsProtectionCoverage,
     TransportProtocol,
-    ApplicationGatewayProtocol,
     ApplicationGatewayCookieBasedAffinity,
     ApplicationGatewayBackendHealthServerHealth,
     ApplicationGatewaySkuName,
@@ -774,6 +778,8 @@ from .network_management_client_enums import (
 )
 
 __all__ = [
+    'ApplicationGatewayProbeHealthResponseMatch',
+    'ApplicationGatewayOnDemandProbe',
     'NetworkInterfaceTapConfiguration',
     'SubResource',
     'ApplicationSecurityGroup',
@@ -810,6 +816,7 @@ __all__ = [
     'ApplicationGatewayBackendHttpSettings',
     'ApplicationGatewayBackendHealthServer',
     'ApplicationGatewayBackendHealthHttpSettings',
+    'ApplicationGatewayBackendHealthOnDemand',
     'ApplicationGatewayBackendHealthPool',
     'ApplicationGatewayBackendHealth',
     'ApplicationGatewaySku',
@@ -823,7 +830,6 @@ __all__ = [
     'ApplicationGatewayCustomError',
     'ApplicationGatewayHttpListener',
     'ApplicationGatewayPathRule',
-    'ApplicationGatewayProbeHealthResponseMatch',
     'ApplicationGatewayProbe',
     'ApplicationGatewayRequestRoutingRule',
     'ApplicationGatewayRewriteRuleCondition',
@@ -1134,6 +1140,7 @@ __all__ = [
     'P2SVpnServerConfigurationPaged',
     'P2SVpnGatewayPaged',
     'WebApplicationFirewallPolicyPaged',
+    'ApplicationGatewayProtocol',
     'IPAllocationMethod',
     'SecurityRuleProtocol',
     'SecurityRuleAccess',
@@ -1143,7 +1150,6 @@ __all__ = [
     'IPVersion',
     'DdosSettingsProtectionCoverage',
     'TransportProtocol',
-    'ApplicationGatewayProtocol',
     'ApplicationGatewayCookieBasedAffinity',
     'ApplicationGatewayBackendHealthServerHealth',
     'ApplicationGatewaySkuName',
