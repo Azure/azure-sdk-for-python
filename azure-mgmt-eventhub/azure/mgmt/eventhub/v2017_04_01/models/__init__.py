@@ -30,6 +30,10 @@ try:
     from .messaging_regions_properties_py3 import MessagingRegionsProperties
     from .messaging_regions_py3 import MessagingRegions
     from .messaging_plan_py3 import MessagingPlan
+    from .subnet_py3 import Subnet
+    from .nw_rule_set_ip_rules_py3 import NWRuleSetIpRules
+    from .nw_rule_set_virtual_network_rules_py3 import NWRuleSetVirtualNetworkRules
+    from .network_rule_set_py3 import NetworkRuleSet
 except (SyntaxError, ImportError):
     from .tracked_resource import TrackedResource
     from .resource import Resource
@@ -51,6 +55,10 @@ except (SyntaxError, ImportError):
     from .messaging_regions_properties import MessagingRegionsProperties
     from .messaging_regions import MessagingRegions
     from .messaging_plan import MessagingPlan
+    from .subnet import Subnet
+    from .nw_rule_set_ip_rules import NWRuleSetIpRules
+    from .nw_rule_set_virtual_network_rules import NWRuleSetVirtualNetworkRules
+    from .network_rule_set import NetworkRuleSet
 from .operation_paged import OperationPaged
 from .eh_namespace_paged import EHNamespacePaged
 from .authorization_rule_paged import AuthorizationRulePaged
@@ -68,6 +76,8 @@ from .event_hub_management_client_enums import (
     UnavailableReason,
     ProvisioningStateDR,
     RoleDisasterRecovery,
+    NetworkRuleIPAction,
+    DefaultAction,
 )
 
 __all__ = [
@@ -91,6 +101,10 @@ __all__ = [
     'MessagingRegionsProperties',
     'MessagingRegions',
     'MessagingPlan',
+    'Subnet',
+    'NWRuleSetIpRules',
+    'NWRuleSetVirtualNetworkRules',
+    'NetworkRuleSet',
     'OperationPaged',
     'EHNamespacePaged',
     'AuthorizationRulePaged',
@@ -107,4 +121,6 @@ __all__ = [
     'UnavailableReason',
     'ProvisioningStateDR',
     'RoleDisasterRecovery',
+    'NetworkRuleIPAction',
+    'DefaultAction',
 ]

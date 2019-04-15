@@ -19,6 +19,9 @@ try:
     from .jobs_summary_py3 import JobsSummary
     from .monitoring_summary_py3 import MonitoringSummary
     from .replication_usage_py3 import ReplicationUsage
+    from .check_name_availability_parameters_py3 import CheckNameAvailabilityParameters
+    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
+    from .check_name_availability_result_resource_py3 import CheckNameAvailabilityResultResource
     from .client_discovery_display_py3 import ClientDiscoveryDisplay
     from .client_discovery_for_log_specification_py3 import ClientDiscoveryForLogSpecification
     from .client_discovery_for_service_specification_py3 import ClientDiscoveryForServiceSpecification
@@ -45,6 +48,9 @@ except (SyntaxError, ImportError):
     from .jobs_summary import JobsSummary
     from .monitoring_summary import MonitoringSummary
     from .replication_usage import ReplicationUsage
+    from .check_name_availability_parameters import CheckNameAvailabilityParameters
+    from .check_name_availability_result import CheckNameAvailabilityResult
+    from .check_name_availability_result_resource import CheckNameAvailabilityResultResource
     from .client_discovery_display import ClientDiscoveryDisplay
     from .client_discovery_for_log_specification import ClientDiscoveryForLogSpecification
     from .client_discovery_for_service_specification import ClientDiscoveryForServiceSpecification
@@ -83,6 +89,9 @@ __all__ = [
     'JobsSummary',
     'MonitoringSummary',
     'ReplicationUsage',
+    'CheckNameAvailabilityParameters',
+    'CheckNameAvailabilityResult',
+    'CheckNameAvailabilityResultResource',
     'ClientDiscoveryDisplay',
     'ClientDiscoveryForLogSpecification',
     'ClientDiscoveryForServiceSpecification',
