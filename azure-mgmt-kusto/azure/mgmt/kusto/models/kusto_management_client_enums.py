@@ -82,3 +82,9 @@ class DatabasePrincipalType(str, Enum):
     app = "App"
     group = "Group"
     user = "User"
+
+
+class NameAvailable(str, Enum):
+
+    available = "Available"
+    not_available = "NotAvailable"
