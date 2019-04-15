@@ -15,41 +15,29 @@ from msrest.serialization import Model
 class MonitoringDetails(Model):
     """Details needed to monitor a Hana Instance.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar hana_vnet: ARM ID of an Azure Vnet with access to the HANA instance.
-    :vartype hana_vnet: str
-    :ivar hana_hostname: Hostname of the HANA Instance blade.
-    :vartype hana_hostname: str
-    :ivar hana_instance_num: A number between 00 and 99, stored as a string to
-     maintain leading zero.
-    :vartype hana_instance_num: str
-    :ivar db_container: Either single or multiple depending on the use of
+    :param hana_vnet: ARM ID of an Azure Vnet with access to the HANA
+     instance.
+    :type hana_vnet: str
+    :param hana_hostname: Hostname of the HANA Instance blade.
+    :type hana_hostname: str
+    :param hana_instance_num: A number between 00 and 99, stored as a string
+     to maintain leading zero.
+    :type hana_instance_num: str
+    :param db_container: Either single or multiple depending on the use of
      MDC(Multiple Database Containers). Possible values include: 'single',
      'multiple'. Default value: "single" .
-    :vartype db_container: str or
+    :type db_container: str or
      ~azure.mgmt.hanaonazure.models.HanaDatabaseContainersEnum
-    :ivar hana_database: Name of the database itself.  It only needs to be
+    :param hana_database: Name of the database itself.  It only needs to be
      specified if using MDC
-    :vartype hana_database: str
-    :ivar hana_db_username: Username for the HANA database to login to for
+    :type hana_database: str
+    :param hana_db_username: Username for the HANA database to login to for
      monitoring
-    :vartype hana_db_username: str
-    :ivar hana_db_password: Password for the HANA database to login for
+    :type hana_db_username: str
+    :param hana_db_password: Password for the HANA database to login for
      monitoring
-    :vartype hana_db_password: str
+    :type hana_db_password: str
     """
-
-    _validation = {
-        'hana_vnet': {'readonly': True},
-        'hana_hostname': {'readonly': True},
-        'hana_instance_num': {'readonly': True},
-        'db_container': {'readonly': True},
-        'hana_database': {'readonly': True},
-        'hana_db_username': {'readonly': True},
-        'hana_db_password': {'readonly': True},
-    }
 
     _attribute_map = {
         'hana_vnet': {'key': 'hanaVnet', 'type': 'str'},
@@ -61,12 +49,12 @@ class MonitoringDetails(Model):
         'hana_db_password': {'key': 'hanaDbPassword', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, hana_vnet: str=None, hana_hostname: str=None, hana_instance_num: str=None, db_container="single", hana_database: str=None, hana_db_username: str=None, hana_db_password: str=None, **kwargs) -> None:
         super(MonitoringDetails, self).__init__(**kwargs)
-        self.hana_vnet = None
-        self.hana_hostname = None
-        self.hana_instance_num = None
-        self.db_container = None
-        self.hana_database = None
-        self.hana_db_username = None
-        self.hana_db_password = None
+        self.hana_vnet = hana_vnet
+        self.hana_hostname = hana_hostname
+        self.hana_instance_num = hana_instance_num
+        self.db_container = db_container
+        self.hana_database = hana_database
+        self.hana_db_username = hana_db_username
+        self.hana_db_password = hana_db_password
