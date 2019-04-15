@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class ApplicationGatewayProtocol(str, Enum):
+
+    http = "Http"
+    https = "Https"
+
+
 class IPAllocationMethod(str, Enum):
 
     static = "Static"
@@ -71,12 +77,6 @@ class TransportProtocol(str, Enum):
     udp = "Udp"
     tcp = "Tcp"
     all = "All"
-
-
-class ApplicationGatewayProtocol(str, Enum):
-
-    http = "Http"
-    https = "Https"
 
 
 class ApplicationGatewayCookieBasedAffinity(str, Enum):
