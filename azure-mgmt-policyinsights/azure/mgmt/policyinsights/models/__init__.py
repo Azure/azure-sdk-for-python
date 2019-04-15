@@ -23,7 +23,6 @@ try:
     from .remediation_deployment_py3 import RemediationDeployment
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .policy_event_py3 import PolicyEvent
-    from .policy_events_query_results_py3 import PolicyEventsQueryResults
     from .expression_evaluation_details_py3 import ExpressionEvaluationDetails
     from .if_not_exists_evaluation_details_py3 import IfNotExistsEvaluationDetails
     from .policy_evaluation_details_py3 import PolicyEvaluationDetails
@@ -52,7 +51,6 @@ except (SyntaxError, ImportError):
     from .remediation_deployment import RemediationDeployment
     from .error_response import ErrorResponse, ErrorResponseException
     from .policy_event import PolicyEvent
-    from .policy_events_query_results import PolicyEventsQueryResults
     from .expression_evaluation_details import ExpressionEvaluationDetails
     from .if_not_exists_evaluation_details import IfNotExistsEvaluationDetails
     from .policy_evaluation_details import PolicyEvaluationDetails
@@ -70,6 +68,8 @@ except (SyntaxError, ImportError):
 from .policy_tracked_resource_paged import PolicyTrackedResourcePaged
 from .remediation_deployment_paged import RemediationDeploymentPaged
 from .remediation_paged import RemediationPaged
+from .policy_event_paged import PolicyEventPaged
+from .policy_state_paged import PolicyStatePaged
 from .policy_insights_client_enums import (
     PolicyStatesResource,
 )
@@ -88,7 +88,6 @@ __all__ = [
     'RemediationDeployment',
     'ErrorResponse', 'ErrorResponseException',
     'PolicyEvent',
-    'PolicyEventsQueryResults',
     'ExpressionEvaluationDetails',
     'IfNotExistsEvaluationDetails',
     'PolicyEvaluationDetails',
@@ -106,5 +105,7 @@ __all__ = [
     'PolicyTrackedResourcePaged',
     'RemediationDeploymentPaged',
     'RemediationPaged',
+    'PolicyEventPaged',
+    'PolicyStatePaged',
     'PolicyStatesResource',
 ]

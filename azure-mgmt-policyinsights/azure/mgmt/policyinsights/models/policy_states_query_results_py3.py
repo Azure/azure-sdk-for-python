@@ -23,6 +23,9 @@ class PolicyStatesQueryResults(Model):
     :type odatacount: int
     :param value: Query results.
     :type value: list[~azure.mgmt.policyinsights.models.PolicyState]
+    :param odatanext_link: Odata next link, used to get the next set of
+     records.
+    :type odatanext_link: str
     """
 
     _validation = {
@@ -33,10 +36,12 @@ class PolicyStatesQueryResults(Model):
         'odatacontext': {'key': '@odata\\.context', 'type': 'str'},
         'odatacount': {'key': '@odata\\.count', 'type': 'int'},
         'value': {'key': 'value', 'type': '[PolicyState]'},
+        'odatanext_link': {'key': '@odata\\.nextLink', 'type': 'str'},
     }
 
-    def __init__(self, *, odatacontext: str=None, odatacount: int=None, value=None, **kwargs) -> None:
+    def __init__(self, *, odatacontext: str=None, odatacount: int=None, value=None, odatanext_link: str=None, **kwargs) -> None:
         super(PolicyStatesQueryResults, self).__init__(**kwargs)
         self.odatacontext = odatacontext
         self.odatacount = odatacount
         self.value = value
+        self.odatanext_link = odatanext_link
