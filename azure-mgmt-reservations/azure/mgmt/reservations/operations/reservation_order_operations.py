@@ -42,7 +42,8 @@ class ReservationOrderOperations(object):
             self, body, custom_headers=None, raw=False, **operation_config):
         """Calculate price for a `ReservationOrder`.
 
-        Calculate price for placing a `ReservationOrder`.
+        Calculate price for placing a `ReservationOrder`
+        .
 
         :param body: Information needed for calculate or purchase reservation
         :type body: ~azure.mgmt.reservations.models.PurchaseRequest
@@ -211,8 +212,9 @@ class ReservationOrderOperations(object):
             self, reservation_order_id, body, custom_headers=None, raw=False, polling=True, **operation_config):
         """Purchase `ReservationOrder`.
 
-        Purchase `ReservationOrder` and create resource under the specified
-        URI.
+        Purchase `ReservationOrder` and create resource under the specificed
+        URI
+        .
 
         :param reservation_order_id: Order Id of the reservation
         :type reservation_order_id: str
