@@ -100,8 +100,8 @@ class ReservedResourceType(str, Enum):
 
 class InstanceFlexibility(str, Enum):
 
-    true = "true"
-    false = "false"
+    on = "On"
+    off = "Off"
 
 
 class AppliedScopeType(str, Enum):
