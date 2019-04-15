@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.5.0 (2019-04-15)
+++++++++++++++++++
+
+**Features**
+
+- Added operation group MonitoringOperations
+
 0.4.0 (2019-02-21)
 ++++++++++++++++++
 
