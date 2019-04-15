@@ -41,9 +41,7 @@ class MonitoringOperations(object):
 
 
     def _hana_instances_method_initial(
-            self, resource_group_name, hana_instance_name, custom_headers=None, raw=False, **operation_config):
-        monitoring_parameter = None
-
+            self, resource_group_name, hana_instance_name, monitoring_parameter, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.hana_instances_method.metadata['url']
         path_format_arguments = {
@@ -84,13 +82,17 @@ class MonitoringOperations(object):
             return client_raw_response
 
     def hana_instances_method(
-            self, resource_group_name, hana_instance_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, hana_instance_name, monitoring_parameter, custom_headers=None, raw=False, polling=True, **operation_config):
         """The operation to monitor a SAP HANA instance.
 
         :param resource_group_name: Name of the resource group.
         :type resource_group_name: str
         :param hana_instance_name: Name of the SAP HANA on Azure instance.
         :type hana_instance_name: str
+        :param monitoring_parameter: Request body that only contains
+         monitoring attributes
+        :type monitoring_parameter:
+         ~azure.mgmt.hanaonazure.models.MonitoringDetails
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -105,6 +107,7 @@ class MonitoringOperations(object):
         raw_result = self._hana_instances_method_initial(
             resource_group_name=resource_group_name,
             hana_instance_name=hana_instance_name,
+            monitoring_parameter=monitoring_parameter,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
