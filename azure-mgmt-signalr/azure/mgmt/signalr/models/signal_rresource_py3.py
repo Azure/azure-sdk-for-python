@@ -38,6 +38,14 @@ class SignalRResource(TrackedResource):
      The hostname will be of format:
      &lt;hostNamePrefix&gt;.service.signalr.net.
     :type host_name_prefix: str
+    :param features: List of SignalR featureFlags. e.g. ServiceMode.
+     When updating featureFlags, if certain featureFlag is not included in
+     parameters, SignalR service will remain it unchanged.
+     And when you GET a SignalR resource, the response will include only those
+     featureFlags explicitly set by you. For other featureFlags,
+     SignalR service will use its globally default value. Note that, default
+     value doesn't mean "false". It varies in terms of different FeatureFlags.
+    :type features: list[~azure.mgmt.signalr.models.SignalRFeature]
     :ivar provisioning_state: Provisioning state of the resource. Possible
      values include: 'Unknown', 'Succeeded', 'Failed', 'Canceled', 'Running',
      'Creating', 'Updating', 'Deleting', 'Moving'
@@ -78,6 +86,7 @@ class SignalRResource(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'ResourceSku'},
         'host_name_prefix': {'key': 'properties.hostNamePrefix', 'type': 'str'},
+        'features': {'key': 'properties.features', 'type': '[SignalRFeature]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'external_ip': {'key': 'properties.externalIP', 'type': 'str'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
@@ -86,10 +95,11 @@ class SignalRResource(TrackedResource):
         'version': {'key': 'properties.version', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, sku=None, host_name_prefix: str=None, version: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, sku=None, host_name_prefix: str=None, features=None, version: str=None, **kwargs) -> None:
         super(SignalRResource, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.host_name_prefix = host_name_prefix
+        self.features = features
         self.provisioning_state = None
         self.external_ip = None
         self.host_name = None

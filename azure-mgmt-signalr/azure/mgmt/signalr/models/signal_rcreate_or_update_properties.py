@@ -20,12 +20,22 @@ class SignalRCreateOrUpdateProperties(Model):
      The hostname will be of format:
      &lt;hostNamePrefix&gt;.service.signalr.net.
     :type host_name_prefix: str
+    :param features: List of SignalR featureFlags. e.g. ServiceMode.
+     When updating featureFlags, if certain featureFlag is not included in
+     parameters, SignalR service will remain it unchanged.
+     And when you GET a SignalR resource, the response will include only those
+     featureFlags explicitly set by you. For other featureFlags,
+     SignalR service will use its globally default value. Note that, default
+     value doesn't mean "false". It varies in terms of different FeatureFlags.
+    :type features: list[~azure.mgmt.signalr.models.SignalRFeature]
     """
 
     _attribute_map = {
         'host_name_prefix': {'key': 'hostNamePrefix', 'type': 'str'},
+        'features': {'key': 'features', 'type': '[SignalRFeature]'},
     }
 
     def __init__(self, **kwargs):
         super(SignalRCreateOrUpdateProperties, self).__init__(**kwargs)
         self.host_name_prefix = kwargs.get('host_name_prefix', None)
+        self.features = kwargs.get('features', None)
