@@ -5,7 +5,7 @@ from azure.keyvault.secrets import SecretClient
 
 class KeyvaultTestCase(AzureMgmtTestCase):
     def setUp(self):
-        self.list_test_size = 2
+        self.list_test_size = 7
         super(KeyvaultTestCase, self).setUp()
 
 

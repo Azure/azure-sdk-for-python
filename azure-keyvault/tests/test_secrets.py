@@ -5,16 +5,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
+from devtools_testutils import ResourceGroupPreparer
 from keyvault_preparer import KeyVaultPreparer
 from keyvault_testcase import KeyvaultTestCase
-from azure.keyvault import VaultClient
 from azure.core.exceptions import ClientRequestError
 
-import copy
 from dateutil import parser as date_parse
 import time
-import unittest
 
 
 class KeyVaultSecretTest(KeyvaultTestCase):
@@ -32,7 +29,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         self.assertEqual(s1.key_id, s2.key_id)
 
     def _validate_secret_bundle(self, bundle, vault, secret_name, secret_value):
-        prefix = '{}secrets/{}/'.format(vault, secret_name)
+        prefix = "/".join(s.strip("/") for s in [vault, "secrets", secret_name])
         id = bundle.id
         self.assertTrue(id.index(prefix) == 0,
                         "String should start with '{}', but value is '{}'".format(prefix, id))
@@ -49,7 +46,6 @@ class KeyVaultSecretTest(KeyvaultTestCase):
                 self._assert_secret_attributes_equal(expected_secret, secret)
                 del expected[secret.id]
 
-
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
     def test_secret_crud_operations(self, vault_client, **kwargs):
@@ -59,15 +55,14 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         secret_value = self.get_resource_name('crud_secret_value')
 
         # create secret
-        secret_bundle = client.set_secret(secret_name, secret_value)
-        self._validate_secret_bundle(secret_bundle, vault_client.vault_url, secret_name, secret_value)
-        created_bundle = secret_bundle
+        created = client.set_secret(secret_name, secret_value)
+        self._validate_secret_bundle(created, vault_client.vault_url, secret_name, secret_value)
 
         # get secret without version
-        self.assertEqual(created_bundle, client.get_secret(created_bundle.name, ''))
+        self._assert_secret_attributes_equal(created, client.get_secret(created.name, ''))
 
         # get secret with version
-        self.assertEqual(created_bundle, client.get_secret(created_bundle.name, created_bundle.version))
+        self._assert_secret_attributes_equal(created, client.get_secret(created.name, created.version))
 
         def _update_secret(secret):
             content_type = 'text/plain'
@@ -80,14 +75,17 @@ class KeyVaultSecretTest(KeyvaultTestCase):
                 tags=tags)
             self.assertEqual(tags, secret_bundle.tags)
             self.assertEqual(secret.id, secret_bundle.id)
-            self.assertNotEqual(str(secret.updated), str(secret_bundle.updated))
+            self.assertNotEqual(secret.updated, secret_bundle.updated)
             return secret_bundle
 
         # update secret with version
-        secret_bundle = _update_secret(created_bundle)
+        if self.is_live:
+            # wait a second to ensure the secret's update time won't equal its creation time
+            time.sleep(1)
+        updated = _update_secret(created)
 
         # delete secret
-        client.delete_secret(secret_bundle.name)
+        client.delete_secret(updated.name)
 
         # TestCase.assertRaisesRegexp was deprecated in 3.2
         if hasattr(self, "assertRaisesRegex"):
@@ -97,8 +95,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
 
         # deleted secret isn't found
         with assertRaises(ClientRequestError, r"not found"):
-            client.get_secret(secret_bundle.name, '')
-
+            client.get_secret(updated.name, '')
 
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
@@ -122,7 +119,6 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         result = list(client.list_secrets(max_secrets))
         self._validate_secret_list(result, expected)
 
-
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
     def test_list_versions(self, vault_client, **kwargs):
@@ -143,7 +139,6 @@ class KeyVaultSecretTest(KeyvaultTestCase):
 
         # list secret versions
         self._validate_secret_list(list(client.list_secret_versions(secret_name)), expected)
-
 
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
