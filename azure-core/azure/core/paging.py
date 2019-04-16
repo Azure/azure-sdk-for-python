@@ -62,8 +62,8 @@ class Paged(AsyncPagedMixin, Iterator):
         super(Paged, self).__init__(**kwargs)  # type: ignore
         # Sets next_link, current_page, and _current_page_iter_index.
         self.next_link = ""
+        self.current_page = []  # type: List[Model]
         self._current_page_iter_index = 0
-        self.reset()
         self._derserializer = Deserializer(classes)
         self._get_next = command
         self._response = None  # type: Optional[ClientResponse]
@@ -79,13 +79,6 @@ class Paged(AsyncPagedMixin, Iterator):
     def _get_subtype_map(cls):
         """Required for parity to Model object for deserialization."""
         return {}
-
-    def reset(self):
-        # type: () -> None
-        """Reset iterator to first page."""
-        self.next_link = ""
-        self.current_page = []  # type: List[Model]
-        self._current_page_iter_index = 0
 
     def advance_page(self):
         # type: () -> List[Model]
