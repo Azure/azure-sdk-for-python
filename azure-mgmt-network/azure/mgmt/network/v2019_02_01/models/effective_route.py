@@ -17,9 +17,6 @@ class EffectiveRoute(Model):
 
     :param name: The name of the user defined route. This is optional.
     :type name: str
-    :param disable_bgp_route_propagation: If true, on-premises routes are not
-     propagated to the network interfaces in the subnet.
-    :type disable_bgp_route_propagation: bool
     :param source: Who created the route. Possible values are: 'Unknown',
      'User', 'VirtualNetworkGateway', and 'Default'. Possible values include:
      'Unknown', 'User', 'VirtualNetworkGateway', 'Default'
@@ -46,7 +43,6 @@ class EffectiveRoute(Model):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'disable_bgp_route_propagation': {'key': 'disableBgpRoutePropagation', 'type': 'bool'},
         'source': {'key': 'source', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
         'address_prefix': {'key': 'addressPrefix', 'type': '[str]'},
@@ -57,7 +53,6 @@ class EffectiveRoute(Model):
     def __init__(self, **kwargs):
         super(EffectiveRoute, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.disable_bgp_route_propagation = kwargs.get('disable_bgp_route_propagation', None)
         self.source = kwargs.get('source', None)
         self.state = kwargs.get('state', None)
         self.address_prefix = kwargs.get('address_prefix', None)

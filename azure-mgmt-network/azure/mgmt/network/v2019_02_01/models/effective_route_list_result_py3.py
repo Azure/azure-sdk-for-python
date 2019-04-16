@@ -18,6 +18,9 @@ class EffectiveRouteListResult(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :param disable_bgp_route_propagation: If true, on-premises routes are not
+     propagated to the network interfaces in the subnet.
+    :type disable_bgp_route_propagation: bool
     :param value: A list of effective routes.
     :type value: list[~azure.mgmt.network.v2019_02_01.models.EffectiveRoute]
     :ivar next_link: The URL to get the next set of results.
@@ -29,11 +32,13 @@ class EffectiveRouteListResult(Model):
     }
 
     _attribute_map = {
+        'disable_bgp_route_propagation': {'key': 'disableBgpRoutePropagation', 'type': 'bool'},
         'value': {'key': 'value', 'type': '[EffectiveRoute]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
+    def __init__(self, *, disable_bgp_route_propagation: bool=None, value=None, **kwargs) -> None:
         super(EffectiveRouteListResult, self).__init__(**kwargs)
+        self.disable_bgp_route_propagation = disable_bgp_route_propagation
         self.value = value
         self.next_link = None
