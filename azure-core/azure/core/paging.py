@@ -80,19 +80,6 @@ class Paged(AsyncPagedMixin, Iterator):
         """Required for parity to Model object for deserialization."""
         return {}
 
-    def get(self, url):
-        # type: (str) -> List[Model]
-        """Get an arbitrary page.
-
-        This resets the iterator and then fully consumes it to return the
-        specific page **only**.
-
-        :param str url: URL to arbitrary page results.
-        """
-        self.reset()
-        self.next_link = url
-        return self.advance_page()
-
     def reset(self):
         # type: () -> None
         """Reset iterator to first page."""
