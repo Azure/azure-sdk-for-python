@@ -24,6 +24,6 @@ class MultiLanguageBatchInput(Model):
         'documents': {'key': 'documents', 'type': '[MultiLanguageInput]'},
     }
 
-    def __init__(self, documents=None):
-        super(MultiLanguageBatchInput, self).__init__()
-        self.documents = documents
+    def __init__(self, **kwargs):
+        super(MultiLanguageBatchInput, self).__init__(**kwargs)
+        self.documents = kwargs.get('documents', None)

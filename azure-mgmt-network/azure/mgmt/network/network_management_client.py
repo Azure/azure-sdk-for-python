@@ -79,7 +79,7 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2018-11-01'
+    DEFAULT_API_VERSION = '2018-12-01'
     _PROFILE_TAG = "azure.mgmt.network.NetworkManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -2143,6 +2143,19 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def peer_express_route_circuit_connections(self):
+        """Instance depends on the API version:
+
+           * 2018-12-01: :class:`PeerExpressRouteCircuitConnectionsOperations<azure.mgmt.network.v2018_12_01.operations.PeerExpressRouteCircuitConnectionsOperations>`
+        """
+        api_version = self._get_api_version('peer_express_route_circuit_connections')
+        if api_version == '2018-12-01':
+            from .v2018_12_01.operations import PeerExpressRouteCircuitConnectionsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def public_ip_addresses(self):
         """Instance depends on the API version:
 
@@ -3184,6 +3197,19 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_11_01.operations import VpnSitesConfigurationOperations as OperationClass
         elif api_version == '2018-12-01':
             from .v2018_12_01.operations import VpnSitesConfigurationOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def web_application_firewall_policies(self):
+        """Instance depends on the API version:
+
+           * 2018-12-01: :class:`WebApplicationFirewallPoliciesOperations<azure.mgmt.network.v2018_12_01.operations.WebApplicationFirewallPoliciesOperations>`
+        """
+        api_version = self._get_api_version('web_application_firewall_policies')
+        if api_version == '2018-12-01':
+            from .v2018_12_01.operations import WebApplicationFirewallPoliciesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

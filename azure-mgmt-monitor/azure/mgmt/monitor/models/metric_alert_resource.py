@@ -47,6 +47,14 @@ class MetricAlertResource(Resource):
     :param window_size: Required. the period of time (in ISO 8601 duration
      format) that is used to monitor alert activity based on the threshold.
     :type window_size: timedelta
+    :param target_resource_type: the resource type of the target resource(s)
+     on which the alert is created/updated. Mandatory for
+     MultipleResourceMultipleMetricCriteria.
+    :type target_resource_type: str
+    :param target_resource_region: the region of the target resource(s) on
+     which the alert is created/updated. Mandatory for
+     MultipleResourceMultipleMetricCriteria.
+    :type target_resource_region: str
     :param criteria: Required. defines the specific alert criteria
      information.
     :type criteria: ~azure.mgmt.monitor.models.MetricAlertCriteria
@@ -86,6 +94,8 @@ class MetricAlertResource(Resource):
         'scopes': {'key': 'properties.scopes', 'type': '[str]'},
         'evaluation_frequency': {'key': 'properties.evaluationFrequency', 'type': 'duration'},
         'window_size': {'key': 'properties.windowSize', 'type': 'duration'},
+        'target_resource_type': {'key': 'properties.targetResourceType', 'type': 'str'},
+        'target_resource_region': {'key': 'properties.targetResourceRegion', 'type': 'str'},
         'criteria': {'key': 'properties.criteria', 'type': 'MetricAlertCriteria'},
         'auto_mitigate': {'key': 'properties.autoMitigate', 'type': 'bool'},
         'actions': {'key': 'properties.actions', 'type': '[MetricAlertAction]'},
@@ -100,6 +110,8 @@ class MetricAlertResource(Resource):
         self.scopes = kwargs.get('scopes', None)
         self.evaluation_frequency = kwargs.get('evaluation_frequency', None)
         self.window_size = kwargs.get('window_size', None)
+        self.target_resource_type = kwargs.get('target_resource_type', None)
+        self.target_resource_region = kwargs.get('target_resource_region', None)
         self.criteria = kwargs.get('criteria', None)
         self.auto_mitigate = kwargs.get('auto_mitigate', None)
         self.actions = kwargs.get('actions', None)

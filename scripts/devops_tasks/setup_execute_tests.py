@@ -20,11 +20,11 @@ dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 
 # a return code of 5 from pytest == no tests run
 # evaluating whether we want this or not.
-ALLOWED_RETURN_CODES = [] 
+ALLOWED_RETURN_CODES = []
 
 def prep_and_run_tests(targeted_packages, python_version, test_res):
     print('running test setup for {}'.format(targeted_packages))
-    run_check_call([python_version, dev_setup_script_location, '-p', ','.join([os.path.basename(package_path) for package_path in targeted_packages])], root_dir)
+    run_check_call([python_version, dev_setup_script_location, '-p', ','.join(targeted_packages)], root_dir)
 
     print('Setup complete. Running pytest for {}'.format(targeted_packages))
     command_array = [python_version, '-m', 'pytest']
@@ -53,9 +53,18 @@ if __name__ == '__main__':
         help = ('The folder where the test results will be stored in xml format.'
                 'Example: --junitxml="junit/test-results.xml"'))
 
+    parser.add_argument(
+        '--disablecov',
+        help = ('Flag that disables code coverage.'),
+        action='store_true')
+
     args = parser.parse_args()
     targeted_packages = process_glob_string(args.glob_string, root_dir)
     test_results_arg = []
     if args.test_results:
         test_results_arg.extend(['--junitxml', args.test_results])
+
+    if args.disablecov:
+        test_results_arg.append('--no-cov')
+
     prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)

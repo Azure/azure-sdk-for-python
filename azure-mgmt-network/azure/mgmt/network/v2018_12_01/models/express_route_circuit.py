@@ -72,6 +72,8 @@ class ExpressRouteCircuit(Resource):
     :type gateway_manager_etag: str
     :param allow_global_reach: Flag to enable Global Reach on the circuit.
     :type allow_global_reach: bool
+    :param global_reach_enabled: Flag denoting Global reach status.
+    :type global_reach_enabled: bool
     :ivar etag: Gets a unique read-only string that changes whenever the
      resource is updated.
     :vartype etag: str
@@ -105,6 +107,7 @@ class ExpressRouteCircuit(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'gateway_manager_etag': {'key': 'properties.gatewayManagerEtag', 'type': 'str'},
         'allow_global_reach': {'key': 'properties.allowGlobalReach', 'type': 'bool'},
+        'global_reach_enabled': {'key': 'properties.globalReachEnabled', 'type': 'bool'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
@@ -125,4 +128,5 @@ class ExpressRouteCircuit(Resource):
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.gateway_manager_etag = kwargs.get('gateway_manager_etag', None)
         self.allow_global_reach = kwargs.get('allow_global_reach', None)
+        self.global_reach_enabled = kwargs.get('global_reach_enabled', None)
         self.etag = None

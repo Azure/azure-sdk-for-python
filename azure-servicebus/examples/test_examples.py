@@ -10,7 +10,6 @@ import os
 
 from azure.servicebus import ServiceBusResourceNotFound, ServiceBusError
 
-
 def create_servicebus_client():
     # [START create_servicebus_client]
     import os
@@ -33,7 +32,7 @@ def create_servicebus_client():
 def process_message(message):
     print(message)
 
-
+@pytest.mark.liveTest
 def test_example_create_servicebus_client(live_servicebus_config):
 
     client = create_servicebus_client()
@@ -94,7 +93,7 @@ def test_example_create_servicebus_client(live_servicebus_config):
         print(sub_client.name)
     # [END list_subscriptions]
 
-
+@pytest.mark.liveTest
 def test_example_send_receive_service_bus(live_servicebus_config, standard_queue, session_queue):
     import os
     import datetime
@@ -266,7 +265,7 @@ def test_example_send_receive_service_bus(live_servicebus_config, standard_queue
             message.complete()
     # [END get_dead_letter_receiver]
 
-
+@pytest.mark.liveTest
 def test_example_receiver_client(live_servicebus_config, standard_queue, session_queue):
     import os
     import datetime
@@ -397,7 +396,7 @@ def test_example_receiver_client(live_servicebus_config, standard_queue, session
         session_ids = receiver.list_sessions(updated_since=yesterday)
     # [END list_sessions]
 
-
+@pytest.mark.liveTest
 def test_example_create_sender_send_message(live_servicebus_config, standard_queue, session_queue):
     import os
     from azure.servicebus import ServiceBusClient
@@ -482,7 +481,7 @@ def test_example_create_sender_send_message(live_servicebus_config, standard_que
                 print("Message send failed: {}".format(status[1]))
     # [END queue_and_send_session_messages]
 
-
+@pytest.mark.liveTest
 def test_sample_queue_send_receive_batch(live_servicebus_config, standard_queue):
     try:
         from examples.example_queue_send_receive_batch import sample_queue_send_receive_batch
@@ -490,7 +489,7 @@ def test_sample_queue_send_receive_batch(live_servicebus_config, standard_queue)
         pytest.skip("")
     sample_queue_send_receive_batch(live_servicebus_config, standard_queue)
 
-
+@pytest.mark.liveTest
 def test_sample_session_send_receive_batch(live_servicebus_config, session_queue):
     try:
         from examples.example_session_send_receive_batch import sample_session_send_receive_batch
@@ -498,7 +497,7 @@ def test_sample_session_send_receive_batch(live_servicebus_config, session_queue
         pytest.skip("")
     sample_session_send_receive_batch(live_servicebus_config, session_queue)
 
-
+@pytest.mark.liveTest
 def test_sample_session_send_receive_with_pool(live_servicebus_config, session_queue):
     try:
         from examples.example_session_send_receive_with_pool import sample_session_send_receive_with_pool

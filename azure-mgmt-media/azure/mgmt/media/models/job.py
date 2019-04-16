@@ -47,7 +47,7 @@ class Job(ProxyResource):
      priority jobs are processed before lower priority jobs. If not set, the
      default is normal. Possible values include: 'Low', 'Normal', 'High'
     :type priority: str or ~azure.mgmt.media.models.Priority
-    :param correlation_data: Customer provided correlation data that will be
+    :param correlation_data: Customer provided key, value pairs that will be
      returned in Job and JobOutput state events.
     :type correlation_data: dict[str, str]
     """
