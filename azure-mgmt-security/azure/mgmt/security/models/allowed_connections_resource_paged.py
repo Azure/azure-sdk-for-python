@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class PricingPaged(Paged):
+class AllowedConnectionsResourcePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Pricing <azure.mgmt.security.models.Pricing>` object
+    A paging container for iterating over a list of :class:`AllowedConnectionsResource <azure.mgmt.security.models.AllowedConnectionsResource>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Pricing]'}
+        'current_page': {'key': 'value', 'type': '[AllowedConnectionsResource]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(PricingPaged, self).__init__(*args, **kwargs)
+        super(AllowedConnectionsResourcePaged, self).__init__(*args, **kwargs)

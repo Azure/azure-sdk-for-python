@@ -12,18 +12,23 @@
 from msrest.serialization import Model
 
 
-class SettingKind1(Model):
-    """The kind of the security setting.
+class PricingList(Model):
+    """List of pricing configurations response.
 
-    :param kind: the kind of the settings string. Possible values include:
-     'DataExportSetting'
-    :type kind: str or ~azure.mgmt.security.models.SettingKind
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. List of pricing configurations
+    :type value: list[~azure.mgmt.security.models.Pricing]
     """
 
+    _validation = {
+        'value': {'required': True},
+    }
+
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[Pricing]'},
     }
 
     def __init__(self, **kwargs):
-        super(SettingKind1, self).__init__(**kwargs)
-        self.kind = kwargs.get('kind', None)
+        super(PricingList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

@@ -12,19 +12,12 @@
 from msrest.serialization import Model
 
 
-class ExternalSecuritySolution(Model):
-    """Represents a security solution external to Azure Security Center which
-    sends information to an OMS workspace and whose data is displayed by Azure
-    Security Center.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CefExternalSecuritySolution, AtaExternalSecuritySolution,
-    AadExternalSecuritySolution
+class AllowedConnectionsResource(Model):
+    """The resource whose properties describes the allowed traffic between Azure
+    resources.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Resource Id
     :vartype id: str
@@ -34,8 +27,12 @@ class ExternalSecuritySolution(Model):
     :vartype type: str
     :ivar location: Location where the resource is stored
     :vartype location: str
-    :param kind: Required. Constant filled by server.
-    :type kind: str
+    :ivar calculated_date_time: The UTC time on which the allowed connections
+     resource was calculated
+    :vartype calculated_date_time: datetime
+    :ivar connectable_resources: List of connectable resources
+    :vartype connectable_resources:
+     list[~azure.mgmt.security.models.ConnectableResource]
     """
 
     _validation = {
@@ -43,7 +40,8 @@ class ExternalSecuritySolution(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'readonly': True},
-        'kind': {'required': True},
+        'calculated_date_time': {'readonly': True},
+        'connectable_resources': {'readonly': True},
     }
 
     _attribute_map = {
@@ -51,17 +49,15 @@ class ExternalSecuritySolution(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'kind': {'CEF': 'CefExternalSecuritySolution', 'ATA': 'AtaExternalSecuritySolution', 'AAD': 'AadExternalSecuritySolution'}
+        'calculated_date_time': {'key': 'properties.calculatedDateTime', 'type': 'iso-8601'},
+        'connectable_resources': {'key': 'properties.connectableResources', 'type': '[ConnectableResource]'},
     }
 
     def __init__(self, **kwargs):
-        super(ExternalSecuritySolution, self).__init__(**kwargs)
+        super(AllowedConnectionsResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.location = None
-        self.kind = None
+        self.calculated_date_time = None
+        self.connectable_resources = None
