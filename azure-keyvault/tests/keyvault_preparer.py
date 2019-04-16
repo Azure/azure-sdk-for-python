@@ -94,8 +94,8 @@ class KeyVaultPreparer(AzureMgmtPreparer):
             # playback => we need only the uri used in the recording
             vault_uri = 'https://{}.vault.azure.net/'.format(name)
 
-        credentials = self.test_class_instance.settings.get_credentials()
-        client = VaultClient(vault_uri, credentials)
+        vault_credentials = self.test_class_instance.settings.get_credentials(resource="https://vault.azure.net")
+        client = VaultClient(vault_uri, vault_credentials)
 
         return { self.parameter_name: client }
 
