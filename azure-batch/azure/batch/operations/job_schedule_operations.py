@@ -484,7 +484,7 @@ class JobScheduleOperations(object):
             self, job_schedule_id, job_schedule_update_parameter, job_schedule_update_options=None, custom_headers=None, raw=False, **operation_config):
         """Updates the properties of the specified job schedule.
 
-        This fully replaces all the updateable properties of the job schedule.
+        This fully replaces all the updatable properties of the job schedule.
         For example, if the schedule property is not specified with this
         request, then the Batch service will remove the existing schedule.
         Changes to a job schedule only impact jobs created by the schedule
