@@ -32,12 +32,12 @@ except ImportError:
 
 from typing import Dict, Any, List, Callable, Optional, TYPE_CHECKING  # pylint: disable=unused-import
 
-from .serialization import Deserializer
+from msrest.serialization import Deserializer
 from .pipeline import ClientRawResponse
 
 if TYPE_CHECKING:
     from .universal_http import ClientResponse  # pylint: disable=unused-import
-    from .serialization import Model  # pylint: disable=unused-import
+    from msrest.serialization import Model  # pylint: disable=unused-import
 
 if sys.version_info >= (3, 5, 2):
     # Not executed on old Python, no syntax error
