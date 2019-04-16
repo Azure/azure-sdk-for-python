@@ -19,6 +19,7 @@ from azure.core.pipeline.policies import (
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import ClientRequestError
+from azure.keyvault._internal import _BearerTokenCredentialPolicy
 
 from msrest import Serializer, Deserializer
 
@@ -32,17 +33,6 @@ from ._models import (
 )
 
 from .._internal import _BackupResult
-
-
-class BearerTokenCredentialPolicy(HTTPPolicy):
-    def __init__(self, credentials):
-        self._credentials = credentials
-
-    def send(self, request, **kwargs):
-        auth_header = 'Bearer ' + self._credentials.token['access_token']
-        request.http_request.headers['Authorization'] = auth_header
-
-        return self.next.send(request, **kwargs)
 
 
 class SecretClient:
@@ -78,7 +68,7 @@ class SecretClient:
         policies = [
             config.user_agent,
             config.headers,
-            BearerTokenCredentialPolicy(credentials),
+            _BearerTokenCredentialPolicy(credentials),
             config.redirect,
             config.retry,
             config.logging,

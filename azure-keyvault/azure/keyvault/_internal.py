@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+from azure.core.pipeline.policies import HTTPPolicy
 from msrest.serialization import Model
 
 try:
@@ -58,3 +58,15 @@ class _BackupResult(Model):
     def __init__(self, **kwargs):
         super(_BackupResult, self).__init__(**kwargs)
         self.value = None
+
+
+# TODO: integrate with azure.core
+class _BearerTokenCredentialPolicy(HTTPPolicy):
+    def __init__(self, credentials):
+        self._credentials = credentials
+
+    def send(self, request, **kwargs):
+        auth_header = 'Bearer ' + self._credentials.token['access_token']
+        request.http_request.headers['Authorization'] = auth_header
+
+        return self.next.send(request, **kwargs)
