@@ -29,9 +29,11 @@ __version__ = "0.0.1"
 from .pipeline_client import PipelineClient
 from .configuration import Configuration
 from .pipeline.transport import HttpRequest
+from .exceptions import *
 
 
 __all__ = [
     "Configuration",
     "PipelineClient",
+    "AzureError",
 ]
