@@ -10,11 +10,8 @@ import uuid
 from azure.core.configuration import Configuration
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
-    HeadersPolicy,
     RetryPolicy,
     RedirectPolicy,
-    CredentialsPolicy,
-    HTTPPolicy,
 )
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest
 from azure.core.pipeline import Pipeline
