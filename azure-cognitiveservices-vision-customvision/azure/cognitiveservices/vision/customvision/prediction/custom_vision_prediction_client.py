@@ -474,18 +474,13 @@ class CustomVisionPredictionClient(SDKClient):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'multipart/form-data'
+        header_parameters['Content-Type'] = 'application/octet-stream'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['Prediction-Key'] = self._serialize.header("self.config.api_key", self.config.api_key, 'str')
 
-        # Construct form data
-        form_data_content = {
-            'imageData': image_data,
-        }
-
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, form_content=form_data_content)
+        request = self._client.post(url, query_parameters, header_parameters, form_content=image_data)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
