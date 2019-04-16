@@ -9,20 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .usage_details_operations import UsageDetailsOperations
-from .marketplaces_operations import MarketplacesOperations
-from .reservations_summaries_operations import ReservationsSummariesOperations
-from .reservations_details_operations import ReservationsDetailsOperations
-from .budgets_operations import BudgetsOperations
 from .operations import Operations
-from .price_sheet_operations import PriceSheetOperations
+from .credit_summary_by_billing_profile_operations import CreditSummaryByBillingProfileOperations
+from .events_by_billing_profile_operations import EventsByBillingProfileOperations
+from .lots_by_billing_profile_operations import LotsByBillingProfileOperations
+from .invoice_pricesheet_operations import InvoicePricesheetOperations
+from .billing_profile_pricesheet_operations import BillingProfilePricesheetOperations
+from .charges_by_billing_account_operations import ChargesByBillingAccountOperations
+from .charges_by_billing_profile_operations import ChargesByBillingProfileOperations
+from .charges_by_invoice_section_operations import ChargesByInvoiceSectionOperations
 
 __all__ = [
-    'UsageDetailsOperations',
-    'MarketplacesOperations',
-    'ReservationsSummariesOperations',
-    'ReservationsDetailsOperations',
-    'BudgetsOperations',
     'Operations',
-    'PriceSheetOperations',
+    'CreditSummaryByBillingProfileOperations',
+    'EventsByBillingProfileOperations',
+    'LotsByBillingProfileOperations',
+    'InvoicePricesheetOperations',
+    'BillingProfilePricesheetOperations',
+    'ChargesByBillingAccountOperations',
+    'ChargesByBillingProfileOperations',
+    'ChargesByInvoiceSectionOperations',
 ]

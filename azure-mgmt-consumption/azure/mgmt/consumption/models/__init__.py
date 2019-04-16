@@ -9,64 +9,100 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .meter_details import MeterDetails
-from .usage_detail import UsageDetail
-from .marketplace import Marketplace
-from .reservation_summaries import ReservationSummaries
-from .reservation_details import ReservationDetails
-from .budget_time_period import BudgetTimePeriod
-from .filters import Filters
-from .current_spend import CurrentSpend
-from .notification import Notification
-from .budget import Budget
-from .error_details import ErrorDetails
-from .error_response import ErrorResponse, ErrorResponseException
-from .operation_display import OperationDisplay
-from .operation import Operation
-from .resource import Resource
-from .proxy_resource import ProxyResource
-from .price_sheet_properties import PriceSheetProperties
-from .price_sheet_result import PriceSheetResult
-from .usage_detail_paged import UsageDetailPaged
-from .marketplace_paged import MarketplacePaged
-from .reservation_summaries_paged import ReservationSummariesPaged
-from .reservation_details_paged import ReservationDetailsPaged
-from .budget_paged import BudgetPaged
+try:
+    from .enrollment_policies_py3 import EnrollmentPolicies
+    from .enrollment_py3 import Enrollment
+    from .department_py3 import Department
+    from .enrollment_account_py3 import EnrollmentAccount
+    from .address_py3 import Address
+    from .billing_profile_py3 import BillingProfile
+    from .invoice_section_py3 import InvoiceSection
+    from .billing_account_py3 import BillingAccount
+    from .amount_py3 import Amount
+    from .pricesheet_download_response_py3 import PricesheetDownloadResponse
+    from .credit_balance_summary_py3 import CreditBalanceSummary
+    from .credit_summary_py3 import CreditSummary
+    from .event_summary_py3 import EventSummary
+    from .events_py3 import Events
+    from .lot_summary_py3 import LotSummary
+    from .lots_py3 import Lots
+    from .charge_summary_by_billing_account_py3 import ChargeSummaryByBillingAccount
+    from .charges_list_by_billing_account_py3 import ChargesListByBillingAccount
+    from .charge_summary_by_billing_profile_py3 import ChargeSummaryByBillingProfile
+    from .charges_list_by_billing_profile_py3 import ChargesListByBillingProfile
+    from .charge_summary_by_invoice_section_py3 import ChargeSummaryByInvoiceSection
+    from .charges_list_by_invoice_section_py3 import ChargesListByInvoiceSection
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
+    from .error_details_py3 import ErrorDetails
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .proxy_resource_py3 import ProxyResource
+    from .resource_py3 import Resource
+except (SyntaxError, ImportError):
+    from .enrollment_policies import EnrollmentPolicies
+    from .enrollment import Enrollment
+    from .department import Department
+    from .enrollment_account import EnrollmentAccount
+    from .address import Address
+    from .billing_profile import BillingProfile
+    from .invoice_section import InvoiceSection
+    from .billing_account import BillingAccount
+    from .amount import Amount
+    from .pricesheet_download_response import PricesheetDownloadResponse
+    from .credit_balance_summary import CreditBalanceSummary
+    from .credit_summary import CreditSummary
+    from .event_summary import EventSummary
+    from .events import Events
+    from .lot_summary import LotSummary
+    from .lots import Lots
+    from .charge_summary_by_billing_account import ChargeSummaryByBillingAccount
+    from .charges_list_by_billing_account import ChargesListByBillingAccount
+    from .charge_summary_by_billing_profile import ChargeSummaryByBillingProfile
+    from .charges_list_by_billing_profile import ChargesListByBillingProfile
+    from .charge_summary_by_invoice_section import ChargeSummaryByInvoiceSection
+    from .charges_list_by_invoice_section import ChargesListByInvoiceSection
+    from .operation_display import OperationDisplay
+    from .operation import Operation
+    from .error_details import ErrorDetails
+    from .error_response import ErrorResponse, ErrorResponseException
+    from .proxy_resource import ProxyResource
+    from .resource import Resource
 from .operation_paged import OperationPaged
 from .consumption_management_client_enums import (
-    CategoryType,
-    TimeGrainType,
-    OperatorType,
-    Datagrain,
+    EventType,
+    LotSource,
 )
 
 __all__ = [
-    'MeterDetails',
-    'UsageDetail',
-    'Marketplace',
-    'ReservationSummaries',
-    'ReservationDetails',
-    'BudgetTimePeriod',
-    'Filters',
-    'CurrentSpend',
-    'Notification',
-    'Budget',
-    'ErrorDetails',
-    'ErrorResponse', 'ErrorResponseException',
+    'EnrollmentPolicies',
+    'Enrollment',
+    'Department',
+    'EnrollmentAccount',
+    'Address',
+    'BillingProfile',
+    'InvoiceSection',
+    'BillingAccount',
+    'Amount',
+    'PricesheetDownloadResponse',
+    'CreditBalanceSummary',
+    'CreditSummary',
+    'EventSummary',
+    'Events',
+    'LotSummary',
+    'Lots',
+    'ChargeSummaryByBillingAccount',
+    'ChargesListByBillingAccount',
+    'ChargeSummaryByBillingProfile',
+    'ChargesListByBillingProfile',
+    'ChargeSummaryByInvoiceSection',
+    'ChargesListByInvoiceSection',
     'OperationDisplay',
     'Operation',
-    'Resource',
+    'ErrorDetails',
+    'ErrorResponse', 'ErrorResponseException',
     'ProxyResource',
-    'PriceSheetProperties',
-    'PriceSheetResult',
-    'UsageDetailPaged',
-    'MarketplacePaged',
-    'ReservationSummariesPaged',
-    'ReservationDetailsPaged',
-    'BudgetPaged',
+    'Resource',
     'OperationPaged',
-    'CategoryType',
-    'TimeGrainType',
-    'OperatorType',
-    'Datagrain',
+    'EventType',
+    'LotSource',
 ]

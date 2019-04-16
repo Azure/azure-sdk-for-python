@@ -16,13 +16,13 @@ class TimeframeType(str, Enum):
 
     week_to_date = "WeekToDate"
     month_to_date = "MonthToDate"
-    billing_month_to_date = "BillingMonthToDate"
     year_to_date = "YearToDate"
     the_last_week = "TheLastWeek"
     the_last_month = "TheLastMonth"
-    the_last_billing_month = "TheLastBillingMonth"
     the_last_year = "TheLastYear"
     custom = "Custom"
+    billing_month_to_date = "BillingMonthToDate"
+    the_last_billing_month = "TheLastBillingMonth"
 
 
 class GranularityType(str, Enum):

@@ -12,29 +12,29 @@
 from msrest.serialization import Model
 
 
-class ErrorDetails(Model):
-    """The details of the error.
+class CreditBalanceSummary(Model):
+    """Summary of credit balances.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar message: Error message indicating why the operation failed.
-    :vartype message: str
+    :ivar estimated_balance: Estimated balance.
+    :vartype estimated_balance: ~azure.mgmt.consumption.models.Amount
+    :ivar current_balance: Current balance.
+    :vartype current_balance: ~azure.mgmt.consumption.models.Amount
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        'estimated_balance': {'readonly': True},
+        'current_balance': {'readonly': True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'estimated_balance': {'key': 'estimatedBalance', 'type': 'Amount'},
+        'current_balance': {'key': 'currentBalance', 'type': 'Amount'},
     }
 
     def __init__(self, **kwargs):
-        super(ErrorDetails, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
+        super(CreditBalanceSummary, self).__init__(**kwargs)
+        self.estimated_balance = None
+        self.current_balance = None

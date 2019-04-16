@@ -24,9 +24,9 @@ class QueryDefinition(Model):
     :vartype type: str
     :param timeframe: Required. The time frame for pulling data for the query.
      If custom, then a specific time period must be provided. Possible values
-     include: 'WeekToDate', 'MonthToDate', 'BillingMonthToDate', 'YearToDate',
-     'TheLastWeek', 'TheLastMonth', 'TheLastBillingMonth', 'TheLastYear',
-     'Custom'
+     include: 'WeekToDate', 'MonthToDate', 'YearToDate', 'TheLastWeek',
+     'TheLastMonth', 'TheLastYear', 'Custom', 'BillingMonthToDate',
+     'TheLastBillingMonth'
     :type timeframe: str or ~azure.mgmt.costmanagement.models.TimeframeType
     :param time_period: Has time period for pulling data for the query.
     :type time_period: ~azure.mgmt.costmanagement.models.QueryTimePeriod

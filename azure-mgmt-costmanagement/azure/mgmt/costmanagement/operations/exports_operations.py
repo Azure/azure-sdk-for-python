@@ -40,9 +40,8 @@ class ExportsOperations(object):
             self, scope, custom_headers=None, raw=False, **operation_config):
         """Lists all exports at the given scope.
 
-        :param scope: The scope associated with query and export operations.
-         This includes '/subscriptions/{subscriptionId}/' for subscription
-         scope,
+        :param scope: The scope associated with export operations. This
+         includes '/subscriptions/{subscriptionId}' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -50,9 +49,7 @@ class ExportsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope and
-         '/providers/Microsoft.Management/managementGroups/{managementGroupId}
-         for Management Group scope..
+         for EnrollmentAccount scope.
         :type scope: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -109,9 +106,8 @@ class ExportsOperations(object):
             self, scope, export_name, custom_headers=None, raw=False, **operation_config):
         """Gets the export for the defined scope by export name.
 
-        :param scope: The scope associated with query and export operations.
-         This includes '/subscriptions/{subscriptionId}/' for subscription
-         scope,
+        :param scope: The scope associated with export operations. This
+         includes '/subscriptions/{subscriptionId}' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -119,9 +115,7 @@ class ExportsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope and
-         '/providers/Microsoft.Management/managementGroups/{managementGroupId}
-         for Management Group scope..
+         for EnrollmentAccount scope.
         :type scope: str
         :param export_name: Export Name.
         :type export_name: str
@@ -183,9 +177,8 @@ class ExportsOperations(object):
         latest eTag to be set in the request. You may obtain the latest eTag by
         performing a get operation. Create operation does not require eTag.
 
-        :param scope: The scope associated with query and export operations.
-         This includes '/subscriptions/{subscriptionId}/' for subscription
-         scope,
+        :param scope: The scope associated with export operations. This
+         includes '/subscriptions/{subscriptionId}' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -193,9 +186,7 @@ class ExportsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope and
-         '/providers/Microsoft.Management/managementGroups/{managementGroupId}
-         for Management Group scope..
+         for EnrollmentAccount scope.
         :type scope: str
         :param export_name: Export Name.
         :type export_name: str
@@ -264,9 +255,8 @@ class ExportsOperations(object):
             self, scope, export_name, custom_headers=None, raw=False, **operation_config):
         """The operation to delete a export.
 
-        :param scope: The scope associated with query and export operations.
-         This includes '/subscriptions/{subscriptionId}/' for subscription
-         scope,
+        :param scope: The scope associated with export operations. This
+         includes '/subscriptions/{subscriptionId}' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -274,9 +264,7 @@ class ExportsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope and
-         '/providers/Microsoft.Management/managementGroups/{managementGroupId}
-         for Management Group scope..
+         for EnrollmentAccount scope.
         :type scope: str
         :param export_name: Export Name.
         :type export_name: str
@@ -327,9 +315,8 @@ class ExportsOperations(object):
             self, scope, export_name, custom_headers=None, raw=False, **operation_config):
         """The operation to execute a export.
 
-        :param scope: The scope associated with query and export operations.
-         This includes '/subscriptions/{subscriptionId}/' for subscription
-         scope,
+        :param scope: The scope associated with export operations. This
+         includes '/subscriptions/{subscriptionId}' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -337,9 +324,7 @@ class ExportsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope and
-         '/providers/Microsoft.Management/managementGroups/{managementGroupId}
-         for Management Group scope..
+         for EnrollmentAccount scope.
         :type scope: str
         :param export_name: Export Name.
         :type export_name: str
@@ -391,9 +376,8 @@ class ExportsOperations(object):
         """Gets the execution history of a export for the defined scope by export
         name.
 
-        :param scope: The scope associated with query and export operations.
-         This includes '/subscriptions/{subscriptionId}/' for subscription
-         scope,
+        :param scope: The scope associated with export operations. This
+         includes '/subscriptions/{subscriptionId}' for subscription scope,
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
          for resourceGroup scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
@@ -401,9 +385,7 @@ class ExportsOperations(object):
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
          for Department scope,
          '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope and
-         '/providers/Microsoft.Management/managementGroups/{managementGroupId}
-         for Management Group scope..
+         for EnrollmentAccount scope.
         :type scope: str
         :param export_name: Export Name.
         :type export_name: str

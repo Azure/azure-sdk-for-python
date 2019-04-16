@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class Resource(Model):
-    """The Resource model definition.
+class Department(Resource):
+    """A department resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,6 +26,16 @@ class Resource(Model):
     :vartype type: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :param department_name: The name for department.
+    :type department_name: str
+    :param cost_center: The cost center name.
+    :type cost_center: str
+    :param status: The status for department.
+    :type status: str
+    :param enrollment_accounts: Associated enrollment accounts. By default
+     this is not populated, unless it's specified in $expand.
+    :type enrollment_accounts:
+     list[~azure.mgmt.consumption.models.EnrollmentAccount]
     """
 
     _validation = {
@@ -40,11 +50,15 @@ class Resource(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'department_name': {'key': 'properties.departmentName', 'type': 'str'},
+        'cost_center': {'key': 'properties.costCenter', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'enrollment_accounts': {'key': 'properties.enrollmentAccounts', 'type': '[EnrollmentAccount]'},
     }
 
     def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.tags = None
+        super(Department, self).__init__(**kwargs)
+        self.department_name = kwargs.get('department_name', None)
+        self.cost_center = kwargs.get('cost_center', None)
+        self.status = kwargs.get('status', None)
+        self.enrollment_accounts = kwargs.get('enrollment_accounts', None)

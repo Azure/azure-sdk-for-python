@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource_py3 import Resource
 
 
-class Resource(Model):
-    """The Resource model definition.
+class PricesheetDownloadResponse(Resource):
+    """Download response of Pricesheets.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,6 +26,10 @@ class Resource(Model):
     :vartype type: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar download_url: The URL to the PDF file.
+    :vartype download_url: str
+    :ivar expiry_time: The time in UTC at which this download URL will expire.
+    :vartype expiry_time: str
     """
 
     _validation = {
@@ -33,6 +37,8 @@ class Resource(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'tags': {'readonly': True},
+        'download_url': {'readonly': True},
+        'expiry_time': {'readonly': True},
     }
 
     _attribute_map = {
@@ -40,11 +46,11 @@ class Resource(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'download_url': {'key': 'properties.downloadUrl', 'type': 'str'},
+        'expiry_time': {'key': 'properties.expiryTime', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.tags = None
+    def __init__(self, **kwargs) -> None:
+        super(PricesheetDownloadResponse, self).__init__(**kwargs)
+        self.download_url = None
+        self.expiry_time = None

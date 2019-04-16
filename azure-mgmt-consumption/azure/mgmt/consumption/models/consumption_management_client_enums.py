@@ -12,27 +12,14 @@
 from enum import Enum
 
 
-class CategoryType(Enum):
+class EventType(str, Enum):
 
-    cost = "Cost"
-    usage = "Usage"
-
-
-class TimeGrainType(Enum):
-
-    monthly = "Monthly"
-    quarterly = "Quarterly"
-    annually = "Annually"
+    new_credit = "NewCredit"
+    expired_credit = "ExpiredCredit"
+    settled_charges = "SettledCharges"
 
 
-class OperatorType(Enum):
+class LotSource(str, Enum):
 
-    equal_to = "EqualTo"
-    greater_than = "GreaterThan"
-    greater_than_or_equal_to = "GreaterThanOrEqualTo"
-
-
-class Datagrain(Enum):
-
-    daily_grain = "daily"
-    monthly_grain = "monthly"
+    purchased_credit = "PurchasedCredit"
+    promotional_credit = "PromotionalCredit"

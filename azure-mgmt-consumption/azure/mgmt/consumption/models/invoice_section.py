@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class Resource(Model):
-    """The Resource model definition.
+class InvoiceSection(Resource):
+    """An InvoiceSection resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,6 +26,12 @@ class Resource(Model):
     :vartype type: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :param display_name: The name of the InvoiceSection.
+    :type display_name: str
+    :param billing_profiles: The billing profiles associated to the billing
+     account.
+    :type billing_profiles:
+     list[~azure.mgmt.consumption.models.BillingProfile]
     """
 
     _validation = {
@@ -40,11 +46,11 @@ class Resource(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'billing_profiles': {'key': 'properties.billingProfiles', 'type': '[BillingProfile]'},
     }
 
     def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.tags = None
+        super(InvoiceSection, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.billing_profiles = kwargs.get('billing_profiles', None)

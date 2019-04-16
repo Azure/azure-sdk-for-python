@@ -12,29 +12,28 @@
 from msrest.serialization import Model
 
 
-class ErrorDetails(Model):
-    """The details of the error.
+class Operation(Model):
+    """A Consumption REST API operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar message: Error message indicating why the operation failed.
-    :vartype message: str
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :param display: The object that represents the operation.
+    :type display: ~azure.mgmt.consumption.models.OperationDisplay
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        'name': {'readonly': True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
-    def __init__(self, **kwargs):
-        super(ErrorDetails, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
+    def __init__(self, *, display=None, **kwargs) -> None:
+        super(Operation, self).__init__(**kwargs)
+        self.name = None
+        self.display = display

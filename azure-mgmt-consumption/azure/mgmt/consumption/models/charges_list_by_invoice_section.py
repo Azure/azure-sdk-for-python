@@ -12,29 +12,27 @@
 from msrest.serialization import Model
 
 
-class ErrorDetails(Model):
-    """The details of the error.
+class ChargesListByInvoiceSection(Model):
+    """Result of listing charge summary by invoiceSection. It contains a list of
+    available change summaries in reverse chronological order by billing
+    period.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: Error code.
-    :vartype code: str
-    :ivar message: Error message indicating why the operation failed.
-    :vartype message: str
+    :ivar value: The list of charge summary by invoiceSection.
+    :vartype value:
+     list[~azure.mgmt.consumption.models.ChargeSummaryByInvoiceSection]
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        'value': {'readonly': True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[ChargeSummaryByInvoiceSection]'},
     }
 
     def __init__(self, **kwargs):
-        super(ErrorDetails, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
+        super(ChargesListByInvoiceSection, self).__init__(**kwargs)
+        self.value = None
