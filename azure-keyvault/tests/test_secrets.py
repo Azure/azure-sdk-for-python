@@ -113,20 +113,10 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         for x in range(0, max_secrets):
             secret_name = 'sec{}'.format(x)
             secret_value = self.get_resource_name('secVal{}'.format(x))
-            secret_bundle = None
-            error_count = 0
-            while not secret_bundle:
-                try:
-                    secret_bundle = client.set_secret(secret_name, secret_value)
-                    sid = secret_bundle.id
-                    expected[sid] = secret_bundle
-                except Exception as ex:
-                    if hasattr(ex, 'message') and 'Throttled' in ex.message:
-                        error_count += 1
-                        time.sleep(2.5 * error_count)
-                        continue
-                    else:
-                        raise ex
+            secret = None
+            while not secret:
+                secret = client.set_secret(secret_name, secret_value)
+                expected[secret.id] = secret
 
         # list secrets
         result = list(client.list_secrets(max_secrets))
@@ -146,19 +136,10 @@ class KeyVaultSecretTest(KeyvaultTestCase):
 
         # create many secret versions
         for _ in range(0, max_secrets):
-            secret_bundle = None
-            error_count = 0
-            while not secret_bundle:
-                try:
-                    secret_bundle = client.set_secret(secret_name, secret_value)
-                    expected[secret_bundle.id] = secret_bundle
-                except Exception as ex:
-                    if hasattr(ex, 'message') and 'Throttled' in ex.message:
-                        error_count += 1
-                        time.sleep(2.5 * error_count)
-                        continue
-                    else:
-                        raise ex
+            secret = None
+            while not secret:
+                secret = client.set_secret(secret_name, secret_value)
+                expected[secret.id] = secret
 
         # list secret versions
         self._validate_secret_list(list(client.list_secret_versions(secret_name)), expected)
