@@ -40,7 +40,7 @@ class AsyncPagedMixin(AsyncIterator):
             _LOGGER.debug("Paging async iterator protocol is not available for %s",
                           self.__class__.__name__)
 
-    async def async_advance_page(self):
+    async def _async_advance_page(self):
         if not self._async_get_next:
             raise NotImplementedError(
                 "The class %s does not support async paging at the moment.",
@@ -63,5 +63,5 @@ class AsyncPagedMixin(AsyncIterator):
             self._current_page_iter_index += 1
             return response
         else:
-            await self.async_advance_page()
+            await self._async_advance_page()
             return await self.__anext__()

@@ -80,7 +80,7 @@ class Paged(AsyncPagedMixin, Iterator):
         """Required for parity to Model object for deserialization."""
         return {}
 
-    def advance_page(self):
+    def _advance_page(self):
         # type: () -> List[Model]
         """Force moving the cursor to the next azure call.
 
@@ -107,7 +107,7 @@ class Paged(AsyncPagedMixin, Iterator):
             self._current_page_iter_index += 1
             return response
         else:
-            self.advance_page()
+            self._advance_page()
             return self.__next__()
 
     next = __next__  # Python 2 compatibility.
