@@ -33,7 +33,6 @@ except ImportError:
 from typing import Dict, Any, List, Callable, Optional, TYPE_CHECKING  # pylint: disable=unused-import
 
 from msrest.serialization import Deserializer
-from .pipeline import ClientRawResponse
 
 if TYPE_CHECKING:
     from .universal_http import ClientResponse  # pylint: disable=unused-import
@@ -80,18 +79,6 @@ class Paged(AsyncPagedMixin, Iterator):
     def _get_subtype_map(cls):
         """Required for parity to Model object for deserialization."""
         return {}
-
-    @property
-    def raw(self):
-        # type: () -> ClientRawResponse
-        """Get current page as ClientRawResponse.
-
-        :rtype: ClientRawResponse
-        """
-        raw = ClientRawResponse(self.current_page, self._response)
-        if self._raw_headers:
-            raw.add_headers(self._raw_headers)
-        return raw
 
     def get(self, url):
         # type: (str) -> List[Model]
