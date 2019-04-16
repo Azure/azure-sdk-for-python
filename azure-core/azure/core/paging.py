@@ -64,7 +64,7 @@ class Paged(AsyncPagedMixin, Iterator):
         self.next_link = ""
         self.current_page = []  # type: List[Model]
         self._current_page_iter_index = 0
-        self._derserializer = Deserializer(classes)
+        self._deserializer = Deserializer(classes)
         self._get_next = command
         self._response = None  # type: Optional[ClientResponse]
         self._raw_headers = raw_headers
@@ -94,7 +94,7 @@ class Paged(AsyncPagedMixin, Iterator):
             raise StopIteration("End of paging")
         self._current_page_iter_index = 0
         self._response = self._get_next(self.next_link)
-        self._derserializer(self, self._response)
+        self._deserializer(self, self._response)
         return self.current_page
 
     def __next__(self):

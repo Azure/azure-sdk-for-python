@@ -50,7 +50,7 @@ class AsyncPagedMixin(AsyncIterator):
             raise StopAsyncIteration("End of paging")
         self._current_page_iter_index = 0
         self._response = await self._async_get_next(self.next_link)
-        self._derserializer(self, self._response)
+        self._deserializer(self, self._response)
         return self.current_page
 
     async def __anext__(self):
