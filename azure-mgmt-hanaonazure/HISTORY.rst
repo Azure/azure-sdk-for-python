@@ -8,7 +8,7 @@ Release History
 
 **Features**
 
-- Added operation group MonitoringOperations
+- Added operation enable_monitoring
 
 0.4.0 (2019-02-21)
 ++++++++++++++++++
