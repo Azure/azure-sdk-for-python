@@ -24,8 +24,6 @@ class BillingProperty(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar product_id: Product Id.
-    :vartype product_id: str
     :ivar billing_tenant_id: Billing tenant Id.
     :vartype billing_tenant_id: str
     :ivar billing_account_id: Billing account Id.
@@ -36,10 +34,16 @@ class BillingProperty(Resource):
     :vartype billing_profile_id: str
     :ivar billing_profile_name: Billing profile name.
     :vartype billing_profile_name: str
+    :ivar cost_center: Cost center name.
+    :vartype cost_center: str
     :ivar invoice_section_id: Invoice Section Id.
     :vartype invoice_section_id: str
     :ivar invoice_section_name: Invoice Section name.
     :vartype invoice_section_name: str
+    :ivar product_id: Product Id.
+    :vartype product_id: str
+    :ivar product_name: Product name.
+    :vartype product_name: str
     :ivar sku_id: SKU Id.
     :vartype sku_id: str
     :ivar sku_description: SKU description.
@@ -50,14 +54,16 @@ class BillingProperty(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'product_id': {'readonly': True},
         'billing_tenant_id': {'readonly': True},
         'billing_account_id': {'readonly': True},
         'billing_account_name': {'readonly': True},
         'billing_profile_id': {'readonly': True},
         'billing_profile_name': {'readonly': True},
+        'cost_center': {'readonly': True},
         'invoice_section_id': {'readonly': True},
         'invoice_section_name': {'readonly': True},
+        'product_id': {'readonly': True},
+        'product_name': {'readonly': True},
         'sku_id': {'readonly': True},
         'sku_description': {'readonly': True},
     }
@@ -66,27 +72,31 @@ class BillingProperty(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'product_id': {'key': 'properties.productId', 'type': 'str'},
         'billing_tenant_id': {'key': 'properties.billingTenantId', 'type': 'str'},
         'billing_account_id': {'key': 'properties.billingAccountId', 'type': 'str'},
         'billing_account_name': {'key': 'properties.billingAccountName', 'type': 'str'},
         'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
         'billing_profile_name': {'key': 'properties.billingProfileName', 'type': 'str'},
+        'cost_center': {'key': 'properties.costCenter', 'type': 'str'},
         'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
         'invoice_section_name': {'key': 'properties.invoiceSectionName', 'type': 'str'},
+        'product_id': {'key': 'properties.productId', 'type': 'str'},
+        'product_name': {'key': 'properties.productName', 'type': 'str'},
         'sku_id': {'key': 'properties.skuId', 'type': 'str'},
         'sku_description': {'key': 'properties.skuDescription', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(BillingProperty, self).__init__(**kwargs)
-        self.product_id = None
         self.billing_tenant_id = None
         self.billing_account_id = None
         self.billing_account_name = None
         self.billing_profile_id = None
         self.billing_profile_name = None
+        self.cost_center = None
         self.invoice_section_id = None
         self.invoice_section_name = None
+        self.product_id = None
+        self.product_name = None
         self.sku_id = None
         self.sku_description = None

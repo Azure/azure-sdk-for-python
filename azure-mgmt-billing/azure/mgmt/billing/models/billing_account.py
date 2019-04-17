@@ -31,8 +31,10 @@ class BillingAccount(Resource):
     :vartype account_type: str or ~azure.mgmt.billing.models.enum
     :param address: The address associated with billing account.
     :type address: ~azure.mgmt.billing.models.Address
-    :param company: Company Name.
-    :type company: str
+    :ivar company: Company Name.
+    :vartype company: str
+    :ivar country: Country Name.
+    :vartype country: str
     :param invoice_sections: The invoice sections associated to the billing
      account. By default this is not populated, unless it's specified in
      $expand.
@@ -61,6 +63,8 @@ class BillingAccount(Resource):
         'type': {'readonly': True},
         'display_name': {'readonly': True},
         'account_type': {'readonly': True},
+        'company': {'readonly': True},
+        'country': {'readonly': True},
         'enrollment_details': {'readonly': True},
         'has_read_access': {'readonly': True},
     }
@@ -73,6 +77,7 @@ class BillingAccount(Resource):
         'account_type': {'key': 'properties.accountType', 'type': 'str'},
         'address': {'key': 'properties.address', 'type': 'Address'},
         'company': {'key': 'properties.company', 'type': 'str'},
+        'country': {'key': 'properties.country', 'type': 'str'},
         'invoice_sections': {'key': 'properties.invoiceSections', 'type': '[InvoiceSection]'},
         'billing_profiles': {'key': 'properties.billingProfiles', 'type': '[BillingProfile]'},
         'enrollment_details': {'key': 'properties.enrollmentDetails', 'type': 'Enrollment'},
@@ -86,7 +91,8 @@ class BillingAccount(Resource):
         self.display_name = None
         self.account_type = None
         self.address = kwargs.get('address', None)
-        self.company = kwargs.get('company', None)
+        self.company = None
+        self.country = None
         self.invoice_sections = kwargs.get('invoice_sections', None)
         self.billing_profiles = kwargs.get('billing_profiles', None)
         self.enrollment_details = None
