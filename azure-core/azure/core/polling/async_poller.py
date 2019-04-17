@@ -25,7 +25,8 @@
 # --------------------------------------------------------------------------
 from .poller import NoPolling as _NoPolling
 
-from ..serialization import Model
+from msrest.serialization import Model
+
 from ..async_client import ServiceClientAsync
 from ..pipeline import ClientRawResponse
 

@@ -36,7 +36,8 @@ from typing import Any, Callable, Union, List, Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     import requests
 
-from ..serialization import Model
+from msrest.serialization import Model
+
 from ..service_client import ServiceClient
 from ..pipeline import ClientRawResponse
 
