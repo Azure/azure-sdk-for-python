@@ -30,6 +30,8 @@ from .operations.compliances_operations import CompliancesOperations
 from .operations.information_protection_policies_operations import InformationProtectionPoliciesOperations
 from .operations.security_contacts_operations import SecurityContactsOperations
 from .operations.workspace_settings_operations import WorkspaceSettingsOperations
+from .operations.assessments_operations import AssessmentsOperations
+from .operations.assessments_metadata_operations import AssessmentsMetadataOperations
 from . import models
 
 
@@ -111,6 +113,10 @@ class SecurityCenter(SDKClient):
     :vartype security_contacts: azure.mgmt.security.operations.SecurityContactsOperations
     :ivar workspace_settings: WorkspaceSettings operations
     :vartype workspace_settings: azure.mgmt.security.operations.WorkspaceSettingsOperations
+    :ivar assessments: Assessments operations
+    :vartype assessments: azure.mgmt.security.operations.AssessmentsOperations
+    :ivar assessments_metadata: AssessmentsMetadata operations
+    :vartype assessments_metadata: azure.mgmt.security.operations.AssessmentsMetadataOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -166,4 +172,8 @@ class SecurityCenter(SDKClient):
         self.security_contacts = SecurityContactsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workspace_settings = WorkspaceSettingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.assessments = AssessmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.assessments_metadata = AssessmentsMetadataOperations(
             self._client, self.config, self._serialize, self._deserialize)

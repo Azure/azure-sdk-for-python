@@ -92,6 +92,29 @@ class AlertsToAdmins(str, Enum):
     off = "Off"  #: Don't send notification on new alerts to the subscription's admins
 
 
+class Severity(str, Enum):
+
+    passed = "Passed"  #: The resource is healthy
+    failed = "Failed"  #: The resource has a security issue that needs to be addressed
+    not_applicable = "NotApplicable"  #: Assessment for this resource did not happen
+
+
+class Category(str, Enum):
+
+    compute = "Compute"
+    network = "Network"
+    data = "Data"
+    identity_and_access = "IdentityAndAccess"
+    io_t = "IoT"
+
+
+class ReleaseStatus(str, Enum):
+
+    ga = "GA"
+    public_preview = "PublicPreview"
+    private_preview = "PrivatePreview"
+
+
 class ConnectionType(str, Enum):
 
     internal = "Internal"

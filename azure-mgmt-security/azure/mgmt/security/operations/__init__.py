@@ -26,6 +26,8 @@ from .compliances_operations import CompliancesOperations
 from .information_protection_policies_operations import InformationProtectionPoliciesOperations
 from .security_contacts_operations import SecurityContactsOperations
 from .workspace_settings_operations import WorkspaceSettingsOperations
+from .assessments_operations import AssessmentsOperations
+from .assessments_metadata_operations import AssessmentsMetadataOperations
 
 __all__ = [
     'PricingsOperations',
@@ -45,4 +47,6 @@ __all__ = [
     'InformationProtectionPoliciesOperations',
     'SecurityContactsOperations',
     'WorkspaceSettingsOperations',
+    'AssessmentsOperations',
+    'AssessmentsMetadataOperations',
 ]

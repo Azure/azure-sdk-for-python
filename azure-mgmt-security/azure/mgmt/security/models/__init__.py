@@ -64,6 +64,11 @@ try:
     from .information_protection_policy_py3 import InformationProtectionPolicy
     from .security_contact_py3 import SecurityContact
     from .workspace_setting_py3 import WorkspaceSetting
+    from .resource_details_py3 import ResourceDetails
+    from .assessment_additional_data_py3 import AssessmentAdditionalData
+    from .security_assessment_py3 import SecurityAssessment
+    from .azure_resource_details_py3 import AzureResourceDetails
+    from .security_assessment_metadata_py3 import SecurityAssessmentMetadata
 except (SyntaxError, ImportError):
     from .pricing import Pricing
     from .pricing_list import PricingList
@@ -119,6 +124,11 @@ except (SyntaxError, ImportError):
     from .information_protection_policy import InformationProtectionPolicy
     from .security_contact import SecurityContact
     from .workspace_setting import WorkspaceSetting
+    from .resource_details import ResourceDetails
+    from .assessment_additional_data import AssessmentAdditionalData
+    from .security_assessment import SecurityAssessment
+    from .azure_resource_details import AzureResourceDetails
+    from .security_assessment_metadata import SecurityAssessmentMetadata
 from .alert_paged import AlertPaged
 from .setting_paged import SettingPaged
 from .allowed_connections_resource_paged import AllowedConnectionsResourcePaged
@@ -134,6 +144,8 @@ from .compliance_paged import CompliancePaged
 from .information_protection_policy_paged import InformationProtectionPolicyPaged
 from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
+from .security_assessment_paged import SecurityAssessmentPaged
+from .security_assessment_metadata_paged import SecurityAssessmentMetadataPaged
 from .security_center_enums import (
     PricingTier,
     ReportedSeverity,
@@ -147,6 +159,9 @@ from .security_center_enums import (
     AutoProvision,
     AlertNotifications,
     AlertsToAdmins,
+    Severity,
+    Category,
+    ReleaseStatus,
     ConnectionType,
 )
 
@@ -205,6 +220,11 @@ __all__ = [
     'InformationProtectionPolicy',
     'SecurityContact',
     'WorkspaceSetting',
+    'ResourceDetails',
+    'AssessmentAdditionalData',
+    'SecurityAssessment',
+    'AzureResourceDetails',
+    'SecurityAssessmentMetadata',
     'AlertPaged',
     'SettingPaged',
     'AllowedConnectionsResourcePaged',
@@ -220,6 +240,8 @@ __all__ = [
     'InformationProtectionPolicyPaged',
     'SecurityContactPaged',
     'WorkspaceSettingPaged',
+    'SecurityAssessmentPaged',
+    'SecurityAssessmentMetadataPaged',
     'PricingTier',
     'ReportedSeverity',
     'SettingKind',
@@ -232,5 +254,8 @@ __all__ = [
     'AutoProvision',
     'AlertNotifications',
     'AlertsToAdmins',
+    'Severity',
+    'Category',
+    'ReleaseStatus',
     'ConnectionType',
 ]
