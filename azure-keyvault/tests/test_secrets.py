@@ -116,7 +116,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
                 expected[secret.id] = secret
 
         # list secrets
-        result = list(client.list_secrets(max_secrets))
+        result = list(client.list_secrets(max_page_size=max_secrets))
         self._validate_secret_list(result, expected)
 
     @ResourceGroupPreparer()
@@ -157,6 +157,9 @@ class KeyVaultSecretTest(KeyvaultTestCase):
 
         # delete secret
         client.delete_secret(created_bundle.name)
+
+        # get the deleted secret
+        # deleted = client.get_deleted_secret(created_bundle.name)
 
         # restore secret
         restored = client.restore_secret(secret_backup)

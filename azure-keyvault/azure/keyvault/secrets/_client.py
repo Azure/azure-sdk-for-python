@@ -195,7 +195,7 @@ class SecretClient:
 
         return SecretAttributes.from_secret_bundle(bundle)
 
-    def list_secrets(self, max_page_size=None, **kwargs):
+    def list_secrets(self, **kwargs):
         """List secrets in the vault.
 
         The Get Secrets operation is applicable to the entire vault. However,
@@ -213,11 +213,12 @@ class SecretClient:
          :class:`ClientRequestError<azure.core.ClientRequestError>`
         """
         url = '{}/secrets'.format(self._vault_url)
+        max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = SecretItemPaged(paging, DESERIALIZE.dependencies)
         return (SecretAttributes.from_secret_item(item) for item in pages)
 
-    def list_secret_versions(self, name, max_page_size=None, **kwargs):
+    def list_secret_versions(self, name, **kwargs):
         """List all versions of the specified secret.
 
         The full secret identifier and attributes are provided in the response.
@@ -237,6 +238,7 @@ class SecretClient:
         """
 
         url = '{}/secrets/{}/versions'.format(self._vault_url, name)
+        max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = SecretItemPaged(paging, DESERIALIZE.dependencies)
         return (SecretAttributes.from_secret_item(item) for item in pages)
@@ -341,9 +343,10 @@ class SecretClient:
 
         return DeletedSecret.from_deleted_secret_bundle(bundle)
 
-    def list_deleted_secrets(self, max_page_size=None, **kwargs):
+    def list_deleted_secrets(self, **kwargs):
         # type: (Optional[int], Mapping[str, Any]) -> DeletedSecretPaged
         url = '{}/deletedsecrets'.format(self._vault_url)
+        max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = DeletedSecretItemPaged(paging, DESERIALIZE.dependencies)
         return (DeletedSecret.from_deleted_secret_item(item) for item in pages)
