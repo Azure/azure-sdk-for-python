@@ -36,9 +36,11 @@ from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Op
 import warnings
 
 from azure.core.exceptions import (
+    AzureError,
     ServiceRequestError,
-    ConnectionError,
-    ConnectionReadError
+    ServiceResponseError,
+    ConnectError,
+    HttpRequestError
 )
 
 from .base import HTTPPolicy, RequestHistory
@@ -167,13 +169,13 @@ class RetryPolicy(HTTPPolicy):
         """ Errors when we're fairly sure that the server did not receive the
         request, so it should be safe to retry.
         """
-        return isinstance(err, ConnectionError)
+        return isinstance(err, ConnectError)
 
     def _is_read_error(self, err):
         """ Errors that occur after the request has been started, so we should
         assume that the server began processing it.
         """
-        return isinstance(err, ConnectionReadError)
+        return isinstance(err, ServiceResponseError)
 
     def _is_method_retryable(self, settings, request, response=None):
         """ Checks if a given HTTP method should be retried upon, depending if
@@ -253,7 +255,7 @@ class RetryPolicy(HTTPPolicy):
                         self.sleep(retry_settings, request.context.transport, response=response)
                         continue
                 return response
-            except ServiceRequestError as err:
+            except AzureError as err:
                 if self._is_method_retryable(retry_settings, request.http_request):
                     retries_remaining = self.increment(retry_settings, response=request, error=err)
                     if retries_remaining:
