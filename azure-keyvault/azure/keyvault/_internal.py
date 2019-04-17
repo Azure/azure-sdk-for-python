@@ -5,7 +5,6 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core.pipeline.policies import HTTPPolicy
-from msrest.serialization import Model
 
 try:
     import urllib.parse as parse
@@ -35,29 +34,6 @@ def _parse_vault_id(url):
                     collection=path[0],
                     name=path[1],
                     version=path[2] if len(path) == 3 else None)
-
-
-class _BackupResult(Model):
-    """The backup secret result, containing the backup blob.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar value: The backup blob containing the backed up secret.
-    :vartype value: bytes
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': 'base64'},
-    }
-
-    def __init__(self, **kwargs):
-        super(_BackupResult, self).__init__(**kwargs)
-        self.value = None
 
 
 # TODO: integrate with azure.core
