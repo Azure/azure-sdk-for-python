@@ -35,6 +35,8 @@ class TransactionsSummary(Resource):
     :vartype order_id: str
     :ivar order_name: The reservation order name.
     :vartype order_name: str
+    :ivar product_family: The product family.
+    :vartype product_family: str
     :ivar product_type_id: The product type id.
     :vartype product_type_id: str
     :ivar product_type: The type of product.
@@ -74,6 +76,7 @@ class TransactionsSummary(Resource):
         'invoice': {'readonly': True},
         'order_id': {'readonly': True},
         'order_name': {'readonly': True},
+        'product_family': {'readonly': True},
         'product_type_id': {'readonly': True},
         'product_type': {'readonly': True},
         'product_description': {'readonly': True},
@@ -96,6 +99,7 @@ class TransactionsSummary(Resource):
         'invoice': {'key': 'properties.invoice', 'type': 'str'},
         'order_id': {'key': 'properties.orderId', 'type': 'str'},
         'order_name': {'key': 'properties.orderName', 'type': 'str'},
+        'product_family': {'key': 'properties.productFamily', 'type': 'str'},
         'product_type_id': {'key': 'properties.productTypeId', 'type': 'str'},
         'product_type': {'key': 'properties.productType', 'type': 'str'},
         'product_description': {'key': 'properties.productDescription', 'type': 'str'},
@@ -117,6 +121,7 @@ class TransactionsSummary(Resource):
         self.invoice = None
         self.order_id = None
         self.order_name = None
+        self.product_family = None
         self.product_type_id = None
         self.product_type = None
         self.product_description = None

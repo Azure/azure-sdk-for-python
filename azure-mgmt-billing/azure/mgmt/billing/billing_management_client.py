@@ -18,7 +18,6 @@ from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 import uuid
 from .operations.billing_accounts_operations import BillingAccountsOperations
-from .operations.billing_accounts_with_create_invoice_section_permission_operations import BillingAccountsWithCreateInvoiceSectionPermissionOperations
 from .operations.available_balance_by_billing_profile_operations import AvailableBalanceByBillingProfileOperations
 from .operations.payment_methods_by_billing_profile_operations import PaymentMethodsByBillingProfileOperations
 from .operations.billing_profiles_by_billing_account_name_operations import BillingProfilesByBillingAccountNameOperations
@@ -102,8 +101,6 @@ class BillingManagementClient(SDKClient):
 
     :ivar billing_accounts: BillingAccounts operations
     :vartype billing_accounts: azure.mgmt.billing.operations.BillingAccountsOperations
-    :ivar billing_accounts_with_create_invoice_section_permission: BillingAccountsWithCreateInvoiceSectionPermission operations
-    :vartype billing_accounts_with_create_invoice_section_permission: azure.mgmt.billing.operations.BillingAccountsWithCreateInvoiceSectionPermissionOperations
     :ivar available_balance_by_billing_profile: AvailableBalanceByBillingProfile operations
     :vartype available_balance_by_billing_profile: azure.mgmt.billing.operations.AvailableBalanceByBillingProfileOperations
     :ivar payment_methods_by_billing_profile: PaymentMethodsByBillingProfile operations
@@ -205,8 +202,6 @@ class BillingManagementClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
         self.billing_accounts = BillingAccountsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.billing_accounts_with_create_invoice_section_permission = BillingAccountsWithCreateInvoiceSectionPermissionOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.available_balance_by_billing_profile = AvailableBalanceByBillingProfileOperations(
             self._client, self.config, self._serialize, self._deserialize)

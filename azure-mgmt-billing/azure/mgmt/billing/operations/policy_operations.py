@@ -97,19 +97,15 @@ class PolicyOperations(object):
     get_by_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/policies/default'}
 
     def update(
-            self, billing_account_name, billing_profile_name, reservation_purchases_allowed=None, marketplace_purchases_allowed=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, parameters, custom_headers=None, raw=False, **operation_config):
         """The operation to update a policy.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
-        :param reservation_purchases_allowed: The reservationPurchasesAllowed
-         flag.
-        :type reservation_purchases_allowed: bool
-        :param marketplace_purchases_allowed: The marketplacePurchasesAllowed
-         flag.
-        :type marketplace_purchases_allowed: bool
+        :param parameters: Parameters supplied to the update policy operation.
+        :type parameters: ~azure.mgmt.billing.models.Policy
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -121,8 +117,6 @@ class PolicyOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        parameters = models.Policy(reservation_purchases_allowed=reservation_purchases_allowed, marketplace_purchases_allowed=marketplace_purchases_allowed)
-
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {

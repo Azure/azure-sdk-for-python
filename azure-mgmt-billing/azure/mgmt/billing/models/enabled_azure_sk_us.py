@@ -13,18 +13,19 @@ from msrest.serialization import Model
 
 
 class EnabledAzureSKUs(Model):
-    """Details about the product.
+    """Details about the enable azure sku.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param sku_id: The sku id.
-    :type sku_id: str
+    :ivar sku_id: The sku id.
+    :vartype sku_id: str
     :ivar sku_description: The sku description.
     :vartype sku_description: str
     """
 
     _validation = {
+        'sku_id': {'readonly': True},
         'sku_description': {'readonly': True},
     }
 
@@ -35,5 +36,5 @@ class EnabledAzureSKUs(Model):
 
     def __init__(self, **kwargs):
         super(EnabledAzureSKUs, self).__init__(**kwargs)
-        self.sku_id = kwargs.get('sku_id', None)
+        self.sku_id = None
         self.sku_description = None

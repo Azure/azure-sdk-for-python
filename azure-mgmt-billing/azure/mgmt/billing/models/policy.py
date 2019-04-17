@@ -24,12 +24,15 @@ class Policy(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param reservation_purchases_allowed: The reservationPurchasesAllowed
-     flag.
-    :type reservation_purchases_allowed: bool
     :param marketplace_purchases_allowed: The marketplacePurchasesAllowed
      flag.
     :type marketplace_purchases_allowed: bool
+    :param reservation_purchases_allowed: The reservationPurchasesAllowed
+     flag.
+    :type reservation_purchases_allowed: bool
+    :param subscription_owner_can_view_charges: The
+     subscriptionOwnerCanViewCharges flag.
+    :type subscription_owner_can_view_charges: bool
     """
 
     _validation = {
@@ -42,11 +45,13 @@ class Policy(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'reservation_purchases_allowed': {'key': 'properties.reservationPurchasesAllowed', 'type': 'bool'},
         'marketplace_purchases_allowed': {'key': 'properties.marketplacePurchasesAllowed', 'type': 'bool'},
+        'reservation_purchases_allowed': {'key': 'properties.reservationPurchasesAllowed', 'type': 'bool'},
+        'subscription_owner_can_view_charges': {'key': 'properties.subscriptionOwnerCanViewCharges', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(Policy, self).__init__(**kwargs)
-        self.reservation_purchases_allowed = kwargs.get('reservation_purchases_allowed', None)
         self.marketplace_purchases_allowed = kwargs.get('marketplace_purchases_allowed', None)
+        self.reservation_purchases_allowed = kwargs.get('reservation_purchases_allowed', None)
+        self.subscription_owner_can_view_charges = kwargs.get('subscription_owner_can_view_charges', None)

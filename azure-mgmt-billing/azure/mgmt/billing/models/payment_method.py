@@ -24,9 +24,10 @@ class PaymentMethod(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param method_type: Payment method type. Possible values include:
+    :param payment_method_type: Payment method type. Possible values include:
      'Credits', 'ChequeWire'
-    :type method_type: str or ~azure.mgmt.billing.models.PaymentMethodType
+    :type payment_method_type: str or
+     ~azure.mgmt.billing.models.PaymentMethodType
     :ivar details: Details about the payment method.
     :vartype details: str
     :ivar expiration: Expiration date.
@@ -48,7 +49,7 @@ class PaymentMethod(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'method_type': {'key': 'properties.methodType', 'type': 'str'},
+        'payment_method_type': {'key': 'properties.paymentMethodType', 'type': 'str'},
         'details': {'key': 'properties.details', 'type': 'str'},
         'expiration': {'key': 'properties.expiration', 'type': 'iso-8601'},
         'currency': {'key': 'properties.currency', 'type': 'str'},
@@ -56,7 +57,7 @@ class PaymentMethod(Resource):
 
     def __init__(self, **kwargs):
         super(PaymentMethod, self).__init__(**kwargs)
-        self.method_type = kwargs.get('method_type', None)
+        self.payment_method_type = kwargs.get('payment_method_type', None)
         self.details = None
         self.expiration = None
         self.currency = None
