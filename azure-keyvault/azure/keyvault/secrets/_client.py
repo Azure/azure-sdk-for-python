@@ -80,7 +80,7 @@ class SecretClient:
     def vault_url(self):
         return self._vault_url
 
-    def get_secret(self, name, version=None, **kwargs):
+    def get_secret(self, name, version, **kwargs):
         """Get a specified from the vault.
 
         The GET operation is applicable to any secret stored in Azure Key
@@ -94,7 +94,7 @@ class SecretClient:
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.KeyVaultErrorException>`
         """
-        url = '/'.join((self._vault_url, 'secrets', name, version or ''))
+        url = '/'.join((self._vault_url, 'secrets', name, version))
 
         query_parameters = {'api-version': self._api_version}
 
