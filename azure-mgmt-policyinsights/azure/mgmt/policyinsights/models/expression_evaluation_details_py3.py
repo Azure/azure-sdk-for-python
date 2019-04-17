@@ -22,10 +22,10 @@ class ExpressionEvaluationDetails(Model):
     :param path: Property path if the expression is a field or an alias.
     :type path: str
     :param expression_value: Value of the expression.
-    :type expression_value: str
+    :type expression_value: object
     :param target_value: Target value to be compared with the expression
      value.
-    :type target_value: str
+    :type target_value: object
     :param operator: Operator to compare the expression value and the target
      value.
     :type operator: str
@@ -35,12 +35,12 @@ class ExpressionEvaluationDetails(Model):
         'result': {'key': 'result', 'type': 'str'},
         'expression': {'key': 'expression', 'type': 'str'},
         'path': {'key': 'path', 'type': 'str'},
-        'expression_value': {'key': 'expressionValue', 'type': 'str'},
-        'target_value': {'key': 'targetValue', 'type': 'str'},
+        'expression_value': {'key': 'expressionValue', 'type': 'object'},
+        'target_value': {'key': 'targetValue', 'type': 'object'},
         'operator': {'key': 'operator', 'type': 'str'},
     }
 
-    def __init__(self, *, result: str=None, expression: str=None, path: str=None, expression_value: str=None, target_value: str=None, operator: str=None, **kwargs) -> None:
+    def __init__(self, *, result: str=None, expression: str=None, path: str=None, expression_value=None, target_value=None, operator: str=None, **kwargs) -> None:
         super(ExpressionEvaluationDetails, self).__init__(**kwargs)
         self.result = result
         self.expression = expression
