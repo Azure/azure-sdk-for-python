@@ -5,260 +5,194 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
-from msrest.paging import Paged
-from .._internal import _parse_vault_id
 from datetime import datetime
-from typing import Any, Mapping
+from typing import Any, Mapping, Optional
+from .._generated.v7_0 import models
+from .._internal import _parse_vault_id
 
-class SecretAttributes(Model):
-    """A secret's id and attributes.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+class SecretAttributes(object):
+    def __init__(self, attributes, vault_id, **kwargs):
+        # type: (models.SecretAttributes, str, Mapping[str, Any]) -> None
+        self._attributes = attributes
+        self._id = vault_id  # TODO: is the unparsed id useful?
+        self._vault_id = _parse_vault_id(vault_id)
+        self._content_type = kwargs.get("content_type", None)
+        self._key_id = kwargs.get("key_id", None)
+        self._managed = kwargs.get("managed", None)
+        self._tags = kwargs.get("tags", None)
 
-    :param str id: The secret id.
-    :param str content_type: The content type of the secret.
-    :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :ivar str key_id: If this is a secret backing a KV certificate, then this field
-     specifies the corresponding key backing the KV certificate.
-    :ivar bool managed: True if the secret's lifetime is managed by key vault. If
-     this is a secret backing a certificate, then managed will be true.
-    """
+    @classmethod
+    def from_secret_bundle(cls, secret_bundle):
+        # type: (models.SecretBundle) -> SecretAttributes
+        """Construct a Secret from an autorest-generated SecretBundle"""
+        return cls(
+            secret_bundle.attributes,
+            secret_bundle.id,
+            content_type=secret_bundle.content_type,
+            key_id=secret_bundle.kid,
+            managed=secret_bundle.managed,
+            tags=secret_bundle.tags,
+        )
 
-    _validation = {
-        'key_id': {'readonly': True},
-        'managed': {'readonly': True},
-    }
+    @classmethod
+    def from_secret_item(cls, secret_item):
+        # type: (models.SecretItem) -> SecretAttributes
+        """Construct a Secret from an autorest-generated SecretItem"""
+        return cls(
+            secret_item.attributes,
+            secret_item.id,
+            content_type=secret_item.content_type,
+            managed=secret_item.managed,
+            tags=secret_item.tags,
+        )
 
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        '_management_attributes': {'key': 'attributes', 'type': '_SecretManagementAttributes'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'key_id': {'key': 'kid', 'type': 'str'},
-        'managed': {'key': 'managed', 'type': 'bool'},
-    }
+    @property
+    def content_type(self):
+        # type: () -> str
+        return self._content_type
 
-    def __init__(self, **kwargs):
-        # type: (Mapping[str, Any]) -> None
-        super(SecretAttributes, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        if self.id:
-            self._vault_id = _parse_vault_id(self.id)
-        self.content_type = kwargs.get('content_type', None)
-        self._management_attributes = kwargs.get('_management_attributes', None)
-        self.tags = kwargs.get('tags', None)
-        self.key_id = None
-        self.managed = None
+    @property
+    def id(self):
+        # type: () -> str
+        return self._id
+
+    @property
+    def key_id(self):
+        # type: () -> str
+        return self._key_id
 
     @property
     def enabled(self):
         # type: () -> bool
         """Gets the Secret's 'enabled' attribute"""
-        return self._management_attributes.enabled
+        return self._attributes.enabled
 
     @property
     def not_before(self):
         # type: () -> datetime
         """Gets the Secret's 'not_before' attribute"""
-        return self._management_attributes.not_before
+        return self._attributes.not_before
 
     @property
     def expires(self):
         # type: () -> datetime
         """Gets the Secret's 'expires' attribute"""
-        return self._management_attributes.expires
+        return self._attributes.expires
 
     @property
     def created(self):
         # type: () -> datetime
         """Gets the Secret's 'created' attribute"""
-        return self._management_attributes.created
+        return self._attributes.created
 
     @property
     def updated(self):
         # type: () -> datetime
         """Gets the Secret's 'updated' attribute"""
-        return self._management_attributes.updated
+        return self._attributes.updated
 
     @property
     def recovery_level(self):
         # type: () -> str
         """Gets the Secret's 'recovery_level' attribute"""
-        return self._management_attributes.recovery_level
+        return self._attributes.recovery_level
 
     @property
     def vault_url(self):
         # type: () -> str
         """The url of the vault containing the secret"""
-        return self._vault_id.vault_url if self._vault_id else None
+        return self._vault_id.vault_url
 
     @property
     def name(self):
         # type: () -> str
         """The name of the secret"""
-        return self._vault_id.name if self._vault_id else None
+        return self._vault_id.name
 
     @property
     def version(self):
         # type: () -> str
         """The version of the secret"""
-        return self._vault_id.version if self._vault_id else None
+        return self._vault_id.version
 
+    @property
+    def tags(self):
+        return self._tags
 
-class _SecretManagementAttributes(Model):
-    """The secret management attributes.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param bool enabled: Determines whether the object is enabled.
-    :param datetime not_before: Not before date in UTC.
-    :param datetime expires: Expiry date in UTC.
-    :ivar datetime created: Creation time in UTC.
-    :ivar datetime updated: Last updated time in UTC.
-    :ivar str recovery_level: Reflects the deletion recovery level currently in
-     effect for secrets in the current vault. If it contains 'Purgeable', the
-     secret can be permanently deleted by a privileged user; otherwise, only
-     the system can purge the secret, at the end of the retention interval.
-     Possible values include: 'Purgeable', 'Recoverable+Purgeable',
-     'Recoverable', 'Recoverable+ProtectedSubscription'
-    """
-
-    _validation = {
-        'created': {'readonly': True},
-        'updated': {'readonly': True},
-        'recovery_level': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'not_before': {'key': 'nbf', 'type': 'unix-time'},
-        'expires': {'key': 'exp', 'type': 'unix-time'},
-        'created': {'key': 'created', 'type': 'unix-time'},
-        'updated': {'key': 'updated', 'type': 'unix-time'},
-        'recovery_level': {'key': 'recoveryLevel', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        # type: (Mapping[str, Any]) -> None
-        super(_SecretManagementAttributes, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
-        self.not_before = kwargs.get('not_before', None)
-        self.expires = kwargs.get('expires', None)
-        self.created = None
-        self.updated = None
-        self.recovery_level = None
 
 class Secret(SecretAttributes):
-    """A secret consisting of its attributes, a value, and id.
+    def __init__(self, attributes, vault_id, value, **kwargs):
+        super(Secret, self).__init__(attributes, vault_id, **kwargs)
+        self._value = value
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    @classmethod
+    def from_secret_bundle(cls, secret_bundle):
+        # type: (models.SecretBundle) -> Secret
+        """Construct a Secret from an autorest-generated SecretBundle"""
+        return cls(
+            secret_bundle.attributes,
+            secret_bundle.id,
+            secret_bundle.value,
+            content_type=secret_bundle.content_type,
+            key_id=secret_bundle.kid,
+            managed=secret_bundle.managed,
+            tags=secret_bundle.tags,
+        )
 
-    :param str value: The secret value.
-    :param str id: The secret id.
-    :param str content_type: The content type of the secret.
-    :param attributes: The secret management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.SecretAttributes
-    :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :ivar str kid: If this is a secret backing a KV certificate, then this field
-     specifies the corresponding key backing the KV certificate.
-    :ivar bool managed: True if the secret's lifetime is managed by key vault. If
-     this is a secret backing a certificate, then managed will be true.
-    """
-
-    # i.e., Secret is SecretAttributes plus a value
-    _attribute_map = dict({
-        'value': {'key': 'value', 'type': 'str'}
-    }, **SecretAttributes._attribute_map)
-
-    def __init__(self, **kwargs):
-        # type: (Mapping[str, Any]) -> None
-        super(Secret, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-
-
-class SecretAttributesPaged(Paged):
-    """A paging container for iterating over a list of :class:`SecretAttributes <azure.keyvault.secrets.SecretAttributes>` objects
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[SecretAttributes]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-        super(SecretAttributesPaged, self).__init__(*args, **kwargs)
+    @property
+    def value(self):
+        # type: () -> str
+        return self._value
 
 
 class DeletedSecret(SecretAttributes):
-    """A Deleted Secret consisting of its previous id, attributes and its tags, as
-    well as information on when it will be purged.
+    def __init__(self, attributes, vault_id, deleted_date=None, recovery_id=None, scheduled_purge_date=None, **kwargs):
+        # type: (models.SecretAttributes, str, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
+        super(DeletedSecret, self).__init__(attributes, vault_id, **kwargs)
+        self._deleted_date = deleted_date
+        self._recovery_id = recovery_id
+        self._scheduled_purge_date = scheduled_purge_date
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    @classmethod
+    def from_deleted_secret_bundle(cls, deleted_secret_bundle):
+        # type: (models.DeletedSecretBundle) -> DeletedSecret
+        """Construct a DeletedSecret from an autorest-generated DeletedSecretBundle"""
+        return cls(
+            deleted_secret_bundle.attributes,
+            deleted_secret_bundle.id,
+            content_type=deleted_secret_bundle.content_type,
+            key_id=deleted_secret_bundle.kid,
+            managed=deleted_secret_bundle.managed,
+            tags=deleted_secret_bundle.tags,
+        )
 
-    :param str id: The secret id.
-    :param content_type: The content type of the secret.
-    :type content_type: str
-    :param attributes: The secret management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.SecretAttributes
-    :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :ivar kid: If this is a secret backing a KV certificate, then this field
-     specifies the corresponding key backing the KV certificate.
-    :vartype kid: str
-    :ivar managed: True if the secret's lifetime is managed by key vault. If
-     this is a secret backing a certificate, then managed will be true.
-    :vartype managed: bool
-    :param recovery_id: The url of the recovery object, used to identify and
-     recover the deleted secret.
-    :type recovery_id: str
-    :ivar scheduled_purge_date: The time when the secret is scheduled to be
-     purged, in UTC
-    :vartype scheduled_purge_date: datetime
-    :ivar deleted_date: The time when the secret was deleted, in UTC
-    :vartype deleted_date: datetime
-    """
+    @classmethod
+    def from_deleted_secret_item(cls, deleted_secret_item):
+        # type: (models.DeletedSecretItem) -> DeletedSecret
+        """Construct a DeletedSecret from an autorest-generated DeletedSecretItem"""
+        return cls(
+            deleted_secret_item.attributes,
+            deleted_secret_item.id,
+            deleted_date=deleted_secret_item.deleted_date,
+            recovery_id=deleted_secret_item.recovery_id,
+            scheduled_purge_date=deleted_secret_item.scheduled_purge_date,
+            content_type=deleted_secret_item.content_type,
+            managed=deleted_secret_item.managed,
+            tags=deleted_secret_item.tags,
+        )
 
-    _validation = dict(
-        {
-        'scheduled_purge_date': {'readonly': True},
-        'deleted_date': {'readonly': True},
-        },
-        **SecretAttributes._validation
-    )
+    @property
+    def deleted_date(self):
+        # type: () -> datetime
+        return self._deleted_date
 
-    # DeletedSecret is SecretAttributes plus deletion info
-    _attribute_map = dict(
-        {
-            "recovery_id": {"key": "recoveryId", "type": "str"},
-            "scheduled_purge_date": {"key": "scheduledPurgeDate", "type": "unix-time"},
-            "deleted_date": {"key": "deletedDate", "type": "unix-time"},
-        },
-        **SecretAttributes._attribute_map
-    )
+    @property
+    def recovery_id(self):
+        # type: () -> str
+        return self._recovery_id
 
-    def __init__(self, **kwargs):
-        # type: (Mapping[str, Any]) -> None
-        super(DeletedSecret, self).__init__(**kwargs)
-        self.recovery_id = kwargs.get('recovery_id', None)
-        self.scheduled_purge_date = None
-        self.deleted_date = None
-
-
-class DeletedSecretPaged(Paged):
-    """A paging container for iterating over a list of :class:`DeletedSecret <azure.keyvault.secrets.DeletedSecret>` objects
-    """
-
-    _attribute_map = {
-        "next_link": {"key": "nextLink", "type": "str"},
-        "current_page": {"key": "value", "type": "[DeletedSecret]"},
-    }
-
-    def __init__(self, *args, **kwargs):
-        super(DeletedSecretPaged, self).__init__(*args, **kwargs)
+    @property
+    def scheduled_purge_date(self):
+        # type: () -> datetime
+        return self._scheduled_purge_date
