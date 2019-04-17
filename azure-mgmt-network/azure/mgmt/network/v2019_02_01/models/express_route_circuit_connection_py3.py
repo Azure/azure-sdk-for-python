@@ -33,9 +33,9 @@ class ExpressRouteCircuitConnection(SubResource):
     :type address_prefix: str
     :param authorization_key: The authorization key.
     :type authorization_key: str
-    :ivar circuit_connection_status: Express Route Circuit connection state.
+    :param circuit_connection_status: Express Route Circuit connection state.
      Possible values include: 'Connected', 'Connecting', 'Disconnected'
-    :vartype circuit_connection_status: str or
+    :type circuit_connection_status: str or
      ~azure.mgmt.network.v2019_02_01.models.CircuitConnectionStatus
     :ivar provisioning_state: Provisioning state of the circuit connection
      resource. Possible values are: 'Succeeded', 'Updating', 'Deleting', and
@@ -50,7 +50,6 @@ class ExpressRouteCircuitConnection(SubResource):
     """
 
     _validation = {
-        'circuit_connection_status': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'etag': {'readonly': True},
     }
@@ -67,13 +66,13 @@ class ExpressRouteCircuitConnection(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, express_route_circuit_peering=None, peer_express_route_circuit_peering=None, address_prefix: str=None, authorization_key: str=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, express_route_circuit_peering=None, peer_express_route_circuit_peering=None, address_prefix: str=None, authorization_key: str=None, circuit_connection_status=None, name: str=None, **kwargs) -> None:
         super(ExpressRouteCircuitConnection, self).__init__(id=id, **kwargs)
         self.express_route_circuit_peering = express_route_circuit_peering
         self.peer_express_route_circuit_peering = peer_express_route_circuit_peering
         self.address_prefix = address_prefix
         self.authorization_key = authorization_key
-        self.circuit_connection_status = None
+        self.circuit_connection_status = circuit_connection_status
         self.provisioning_state = None
         self.name = name
         self.etag = None

@@ -33,9 +33,9 @@ class ExpressRouteCircuitConnection(SubResource):
     :type address_prefix: str
     :param authorization_key: The authorization key.
     :type authorization_key: str
-    :ivar circuit_connection_status: Express Route Circuit connection state.
+    :param circuit_connection_status: Express Route Circuit connection state.
      Possible values include: 'Connected', 'Connecting', 'Disconnected'
-    :vartype circuit_connection_status: str or
+    :type circuit_connection_status: str or
      ~azure.mgmt.network.v2019_02_01.models.CircuitConnectionStatus
     :ivar provisioning_state: Provisioning state of the circuit connection
      resource. Possible values are: 'Succeeded', 'Updating', 'Deleting', and
@@ -50,7 +50,6 @@ class ExpressRouteCircuitConnection(SubResource):
     """
 
     _validation = {
-        'circuit_connection_status': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'etag': {'readonly': True},
     }
@@ -73,7 +72,7 @@ class ExpressRouteCircuitConnection(SubResource):
         self.peer_express_route_circuit_peering = kwargs.get('peer_express_route_circuit_peering', None)
         self.address_prefix = kwargs.get('address_prefix', None)
         self.authorization_key = kwargs.get('authorization_key', None)
-        self.circuit_connection_status = None
+        self.circuit_connection_status = kwargs.get('circuit_connection_status', None)
         self.provisioning_state = None
         self.name = kwargs.get('name', None)
         self.etag = None

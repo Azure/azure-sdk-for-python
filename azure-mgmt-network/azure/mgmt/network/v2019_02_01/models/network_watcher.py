@@ -31,16 +31,15 @@ class NetworkWatcher(Resource):
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
-    :ivar provisioning_state: The provisioning state of the resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
-    :vartype provisioning_state: str or
+    :param provisioning_state: The provisioning state of the resource.
+     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
+    :type provisioning_state: str or
      ~azure.mgmt.network.v2019_02_01.models.ProvisioningState
     """
 
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -56,4 +55,4 @@ class NetworkWatcher(Resource):
     def __init__(self, **kwargs):
         super(NetworkWatcher, self).__init__(**kwargs)
         self.etag = kwargs.get('etag', None)
-        self.provisioning_state = None
+        self.provisioning_state = kwargs.get('provisioning_state', None)

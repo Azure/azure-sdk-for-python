@@ -32,9 +32,9 @@ class PeerExpressRouteCircuitConnection(SubResource):
     :param address_prefix: /29 IP address space to carve out Customer
      addresses for tunnels.
     :type address_prefix: str
-    :ivar circuit_connection_status: Express Route Circuit connection state.
+    :param circuit_connection_status: Express Route Circuit connection state.
      Possible values include: 'Connected', 'Connecting', 'Disconnected'
-    :vartype circuit_connection_status: str or
+    :type circuit_connection_status: str or
      ~azure.mgmt.network.v2019_02_01.models.CircuitConnectionStatus
     :param connection_name: The name of the express route circuit connection
      resource.
@@ -55,7 +55,6 @@ class PeerExpressRouteCircuitConnection(SubResource):
     """
 
     _validation = {
-        'circuit_connection_status': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'etag': {'readonly': True},
     }
@@ -78,7 +77,7 @@ class PeerExpressRouteCircuitConnection(SubResource):
         self.express_route_circuit_peering = kwargs.get('express_route_circuit_peering', None)
         self.peer_express_route_circuit_peering = kwargs.get('peer_express_route_circuit_peering', None)
         self.address_prefix = kwargs.get('address_prefix', None)
-        self.circuit_connection_status = None
+        self.circuit_connection_status = kwargs.get('circuit_connection_status', None)
         self.connection_name = kwargs.get('connection_name', None)
         self.auth_resource_guid = kwargs.get('auth_resource_guid', None)
         self.provisioning_state = None

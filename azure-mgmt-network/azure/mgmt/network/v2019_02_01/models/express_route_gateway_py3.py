@@ -37,9 +37,9 @@ class ExpressRouteGateway(Resource):
      ExpressRoute gateway.
     :vartype express_route_connections:
      list[~azure.mgmt.network.v2019_02_01.models.ExpressRouteConnection]
-    :ivar provisioning_state: The provisioning state of the resource. Possible
-     values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
-    :vartype provisioning_state: str or
+    :param provisioning_state: The provisioning state of the resource.
+     Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
+    :type provisioning_state: str or
      ~azure.mgmt.network.v2019_02_01.models.ProvisioningState
     :param virtual_hub: Required. The Virtual Hub where the ExpressRoute
      gateway is or will be deployed.
@@ -53,7 +53,6 @@ class ExpressRouteGateway(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'express_route_connections': {'readonly': True},
-        'provisioning_state': {'readonly': True},
         'virtual_hub': {'required': True},
         'etag': {'readonly': True},
     }
@@ -71,10 +70,10 @@ class ExpressRouteGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, virtual_hub, id: str=None, location: str=None, tags=None, auto_scale_configuration=None, **kwargs) -> None:
+    def __init__(self, *, virtual_hub, id: str=None, location: str=None, tags=None, auto_scale_configuration=None, provisioning_state=None, **kwargs) -> None:
         super(ExpressRouteGateway, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.auto_scale_configuration = auto_scale_configuration
         self.express_route_connections = None
-        self.provisioning_state = None
+        self.provisioning_state = provisioning_state
         self.virtual_hub = virtual_hub
         self.etag = None
