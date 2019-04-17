@@ -28,7 +28,6 @@ from .poller import NoPolling as _NoPolling
 from msrest.serialization import Model
 
 from ..async_client import ServiceClientAsync
-from ..pipeline import ClientRawResponse
 
 class AsyncPollingMethod(object):
     """ABC class for polling method.
@@ -66,7 +65,7 @@ async def async_poller(client, initial_response, deserialization_callback, polli
     :param client: A msrest service client. Can be a SDK client and it will be casted to a ServiceClient.
     :type client: msrest.service_client.ServiceClient
     :param initial_response: The initial call response
-    :type initial_response: msrest.universal_http.ClientResponse or msrest.pipeline.ClientRawResponse
+    :type initial_response: azure.core.pipeline.HttpResponse
     :param deserialization_callback: A callback that takes a Response and return a deserialized object. If a subclass of Model is given, this passes "deserialize" as callback.
     :type deserialization_callback: callable or msrest.serialization.Model
     :param polling_method: The polling strategy to adopt
@@ -77,13 +76,12 @@ async def async_poller(client, initial_response, deserialization_callback, polli
         client = client if isinstance(client, ServiceClientAsync) else client._client
     except AttributeError:
         raise ValueError("Poller client parameter must be a low-level msrest Service Client or a SDK client.")
-    response = initial_response.response if isinstance(initial_response, ClientRawResponse) else initial_response
 
     if isinstance(deserialization_callback, type) and issubclass(deserialization_callback, Model):
         deserialization_callback = deserialization_callback.deserialize
 
     # Might raise a CloudError
-    polling_method.initialize(client, response, deserialization_callback)
+    polling_method.initialize(client, initial_response, deserialization_callback)
 
     await polling_method.run()
     return polling_method.resource()

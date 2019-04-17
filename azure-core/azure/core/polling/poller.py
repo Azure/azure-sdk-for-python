@@ -35,11 +35,11 @@ from typing import Any, Callable, Union, List, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     import requests
+    from .pipeline import HttpResponse  # pylint: disable=unused-import
 
 from msrest.serialization import Model
 
 from ..service_client import ServiceClient
-from ..pipeline import ClientRawResponse
 
 class PollingMethod(object):
     """ABC class for polling method.
@@ -107,7 +107,7 @@ class LROPoller(object):
     :param client: A msrest service client. Can be a SDK client and it will be casted to a ServiceClient.
     :type client: msrest.service_client.ServiceClient
     :param initial_response: The initial call response
-    :type initial_response: requests.Response or msrest.pipeline.ClientRawResponse
+    :type initial_response: azure.core.pipeline.HttpResponse
     :param deserialization_callback: A callback that takes a Response and return a deserialized object. If a subclass of Model is given, this passes "deserialize" as callback.
     :type deserialization_callback: callable or msrest.serialization.Model
     :param polling_method: The polling strategy to adopt
@@ -115,12 +115,12 @@ class LROPoller(object):
     """
 
     def __init__(self, client, initial_response, deserialization_callback, polling_method):
-        # type: (Any, Union[ClientRawResponse, requests.Response], Union[Model, Callable[[requests.Response], Model]], PollingMethod) -> None
+        # type: (Any, HttpResponse, Union[Model, Callable[[requests.Response], Model]], PollingMethod) -> None
         try:
             self._client = client if isinstance(client, ServiceClient) else client._client  #  type: ServiceClient
         except AttributeError:
             raise ValueError("Poller client parameter must be a low-level msrest Service Client or a SDK client.")
-        self._response = initial_response.response if isinstance(initial_response, ClientRawResponse) else initial_response
+        self._response = initial_response
         self._callbacks = []  # type: List[Callable]
         self._polling_method = polling_method
 
