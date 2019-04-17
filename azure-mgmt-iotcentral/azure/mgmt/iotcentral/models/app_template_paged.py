@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2018-09-01"
+from msrest.paging import Paged
 
+
+class AppTemplatePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AppTemplate <azure.mgmt.iotcentral.models.AppTemplate>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AppTemplate]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AppTemplatePaged, self).__init__(*args, **kwargs)
