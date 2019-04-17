@@ -50,6 +50,9 @@ class VpnConnection(SubResource):
     :type enable_rate_limiting: bool
     :param enable_internet_security: Enable internet security
     :type enable_internet_security: bool
+    :param use_local_azure_ip_address: Use local azure ip to initiate
+     connection
+    :type use_local_azure_ip_address: bool
     :param provisioning_state: The provisioning state of the resource.
      Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :type provisioning_state: str or
@@ -82,12 +85,13 @@ class VpnConnection(SubResource):
         'ipsec_policies': {'key': 'properties.ipsecPolicies', 'type': '[IpsecPolicy]'},
         'enable_rate_limiting': {'key': 'properties.enableRateLimiting', 'type': 'bool'},
         'enable_internet_security': {'key': 'properties.enableInternetSecurity', 'type': 'bool'},
+        'use_local_azure_ip_address': {'key': 'properties.useLocalAzureIpAddress', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, remote_vpn_site=None, routing_weight: int=None, connection_status=None, vpn_connection_protocol_type=None, connection_bandwidth: int=None, shared_key: str=None, enable_bgp: bool=None, ipsec_policies=None, enable_rate_limiting: bool=None, enable_internet_security: bool=None, provisioning_state=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, remote_vpn_site=None, routing_weight: int=None, connection_status=None, vpn_connection_protocol_type=None, connection_bandwidth: int=None, shared_key: str=None, enable_bgp: bool=None, ipsec_policies=None, enable_rate_limiting: bool=None, enable_internet_security: bool=None, use_local_azure_ip_address: bool=None, provisioning_state=None, name: str=None, **kwargs) -> None:
         super(VpnConnection, self).__init__(id=id, **kwargs)
         self.remote_vpn_site = remote_vpn_site
         self.routing_weight = routing_weight
@@ -101,6 +105,7 @@ class VpnConnection(SubResource):
         self.ipsec_policies = ipsec_policies
         self.enable_rate_limiting = enable_rate_limiting
         self.enable_internet_security = enable_internet_security
+        self.use_local_azure_ip_address = use_local_azure_ip_address
         self.provisioning_state = provisioning_state
         self.name = name
         self.etag = None
