@@ -153,6 +153,12 @@ class BaseImageDependencyType(str, Enum):
     run_time = "RunTime"
 
 
+class TriggerStatus(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
 class SourceControlType(str, Enum):
 
     github = "Github"
@@ -169,12 +175,6 @@ class SourceTriggerEvent(str, Enum):
 
     commit = "commit"
     pullrequest = "pullrequest"
-
-
-class TriggerStatus(str, Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
 
 
 class BaseImageTriggerType(str, Enum):

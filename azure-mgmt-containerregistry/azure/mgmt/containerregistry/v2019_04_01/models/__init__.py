@@ -66,6 +66,7 @@ try:
     from .identity_properties_py3 import IdentityProperties
     from .base_image_dependency_py3 import BaseImageDependency
     from .task_step_properties_py3 import TaskStepProperties
+    from .scheduler_trigger_py3 import SchedulerTrigger
     from .auth_info_py3 import AuthInfo
     from .source_properties_py3 import SourceProperties
     from .source_trigger_py3 import SourceTrigger
@@ -154,6 +155,7 @@ except (SyntaxError, ImportError):
     from .identity_properties import IdentityProperties
     from .base_image_dependency import BaseImageDependency
     from .task_step_properties import TaskStepProperties
+    from .scheduler_trigger import SchedulerTrigger
     from .auth_info import AuthInfo
     from .source_properties import SourceProperties
     from .source_trigger import SourceTrigger
@@ -213,10 +215,10 @@ from .container_registry_management_client_enums import (
     ResourceIdentityType,
     TaskStatus,
     BaseImageDependencyType,
+    TriggerStatus,
     SourceControlType,
     TokenType,
     SourceTriggerEvent,
-    TriggerStatus,
     BaseImageTriggerType,
     SourceRegistryLoginMode,
     SecretObjectType,
@@ -279,6 +281,7 @@ __all__ = [
     'IdentityProperties',
     'BaseImageDependency',
     'TaskStepProperties',
+    'SchedulerTrigger',
     'AuthInfo',
     'SourceProperties',
     'SourceTrigger',
@@ -337,10 +340,10 @@ __all__ = [
     'ResourceIdentityType',
     'TaskStatus',
     'BaseImageDependencyType',
+    'TriggerStatus',
     'SourceControlType',
     'TokenType',
     'SourceTriggerEvent',
-    'TriggerStatus',
     'BaseImageTriggerType',
     'SourceRegistryLoginMode',
     'SecretObjectType',
