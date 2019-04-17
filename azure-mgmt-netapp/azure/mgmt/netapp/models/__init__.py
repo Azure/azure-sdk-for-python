@@ -15,6 +15,8 @@ try:
     from .metric_specification_py3 import MetricSpecification
     from .service_specification_py3 import ServiceSpecification
     from .operation_py3 import Operation
+    from .resource_name_availability_py3 import ResourceNameAvailability
+    from .resource_name_availability_request_py3 import ResourceNameAvailabilityRequest
     from .active_directory_py3 import ActiveDirectory
     from .net_app_account_py3 import NetAppAccount
     from .net_app_account_patch_py3 import NetAppAccountPatch
@@ -28,13 +30,14 @@ try:
     from .mount_target_py3 import MountTarget
     from .snapshot_py3 import Snapshot
     from .snapshot_patch_py3 import SnapshotPatch
-    from .error_py3 import Error, ErrorException
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .dimension import Dimension
     from .metric_specification import MetricSpecification
     from .service_specification import ServiceSpecification
     from .operation import Operation
+    from .resource_name_availability import ResourceNameAvailability
+    from .resource_name_availability_request import ResourceNameAvailabilityRequest
     from .active_directory import ActiveDirectory
     from .net_app_account import NetAppAccount
     from .net_app_account_patch import NetAppAccountPatch
@@ -48,7 +51,6 @@ except (SyntaxError, ImportError):
     from .mount_target import MountTarget
     from .snapshot import Snapshot
     from .snapshot_patch import SnapshotPatch
-    from .error import Error, ErrorException
 from .operation_paged import OperationPaged
 from .net_app_account_paged import NetAppAccountPaged
 from .capacity_pool_paged import CapacityPoolPaged
@@ -56,6 +58,8 @@ from .volume_paged import VolumePaged
 from .mount_target_paged import MountTargetPaged
 from .snapshot_paged import SnapshotPaged
 from .azure_net_app_files_management_client_enums import (
+    InAvailabilityReasonType,
+    CheckNameResourceTypes,
     ServiceLevel,
 )
 
@@ -65,6 +69,8 @@ __all__ = [
     'MetricSpecification',
     'ServiceSpecification',
     'Operation',
+    'ResourceNameAvailability',
+    'ResourceNameAvailabilityRequest',
     'ActiveDirectory',
     'NetAppAccount',
     'NetAppAccountPatch',
@@ -78,12 +84,13 @@ __all__ = [
     'MountTarget',
     'Snapshot',
     'SnapshotPatch',
-    'Error', 'ErrorException',
     'OperationPaged',
     'NetAppAccountPaged',
     'CapacityPoolPaged',
     'VolumePaged',
     'MountTargetPaged',
     'SnapshotPaged',
+    'InAvailabilityReasonType',
+    'CheckNameResourceTypes',
     'ServiceLevel',
 ]

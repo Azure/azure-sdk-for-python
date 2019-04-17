@@ -37,7 +37,7 @@ class VolumePatch(Model):
      Minimum size is 100 GiB. Upper limit is 100TiB. Default value:
      107374182400 .
     :type usage_threshold: long
-    :param export_policy: Export policy rule
+    :param export_policy: exportPolicy. Set of export policy rules
     :type export_policy:
      ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
     """
