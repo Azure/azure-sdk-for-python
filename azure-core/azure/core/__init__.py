@@ -35,5 +35,5 @@ from .exceptions import *
 __all__ = [
     "Configuration",
     "PipelineClient",
-    "AzureError",
+    "ClientRequestError",
 ]
