@@ -37,10 +37,7 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-from azure.core.exceptions import (
-    ClientRequestError,
-    TooManyRedirectsError
-)
+from azure.core.exceptions import TooManyRedirectsError
 
 from .base import HTTPPolicy, RequestHistory
 

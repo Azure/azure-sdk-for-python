@@ -38,11 +38,6 @@ from requests.models import CONTENT_CHUNK_SIZE
 
 from urllib3 import Retry  # Needs requests 2.16 at least to be safe
 
-from azure.core.exceptions import (
-    ClientRequestError,
-    raise_with_traceback
-)
-
 from .base import HTTPPolicy
 
 

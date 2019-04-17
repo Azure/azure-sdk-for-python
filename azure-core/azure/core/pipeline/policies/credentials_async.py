@@ -32,10 +32,6 @@ from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
 import requests
 from requests.models import CONTENT_CHUNK_SIZE
 
-from azure.core.exceptions import (
-    ClientRequestError,
-    raise_with_traceback
-)
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 
 

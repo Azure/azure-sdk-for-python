@@ -41,8 +41,12 @@ from .base_async import (
     _iterate_response_content)
 from .requests_basic import RequestsTransport, RequestsTransportResponse
 from azure.core.exceptions import (
-    ClientRequestError,
-    raise_with_traceback)
+    ServiceRequestError,
+    ServiceResponseError,
+    ConnectError,
+    ReadTimeoutError,
+    raise_with_traceback
+)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -125,14 +129,14 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
                 limiter=trio_limiter)
 
         except urllib3.exceptions.NewConnectionError as err:
-            error = ConnectionError(err, error=err)
+            error = ConnectError(err, error=err)
         except requests.exceptions.ReadTimeout as err:
             error = ReadTimeoutError(err, error=err)
         except requests.exceptions.ConnectionError as err:
             if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
-                error = ConnectionReadError(err, error=err)
+                error = ServiceResponseError(err, error=err)
             else:
-                error = ConnectionError(err, error=err)
+                error = ConnectError(err, error=err)
         except requests.RequestException as err:
             error = ServiceRequestError(err, error=err)
         finally:
