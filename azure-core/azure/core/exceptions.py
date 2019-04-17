@@ -88,14 +88,14 @@ class ConnectError(ServiceRequestError):
     These errors are safe to retry."""
 
 
-class ReadTimeoutError(ServiceRequestError):
-    """The server did not send any data in the allotted amount of time.
-    These errors may not be safe to retry."""
-
-
 class ServiceResponseError(AzureError):
     """The request was sent, but the client failed to understand the response.
     These errors may not be safe to retry"""
+
+
+class ReadTimeoutError(ServiceResponseError):
+    """The server did not send any data in the allotted amount of time.
+    These errors may not be safe to retry."""
 
 
 class HttpRequestError(ServiceRequestError):

@@ -39,8 +39,8 @@ from .base import (
 from azure.core.configuration import Configuration
 from azure.core.exceptions import (
     ServiceRequestError,
-    ConnectionError,
-    ConnectionReadError,
+    ServiceResponseError,
+    ConnectError,
     ReadTimeoutError,
     raise_with_traceback
 )
@@ -199,14 +199,14 @@ class RequestsTransport(HttpTransport):
                 **kwargs)
 
         except urllib3.exceptions.NewConnectionError as err:
-            error = ConnectionError(err, error=err)
+            error = ConnectError(err, error=err)
         except requests.exceptions.ReadTimeout as err:
             error = ReadTimeoutError(err, error=err)
         except requests.exceptions.ConnectionError as err:
             if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
-                error = ConnectionReadError(err, error=err)
+                error = ServiceResponseError(err, error=err)
             else:
-                error = ConnectionError(err, error=err)
+                error = ConnectError(err, error=err)
         except requests.RequestException as err:
             error = ServiceRequestError(err, error=err)
         finally:
