@@ -63,7 +63,7 @@ class SecretClient:
         if not vault_url:
             raise ValueError('vault_url')
 
-        self.vault_url = vault_url
+        self._vault_url = vault_url
         config = config or SecretClient.create_config(**kwargs)
         transport = RequestsTransport(config.connection)
         policies = [
@@ -75,6 +75,10 @@ class SecretClient:
             config.logging,
         ]
         self._pipeline = Pipeline(transport, policies=policies)
+
+    @property
+    def vault_url(self):
+        return self._vault_url
 
     def get_secret(self, name, version=None, **kwargs):
         """Get a specified from the vault.
@@ -90,7 +94,7 @@ class SecretClient:
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.KeyVaultErrorException>`
         """
-        url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', name, version or '')])
+        url = '/'.join((self._vault_url, 'secrets', name, version or ''))
 
         query_parameters = {'api-version': self._api_version}
 
@@ -135,7 +139,7 @@ class SecretClient:
         :raises:
         :class:`azure.core.ClientRequestError`
         """
-        url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', name)])
+        url = '/'.join((self._vault_url, 'secrets', name))
 
         query_parameters = {'api-version': self._api_version}
 
@@ -164,7 +168,7 @@ class SecretClient:
     def update_secret_attributes(
         self, name, version, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
     ):
-        url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', name, version)])
+        url = '/'.join((self._vault_url, 'secrets', name, version))
 
         attributes = _SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
         secret = SecretUpdateParameters(secret_attributes=attributes, tags=tags, content_type=content_type)
@@ -208,7 +212,7 @@ class SecretClient:
         :raises:
          :class:`ClientRequestError<azure.core.ClientRequestError>`
         """
-        url = '{}/secrets'.format(self.vault_url)
+        url = '{}/secrets'.format(self._vault_url)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = SecretItemPaged(paging, DESERIALIZE.dependencies)
         return (SecretAttributes.from_secret_item(item) for item in pages)
@@ -232,7 +236,7 @@ class SecretClient:
          :class:`ClientRequestError<azure.core.ClientRequestError>`
         """
 
-        url = '{}/secrets/{}/versions'.format(self.vault_url, name)
+        url = '{}/secrets/{}/versions'.format(self._vault_url, name)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = SecretItemPaged(paging, DESERIALIZE.dependencies)
         return (SecretAttributes.from_secret_item(item) for item in pages)
@@ -250,7 +254,7 @@ class SecretClient:
         :raises:
          :class:azure.core.ClientRequestError
         """
-        url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', name, 'backup')])
+        url = '/'.join((self._vault_url, 'secrets', name, 'backup'))
 
         query_parameters = {'api-version': self._api_version}
 
@@ -284,7 +288,7 @@ class SecretClient:
         :raises:
          :class:azure.core.ClientRequestError
         """
-        url = '/'.join([s.strip('/') for s in (self.vault_url, 'secrets', 'restore')])
+        url = '/'.join((self._vault_url, 'secrets', 'restore'))
 
         query_parameters = {'api-version': self._api_version}
 
@@ -311,7 +315,7 @@ class SecretClient:
 
     def delete_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> DeletedSecret
-        url = '/'.join([self.vault_url, 'secrets', name])
+        url = '/'.join([self._vault_url, 'secrets', name])
 
         request = HttpRequest('DELETE', url)
         request.format_parameters({'api-version': self._api_version})
@@ -325,7 +329,7 @@ class SecretClient:
 
     def get_deleted_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> DeletedSecret
-        url = '/'.join([self.vault_url, 'deletedsecrets', name])
+        url = '/'.join([self._vault_url, 'deletedsecrets', name])
 
         request = HttpRequest('GET', url)
         request.format_parameters({'api-version': self._api_version})
@@ -339,14 +343,14 @@ class SecretClient:
 
     def list_deleted_secrets(self, max_page_size=None, **kwargs):
         # type: (Optional[int], Mapping[str, Any]) -> DeletedSecretPaged
-        url = '{}/deletedsecrets'.format(self.vault_url)
+        url = '{}/deletedsecrets'.format(self._vault_url)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = DeletedSecretItemPaged(paging, DESERIALIZE.dependencies)
         return (DeletedSecret.from_deleted_secret_item(item) for item in pages)
 
     def purge_deleted_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> None
-        url = '/'.join([self.vault_url, 'deletedsecrets', name])
+        url = '/'.join([self._vault_url, 'deletedsecrets', name])
 
         request = HttpRequest('DELETE', url)
         request.format_parameters({'api-version': self._api_version})
@@ -358,7 +362,7 @@ class SecretClient:
 
     def recover_deleted_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> SecretAttributes
-        url = '/'.join([self.vault_url, 'deletedsecrets', name, 'recover'])
+        url = '/'.join([self._vault_url, 'deletedsecrets', name, 'recover'])
 
         request = HttpRequest('POST', url)
         request.format_parameters({'api-version': self._api_version})
