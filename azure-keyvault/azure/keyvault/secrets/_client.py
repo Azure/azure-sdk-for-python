@@ -114,7 +114,7 @@ class SecretClient:
 
         bundle = DESERIALIZE('SecretBundle', response)
 
-        return Secret.from_secret_bundle(bundle)
+        return Secret._from_secret_bundle(bundle)
 
     def set_secret(
         self, name, value, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
@@ -163,7 +163,7 @@ class SecretClient:
 
         bundle = DESERIALIZE('SecretBundle', response)
 
-        return Secret.from_secret_bundle(bundle)
+        return Secret._from_secret_bundle(bundle)
 
     def update_secret_attributes(
         self, name, version, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
@@ -193,7 +193,7 @@ class SecretClient:
 
         bundle = DESERIALIZE('SecretBundle', response)
 
-        return SecretAttributes.from_secret_bundle(bundle)
+        return SecretAttributes._from_secret_bundle(bundle)
 
     def list_secrets(self, **kwargs):
         """List secrets in the vault.
@@ -216,7 +216,7 @@ class SecretClient:
         max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = SecretItemPaged(paging, DESERIALIZE.dependencies)
-        return (SecretAttributes.from_secret_item(item) for item in pages)
+        return (SecretAttributes._from_secret_item(item) for item in pages)
 
     def list_secret_versions(self, name, **kwargs):
         """List all versions of the specified secret.
@@ -241,7 +241,7 @@ class SecretClient:
         max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = SecretItemPaged(paging, DESERIALIZE.dependencies)
-        return (SecretAttributes.from_secret_item(item) for item in pages)
+        return (SecretAttributes._from_secret_item(item) for item in pages)
 
     def backup_secret(self, name, **kwargs):
         """Backs up the specified secret.
@@ -313,7 +313,7 @@ class SecretClient:
 
         bundle = DESERIALIZE('SecretBundle', response)
 
-        return SecretAttributes.from_secret_bundle(bundle)
+        return SecretAttributes._from_secret_bundle(bundle)
 
     def delete_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> DeletedSecret
@@ -327,7 +327,7 @@ class SecretClient:
 
         bundle = DESERIALIZE('DeletedSecretBundle', response)
 
-        return DeletedSecret.from_deleted_secret_bundle(bundle)
+        return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     def get_deleted_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> DeletedSecret
@@ -341,7 +341,7 @@ class SecretClient:
 
         bundle = DESERIALIZE('DeletedSecretBundle', response)
 
-        return DeletedSecret.from_deleted_secret_bundle(bundle)
+        return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     def list_deleted_secrets(self, **kwargs):
         # type: (Optional[int], Mapping[str, Any]) -> DeletedSecretPaged
@@ -349,7 +349,7 @@ class SecretClient:
         max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = DeletedSecretItemPaged(paging, DESERIALIZE.dependencies)
-        return (DeletedSecret.from_deleted_secret_item(item) for item in pages)
+        return (DeletedSecret._from_deleted_secret_item(item) for item in pages)
 
     def purge_deleted_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> None
@@ -376,7 +376,7 @@ class SecretClient:
 
         bundle = DESERIALIZE('SecretBundle', response)
 
-        return SecretAttributes.from_secret_bundle(bundle)
+        return SecretAttributes._from_secret_bundle(bundle)
 
     def _internal_paging(self, url, max_page_size, next_link=None, raw=False, **kwargs):
         # type: (str, int, Optional[str], Optional[bool], Mapping[str, Any]) -> HttpResponse

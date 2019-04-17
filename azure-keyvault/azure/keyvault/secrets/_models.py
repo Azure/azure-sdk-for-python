@@ -23,7 +23,7 @@ class SecretAttributes(object):
         self._tags = kwargs.get("tags", None)
 
     @classmethod
-    def from_secret_bundle(cls, secret_bundle):
+    def _from_secret_bundle(cls, secret_bundle):
         # type: (models.SecretBundle) -> SecretAttributes
         """Construct a Secret from an autorest-generated SecretBundle"""
         return cls(
@@ -36,7 +36,7 @@ class SecretAttributes(object):
         )
 
     @classmethod
-    def from_secret_item(cls, secret_item):
+    def _from_secret_item(cls, secret_item):
         # type: (models.SecretItem) -> SecretAttributes
         """Construct a Secret from an autorest-generated SecretItem"""
         return cls(
@@ -127,7 +127,7 @@ class Secret(SecretAttributes):
         self._value = value
 
     @classmethod
-    def from_secret_bundle(cls, secret_bundle):
+    def _from_secret_bundle(cls, secret_bundle):
         # type: (models.SecretBundle) -> Secret
         """Construct a Secret from an autorest-generated SecretBundle"""
         return cls(
@@ -155,7 +155,7 @@ class DeletedSecret(SecretAttributes):
         self._scheduled_purge_date = scheduled_purge_date
 
     @classmethod
-    def from_deleted_secret_bundle(cls, deleted_secret_bundle):
+    def _from_deleted_secret_bundle(cls, deleted_secret_bundle):
         # type: (models.DeletedSecretBundle) -> DeletedSecret
         """Construct a DeletedSecret from an autorest-generated DeletedSecretBundle"""
         return cls(
@@ -168,7 +168,7 @@ class DeletedSecret(SecretAttributes):
         )
 
     @classmethod
-    def from_deleted_secret_item(cls, deleted_secret_item):
+    def _from_deleted_secret_item(cls, deleted_secret_item):
         # type: (models.DeletedSecretItem) -> DeletedSecret
         """Construct a DeletedSecret from an autorest-generated DeletedSecretItem"""
         return cls(
