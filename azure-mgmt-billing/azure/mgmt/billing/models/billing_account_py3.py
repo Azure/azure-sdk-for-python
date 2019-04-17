@@ -31,6 +31,8 @@ class BillingAccount(Resource):
     :vartype account_type: str or ~azure.mgmt.billing.models.enum
     :param address: The address associated with billing account.
     :type address: ~azure.mgmt.billing.models.Address
+    :param company: Company Name.
+    :type company: str
     :param invoice_sections: The invoice sections associated to the billing
      account. By default this is not populated, unless it's specified in
      $expand.
@@ -70,6 +72,7 @@ class BillingAccount(Resource):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'account_type': {'key': 'properties.accountType', 'type': 'str'},
         'address': {'key': 'properties.address', 'type': 'Address'},
+        'company': {'key': 'properties.company', 'type': 'str'},
         'invoice_sections': {'key': 'properties.invoiceSections', 'type': '[InvoiceSection]'},
         'billing_profiles': {'key': 'properties.billingProfiles', 'type': '[BillingProfile]'},
         'enrollment_details': {'key': 'properties.enrollmentDetails', 'type': 'Enrollment'},
@@ -78,11 +81,12 @@ class BillingAccount(Resource):
         'has_read_access': {'key': 'properties.hasReadAccess', 'type': 'bool'},
     }
 
-    def __init__(self, *, address=None, invoice_sections=None, billing_profiles=None, departments=None, enrollment_accounts=None, **kwargs) -> None:
+    def __init__(self, *, address=None, company: str=None, invoice_sections=None, billing_profiles=None, departments=None, enrollment_accounts=None, **kwargs) -> None:
         super(BillingAccount, self).__init__(**kwargs)
         self.display_name = None
         self.account_type = None
         self.address = address
+        self.company = company
         self.invoice_sections = invoice_sections
         self.billing_profiles = billing_profiles
         self.enrollment_details = None

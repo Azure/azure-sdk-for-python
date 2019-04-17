@@ -9,15 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class BillingProperty(Model):
-    """The billing property.
+class BillingProperty(Resource):
+    """A billing property resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar product_id: Product Id.
     :vartype product_id: str
     :ivar billing_tenant_id: Billing tenant Id.
@@ -41,6 +47,9 @@ class BillingProperty(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'product_id': {'readonly': True},
         'billing_tenant_id': {'readonly': True},
         'billing_account_id': {'readonly': True},
@@ -54,16 +63,19 @@ class BillingProperty(Model):
     }
 
     _attribute_map = {
-        'product_id': {'key': 'productId', 'type': 'str'},
-        'billing_tenant_id': {'key': 'billingTenantId', 'type': 'str'},
-        'billing_account_id': {'key': 'billingAccountId', 'type': 'str'},
-        'billing_account_name': {'key': 'billingAccountName', 'type': 'str'},
-        'billing_profile_id': {'key': 'billingProfileId', 'type': 'str'},
-        'billing_profile_name': {'key': 'billingProfileName', 'type': 'str'},
-        'invoice_section_id': {'key': 'invoiceSectionId', 'type': 'str'},
-        'invoice_section_name': {'key': 'invoiceSectionName', 'type': 'str'},
-        'sku_id': {'key': 'skuId', 'type': 'str'},
-        'sku_description': {'key': 'skuDescription', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'product_id': {'key': 'properties.productId', 'type': 'str'},
+        'billing_tenant_id': {'key': 'properties.billingTenantId', 'type': 'str'},
+        'billing_account_id': {'key': 'properties.billingAccountId', 'type': 'str'},
+        'billing_account_name': {'key': 'properties.billingAccountName', 'type': 'str'},
+        'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
+        'billing_profile_name': {'key': 'properties.billingProfileName', 'type': 'str'},
+        'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
+        'invoice_section_name': {'key': 'properties.invoiceSectionName', 'type': 'str'},
+        'sku_id': {'key': 'properties.skuId', 'type': 'str'},
+        'sku_description': {'key': 'properties.skuDescription', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
