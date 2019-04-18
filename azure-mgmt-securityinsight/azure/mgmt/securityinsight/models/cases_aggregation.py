@@ -28,30 +28,13 @@ class CasesAggregation(Aggregations):
     :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :ivar total_critical_severity: Total amount of open cases with severity
-     Critical
-    :vartype total_critical_severity: str
-    :ivar total_high_severity: Total amount of open cases with severity High
-    :vartype total_high_severity: str
-    :ivar total_medium_severity: Total amount of open cases with severity
-     medium
-    :vartype total_medium_severity: str
-    :ivar total_low_severity: Total amount of open cases with severity Low
-    :vartype total_low_severity: str
-    :ivar total_informational_severity: Total amount of open cases with
-     severity Informational
-    :vartype total_informational_severity: str
-    :ivar total_new_status: Total amount of open cases with status New
-    :vartype total_new_status: str
-    :ivar total_in_progress_status: Total amount of open cases with status
-     InProgress
-    :vartype total_in_progress_status: str
-    :ivar total_resolved_status: Total amount of open cases with status
-     Resolved
-    :vartype total_resolved_status: str
-    :ivar total_dismissed_status: Total amount of open cases with status
-     Dismissed
-    :vartype total_dismissed_status: str
+    :param cases_aggregation_by_severity: Aggregations results by case
+     severity.
+    :type cases_aggregation_by_severity:
+     ~azure.mgmt.securityinsight.models.CasesAggregationBySeverityProperties
+    :param cases_aggregation_by_status: Aggregations results by case status.
+    :type cases_aggregation_by_status:
+     ~azure.mgmt.securityinsight.models.CasesAggregationByStatusProperties
     """
 
     _validation = {
@@ -59,15 +42,6 @@ class CasesAggregation(Aggregations):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'kind': {'required': True},
-        'total_critical_severity': {'readonly': True},
-        'total_high_severity': {'readonly': True},
-        'total_medium_severity': {'readonly': True},
-        'total_low_severity': {'readonly': True},
-        'total_informational_severity': {'readonly': True},
-        'total_new_status': {'readonly': True},
-        'total_in_progress_status': {'readonly': True},
-        'total_resolved_status': {'readonly': True},
-        'total_dismissed_status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -75,26 +49,12 @@ class CasesAggregation(Aggregations):
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'total_critical_severity': {'key': 'properties.casesAggregationBySeverity.totalCriticalSeverity', 'type': 'str'},
-        'total_high_severity': {'key': 'properties.casesAggregationBySeverity.totalHighSeverity', 'type': 'str'},
-        'total_medium_severity': {'key': 'properties.casesAggregationBySeverity.totalMediumSeverity', 'type': 'str'},
-        'total_low_severity': {'key': 'properties.casesAggregationBySeverity.totalLowSeverity', 'type': 'str'},
-        'total_informational_severity': {'key': 'properties.casesAggregationBySeverity.totalInformationalSeverity', 'type': 'str'},
-        'total_new_status': {'key': 'properties.casesAggregationByStatus.totalNewStatus', 'type': 'str'},
-        'total_in_progress_status': {'key': 'properties.casesAggregationByStatus.totalInProgressStatus', 'type': 'str'},
-        'total_resolved_status': {'key': 'properties.casesAggregationByStatus.totalResolvedStatus', 'type': 'str'},
-        'total_dismissed_status': {'key': 'properties.casesAggregationByStatus.totalDismissedStatus', 'type': 'str'},
+        'cases_aggregation_by_severity': {'key': 'properties.casesAggregationBySeverity', 'type': 'CasesAggregationBySeverityProperties'},
+        'cases_aggregation_by_status': {'key': 'properties.casesAggregationByStatus', 'type': 'CasesAggregationByStatusProperties'},
     }
 
     def __init__(self, **kwargs):
         super(CasesAggregation, self).__init__(**kwargs)
-        self.total_critical_severity = None
-        self.total_high_severity = None
-        self.total_medium_severity = None
-        self.total_low_severity = None
-        self.total_informational_severity = None
-        self.total_new_status = None
-        self.total_in_progress_status = None
-        self.total_resolved_status = None
-        self.total_dismissed_status = None
+        self.cases_aggregation_by_severity = kwargs.get('cases_aggregation_by_severity', None)
+        self.cases_aggregation_by_status = kwargs.get('cases_aggregation_by_status', None)
         self.kind = 'CasesAggregation'
