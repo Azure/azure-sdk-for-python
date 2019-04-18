@@ -18,7 +18,6 @@ from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 import uuid
-from .operations.application_gateways_operations import ApplicationGatewaysOperations
 from .operations.application_security_groups_operations import ApplicationSecurityGroupsOperations
 from .operations.available_delegations_operations import AvailableDelegationsOperations
 from .operations.available_resource_group_delegations_operations import AvailableResourceGroupDelegationsOperations
@@ -132,8 +131,6 @@ class NetworkManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: NetworkManagementClientConfiguration
 
-    :ivar application_gateways: ApplicationGateways operations
-    :vartype application_gateways: azure.mgmt.network.v2019_02_01.operations.ApplicationGatewaysOperations
     :ivar application_security_groups: ApplicationSecurityGroups operations
     :vartype application_security_groups: azure.mgmt.network.v2019_02_01.operations.ApplicationSecurityGroupsOperations
     :ivar available_delegations: AvailableDelegations operations
@@ -295,8 +292,6 @@ class NetworkManagementClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.application_gateways = ApplicationGatewaysOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.application_security_groups = ApplicationSecurityGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.available_delegations = AvailableDelegationsOperations(

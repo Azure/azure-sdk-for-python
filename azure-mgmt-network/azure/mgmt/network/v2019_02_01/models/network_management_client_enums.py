@@ -12,198 +12,6 @@
 from enum import Enum
 
 
-class ApplicationGatewayProtocol(str, Enum):
-
-    http = "Http"
-    https = "Https"
-
-
-class IPAllocationMethod(str, Enum):
-
-    static = "Static"
-    dynamic = "Dynamic"
-
-
-class SecurityRuleProtocol(str, Enum):
-
-    tcp = "Tcp"
-    udp = "Udp"
-    icmp = "Icmp"
-    esp = "Esp"
-    asterisk = "*"
-
-
-class SecurityRuleAccess(str, Enum):
-
-    allow = "Allow"
-    deny = "Deny"
-
-
-class SecurityRuleDirection(str, Enum):
-
-    inbound = "Inbound"
-    outbound = "Outbound"
-
-
-class RouteNextHopType(str, Enum):
-
-    virtual_network_gateway = "VirtualNetworkGateway"
-    vnet_local = "VnetLocal"
-    internet = "Internet"
-    virtual_appliance = "VirtualAppliance"
-    none = "None"
-
-
-class PublicIPAddressSkuName(str, Enum):
-
-    basic = "Basic"
-    standard = "Standard"
-
-
-class IPVersion(str, Enum):
-
-    ipv4 = "IPv4"
-    ipv6 = "IPv6"
-
-
-class DdosSettingsProtectionCoverage(str, Enum):
-
-    basic = "Basic"
-    standard = "Standard"
-
-
-class TransportProtocol(str, Enum):
-
-    udp = "Udp"
-    tcp = "Tcp"
-    all = "All"
-
-
-class ApplicationGatewayCookieBasedAffinity(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class ApplicationGatewayBackendHealthServerHealth(str, Enum):
-
-    unknown = "Unknown"
-    up = "Up"
-    down = "Down"
-    partial = "Partial"
-    draining = "Draining"
-
-
-class ApplicationGatewaySkuName(str, Enum):
-
-    standard_small = "Standard_Small"
-    standard_medium = "Standard_Medium"
-    standard_large = "Standard_Large"
-    waf_medium = "WAF_Medium"
-    waf_large = "WAF_Large"
-    standard_v2 = "Standard_v2"
-    waf_v2 = "WAF_v2"
-
-
-class ApplicationGatewayTier(str, Enum):
-
-    standard = "Standard"
-    waf = "WAF"
-    standard_v2 = "Standard_v2"
-    waf_v2 = "WAF_v2"
-
-
-class ApplicationGatewaySslProtocol(str, Enum):
-
-    tl_sv1_0 = "TLSv1_0"
-    tl_sv1_1 = "TLSv1_1"
-    tl_sv1_2 = "TLSv1_2"
-
-
-class ApplicationGatewaySslPolicyType(str, Enum):
-
-    predefined = "Predefined"
-    custom = "Custom"
-
-
-class ApplicationGatewaySslPolicyName(str, Enum):
-
-    app_gw_ssl_policy20150501 = "AppGwSslPolicy20150501"
-    app_gw_ssl_policy20170401 = "AppGwSslPolicy20170401"
-    app_gw_ssl_policy20170401_s = "AppGwSslPolicy20170401S"
-
-
-class ApplicationGatewaySslCipherSuite(str, Enum):
-
-    tls_ecdhe_rsa_with_aes_256_cbc_sha384 = "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384"
-    tls_ecdhe_rsa_with_aes_128_cbc_sha256 = "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
-    tls_ecdhe_rsa_with_aes_256_cbc_sha = "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA"
-    tls_ecdhe_rsa_with_aes_128_cbc_sha = "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"
-    tls_dhe_rsa_with_aes_256_gcm_sha384 = "TLS_DHE_RSA_WITH_AES_256_GCM_SHA384"
-    tls_dhe_rsa_with_aes_128_gcm_sha256 = "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"
-    tls_dhe_rsa_with_aes_256_cbc_sha = "TLS_DHE_RSA_WITH_AES_256_CBC_SHA"
-    tls_dhe_rsa_with_aes_128_cbc_sha = "TLS_DHE_RSA_WITH_AES_128_CBC_SHA"
-    tls_rsa_with_aes_256_gcm_sha384 = "TLS_RSA_WITH_AES_256_GCM_SHA384"
-    tls_rsa_with_aes_128_gcm_sha256 = "TLS_RSA_WITH_AES_128_GCM_SHA256"
-    tls_rsa_with_aes_256_cbc_sha256 = "TLS_RSA_WITH_AES_256_CBC_SHA256"
-    tls_rsa_with_aes_128_cbc_sha256 = "TLS_RSA_WITH_AES_128_CBC_SHA256"
-    tls_rsa_with_aes_256_cbc_sha = "TLS_RSA_WITH_AES_256_CBC_SHA"
-    tls_rsa_with_aes_128_cbc_sha = "TLS_RSA_WITH_AES_128_CBC_SHA"
-    tls_ecdhe_ecdsa_with_aes_256_gcm_sha384 = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
-    tls_ecdhe_ecdsa_with_aes_128_gcm_sha256 = "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
-    tls_ecdhe_ecdsa_with_aes_256_cbc_sha384 = "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"
-    tls_ecdhe_ecdsa_with_aes_128_cbc_sha256 = "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"
-    tls_ecdhe_ecdsa_with_aes_256_cbc_sha = "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA"
-    tls_ecdhe_ecdsa_with_aes_128_cbc_sha = "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA"
-    tls_dhe_dss_with_aes_256_cbc_sha256 = "TLS_DHE_DSS_WITH_AES_256_CBC_SHA256"
-    tls_dhe_dss_with_aes_128_cbc_sha256 = "TLS_DHE_DSS_WITH_AES_128_CBC_SHA256"
-    tls_dhe_dss_with_aes_256_cbc_sha = "TLS_DHE_DSS_WITH_AES_256_CBC_SHA"
-    tls_dhe_dss_with_aes_128_cbc_sha = "TLS_DHE_DSS_WITH_AES_128_CBC_SHA"
-    tls_rsa_with_3_des_ede_cbc_sha = "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
-
-
-class ApplicationGatewayCustomErrorStatusCode(str, Enum):
-
-    http_status403 = "HttpStatus403"
-    http_status502 = "HttpStatus502"
-
-
-class ApplicationGatewayRequestRoutingRuleType(str, Enum):
-
-    basic = "Basic"
-    path_based_routing = "PathBasedRouting"
-
-
-class ApplicationGatewayRedirectType(str, Enum):
-
-    permanent = "Permanent"
-    found = "Found"
-    see_other = "SeeOther"
-    temporary = "Temporary"
-
-
-class ApplicationGatewayOperationalState(str, Enum):
-
-    stopped = "Stopped"
-    starting = "Starting"
-    running = "Running"
-    stopping = "Stopping"
-
-
-class ApplicationGatewayFirewallMode(str, Enum):
-
-    detection = "Detection"
-    prevention = "Prevention"
-
-
-class ResourceIdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
-    user_assigned = "UserAssigned"
-    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
-    none = "None"
-
-
 class ProvisioningState(str, Enum):
 
     succeeded = "Succeeded"
@@ -214,7 +22,6 @@ class ProvisioningState(str, Enum):
 
 class AzureFirewallRCActionType(str, Enum):
 
-    allow = "Allow"
     deny = "Deny"
 
 
@@ -346,6 +153,67 @@ class ExpressRoutePortsEncapsulation(str, Enum):
     qin_q = "QinQ"
 
 
+class SecurityRuleProtocol(str, Enum):
+
+    tcp = "Tcp"
+    udp = "Udp"
+    icmp = "Icmp"
+    esp = "Esp"
+    asterisk = "*"
+
+
+class SecurityRuleAccess(str, Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
+class SecurityRuleDirection(str, Enum):
+
+    inbound = "Inbound"
+    outbound = "Outbound"
+
+
+class IPAllocationMethod(str, Enum):
+
+    static = "Static"
+    dynamic = "Dynamic"
+
+
+class PublicIPAddressSkuName(str, Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+
+
+class IPVersion(str, Enum):
+
+    ipv4 = "IPv4"
+    ipv6 = "IPv6"
+
+
+class DdosSettingsProtectionCoverage(str, Enum):
+
+    basic = "Basic"
+    standard = "Standard"
+
+
+class TransportProtocol(str, Enum):
+
+    udp = "Udp"
+    tcp = "Tcp"
+    all = "All"
+
+
+class RouteNextHopType(str, Enum):
+
+    virtual_network_gateway = "VirtualNetworkGateway"
+    vnet_local = "VnetLocal"
+    internet = "Internet"
+    virtual_appliance = "VirtualAppliance"
+    none = "None"
+
+
 class LoadBalancerSkuName(str, Enum):
 
     basic = "Basic"
@@ -383,6 +251,14 @@ class NetworkOperationStatus(str, Enum):
     in_progress = "InProgress"
     succeeded = "Succeeded"
     failed = "Failed"
+
+
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    none = "None"
 
 
 class EffectiveSecurityRuleProtocol(str, Enum):
@@ -819,6 +695,120 @@ class WebApplicationFirewallAction(str, Enum):
     allow = "Allow"
     block = "Block"
     log = "Log"
+
+
+class ApplicationGatewaySkuName(str, Enum):
+
+    standard_small = "Standard_Small"
+    standard_medium = "Standard_Medium"
+    standard_large = "Standard_Large"
+    waf_medium = "WAF_Medium"
+    waf_large = "WAF_Large"
+    standard_v2 = "Standard_v2"
+    waf_v2 = "WAF_v2"
+
+
+class ApplicationGatewayTier(str, Enum):
+
+    standard = "Standard"
+    waf = "WAF"
+    standard_v2 = "Standard_v2"
+    waf_v2 = "WAF_v2"
+
+
+class ApplicationGatewaySslProtocol(str, Enum):
+
+    tl_sv1_0 = "TLSv1_0"
+    tl_sv1_1 = "TLSv1_1"
+    tl_sv1_2 = "TLSv1_2"
+
+
+class ApplicationGatewaySslPolicyType(str, Enum):
+
+    predefined = "Predefined"
+    custom = "Custom"
+
+
+class ApplicationGatewaySslPolicyName(str, Enum):
+
+    app_gw_ssl_policy20150501 = "AppGwSslPolicy20150501"
+    app_gw_ssl_policy20170401 = "AppGwSslPolicy20170401"
+    app_gw_ssl_policy20170401_s = "AppGwSslPolicy20170401S"
+
+
+class ApplicationGatewaySslCipherSuite(str, Enum):
+
+    tls_ecdhe_rsa_with_aes_256_cbc_sha384 = "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384"
+    tls_ecdhe_rsa_with_aes_128_cbc_sha256 = "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"
+    tls_ecdhe_rsa_with_aes_256_cbc_sha = "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA"
+    tls_ecdhe_rsa_with_aes_128_cbc_sha = "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA"
+    tls_dhe_rsa_with_aes_256_gcm_sha384 = "TLS_DHE_RSA_WITH_AES_256_GCM_SHA384"
+    tls_dhe_rsa_with_aes_128_gcm_sha256 = "TLS_DHE_RSA_WITH_AES_128_GCM_SHA256"
+    tls_dhe_rsa_with_aes_256_cbc_sha = "TLS_DHE_RSA_WITH_AES_256_CBC_SHA"
+    tls_dhe_rsa_with_aes_128_cbc_sha = "TLS_DHE_RSA_WITH_AES_128_CBC_SHA"
+    tls_rsa_with_aes_256_gcm_sha384 = "TLS_RSA_WITH_AES_256_GCM_SHA384"
+    tls_rsa_with_aes_128_gcm_sha256 = "TLS_RSA_WITH_AES_128_GCM_SHA256"
+    tls_rsa_with_aes_256_cbc_sha256 = "TLS_RSA_WITH_AES_256_CBC_SHA256"
+    tls_rsa_with_aes_128_cbc_sha256 = "TLS_RSA_WITH_AES_128_CBC_SHA256"
+    tls_rsa_with_aes_256_cbc_sha = "TLS_RSA_WITH_AES_256_CBC_SHA"
+    tls_rsa_with_aes_128_cbc_sha = "TLS_RSA_WITH_AES_128_CBC_SHA"
+    tls_ecdhe_ecdsa_with_aes_256_gcm_sha384 = "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
+    tls_ecdhe_ecdsa_with_aes_128_gcm_sha256 = "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
+    tls_ecdhe_ecdsa_with_aes_256_cbc_sha384 = "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384"
+    tls_ecdhe_ecdsa_with_aes_128_cbc_sha256 = "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256"
+    tls_ecdhe_ecdsa_with_aes_256_cbc_sha = "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA"
+    tls_ecdhe_ecdsa_with_aes_128_cbc_sha = "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA"
+    tls_dhe_dss_with_aes_256_cbc_sha256 = "TLS_DHE_DSS_WITH_AES_256_CBC_SHA256"
+    tls_dhe_dss_with_aes_128_cbc_sha256 = "TLS_DHE_DSS_WITH_AES_128_CBC_SHA256"
+    tls_dhe_dss_with_aes_256_cbc_sha = "TLS_DHE_DSS_WITH_AES_256_CBC_SHA"
+    tls_dhe_dss_with_aes_128_cbc_sha = "TLS_DHE_DSS_WITH_AES_128_CBC_SHA"
+    tls_rsa_with_3_des_ede_cbc_sha = "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
+
+
+class ApplicationGatewayOperationalState(str, Enum):
+
+    stopped = "Stopped"
+    starting = "Starting"
+    running = "Running"
+    stopping = "Stopping"
+
+
+class ApplicationGatewayProtocol(str, Enum):
+
+    http = "Http"
+    https = "Https"
+
+
+class ApplicationGatewayCookieBasedAffinity(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class ApplicationGatewayCustomErrorStatusCode(str, Enum):
+
+    http_status403 = "HttpStatus403"
+    http_status502 = "HttpStatus502"
+
+
+class ApplicationGatewayRequestRoutingRuleType(str, Enum):
+
+    basic = "Basic"
+    path_based_routing = "PathBasedRouting"
+
+
+class ApplicationGatewayRedirectType(str, Enum):
+
+    permanent = "Permanent"
+    found = "Found"
+    see_other = "SeeOther"
+    temporary = "Temporary"
+
+
+class ApplicationGatewayFirewallMode(str, Enum):
+
+    detection = "Detection"
+    prevention = "Prevention"
 
 
 class WebApplicationFirewallPolicyResourceState(str, Enum):

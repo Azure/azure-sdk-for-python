@@ -10,85 +10,11 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .application_gateway_probe_health_response_match_py3 import ApplicationGatewayProbeHealthResponseMatch
-    from .application_gateway_on_demand_probe_py3 import ApplicationGatewayOnDemandProbe
-    from .network_interface_tap_configuration_py3 import NetworkInterfaceTapConfiguration
-    from .sub_resource_py3 import SubResource
     from .application_security_group_py3 import ApplicationSecurityGroup
-    from .security_rule_py3 import SecurityRule
-    from .endpoint_service_py3 import EndpointService
-    from .interface_endpoint_py3 import InterfaceEndpoint
-    from .network_interface_dns_settings_py3 import NetworkInterfaceDnsSettings
-    from .network_interface_py3 import NetworkInterface
-    from .network_security_group_py3 import NetworkSecurityGroup
-    from .route_py3 import Route
-    from .route_table_py3 import RouteTable
-    from .service_endpoint_properties_format_py3 import ServiceEndpointPropertiesFormat
-    from .service_endpoint_policy_definition_py3 import ServiceEndpointPolicyDefinition
-    from .service_endpoint_policy_py3 import ServiceEndpointPolicy
-    from .public_ip_address_sku_py3 import PublicIPAddressSku
-    from .public_ip_address_dns_settings_py3 import PublicIPAddressDnsSettings
-    from .ddos_settings_py3 import DdosSettings
-    from .ip_tag_py3 import IpTag
-    from .public_ip_address_py3 import PublicIPAddress
-    from .ip_configuration_py3 import IPConfiguration
-    from .ip_configuration_profile_py3 import IPConfigurationProfile
-    from .resource_navigation_link_py3 import ResourceNavigationLink
-    from .service_association_link_py3 import ServiceAssociationLink
-    from .delegation_py3 import Delegation
-    from .subnet_py3 import Subnet
-    from .frontend_ip_configuration_py3 import FrontendIPConfiguration
-    from .virtual_network_tap_py3 import VirtualNetworkTap
-    from .backend_address_pool_py3 import BackendAddressPool
-    from .inbound_nat_rule_py3 import InboundNatRule
-    from .network_interface_ip_configuration_py3 import NetworkInterfaceIPConfiguration
-    from .application_gateway_backend_address_py3 import ApplicationGatewayBackendAddress
-    from .application_gateway_backend_address_pool_py3 import ApplicationGatewayBackendAddressPool
-    from .application_gateway_connection_draining_py3 import ApplicationGatewayConnectionDraining
-    from .application_gateway_backend_http_settings_py3 import ApplicationGatewayBackendHttpSettings
-    from .application_gateway_backend_health_server_py3 import ApplicationGatewayBackendHealthServer
-    from .application_gateway_backend_health_http_settings_py3 import ApplicationGatewayBackendHealthHttpSettings
-    from .application_gateway_backend_health_on_demand_py3 import ApplicationGatewayBackendHealthOnDemand
-    from .application_gateway_backend_health_pool_py3 import ApplicationGatewayBackendHealthPool
-    from .application_gateway_backend_health_py3 import ApplicationGatewayBackendHealth
-    from .application_gateway_sku_py3 import ApplicationGatewaySku
-    from .application_gateway_ssl_policy_py3 import ApplicationGatewaySslPolicy
-    from .application_gateway_ip_configuration_py3 import ApplicationGatewayIPConfiguration
-    from .application_gateway_authentication_certificate_py3 import ApplicationGatewayAuthenticationCertificate
-    from .application_gateway_trusted_root_certificate_py3 import ApplicationGatewayTrustedRootCertificate
-    from .application_gateway_ssl_certificate_py3 import ApplicationGatewaySslCertificate
-    from .application_gateway_frontend_ip_configuration_py3 import ApplicationGatewayFrontendIPConfiguration
-    from .application_gateway_frontend_port_py3 import ApplicationGatewayFrontendPort
-    from .application_gateway_custom_error_py3 import ApplicationGatewayCustomError
-    from .application_gateway_http_listener_py3 import ApplicationGatewayHttpListener
-    from .application_gateway_path_rule_py3 import ApplicationGatewayPathRule
-    from .application_gateway_probe_py3 import ApplicationGatewayProbe
-    from .application_gateway_request_routing_rule_py3 import ApplicationGatewayRequestRoutingRule
-    from .application_gateway_rewrite_rule_condition_py3 import ApplicationGatewayRewriteRuleCondition
-    from .application_gateway_header_configuration_py3 import ApplicationGatewayHeaderConfiguration
-    from .application_gateway_rewrite_rule_action_set_py3 import ApplicationGatewayRewriteRuleActionSet
-    from .application_gateway_rewrite_rule_py3 import ApplicationGatewayRewriteRule
-    from .application_gateway_rewrite_rule_set_py3 import ApplicationGatewayRewriteRuleSet
-    from .application_gateway_redirect_configuration_py3 import ApplicationGatewayRedirectConfiguration
-    from .application_gateway_url_path_map_py3 import ApplicationGatewayUrlPathMap
-    from .application_gateway_firewall_disabled_rule_group_py3 import ApplicationGatewayFirewallDisabledRuleGroup
-    from .application_gateway_firewall_exclusion_py3 import ApplicationGatewayFirewallExclusion
-    from .application_gateway_web_application_firewall_configuration_py3 import ApplicationGatewayWebApplicationFirewallConfiguration
-    from .application_gateway_autoscale_configuration_py3 import ApplicationGatewayAutoscaleConfiguration
-    from .managed_service_identity_user_assigned_identities_value_py3 import ManagedServiceIdentityUserAssignedIdentitiesValue
-    from .managed_service_identity_py3 import ManagedServiceIdentity
-    from .application_gateway_py3 import ApplicationGateway
-    from .application_gateway_firewall_rule_py3 import ApplicationGatewayFirewallRule
-    from .application_gateway_firewall_rule_group_py3 import ApplicationGatewayFirewallRuleGroup
-    from .application_gateway_firewall_rule_set_py3 import ApplicationGatewayFirewallRuleSet
-    from .application_gateway_available_waf_rule_sets_result_py3 import ApplicationGatewayAvailableWafRuleSetsResult
-    from .application_gateway_available_ssl_options_py3 import ApplicationGatewayAvailableSslOptions
-    from .application_gateway_ssl_predefined_policy_py3 import ApplicationGatewaySslPredefinedPolicy
     from .resource_py3 import Resource
-    from .error_details_py3 import ErrorDetails
-    from .error_py3 import Error, ErrorException
     from .tags_object_py3 import TagsObject
     from .available_delegation_py3 import AvailableDelegation
+    from .sub_resource_py3 import SubResource
     from .azure_firewall_ip_configuration_py3 import AzureFirewallIPConfiguration
     from .azure_firewall_rc_action_py3 import AzureFirewallRCAction
     from .azure_firewall_application_rule_protocol_py3 import AzureFirewallApplicationRuleProtocol
@@ -144,6 +70,36 @@ try:
     from .express_route_ports_location_py3 import ExpressRoutePortsLocation
     from .express_route_link_py3 import ExpressRouteLink
     from .express_route_port_py3 import ExpressRoutePort
+    from .endpoint_service_py3 import EndpointService
+    from .security_rule_py3 import SecurityRule
+    from .network_interface_tap_configuration_py3 import NetworkInterfaceTapConfiguration
+    from .public_ip_address_sku_py3 import PublicIPAddressSku
+    from .ip_configuration_py3 import IPConfiguration
+    from .public_ip_address_dns_settings_py3 import PublicIPAddressDnsSettings
+    from .ddos_settings_py3 import DdosSettings
+    from .ip_tag_py3 import IpTag
+    from .public_ip_address_py3 import PublicIPAddress
+    from .frontend_ip_configuration_py3 import FrontendIPConfiguration
+    from .virtual_network_tap_py3 import VirtualNetworkTap
+    from .application_gateway_backend_address_py3 import ApplicationGatewayBackendAddress
+    from .application_gateway_backend_address_pool_py3 import ApplicationGatewayBackendAddressPool
+    from .backend_address_pool_py3 import BackendAddressPool
+    from .inbound_nat_rule_py3 import InboundNatRule
+    from .network_interface_ip_configuration_py3 import NetworkInterfaceIPConfiguration
+    from .network_interface_dns_settings_py3 import NetworkInterfaceDnsSettings
+    from .network_interface_py3 import NetworkInterface
+    from .network_security_group_py3 import NetworkSecurityGroup
+    from .route_py3 import Route
+    from .route_table_py3 import RouteTable
+    from .service_endpoint_properties_format_py3 import ServiceEndpointPropertiesFormat
+    from .service_endpoint_policy_definition_py3 import ServiceEndpointPolicyDefinition
+    from .service_endpoint_policy_py3 import ServiceEndpointPolicy
+    from .ip_configuration_profile_py3 import IPConfigurationProfile
+    from .resource_navigation_link_py3 import ResourceNavigationLink
+    from .service_association_link_py3 import ServiceAssociationLink
+    from .delegation_py3 import Delegation
+    from .subnet_py3 import Subnet
+    from .interface_endpoint_py3 import InterfaceEndpoint
     from .load_balancer_sku_py3 import LoadBalancerSku
     from .load_balancing_rule_py3 import LoadBalancingRule
     from .probe_py3 import Probe
@@ -152,7 +108,11 @@ try:
     from .load_balancer_py3 import LoadBalancer
     from .nat_gateway_sku_py3 import NatGatewaySku
     from .nat_gateway_py3 import NatGateway
+    from .error_details_py3 import ErrorDetails
+    from .error_py3 import Error, ErrorException
     from .azure_async_operation_result_py3 import AzureAsyncOperationResult
+    from .managed_service_identity_user_assigned_identities_value_py3 import ManagedServiceIdentityUserAssignedIdentitiesValue
+    from .managed_service_identity_py3 import ManagedServiceIdentity
     from .effective_network_security_group_association_py3 import EffectiveNetworkSecurityGroupAssociation
     from .effective_network_security_rule_py3 import EffectiveNetworkSecurityRule
     from .effective_network_security_group_py3 import EffectiveNetworkSecurityGroup
@@ -305,87 +265,41 @@ try:
     from .match_variable_py3 import MatchVariable
     from .match_condition_py3 import MatchCondition
     from .web_application_firewall_custom_rule_py3 import WebApplicationFirewallCustomRule
+    from .application_gateway_sku_py3 import ApplicationGatewaySku
+    from .application_gateway_ssl_policy_py3 import ApplicationGatewaySslPolicy
+    from .application_gateway_ip_configuration_py3 import ApplicationGatewayIPConfiguration
+    from .application_gateway_authentication_certificate_py3 import ApplicationGatewayAuthenticationCertificate
+    from .application_gateway_trusted_root_certificate_py3 import ApplicationGatewayTrustedRootCertificate
+    from .application_gateway_ssl_certificate_py3 import ApplicationGatewaySslCertificate
+    from .application_gateway_frontend_ip_configuration_py3 import ApplicationGatewayFrontendIPConfiguration
+    from .application_gateway_frontend_port_py3 import ApplicationGatewayFrontendPort
+    from .application_gateway_probe_health_response_match_py3 import ApplicationGatewayProbeHealthResponseMatch
+    from .application_gateway_probe_py3 import ApplicationGatewayProbe
+    from .application_gateway_connection_draining_py3 import ApplicationGatewayConnectionDraining
+    from .application_gateway_backend_http_settings_py3 import ApplicationGatewayBackendHttpSettings
+    from .application_gateway_custom_error_py3 import ApplicationGatewayCustomError
+    from .application_gateway_http_listener_py3 import ApplicationGatewayHttpListener
+    from .application_gateway_path_rule_py3 import ApplicationGatewayPathRule
+    from .application_gateway_url_path_map_py3 import ApplicationGatewayUrlPathMap
+    from .application_gateway_request_routing_rule_py3 import ApplicationGatewayRequestRoutingRule
+    from .application_gateway_rewrite_rule_condition_py3 import ApplicationGatewayRewriteRuleCondition
+    from .application_gateway_header_configuration_py3 import ApplicationGatewayHeaderConfiguration
+    from .application_gateway_rewrite_rule_action_set_py3 import ApplicationGatewayRewriteRuleActionSet
+    from .application_gateway_rewrite_rule_py3 import ApplicationGatewayRewriteRule
+    from .application_gateway_rewrite_rule_set_py3 import ApplicationGatewayRewriteRuleSet
+    from .application_gateway_redirect_configuration_py3 import ApplicationGatewayRedirectConfiguration
+    from .application_gateway_firewall_disabled_rule_group_py3 import ApplicationGatewayFirewallDisabledRuleGroup
+    from .application_gateway_firewall_exclusion_py3 import ApplicationGatewayFirewallExclusion
+    from .application_gateway_web_application_firewall_configuration_py3 import ApplicationGatewayWebApplicationFirewallConfiguration
+    from .application_gateway_autoscale_configuration_py3 import ApplicationGatewayAutoscaleConfiguration
+    from .application_gateway_py3 import ApplicationGateway
     from .web_application_firewall_policy_py3 import WebApplicationFirewallPolicy
 except (SyntaxError, ImportError):
-    from .application_gateway_probe_health_response_match import ApplicationGatewayProbeHealthResponseMatch
-    from .application_gateway_on_demand_probe import ApplicationGatewayOnDemandProbe
-    from .network_interface_tap_configuration import NetworkInterfaceTapConfiguration
-    from .sub_resource import SubResource
     from .application_security_group import ApplicationSecurityGroup
-    from .security_rule import SecurityRule
-    from .endpoint_service import EndpointService
-    from .interface_endpoint import InterfaceEndpoint
-    from .network_interface_dns_settings import NetworkInterfaceDnsSettings
-    from .network_interface import NetworkInterface
-    from .network_security_group import NetworkSecurityGroup
-    from .route import Route
-    from .route_table import RouteTable
-    from .service_endpoint_properties_format import ServiceEndpointPropertiesFormat
-    from .service_endpoint_policy_definition import ServiceEndpointPolicyDefinition
-    from .service_endpoint_policy import ServiceEndpointPolicy
-    from .public_ip_address_sku import PublicIPAddressSku
-    from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
-    from .ddos_settings import DdosSettings
-    from .ip_tag import IpTag
-    from .public_ip_address import PublicIPAddress
-    from .ip_configuration import IPConfiguration
-    from .ip_configuration_profile import IPConfigurationProfile
-    from .resource_navigation_link import ResourceNavigationLink
-    from .service_association_link import ServiceAssociationLink
-    from .delegation import Delegation
-    from .subnet import Subnet
-    from .frontend_ip_configuration import FrontendIPConfiguration
-    from .virtual_network_tap import VirtualNetworkTap
-    from .backend_address_pool import BackendAddressPool
-    from .inbound_nat_rule import InboundNatRule
-    from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
-    from .application_gateway_backend_address import ApplicationGatewayBackendAddress
-    from .application_gateway_backend_address_pool import ApplicationGatewayBackendAddressPool
-    from .application_gateway_connection_draining import ApplicationGatewayConnectionDraining
-    from .application_gateway_backend_http_settings import ApplicationGatewayBackendHttpSettings
-    from .application_gateway_backend_health_server import ApplicationGatewayBackendHealthServer
-    from .application_gateway_backend_health_http_settings import ApplicationGatewayBackendHealthHttpSettings
-    from .application_gateway_backend_health_on_demand import ApplicationGatewayBackendHealthOnDemand
-    from .application_gateway_backend_health_pool import ApplicationGatewayBackendHealthPool
-    from .application_gateway_backend_health import ApplicationGatewayBackendHealth
-    from .application_gateway_sku import ApplicationGatewaySku
-    from .application_gateway_ssl_policy import ApplicationGatewaySslPolicy
-    from .application_gateway_ip_configuration import ApplicationGatewayIPConfiguration
-    from .application_gateway_authentication_certificate import ApplicationGatewayAuthenticationCertificate
-    from .application_gateway_trusted_root_certificate import ApplicationGatewayTrustedRootCertificate
-    from .application_gateway_ssl_certificate import ApplicationGatewaySslCertificate
-    from .application_gateway_frontend_ip_configuration import ApplicationGatewayFrontendIPConfiguration
-    from .application_gateway_frontend_port import ApplicationGatewayFrontendPort
-    from .application_gateway_custom_error import ApplicationGatewayCustomError
-    from .application_gateway_http_listener import ApplicationGatewayHttpListener
-    from .application_gateway_path_rule import ApplicationGatewayPathRule
-    from .application_gateway_probe import ApplicationGatewayProbe
-    from .application_gateway_request_routing_rule import ApplicationGatewayRequestRoutingRule
-    from .application_gateway_rewrite_rule_condition import ApplicationGatewayRewriteRuleCondition
-    from .application_gateway_header_configuration import ApplicationGatewayHeaderConfiguration
-    from .application_gateway_rewrite_rule_action_set import ApplicationGatewayRewriteRuleActionSet
-    from .application_gateway_rewrite_rule import ApplicationGatewayRewriteRule
-    from .application_gateway_rewrite_rule_set import ApplicationGatewayRewriteRuleSet
-    from .application_gateway_redirect_configuration import ApplicationGatewayRedirectConfiguration
-    from .application_gateway_url_path_map import ApplicationGatewayUrlPathMap
-    from .application_gateway_firewall_disabled_rule_group import ApplicationGatewayFirewallDisabledRuleGroup
-    from .application_gateway_firewall_exclusion import ApplicationGatewayFirewallExclusion
-    from .application_gateway_web_application_firewall_configuration import ApplicationGatewayWebApplicationFirewallConfiguration
-    from .application_gateway_autoscale_configuration import ApplicationGatewayAutoscaleConfiguration
-    from .managed_service_identity_user_assigned_identities_value import ManagedServiceIdentityUserAssignedIdentitiesValue
-    from .managed_service_identity import ManagedServiceIdentity
-    from .application_gateway import ApplicationGateway
-    from .application_gateway_firewall_rule import ApplicationGatewayFirewallRule
-    from .application_gateway_firewall_rule_group import ApplicationGatewayFirewallRuleGroup
-    from .application_gateway_firewall_rule_set import ApplicationGatewayFirewallRuleSet
-    from .application_gateway_available_waf_rule_sets_result import ApplicationGatewayAvailableWafRuleSetsResult
-    from .application_gateway_available_ssl_options import ApplicationGatewayAvailableSslOptions
-    from .application_gateway_ssl_predefined_policy import ApplicationGatewaySslPredefinedPolicy
     from .resource import Resource
-    from .error_details import ErrorDetails
-    from .error import Error, ErrorException
     from .tags_object import TagsObject
     from .available_delegation import AvailableDelegation
+    from .sub_resource import SubResource
     from .azure_firewall_ip_configuration import AzureFirewallIPConfiguration
     from .azure_firewall_rc_action import AzureFirewallRCAction
     from .azure_firewall_application_rule_protocol import AzureFirewallApplicationRuleProtocol
@@ -441,6 +355,36 @@ except (SyntaxError, ImportError):
     from .express_route_ports_location import ExpressRoutePortsLocation
     from .express_route_link import ExpressRouteLink
     from .express_route_port import ExpressRoutePort
+    from .endpoint_service import EndpointService
+    from .security_rule import SecurityRule
+    from .network_interface_tap_configuration import NetworkInterfaceTapConfiguration
+    from .public_ip_address_sku import PublicIPAddressSku
+    from .ip_configuration import IPConfiguration
+    from .public_ip_address_dns_settings import PublicIPAddressDnsSettings
+    from .ddos_settings import DdosSettings
+    from .ip_tag import IpTag
+    from .public_ip_address import PublicIPAddress
+    from .frontend_ip_configuration import FrontendIPConfiguration
+    from .virtual_network_tap import VirtualNetworkTap
+    from .application_gateway_backend_address import ApplicationGatewayBackendAddress
+    from .application_gateway_backend_address_pool import ApplicationGatewayBackendAddressPool
+    from .backend_address_pool import BackendAddressPool
+    from .inbound_nat_rule import InboundNatRule
+    from .network_interface_ip_configuration import NetworkInterfaceIPConfiguration
+    from .network_interface_dns_settings import NetworkInterfaceDnsSettings
+    from .network_interface import NetworkInterface
+    from .network_security_group import NetworkSecurityGroup
+    from .route import Route
+    from .route_table import RouteTable
+    from .service_endpoint_properties_format import ServiceEndpointPropertiesFormat
+    from .service_endpoint_policy_definition import ServiceEndpointPolicyDefinition
+    from .service_endpoint_policy import ServiceEndpointPolicy
+    from .ip_configuration_profile import IPConfigurationProfile
+    from .resource_navigation_link import ResourceNavigationLink
+    from .service_association_link import ServiceAssociationLink
+    from .delegation import Delegation
+    from .subnet import Subnet
+    from .interface_endpoint import InterfaceEndpoint
     from .load_balancer_sku import LoadBalancerSku
     from .load_balancing_rule import LoadBalancingRule
     from .probe import Probe
@@ -449,7 +393,11 @@ except (SyntaxError, ImportError):
     from .load_balancer import LoadBalancer
     from .nat_gateway_sku import NatGatewaySku
     from .nat_gateway import NatGateway
+    from .error_details import ErrorDetails
+    from .error import Error, ErrorException
     from .azure_async_operation_result import AzureAsyncOperationResult
+    from .managed_service_identity_user_assigned_identities_value import ManagedServiceIdentityUserAssignedIdentitiesValue
+    from .managed_service_identity import ManagedServiceIdentity
     from .effective_network_security_group_association import EffectiveNetworkSecurityGroupAssociation
     from .effective_network_security_rule import EffectiveNetworkSecurityRule
     from .effective_network_security_group import EffectiveNetworkSecurityGroup
@@ -602,9 +550,35 @@ except (SyntaxError, ImportError):
     from .match_variable import MatchVariable
     from .match_condition import MatchCondition
     from .web_application_firewall_custom_rule import WebApplicationFirewallCustomRule
+    from .application_gateway_sku import ApplicationGatewaySku
+    from .application_gateway_ssl_policy import ApplicationGatewaySslPolicy
+    from .application_gateway_ip_configuration import ApplicationGatewayIPConfiguration
+    from .application_gateway_authentication_certificate import ApplicationGatewayAuthenticationCertificate
+    from .application_gateway_trusted_root_certificate import ApplicationGatewayTrustedRootCertificate
+    from .application_gateway_ssl_certificate import ApplicationGatewaySslCertificate
+    from .application_gateway_frontend_ip_configuration import ApplicationGatewayFrontendIPConfiguration
+    from .application_gateway_frontend_port import ApplicationGatewayFrontendPort
+    from .application_gateway_probe_health_response_match import ApplicationGatewayProbeHealthResponseMatch
+    from .application_gateway_probe import ApplicationGatewayProbe
+    from .application_gateway_connection_draining import ApplicationGatewayConnectionDraining
+    from .application_gateway_backend_http_settings import ApplicationGatewayBackendHttpSettings
+    from .application_gateway_custom_error import ApplicationGatewayCustomError
+    from .application_gateway_http_listener import ApplicationGatewayHttpListener
+    from .application_gateway_path_rule import ApplicationGatewayPathRule
+    from .application_gateway_url_path_map import ApplicationGatewayUrlPathMap
+    from .application_gateway_request_routing_rule import ApplicationGatewayRequestRoutingRule
+    from .application_gateway_rewrite_rule_condition import ApplicationGatewayRewriteRuleCondition
+    from .application_gateway_header_configuration import ApplicationGatewayHeaderConfiguration
+    from .application_gateway_rewrite_rule_action_set import ApplicationGatewayRewriteRuleActionSet
+    from .application_gateway_rewrite_rule import ApplicationGatewayRewriteRule
+    from .application_gateway_rewrite_rule_set import ApplicationGatewayRewriteRuleSet
+    from .application_gateway_redirect_configuration import ApplicationGatewayRedirectConfiguration
+    from .application_gateway_firewall_disabled_rule_group import ApplicationGatewayFirewallDisabledRuleGroup
+    from .application_gateway_firewall_exclusion import ApplicationGatewayFirewallExclusion
+    from .application_gateway_web_application_firewall_configuration import ApplicationGatewayWebApplicationFirewallConfiguration
+    from .application_gateway_autoscale_configuration import ApplicationGatewayAutoscaleConfiguration
+    from .application_gateway import ApplicationGateway
     from .web_application_firewall_policy import WebApplicationFirewallPolicy
-from .application_gateway_paged import ApplicationGatewayPaged
-from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
 from .application_security_group_paged import ApplicationSecurityGroupPaged
 from .available_delegation_paged import AvailableDelegationPaged
 from .azure_firewall_paged import AzureFirewallPaged
@@ -670,30 +644,6 @@ from .p2_svpn_server_configuration_paged import P2SVpnServerConfigurationPaged
 from .p2_svpn_gateway_paged import P2SVpnGatewayPaged
 from .web_application_firewall_policy_paged import WebApplicationFirewallPolicyPaged
 from .network_management_client_enums import (
-    ApplicationGatewayProtocol,
-    IPAllocationMethod,
-    SecurityRuleProtocol,
-    SecurityRuleAccess,
-    SecurityRuleDirection,
-    RouteNextHopType,
-    PublicIPAddressSkuName,
-    IPVersion,
-    DdosSettingsProtectionCoverage,
-    TransportProtocol,
-    ApplicationGatewayCookieBasedAffinity,
-    ApplicationGatewayBackendHealthServerHealth,
-    ApplicationGatewaySkuName,
-    ApplicationGatewayTier,
-    ApplicationGatewaySslProtocol,
-    ApplicationGatewaySslPolicyType,
-    ApplicationGatewaySslPolicyName,
-    ApplicationGatewaySslCipherSuite,
-    ApplicationGatewayCustomErrorStatusCode,
-    ApplicationGatewayRequestRoutingRuleType,
-    ApplicationGatewayRedirectType,
-    ApplicationGatewayOperationalState,
-    ApplicationGatewayFirewallMode,
-    ResourceIdentityType,
     ProvisioningState,
     AzureFirewallRCActionType,
     AzureFirewallApplicationRuleProtocolType,
@@ -715,12 +665,22 @@ from .network_management_client_enums import (
     ExpressRouteLinkConnectorType,
     ExpressRouteLinkAdminState,
     ExpressRoutePortsEncapsulation,
+    SecurityRuleProtocol,
+    SecurityRuleAccess,
+    SecurityRuleDirection,
+    IPAllocationMethod,
+    PublicIPAddressSkuName,
+    IPVersion,
+    DdosSettingsProtectionCoverage,
+    TransportProtocol,
+    RouteNextHopType,
     LoadBalancerSkuName,
     LoadDistribution,
     ProbeProtocol,
     LoadBalancerOutboundRuleProtocol,
     NatGatewaySkuName,
     NetworkOperationStatus,
+    ResourceIdentityType,
     EffectiveSecurityRuleProtocol,
     EffectiveRouteSource,
     EffectiveRouteState,
@@ -774,89 +734,28 @@ from .network_management_client_enums import (
     WebApplicationFirewallOperator,
     WebApplicationFirewallTransform,
     WebApplicationFirewallAction,
+    ApplicationGatewaySkuName,
+    ApplicationGatewayTier,
+    ApplicationGatewaySslProtocol,
+    ApplicationGatewaySslPolicyType,
+    ApplicationGatewaySslPolicyName,
+    ApplicationGatewaySslCipherSuite,
+    ApplicationGatewayOperationalState,
+    ApplicationGatewayProtocol,
+    ApplicationGatewayCookieBasedAffinity,
+    ApplicationGatewayCustomErrorStatusCode,
+    ApplicationGatewayRequestRoutingRuleType,
+    ApplicationGatewayRedirectType,
+    ApplicationGatewayFirewallMode,
     WebApplicationFirewallPolicyResourceState,
 )
 
 __all__ = [
-    'ApplicationGatewayProbeHealthResponseMatch',
-    'ApplicationGatewayOnDemandProbe',
-    'NetworkInterfaceTapConfiguration',
-    'SubResource',
     'ApplicationSecurityGroup',
-    'SecurityRule',
-    'EndpointService',
-    'InterfaceEndpoint',
-    'NetworkInterfaceDnsSettings',
-    'NetworkInterface',
-    'NetworkSecurityGroup',
-    'Route',
-    'RouteTable',
-    'ServiceEndpointPropertiesFormat',
-    'ServiceEndpointPolicyDefinition',
-    'ServiceEndpointPolicy',
-    'PublicIPAddressSku',
-    'PublicIPAddressDnsSettings',
-    'DdosSettings',
-    'IpTag',
-    'PublicIPAddress',
-    'IPConfiguration',
-    'IPConfigurationProfile',
-    'ResourceNavigationLink',
-    'ServiceAssociationLink',
-    'Delegation',
-    'Subnet',
-    'FrontendIPConfiguration',
-    'VirtualNetworkTap',
-    'BackendAddressPool',
-    'InboundNatRule',
-    'NetworkInterfaceIPConfiguration',
-    'ApplicationGatewayBackendAddress',
-    'ApplicationGatewayBackendAddressPool',
-    'ApplicationGatewayConnectionDraining',
-    'ApplicationGatewayBackendHttpSettings',
-    'ApplicationGatewayBackendHealthServer',
-    'ApplicationGatewayBackendHealthHttpSettings',
-    'ApplicationGatewayBackendHealthOnDemand',
-    'ApplicationGatewayBackendHealthPool',
-    'ApplicationGatewayBackendHealth',
-    'ApplicationGatewaySku',
-    'ApplicationGatewaySslPolicy',
-    'ApplicationGatewayIPConfiguration',
-    'ApplicationGatewayAuthenticationCertificate',
-    'ApplicationGatewayTrustedRootCertificate',
-    'ApplicationGatewaySslCertificate',
-    'ApplicationGatewayFrontendIPConfiguration',
-    'ApplicationGatewayFrontendPort',
-    'ApplicationGatewayCustomError',
-    'ApplicationGatewayHttpListener',
-    'ApplicationGatewayPathRule',
-    'ApplicationGatewayProbe',
-    'ApplicationGatewayRequestRoutingRule',
-    'ApplicationGatewayRewriteRuleCondition',
-    'ApplicationGatewayHeaderConfiguration',
-    'ApplicationGatewayRewriteRuleActionSet',
-    'ApplicationGatewayRewriteRule',
-    'ApplicationGatewayRewriteRuleSet',
-    'ApplicationGatewayRedirectConfiguration',
-    'ApplicationGatewayUrlPathMap',
-    'ApplicationGatewayFirewallDisabledRuleGroup',
-    'ApplicationGatewayFirewallExclusion',
-    'ApplicationGatewayWebApplicationFirewallConfiguration',
-    'ApplicationGatewayAutoscaleConfiguration',
-    'ManagedServiceIdentityUserAssignedIdentitiesValue',
-    'ManagedServiceIdentity',
-    'ApplicationGateway',
-    'ApplicationGatewayFirewallRule',
-    'ApplicationGatewayFirewallRuleGroup',
-    'ApplicationGatewayFirewallRuleSet',
-    'ApplicationGatewayAvailableWafRuleSetsResult',
-    'ApplicationGatewayAvailableSslOptions',
-    'ApplicationGatewaySslPredefinedPolicy',
     'Resource',
-    'ErrorDetails',
-    'Error', 'ErrorException',
     'TagsObject',
     'AvailableDelegation',
+    'SubResource',
     'AzureFirewallIPConfiguration',
     'AzureFirewallRCAction',
     'AzureFirewallApplicationRuleProtocol',
@@ -912,6 +811,36 @@ __all__ = [
     'ExpressRoutePortsLocation',
     'ExpressRouteLink',
     'ExpressRoutePort',
+    'EndpointService',
+    'SecurityRule',
+    'NetworkInterfaceTapConfiguration',
+    'PublicIPAddressSku',
+    'IPConfiguration',
+    'PublicIPAddressDnsSettings',
+    'DdosSettings',
+    'IpTag',
+    'PublicIPAddress',
+    'FrontendIPConfiguration',
+    'VirtualNetworkTap',
+    'ApplicationGatewayBackendAddress',
+    'ApplicationGatewayBackendAddressPool',
+    'BackendAddressPool',
+    'InboundNatRule',
+    'NetworkInterfaceIPConfiguration',
+    'NetworkInterfaceDnsSettings',
+    'NetworkInterface',
+    'NetworkSecurityGroup',
+    'Route',
+    'RouteTable',
+    'ServiceEndpointPropertiesFormat',
+    'ServiceEndpointPolicyDefinition',
+    'ServiceEndpointPolicy',
+    'IPConfigurationProfile',
+    'ResourceNavigationLink',
+    'ServiceAssociationLink',
+    'Delegation',
+    'Subnet',
+    'InterfaceEndpoint',
     'LoadBalancerSku',
     'LoadBalancingRule',
     'Probe',
@@ -920,7 +849,11 @@ __all__ = [
     'LoadBalancer',
     'NatGatewaySku',
     'NatGateway',
+    'ErrorDetails',
+    'Error', 'ErrorException',
     'AzureAsyncOperationResult',
+    'ManagedServiceIdentityUserAssignedIdentitiesValue',
+    'ManagedServiceIdentity',
     'EffectiveNetworkSecurityGroupAssociation',
     'EffectiveNetworkSecurityRule',
     'EffectiveNetworkSecurityGroup',
@@ -1073,9 +1006,35 @@ __all__ = [
     'MatchVariable',
     'MatchCondition',
     'WebApplicationFirewallCustomRule',
+    'ApplicationGatewaySku',
+    'ApplicationGatewaySslPolicy',
+    'ApplicationGatewayIPConfiguration',
+    'ApplicationGatewayAuthenticationCertificate',
+    'ApplicationGatewayTrustedRootCertificate',
+    'ApplicationGatewaySslCertificate',
+    'ApplicationGatewayFrontendIPConfiguration',
+    'ApplicationGatewayFrontendPort',
+    'ApplicationGatewayProbeHealthResponseMatch',
+    'ApplicationGatewayProbe',
+    'ApplicationGatewayConnectionDraining',
+    'ApplicationGatewayBackendHttpSettings',
+    'ApplicationGatewayCustomError',
+    'ApplicationGatewayHttpListener',
+    'ApplicationGatewayPathRule',
+    'ApplicationGatewayUrlPathMap',
+    'ApplicationGatewayRequestRoutingRule',
+    'ApplicationGatewayRewriteRuleCondition',
+    'ApplicationGatewayHeaderConfiguration',
+    'ApplicationGatewayRewriteRuleActionSet',
+    'ApplicationGatewayRewriteRule',
+    'ApplicationGatewayRewriteRuleSet',
+    'ApplicationGatewayRedirectConfiguration',
+    'ApplicationGatewayFirewallDisabledRuleGroup',
+    'ApplicationGatewayFirewallExclusion',
+    'ApplicationGatewayWebApplicationFirewallConfiguration',
+    'ApplicationGatewayAutoscaleConfiguration',
+    'ApplicationGateway',
     'WebApplicationFirewallPolicy',
-    'ApplicationGatewayPaged',
-    'ApplicationGatewaySslPredefinedPolicyPaged',
     'ApplicationSecurityGroupPaged',
     'AvailableDelegationPaged',
     'AzureFirewallPaged',
@@ -1140,30 +1099,6 @@ __all__ = [
     'P2SVpnServerConfigurationPaged',
     'P2SVpnGatewayPaged',
     'WebApplicationFirewallPolicyPaged',
-    'ApplicationGatewayProtocol',
-    'IPAllocationMethod',
-    'SecurityRuleProtocol',
-    'SecurityRuleAccess',
-    'SecurityRuleDirection',
-    'RouteNextHopType',
-    'PublicIPAddressSkuName',
-    'IPVersion',
-    'DdosSettingsProtectionCoverage',
-    'TransportProtocol',
-    'ApplicationGatewayCookieBasedAffinity',
-    'ApplicationGatewayBackendHealthServerHealth',
-    'ApplicationGatewaySkuName',
-    'ApplicationGatewayTier',
-    'ApplicationGatewaySslProtocol',
-    'ApplicationGatewaySslPolicyType',
-    'ApplicationGatewaySslPolicyName',
-    'ApplicationGatewaySslCipherSuite',
-    'ApplicationGatewayCustomErrorStatusCode',
-    'ApplicationGatewayRequestRoutingRuleType',
-    'ApplicationGatewayRedirectType',
-    'ApplicationGatewayOperationalState',
-    'ApplicationGatewayFirewallMode',
-    'ResourceIdentityType',
     'ProvisioningState',
     'AzureFirewallRCActionType',
     'AzureFirewallApplicationRuleProtocolType',
@@ -1185,12 +1120,22 @@ __all__ = [
     'ExpressRouteLinkConnectorType',
     'ExpressRouteLinkAdminState',
     'ExpressRoutePortsEncapsulation',
+    'SecurityRuleProtocol',
+    'SecurityRuleAccess',
+    'SecurityRuleDirection',
+    'IPAllocationMethod',
+    'PublicIPAddressSkuName',
+    'IPVersion',
+    'DdosSettingsProtectionCoverage',
+    'TransportProtocol',
+    'RouteNextHopType',
     'LoadBalancerSkuName',
     'LoadDistribution',
     'ProbeProtocol',
     'LoadBalancerOutboundRuleProtocol',
     'NatGatewaySkuName',
     'NetworkOperationStatus',
+    'ResourceIdentityType',
     'EffectiveSecurityRuleProtocol',
     'EffectiveRouteSource',
     'EffectiveRouteState',
@@ -1244,5 +1189,18 @@ __all__ = [
     'WebApplicationFirewallOperator',
     'WebApplicationFirewallTransform',
     'WebApplicationFirewallAction',
+    'ApplicationGatewaySkuName',
+    'ApplicationGatewayTier',
+    'ApplicationGatewaySslProtocol',
+    'ApplicationGatewaySslPolicyType',
+    'ApplicationGatewaySslPolicyName',
+    'ApplicationGatewaySslCipherSuite',
+    'ApplicationGatewayOperationalState',
+    'ApplicationGatewayProtocol',
+    'ApplicationGatewayCookieBasedAffinity',
+    'ApplicationGatewayCustomErrorStatusCode',
+    'ApplicationGatewayRequestRoutingRuleType',
+    'ApplicationGatewayRedirectType',
+    'ApplicationGatewayFirewallMode',
     'WebApplicationFirewallPolicyResourceState',
 ]

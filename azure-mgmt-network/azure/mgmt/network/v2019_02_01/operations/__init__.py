@@ -9,7 +9,6 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .application_gateways_operations import ApplicationGatewaysOperations
 from .application_security_groups_operations import ApplicationSecurityGroupsOperations
 from .available_delegations_operations import AvailableDelegationsOperations
 from .available_resource_group_delegations_operations import AvailableResourceGroupDelegationsOperations
@@ -82,7 +81,6 @@ from .p2s_vpn_gateways_operations import P2sVpnGatewaysOperations
 from .web_application_firewall_policies_operations import WebApplicationFirewallPoliciesOperations
 
 __all__ = [
-    'ApplicationGatewaysOperations',
     'ApplicationSecurityGroupsOperations',
     'AvailableDelegationsOperations',
     'AvailableResourceGroupDelegationsOperations',
