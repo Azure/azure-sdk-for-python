@@ -168,8 +168,8 @@ class BillingSubscriptionOperations(object):
         :type invoice_section_name: str
         :param billing_subscription_name: Billing Subscription Id.
         :type billing_subscription_name: str
-        :param destination_invoice_section_id: The destination
-         invoiceSectionName.
+        :param destination_invoice_section_id: The destination invoice section
+         id.
         :type destination_invoice_section_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the

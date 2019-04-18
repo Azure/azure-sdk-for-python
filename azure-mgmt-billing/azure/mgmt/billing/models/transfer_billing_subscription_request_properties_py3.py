@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class TransferBillingSubscriptionRequestProperties(Model):
     """Request parameters to transfer billing subscription.
 
-    :param destination_invoice_section_id: The destination invoiceSectionName.
+    :param destination_invoice_section_id: The destination invoice section id.
     :type destination_invoice_section_id: str
     """
 
