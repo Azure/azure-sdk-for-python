@@ -50,6 +50,9 @@ class VpnConnection(SubResource):
     :type enable_rate_limiting: bool
     :param enable_internet_security: Enable internet security
     :type enable_internet_security: bool
+    :param use_local_azure_ip_address: Use local azure ip to initiate
+     connection
+    :type use_local_azure_ip_address: bool
     :param provisioning_state: The provisioning state of the resource.
      Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :type provisioning_state: str or
@@ -82,6 +85,7 @@ class VpnConnection(SubResource):
         'ipsec_policies': {'key': 'properties.ipsecPolicies', 'type': '[IpsecPolicy]'},
         'enable_rate_limiting': {'key': 'properties.enableRateLimiting', 'type': 'bool'},
         'enable_internet_security': {'key': 'properties.enableInternetSecurity', 'type': 'bool'},
+        'use_local_azure_ip_address': {'key': 'properties.useLocalAzureIpAddress', 'type': 'bool'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -101,6 +105,7 @@ class VpnConnection(SubResource):
         self.ipsec_policies = kwargs.get('ipsec_policies', None)
         self.enable_rate_limiting = kwargs.get('enable_rate_limiting', None)
         self.enable_internet_security = kwargs.get('enable_internet_security', None)
+        self.use_local_azure_ip_address = kwargs.get('use_local_azure_ip_address', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.name = kwargs.get('name', None)
         self.etag = None
