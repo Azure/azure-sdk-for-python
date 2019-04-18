@@ -168,7 +168,11 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
         else:
             authority_url = authority_url + '/' + config_dict['tenantId']
 
-        context = adal.AuthenticationContext(authority_url, api_version=None)
+        context = adal.AuthenticationContext(
+            authority_url,
+            api_version=None,
+            validate_authority=not is_adfs
+        )
         parameters['credentials'] = AdalAuthentication(
             context.acquire_token_with_client_credentials,
             resource,
