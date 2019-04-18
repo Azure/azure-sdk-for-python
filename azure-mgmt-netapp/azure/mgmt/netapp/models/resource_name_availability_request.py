@@ -25,7 +25,7 @@ class ResourceNameAvailabilityRequest(Model):
      'Microsoft.NetApp/netAppAccount/capacityPools/volumes',
      'Microsoft.NetApp/netAppAccount/capacityPools/volumes/snapshots'
     :type type: str or ~azure.mgmt.netapp.models.CheckNameResourceTypes
-    :param resource_group: Required. Is fully qualified domain name.
+    :param resource_group: Required. Resource group name.
     :type resource_group: str
     """
 
