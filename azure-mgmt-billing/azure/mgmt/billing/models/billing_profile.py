@@ -28,8 +28,8 @@ class BillingProfile(Resource):
     :type display_name: str
     :param po_number: Purchase order number.
     :type po_number: str
-    :param billing_address: Billing address.
-    :type billing_address: ~azure.mgmt.billing.models.Address
+    :param address: Billing address.
+    :type address: ~azure.mgmt.billing.models.Address
     :ivar invoice_email_opt_in: If the billing profile is opted in to receive
      invoices via email.
     :vartype invoice_email_opt_in: bool
@@ -63,7 +63,7 @@ class BillingProfile(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'po_number': {'key': 'properties.poNumber', 'type': 'str'},
-        'billing_address': {'key': 'properties.billingAddress', 'type': 'Address'},
+        'address': {'key': 'properties.address', 'type': 'Address'},
         'invoice_email_opt_in': {'key': 'properties.invoiceEmailOptIn', 'type': 'bool'},
         'is_classic': {'key': 'properties.isClassic', 'type': 'bool'},
         'invoice_day': {'key': 'properties.invoiceDay', 'type': 'int'},
@@ -76,7 +76,7 @@ class BillingProfile(Resource):
         super(BillingProfile, self).__init__(**kwargs)
         self.display_name = kwargs.get('display_name', None)
         self.po_number = kwargs.get('po_number', None)
-        self.billing_address = kwargs.get('billing_address', None)
+        self.address = kwargs.get('address', None)
         self.invoice_email_opt_in = None
         self.is_classic = None
         self.invoice_day = None

@@ -39,9 +39,9 @@ class InvoiceSummary(Resource):
     :vartype invoice_period_start_date: datetime
     :ivar invoice_period_end_date: The end date of the billing period.
     :vartype invoice_period_end_date: datetime
-    :ivar billing_profile: The profile id which invoice belongs to.
-    :vartype billing_profile: str
-    :ivar billing_profile_name: The profile name which invoice belongs to.
+    :ivar billing_profile_id: The billing profile id this invoice belongs to.
+    :vartype billing_profile_id: str
+    :ivar billing_profile_name: The profile name this invoice belongs to.
     :vartype billing_profile_name: str
     :ivar purchase_order_number: The purchase identifier for the invoice.
     :vartype purchase_order_number: str
@@ -64,7 +64,7 @@ class InvoiceSummary(Resource):
         'billed_amount': {'readonly': True},
         'invoice_period_start_date': {'readonly': True},
         'invoice_period_end_date': {'readonly': True},
-        'billing_profile': {'readonly': True},
+        'billing_profile_id': {'readonly': True},
         'billing_profile_name': {'readonly': True},
         'purchase_order_number': {'readonly': True},
         'document_urls': {'readonly': True},
@@ -82,7 +82,7 @@ class InvoiceSummary(Resource):
         'billed_amount': {'key': 'properties.billedAmount', 'type': 'Amount'},
         'invoice_period_start_date': {'key': 'properties.invoicePeriodStartDate', 'type': 'iso-8601'},
         'invoice_period_end_date': {'key': 'properties.invoicePeriodEndDate', 'type': 'iso-8601'},
-        'billing_profile': {'key': 'properties.billingProfile', 'type': 'str'},
+        'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
         'billing_profile_name': {'key': 'properties.billingProfileName', 'type': 'str'},
         'purchase_order_number': {'key': 'properties.purchaseOrderNumber', 'type': 'str'},
         'document_urls': {'key': 'properties.documentUrls', 'type': '[DownloadProperties]'},
@@ -98,7 +98,7 @@ class InvoiceSummary(Resource):
         self.billed_amount = None
         self.invoice_period_start_date = None
         self.invoice_period_end_date = None
-        self.billing_profile = None
+        self.billing_profile_id = None
         self.billing_profile_name = None
         self.purchase_order_number = None
         self.document_urls = None

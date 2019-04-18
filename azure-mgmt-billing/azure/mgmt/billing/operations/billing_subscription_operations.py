@@ -103,8 +103,8 @@ class BillingSubscriptionOperations(object):
 
 
     def _transfer_initial(
-            self, billing_account_name, invoice_section_name, billing_subscription_name, destination_invoice_section_name=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.TransferBillingSubscriptionRequestProperties(destination_invoice_section_name=destination_invoice_section_name)
+            self, billing_account_name, invoice_section_name, billing_subscription_name, destination_invoice_section_id=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.TransferBillingSubscriptionRequestProperties(destination_invoice_section_id=destination_invoice_section_id)
 
         # Construct URL
         url = self.transfer.metadata['url']
@@ -158,7 +158,7 @@ class BillingSubscriptionOperations(object):
         return deserialized
 
     def transfer(
-            self, billing_account_name, invoice_section_name, billing_subscription_name, destination_invoice_section_name=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, billing_account_name, invoice_section_name, billing_subscription_name, destination_invoice_section_id=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Transfers the GTM subscription from one invoice section to another
         within a billing account.
 
@@ -168,9 +168,9 @@ class BillingSubscriptionOperations(object):
         :type invoice_section_name: str
         :param billing_subscription_name: Billing Subscription Id.
         :type billing_subscription_name: str
-        :param destination_invoice_section_name: The destination
-         invoiceSectionName.
-        :type destination_invoice_section_name: str
+        :param destination_invoice_section_id: The destination invoice section
+         id.
+        :type destination_invoice_section_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -190,7 +190,7 @@ class BillingSubscriptionOperations(object):
             billing_account_name=billing_account_name,
             invoice_section_name=invoice_section_name,
             billing_subscription_name=billing_subscription_name,
-            destination_invoice_section_name=destination_invoice_section_name,
+            destination_invoice_section_id=destination_invoice_section_id,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
