@@ -279,6 +279,7 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
            * 2018-10-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2018_10_01.operations.ApplicationGatewaysOperations>`
            * 2018-11-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2018_11_01.operations.ApplicationGatewaysOperations>`
            * 2018-12-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2018_12_01.operations.ApplicationGatewaysOperations>`
+           * 2019-02-01: :class:`ApplicationGatewaysOperations<azure.mgmt.network.v2019_02_01.operations.ApplicationGatewaysOperations>`
         """
         api_version = self._get_api_version('application_gateways')
         if api_version == '2015-06-15':
@@ -317,6 +318,8 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_11_01.operations import ApplicationGatewaysOperations as OperationClass
         elif api_version == '2018-12-01':
             from .v2018_12_01.operations import ApplicationGatewaysOperations as OperationClass
+        elif api_version == '2019-02-01':
+            from .v2019_02_01.operations import ApplicationGatewaysOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

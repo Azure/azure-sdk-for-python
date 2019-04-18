@@ -12,18 +12,18 @@
 from msrest.serialization import Model
 
 
-class AzureFirewallRCAction(Model):
-    """Properties of the AzureFirewallRCAction.
+class ApplicationGatewayAvailableWafRuleSetsResult(Model):
+    """Response for ApplicationGatewayAvailableWafRuleSets API service call.
 
-    :param type: The type of action. Possible values include: 'Allow', 'Deny'
-    :type type: str or
-     ~azure.mgmt.network.v2019_02_01.models.AzureFirewallRCActionType
+    :param value: The list of application gateway rule sets.
+    :type value:
+     list[~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayFirewallRuleSet]
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[ApplicationGatewayFirewallRuleSet]'},
     }
 
     def __init__(self, **kwargs):
-        super(AzureFirewallRCAction, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
+        super(ApplicationGatewayAvailableWafRuleSetsResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

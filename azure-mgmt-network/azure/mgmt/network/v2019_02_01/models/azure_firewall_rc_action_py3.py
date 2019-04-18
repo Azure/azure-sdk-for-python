@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class AzureFirewallRCAction(Model):
     """Properties of the AzureFirewallRCAction.
 
-    :param type: The type of action. Possible values include: 'Deny'
+    :param type: The type of action. Possible values include: 'Allow', 'Deny'
     :type type: str or
      ~azure.mgmt.network.v2019_02_01.models.AzureFirewallRCActionType
     """
