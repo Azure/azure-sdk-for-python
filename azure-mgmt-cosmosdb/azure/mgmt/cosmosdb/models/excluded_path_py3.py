@@ -9,19 +9,21 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from msrest.serialization import Model
 
 
-class SqlContainerPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`SqlContainer <azure.mgmt.cosmosdb.models.SqlContainer>` object
+class ExcludedPath(Model):
+    """ExcludedPath.
+
+    :param path: The path for which the indexing behavior applies to. Index
+     paths typically start with root and end with wildcard (/path/*)
+    :type path: str
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[SqlContainer]'}
+        'path': {'key': 'path', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(SqlContainerPaged, self).__init__(*args, **kwargs)
+    def __init__(self, *, path: str=None, **kwargs) -> None:
+        super(ExcludedPath, self).__init__(**kwargs)
+        self.path = path

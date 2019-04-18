@@ -21,16 +21,16 @@ class IndexingPolicy(Model):
      include: 'Consistent', 'Lazy', 'None'. Default value: "Consistent" .
     :type indexing_mode: str or ~azure.mgmt.cosmosdb.models.IndexingMode
     :param included_paths: List of paths to include in the indexing
-    :type included_paths: list[~azure.mgmt.cosmosdb.models.IncludedPaths]
+    :type included_paths: list[~azure.mgmt.cosmosdb.models.IncludedPath]
     :param excluded_paths: List of paths to exclude from indexing
-    :type excluded_paths: list[str]
+    :type excluded_paths: list[~azure.mgmt.cosmosdb.models.ExcludedPath]
     """
 
     _attribute_map = {
         'automatic': {'key': 'automatic', 'type': 'bool'},
         'indexing_mode': {'key': 'indexingMode', 'type': 'str'},
-        'included_paths': {'key': 'includedPaths', 'type': '[IncludedPaths]'},
-        'excluded_paths': {'key': 'excludedPaths', 'type': '[str]'},
+        'included_paths': {'key': 'includedPaths', 'type': '[IncludedPath]'},
+        'excluded_paths': {'key': 'excludedPaths', 'type': '[ExcludedPath]'},
     }
 
     def __init__(self, **kwargs):

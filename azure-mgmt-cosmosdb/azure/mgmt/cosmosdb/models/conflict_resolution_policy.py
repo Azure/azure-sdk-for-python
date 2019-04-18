@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ConflictResolutionPolicy(Model):
-    """The conflict resolution policy for the SQL container.
+    """The conflict resolution policy for the container.
 
     :param mode: Indicates the conflict resolution mode. Possible values
      include: 'LastWriterWins', 'Custom'. Default value: "LastWriterWins" .

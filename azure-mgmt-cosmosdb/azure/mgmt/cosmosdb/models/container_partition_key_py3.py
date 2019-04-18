@@ -12,12 +12,12 @@
 from msrest.serialization import Model
 
 
-class SqlPartitionKey(Model):
+class ContainerPartitionKey(Model):
     """The configuration of the partition key to be used for partitioning data
     into multiple partitions.
 
-    :param paths: List of paths using which data within the SQL container can
-     be partitioned
+    :param paths: List of paths using which data within the container can be
+     partitioned
     :type paths: list[str]
     :param kind: Indicates the kind of algorithm used for partitioning.
      Possible values include: 'Hash', 'Range'. Default value: "Hash" .
@@ -30,6 +30,6 @@ class SqlPartitionKey(Model):
     }
 
     def __init__(self, *, paths=None, kind="Hash", **kwargs) -> None:
-        super(SqlPartitionKey, self).__init__(**kwargs)
+        super(ContainerPartitionKey, self).__init__(**kwargs)
         self.paths = paths
         self.kind = kind

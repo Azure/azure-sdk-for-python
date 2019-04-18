@@ -12,8 +12,8 @@
 from .resource import Resource
 
 
-class SqlContainer(Resource):
-    """An Azure Cosmos DB SQL container.
+class Container(Resource):
+    """An Azure Cosmos DB container.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,15 +31,15 @@ class SqlContainer(Resource):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param sql_container_id: Required. Name of the Cosmos DB SQL container
-    :type sql_container_id: str
+    :param container_id: Required. Name of the Cosmos DB container
+    :type container_id: str
     :param indexing_policy: The configuration of the indexing policy. By
-     default, the indexing is automatic for all document paths within the SQL
+     default, the indexing is automatic for all document paths within the
      container
     :type indexing_policy: ~azure.mgmt.cosmosdb.models.IndexingPolicy
     :param partition_key: The configuration of the partition key to be used
      for partitioning data into multiple partitions
-    :type partition_key: ~azure.mgmt.cosmosdb.models.SqlPartitionKey
+    :type partition_key: ~azure.mgmt.cosmosdb.models.ContainerPartitionKey
     :param default_ttl: Default time to live
     :type default_ttl: int
     :param unique_key_policy: The unique key policy configuration for
@@ -47,7 +47,7 @@ class SqlContainer(Resource):
      Azure Cosmos DB service.
     :type unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
     :param conflict_resolution_policy: The conflict resolution policy for the
-     SQL container.
+     container.
     :type conflict_resolution_policy:
      ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
     :param _rid: A system generated property. A unique identifier.
@@ -61,21 +61,6 @@ class SqlContainer(Resource):
     :param _etag: A system generated property representing the resource etag
      required for optimistic concurrency control.
     :type _etag: str
-    :param _doc: A system generated property that specifies the addressable
-     path of the documents resource.
-    :type _doc: str
-    :param _sprocs: A system generated property that specifies the addressable
-     path of the stored procedures (sprocs) resource.
-    :type _sprocs: str
-    :param _triggers: A system generated property that specifies the
-     addressable path of the triggers resource.
-    :type _triggers: str
-    :param _udfs: A system generated property that specifies the addressable
-     path of the user-defined functions (udfs) resource.
-    :type _udfs: str
-    :param _conflicts: A system generated property that specifies the
-     addressable path of the conflicts resource.
-    :type _conflicts: str
     """
 
     _validation = {
@@ -83,7 +68,7 @@ class SqlContainer(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
-        'sql_container_id': {'required': True},
+        'container_id': {'required': True},
     }
 
     _attribute_map = {
@@ -92,9 +77,9 @@ class SqlContainer(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'sql_container_id': {'key': 'properties.id', 'type': 'str'},
+        'container_id': {'key': 'properties.id', 'type': 'str'},
         'indexing_policy': {'key': 'properties.indexingPolicy', 'type': 'IndexingPolicy'},
-        'partition_key': {'key': 'properties.partitionKey', 'type': 'SqlPartitionKey'},
+        'partition_key': {'key': 'properties.partitionKey', 'type': 'ContainerPartitionKey'},
         'default_ttl': {'key': 'properties.defaultTtl', 'type': 'int'},
         'unique_key_policy': {'key': 'properties.uniqueKeyPolicy', 'type': 'UniqueKeyPolicy'},
         'conflict_resolution_policy': {'key': 'properties.conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
@@ -102,16 +87,11 @@ class SqlContainer(Resource):
         '_ts': {'key': 'properties._ts', 'type': 'object'},
         '_self': {'key': 'properties._self', 'type': 'str'},
         '_etag': {'key': 'properties._etag', 'type': 'str'},
-        '_doc': {'key': 'properties._doc', 'type': 'str'},
-        '_sprocs': {'key': 'properties._sprocs', 'type': 'str'},
-        '_triggers': {'key': 'properties._triggers', 'type': 'str'},
-        '_udfs': {'key': 'properties._udfs', 'type': 'str'},
-        '_conflicts': {'key': 'properties._conflicts', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(SqlContainer, self).__init__(**kwargs)
-        self.sql_container_id = kwargs.get('sql_container_id', None)
+        super(Container, self).__init__(**kwargs)
+        self.container_id = kwargs.get('container_id', None)
         self.indexing_policy = kwargs.get('indexing_policy', None)
         self.partition_key = kwargs.get('partition_key', None)
         self.default_ttl = kwargs.get('default_ttl', None)
@@ -121,8 +101,3 @@ class SqlContainer(Resource):
         self._ts = kwargs.get('_ts', None)
         self._self = kwargs.get('_self', None)
         self._etag = kwargs.get('_etag', None)
-        self._doc = kwargs.get('_doc', None)
-        self._sprocs = kwargs.get('_sprocs', None)
-        self._triggers = kwargs.get('_triggers', None)
-        self._udfs = kwargs.get('_udfs', None)
-        self._conflicts = kwargs.get('_conflicts', None)

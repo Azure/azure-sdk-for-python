@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class IncludedPaths(Model):
+class IncludedPath(Model):
     """The paths that are included in indexing.
 
     :param path: The path for which the indexing behavior applies to. Index
@@ -27,7 +27,7 @@ class IncludedPaths(Model):
         'indexes': {'key': 'indexes', 'type': '[Indexes]'},
     }
 
-    def __init__(self, *, path: str=None, indexes=None, **kwargs) -> None:
-        super(IncludedPaths, self).__init__(**kwargs)
-        self.path = path
-        self.indexes = indexes
+    def __init__(self, **kwargs):
+        super(IncludedPath, self).__init__(**kwargs)
+        self.path = kwargs.get('path', None)
+        self.indexes = kwargs.get('indexes', None)

@@ -12,22 +12,18 @@
 from msrest.serialization import Model
 
 
-class IncludedPaths(Model):
-    """The paths that are included in indexing.
+class ExcludedPath(Model):
+    """ExcludedPath.
 
     :param path: The path for which the indexing behavior applies to. Index
      paths typically start with root and end with wildcard (/path/*)
     :type path: str
-    :param indexes: List of indexes for this path
-    :type indexes: list[~azure.mgmt.cosmosdb.models.Indexes]
     """
 
     _attribute_map = {
         'path': {'key': 'path', 'type': 'str'},
-        'indexes': {'key': 'indexes', 'type': '[Indexes]'},
     }
 
     def __init__(self, **kwargs):
-        super(IncludedPaths, self).__init__(**kwargs)
+        super(ExcludedPath, self).__init__(**kwargs)
         self.path = kwargs.get('path', None)
-        self.indexes = kwargs.get('indexes', None)

@@ -18,18 +18,20 @@ try:
     from .database_account_py3 import DatabaseAccount
     from .sql_database_py3 import SqlDatabase
     from .indexes_py3 import Indexes
-    from .included_paths_py3 import IncludedPaths
+    from .included_path_py3 import IncludedPath
+    from .excluded_path_py3 import ExcludedPath
     from .indexing_policy_py3 import IndexingPolicy
-    from .sql_partition_key_py3 import SqlPartitionKey
+    from .container_partition_key_py3 import ContainerPartitionKey
     from .unique_key_py3 import UniqueKey
     from .unique_key_policy_py3 import UniqueKeyPolicy
     from .conflict_resolution_policy_py3 import ConflictResolutionPolicy
-    from .sql_container_py3 import SqlContainer
+    from .container_py3 import Container
     from .mongo_database_py3 import MongoDatabase
     from .mongo_collection_py3 import MongoCollection
     from .table_py3 import Table
     from .cassandra_keyspace_py3 import CassandraKeyspace
     from .cassandra_table_py3 import CassandraTable
+    from .gremlin_database_py3 import GremlinDatabase
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .failover_policies_py3 import FailoverPolicies
     from .region_for_online_offline_py3 import RegionForOnlineOffline
@@ -44,8 +46,8 @@ try:
     from .database_account_regenerate_key_parameters_py3 import DatabaseAccountRegenerateKeyParameters
     from .sql_database_resource_py3 import SqlDatabaseResource
     from .sql_database_create_update_parameters_py3 import SqlDatabaseCreateUpdateParameters
-    from .sql_container_resource_py3 import SqlContainerResource
-    from .sql_container_create_update_parameters_py3 import SqlContainerCreateUpdateParameters
+    from .container_resource_py3 import ContainerResource
+    from .container_create_update_parameters_py3 import ContainerCreateUpdateParameters
     from .mongo_database_resource_py3 import MongoDatabaseResource
     from .mongo_database_create_update_parameters_py3 import MongoDatabaseCreateUpdateParameters
     from .mongo_index_keys_py3 import MongoIndexKeys
@@ -63,6 +65,8 @@ try:
     from .cassandra_schema_py3 import CassandraSchema
     from .cassandra_table_resource_py3 import CassandraTableResource
     from .cassandra_table_create_update_parameters_py3 import CassandraTableCreateUpdateParameters
+    from .gremlin_database_resource_py3 import GremlinDatabaseResource
+    from .gremlin_database_create_update_parameters_py3 import GremlinDatabaseCreateUpdateParameters
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
     from .metric_name_py3 import MetricName
@@ -84,18 +88,20 @@ except (SyntaxError, ImportError):
     from .database_account import DatabaseAccount
     from .sql_database import SqlDatabase
     from .indexes import Indexes
-    from .included_paths import IncludedPaths
+    from .included_path import IncludedPath
+    from .excluded_path import ExcludedPath
     from .indexing_policy import IndexingPolicy
-    from .sql_partition_key import SqlPartitionKey
+    from .container_partition_key import ContainerPartitionKey
     from .unique_key import UniqueKey
     from .unique_key_policy import UniqueKeyPolicy
     from .conflict_resolution_policy import ConflictResolutionPolicy
-    from .sql_container import SqlContainer
+    from .container import Container
     from .mongo_database import MongoDatabase
     from .mongo_collection import MongoCollection
     from .table import Table
     from .cassandra_keyspace import CassandraKeyspace
     from .cassandra_table import CassandraTable
+    from .gremlin_database import GremlinDatabase
     from .error_response import ErrorResponse, ErrorResponseException
     from .failover_policies import FailoverPolicies
     from .region_for_online_offline import RegionForOnlineOffline
@@ -110,8 +116,8 @@ except (SyntaxError, ImportError):
     from .database_account_regenerate_key_parameters import DatabaseAccountRegenerateKeyParameters
     from .sql_database_resource import SqlDatabaseResource
     from .sql_database_create_update_parameters import SqlDatabaseCreateUpdateParameters
-    from .sql_container_resource import SqlContainerResource
-    from .sql_container_create_update_parameters import SqlContainerCreateUpdateParameters
+    from .container_resource import ContainerResource
+    from .container_create_update_parameters import ContainerCreateUpdateParameters
     from .mongo_database_resource import MongoDatabaseResource
     from .mongo_database_create_update_parameters import MongoDatabaseCreateUpdateParameters
     from .mongo_index_keys import MongoIndexKeys
@@ -129,6 +135,8 @@ except (SyntaxError, ImportError):
     from .cassandra_schema import CassandraSchema
     from .cassandra_table_resource import CassandraTableResource
     from .cassandra_table_create_update_parameters import CassandraTableCreateUpdateParameters
+    from .gremlin_database_resource import GremlinDatabaseResource
+    from .gremlin_database_create_update_parameters import GremlinDatabaseCreateUpdateParameters
     from .operation_display import OperationDisplay
     from .operation import Operation
     from .metric_name import MetricName
@@ -146,12 +154,13 @@ from .metric_paged import MetricPaged
 from .usage_paged import UsagePaged
 from .metric_definition_paged import MetricDefinitionPaged
 from .sql_database_paged import SqlDatabasePaged
-from .sql_container_paged import SqlContainerPaged
+from .container_paged import ContainerPaged
 from .mongo_database_paged import MongoDatabasePaged
 from .mongo_collection_paged import MongoCollectionPaged
 from .table_paged import TablePaged
 from .cassandra_keyspace_paged import CassandraKeyspacePaged
 from .cassandra_table_paged import CassandraTablePaged
+from .gremlin_database_paged import GremlinDatabasePaged
 from .operation_paged import OperationPaged
 from .percentile_metric_paged import PercentileMetricPaged
 from .partition_metric_paged import PartitionMetricPaged
@@ -179,18 +188,20 @@ __all__ = [
     'DatabaseAccount',
     'SqlDatabase',
     'Indexes',
-    'IncludedPaths',
+    'IncludedPath',
+    'ExcludedPath',
     'IndexingPolicy',
-    'SqlPartitionKey',
+    'ContainerPartitionKey',
     'UniqueKey',
     'UniqueKeyPolicy',
     'ConflictResolutionPolicy',
-    'SqlContainer',
+    'Container',
     'MongoDatabase',
     'MongoCollection',
     'Table',
     'CassandraKeyspace',
     'CassandraTable',
+    'GremlinDatabase',
     'ErrorResponse', 'ErrorResponseException',
     'FailoverPolicies',
     'RegionForOnlineOffline',
@@ -205,8 +216,8 @@ __all__ = [
     'DatabaseAccountRegenerateKeyParameters',
     'SqlDatabaseResource',
     'SqlDatabaseCreateUpdateParameters',
-    'SqlContainerResource',
-    'SqlContainerCreateUpdateParameters',
+    'ContainerResource',
+    'ContainerCreateUpdateParameters',
     'MongoDatabaseResource',
     'MongoDatabaseCreateUpdateParameters',
     'MongoIndexKeys',
@@ -224,6 +235,8 @@ __all__ = [
     'CassandraSchema',
     'CassandraTableResource',
     'CassandraTableCreateUpdateParameters',
+    'GremlinDatabaseResource',
+    'GremlinDatabaseCreateUpdateParameters',
     'OperationDisplay',
     'Operation',
     'MetricName',
@@ -241,12 +254,13 @@ __all__ = [
     'UsagePaged',
     'MetricDefinitionPaged',
     'SqlDatabasePaged',
-    'SqlContainerPaged',
+    'ContainerPaged',
     'MongoDatabasePaged',
     'MongoCollectionPaged',
     'TablePaged',
     'CassandraKeyspacePaged',
     'CassandraTablePaged',
+    'GremlinDatabasePaged',
     'OperationPaged',
     'PercentileMetricPaged',
     'PartitionMetricPaged',
