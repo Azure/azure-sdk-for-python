@@ -51,7 +51,7 @@ class Volume(Model):
     :vartype provisioning_state: str
     :param snapshot_id: Snapshot ID. UUID v4 used to identify the Snapshot
     :type snapshot_id: str
-    :ivar baremetal_tenant_id: Baremental Tenant ID. Unique Baremetal Tenant
+    :ivar baremetal_tenant_id: Baremetal Tenant ID. Unique Baremetal Tenant
      Identifier.
     :vartype baremetal_tenant_id: str
     :param subnet_id: The Azure Resource URI for a delegated subnet. Must have

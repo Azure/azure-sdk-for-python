@@ -115,7 +115,7 @@ class PoolsOperations(object):
             self, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, **operation_config):
         """Describe a Capacity Pool.
 
-        Get detailsof the specified capacity pool.
+        Get details of the specified capacity pool.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
