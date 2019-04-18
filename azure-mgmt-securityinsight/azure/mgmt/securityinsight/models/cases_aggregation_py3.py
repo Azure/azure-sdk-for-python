@@ -28,12 +28,11 @@ class CasesAggregation(Aggregations):
     :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param cases_aggregation_by_severity: Aggregations results by case
-     severity.
-    :type cases_aggregation_by_severity:
+    :param aggregation_by_severity: Aggregations results by case severity.
+    :type aggregation_by_severity:
      ~azure.mgmt.securityinsight.models.CasesAggregationBySeverityProperties
-    :param cases_aggregation_by_status: Aggregations results by case status.
-    :type cases_aggregation_by_status:
+    :param aggregation_by_status: Aggregations results by case status.
+    :type aggregation_by_status:
      ~azure.mgmt.securityinsight.models.CasesAggregationByStatusProperties
     """
 
@@ -49,12 +48,12 @@ class CasesAggregation(Aggregations):
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'cases_aggregation_by_severity': {'key': 'properties.casesAggregationBySeverity', 'type': 'CasesAggregationBySeverityProperties'},
-        'cases_aggregation_by_status': {'key': 'properties.casesAggregationByStatus', 'type': 'CasesAggregationByStatusProperties'},
+        'aggregation_by_severity': {'key': 'properties.aggregationBySeverity', 'type': 'CasesAggregationBySeverityProperties'},
+        'aggregation_by_status': {'key': 'properties.aggregationByStatus', 'type': 'CasesAggregationByStatusProperties'},
     }
 
-    def __init__(self, *, cases_aggregation_by_severity=None, cases_aggregation_by_status=None, **kwargs) -> None:
+    def __init__(self, *, aggregation_by_severity=None, aggregation_by_status=None, **kwargs) -> None:
         super(CasesAggregation, self).__init__(**kwargs)
-        self.cases_aggregation_by_severity = cases_aggregation_by_severity
-        self.cases_aggregation_by_status = cases_aggregation_by_status
+        self.aggregation_by_severity = aggregation_by_severity
+        self.aggregation_by_status = aggregation_by_status
         self.kind = 'CasesAggregation'
