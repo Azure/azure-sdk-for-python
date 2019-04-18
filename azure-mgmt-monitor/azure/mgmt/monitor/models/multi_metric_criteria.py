@@ -16,31 +16,54 @@ class MultiMetricCriteria(Model):
     """The types of conditions for a multi resource alert.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MetricCriteria
+    sub-classes are: StaticMetricCriteria, DynamicMetricCriteria
 
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
+    :param name: Required. Name of the criteria.
+    :type name: str
+    :param metric_name: Required. Name of the metric.
+    :type metric_name: str
+    :param metric_namespace: Namespace of the metric.
+    :type metric_namespace: str
+    :param time_aggregation: Required. the criteria time aggregation types.
+    :type time_aggregation: object
+    :param dimensions: List of dimension conditions.
+    :type dimensions: list[~azure.mgmt.monitor.models.MetricDimension]
     :param criterion_type: Required. Constant filled by server.
     :type criterion_type: str
     """
 
     _validation = {
+        'name': {'required': True},
+        'metric_name': {'required': True},
+        'time_aggregation': {'required': True},
         'criterion_type': {'required': True},
     }
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
+        'name': {'key': 'name', 'type': 'str'},
+        'metric_name': {'key': 'metricName', 'type': 'str'},
+        'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
+        'time_aggregation': {'key': 'timeAggregation', 'type': 'object'},
+        'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
         'criterion_type': {'key': 'criterionType', 'type': 'str'},
     }
 
     _subtype_map = {
-        'criterion_type': {'StaticThresholdCriterion': 'MetricCriteria'}
+        'criterion_type': {'StaticThresholdCriterion': 'StaticMetricCriteria', 'DynamicThresholdCriterion': 'DynamicMetricCriteria'}
     }
 
     def __init__(self, **kwargs):
         super(MultiMetricCriteria, self).__init__(**kwargs)
         self.additional_properties = kwargs.get('additional_properties', None)
+        self.name = kwargs.get('name', None)
+        self.metric_name = kwargs.get('metric_name', None)
+        self.metric_namespace = kwargs.get('metric_namespace', None)
+        self.time_aggregation = kwargs.get('time_aggregation', None)
+        self.dimensions = kwargs.get('dimensions', None)
         self.criterion_type = None

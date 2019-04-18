@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .multi_metric_criteria import MultiMetricCriteria
+from .multi_metric_criteria_py3 import MultiMetricCriteria
 
 
-class MetricCriteria(MultiMetricCriteria):
+class StaticMetricCriteria(MultiMetricCriteria):
     """Criterion to filter metrics.
 
     All required parameters must be populated in order to send to Azure.
@@ -20,53 +20,48 @@ class MetricCriteria(MultiMetricCriteria):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param criterion_type: Required. Constant filled by server.
-    :type criterion_type: str
     :param name: Required. Name of the criteria.
     :type name: str
     :param metric_name: Required. Name of the metric.
     :type metric_name: str
     :param metric_namespace: Namespace of the metric.
     :type metric_namespace: str
-    :param operator: Required. the criteria operator.
-    :type operator: object
     :param time_aggregation: Required. the criteria time aggregation types.
     :type time_aggregation: object
+    :param dimensions: List of dimension conditions.
+    :type dimensions: list[~azure.mgmt.monitor.models.MetricDimension]
+    :param criterion_type: Required. Constant filled by server.
+    :type criterion_type: str
+    :param operator: Required. the criteria operator.
+    :type operator: object
     :param threshold: Required. the criteria threshold value that activates
      the alert.
     :type threshold: float
-    :param dimensions: List of dimension conditions.
-    :type dimensions: list[~azure.mgmt.monitor.models.MetricDimension]
     """
 
     _validation = {
-        'criterion_type': {'required': True},
         'name': {'required': True},
         'metric_name': {'required': True},
-        'operator': {'required': True},
         'time_aggregation': {'required': True},
+        'criterion_type': {'required': True},
+        'operator': {'required': True},
         'threshold': {'required': True},
     }
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'criterion_type': {'key': 'criterionType', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'metric_name': {'key': 'metricName', 'type': 'str'},
         'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'object'},
         'time_aggregation': {'key': 'timeAggregation', 'type': 'object'},
-        'threshold': {'key': 'threshold', 'type': 'float'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        'criterion_type': {'key': 'criterionType', 'type': 'str'},
+        'operator': {'key': 'operator', 'type': 'object'},
+        'threshold': {'key': 'threshold', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs):
-        super(MetricCriteria, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.metric_name = kwargs.get('metric_name', None)
-        self.metric_namespace = kwargs.get('metric_namespace', None)
-        self.operator = kwargs.get('operator', None)
-        self.time_aggregation = kwargs.get('time_aggregation', None)
-        self.threshold = kwargs.get('threshold', None)
-        self.dimensions = kwargs.get('dimensions', None)
+    def __init__(self, *, name: str, metric_name: str, time_aggregation, operator, threshold: float, additional_properties=None, metric_namespace: str=None, dimensions=None, **kwargs) -> None:
+        super(StaticMetricCriteria, self).__init__(additional_properties=additional_properties, name=name, metric_name=metric_name, metric_namespace=metric_namespace, time_aggregation=time_aggregation, dimensions=dimensions, **kwargs)
+        self.operator = operator
+        self.threshold = threshold
         self.criterion_type = 'StaticThresholdCriterion'
