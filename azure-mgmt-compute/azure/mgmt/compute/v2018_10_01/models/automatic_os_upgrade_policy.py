@@ -20,7 +20,7 @@ class AutomaticOSUpgradePolicy(Model):
      a newer version of the OS image becomes available. Default value is false.
      If this is set to true for Windows based scale sets, recommendation is to
      set
-     [enableAutomaticUpdates](https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet)
+     [enableAutomaticUpdates](https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet)
      to false.
     :type enable_automatic_os_upgrade: bool
     :param disable_automatic_rollback: Whether OS image rollback feature
