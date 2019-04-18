@@ -52,6 +52,7 @@ try:
     from .win_rm_listener_py3 import WinRMListener
     from .win_rm_configuration_py3 import WinRMConfiguration
     from .windows_configuration_py3 import WindowsConfiguration
+    from .virtual_machine_scale_set_windows_configuration_py3 import VirtualMachineScaleSetWindowsConfiguration
     from .ssh_public_key_py3 import SshPublicKey
     from .ssh_configuration_py3 import SshConfiguration
     from .linux_configuration_py3 import LinuxConfiguration
@@ -189,6 +190,7 @@ except (SyntaxError, ImportError):
     from .win_rm_listener import WinRMListener
     from .win_rm_configuration import WinRMConfiguration
     from .windows_configuration import WindowsConfiguration
+    from .virtual_machine_scale_set_windows_configuration import VirtualMachineScaleSetWindowsConfiguration
     from .ssh_public_key import SshPublicKey
     from .ssh_configuration import SshConfiguration
     from .linux_configuration import LinuxConfiguration
@@ -369,6 +371,7 @@ __all__ = [
     'WinRMListener',
     'WinRMConfiguration',
     'WindowsConfiguration',
+    'VirtualMachineScaleSetWindowsConfiguration',
     'SshPublicKey',
     'SshConfiguration',
     'LinuxConfiguration',

@@ -60,7 +60,7 @@ class VirtualMachineScaleSetOSProfile(Model):
     :param windows_configuration: Specifies Windows operating system settings
      on the virtual machine.
     :type windows_configuration:
-     ~azure.mgmt.compute.v2018_10_01.models.WindowsConfiguration
+     ~azure.mgmt.compute.v2018_10_01.models.VirtualMachineScaleSetWindowsConfiguration
     :param linux_configuration: Specifies the Linux operating system settings
      on the virtual machine. <br><br>For a list of supported Linux
      distributions, see [Linux on Azure-Endorsed
@@ -81,7 +81,7 @@ class VirtualMachineScaleSetOSProfile(Model):
         'admin_username': {'key': 'adminUsername', 'type': 'str'},
         'admin_password': {'key': 'adminPassword', 'type': 'str'},
         'custom_data': {'key': 'customData', 'type': 'str'},
-        'windows_configuration': {'key': 'windowsConfiguration', 'type': 'WindowsConfiguration'},
+        'windows_configuration': {'key': 'windowsConfiguration', 'type': 'VirtualMachineScaleSetWindowsConfiguration'},
         'linux_configuration': {'key': 'linuxConfiguration', 'type': 'LinuxConfiguration'},
         'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
     }
