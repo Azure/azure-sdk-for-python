@@ -32,18 +32,21 @@ class DynamicMetricCriteria(MultiMetricCriteria):
     :type dimensions: list[~azure.mgmt.monitor.models.MetricDimension]
     :param criterion_type: Required. Constant filled by server.
     :type criterion_type: str
-    :param operator: Required. The condition used to compare the metric value
-     against the threshold
+    :param operator: Required. The operator used to compare the metric value
+     against the threshold.
     :type operator: object
-    :param alert_sensitivity: Required. The sensitivity of the threshold
+    :param alert_sensitivity: Required. The extent of deviation required to
+     trigger an alert. This will affect how tight the threshold is to the
+     metric series pattern.
     :type alert_sensitivity: object
-    :param failing_periods: Required. Select minimum number of violations
-     within the selected lookback time window required to raise an alert
+    :param failing_periods: Required. The minimum number of violations
+     required within the selected lookback time window required to raise an
+     alert.
     :type failing_periods:
      ~azure.mgmt.monitor.models.DynamicThresholdFailingPeriods
     :param ignore_data_before: Use this option to set the date from which to
      start learning the metric historical data and calculate the dynamic
-     thresholds
+     thresholds (in ISO8601 format)
     :type ignore_data_before: datetime
     """
 
