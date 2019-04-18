@@ -49,6 +49,7 @@ try:
     from .toggle_settings_py3 import ToggleSettings
     from .aggregations_py3 import Aggregations
     from .aggregations_kind1_py3 import AggregationsKind1
+    from .cases_aggregation_py3 import CasesAggregation
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .operation import Operation
@@ -89,6 +90,7 @@ except (SyntaxError, ImportError):
     from .toggle_settings import ToggleSettings
     from .aggregations import Aggregations
     from .aggregations_kind1 import AggregationsKind1
+    from .cases_aggregation import CasesAggregation
 from .operation_paged import OperationPaged
 from .alert_rule_paged import AlertRulePaged
 from .action_paged import ActionPaged
@@ -153,6 +155,7 @@ __all__ = [
     'ToggleSettings',
     'Aggregations',
     'AggregationsKind1',
+    'CasesAggregation',
     'OperationPaged',
     'AlertRulePaged',
     'ActionPaged',
