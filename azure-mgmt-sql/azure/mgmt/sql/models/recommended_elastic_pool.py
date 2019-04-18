@@ -13,7 +13,7 @@ from .proxy_resource import ProxyResource
 
 
 class RecommendedElasticPool(ProxyResource):
-    """Represents a recommented elastic pool.
+    """Represents a recommended elastic pool.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

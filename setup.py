@@ -15,7 +15,7 @@ import runpy
 
 root_folder = os.path.abspath(os.path.dirname(__file__))
 
-packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
+packages = [os.path.dirname(p) for p in (glob.glob('azure*/setup.py') + glob.glob('sdk/*/azure*/setup.py'))]
 
 # "install" is used by ReadTheDocs, do not install "nspkg"
 

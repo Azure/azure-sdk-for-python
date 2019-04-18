@@ -551,7 +551,7 @@ class JobExecutionsOperations(object):
 
     def create_or_update(
             self, resource_group_name, server_name, job_agent_name, job_name, job_execution_id, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updatess a job execution.
+        """Creates or updates a job execution.
 
         :param resource_group_name: The name of the resource group that
          contains the resource. You can obtain this value from the Azure

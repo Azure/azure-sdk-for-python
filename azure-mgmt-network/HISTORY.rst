@@ -3,6 +3,24 @@
 Release History
 ===============
 
+2.6.0 (2019-03-21)
+++++++++++++++++++
+
+**Features**
+
+- Model ApplicationGateway has a new parameter firewall_policy
+- Model ApplicationGatewayBackendHealthServer has a new parameter health_probe_log
+- Model ExpressRouteCircuitPeering has a new parameter peered_connections
+- Model ExpressRouteCircuit has a new parameter global_reach_enabled
+- Added operation group PeerExpressRouteCircuitConnectionsOperations
+- Added operation group WebApplicationFirewallPoliciesOperations
+
+**Bugfixes**
+
+- Fix incorrect operation ApplicationGatewaysOperations.list_available_request_headers
+- Fix incorrect operation ApplicationGatewaysOperations.list_available_server_variables
+- Fix incorrect operation ApplicationGatewaysOperations.list_available_response_headers
+
 2.6.0rc1 (2019-02-15)
 +++++++++++++++++++++
 

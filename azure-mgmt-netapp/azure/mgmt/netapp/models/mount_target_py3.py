@@ -36,13 +36,13 @@ class MountTarget(Model):
     :type file_system_id: str
     :ivar ip_address: ipAddress. The mount target's IPv4 address
     :vartype ip_address: str
-    :param vlan_id: vlanid. Vlan Id
-    :type vlan_id: int
+    :param subnet: subnet. The subnet
+    :type subnet: str
     :param start_ip: startIp. The start of IPv4 address range to use when
      creating a new mount target
     :type start_ip: str
-    :param end_ip: startIp. The end of IPv4 address range to use when creating
-     a new mount target
+    :param end_ip: endIp. The end of IPv4 address range to use when creating a
+     new mount target
     :type end_ip: str
     :param gateway: gateway. The gateway of the IPv4 address range to use when
      creating a new mount target
@@ -50,6 +50,9 @@ class MountTarget(Model):
     :param netmask: netmask. The netmask of the IPv4 address range to use when
      creating a new mount target
     :type netmask: str
+    :param smb_server_fqdn: smbServerFQDN. The SMB server's Fully Qualified
+     Domain Name, FQDN
+    :type smb_server_fqdn: str
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
     """
@@ -72,15 +75,16 @@ class MountTarget(Model):
         'mount_target_id': {'key': 'properties.mountTargetId', 'type': 'str'},
         'file_system_id': {'key': 'properties.fileSystemId', 'type': 'str'},
         'ip_address': {'key': 'properties.ipAddress', 'type': 'str'},
-        'vlan_id': {'key': 'properties.vlanId', 'type': 'int'},
+        'subnet': {'key': 'properties.subnet', 'type': 'str'},
         'start_ip': {'key': 'properties.startIp', 'type': 'str'},
         'end_ip': {'key': 'properties.endIp', 'type': 'str'},
         'gateway': {'key': 'properties.gateway', 'type': 'str'},
         'netmask': {'key': 'properties.netmask', 'type': 'str'},
+        'smb_server_fqdn': {'key': 'properties.smbServerFqdn', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, file_system_id: str, tags=None, vlan_id: int=None, start_ip: str=None, end_ip: str=None, gateway: str=None, netmask: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, file_system_id: str, tags=None, subnet: str=None, start_ip: str=None, end_ip: str=None, gateway: str=None, netmask: str=None, smb_server_fqdn: str=None, **kwargs) -> None:
         super(MountTarget, self).__init__(**kwargs)
         self.location = location
         self.id = None
@@ -89,9 +93,10 @@ class MountTarget(Model):
         self.mount_target_id = None
         self.file_system_id = file_system_id
         self.ip_address = None
-        self.vlan_id = vlan_id
+        self.subnet = subnet
         self.start_ip = start_ip
         self.end_ip = end_ip
         self.gateway = gateway
         self.netmask = netmask
+        self.smb_server_fqdn = smb_server_fqdn
         self.provisioning_state = None

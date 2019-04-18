@@ -1,6 +1,6 @@
 [packaging]
 package_name = "azure-mgmt-hdinsight"
 package_pprint_name = "HDInsight Management"
-package_doc_id = ""
-is_stable = false
+package_doc_id = "hdinsight"
+is_stable = true
 is_arm = true
