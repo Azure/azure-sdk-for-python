@@ -26,8 +26,8 @@ class GremlinDatabase(Resource):
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: Required. The location of the resource group to which the
-     resource belongs.
+    :param location: The location of the resource group to which the resource
+     belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -48,7 +48,6 @@ class GremlinDatabase(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'gremlin_database_id': {'required': True},
     }
 
@@ -64,7 +63,7 @@ class GremlinDatabase(Resource):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, gremlin_database_id: str, tags=None, _rid: str=None, _ts=None, _etag: str=None, **kwargs) -> None:
+    def __init__(self, *, gremlin_database_id: str, location: str=None, tags=None, _rid: str=None, _ts=None, _etag: str=None, **kwargs) -> None:
         super(GremlinDatabase, self).__init__(location=location, tags=tags, **kwargs)
         self.gremlin_database_id = gremlin_database_id
         self._rid = _rid

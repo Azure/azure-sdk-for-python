@@ -21,9 +21,6 @@ class ExtendedResourceProperties(Model):
     :param _ts: A system generated property that denotes the last updated
      timestamp of the resource.
     :type _ts: object
-    :param _self: A system generated property. It is the unique addressable
-     URI for the resource.
-    :type _self: str
     :param _etag: A system generated property representing the resource etag
      required for optimistic concurrency control.
     :type _etag: str
@@ -32,13 +29,11 @@ class ExtendedResourceProperties(Model):
     _attribute_map = {
         '_rid': {'key': '_rid', 'type': 'str'},
         '_ts': {'key': '_ts', 'type': 'object'},
-        '_self': {'key': '_self', 'type': 'str'},
         '_etag': {'key': '_etag', 'type': 'str'},
     }
 
-    def __init__(self, *, _rid: str=None, _ts=None, _self: str=None, _etag: str=None, **kwargs) -> None:
+    def __init__(self, *, _rid: str=None, _ts=None, _etag: str=None, **kwargs) -> None:
         super(ExtendedResourceProperties, self).__init__(**kwargs)
         self._rid = _rid
         self._ts = _ts
-        self._self = _self
         self._etag = _etag

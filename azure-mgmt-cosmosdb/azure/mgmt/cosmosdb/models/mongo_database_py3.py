@@ -26,8 +26,8 @@ class MongoDatabase(Resource):
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: Required. The location of the resource group to which the
-     resource belongs.
+    :param location: The location of the resource group to which the resource
+     belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -39,7 +39,6 @@ class MongoDatabase(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'mongo_database_id': {'required': True},
     }
 
@@ -52,6 +51,6 @@ class MongoDatabase(Resource):
         'mongo_database_id': {'key': 'properties.id', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, mongo_database_id: str, tags=None, **kwargs) -> None:
+    def __init__(self, *, mongo_database_id: str, location: str=None, tags=None, **kwargs) -> None:
         super(MongoDatabase, self).__init__(location=location, tags=tags, **kwargs)
         self.mongo_database_id = mongo_database_id

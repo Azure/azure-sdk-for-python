@@ -26,8 +26,8 @@ class CassandraKeyspace(Resource):
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: Required. The location of the resource group to which the
-     resource belongs.
+    :param location: The location of the resource group to which the resource
+     belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -40,7 +40,6 @@ class CassandraKeyspace(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'cassandra_keyspace_id': {'required': True},
     }
 
@@ -53,6 +52,6 @@ class CassandraKeyspace(Resource):
         'cassandra_keyspace_id': {'key': 'properties.id', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, cassandra_keyspace_id: str, tags=None, **kwargs) -> None:
+    def __init__(self, *, cassandra_keyspace_id: str, location: str=None, tags=None, **kwargs) -> None:
         super(CassandraKeyspace, self).__init__(location=location, tags=tags, **kwargs)
         self.cassandra_keyspace_id = cassandra_keyspace_id

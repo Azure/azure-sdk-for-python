@@ -26,8 +26,8 @@ class CassandraTable(Resource):
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: Required. The location of the resource group to which the
-     resource belongs.
+    :param location: The location of the resource group to which the resource
+     belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -43,7 +43,6 @@ class CassandraTable(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'cassandra_table_id': {'required': True},
     }
 
@@ -58,7 +57,7 @@ class CassandraTable(Resource):
         'schema': {'key': 'properties.schema', 'type': 'CassandraSchema'},
     }
 
-    def __init__(self, *, location: str, cassandra_table_id: str, tags=None, default_ttl: int=None, schema=None, **kwargs) -> None:
+    def __init__(self, *, cassandra_table_id: str, location: str=None, tags=None, default_ttl: int=None, schema=None, **kwargs) -> None:
         super(CassandraTable, self).__init__(location=location, tags=tags, **kwargs)
         self.cassandra_table_id = cassandra_table_id
         self.default_ttl = default_ttl

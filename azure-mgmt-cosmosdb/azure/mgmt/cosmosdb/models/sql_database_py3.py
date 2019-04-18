@@ -26,8 +26,8 @@ class SqlDatabase(Resource):
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: Required. The location of the resource group to which the
-     resource belongs.
+    :param location: The location of the resource group to which the resource
+     belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -38,9 +38,6 @@ class SqlDatabase(Resource):
     :param _ts: A system generated property that denotes the last updated
      timestamp of the resource.
     :type _ts: object
-    :param _self: A system generated property. It is the unique addressable
-     URI for the resource.
-    :type _self: str
     :param _etag: A system generated property representing the resource etag
      required for optimistic concurrency control.
     :type _etag: str
@@ -56,7 +53,6 @@ class SqlDatabase(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'sql_database_id': {'required': True},
     }
 
@@ -69,18 +65,16 @@ class SqlDatabase(Resource):
         'sql_database_id': {'key': 'properties.id', 'type': 'str'},
         '_rid': {'key': 'properties._rid', 'type': 'str'},
         '_ts': {'key': 'properties._ts', 'type': 'object'},
-        '_self': {'key': 'properties._self', 'type': 'str'},
         '_etag': {'key': 'properties._etag', 'type': 'str'},
         '_colls': {'key': 'properties._colls', 'type': 'str'},
         '_users': {'key': 'properties._users', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, sql_database_id: str, tags=None, _rid: str=None, _ts=None, _self: str=None, _etag: str=None, _colls: str=None, _users: str=None, **kwargs) -> None:
+    def __init__(self, *, sql_database_id: str, location: str=None, tags=None, _rid: str=None, _ts=None, _etag: str=None, _colls: str=None, _users: str=None, **kwargs) -> None:
         super(SqlDatabase, self).__init__(location=location, tags=tags, **kwargs)
         self.sql_database_id = sql_database_id
         self._rid = _rid
         self._ts = _ts
-        self._self = _self
         self._etag = _etag
         self._colls = _colls
         self._users = _users

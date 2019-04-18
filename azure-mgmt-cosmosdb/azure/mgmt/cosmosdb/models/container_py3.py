@@ -26,8 +26,8 @@ class Container(Resource):
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: Required. The location of the resource group to which the
-     resource belongs.
+    :param location: The location of the resource group to which the resource
+     belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -55,9 +55,6 @@ class Container(Resource):
     :param _ts: A system generated property that denotes the last updated
      timestamp of the resource.
     :type _ts: object
-    :param _self: A system generated property. It is the unique addressable
-     URI for the resource.
-    :type _self: str
     :param _etag: A system generated property representing the resource etag
      required for optimistic concurrency control.
     :type _etag: str
@@ -67,7 +64,6 @@ class Container(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'container_id': {'required': True},
     }
 
@@ -85,11 +81,10 @@ class Container(Resource):
         'conflict_resolution_policy': {'key': 'properties.conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
         '_rid': {'key': 'properties._rid', 'type': 'str'},
         '_ts': {'key': 'properties._ts', 'type': 'object'},
-        '_self': {'key': 'properties._self', 'type': 'str'},
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, container_id: str, tags=None, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, _rid: str=None, _ts=None, _self: str=None, _etag: str=None, **kwargs) -> None:
+    def __init__(self, *, container_id: str, location: str=None, tags=None, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, _rid: str=None, _ts=None, _etag: str=None, **kwargs) -> None:
         super(Container, self).__init__(location=location, tags=tags, **kwargs)
         self.container_id = container_id
         self.indexing_policy = indexing_policy
@@ -99,5 +94,4 @@ class Container(Resource):
         self.conflict_resolution_policy = conflict_resolution_policy
         self._rid = _rid
         self._ts = _ts
-        self._self = _self
         self._etag = _etag

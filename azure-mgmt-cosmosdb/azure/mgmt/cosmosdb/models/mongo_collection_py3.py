@@ -26,8 +26,8 @@ class MongoCollection(Resource):
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: Required. The location of the resource group to which the
-     resource belongs.
+    :param location: The location of the resource group to which the resource
+     belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -45,7 +45,6 @@ class MongoCollection(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'mongo_collection_id': {'required': True},
     }
 
@@ -60,7 +59,7 @@ class MongoCollection(Resource):
         'indexes': {'key': 'properties.indexes', 'type': '[MongoIndex]'},
     }
 
-    def __init__(self, *, location: str, mongo_collection_id: str, tags=None, shard_key=None, indexes=None, **kwargs) -> None:
+    def __init__(self, *, mongo_collection_id: str, location: str=None, tags=None, shard_key=None, indexes=None, **kwargs) -> None:
         super(MongoCollection, self).__init__(location=location, tags=tags, **kwargs)
         self.mongo_collection_id = mongo_collection_id
         self.shard_key = shard_key
