@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class EnabledAzureSKUs(Model):
-    """Details about the enable azure sku.
+    """Details about the enabled azure sku.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
