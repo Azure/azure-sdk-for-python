@@ -385,7 +385,7 @@ class TopicsOperations(object):
 
     def create_or_update_authorization_rule(
             self, resource_group_name, namespace_name, topic_name, authorization_rule_name, rights, custom_headers=None, raw=False, **operation_config):
-        """Creates an authorizatio rule for the specified topic.
+        """Creates an authorization rule for the specified topic.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -394,7 +394,7 @@ class TopicsOperations(object):
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param rights: The rights associated with the rule.
         :type rights: list[str or ~azure.mgmt.servicebus.models.AccessRights]
@@ -470,7 +470,7 @@ class TopicsOperations(object):
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -538,7 +538,7 @@ class TopicsOperations(object):
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -597,7 +597,7 @@ class TopicsOperations(object):
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -665,7 +665,7 @@ class TopicsOperations(object):
         :type namespace_name: str
         :param topic_name: The topic name.
         :type topic_name: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param key_type: The access key to regenerate. Possible values
          include: 'PrimaryKey', 'SecondaryKey'
