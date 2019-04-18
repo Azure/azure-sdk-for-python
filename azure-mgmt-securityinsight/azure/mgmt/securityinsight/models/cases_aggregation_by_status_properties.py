@@ -19,16 +19,16 @@ class CasesAggregationByStatusProperties(Model):
     sending a request.
 
     :ivar total_new_status: Total amount of open cases with status New
-    :vartype total_new_status: str
+    :vartype total_new_status: int
     :ivar total_in_progress_status: Total amount of open cases with status
      InProgress
-    :vartype total_in_progress_status: str
+    :vartype total_in_progress_status: int
     :ivar total_resolved_status: Total amount of open cases with status
      Resolved
-    :vartype total_resolved_status: str
+    :vartype total_resolved_status: int
     :ivar total_dismissed_status: Total amount of open cases with status
      Dismissed
-    :vartype total_dismissed_status: str
+    :vartype total_dismissed_status: int
     """
 
     _validation = {
@@ -39,10 +39,10 @@ class CasesAggregationByStatusProperties(Model):
     }
 
     _attribute_map = {
-        'total_new_status': {'key': 'totalNewStatus', 'type': 'str'},
-        'total_in_progress_status': {'key': 'totalInProgressStatus', 'type': 'str'},
-        'total_resolved_status': {'key': 'totalResolvedStatus', 'type': 'str'},
-        'total_dismissed_status': {'key': 'totalDismissedStatus', 'type': 'str'},
+        'total_new_status': {'key': 'totalNewStatus', 'type': 'int'},
+        'total_in_progress_status': {'key': 'totalInProgressStatus', 'type': 'int'},
+        'total_resolved_status': {'key': 'totalResolvedStatus', 'type': 'int'},
+        'total_dismissed_status': {'key': 'totalDismissedStatus', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):

@@ -20,17 +20,17 @@ class CasesAggregationBySeverityProperties(Model):
 
     :ivar total_critical_severity: Total amount of open cases with severity
      Critical
-    :vartype total_critical_severity: str
+    :vartype total_critical_severity: int
     :ivar total_high_severity: Total amount of open cases with severity High
-    :vartype total_high_severity: str
+    :vartype total_high_severity: int
     :ivar total_medium_severity: Total amount of open cases with severity
      medium
-    :vartype total_medium_severity: str
+    :vartype total_medium_severity: int
     :ivar total_low_severity: Total amount of open cases with severity Low
-    :vartype total_low_severity: str
+    :vartype total_low_severity: int
     :ivar total_informational_severity: Total amount of open cases with
      severity Informational
-    :vartype total_informational_severity: str
+    :vartype total_informational_severity: int
     """
 
     _validation = {
@@ -42,11 +42,11 @@ class CasesAggregationBySeverityProperties(Model):
     }
 
     _attribute_map = {
-        'total_critical_severity': {'key': 'totalCriticalSeverity', 'type': 'str'},
-        'total_high_severity': {'key': 'totalHighSeverity', 'type': 'str'},
-        'total_medium_severity': {'key': 'totalMediumSeverity', 'type': 'str'},
-        'total_low_severity': {'key': 'totalLowSeverity', 'type': 'str'},
-        'total_informational_severity': {'key': 'totalInformationalSeverity', 'type': 'str'},
+        'total_critical_severity': {'key': 'totalCriticalSeverity', 'type': 'int'},
+        'total_high_severity': {'key': 'totalHighSeverity', 'type': 'int'},
+        'total_medium_severity': {'key': 'totalMediumSeverity', 'type': 'int'},
+        'total_low_severity': {'key': 'totalLowSeverity', 'type': 'int'},
+        'total_informational_severity': {'key': 'totalInformationalSeverity', 'type': 'int'},
     }
 
     def __init__(self, **kwargs) -> None:
