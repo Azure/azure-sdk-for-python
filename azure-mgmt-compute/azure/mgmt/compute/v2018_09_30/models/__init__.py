@@ -83,5 +83,4 @@ __all__ = [
     'DiskState',
     'SnapshotStorageAccountTypes',
     'AccessLevel',
-    'StorageAccountTypes',
 ]
