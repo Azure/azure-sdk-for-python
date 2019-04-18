@@ -3,6 +3,11 @@
 Release History
 ===============
 
+1.1.19 (2019-04-18)
++++++++++++++++++++
+
+- Azure Stack support for get_client_from_auth_file and get_client_from_json_dict
+
 1.1.18 (2019-01-29)
 +++++++++++++++++++
 

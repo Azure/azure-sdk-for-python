@@ -156,9 +156,17 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
         if is_graphrbac:
             resource = config_dict['activeDirectoryGraphResourceId']
         else:
-            resource = config_dict['resourceManagerEndpointUrl']
-        authority_url = (config_dict['activeDirectoryEndpointUrl'] + '/' +
-                         config_dict['tenantId'])
+            if "activeDirectoryResourceId" not in config_dict or 'resourceManagerEndpointUrl' not in config_dict:
+                raise ValueError("Need activeDirectoryResourceId or resourceManagerEndpointUrl key")
+            resource = config_dict.get('activeDirectoryResourceId', config_dict['resourceManagerEndpointUrl'])
+
+        authority_url = config_dict['activeDirectoryEndpointUrl']
+        is_adfs = bool(re.match('.+(/adfs|/adfs/)$', authority_url, re.I))
+        if is_adfs:
+            authority_url = authority_url.rstrip('/')  # workaround: ADAL is known to reject auth urls with trailing /
+        else:
+            authority_url = authority_url + '/' + config_dict['tenantId']
+
         context = adal.AuthenticationContext(authority_url, api_version=None)
         parameters['credentials'] = AdalAuthentication(
             context.acquire_token_with_client_credentials,
