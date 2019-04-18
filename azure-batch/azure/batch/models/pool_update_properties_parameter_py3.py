@@ -39,12 +39,12 @@ class PoolUpdatePropertiesParameter(Model):
     :param application_package_references: Required. The list of application
      packages to be installed on each compute node in the pool. The list
      replaces any existing application package references on the pool. Changes
-     to application packages affect all new compute nodes joining the pool, but
-     do not affect compute nodes that are already in the pool until they are
-     rebooted or reimaged. There can be a maximum of 10 application package
-     references on any given pool. If omitted, or if you specify an empty
-     collection, any existing application packages references are removed from
-     the pool.
+     to application package references affect all new compute nodes joining the
+     pool, but do not affect compute nodes that are already in the pool until
+     they are rebooted or reimaged. There is a maximum of 10 application
+     package references on any given pool. If omitted, or if you specify an
+     empty collection, any existing application packages references are removed
+     from the pool.
     :type application_package_references:
      list[~azure.batch.models.ApplicationPackageReference]
     :param metadata: Required. A list of name-value pairs associated with the

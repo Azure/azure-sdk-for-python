@@ -118,10 +118,10 @@ class PoolAddParameter(Model):
      list[~azure.batch.models.CertificateReference]
     :param application_package_references: The list of application packages to
      be installed on each compute node in the pool. Changes to application
-     packages affect all new compute nodes joining the pool, but do not affect
-     compute nodes that are already in the pool until they are rebooted or
-     reimaged. There can be a maximum of 10 application package references on
-     any given pool.
+     package references affect all new compute nodes joining the pool, but do
+     not affect compute nodes that are already in the pool until they are
+     rebooted or reimaged. There is a maximum of 10 application package
+     references on any given pool.
     :type application_package_references:
      list[~azure.batch.models.ApplicationPackageReference]
     :param application_licenses: The list of application licenses the Batch
@@ -132,8 +132,8 @@ class PoolAddParameter(Model):
     :type application_licenses: list[str]
     :param max_tasks_per_node: The maximum number of tasks that can run
      concurrently on a single compute node in the pool. The default value is 1.
-     The maximum value is 4 times the number of cores of the vmSize of the
-     pool, or 256, whichever is smaller.
+     The maximum value is the smaller of 4 times the number of cores of the
+     vmSize of the pool or 256.
     :type max_tasks_per_node: int
     :param task_scheduling_policy: How tasks are distributed across compute
      nodes in a pool. If not specified, the default is spread.
