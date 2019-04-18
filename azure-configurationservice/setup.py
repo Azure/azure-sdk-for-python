@@ -6,6 +6,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
+import sys
 import re
 import os.path
 from io import open
@@ -13,7 +14,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-configuration"
-PACKAGE_PPRINT_NAME = "Azure Configuration"
+PACKAGE_PPRINT_NAME = "Azure App Configuration"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -36,7 +37,6 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-print(package_folder_path)
 with open(os.path.join(package_folder_path, '__init__.py'), 'r') as fd:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                         fd.read(), re.MULTILINE).group(1)
@@ -49,6 +49,18 @@ with open('README.md', encoding='utf-8') as f:
 with open('HISTORY.md', encoding='utf-8') as f:
     history = f.read()
 
+exclude_packages = [
+        'tests',
+        'examples',
+        # Exclude packages that will be covered by PEP420 or nspkg
+        'azure',
+    ]
+if sys.version_info[0] < 3 or (sys.version_info[0] == 3 and sys.version_info[1] < 5):
+    exclude_packages.extend([
+        '*.aio',
+        '*.aio.*'
+    ])
+
 setup(
     name=PACKAGE_NAME,
     version=version,
@@ -57,10 +69,10 @@ setup(
     long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
-    author_email='yijxie@microsoft.com',
+    author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/azure-configurationservice',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 3 - Alpha',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
@@ -72,14 +84,9 @@ setup(
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=find_packages(exclude=[
-        'tests',
-        # Exclude packages that will be covered by PEP420 or nspkg
-        'azure',
-    ]),
+    packages=find_packages(exclude=exclude_packages),
     install_requires=[
-        "requests>=2.18.4",
-        "certifi>=2017.4.17",
+        "azure-core",
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
