@@ -17,12 +17,13 @@ class VirtualNetworkPeering(SubResource):
 
     :param id: Resource ID.
     :type id: str
-    :param allow_virtual_network_access: Whether the VMs in the linked virtual
-     network space would be able to access all the VMs in local Virtual network
+    :param allow_virtual_network_access: Whether the VMs in the local virtual
+     network space would be able to access the VMs in remote virtual network
      space.
     :type allow_virtual_network_access: bool
     :param allow_forwarded_traffic: Whether the forwarded traffic from the VMs
-     in the remote virtual network will be allowed/disallowed.
+     in the local virtual network will be allowed/disallowed in remote virtual
+     network.
     :type allow_forwarded_traffic: bool
     :param allow_gateway_transit: If gateway links can be used in remote
      virtual networking to link to this virtual network.
