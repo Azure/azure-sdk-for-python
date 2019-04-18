@@ -7,6 +7,7 @@
 import io
 import json
 import os
+import re
 import sys
 try:
     from inspect import getfullargspec as get_arg_spec
@@ -156,7 +157,7 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
         if is_graphrbac:
             resource = config_dict['activeDirectoryGraphResourceId']
         else:
-            if "activeDirectoryResourceId" not in config_dict or 'resourceManagerEndpointUrl' not in config_dict:
+            if "activeDirectoryResourceId" not in config_dict and 'resourceManagerEndpointUrl' not in config_dict:
                 raise ValueError("Need activeDirectoryResourceId or resourceManagerEndpointUrl key")
             resource = config_dict.get('activeDirectoryResourceId', config_dict['resourceManagerEndpointUrl'])
 
