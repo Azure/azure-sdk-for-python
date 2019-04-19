@@ -6,15 +6,24 @@
 # --------------------------------------------------------------------------
 
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
+from azure.core import HttpRequestError
 from ... import models
 import uuid
 
 
 class AzureConfigurationClientImpOperationsMixin:
+    def _map_error(self, status_code, response, **config):
+        error_map = config.get("error_map")
+        if error_map is None:
+            return
+        error_type = error_map.get(status_code)
+        if error_type is None:
+            return
+        error = error_type(response=response)
+        raise error
 
     def list_configuration_settings(
-            self, label=None, key=None, accept_date_time=None, fields=None, *, custom_headers=None, raw=False, **operation_config):
+            self, label=None, key=None, accept_date_time=None, fields=None, *, raw=False, **kwargs):
         """List configuration settings.
 
         List the configuration settings in the configuration store, optionally
@@ -31,15 +40,12 @@ class AzureConfigurationClientImpOperationsMixin:
         :type accept_date_time: datetime
         :param fields: Specify which fields to return
         :type fields: list[str]
-        :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ConfigurationSetting
         :rtype:
          ~azconfig.models.ConfigurationSettingPaged[~azconfig.models.ConfigurationSetting]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -64,8 +70,9 @@ class AzureConfigurationClientImpOperationsMixin:
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
+            headers = kwargs.get('headers')
+            if headers:
+                header_parameters.update(headers)
             if accept_date_time is not None:
                 header_parameters['Accept-DateTime'] = self._serialize.header("accept_date_time", accept_date_time, 'iso-8601')
             if self._config.accept_language is not None:
@@ -82,8 +89,8 @@ class AzureConfigurationClientImpOperationsMixin:
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
+                error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
+                exp = HttpRequestError(response=response)
                 raise exp
 
             return response
@@ -95,8 +102,8 @@ class AzureConfigurationClientImpOperationsMixin:
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
+                error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
+                exp = HttpRequestError(response=response)
                 raise exp
 
             return response
@@ -112,7 +119,7 @@ class AzureConfigurationClientImpOperationsMixin:
     list_configuration_settings.metadata = {'url': '/kv'}
 
     async def get_configuration_setting(
-            self, key, label="%00", accept_date_time=None, *, custom_headers=None, raw=False, **operation_config):
+            self, key, label="%00", accept_date_time=None, *, raw=False, **kwargs):
         """Get a ConfigurationSetting.
 
         Get the ConfigurationSetting for the given key and label.
@@ -124,15 +131,12 @@ class AzureConfigurationClientImpOperationsMixin:
         :param accept_date_time: Obtain representation of the result related
          to past time.
         :type accept_date_time: datetime
-        :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
         :return: ConfigurationSetting or ClientRawResponse if raw=true
         :rtype: ~azconfig.models.ConfigurationSetting or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
         """
         # Construct URL
         url = self.get_configuration_setting.metadata['url']
@@ -151,8 +155,9 @@ class AzureConfigurationClientImpOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
+        headers = kwargs.get('headers')
+        if headers:
+            header_parameters.update(headers)
         if accept_date_time is not None:
             header_parameters['Accept-DateTime'] = self._serialize.header("accept_date_time", accept_date_time, 'iso-8601')
         if self._config.accept_language is not None:
@@ -164,8 +169,8 @@ class AzureConfigurationClientImpOperationsMixin:
         response = pipeline_response.http_response.internal_response
 
         if response.status_code not in [200, 304]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
+            exp = HttpRequestError(response=response)
             raise exp
 
         header_dict = {}
@@ -185,7 +190,7 @@ class AzureConfigurationClientImpOperationsMixin:
     get_configuration_setting.metadata = {'url': '/kv/{key}'}
 
     async def create_or_update_configuration_setting(
-            self, configuration_setting, key, label="%00", *, custom_headers=None, raw=False, **operation_config):
+            self, configuration_setting, key, label="%00", *, raw=False, **kwargs):
         """Create (or update) a ConfigurationSetting.
 
         Create (or update) a ConfigurationSetting.
@@ -196,15 +201,12 @@ class AzureConfigurationClientImpOperationsMixin:
         :type key: str
         :param label:
         :type label: str
-        :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
         :return: ConfigurationSetting or ClientRawResponse if raw=true
         :rtype: ~azconfig.models.ConfigurationSetting or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
         """
         # Construct URL
         url = self.create_or_update_configuration_setting.metadata['url']
@@ -224,8 +226,9 @@ class AzureConfigurationClientImpOperationsMixin:
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
+        headers = kwargs.get('headers')
+        if headers:
+            header_parameters.update(headers)
         if self._config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
@@ -238,8 +241,8 @@ class AzureConfigurationClientImpOperationsMixin:
         response = pipeline_response.http_response.internal_response
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
+            exp = HttpRequestError(response=response)
             raise exp
 
         deserialized = None
@@ -254,22 +257,19 @@ class AzureConfigurationClientImpOperationsMixin:
     create_or_update_configuration_setting.metadata = {'url': '/kv/{key}'}
 
     async def delete_configuration_setting(
-            self, key, label=None, *, custom_headers=None, raw=False, **operation_config):
+            self, key, label=None, *, raw=False, **kwargs):
         """Delete a ConfigurationSetting.
 
         :param key: string
         :type key: str
         :param label:
         :type label: str
-        :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
         :return: ConfigurationSetting or ClientRawResponse if raw=true
         :rtype: ~azconfig.models.ConfigurationSetting or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
         """
         # Construct URL
         url = self.delete_configuration_setting.metadata['url']
@@ -288,8 +288,9 @@ class AzureConfigurationClientImpOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
+        headers = kwargs.get('headers')
+        if headers:
+            header_parameters.update(headers)
         if self._config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
@@ -299,8 +300,8 @@ class AzureConfigurationClientImpOperationsMixin:
         response = pipeline_response.http_response.internal_response
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
+            exp = HttpRequestError(response=response)
             raise exp
 
         deserialized = None
@@ -315,7 +316,7 @@ class AzureConfigurationClientImpOperationsMixin:
     delete_configuration_setting.metadata = {'url': '/kv/{key}'}
 
     def list_keys(
-            self, name=None, accept_date_time=None, *, custom_headers=None, raw=False, **operation_config):
+            self, name=None, accept_date_time=None, *, raw=False, **kwargs):
         """
 
         :param name:
@@ -323,14 +324,11 @@ class AzureConfigurationClientImpOperationsMixin:
         :param accept_date_time: Obtain representation of the result related
          to past time.
         :type accept_date_time: datetime
-        :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Key
         :rtype: ~azconfig.models.KeyPaged[~azconfig.models.Key]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -351,8 +349,9 @@ class AzureConfigurationClientImpOperationsMixin:
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
+            headers = kwargs.get('headers')
+            if headers:
+                header_parameters.update(headers)
             if accept_date_time is not None:
                 header_parameters['Accept-DateTime'] = self._serialize.header("accept_date_time", accept_date_time, 'iso-8601')
             if self._config.accept_language is not None:
@@ -369,8 +368,8 @@ class AzureConfigurationClientImpOperationsMixin:
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
+                error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
+                exp = HttpRequestError(response=response)
                 raise exp
 
             return response
@@ -382,8 +381,8 @@ class AzureConfigurationClientImpOperationsMixin:
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
+                error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
+                exp = HttpRequestError(response=response)
                 raise exp
 
             return response
@@ -399,7 +398,7 @@ class AzureConfigurationClientImpOperationsMixin:
     list_keys.metadata = {'url': '/keys'}
 
     def list_labels(
-            self, accept_date_time=None, fields=None, name=None, *, custom_headers=None, raw=False, **operation_config):
+            self, accept_date_time=None, fields=None, name=None, *, raw=False, **kwargs):
         """List labels.
 
         :param accept_date_time: Obtain representation of the result related
@@ -409,14 +408,11 @@ class AzureConfigurationClientImpOperationsMixin:
         :type fields: list[str]
         :param name:
         :type name: str
-        :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Label
         :rtype: ~azconfig.models.LabelPaged[~azconfig.models.Label]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -439,8 +435,9 @@ class AzureConfigurationClientImpOperationsMixin:
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
+            headers = kwargs.get('headers')
+            if headers:
+                header_parameters.update(headers)
             if accept_date_time is not None:
                 header_parameters['Accept-DateTime'] = self._serialize.header("accept_date_time", accept_date_time, 'iso-8601')
             if self._config.accept_language is not None:
@@ -457,8 +454,8 @@ class AzureConfigurationClientImpOperationsMixin:
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
+                error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
+                exp = HttpRequestError(response=response)
                 raise exp
 
             return response
@@ -470,8 +467,8 @@ class AzureConfigurationClientImpOperationsMixin:
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
+                error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
+                exp = HttpRequestError(response=response)
                 raise exp
 
             return response
@@ -487,22 +484,19 @@ class AzureConfigurationClientImpOperationsMixin:
     list_labels.metadata = {'url': '/labels'}
 
     async def lock_configuration_setting(
-            self, key, label=None, *, custom_headers=None, raw=False, **operation_config):
+            self, key, label=None, *, raw=False, **kwargs):
         """
 
         :param key:
         :type key: str
         :param label:
         :type label: str
-        :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
         :return: ConfigurationSetting or ClientRawResponse if raw=true
         :rtype: ~azconfig.models.ConfigurationSetting or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
         """
         # Construct URL
         url = self.lock_configuration_setting.metadata['url']
@@ -521,8 +515,9 @@ class AzureConfigurationClientImpOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
+        headers = kwargs.get('headers')
+        if headers:
+            header_parameters.update(headers)
         if self._config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
@@ -532,8 +527,8 @@ class AzureConfigurationClientImpOperationsMixin:
         response = pipeline_response.http_response.internal_response
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
+            exp = HttpRequestError(response=response)
             raise exp
 
         deserialized = None
@@ -548,22 +543,19 @@ class AzureConfigurationClientImpOperationsMixin:
     lock_configuration_setting.metadata = {'url': '/locks/{key}'}
 
     async def unlock_configuration_setting(
-            self, key, label=None, *, custom_headers=None, raw=False, **operation_config):
+            self, key, label=None, *, raw=False, **kwargs):
         """
 
         :param key:
         :type key: str
         :param label:
         :type label: str
-        :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
         :return: ConfigurationSetting or ClientRawResponse if raw=true
         :rtype: ~azconfig.models.ConfigurationSetting or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
         """
         # Construct URL
         url = self.unlock_configuration_setting.metadata['url']
@@ -582,8 +574,9 @@ class AzureConfigurationClientImpOperationsMixin:
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
+        headers = kwargs.get('headers')
+        if headers:
+            header_parameters.update(headers)
         if self._config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
@@ -593,8 +586,8 @@ class AzureConfigurationClientImpOperationsMixin:
         response = pipeline_response.http_response.internal_response
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
+            error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
+            exp = HttpRequestError(response=response)
             raise exp
 
         deserialized = None
@@ -609,7 +602,7 @@ class AzureConfigurationClientImpOperationsMixin:
     unlock_configuration_setting.metadata = {'url': '/locks/{key}'}
 
     def list_revisions(
-            self, label=None, key=None, fields=None, accept_date_time=None, *, custom_headers=None, raw=False, **operation_config):
+            self, label=None, key=None, fields=None, accept_date_time=None, *, raw=False, **kwargs):
         """
 
         :param label: Filter returned values based on their label. '*' can be
@@ -623,15 +616,12 @@ class AzureConfigurationClientImpOperationsMixin:
         :param accept_date_time: Obtain representation of the result related
          to past time.
         :type accept_date_time: datetime
-        :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ConfigurationSetting
         :rtype:
          ~azconfig.models.ConfigurationSettingPaged[~azconfig.models.ConfigurationSetting]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -656,8 +646,9 @@ class AzureConfigurationClientImpOperationsMixin:
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            if custom_headers:
-                header_parameters.update(custom_headers)
+            headers = kwargs.get('headers')
+            if headers:
+                header_parameters.update(headers)
             if accept_date_time is not None:
                 header_parameters['Accept-DateTime'] = self._serialize.header("accept_date_time", accept_date_time, 'iso-8601')
             if self._config.accept_language is not None:
@@ -674,8 +665,8 @@ class AzureConfigurationClientImpOperationsMixin:
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
+                error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
+                exp = HttpRequestError(response=response)
                 raise exp
 
             return response
@@ -687,8 +678,8 @@ class AzureConfigurationClientImpOperationsMixin:
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
+                error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
+                exp = HttpRequestError(response=response)
                 raise exp
 
             return response

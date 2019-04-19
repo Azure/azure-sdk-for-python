@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import os
+import sys
 import platform
 
 from azure.core.pipeline import Pipeline
@@ -25,11 +27,13 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
     def __init__(self, connection_string):
 
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
+        program_name = os.path.basename(sys.argv[0]) or "noprogram"
         self.config = AzureConfigurationClientImpConfiguration(
             connection_string,
-            base_user_agent="python/{}".format(platform.python_version()),
+            base_user_agent=program_name,
             logging_enable=True,
         )
+        self.config.user_agent_policy.add_user_agent("{}{}".format(platform.python_implementation(), platform.python_version()))
         self.config.user_agent_policy.add_user_agent(platform.platform())
         self._impl = AzureConfigurationClientImp(
             connection_string, base_url, config=self.config

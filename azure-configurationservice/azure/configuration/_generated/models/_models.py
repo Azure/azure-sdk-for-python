@@ -8,14 +8,6 @@
 from msrest.serialization import Model
 
 
-class CloudError(Model):
-    """CloudError.
-    """
-
-    _attribute_map = {
-    }
-
-
 class ConfigurationSetting(Model):
     """A configuration value.
 
@@ -67,6 +59,14 @@ class ConfigurationSetting(Model):
         self.last_modified = None
         self.locked = None
         self.tags = kwargs.get('tags', None)
+
+
+class HttpRequestError(Model):
+    """HttpRequestError.
+    """
+
+    _attribute_map = {
+    }
 
 
 class Key(Model):
