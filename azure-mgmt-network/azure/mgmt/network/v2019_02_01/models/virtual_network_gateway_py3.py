@@ -60,6 +60,10 @@ class VirtualNetworkGateway(Resource):
      ~azure.mgmt.network.v2019_02_01.models.VpnClientConfiguration
     :param bgp_settings: Virtual network gateway's BGP speaker settings.
     :type bgp_settings: ~azure.mgmt.network.v2019_02_01.models.BgpSettings
+    :param custom_routes: The reference of the address space resource which
+     represents the custom routes address space specified by the the customer
+     for virtual network gateway and VpnClient.
+    :type custom_routes: ~azure.mgmt.network.v2019_02_01.models.AddressSpace
     :param resource_guid: The resource GUID property of the
      VirtualNetworkGateway resource.
     :type resource_guid: str
@@ -93,12 +97,13 @@ class VirtualNetworkGateway(Resource):
         'sku': {'key': 'properties.sku', 'type': 'VirtualNetworkGatewaySku'},
         'vpn_client_configuration': {'key': 'properties.vpnClientConfiguration', 'type': 'VpnClientConfiguration'},
         'bgp_settings': {'key': 'properties.bgpSettings', 'type': 'BgpSettings'},
+        'custom_routes': {'key': 'properties.customRoutes', 'type': 'AddressSpace'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, ip_configurations=None, gateway_type=None, vpn_type=None, enable_bgp: bool=None, active_active: bool=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, bgp_settings=None, resource_guid: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, ip_configurations=None, gateway_type=None, vpn_type=None, enable_bgp: bool=None, active_active: bool=None, gateway_default_site=None, sku=None, vpn_client_configuration=None, bgp_settings=None, custom_routes=None, resource_guid: str=None, etag: str=None, **kwargs) -> None:
         super(VirtualNetworkGateway, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.ip_configurations = ip_configurations
         self.gateway_type = gateway_type
@@ -109,6 +114,7 @@ class VirtualNetworkGateway(Resource):
         self.sku = sku
         self.vpn_client_configuration = vpn_client_configuration
         self.bgp_settings = bgp_settings
+        self.custom_routes = custom_routes
         self.resource_guid = resource_guid
         self.provisioning_state = None
         self.etag = etag

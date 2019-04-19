@@ -44,6 +44,10 @@ class P2SVpnGateway(Resource):
      resource which represents Address space for P2S VpnClient.
     :type vpn_client_address_pool:
      ~azure.mgmt.network.v2019_02_01.models.AddressSpace
+    :param custom_routes: The reference of the address space resource which
+     represents the custom routes specified by the customer for P2SVpnGateway
+     and P2S VpnClient.
+    :type custom_routes: ~azure.mgmt.network.v2019_02_01.models.AddressSpace
     :ivar vpn_client_connection_health: All P2S VPN clients' connection health
      status.
     :vartype vpn_client_connection_health:
@@ -71,6 +75,7 @@ class P2SVpnGateway(Resource):
         'vpn_gateway_scale_unit': {'key': 'properties.vpnGatewayScaleUnit', 'type': 'int'},
         'p2_svpn_server_configuration': {'key': 'properties.p2SVpnServerConfiguration', 'type': 'SubResource'},
         'vpn_client_address_pool': {'key': 'properties.vpnClientAddressPool', 'type': 'AddressSpace'},
+        'custom_routes': {'key': 'properties.customRoutes', 'type': 'AddressSpace'},
         'vpn_client_connection_health': {'key': 'properties.vpnClientConnectionHealth', 'type': 'VpnClientConnectionHealth'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
@@ -82,5 +87,6 @@ class P2SVpnGateway(Resource):
         self.vpn_gateway_scale_unit = kwargs.get('vpn_gateway_scale_unit', None)
         self.p2_svpn_server_configuration = kwargs.get('p2_svpn_server_configuration', None)
         self.vpn_client_address_pool = kwargs.get('vpn_client_address_pool', None)
+        self.custom_routes = kwargs.get('custom_routes', None)
         self.vpn_client_connection_health = None
         self.etag = None

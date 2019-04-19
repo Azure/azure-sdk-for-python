@@ -60,6 +60,10 @@ class VirtualNetworkGateway(Resource):
      ~azure.mgmt.network.v2019_02_01.models.VpnClientConfiguration
     :param bgp_settings: Virtual network gateway's BGP speaker settings.
     :type bgp_settings: ~azure.mgmt.network.v2019_02_01.models.BgpSettings
+    :param custom_routes: The reference of the address space resource which
+     represents the custom routes address space specified by the the customer
+     for virtual network gateway and VpnClient.
+    :type custom_routes: ~azure.mgmt.network.v2019_02_01.models.AddressSpace
     :param resource_guid: The resource GUID property of the
      VirtualNetworkGateway resource.
     :type resource_guid: str
@@ -93,6 +97,7 @@ class VirtualNetworkGateway(Resource):
         'sku': {'key': 'properties.sku', 'type': 'VirtualNetworkGatewaySku'},
         'vpn_client_configuration': {'key': 'properties.vpnClientConfiguration', 'type': 'VpnClientConfiguration'},
         'bgp_settings': {'key': 'properties.bgpSettings', 'type': 'BgpSettings'},
+        'custom_routes': {'key': 'properties.customRoutes', 'type': 'AddressSpace'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -109,6 +114,7 @@ class VirtualNetworkGateway(Resource):
         self.sku = kwargs.get('sku', None)
         self.vpn_client_configuration = kwargs.get('vpn_client_configuration', None)
         self.bgp_settings = kwargs.get('bgp_settings', None)
+        self.custom_routes = kwargs.get('custom_routes', None)
         self.resource_guid = kwargs.get('resource_guid', None)
         self.provisioning_state = None
         self.etag = kwargs.get('etag', None)

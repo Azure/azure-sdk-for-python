@@ -44,6 +44,10 @@ class P2SVpnGateway(Resource):
      resource which represents Address space for P2S VpnClient.
     :type vpn_client_address_pool:
      ~azure.mgmt.network.v2019_02_01.models.AddressSpace
+    :param custom_routes: The reference of the address space resource which
+     represents the custom routes specified by the customer for P2SVpnGateway
+     and P2S VpnClient.
+    :type custom_routes: ~azure.mgmt.network.v2019_02_01.models.AddressSpace
     :ivar vpn_client_connection_health: All P2S VPN clients' connection health
      status.
     :vartype vpn_client_connection_health:
@@ -71,16 +75,18 @@ class P2SVpnGateway(Resource):
         'vpn_gateway_scale_unit': {'key': 'properties.vpnGatewayScaleUnit', 'type': 'int'},
         'p2_svpn_server_configuration': {'key': 'properties.p2SVpnServerConfiguration', 'type': 'SubResource'},
         'vpn_client_address_pool': {'key': 'properties.vpnClientAddressPool', 'type': 'AddressSpace'},
+        'custom_routes': {'key': 'properties.customRoutes', 'type': 'AddressSpace'},
         'vpn_client_connection_health': {'key': 'properties.vpnClientConnectionHealth', 'type': 'VpnClientConnectionHealth'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_hub=None, provisioning_state=None, vpn_gateway_scale_unit: int=None, p2_svpn_server_configuration=None, vpn_client_address_pool=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, virtual_hub=None, provisioning_state=None, vpn_gateway_scale_unit: int=None, p2_svpn_server_configuration=None, vpn_client_address_pool=None, custom_routes=None, **kwargs) -> None:
         super(P2SVpnGateway, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.virtual_hub = virtual_hub
         self.provisioning_state = provisioning_state
         self.vpn_gateway_scale_unit = vpn_gateway_scale_unit
         self.p2_svpn_server_configuration = p2_svpn_server_configuration
         self.vpn_client_address_pool = vpn_client_address_pool
+        self.custom_routes = custom_routes
         self.vpn_client_connection_health = None
         self.etag = None
