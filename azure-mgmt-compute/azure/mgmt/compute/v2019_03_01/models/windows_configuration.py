@@ -22,7 +22,9 @@ class WindowsConfiguration(Model):
      can be added to the VM later.
     :type provision_vm_agent: bool
     :param enable_automatic_updates: Indicates whether virtual machine is
-     enabled for automatic updates.
+     enabled for automatic Windows updates. Default value is true. <br><br> For
+     virtual machine scale sets, this property can be updated and updates will
+     take effect on OS reprovisioning.
     :type enable_automatic_updates: bool
     :param time_zone: Specifies the time zone of the virtual machine. e.g.
      "Pacific Standard Time"
