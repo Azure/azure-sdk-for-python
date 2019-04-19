@@ -79,6 +79,9 @@ class ManagedCluster(Resource):
     :param api_server_authorized_ip_ranges: (PREVIEW) Authorized IP Ranges to
      kubernetes API server.
     :type api_server_authorized_ip_ranges: list[str]
+    :param identity: The identity of the managed cluster, if configured.
+    :type identity:
+     ~azure.mgmt.containerservice.v2019_04_01.models.ManagedClusterIdentity
     """
 
     _validation = {
@@ -114,6 +117,7 @@ class ManagedCluster(Resource):
         'network_profile': {'key': 'properties.networkProfile', 'type': 'ContainerServiceNetworkProfile'},
         'aad_profile': {'key': 'properties.aadProfile', 'type': 'ManagedClusterAADProfile'},
         'api_server_authorized_ip_ranges': {'key': 'properties.apiServerAuthorizedIPRanges', 'type': '[str]'},
+        'identity': {'key': 'identity', 'type': 'ManagedClusterIdentity'},
     }
 
     def __init__(self, **kwargs):
@@ -134,3 +138,4 @@ class ManagedCluster(Resource):
         self.network_profile = kwargs.get('network_profile', None)
         self.aad_profile = kwargs.get('aad_profile', None)
         self.api_server_authorized_ip_ranges = kwargs.get('api_server_authorized_ip_ranges', None)
+        self.identity = kwargs.get('identity', None)

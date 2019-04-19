@@ -224,3 +224,9 @@ class LoadBalancerSku(str, Enum):
 
     standard = "standard"
     basic = "basic"
+
+
+class ResourceIdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    none = "None"
