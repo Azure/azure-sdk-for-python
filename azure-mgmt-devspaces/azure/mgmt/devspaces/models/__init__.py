@@ -17,6 +17,7 @@ try:
     from .sku_py3 import Sku
     from .controller_py3 import Controller
     from .controller_update_parameters_py3 import ControllerUpdateParameters
+    from .list_connection_details_parameters_py3 import ListConnectionDetailsParameters
     from .orchestrator_specific_connection_details_py3 import OrchestratorSpecificConnectionDetails
     from .controller_connection_details_py3 import ControllerConnectionDetails
     from .controller_connection_details_list_py3 import ControllerConnectionDetailsList
@@ -32,6 +33,7 @@ except (SyntaxError, ImportError):
     from .sku import Sku
     from .controller import Controller
     from .controller_update_parameters import ControllerUpdateParameters
+    from .list_connection_details_parameters import ListConnectionDetailsParameters
     from .orchestrator_specific_connection_details import OrchestratorSpecificConnectionDetails
     from .controller_connection_details import ControllerConnectionDetails
     from .controller_connection_details_list import ControllerConnectionDetailsList
@@ -54,6 +56,7 @@ __all__ = [
     'Sku',
     'Controller',
     'ControllerUpdateParameters',
+    'ListConnectionDetailsParameters',
     'OrchestratorSpecificConnectionDetails',
     'ControllerConnectionDetails',
     'ControllerConnectionDetailsList',

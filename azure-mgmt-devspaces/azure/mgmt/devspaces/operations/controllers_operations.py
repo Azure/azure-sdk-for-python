@@ -24,7 +24,7 @@ class ControllersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2019-01-01-preview".
+    :ivar api_version: Client API version. Constant value: "2019-04-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ControllersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-01-01-preview"
+        self.api_version = "2019-04-01"
 
         self.config = config
 
@@ -498,7 +498,7 @@ class ControllersOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DevSpaces/controllers'}
 
     def list_connection_details(
-            self, resource_group_name, name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, target_container_host_resource_id, custom_headers=None, raw=False, **operation_config):
         """Lists connection details for an Azure Dev Spaces Controller.
 
         Lists connection details for the underlying container resources of an
@@ -509,6 +509,9 @@ class ControllersOperations(object):
         :type resource_group_name: str
         :param name: Name of the resource.
         :type name: str
+        :param target_container_host_resource_id: Resource ID of the target
+         container host mapped to the Azure Dev Spaces Controller.
+        :type target_container_host_resource_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -521,6 +524,8 @@ class ControllersOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.devspaces.models.ErrorResponseException>`
         """
+        list_connection_details_parameters = models.ListConnectionDetailsParameters(target_container_host_resource_id=target_container_host_resource_id)
+
         # Construct URL
         url = self.list_connection_details.metadata['url']
         path_format_arguments = {
@@ -537,6 +542,7 @@ class ControllersOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -544,8 +550,11 @@ class ControllersOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(list_connection_details_parameters, 'ListConnectionDetailsParameters')
+
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
