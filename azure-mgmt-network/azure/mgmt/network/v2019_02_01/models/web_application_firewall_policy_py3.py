@@ -41,9 +41,9 @@ class WebApplicationFirewallPolicy(Resource):
     :ivar provisioning_state: Provisioning state of the
      WebApplicationFirewallPolicy.
     :vartype provisioning_state: str
-    :ivar resource_state: Resource status of the policy. Possible values
-     include: 'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled',
-     'Deleting'
+    :ivar resource_state: Resource status of the policy. Resource status of
+     the policy. Possible values include: 'Creating', 'Enabling', 'Enabled',
+     'Disabling', 'Disabled', 'Deleting'
     :vartype resource_state: str or
      ~azure.mgmt.network.v2019_02_01.models.WebApplicationFirewallPolicyResourceState
     :param etag: Gets a unique read-only string that changes whenever the
