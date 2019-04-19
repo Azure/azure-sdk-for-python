@@ -105,28 +105,11 @@ class HttpRequestError(ServiceRequestError):
     :ivar response: The response that triggered the exception.
     """
 
-    def __init__(self, response, *args, **kwargs):
-        """ Create a new HttpRequestError instance.
-
-        :param response: Raw HTTP response that triggered the exception.
-        """
-        super(HttpRequestError).__init__(*args, **kwargs)
-        self.response = response
-
-    @property
-    def status_code(self):
-        return self.response.status_code
-
-
-class ClientRequestError(HttpRequestError):
-    """An error response with status code 4xx.
-    This will not be raised directly by the Azure core pipeline."""
-
-    def __init__(self, response):
-        # TODO: This is a place holder for generated clients.
-        self.status_code = response.status_code
-        self.reason = response.reason
-        message = "Operation returned an invalid status code {!r}".format(self.reason)
+    def __init__(self, message=None, response=None, **kwargs):       
+        self.reason = None
+        if response:
+            self.reason=response.reason
+        message = "Operation returned an invalid status code {}".format(self.reason)
         try:
             try:
                 if self.error.error.code or self.error.error.message:
@@ -138,24 +121,24 @@ class ClientRequestError(HttpRequestError):
                     message = self.error.message
         except AttributeError:
             pass
-        super(ClientRequestError, self).__init__(message, response=response)
+        super(HttpRequestError, self).__init__(message=message, response=response, **kwargs)
 
-class ResourceExistsError(ClientRequestError):
+class ResourceExistsError(HttpRequestError):
     """An error response with status code 4xx.
     This will not be raised directly by the Azure core pipeline."""
 
 
-class ResourceNotFoundError(ClientRequestError):
+class ResourceNotFoundError(HttpRequestError):
     """ An error response, typically triggered by a 412 response (for update) or 404 (for get/post)
     """
 
 
-class ClientAuthenticationError(ClientRequestError):
+class ClientAuthenticationError(HttpRequestError):
     """An error response with status code 4xx.
     This will not be raised directly by the Azure core pipeline."""
 
 
-class ResourceModifiedError(ClientRequestError):
+class ResourceModifiedError(HttpRequestError):
     """An error response with status code 4xx, typically 412 Conflict.
     This will not be raised directly by the Azure core pipeline."""
 
