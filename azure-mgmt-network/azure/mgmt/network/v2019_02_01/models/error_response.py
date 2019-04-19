@@ -16,7 +16,7 @@ from msrest.exceptions import HttpOperationError
 class ErrorResponse(Model):
     """The error object.
 
-    :param error: Error.
+    :param error: Error. The error details object.
     :type error: ~azure.mgmt.network.v2019_02_01.models.ErrorDetails
     """
 
