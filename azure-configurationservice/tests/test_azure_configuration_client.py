@@ -33,7 +33,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         self.working_folder = os.path.dirname(__file__)
         super(AzConfigurationClientTest, self).setUp()
 
-        connection_str = os.environ["AZ_CONFIG_CONNECTION"]
+        connection_str = os.environ["APP_CONFIG_CONNECTION"]
         self.app_config_client = AzureConfigurationClient(connection_str)
         self.test_data = conftest.setup_data()
 

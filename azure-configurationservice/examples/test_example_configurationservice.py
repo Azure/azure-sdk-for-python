@@ -37,7 +37,7 @@ class AzConfigurationClientExamples(AzureMgmtTestCase):
         import os
         from azure.configuration import AzureConfigurationClient
 
-        connection_str = os.environ["AZ_CONFIG_CONNECTION"]
+        connection_str = os.environ["APP_CONFIG_CONNECTION"]
         client = AzureConfigurationClient(connection_str)
         # [END create_app_configuration_client]
 

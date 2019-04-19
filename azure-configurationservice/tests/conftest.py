@@ -33,7 +33,7 @@ def _delete_from_test(app_config_client, key, label):
 
 
 def _create_app_config_client():
-    connection_str = os.environ['AZ_CONFIG_CONNECTION']
+    connection_str = os.environ['APP_CONFIG_CONNECTION']
     return AzureConfigurationClient(connection_str)
 
 
