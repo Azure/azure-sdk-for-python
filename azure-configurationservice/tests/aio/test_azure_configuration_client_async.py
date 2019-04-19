@@ -5,7 +5,7 @@ import asyncio
 import pytest
 import logging
 
-from msrestazure.azure_exceptions import CloudError
+from azure.core import ResourceModifiedError, ResourceNotFoundError, ResourceExistsError, AzureError
 from azure.configuration.aio import AzureConfigurationClient
 from azure.configuration import ConfigurationSetting
 from devtools_testutils import AzureMgmtTestCase
@@ -60,7 +60,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
         kv.value = compare_kv.value
         kv.content_type = compare_kv.content_type
 
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceExistsError):
             asyncio.get_event_loop().run_until_complete(
                 self.app_config_client.add_configuration_setting(kv)
             )
@@ -98,7 +98,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
         kv.value = compare_kv.value
         kv.content_type = compare_kv.content_type
 
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceExistsError):
             asyncio.get_event_loop().run_until_complete(
                 self.app_config_client.add_configuration_setting(kv)
             )
@@ -169,7 +169,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
         to_set_kv.value = to_set_kv.value + "a"
         to_set_kv.tags = {"a": "b", "c": "d"}
         to_set_kv.etag = "wrong etag"
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceModifiedError):
             asyncio.get_event_loop().run_until_complete(
                 self.app_config_client.set_configuration_setting(to_set_kv)
             )
@@ -182,7 +182,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
     def test_set_configuration_setting_no_label_etag(self):
         to_set_kv = copy(self.test_data.no_label_data[-1])
         to_set_kv.key = "unit_test_key_set" + self.test_data.key_uuid
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceModifiedError):
             asyncio.get_event_loop().run_until_complete(
                 self.app_config_client.set_configuration_setting(to_set_kv)
             )
@@ -190,7 +190,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
     def test_set_configuration_setting_label_etag(self):
         to_set_kv = copy(self.test_data.label1_data[-1])
         to_set_kv.key = "unit_test_key_set" + self.test_data.key_uuid
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceModifiedError):
             asyncio.get_event_loop().run_until_complete(
                 self.app_config_client.set_configuration_setting(to_set_kv)
             )
@@ -343,7 +343,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
         )
         tags = {"a": "b", "c": "d"}
         etag = "wrong etag"
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceModifiedError):
             asyncio.get_event_loop().run_until_complete(
                 self.app_config_client.update_configuration_setting(
                     to_update_kv.key,
@@ -362,7 +362,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
     def test_update_no_existing_configuration_setting_label_noetag(self):
         key = self.test_data.key_uuid
         label = "test_label1"
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceNotFoundError):
             asyncio.get_event_loop().run_until_complete(
                 self.app_config_client.update_configuration_setting(
                     key, label=label, value="some value"
@@ -400,7 +400,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
 
     def test_get_non_existing_configuration_setting(self):
         compare_kv = self.test_data.label1_data[0]
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceNotFoundError):
             asyncio.get_event_loop().run_until_complete(
                 self.app_config_client.get_configuration_setting(
                     compare_kv.key, compare_kv.label + "a"
@@ -438,7 +438,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
 
     def test_lock_no_existing(self):
         to_lock_kv = self.test_data.label1_data[0]
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceNotFoundError):
             asyncio.get_event_loop().run_until_complete(
                 self.app_config_client.lock_configuration_setting(
                     to_lock_kv.key, to_lock_kv.label + "a"
@@ -447,7 +447,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
 
     def test_unlock_no_existing(self):
         to_lock_kv = self.test_data.label1_data[0]
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceNotFoundError):
             asyncio.get_event_loop().run_until_complete(
                 self.app_config_client.unlock_configuration_setting(
                     to_lock_kv.key, to_lock_kv.label + "a"
@@ -464,7 +464,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
         asyncio.get_event_loop().run_until_complete(
             self.app_config_client.delete_configuration_setting(to_delete_kv.key)
         )
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceNotFoundError):
             asyncio.get_event_loop().run_until_complete(
                 self.app_config_client.get_configuration_setting(to_delete_kv.key)
             )
@@ -480,7 +480,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
                 to_delete_kv.key, label=to_delete_kv.label
             )
         )
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceNotFoundError):
             asyncio.get_event_loop().run_until_complete(
                 self.app_config_client.get_configuration_setting(
                     to_delete_kv.key, label=to_delete_kv.label
@@ -507,7 +507,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
             )
         )
         assert deleted_kv is not None
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceNotFoundError):
             asyncio.get_event_loop().run_until_complete(
                 self.app_config_client.get_configuration_setting(to_delete_kv.key)
             )
@@ -518,7 +518,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
         to_delete_kv = asyncio.get_event_loop().run_until_complete(
             self.app_config_client.add_configuration_setting(to_delete_kv)
         )
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceModifiedError):
             asyncio.get_event_loop().run_until_complete(
                 self.app_config_client.delete_configuration_setting(
                     to_delete_kv.key, etag="wrong etag"
@@ -640,7 +640,7 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
                         kv.key, kv.label
                     )
                 )
-            except CloudError:
+            except AzureError:
                 pass
 
     def test_list_configuration_settings_null_label(self):
@@ -725,6 +725,9 @@ class AzConfigurationClientAsyncTest(AzureMgmtTestCase):
     @staticmethod
     def _to_list(ait):
         async def lst():
-            return [item async for item in ait]
+            result = []
+            async for item in ait:
+                result.append(item)
+            return result
 
         return asyncio.get_event_loop().run_until_complete(lst())
