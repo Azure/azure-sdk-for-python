@@ -36,7 +36,7 @@ class Volume(Model):
      file path for the volume. Used when creating mount targets
     :type creation_token: str
     :param service_level: Required. serviceLevel. The service level of the
-     file system. Possible values include: 'Standard', 'Premium', 'Extreme'.
+     file system. Possible values include: 'Standard', 'Premium', 'Ultra'.
      Default value: "Premium" .
     :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :param usage_threshold: usageThreshold. Maximum storage quota allowed for
@@ -44,6 +44,9 @@ class Volume(Model):
      Minimum size is 100 GiB. Upper limit is 100TiB. Default value:
      107374182400 .
     :type usage_threshold: long
+    :param export_policy: Export policy rule
+    :type export_policy:
+     ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
     :param subnet_id: The Azure Resource URI for a delegated subnet. Must have
@@ -73,11 +76,12 @@ class Volume(Model):
         'creation_token': {'key': 'properties.creationToken', 'type': 'str'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
         'usage_threshold': {'key': 'properties.usageThreshold', 'type': 'long'},
+        'export_policy': {'key': 'properties.exportPolicy', 'type': 'VolumePropertiesExportPolicy'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, creation_token: str, tags=None, service_level="Premium", usage_threshold: int=107374182400, subnet_id: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, creation_token: str, tags=None, service_level="Premium", usage_threshold: int=107374182400, export_policy=None, subnet_id: str=None, **kwargs) -> None:
         super(Volume, self).__init__(**kwargs)
         self.location = location
         self.id = None
@@ -88,5 +92,6 @@ class Volume(Model):
         self.creation_token = creation_token
         self.service_level = service_level
         self.usage_threshold = usage_threshold
+        self.export_policy = export_policy
         self.provisioning_state = None
         self.subnet_id = subnet_id

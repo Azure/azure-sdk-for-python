@@ -1,5 +1,6 @@
 azure-applicationinsights~=0.1.0
 azure-batch~=4.1
+azure-cognitiveservices-nspkg
 azure-cognitiveservices-knowledge-nspkg
 azure-cognitiveservices-language-nspkg
 azure-cognitiveservices-search-nspkg

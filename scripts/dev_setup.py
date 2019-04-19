@@ -28,19 +28,19 @@ def pip_command(command, additionalDir='.', error_ok=False):
 
 # optional argument in a situation where we want to build a variable subset of packages
 parser = argparse.ArgumentParser(description='Set up the dev environment for selected packages.')
-parser.add_argument('--packageList', '-p', 
-    dest='packageList', 
-    default='', 
+parser.add_argument('--packageList', '-p',
+    dest='packageList',
+    default='',
     help='Comma separated list of targeted packages. Used to limit the number of packages that dependencies will be installed for.')
 args = parser.parse_args()
 
-packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
+packages = [os.path.dirname(p) for p in (glob.glob('azure*/setup.py') + glob.glob('sdk/*/azure*/setup.py'))]
 
 # keep targeted packages separate. python2 needs the nspkgs to work properly.
 if not args.packageList:
-    targeted_packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
+    targeted_packages = packages
 else:
-    targeted_packages = [x.strip() for x in args.packageList.split(',')]
+    targeted_packages = [os.path.relpath(x.strip()) for x in args.packageList.split(',')]
 
 # Extract nspkg and sort nspkg by number of "-"
 nspkg_packages = [p for p in packages if 'nspkg' in p]
@@ -77,7 +77,7 @@ if sys.version_info < (3, ):
 # install packages
 for package_name in content_packages:
     # if we are running dev_setup with no arguments. going after dev_requirements will be a pointless exercise
-    # and waste of cycles as all the dependencies will be installed regardless. 
+    # and waste of cycles as all the dependencies will be installed regardless.
     if os.path.isfile('{}/dev_requirements.txt'.format(package_name)):
         pip_command('install -r dev_requirements.txt', package_name)
     pip_command('install --ignore-requires-python -e {}'.format(package_name))

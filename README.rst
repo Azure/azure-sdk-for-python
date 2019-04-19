@@ -7,11 +7,11 @@ Microsoft Azure SDK for Python
 .. image:: https://img.shields.io/pypi/pyversions/azure.svg?maxAge=2592000
     :target: https://pypi.python.org/pypi/azure/
 
+.. image:: https://dev.azure.com/azure-sdk/public/_apis/build/status/46?branchName=master
+    :target: https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46&branchName=master
+
 .. image:: https://travis-ci.org/Azure/azure-sdk-for-python.svg?branch=master
     :target: https://travis-ci.org/Azure/azure-sdk-for-python
-
-.. image:: https://ci.appveyor.com/api/projects/status/m51hrgewcxknxhsd/branch/master?svg=true
-    :target: https://ci.appveyor.com/project/lmazuel/azure-sdk-for-python/branch/master
 
 .. image:: https://img.shields.io/badge/dependencies-analyzed-blue.svg
     :target: https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-python/dependencies/dependencies.html
@@ -49,12 +49,6 @@ You can also install a set of Azure libraries in a single line using the ``azure
 .. code-block:: console
 
    $ pip install azure
-
-We publish a preview version of this package, which you can access using the `--pre` flag:
-
-.. code-block:: console
-
-   $ pip install --pre azure
 
 The full list of available packages and their latest version can be found on our 
 `documentation on docs.microsoft.com <https://docs.microsoft.com/python/azure/>`__
@@ -103,3 +97,6 @@ Learn More
 ==========
 
 `Microsoft Azure Python Developer Center <http://azure.microsoft.com/en-us/develop/python/>`__
+
+
+.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2FREADME.png

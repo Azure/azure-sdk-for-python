@@ -39,7 +39,9 @@ class WorkspaceSettingsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Settings about where we should store your security data and logs.
+        """Settings about where we should store your security data and logs. If
+        the result is empty, it means that no custom-workspace configuration
+        was set.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -103,7 +105,9 @@ class WorkspaceSettingsOperations(object):
 
     def get(
             self, workspace_setting_name, custom_headers=None, raw=False, **operation_config):
-        """Settings about where we should store your security data and logs.
+        """Settings about where we should store your security data and logs. If
+        the result is empty, it means that no custom-workspace configuration
+        was set.
 
         :param workspace_setting_name: Name of the security setting
         :type workspace_setting_name: str

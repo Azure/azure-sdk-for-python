@@ -3,6 +3,35 @@
 Release History
 ===============
 
+2.6.0 (2019-03-21)
+++++++++++++++++++
+
+**Features**
+
+- Model ApplicationGateway has a new parameter firewall_policy
+- Model ApplicationGatewayBackendHealthServer has a new parameter health_probe_log
+- Model ExpressRouteCircuitPeering has a new parameter peered_connections
+- Model ExpressRouteCircuit has a new parameter global_reach_enabled
+- Added operation group PeerExpressRouteCircuitConnectionsOperations
+- Added operation group WebApplicationFirewallPoliciesOperations
+
+**Bugfixes**
+
+- Fix incorrect operation ApplicationGatewaysOperations.list_available_request_headers
+- Fix incorrect operation ApplicationGatewaysOperations.list_available_server_variables
+- Fix incorrect operation ApplicationGatewaysOperations.list_available_response_headers
+
+2.6.0rc1 (2019-02-15)
++++++++++++++++++++++
+
+**Features**
+
+- Model AzureFirewall has a new parameter threat_intel_mode
+- Model ApplicationGatewayRewriteRule has a new parameter conditions
+- Model ApplicationGatewayRewriteRule has a new parameter rule_sequence
+- Model ApplicationGatewayAutoscaleConfiguration has a new parameter max_capacity
+- Added operation SubnetsOperations.prepare_network_policies
+
 2.5.1 (2019-01-15)
 ++++++++++++++++++
 

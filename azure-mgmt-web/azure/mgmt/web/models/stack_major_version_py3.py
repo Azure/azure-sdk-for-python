@@ -24,6 +24,9 @@ class StackMajorVersion(Model):
     :type is_default: bool
     :param minor_versions: Minor versions associated with the major version.
     :type minor_versions: list[~azure.mgmt.web.models.StackMinorVersion]
+    :param application_insights: <code>true</code> if this supports
+     Application Insights; otherwise, <code>false</code>.
+    :type application_insights: bool
     """
 
     _attribute_map = {
@@ -31,11 +34,13 @@ class StackMajorVersion(Model):
         'runtime_version': {'key': 'runtimeVersion', 'type': 'str'},
         'is_default': {'key': 'isDefault', 'type': 'bool'},
         'minor_versions': {'key': 'minorVersions', 'type': '[StackMinorVersion]'},
+        'application_insights': {'key': 'applicationInsights', 'type': 'bool'},
     }
 
-    def __init__(self, *, display_version: str=None, runtime_version: str=None, is_default: bool=None, minor_versions=None, **kwargs) -> None:
+    def __init__(self, *, display_version: str=None, runtime_version: str=None, is_default: bool=None, minor_versions=None, application_insights: bool=None, **kwargs) -> None:
         super(StackMajorVersion, self).__init__(**kwargs)
         self.display_version = display_version
         self.runtime_version = runtime_version
         self.is_default = is_default
         self.minor_versions = minor_versions
+        self.application_insights = application_insights

@@ -51,6 +51,11 @@ class VirtualMachineScaleSet(Resource):
     :param overprovision: Specifies whether the Virtual Machine Scale Set
      should be overprovisioned.
     :type overprovision: bool
+    :param do_not_run_extensions_on_overprovisioned_vms: When Overprovision is
+     enabled, extensions are launched only on the requested number of VMs which
+     are finally kept. This property will hence ensure that the extensions do
+     not run on the extra overprovisioned VMs.
+    :type do_not_run_extensions_on_overprovisioned_vms: bool
     :ivar unique_id: Specifies the ID which uniquely identifies a Virtual
      Machine Scale Set.
     :vartype unique_id: str
@@ -63,6 +68,11 @@ class VirtualMachineScaleSet(Resource):
     :param platform_fault_domain_count: Fault Domain count for each placement
      group.
     :type platform_fault_domain_count: int
+    :param proximity_placement_group: Specifies information about the
+     proximity placement group that the virtual machine scale set should be
+     assigned to. <br><br>Minimum api-version: 2018-04-01.
+    :type proximity_placement_group:
+     ~azure.mgmt.compute.v2018_10_01.models.SubResource
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -92,10 +102,12 @@ class VirtualMachineScaleSet(Resource):
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetVMProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
+        'do_not_run_extensions_on_overprovisioned_vms': {'key': 'properties.doNotRunExtensionsOnOverprovisionedVMs', 'type': 'bool'},
         'unique_id': {'key': 'properties.uniqueId', 'type': 'str'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'zone_balance': {'key': 'properties.zoneBalance', 'type': 'bool'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
+        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
@@ -108,9 +120,11 @@ class VirtualMachineScaleSet(Resource):
         self.virtual_machine_profile = kwargs.get('virtual_machine_profile', None)
         self.provisioning_state = None
         self.overprovision = kwargs.get('overprovision', None)
+        self.do_not_run_extensions_on_overprovisioned_vms = kwargs.get('do_not_run_extensions_on_overprovisioned_vms', None)
         self.unique_id = None
         self.single_placement_group = kwargs.get('single_placement_group', None)
         self.zone_balance = kwargs.get('zone_balance', None)
         self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
+        self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
         self.identity = kwargs.get('identity', None)
         self.zones = kwargs.get('zones', None)

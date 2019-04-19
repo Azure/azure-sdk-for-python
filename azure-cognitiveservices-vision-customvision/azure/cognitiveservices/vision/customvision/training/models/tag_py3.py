@@ -18,14 +18,16 @@ class Tag(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Gets the Tag ID.
     :vartype id: str
-    :param name: Gets or sets the name of the tag.
+    :param name: Required. Gets or sets the name of the tag.
     :type name: str
-    :param description: Gets or sets the description of the tag.
+    :param description: Required. Gets or sets the description of the tag.
     :type description: str
-    :param type: Gets or sets the type of the tag. Possible values include:
-     'Regular', 'Negative'
+    :param type: Required. Gets or sets the type of the tag. Possible values
+     include: 'Regular', 'Negative'
     :type type: str or
      ~azure.cognitiveservices.vision.customvision.training.models.TagType
     :ivar image_count: Gets the number of images with this tag.
@@ -34,6 +36,9 @@ class Tag(Model):
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'required': True},
+        'description': {'required': True},
+        'type': {'required': True},
         'image_count': {'readonly': True},
     }
 
@@ -45,7 +50,7 @@ class Tag(Model):
         'image_count': {'key': 'imageCount', 'type': 'int'},
     }
 
-    def __init__(self, *, name: str=None, description: str=None, type=None, **kwargs) -> None:
+    def __init__(self, *, name: str, description: str, type, **kwargs) -> None:
         super(Tag, self).__init__(**kwargs)
         self.id = None
         self.name = name
