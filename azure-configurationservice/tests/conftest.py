@@ -1,6 +1,6 @@
 import os
 import logging
-from msrestazure.azure_exceptions import CloudError
+from azure.core import AzureError
 from azure.configuration import AzureConfigurationClient
 from azure.configuration import ConfigurationSetting
 
@@ -28,7 +28,7 @@ def _add_for_test(app_config_client, kv):
 def _delete_from_test(app_config_client, key, label):
     try:
         app_config_client.delete_configuration_setting(key=key, label=label)
-    except CloudError:
+    except AzureError:
         logging.debug("Error occurred removing configuration setting %s %s" % (key, label))
 
 

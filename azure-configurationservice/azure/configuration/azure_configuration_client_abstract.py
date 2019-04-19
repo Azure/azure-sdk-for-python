@@ -14,6 +14,7 @@ from abc import abstractmethod
 import re
 from requests.structures import CaseInsensitiveDict
 from msrest.paging import Paged
+from azure.core import ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
 
 
 class AzureConfigurationClientAbstract(object):
@@ -74,7 +75,7 @@ class AzureConfigurationClientAbstract(object):
             key=keys,
             fields=fields,
             accept_date_time=accept_date_time,
-            custom_headers=kwargs.get("headers"),
+            headers=kwargs.get("headers"),
         )
 
     def get_configuration_setting(
@@ -106,12 +107,16 @@ class AzureConfigurationClientAbstract(object):
             :dedent: 4
             :caption: Get a ConfigurationSetting
         """
-
+        error_map = {
+            404: ResourceNotFoundError,
+            412: ResourceNotFoundError,
+        }
         return self._impl.get_configuration_setting(
             key=key,
             label=label,
             accept_date_time=accept_date_time,
-            custom_headers=kwargs.get("headers"),
+            headers=kwargs.get("headers"),
+            error_map=error_map,
         )
 
     def add_configuration_setting(self, configuration_setting, **kwargs):
@@ -146,7 +151,10 @@ class AzureConfigurationClientAbstract(object):
             configuration_setting=configuration_setting,
             key=configuration_setting.key,
             label=configuration_setting.label,
-            custom_headers=custom_headers,
+            headers=custom_headers,
+            error_map={
+                412: ResourceExistsError
+            },
         )
 
     @abstractmethod
@@ -200,7 +208,10 @@ class AzureConfigurationClientAbstract(object):
             configuration_setting=configuration_setting,
             key=configuration_setting.key,
             label=configuration_setting.label,
-            custom_headers=custom_headers,
+            headers=custom_headers,
+            error_map={
+                412: ResourceModifiedError
+            },
         )
 
     def delete_configuration_setting(self, key, label=None, etag=None, **kwargs):
@@ -234,7 +245,11 @@ class AzureConfigurationClientAbstract(object):
         if etag:
             custom_headers["if-match"] = AzureConfigurationClientAbstract.quote_etag(etag)
         return self._impl.delete_configuration_setting(
-            key=key, label=label, custom_headers=custom_headers
+            key=key, label=label, headers=custom_headers,
+            error_map={
+                404: ResourceNotFoundError,  # 404 doesn't happen actually. return None if no match
+                412: ResourceModifiedError,
+            },
         )
 
     def list_revisions(
@@ -277,7 +292,7 @@ class AzureConfigurationClientAbstract(object):
             key=keys,
             fields=fields,
             accept_date_time=accept_date_time,
-            custom_headers=kwargs.get("headers"),
+            headers=kwargs.get("headers"),
         )
 
     def lock_configuration_setting(self, key, label=None, **kwargs):
@@ -305,7 +320,11 @@ class AzureConfigurationClientAbstract(object):
             :caption: Lock a ConfigurationSetting
         """
         return self._impl.lock_configuration_setting(
-            key=key, label=label, custom_headers=kwargs.get("header")
+            key=key, label=label, headers=kwargs.get("header"),
+            error_map={
+                404: ResourceNotFoundError,
+                412: ResourceModifiedError,
+            },
         )
 
     def unlock_configuration_setting(self, key, label=None, **kwargs):
@@ -332,9 +351,12 @@ class AzureConfigurationClientAbstract(object):
             :caption: Unlock a ConfigurationSetting
         """
         return self._impl.unlock_configuration_setting(
-            key=key, label=label, custom_headers=kwargs.get("header")
+            key=key, label=label, headers=kwargs.get("header"),
+            error_map={
+                404: ResourceNotFoundError,
+                412: ResourceModifiedError,
+            },
         )
-
 
     @staticmethod
     def prep_update_configuration_setting(key, etag=None, **kwargs):

@@ -4,13 +4,19 @@
 # license information.
 # -------------------------------------------------------------------------
 
+import platform
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import AsyncioRequestsTransport
 
-from ..utils import get_endpoint_from_connection_string
 from .._generated.aio import AzureConfigurationClientImp
+from .._generated.aio import AzureConfigurationClientImpConfiguration
+
 from ..azure_configuration_requests import AzConfigRequestsCredentialsPolicy
 from ..azure_configuration_client_abstract import AzureConfigurationClientAbstract
+from azure.core import ResourceModifiedError, ResourceNotFoundError
+
+
+from ..utils import get_endpoint_from_connection_string
 
 
 class AzureConfigurationClient(AzureConfigurationClientAbstract):
@@ -19,18 +25,23 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
     def __init__(self, connection_string):
 
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
-        self._impl = AzureConfigurationClientImp(connection_string, base_url)
+        self.config = AzureConfigurationClientImpConfiguration(
+            connection_string,
+            base_user_agent="python/{}".format(platform.python_version()),
+            logging_enable=True,
+        )
+        self._impl = AzureConfigurationClientImp(connection_string, base_url, config=self.config)
         self._impl.pipeline = self._create_azconfig_pipeline()
 
     def _create_azconfig_pipeline(self):
         policies = [
-            self._impl._config.user_agent_policy,  # UserAgent policy
-            self._impl._config.logging_policy,  # HTTP request/response log
-            AzConfigRequestsCredentialsPolicy(self._impl._config.credentials)
+            self.config.user_agent_policy,  # UserAgent policy
+            self.config.logging_policy,  # HTTP request/response log
+            AzConfigRequestsCredentialsPolicy(self.config.credentials)
         ]
 
         return AsyncPipeline(
-            AsyncioRequestsTransport(self._impl._config),  # Send HTTP request using requests
+            AsyncioRequestsTransport(self.config),  # Send HTTP request using requests
             policies
         )
 
@@ -47,7 +58,7 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
         __doc__ = super().__doc__
 
         custom_headers = AzureConfigurationClientAbstract.prep_update_configuration_setting(key, etag, **kwargs)
-        current_configuration_setting = await self._impl.get_configuration_setting(
+        current_configuration_setting = await self.get_configuration_setting(
             key, label
         )
         if value is not None:
@@ -61,5 +72,9 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
             key=key,
             label=label,
             custom_headers=custom_headers,
+            error_map={
+                404: ResourceNotFoundError,
+                412: ResourceModifiedError,
+            },
         )
 

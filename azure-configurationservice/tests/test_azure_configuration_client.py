@@ -9,7 +9,7 @@ from copy import copy
 import pytest
 
 
-from msrestazure.azure_exceptions import CloudError
+from azure.core import ResourceModifiedError, ResourceNotFoundError, ResourceExistsError, AzureError
 from azure.configuration import AzureConfigurationClient
 from azure.configuration import ConfigurationSetting
 from devtools_testutils import AzureMgmtTestCase
@@ -49,7 +49,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         kv.value = "test value"
         kv.content_type = "test content type"
         kv.tags = {"tag1": "tag1", "tag2": "tag2"}
-        kv.etag = "not needed"  # this etag will not be processed.
+        kv.etag = "expected not to be processed"  # this etag should not be processed.
         created_kv = self.app_config_client.add_configuration_setting(kv)
         self.app_config_client.delete_configuration_setting(kv.key, kv.label)
         assert (
@@ -72,7 +72,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         kv.value = compare_kv.value
         kv.content_type = compare_kv.content_type
 
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceExistsError):
             self.app_config_client.add_configuration_setting(kv)
 
     def test_add_configuration_setting_no_label(self):
@@ -104,7 +104,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         kv.value = compare_kv.value
         kv.content_type = compare_kv.content_type
 
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceExistsError):
             self.app_config_client.add_configuration_setting(kv)
 
     # method: set_configuration_setting
@@ -159,7 +159,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         to_set_kv.value = to_set_kv.value + "a"
         to_set_kv.tags = {"a": "b", "c": "d"}
         to_set_kv.etag = "wrong etag"
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceModifiedError):
             self.app_config_client.set_configuration_setting(to_set_kv)
         self.app_config_client.delete_configuration_setting(
             to_set_kv.key, label=to_set_kv.label
@@ -168,13 +168,13 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
     def test_set_configuration_setting_no_label_etag(self):
         to_set_kv = copy(self.test_data.no_label_data[-1])
         to_set_kv.key = "unit_test_key_set" + self.test_data.key_uuid
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceModifiedError):
             self.app_config_client.set_configuration_setting(to_set_kv)
 
     def test_set_configuration_setting_label_etag(self):
         to_set_kv = copy(self.test_data.label1_data[-1])
         to_set_kv.key = "unit_test_key_set" + self.test_data.key_uuid
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceModifiedError):
             self.app_config_client.set_configuration_setting(to_set_kv)
 
     def test_set_configuration_setting_no_label_no_etag(self):
@@ -291,7 +291,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         to_update_kv = self.app_config_client.add_configuration_setting(sample_kv)
         tags = {"a": "b", "c": "d"}
         etag = "wrong etag"
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceModifiedError):
             self.app_config_client.update_configuration_setting(
                 to_update_kv.key,
                 label=to_update_kv.label,
@@ -306,7 +306,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
     def test_update_no_existing_configuration_setting_label_noetag(self):
         key = self.test_data.key_uuid
         label = "test_label1"
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceNotFoundError):
             self.app_config_client.update_configuration_setting(
                 key, label=label, value="some value"
             )
@@ -338,7 +338,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
 
     def test_get_non_existing_configuration_setting(self):
         compare_kv = self.test_data.label1_data[0]
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceNotFoundError):
             self.app_config_client.get_configuration_setting(
                 compare_kv.key, compare_kv.label + "a"
             )
@@ -368,14 +368,14 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
 
     def test_lock_no_existing(self):
         to_lock_kv = self.test_data.label1_data[0]
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceNotFoundError):
             self.app_config_client.lock_configuration_setting(
                 to_lock_kv.key, to_lock_kv.label + "a"
             )
 
     def test_unlock_no_existing(self):
         to_lock_kv = self.test_data.label1_data[0]
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceNotFoundError):
             self.app_config_client.unlock_configuration_setting(
                 to_lock_kv.key, to_lock_kv.label + "a"
             )
@@ -386,7 +386,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         to_delete_kv.key = "unit_test_key_" + self.test_data.key_uuid
         to_delete_kv = self.app_config_client.add_configuration_setting(to_delete_kv)
         self.app_config_client.delete_configuration_setting(to_delete_kv.key)
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceNotFoundError):
             self.app_config_client.get_configuration_setting(to_delete_kv.key)
 
     def test_delete_with_key_label(self):
@@ -396,7 +396,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         self.app_config_client.delete_configuration_setting(
             to_delete_kv.key, label=to_delete_kv.label
         )
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceNotFoundError):
             self.app_config_client.get_configuration_setting(
                 to_delete_kv.key, label=to_delete_kv.label
             )
@@ -415,14 +415,14 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
             to_delete_kv.key, etag=to_delete_kv.etag
         )
         assert deleted_kv is not None
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceNotFoundError):
             self.app_config_client.get_configuration_setting(to_delete_kv.key)
 
     def test_delete_wrong_etag(self):
         to_delete_kv = copy(self.test_data.no_label_data[-1])
         to_delete_kv.key = "unit_test_key_" + self.test_data.key_uuid
         to_delete_kv = self.app_config_client.add_configuration_setting(to_delete_kv)
-        with pytest.raises(CloudError):
+        with pytest.raises(ResourceModifiedError):
             self.app_config_client.delete_configuration_setting(
                 to_delete_kv.key, etag="wrong etag"
             )
@@ -526,7 +526,7 @@ class AzConfigurationClientTest(AzureMgmtTestCase):
         for kv in delete_me:
             try:
                 self.app_config_client.delete_configuration_setting(kv.key, kv.label)
-            except CloudError:
+            except AzureError:
                 pass
 
     def test_list_configuration_settings_null_label(self):

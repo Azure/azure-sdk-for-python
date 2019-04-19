@@ -4,13 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import unittest
-from msrestazure.azure_exceptions import CloudError
-from azure.configuration import AzureConfigurationClient
+from os import path
+from azure.core import AzureError
 from azure.configuration import ConfigurationSetting
+from devtools_testutils import AzureMgmtTestCase
 
 
-class AzConfigurationClientExamples(unittest.TestCase):
+class AzConfigurationClientExamples(AzureMgmtTestCase):
 
     def _add_for_test(self, key, label):
         exist = bool(list(self.client.list_configuration_settings(keys=[key], labels=[label])))
@@ -27,10 +27,11 @@ class AzConfigurationClientExamples(unittest.TestCase):
     def _delete_from_test(self, key, label):
         try:
             self.client.delete_configuration_setting(key=key, label=label)
-        except CloudError:
+        except AzureError:
             pass
 
     def setUp(self):
+        self.working_folder = path.dirname(__file__)
         super(AzConfigurationClientExamples, self).setUp()
         # [START create_app_configuration_client]
         import os
@@ -65,7 +66,7 @@ class AzConfigurationClientExamples(unittest.TestCase):
             key="MyKey",
             label="MyLabel",
             value="my updated value",
-            content_type="my updated content type",
+            content_type=None,  # None means not to update it
             tags={"my updated tag": "my updated tag value"}
             # TODO: etag handling
         )
@@ -92,9 +93,6 @@ class AzConfigurationClientExamples(unittest.TestCase):
         # [END unlock_configuration_setting]
 
         # [START get_configuration_setting]
-        from datetime import datetime, timedelta
-
-        accept_date_time = datetime.today() + timedelta(days=1)
         fetched_config_setting = client.get_configuration_setting(
             key="MyKey", label="MyLabel"
         )
