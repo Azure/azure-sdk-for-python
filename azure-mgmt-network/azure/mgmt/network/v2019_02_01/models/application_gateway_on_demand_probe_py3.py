@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class ApplicationGatewayOnDemandProbe(Model):
     """Details of on demand test probe request.
 
-    :param protocol: The protocol used for the probe. Possible values are
-     'Http' and 'Https'. Possible values include: 'Http', 'Https'
+    :param protocol: The protocol used for the probe. Possible values include:
+     'Http', 'Https'
     :type protocol: str or
      ~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayProtocol
     :param host: Host name to send the probe to.
