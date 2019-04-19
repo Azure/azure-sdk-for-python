@@ -36,10 +36,8 @@ class EffectiveRoute(Model):
      effective route.
     :type next_hop_ip_address: list[str]
     :param next_hop_type: The type of Azure hop the packet should be sent to.
-     Possible values are: 'VirtualNetworkGateway', 'VnetLocal', 'Internet',
-     'VirtualAppliance', and 'None'. Possible values include:
-     'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance',
-     'None'
+     Possible values include: 'VirtualNetworkGateway', 'VnetLocal', 'Internet',
+     'VirtualAppliance', 'None'
     :type next_hop_type: str or
      ~azure.mgmt.network.v2019_02_01.models.RouteNextHopType
     """

@@ -42,8 +42,7 @@ class ExpressRouteCrossConnection(Resource):
     :type express_route_circuit:
      ~azure.mgmt.network.v2019_02_01.models.ExpressRouteCircuitReference
     :param service_provider_provisioning_state: The provisioning state of the
-     circuit in the connectivity provider system. Possible values are
-     'NotProvisioned', 'Provisioning', 'Provisioned'. Possible values include:
+     circuit in the connectivity provider system. Possible values include:
      'NotProvisioned', 'Provisioning', 'Provisioned', 'Deprovisioning'
     :type service_provider_provisioning_state: str or
      ~azure.mgmt.network.v2019_02_01.models.ServiceProviderProvisioningState

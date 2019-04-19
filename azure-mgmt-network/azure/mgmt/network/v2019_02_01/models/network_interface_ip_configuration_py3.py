@@ -34,15 +34,13 @@ class NetworkInterfaceIPConfiguration(SubResource):
      list[~azure.mgmt.network.v2019_02_01.models.InboundNatRule]
     :param private_ip_address: Private IP address of the IP configuration.
     :type private_ip_address: str
-    :param private_ip_allocation_method: Defines how a private IP address is
-     assigned. Possible values are: 'Static' and 'Dynamic'. Possible values
-     include: 'Static', 'Dynamic'
+    :param private_ip_allocation_method: The private IP address allocation
+     method. Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_02_01.models.IPAllocationMethod
     :param private_ip_address_version: Available from Api-Version 2016-03-30
      onwards, it represents whether the specific ipconfiguration is IPv4 or
-     IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and 'IPv6'.
-     Possible values include: 'IPv4', 'IPv6'
+     IPv6. Default is taken as IPv4. Possible values include: 'IPv4', 'IPv6'
     :type private_ip_address_version: str or
      ~azure.mgmt.network.v2019_02_01.models.IPVersion
     :param subnet: Subnet bound to the IP configuration.

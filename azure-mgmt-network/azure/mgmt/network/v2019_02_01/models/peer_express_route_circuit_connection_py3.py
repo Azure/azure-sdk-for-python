@@ -32,10 +32,9 @@ class PeerExpressRouteCircuitConnection(SubResource):
     :param address_prefix: /29 IP address space to carve out Customer
      addresses for tunnels.
     :type address_prefix: str
-    :ivar circuit_connection_status: Express Route Circuit Connection State.
-     Possible values are: 'Connected' and 'Disconnected'. Possible values
-     include: 'Connected', 'Connecting', 'Disconnected'
-    :vartype circuit_connection_status: str or
+    :param circuit_connection_status: Express Route Circuit connection state.
+     Possible values include: 'Connected', 'Connecting', 'Disconnected'
+    :type circuit_connection_status: str or
      ~azure.mgmt.network.v2019_02_01.models.CircuitConnectionStatus
     :param connection_name: The name of the express route circuit connection
      resource.
@@ -56,7 +55,6 @@ class PeerExpressRouteCircuitConnection(SubResource):
     """
 
     _validation = {
-        'circuit_connection_status': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'etag': {'readonly': True},
     }
@@ -74,12 +72,12 @@ class PeerExpressRouteCircuitConnection(SubResource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, express_route_circuit_peering=None, peer_express_route_circuit_peering=None, address_prefix: str=None, connection_name: str=None, auth_resource_guid: str=None, name: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, express_route_circuit_peering=None, peer_express_route_circuit_peering=None, address_prefix: str=None, circuit_connection_status=None, connection_name: str=None, auth_resource_guid: str=None, name: str=None, **kwargs) -> None:
         super(PeerExpressRouteCircuitConnection, self).__init__(id=id, **kwargs)
         self.express_route_circuit_peering = express_route_circuit_peering
         self.peer_express_route_circuit_peering = peer_express_route_circuit_peering
         self.address_prefix = address_prefix
-        self.circuit_connection_status = None
+        self.circuit_connection_status = circuit_connection_status
         self.connection_name = connection_name
         self.auth_resource_guid = auth_resource_guid
         self.provisioning_state = None

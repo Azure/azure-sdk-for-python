@@ -20,7 +20,7 @@ class TunnelConnectionHealth(Model):
 
     :ivar tunnel: Tunnel name.
     :vartype tunnel: str
-    :ivar connection_status: Virtual network Gateway connection status.
+    :ivar connection_status: Virtual Network Gateway connection status.
      Possible values include: 'Unknown', 'Connecting', 'Connected',
      'NotConnected'
     :vartype connection_status: str or

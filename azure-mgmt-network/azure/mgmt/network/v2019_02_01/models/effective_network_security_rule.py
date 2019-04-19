@@ -53,13 +53,13 @@ class EffectiveNetworkSecurityRule(Model):
      prefix.
     :type expanded_destination_address_prefix: list[str]
     :param access: Whether network traffic is allowed or denied. Possible
-     values are: 'Allow' and 'Deny'. Possible values include: 'Allow', 'Deny'
+     values include: 'Allow', 'Deny'
     :type access: str or
      ~azure.mgmt.network.v2019_02_01.models.SecurityRuleAccess
     :param priority: The priority of the rule.
     :type priority: int
-    :param direction: The direction of the rule. Possible values are: 'Inbound
-     and Outbound'. Possible values include: 'Inbound', 'Outbound'
+    :param direction: The direction of the rule. Possible values include:
+     'Inbound', 'Outbound'
     :type direction: str or
      ~azure.mgmt.network.v2019_02_01.models.SecurityRuleDirection
     """

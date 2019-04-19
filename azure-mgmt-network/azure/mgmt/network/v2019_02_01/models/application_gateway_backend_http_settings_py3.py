@@ -20,8 +20,7 @@ class ApplicationGatewayBackendHttpSettings(SubResource):
     :param port: The destination port on the backend.
     :type port: int
     :param protocol: The protocol used to communicate with the backend.
-     Possible values are 'Http' and 'Https'. Possible values include: 'Http',
-     'Https'
+     Possible values include: 'Http', 'Https'
     :type protocol: str or
      ~azure.mgmt.network.v2019_02_01.models.ApplicationGatewayProtocol
     :param cookie_based_affinity: Cookie based affinity. Possible values

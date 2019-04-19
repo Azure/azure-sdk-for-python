@@ -45,11 +45,11 @@ class IpsecPolicy(Model):
      'GCMAES128'
     :type ike_integrity: str or
      ~azure.mgmt.network.v2019_02_01.models.IkeIntegrity
-    :param dh_group: Required. The DH Groups used in IKE Phase 1 for initial
+    :param dh_group: Required. The DH Group used in IKE Phase 1 for initial
      SA. Possible values include: 'None', 'DHGroup1', 'DHGroup2', 'DHGroup14',
      'DHGroup2048', 'ECP256', 'ECP384', 'DHGroup24'
     :type dh_group: str or ~azure.mgmt.network.v2019_02_01.models.DhGroup
-    :param pfs_group: Required. The Pfs Groups used in IKE Phase 2 for new
+    :param pfs_group: Required. The Pfs Group used in IKE Phase 2 for new
      child SA. Possible values include: 'None', 'PFS1', 'PFS2', 'PFS2048',
      'ECP256', 'ECP384', 'PFS24', 'PFS14', 'PFSMM'
     :type pfs_group: str or ~azure.mgmt.network.v2019_02_01.models.PfsGroup

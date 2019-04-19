@@ -30,13 +30,12 @@ class PublicIPAddress(Resource):
     :type tags: dict[str, str]
     :param sku: The public IP address SKU.
     :type sku: ~azure.mgmt.network.v2019_02_01.models.PublicIPAddressSku
-    :param public_ip_allocation_method: The public IP allocation method.
-     Possible values are: 'Static' and 'Dynamic'. Possible values include:
-     'Static', 'Dynamic'
+    :param public_ip_allocation_method: The public IP address allocation
+     method. Possible values include: 'Static', 'Dynamic'
     :type public_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_02_01.models.IPAllocationMethod
     :param public_ip_address_version: The public IP address version. Possible
-     values are: 'IPv4' and 'IPv6'. Possible values include: 'IPv4', 'IPv6'
+     values include: 'IPv4', 'IPv6'
     :type public_ip_address_version: str or
      ~azure.mgmt.network.v2019_02_01.models.IPVersion
     :ivar ip_configuration: The IP configuration associated with the public IP

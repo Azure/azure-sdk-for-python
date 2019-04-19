@@ -385,6 +385,12 @@ class NetworkOperationStatus(str, Enum):
     failed = "Failed"
 
 
+class AuthenticationMethod(str, Enum):
+
+    eaptls = "EAPTLS"
+    eapmscha_pv2 = "EAPMSCHAPv2"
+
+
 class EffectiveSecurityRuleProtocol(str, Enum):
 
     tcp = "Tcp"
@@ -686,12 +692,6 @@ class ProcessorArchitecture(str, Enum):
 
     amd64 = "Amd64"
     x86 = "X86"
-
-
-class AuthenticationMethod(str, Enum):
-
-    eaptls = "EAPTLS"
-    eapmscha_pv2 = "EAPMSCHAPv2"
 
 
 class VirtualNetworkGatewayConnectionStatus(str, Enum):

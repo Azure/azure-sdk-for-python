@@ -61,8 +61,7 @@ class SecurityRule(SubResource):
     :param destination_port_ranges: The destination port ranges.
     :type destination_port_ranges: list[str]
     :param access: Required. The network traffic is allowed or denied.
-     Possible values are: 'Allow' and 'Deny'. Possible values include: 'Allow',
-     'Deny'
+     Possible values include: 'Allow', 'Deny'
     :type access: str or
      ~azure.mgmt.network.v2019_02_01.models.SecurityRuleAccess
     :param priority: The priority of the rule. The value can be between 100
@@ -72,8 +71,7 @@ class SecurityRule(SubResource):
     :type priority: int
     :param direction: Required. The direction of the rule. The direction
      specifies if rule will be evaluated on incoming or outgoing traffic.
-     Possible values are: 'Inbound' and 'Outbound'. Possible values include:
-     'Inbound', 'Outbound'
+     Possible values include: 'Inbound', 'Outbound'
     :type direction: str or
      ~azure.mgmt.network.v2019_02_01.models.SecurityRuleDirection
     :param provisioning_state: The provisioning state of the public IP

@@ -580,9 +580,8 @@ class P2sVpnGatewaysOperations(object):
         :type resource_group_name: str
         :param gateway_name: The name of the P2SVpnGateway.
         :type gateway_name: str
-        :param authentication_method: VPN client Authentication Method.
-         Possible values are: 'EAPTLS' and 'EAPMSCHAPv2'. Possible values
-         include: 'EAPTLS', 'EAPMSCHAPv2'
+        :param authentication_method: VPN client authentication method.
+         Possible values include: 'EAPTLS', 'EAPMSCHAPv2'
         :type authentication_method: str or
          ~azure.mgmt.network.v2019_02_01.models.AuthenticationMethod
         :param dict custom_headers: headers that will be added to the request

@@ -37,9 +37,7 @@ class ExpressRouteCircuit(Resource):
     :type circuit_provisioning_state: str
     :param service_provider_provisioning_state: The
      ServiceProviderProvisioningState state of the resource. Possible values
-     are 'NotProvisioned', 'Provisioning', 'Provisioned', and 'Deprovisioning'.
-     Possible values include: 'NotProvisioned', 'Provisioning', 'Provisioned',
-     'Deprovisioning'
+     include: 'NotProvisioned', 'Provisioning', 'Provisioned', 'Deprovisioning'
     :type service_provider_provisioning_state: str or
      ~azure.mgmt.network.v2019_02_01.models.ServiceProviderProvisioningState
     :param authorizations: The list of authorizations.

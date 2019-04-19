@@ -22,10 +22,8 @@ class Route(SubResource):
     :param address_prefix: The destination CIDR to which the route applies.
     :type address_prefix: str
     :param next_hop_type: Required. The type of Azure hop the packet should be
-     sent to. Possible values are: 'VirtualNetworkGateway', 'VnetLocal',
-     'Internet', 'VirtualAppliance', and 'None'. Possible values include:
-     'VirtualNetworkGateway', 'VnetLocal', 'Internet', 'VirtualAppliance',
-     'None'
+     sent to. Possible values include: 'VirtualNetworkGateway', 'VnetLocal',
+     'Internet', 'VirtualAppliance', 'None'
     :type next_hop_type: str or
      ~azure.mgmt.network.v2019_02_01.models.RouteNextHopType
     :param next_hop_ip_address: The IP address packets should be forwarded to.
