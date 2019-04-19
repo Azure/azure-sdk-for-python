@@ -42,7 +42,7 @@ import xml.etree.ElementTree as ET
 from requests.structures import CaseInsensitiveDict
 
 from typing import TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional, Tuple, Callable, Iterator  # pylint: disable=unused-import
-from azure.core.exceptions import ClientRequestError, ServerError
+from azure.core.exceptions import HttpRequestError, ServerError
 from azure.core.pipeline import ABC, AbstractContextManager
 
 HTTPResponseType = TypeVar("HTTPResponseType")
