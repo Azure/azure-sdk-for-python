@@ -22,8 +22,9 @@ class CloudServiceConfiguration(Model):
      the virtual machines in the pool. Possible values are: 2 - OS Family 2,
      equivalent to Windows Server 2008 R2 SP1. 3 - OS Family 3, equivalent to
      Windows Server 2012. 4 - OS Family 4, equivalent to Windows Server 2012
-     R2. 5 - OS Family 5, equivalent to Windows Server 2016. For more
-     information, see Azure Guest OS Releases
+     R2. 5 - OS Family 5, equivalent to Windows Server 2016. 6 - OS Family 6,
+     equivalent to Windows Server 2019. For more information, see Azure Guest
+     OS Releases
      (https://azure.microsoft.com/documentation/articles/cloud-services-guestos-update-matrix/#releases).
     :type os_family: str
     :param os_version: The Azure Guest OS version to be installed on the
