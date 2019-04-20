@@ -34,8 +34,7 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
         )
         self.config.user_agent_policy.add_user_agent("{}{}".format(platform.python_implementation(), platform.python_version()))
         self.config.user_agent_policy.add_user_agent(platform.platform())
-        self._impl = AzureConfigurationClientImp(connection_string, base_url, config=self.config)
-        self._impl.pipeline = self._create_azconfig_pipeline()
+        self._impl = AzureConfigurationClientImp(connection_string, base_url, config=self.config, pipeline=self._create_azconfig_pipeline())
 
     def _create_azconfig_pipeline(self):
         policies = [
@@ -75,7 +74,7 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
             configuration_setting=current_configuration_setting,
             key=key,
             label=label,
-            custom_headers=custom_headers,
+            headers=custom_headers,
             error_map={
                 404: ResourceNotFoundError,
                 412: ResourceModifiedError,

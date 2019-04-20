@@ -85,7 +85,7 @@ class AzureConfigurationClientImpOperationsMixin:
         def internal_paging(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self.pipeline.run(request)
+            pipeline_response = self._pipeline.run(request)
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
@@ -98,7 +98,7 @@ class AzureConfigurationClientImpOperationsMixin:
         async def internal_paging_async(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self.pipeline.run(request)
+            pipeline_response = await self._pipeline.run(request)
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
@@ -165,7 +165,7 @@ class AzureConfigurationClientImpOperationsMixin:
 
         # Construct and send request
         request = self.get(url, query_parameters, header_parameters)
-        pipeline_response = await self.pipeline.run(request)
+        pipeline_response = await self._pipeline.run(request)
         response = pipeline_response.http_response.internal_response
 
         if response.status_code not in [200, 304]:
@@ -237,7 +237,7 @@ class AzureConfigurationClientImpOperationsMixin:
 
         # Construct and send request
         request = self.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = await self.pipeline.run(request)
+        pipeline_response = await self._pipeline.run(request)
         response = pipeline_response.http_response.internal_response
 
         if response.status_code not in [200]:
@@ -296,7 +296,7 @@ class AzureConfigurationClientImpOperationsMixin:
 
         # Construct and send request
         request = self.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self.pipeline.run(request)
+        pipeline_response = await self._pipeline.run(request)
         response = pipeline_response.http_response.internal_response
 
         if response.status_code not in [200, 204]:
@@ -364,7 +364,7 @@ class AzureConfigurationClientImpOperationsMixin:
         def internal_paging(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self.pipeline.run(request)
+            pipeline_response = self._pipeline.run(request)
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
@@ -377,7 +377,7 @@ class AzureConfigurationClientImpOperationsMixin:
         async def internal_paging_async(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self.pipeline.run(request)
+            pipeline_response = await self._pipeline.run(request)
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
@@ -450,7 +450,7 @@ class AzureConfigurationClientImpOperationsMixin:
         def internal_paging(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self.pipeline.run(request)
+            pipeline_response = self._pipeline.run(request)
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
@@ -463,7 +463,7 @@ class AzureConfigurationClientImpOperationsMixin:
         async def internal_paging_async(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self.pipeline.run(request)
+            pipeline_response = await self._pipeline.run(request)
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
@@ -523,7 +523,7 @@ class AzureConfigurationClientImpOperationsMixin:
 
         # Construct and send request
         request = self.put(url, query_parameters, header_parameters)
-        pipeline_response = await self.pipeline.run(request)
+        pipeline_response = await self._pipeline.run(request)
         response = pipeline_response.http_response.internal_response
 
         if response.status_code not in [200]:
@@ -582,7 +582,7 @@ class AzureConfigurationClientImpOperationsMixin:
 
         # Construct and send request
         request = self.delete(url, query_parameters, header_parameters)
-        pipeline_response = await self.pipeline.run(request)
+        pipeline_response = await self._pipeline.run(request)
         response = pipeline_response.http_response.internal_response
 
         if response.status_code not in [200]:
@@ -661,7 +661,7 @@ class AzureConfigurationClientImpOperationsMixin:
         def internal_paging(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self.pipeline.run(request)
+            pipeline_response = self._pipeline.run(request)
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:
@@ -674,7 +674,7 @@ class AzureConfigurationClientImpOperationsMixin:
         async def internal_paging_async(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self.pipeline.run(request)
+            pipeline_response = await self._pipeline.run(request)
             response = pipeline_response.http_response.internal_response
 
             if response.status_code not in [200]:

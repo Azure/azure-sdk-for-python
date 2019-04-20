@@ -36,10 +36,8 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
         self.config.user_agent_policy.add_user_agent("{}{}".format(platform.python_implementation(), platform.python_version()))
         self.config.user_agent_policy.add_user_agent(platform.platform())
         self._impl = AzureConfigurationClientImp(
-            connection_string, base_url, config=self.config
+            connection_string, base_url, config=self.config, pipeline=self._create_azconfig_pipeline()
         )
-        # self._impl._config.logging_policy.enable_http_logger = True
-        self._impl.pipeline = self._create_azconfig_pipeline()
 
     def _create_azconfig_pipeline(self):
         policies = [
