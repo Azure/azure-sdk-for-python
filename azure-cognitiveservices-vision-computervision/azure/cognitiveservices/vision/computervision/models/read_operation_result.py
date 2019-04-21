@@ -19,8 +19,8 @@ class ReadOperationResult(Model):
      Started', 'Running', 'Failed', 'Succeeded'
     :type status: str or
      ~azure.cognitiveservices.vision.computervision.models.TextOperationStatusCodes
-    :param recognition_results: A array of text recognition result of the read
-     operation.
+    :param recognition_results: An array of text recognition result of the
+     read operation.
     :type recognition_results:
      list[~azure.cognitiveservices.vision.computervision.models.TextRecognitionResult]
     """

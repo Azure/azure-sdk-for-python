@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Word(Model):
-    """Json object representing a recognized word.
+    """An object representing a recognized word.
 
     All required parameters must be populated in order to send to Azure.
 
