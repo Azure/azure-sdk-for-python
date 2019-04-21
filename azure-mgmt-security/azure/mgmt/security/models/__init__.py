@@ -13,6 +13,11 @@ try:
     from .pricing_py3 import Pricing
     from .pricing_list_py3 import PricingList
     from .asc_location_py3 import AscLocation
+    from .tracked_resource_py3 import TrackedResource
+    from .location_py3 import Location
+    from .kind_py3 import Kind
+    from .etag_py3 import ETag
+    from .tags_py3 import Tags
     from .resource_py3 import Resource
     from .alert_entity_py3 import AlertEntity
     from .alert_confidence_reason_py3 import AlertConfidenceReason
@@ -23,7 +28,6 @@ try:
     from .connected_resource_py3 import ConnectedResource
     from .connectable_resource_py3 import ConnectableResource
     from .allowed_connections_resource_py3 import AllowedConnectionsResource
-    from .location_py3 import Location
     from .discovered_security_solution_py3 import DiscoveredSecuritySolution
     from .external_security_solution_py3 import ExternalSecuritySolution
     from .cef_solution_properties_py3 import CefSolutionProperties
@@ -45,7 +49,6 @@ try:
     from .jit_network_access_policy_initiate_port_py3 import JitNetworkAccessPolicyInitiatePort
     from .jit_network_access_policy_initiate_virtual_machine_py3 import JitNetworkAccessPolicyInitiateVirtualMachine
     from .jit_network_access_policy_initiate_request_py3 import JitNetworkAccessPolicyInitiateRequest
-    from .kind_py3 import Kind
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
     from .security_task_parameters_py3 import SecurityTaskParameters
@@ -68,6 +71,11 @@ except (SyntaxError, ImportError):
     from .pricing import Pricing
     from .pricing_list import PricingList
     from .asc_location import AscLocation
+    from .tracked_resource import TrackedResource
+    from .location import Location
+    from .kind import Kind
+    from .etag import ETag
+    from .tags import Tags
     from .resource import Resource
     from .alert_entity import AlertEntity
     from .alert_confidence_reason import AlertConfidenceReason
@@ -78,7 +86,6 @@ except (SyntaxError, ImportError):
     from .connected_resource import ConnectedResource
     from .connectable_resource import ConnectableResource
     from .allowed_connections_resource import AllowedConnectionsResource
-    from .location import Location
     from .discovered_security_solution import DiscoveredSecuritySolution
     from .external_security_solution import ExternalSecuritySolution
     from .cef_solution_properties import CefSolutionProperties
@@ -100,7 +107,6 @@ except (SyntaxError, ImportError):
     from .jit_network_access_policy_initiate_port import JitNetworkAccessPolicyInitiatePort
     from .jit_network_access_policy_initiate_virtual_machine import JitNetworkAccessPolicyInitiateVirtualMachine
     from .jit_network_access_policy_initiate_request import JitNetworkAccessPolicyInitiateRequest
-    from .kind import Kind
     from .operation_display import OperationDisplay
     from .operation import Operation
     from .security_task_parameters import SecurityTaskParameters
@@ -154,6 +160,11 @@ __all__ = [
     'Pricing',
     'PricingList',
     'AscLocation',
+    'TrackedResource',
+    'Location',
+    'Kind',
+    'ETag',
+    'Tags',
     'Resource',
     'AlertEntity',
     'AlertConfidenceReason',
@@ -164,7 +175,6 @@ __all__ = [
     'ConnectedResource',
     'ConnectableResource',
     'AllowedConnectionsResource',
-    'Location',
     'DiscoveredSecuritySolution',
     'ExternalSecuritySolution',
     'CefSolutionProperties',
@@ -186,7 +196,6 @@ __all__ = [
     'JitNetworkAccessPolicyInitiatePort',
     'JitNetworkAccessPolicyInitiateVirtualMachine',
     'JitNetworkAccessPolicyInitiateRequest',
-    'Kind',
     'OperationDisplay',
     'Operation',
     'SecurityTaskParameters',

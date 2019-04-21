@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.1.0"
+from msrest.serialization import Model
 
+
+class Tags(Model):
+    """A list of key value pairs that describe the resource.
+
+    :param tags: A list of key value pairs that describe the resource.
+    :type tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Tags, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
