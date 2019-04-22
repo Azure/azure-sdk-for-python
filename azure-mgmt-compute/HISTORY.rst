@@ -2,6 +2,11 @@
 
 Release History
 ===============
+4.6.1 (2019-04-18)
+++++++++++++++++++
+
+**Bugfixes**
+- Make enum declarations in Compute package consistent, for the sake of code inspection.
 
 4.6.0 (2019-04-12)
 ++++++++++++++++++
