@@ -110,7 +110,7 @@ class ManagedClusterAgentPoolProfileProperties(Model):
     :param availability_zones: (PREVIEW) Availability zones for nodes. Must
      use VirtualMachineScaleSets AgentPoolType.
     :type availability_zones: list[str]
-    :param enable_node_public_ip: Enable public IP for nodes.
+    :param enable_node_public_ip: Enable public IP for nodes
     :type enable_node_public_ip: bool
     """
 
