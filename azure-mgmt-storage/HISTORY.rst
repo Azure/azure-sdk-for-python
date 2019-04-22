@@ -3,6 +3,14 @@
 Release History
 ===============
 
+3.3.0 (2019-04-22)
+++++++++++++++++++
+
+**Features**
+
+- Model BlobServiceProperties has a new parameter automatic_snapshot_policy_enabled
+- Added operation StorageAccountsOperations.revoke_user_delegation_keys
+
 3.2.0 (2019-04-10)
 ++++++++++++++++++
 
