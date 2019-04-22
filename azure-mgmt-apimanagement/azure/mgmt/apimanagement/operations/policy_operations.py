@@ -157,13 +157,17 @@ class PolicyOperations(object):
     get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/policies/{policyId}'}
 
     def get(
-            self, resource_group_name, service_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, format="xml", custom_headers=None, raw=False, **operation_config):
         """Get the Global policy definition of the Api Management service.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param service_name: The name of the API Management service.
         :type service_name: str
+        :param format: Policy Export Format. Possible values include: 'xml',
+         'xml-link', 'rawxml', 'rawxml-link'
+        :type format: str or
+         ~azure.mgmt.apimanagement.models.PolicyExportFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -187,6 +191,8 @@ class PolicyOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if format is not None:
+            query_parameters['format'] = self._serialize.query("format", format, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
