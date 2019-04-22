@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class PolicyOperations(object):
-    """PolicyOperations operations.
+class PoliciesOperations(object):
+    """PoliciesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.

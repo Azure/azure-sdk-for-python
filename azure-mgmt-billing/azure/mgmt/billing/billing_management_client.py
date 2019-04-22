@@ -14,7 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.billing_accounts_operations import BillingAccountsOperations
-from .operations.available_balance_operations import AvailableBalanceOperations
+from .operations.available_balances_operations import AvailableBalancesOperations
 from .operations.payment_methods_operations import PaymentMethodsOperations
 from .operations.billing_profiles_operations import BillingProfilesOperations
 from .operations.invoice_sections_operations import InvoiceSectionsOperations
@@ -25,15 +25,15 @@ from .operations.price_sheet_operations import PriceSheetOperations
 from .operations.billing_subscriptions_operations import BillingSubscriptionsOperations
 from .operations.products_operations import ProductsOperations
 from .operations.transactions_operations import TransactionsOperations
-from .operations.policy_operations import PolicyOperations
+from .operations.policies_operations import PoliciesOperations
 from .operations.billing_property_operations import BillingPropertyOperations
 from .operations.transfers_operations import TransfersOperations
 from .operations.recipient_transfers_operations import RecipientTransfersOperations
 from .operations.operations import Operations
 from .operations.billing_permissions_operations import BillingPermissionsOperations
 from .operations.billing_profile_billing_permissions_operations import BillingProfileBillingPermissionsOperations
-from .operations.billing_role_definition_operations import BillingRoleDefinitionOperations
-from .operations.billing_role_assignment_operations import BillingRoleAssignmentOperations
+from .operations.billing_role_definitions_operations import BillingRoleDefinitionsOperations
+from .operations.billing_role_assignments_operations import BillingRoleAssignmentsOperations
 from .operations.agreements_operations import AgreementsOperations
 from . import models
 
@@ -78,8 +78,8 @@ class BillingManagementClient(SDKClient):
 
     :ivar billing_accounts: BillingAccounts operations
     :vartype billing_accounts: azure.mgmt.billing.operations.BillingAccountsOperations
-    :ivar available_balance: AvailableBalance operations
-    :vartype available_balance: azure.mgmt.billing.operations.AvailableBalanceOperations
+    :ivar available_balances: AvailableBalances operations
+    :vartype available_balances: azure.mgmt.billing.operations.AvailableBalancesOperations
     :ivar payment_methods: PaymentMethods operations
     :vartype payment_methods: azure.mgmt.billing.operations.PaymentMethodsOperations
     :ivar billing_profiles: BillingProfiles operations
@@ -100,8 +100,8 @@ class BillingManagementClient(SDKClient):
     :vartype products: azure.mgmt.billing.operations.ProductsOperations
     :ivar transactions: Transactions operations
     :vartype transactions: azure.mgmt.billing.operations.TransactionsOperations
-    :ivar policy: Policy operations
-    :vartype policy: azure.mgmt.billing.operations.PolicyOperations
+    :ivar policies: Policies operations
+    :vartype policies: azure.mgmt.billing.operations.PoliciesOperations
     :ivar billing_property: BillingProperty operations
     :vartype billing_property: azure.mgmt.billing.operations.BillingPropertyOperations
     :ivar transfers: Transfers operations
@@ -114,10 +114,10 @@ class BillingManagementClient(SDKClient):
     :vartype billing_permissions: azure.mgmt.billing.operations.BillingPermissionsOperations
     :ivar billing_profile_billing_permissions: BillingProfileBillingPermissions operations
     :vartype billing_profile_billing_permissions: azure.mgmt.billing.operations.BillingProfileBillingPermissionsOperations
-    :ivar billing_role_definition: BillingRoleDefinition operations
-    :vartype billing_role_definition: azure.mgmt.billing.operations.BillingRoleDefinitionOperations
-    :ivar billing_role_assignment: BillingRoleAssignment operations
-    :vartype billing_role_assignment: azure.mgmt.billing.operations.BillingRoleAssignmentOperations
+    :ivar billing_role_definitions: BillingRoleDefinitions operations
+    :vartype billing_role_definitions: azure.mgmt.billing.operations.BillingRoleDefinitionsOperations
+    :ivar billing_role_assignments: BillingRoleAssignments operations
+    :vartype billing_role_assignments: azure.mgmt.billing.operations.BillingRoleAssignmentsOperations
     :ivar agreements: Agreements operations
     :vartype agreements: azure.mgmt.billing.operations.AgreementsOperations
 
@@ -142,7 +142,7 @@ class BillingManagementClient(SDKClient):
 
         self.billing_accounts = BillingAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.available_balance = AvailableBalanceOperations(
+        self.available_balances = AvailableBalancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.payment_methods = PaymentMethodsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -164,7 +164,7 @@ class BillingManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.transactions = TransactionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.policy = PolicyOperations(
+        self.policies = PoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_property = BillingPropertyOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -178,9 +178,9 @@ class BillingManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_profile_billing_permissions = BillingProfileBillingPermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.billing_role_definition = BillingRoleDefinitionOperations(
+        self.billing_role_definitions = BillingRoleDefinitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.billing_role_assignment = BillingRoleAssignmentOperations(
+        self.billing_role_assignments = BillingRoleAssignmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.agreements = AgreementsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -10,7 +10,7 @@
 # --------------------------------------------------------------------------
 
 from .billing_accounts_operations import BillingAccountsOperations
-from .available_balance_operations import AvailableBalanceOperations
+from .available_balances_operations import AvailableBalancesOperations
 from .payment_methods_operations import PaymentMethodsOperations
 from .billing_profiles_operations import BillingProfilesOperations
 from .invoice_sections_operations import InvoiceSectionsOperations
@@ -21,20 +21,20 @@ from .price_sheet_operations import PriceSheetOperations
 from .billing_subscriptions_operations import BillingSubscriptionsOperations
 from .products_operations import ProductsOperations
 from .transactions_operations import TransactionsOperations
-from .policy_operations import PolicyOperations
+from .policies_operations import PoliciesOperations
 from .billing_property_operations import BillingPropertyOperations
 from .transfers_operations import TransfersOperations
 from .recipient_transfers_operations import RecipientTransfersOperations
 from .operations import Operations
 from .billing_permissions_operations import BillingPermissionsOperations
 from .billing_profile_billing_permissions_operations import BillingProfileBillingPermissionsOperations
-from .billing_role_definition_operations import BillingRoleDefinitionOperations
-from .billing_role_assignment_operations import BillingRoleAssignmentOperations
+from .billing_role_definitions_operations import BillingRoleDefinitionsOperations
+from .billing_role_assignments_operations import BillingRoleAssignmentsOperations
 from .agreements_operations import AgreementsOperations
 
 __all__ = [
     'BillingAccountsOperations',
-    'AvailableBalanceOperations',
+    'AvailableBalancesOperations',
     'PaymentMethodsOperations',
     'BillingProfilesOperations',
     'InvoiceSectionsOperations',
@@ -45,14 +45,14 @@ __all__ = [
     'BillingSubscriptionsOperations',
     'ProductsOperations',
     'TransactionsOperations',
-    'PolicyOperations',
+    'PoliciesOperations',
     'BillingPropertyOperations',
     'TransfersOperations',
     'RecipientTransfersOperations',
     'Operations',
     'BillingPermissionsOperations',
     'BillingProfileBillingPermissionsOperations',
-    'BillingRoleDefinitionOperations',
-    'BillingRoleAssignmentOperations',
+    'BillingRoleDefinitionsOperations',
+    'BillingRoleAssignmentsOperations',
     'AgreementsOperations',
 ]

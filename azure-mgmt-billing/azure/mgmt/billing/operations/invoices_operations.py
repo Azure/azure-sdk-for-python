@@ -167,7 +167,7 @@ class InvoicesOperations(object):
 
     def get(
             self, billing_account_name, billing_profile_name, invoice_name, custom_headers=None, raw=False, **operation_config):
-        """Get the invoice by id.
+        """Get the invoice by name.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str

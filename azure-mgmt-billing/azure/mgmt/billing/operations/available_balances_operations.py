@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class AvailableBalanceOperations(object):
-    """AvailableBalanceOperations operations.
+class AvailableBalancesOperations(object):
+    """AvailableBalancesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.

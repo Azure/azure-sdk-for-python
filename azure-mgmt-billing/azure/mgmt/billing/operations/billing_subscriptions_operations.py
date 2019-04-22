@@ -346,8 +346,8 @@ class BillingSubscriptionsOperations(object):
 
     def transfer(
             self, billing_account_name, invoice_section_name, billing_subscription_name, destination_invoice_section_id=None, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Transfers the modern subscription from one invoice section to another
-        within a billing account.
+        """Transfers the subscription from one invoice section to another within a
+        billing account.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
