@@ -28,6 +28,7 @@ try:
     from .container_service_diagnostics_profile_py3 import ContainerServiceDiagnosticsProfile
     from .managed_cluster_addon_profile_py3 import ManagedClusterAddonProfile
     from .managed_cluster_aad_profile_py3 import ManagedClusterAADProfile
+    from .managed_cluster_identity_py3 import ManagedClusterIdentity
     from .managed_cluster_py3 import ManagedCluster
     from .orchestrator_profile_py3 import OrchestratorProfile
     from .managed_cluster_access_profile_py3 import ManagedClusterAccessProfile
@@ -54,6 +55,7 @@ except (SyntaxError, ImportError):
     from .container_service_diagnostics_profile import ContainerServiceDiagnosticsProfile
     from .managed_cluster_addon_profile import ManagedClusterAddonProfile
     from .managed_cluster_aad_profile import ManagedClusterAADProfile
+    from .managed_cluster_identity import ManagedClusterIdentity
     from .managed_cluster import ManagedCluster
     from .orchestrator_profile import OrchestratorProfile
     from .managed_cluster_access_profile import ManagedClusterAccessProfile
@@ -72,6 +74,7 @@ from .container_service_client_enums import (
     NetworkPlugin,
     NetworkPolicy,
     LoadBalancerSku,
+    ResourceIdentityType,
 )
 
 __all__ = [
@@ -93,6 +96,7 @@ __all__ = [
     'ContainerServiceDiagnosticsProfile',
     'ManagedClusterAddonProfile',
     'ManagedClusterAADProfile',
+    'ManagedClusterIdentity',
     'ManagedCluster',
     'OrchestratorProfile',
     'ManagedClusterAccessProfile',
@@ -110,4 +114,5 @@ __all__ = [
     'NetworkPlugin',
     'NetworkPolicy',
     'LoadBalancerSku',
+    'ResourceIdentityType',
 ]
