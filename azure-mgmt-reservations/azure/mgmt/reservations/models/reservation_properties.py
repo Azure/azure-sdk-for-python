@@ -56,6 +56,11 @@ class ReservationProperties(Model):
     :param merge_properties:
     :type merge_properties:
      ~azure.mgmt.reservations.models.ReservationMergeProperties
+    :param renew:
+    :type renew: bool
+    :param renew_properties:
+    :type renew_properties:
+     ~azure.mgmt.reservations.models.RenewPropertiesResponse
     """
 
     _validation = {
@@ -77,6 +82,8 @@ class ReservationProperties(Model):
         'extended_status_info': {'key': 'extendedStatusInfo', 'type': 'ExtendedStatusInfo'},
         'split_properties': {'key': 'splitProperties', 'type': 'ReservationSplitProperties'},
         'merge_properties': {'key': 'mergeProperties', 'type': 'ReservationMergeProperties'},
+        'renew': {'key': 'renew', 'type': 'bool'},
+        'renew_properties': {'key': 'renewProperties', 'type': 'RenewPropertiesResponse'},
     }
 
     def __init__(self, **kwargs):
@@ -95,3 +102,5 @@ class ReservationProperties(Model):
         self.extended_status_info = kwargs.get('extended_status_info', None)
         self.split_properties = kwargs.get('split_properties', None)
         self.merge_properties = kwargs.get('merge_properties', None)
+        self.renew = kwargs.get('renew', None)
+        self.renew_properties = kwargs.get('renew_properties', None)
