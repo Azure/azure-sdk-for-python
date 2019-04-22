@@ -41,7 +41,7 @@ from .pipeline.transport import HttpRequest
 
 _LOGGER = logging.getLogger(__name__)
 
-class PipelineClient(object):
+class AsyncPipelineClient(object):
     """Service client core methods.
 
     This contains methods are sans I/O and not tight to sync or async implementation.
@@ -203,9 +203,3 @@ class PipelineClient(object):
         request = self._request('MERGE', url, params, headers, content, form_content, None)
         return request
 
-    def __enter__(self):
-        self._pipeline.__enter__()
-        return self
-
-    def __exit__(self, *exc_details):
-        self._pipeline.__exit__(*exc_details)
