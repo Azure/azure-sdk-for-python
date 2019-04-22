@@ -80,7 +80,7 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION='2018-07-01'
+    DEFAULT_API_VERSION='2019-04-01'
     _PROFILE_TAG = "azure.mgmt.storage.StorageManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
