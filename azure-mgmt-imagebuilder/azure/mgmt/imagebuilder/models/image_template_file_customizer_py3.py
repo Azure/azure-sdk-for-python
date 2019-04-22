@@ -26,8 +26,9 @@ class ImageTemplateFileCustomizer(ImageTemplateCustomizer):
     :param source_uri: The URI of the file to be uploaded for customizing the
      VM. It can be a github link, SAS URI for Azure Storage, etc
     :type source_uri: str
-    :param destination: The absolute path (with existing directory structure)
-     where the file will be uploaded to in the VM
+    :param destination: The absolute path to a file (with nested directory
+     structures already created) where the file (from sourceUri) will be
+     uploaded to in the VM
     :type destination: str
     """
 
