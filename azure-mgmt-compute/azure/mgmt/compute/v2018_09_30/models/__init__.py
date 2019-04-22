@@ -53,7 +53,6 @@ from .compute_management_client_enums import (
     DiskState,
     SnapshotStorageAccountTypes,
     AccessLevel,
-    StorageAccountTypes,
 )
 
 __all__ = [
