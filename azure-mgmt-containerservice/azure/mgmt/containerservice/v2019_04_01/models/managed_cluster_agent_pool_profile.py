@@ -110,6 +110,8 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :param availability_zones: (PREVIEW) Availability zones for nodes. Must
      use VirtualMachineScaleSets AgentPoolType.
     :type availability_zones: list[str]
+    :param enable_node_public_ip: Enable public IP for nodes.
+    :type enable_node_public_ip: bool
     :param name: Required. Unique name of the agent pool profile in the
      context of the subscription and resource group.
     :type name: str
@@ -136,6 +138,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         'orchestrator_version': {'key': 'orchestratorVersion', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'availability_zones': {'key': 'availabilityZones', 'type': '[str]'},
+        'enable_node_public_ip': {'key': 'enableNodePublicIP', 'type': 'bool'},
         'name': {'key': 'name', 'type': 'str'},
     }
 

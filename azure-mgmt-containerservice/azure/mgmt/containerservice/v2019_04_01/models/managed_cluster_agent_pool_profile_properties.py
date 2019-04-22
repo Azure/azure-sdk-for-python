@@ -110,6 +110,8 @@ class ManagedClusterAgentPoolProfileProperties(Model):
     :param availability_zones: (PREVIEW) Availability zones for nodes. Must
      use VirtualMachineScaleSets AgentPoolType.
     :type availability_zones: list[str]
+    :param enable_node_public_ip: Enable public IP for nodes.
+    :type enable_node_public_ip: bool
     """
 
     _validation = {
@@ -132,6 +134,7 @@ class ManagedClusterAgentPoolProfileProperties(Model):
         'orchestrator_version': {'key': 'orchestratorVersion', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'availability_zones': {'key': 'availabilityZones', 'type': '[str]'},
+        'enable_node_public_ip': {'key': 'enableNodePublicIP', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -149,3 +152,4 @@ class ManagedClusterAgentPoolProfileProperties(Model):
         self.orchestrator_version = kwargs.get('orchestrator_version', None)
         self.provisioning_state = None
         self.availability_zones = kwargs.get('availability_zones', None)
+        self.enable_node_public_ip = kwargs.get('enable_node_public_ip', None)
