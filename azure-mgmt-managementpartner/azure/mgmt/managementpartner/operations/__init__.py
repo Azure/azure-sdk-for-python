@@ -11,8 +11,10 @@
 
 from .partner_operations import PartnerOperations
 from .operation_operations import OperationOperations
+from .partners_operations import PartnersOperations
 
 __all__ = [
     'PartnerOperations',
     'OperationOperations',
+    'PartnersOperations',
 ]
