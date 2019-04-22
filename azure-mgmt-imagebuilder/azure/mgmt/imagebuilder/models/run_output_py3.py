@@ -31,7 +31,7 @@ class RunOutput(SubResource):
     :param artifact_uri: The location URI of the artifact.
     :type artifact_uri: str
     :ivar provisioning_state: Provisioning state of the resource. Possible
-     values include: 'Creating', 'Succeeded', 'Failed', 'Deleting'
+     values include: 'Creating', 'Updating', 'Succeeded', 'Failed', 'Deleting'
     :vartype provisioning_state: str or ~azure.mgmt.imagebuilder.models.enum
     """
 

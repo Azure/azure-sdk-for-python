@@ -2,6 +2,25 @@
 
 Release History
 ===============
+4.6.1 (2019-04-18)
+++++++++++++++++++
+
+**Bugfixes**
+- Make enum declarations in Compute package consistent, for the sake of code inspection.
+
+4.6.0 (2019-04-12)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSet has a new parameter do_not_run_extensions_on_overprovisioned_vms
+- Model VirtualMachineScaleSetVM has a new parameter network_profile_configuration
+- Model VirtualMachineScaleSetVM has a new parameter protection_policy
+- Model VirtualMachineScaleSetVM has a new parameter model_definition_applied
+- Added operation VirtualMachineScaleSetsOperations.convert_to_single_placement_group
+- Operation VirtualMachineScaleSetVMsOperations.power_off has a new signature and can now skip_shutdown
+- Operation VirtualMachinesOperations.power_off has a new signature and can now skip_shutdown
+- Operation VirtualMachineScaleSetsOperations.power_off has a new signature and can now skip_shutdown
 
 4.5.1 (2019-03-29)
 ++++++++++++++++++

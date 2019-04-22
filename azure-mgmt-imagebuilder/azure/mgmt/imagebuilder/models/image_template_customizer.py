@@ -17,7 +17,8 @@ class ImageTemplateCustomizer(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ImageTemplateShellCustomizer,
-    ImageTemplateRestartCustomizer, ImageTemplatePowerShellCustomizer
+    ImageTemplateRestartCustomizer, ImageTemplatePowerShellCustomizer,
+    ImageTemplateFileCustomizer
 
     All required parameters must be populated in order to send to Azure.
 
@@ -38,7 +39,7 @@ class ImageTemplateCustomizer(Model):
     }
 
     _subtype_map = {
-        'type': {'Shell': 'ImageTemplateShellCustomizer', 'WindowsRestart': 'ImageTemplateRestartCustomizer', 'PowerShell': 'ImageTemplatePowerShellCustomizer'}
+        'type': {'Shell': 'ImageTemplateShellCustomizer', 'WindowsRestart': 'ImageTemplateRestartCustomizer', 'PowerShell': 'ImageTemplatePowerShellCustomizer', 'File': 'ImageTemplateFileCustomizer'}
     }
 
     def __init__(self, **kwargs):

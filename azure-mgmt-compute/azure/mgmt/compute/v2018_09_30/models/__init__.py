@@ -53,9 +53,8 @@ from .compute_management_client_enums import (
     DiskState,
     SnapshotStorageAccountTypes,
     AccessLevel,
+    StorageAccountTypes,
 )
-# Manual change to avoid major release until the next major release
-StorageAccountTypes = DiskStorageAccountTypes
 
 __all__ = [
     'Resource',

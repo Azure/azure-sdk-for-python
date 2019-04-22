@@ -15,14 +15,18 @@ from msrest.serialization import Model
 class ImageTemplateUpdateParameters(Model):
     """Parameters for updating an image template.
 
+    :param identity: The identity of the image template, if configured.
+    :type identity: ~azure.mgmt.imagebuilder.models.ImageTemplateIdentity
     :param tags: The user-specified tags associated with the image template.
     :type tags: dict[str, str]
     """
 
     _attribute_map = {
+        'identity': {'key': 'identity', 'type': 'ImageTemplateIdentity'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
         super(ImageTemplateUpdateParameters, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
         self.tags = kwargs.get('tags', None)

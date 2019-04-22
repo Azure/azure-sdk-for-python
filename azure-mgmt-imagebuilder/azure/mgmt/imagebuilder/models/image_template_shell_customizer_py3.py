@@ -14,7 +14,7 @@ from .image_template_customizer_py3 import ImageTemplateCustomizer
 
 class ImageTemplateShellCustomizer(ImageTemplateCustomizer):
     """Runs a shell script during the customization phase (Linux). Corresponds to
-    Packer shell provisioner. Exactly one of 'script' or 'inline' can be
+    Packer shell provisioner. Exactly one of 'scriptUri' or 'inline' can be
     specified.
 
     All required parameters must be populated in order to send to Azure.
@@ -24,9 +24,9 @@ class ImageTemplateShellCustomizer(ImageTemplateCustomizer):
     :type name: str
     :param type: Required. Constant filled by server.
     :type type: str
-    :param script: The shell script to be run for customizing. It can be a
-     github link, SAS URI for Azure Storage, etc
-    :type script: str
+    :param script_uri: URI of the shell script to be run for customizing. It
+     can be a github link, SAS URI for Azure Storage, etc
+    :type script_uri: str
     :param inline: Array of shell commands to execute
     :type inline: list[str]
     """
@@ -38,12 +38,12 @@ class ImageTemplateShellCustomizer(ImageTemplateCustomizer):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'script': {'key': 'script', 'type': 'str'},
+        'script_uri': {'key': 'scriptUri', 'type': 'str'},
         'inline': {'key': 'inline', 'type': '[str]'},
     }
 
-    def __init__(self, *, name: str=None, script: str=None, inline=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, script_uri: str=None, inline=None, **kwargs) -> None:
         super(ImageTemplateShellCustomizer, self).__init__(name=name, **kwargs)
-        self.script = script
+        self.script_uri = script_uri
         self.inline = inline
         self.type = 'Shell'
