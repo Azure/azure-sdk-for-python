@@ -36,9 +36,9 @@ class PolicyOperations(object):
 
         self.config = config
 
-    def get_by_billing_profile(
+    def get_by_billing_profile_name(
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
-        """The policy for a given billingAccountName and billingProfileName.
+        """The policy for a given billing account name and billing profile name.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
@@ -56,7 +56,7 @@ class PolicyOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_by_billing_profile.metadata['url']
+        url = self.get_by_billing_profile_name.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
@@ -94,7 +94,7 @@ class PolicyOperations(object):
             return client_raw_response
 
         return deserialized
-    get_by_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/policies/default'}
+    get_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/policies/default'}
 
     def update(
             self, billing_account_name, billing_profile_name, parameters, custom_headers=None, raw=False, **operation_config):

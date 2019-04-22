@@ -17,8 +17,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class InvoicePricesheetOperations(object):
-    """InvoicePricesheetOperations operations.
+class PriceSheetOperations(object):
+    """PriceSheetOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -91,7 +91,7 @@ class InvoicePricesheetOperations(object):
 
     def download(
             self, billing_account_name, invoice_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Get pricesheet data for invoice id (invoiceName).
+        """Get pricesheet for invoice id (invoiceName).
 
         :param billing_account_name: Azure Billing Account ID.
         :type billing_account_name: str

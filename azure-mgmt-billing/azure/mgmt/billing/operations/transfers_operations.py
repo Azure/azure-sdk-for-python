@@ -36,8 +36,8 @@ class TransfersOperations(object):
 
     def initiate(
             self, billing_account_name, invoice_section_name, billing_profile_id=None, recipient_email_id=None, custom_headers=None, raw=False, **operation_config):
-        """Initiates the request to transfer the GTM or legacy subscriptions or
-        RIs to GTM.
+        """Initiates the request to transfer the modern or legacy subscriptions or
+        RIs to modern.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str

@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ProductsByBillingSubscriptionsOperations(object):
-    """ProductsByBillingSubscriptionsOperations operations.
+class PaymentMethodsOperations(object):
+    """PaymentMethodsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,20 +36,22 @@ class ProductsByBillingSubscriptionsOperations(object):
 
         self.config = config
 
-    def list(
-            self, billing_account_name, custom_headers=None, raw=False, **operation_config):
-        """Lists billing subscriptions by billingAccountName.
+    def list_by_billing_profile_name(
+            self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the Payment Methods by billing profile Id.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of BillingSubscriptionSummary
+        :return: An iterator like instance of PaymentMethod
         :rtype:
-         ~azure.mgmt.billing.models.BillingSubscriptionSummaryPaged[~azure.mgmt.billing.models.BillingSubscriptionSummary]
+         ~azure.mgmt.billing.models.PaymentMethodPaged[~azure.mgmt.billing.models.PaymentMethod]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
@@ -57,9 +59,10 @@ class ProductsByBillingSubscriptionsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_billing_profile_name.metadata['url']
                 path_format_arguments = {
-                    'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
+                    'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+                    'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -91,12 +94,12 @@ class ProductsByBillingSubscriptionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.BillingSubscriptionSummaryPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.PaymentMethodPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.BillingSubscriptionSummaryPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.PaymentMethodPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingSubscriptions'}
+    list_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/paymentMethods'}
