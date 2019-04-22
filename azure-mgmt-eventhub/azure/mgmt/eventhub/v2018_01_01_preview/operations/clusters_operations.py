@@ -48,8 +48,10 @@ class ClustersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: dict or ClientRawResponse if raw=true
-        :rtype: dict[str, int] or ~msrest.pipeline.ClientRawResponse
+        :return: AvailableClustersList or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.eventhub.v2018_01_01_preview.models.AvailableClustersList
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.eventhub.v2018_01_01_preview.models.ErrorResponseException>`
         """
@@ -80,7 +82,7 @@ class ClustersOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('{int}', response)
+            deserialized = self._deserialize('AvailableClustersList', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
