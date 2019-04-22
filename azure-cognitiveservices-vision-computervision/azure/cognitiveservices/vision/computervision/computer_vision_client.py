@@ -886,7 +886,7 @@ class ComputerVisionClient(SDKClient):
     get_text_operation_result.metadata = {'url': '/textOperations/{operationId}'}
 
     def batch_read_file(
-            self, url, custom_headers=None, raw=False, **operation_config):
+            self, url, mode, custom_headers=None, raw=False, **operation_config):
         """Use this interface to get the result of a Read operation, employing the
         state-of-the-art Optical Character Recognition (OCR) algorithms
         optimized for text-heavy documents. When you use the Read File
@@ -894,6 +894,10 @@ class ComputerVisionClient(SDKClient):
         The 'Operation-Location' field contains the URL that you must use for
         your 'GetReadOperationResult' operation to access OCR results.​.
 
+        :param mode: Type of text to recognize. Possible values include:
+         'Handwritten', 'Printed'
+        :type mode: str or
+         ~azure.cognitiveservices.vision.computervision.models.TextRecognitionMode
         :param url: Publicly reachable URL of an image.
         :type url: str
         :param dict custom_headers: headers that will be added to the request
@@ -917,6 +921,7 @@ class ComputerVisionClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
+        query_parameters['mode'] = self._serialize.query("mode", mode, 'TextRecognitionMode')
 
         # Construct headers
         header_parameters = {}
@@ -1722,7 +1727,7 @@ class ComputerVisionClient(SDKClient):
     recognize_text_in_stream.metadata = {'url': '/recognizeText'}
 
     def batch_read_file_in_stream(
-            self, image, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, mode, custom_headers=None, raw=False, callback=None, **operation_config):
         """Use this interface to get the result of a Read Document operation,
         employing the state-of-the-art Optical Character Recognition (OCR)
         algorithms optimized for text-heavy documents. When you use the Read
@@ -1733,6 +1738,10 @@ class ComputerVisionClient(SDKClient):
 
         :param image: An image stream.
         :type image: Generator
+        :param mode: Type of text to recognize. Possible values include:
+         'Handwritten', 'Printed'
+        :type mode: str or
+         ~azure.cognitiveservices.vision.computervision.models.TextRecognitionMode
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1757,6 +1766,7 @@ class ComputerVisionClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
+        query_parameters['mode'] = self._serialize.query("mode", mode, 'TextRecognitionMode')
 
         # Construct headers
         header_parameters = {}
