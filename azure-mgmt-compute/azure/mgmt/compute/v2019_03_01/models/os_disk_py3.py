@@ -47,9 +47,6 @@ class OSDisk(Model):
     :param write_accelerator_enabled: Specifies whether writeAccelerator
      should be enabled or disabled on the disk.
     :type write_accelerator_enabled: bool
-    :param to_be_detached: Specifies whether the disk is in process of
-     detachment from the VM/VMSS
-    :type to_be_detached: bool
     :param diff_disk_settings: Specifies the ephemeral Disk Settings for the
      operating system disk used by the virtual machine.
     :type diff_disk_settings:
@@ -85,14 +82,13 @@ class OSDisk(Model):
         'image': {'key': 'image', 'type': 'VirtualHardDisk'},
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
         'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
-        'to_be_detached': {'key': 'toBeDetached', 'type': 'bool'},
         'diff_disk_settings': {'key': 'diffDiskSettings', 'type': 'DiffDiskSettings'},
         'create_option': {'key': 'createOption', 'type': 'str'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
         'managed_disk': {'key': 'managedDisk', 'type': 'ManagedDiskParameters'},
     }
 
-    def __init__(self, *, create_option, os_type=None, encryption_settings=None, name: str=None, vhd=None, image=None, caching=None, write_accelerator_enabled: bool=None, to_be_detached: bool=None, diff_disk_settings=None, disk_size_gb: int=None, managed_disk=None, **kwargs) -> None:
+    def __init__(self, *, create_option, os_type=None, encryption_settings=None, name: str=None, vhd=None, image=None, caching=None, write_accelerator_enabled: bool=None, diff_disk_settings=None, disk_size_gb: int=None, managed_disk=None, **kwargs) -> None:
         super(OSDisk, self).__init__(**kwargs)
         self.os_type = os_type
         self.encryption_settings = encryption_settings
@@ -101,7 +97,6 @@ class OSDisk(Model):
         self.image = image
         self.caching = caching
         self.write_accelerator_enabled = write_accelerator_enabled
-        self.to_be_detached = to_be_detached
         self.diff_disk_settings = diff_disk_settings
         self.create_option = create_option
         self.disk_size_gb = disk_size_gb

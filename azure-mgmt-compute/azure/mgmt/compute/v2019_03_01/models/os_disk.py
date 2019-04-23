@@ -47,9 +47,6 @@ class OSDisk(Model):
     :param write_accelerator_enabled: Specifies whether writeAccelerator
      should be enabled or disabled on the disk.
     :type write_accelerator_enabled: bool
-    :param to_be_detached: Specifies whether the disk is in process of
-     detachment from the VM/VMSS
-    :type to_be_detached: bool
     :param diff_disk_settings: Specifies the ephemeral Disk Settings for the
      operating system disk used by the virtual machine.
     :type diff_disk_settings:
@@ -85,7 +82,6 @@ class OSDisk(Model):
         'image': {'key': 'image', 'type': 'VirtualHardDisk'},
         'caching': {'key': 'caching', 'type': 'CachingTypes'},
         'write_accelerator_enabled': {'key': 'writeAcceleratorEnabled', 'type': 'bool'},
-        'to_be_detached': {'key': 'toBeDetached', 'type': 'bool'},
         'diff_disk_settings': {'key': 'diffDiskSettings', 'type': 'DiffDiskSettings'},
         'create_option': {'key': 'createOption', 'type': 'str'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
@@ -101,7 +97,6 @@ class OSDisk(Model):
         self.image = kwargs.get('image', None)
         self.caching = kwargs.get('caching', None)
         self.write_accelerator_enabled = kwargs.get('write_accelerator_enabled', None)
-        self.to_be_detached = kwargs.get('to_be_detached', None)
         self.diff_disk_settings = kwargs.get('diff_disk_settings', None)
         self.create_option = kwargs.get('create_option', None)
         self.disk_size_gb = kwargs.get('disk_size_gb', None)
