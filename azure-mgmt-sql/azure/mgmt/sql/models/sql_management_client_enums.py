@@ -325,11 +325,16 @@ class IdentityType(str, Enum):
     system_assigned = "SystemAssigned"
 
 
-class ManagedInstanceProxyOverride(str, Enum):
+class ManagedServerCreateMode(str, Enum):
 
-    proxy = "Proxy"
-    redirect = "Redirect"
     default = "Default"
+    point_in_time_restore = "PointInTimeRestore"
+
+
+class ManagedInstanceLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
 
 
 class OperationOrigin(str, Enum):

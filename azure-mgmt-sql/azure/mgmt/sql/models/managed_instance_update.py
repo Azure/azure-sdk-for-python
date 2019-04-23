@@ -20,6 +20,14 @@ class ManagedInstanceUpdate(Model):
 
     :param sku: Managed instance sku
     :type sku: ~azure.mgmt.sql.models.Sku
+    :param managed_instance_create_mode: Specifies the mode of database
+     creation.
+     Default: Regular instance creation.
+     Restore: Creates an instance by restoring a set of backups to specific
+     point in time. RestorePointInTime and SourceManagedInstanceId must be
+     specified. Possible values include: 'Default', 'PointInTimeRestore'
+    :type managed_instance_create_mode: str or
+     ~azure.mgmt.sql.models.ManagedServerCreateMode
     :ivar fully_qualified_domain_name: The fully qualified domain name of the
      managed instance.
     :vartype fully_qualified_domain_name: str
@@ -35,11 +43,16 @@ class ManagedInstanceUpdate(Model):
     :ivar state: The state of the managed instance.
     :vartype state: str
     :param license_type: The license type. Possible values are
-     'LicenseIncluded' and 'BasePrice'.
-    :type license_type: str
-    :param v_cores: The number of VCores.
+     'LicenseIncluded' (regular price inclusive of a new SQL license) and
+     'BasePrice' (discounted AHB price for bringing your own SQL licenses).
+     Possible values include: 'LicenseIncluded', 'BasePrice'
+    :type license_type: str or
+     ~azure.mgmt.sql.models.ManagedInstanceLicenseType
+    :param v_cores: The number of vCores. Allowed values: 8, 16, 24, 32, 40,
+     64, 80.
     :type v_cores: int
-    :param storage_size_in_gb: The maximum storage size in GB.
+    :param storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum
+     value: 8192. Increments of 32 GB allowed only.
     :type storage_size_in_gb: int
     :param collation: Collation of the managed instance.
     :type collation: str
@@ -51,10 +64,14 @@ class ManagedInstanceUpdate(Model):
     :param public_data_endpoint_enabled: Whether or not the public data
      endpoint is enabled.
     :type public_data_endpoint_enabled: bool
-    :param proxy_override: Connection type used for connecting to the
-     instance. Possible values include: 'Proxy', 'Redirect', 'Default'
-    :type proxy_override: str or
-     ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
+    :param source_managed_instance_id: The resource identifier of the source
+     managed instance associated with create operation of this instance.
+    :type source_managed_instance_id: str
+    :param restore_point_in_time: Specifies the point in time (ISO8601 format)
+     of the source database that will be restored to create the new database.
+    :type restore_point_in_time: datetime
+    :param proxy_override: Proxy override of the managed instance.
+    :type proxy_override: str
     :param timezone_id: Id of the timezone. Allowed values are timezones
      supported by Windows.
      Windows keeps details on supported timezones, including the id, in
@@ -68,6 +85,9 @@ class ManagedInstanceUpdate(Model):
      An example of valid timezone id is "Pacific Standard Time" or "W. Europe
      Standard Time".
     :type timezone_id: str
+    :param instance_pool_id: The Id of the instance pool this managed server
+     belongs to.
+    :type instance_pool_id: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -80,6 +100,7 @@ class ManagedInstanceUpdate(Model):
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'managed_instance_create_mode': {'key': 'properties.managedInstanceCreateMode', 'type': 'str'},
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
         'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
         'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
@@ -92,14 +113,18 @@ class ManagedInstanceUpdate(Model):
         'dns_zone': {'key': 'properties.dnsZone', 'type': 'str'},
         'dns_zone_partner': {'key': 'properties.dnsZonePartner', 'type': 'str'},
         'public_data_endpoint_enabled': {'key': 'properties.publicDataEndpointEnabled', 'type': 'bool'},
+        'source_managed_instance_id': {'key': 'properties.sourceManagedInstanceId', 'type': 'str'},
+        'restore_point_in_time': {'key': 'properties.restorePointInTime', 'type': 'iso-8601'},
         'proxy_override': {'key': 'properties.proxyOverride', 'type': 'str'},
         'timezone_id': {'key': 'properties.timezoneId', 'type': 'str'},
+        'instance_pool_id': {'key': 'properties.instancePoolId', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
         super(ManagedInstanceUpdate, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
+        self.managed_instance_create_mode = kwargs.get('managed_instance_create_mode', None)
         self.fully_qualified_domain_name = None
         self.administrator_login = kwargs.get('administrator_login', None)
         self.administrator_login_password = kwargs.get('administrator_login_password', None)
@@ -112,6 +137,9 @@ class ManagedInstanceUpdate(Model):
         self.dns_zone = None
         self.dns_zone_partner = kwargs.get('dns_zone_partner', None)
         self.public_data_endpoint_enabled = kwargs.get('public_data_endpoint_enabled', None)
+        self.source_managed_instance_id = kwargs.get('source_managed_instance_id', None)
+        self.restore_point_in_time = kwargs.get('restore_point_in_time', None)
         self.proxy_override = kwargs.get('proxy_override', None)
         self.timezone_id = kwargs.get('timezone_id', None)
+        self.instance_pool_id = kwargs.get('instance_pool_id', None)
         self.tags = kwargs.get('tags', None)
