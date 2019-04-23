@@ -32,8 +32,6 @@ except ImportError:
 
 from typing import Dict, Any, List, Callable, Optional, TYPE_CHECKING  # pylint: disable=unused-import
 
-from msrest.serialization import Deserializer
-
 if TYPE_CHECKING:
     from .pipeline import HttpResponse  # pylint: disable=unused-import
     from msrest.serialization import Model  # pylint: disable=unused-import
@@ -57,14 +55,14 @@ class Paged(AsyncPagedMixin, Iterator):
     _validation = {}  # type: Dict[str, Dict[str, Any]]
     _attribute_map = {}  # type: Dict[str, Dict[str, Any]]
 
-    def __init__(self, command, classes, **kwargs):
-        # type: (Callable[[str], HttpResponse], Dict[str, Model], Any) -> None
+    def __init__(self, command, classes, deserializer**kwargs):
+        # type: (Callable[[str], HttpResponse], Dict[str, Model], Callable, Any) -> None
         super(Paged, self).__init__(**kwargs)  # type: ignore
         # Sets next_link, current_page, and _current_page_iter_index.
         self.next_link = ""
         self.current_page = []  # type: List[Model]
         self._current_page_iter_index = 0
-        self._deserializer = Deserializer(classes)
+        self._deserializer = deserializer(classes)
         self._get_next = command
         self._response = None  # type: Optional[HttpResponse]
 
