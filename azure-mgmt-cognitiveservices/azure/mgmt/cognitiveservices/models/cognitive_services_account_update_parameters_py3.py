@@ -23,7 +23,7 @@ class CognitiveServicesAccountUpdateParameters(Model):
      resource. Each tag must have a key no greater than 128 characters and
      value no greater than 256 characters.
     :type tags: dict[str, str]
-    :param properties: Additional properties for Account. Only provided fileds
+    :param properties: Additional properties for Account. Only provided fields
      will be updated.
     :type properties: object
     """

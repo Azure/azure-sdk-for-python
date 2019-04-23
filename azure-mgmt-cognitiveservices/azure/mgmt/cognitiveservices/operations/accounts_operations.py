@@ -127,7 +127,7 @@ class AccountsOperations(object):
          value no greater than 256 characters.
         :type tags: dict[str, str]
         :param properties: Additional properties for Account. Only provided
-         fileds will be updated.
+         fields will be updated.
         :type properties: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
