@@ -35,7 +35,7 @@ from typing import Dict, Any, List, Callable, Optional, TYPE_CHECKING  # pylint:
 from msrest.serialization import Deserializer
 
 if TYPE_CHECKING:
-    from .pipeline.transport import HttpResponse  # pylint: disable=unused-import
+    from .pipeline import HttpResponse  # pylint: disable=unused-import
     from msrest.serialization import Model  # pylint: disable=unused-import
 
 if sys.version_info >= (3, 5, 2):
