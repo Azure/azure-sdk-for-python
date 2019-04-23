@@ -36,8 +36,7 @@ from typing import Any, Callable, Union, List, Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     import requests
     from .pipeline import HttpResponse  # pylint: disable=unused-import
-
-from msrest.serialization import Model
+    from msrest.serialization import Model # pylint: disable=unused-import
 
 class PollingMethod(object):
     """ABC class for polling method.
@@ -119,8 +118,11 @@ class LROPoller(object):
         self._callbacks = []  # type: List[Callable]
         self._polling_method = polling_method
 
-        if isinstance(deserialization_callback, type) and issubclass(deserialization_callback, Model):
-            deserialization_callback = deserialization_callback.deserialize  # type: ignore
+        # This implicit test avoids bringing in an explicit dependency on Model directly 
+        try:
+            deserialization_callback = deserialization_callback.deserialize
+        except AttributeError:
+            pass
 
         # Might raise a CloudError
         self._polling_method.initialize(self._client, self._response, deserialization_callback)

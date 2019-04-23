@@ -25,8 +25,6 @@
 # --------------------------------------------------------------------------
 from .poller import NoPolling as _NoPolling
 
-from msrest.serialization import Model
-
 class AsyncPollingMethod(object):
     """ABC class for polling method.
     """
@@ -70,8 +68,11 @@ async def async_poller(client, initial_response, deserialization_callback, polli
     :type polling_method: msrest.polling.PollingMethod
     """
 
-    if isinstance(deserialization_callback, type) and issubclass(deserialization_callback, Model):
+    # This implicit test avoids bringing in an explicit dependency on Model directly 
+    try:
         deserialization_callback = deserialization_callback.deserialize
+    except AttributeError:
+        pass
 
     # Might raise a CloudError
     polling_method.initialize(client, initial_response, deserialization_callback)
