@@ -17,11 +17,6 @@ try:
     from .extended_status_info_py3 import ExtendedStatusInfo
     from .reservation_split_properties_py3 import ReservationSplitProperties
     from .reservation_merge_properties_py3 import ReservationMergeProperties
-    from .purchase_request_properties_reserved_resource_properties_py3 import PurchaseRequestPropertiesReservedResourceProperties
-    from .purchase_request_py3 import PurchaseRequest
-    from .renew_properties_response_locked_price_total_py3 import RenewPropertiesResponseLockedPriceTotal
-    from .renew_properties_response_links_py3 import RenewPropertiesResponseLinks
-    from .renew_properties_response_py3 import RenewPropertiesResponse
     from .reservation_properties_py3 import ReservationProperties
     from .reservation_response_py3 import ReservationResponse
     from .reservation_order_response_py3 import ReservationOrderResponse
@@ -29,7 +24,9 @@ try:
     from .calculate_price_response_properties_pricing_currency_total_py3 import CalculatePriceResponsePropertiesPricingCurrencyTotal
     from .calculate_price_response_properties_py3 import CalculatePriceResponseProperties
     from .calculate_price_response_py3 import CalculatePriceResponse
+    from .purchase_request_properties_reserved_resource_properties_py3 import PurchaseRequestPropertiesReservedResourceProperties
     from .merge_request_py3 import MergeRequest
+    from .purchase_request_py3 import PurchaseRequest
     from .patch_py3 import Patch
     from .split_request_py3 import SplitRequest
     from .extended_error_info_py3 import ExtendedErrorInfo
@@ -46,11 +43,6 @@ except (SyntaxError, ImportError):
     from .extended_status_info import ExtendedStatusInfo
     from .reservation_split_properties import ReservationSplitProperties
     from .reservation_merge_properties import ReservationMergeProperties
-    from .purchase_request_properties_reserved_resource_properties import PurchaseRequestPropertiesReservedResourceProperties
-    from .purchase_request import PurchaseRequest
-    from .renew_properties_response_locked_price_total import RenewPropertiesResponseLockedPriceTotal
-    from .renew_properties_response_links import RenewPropertiesResponseLinks
-    from .renew_properties_response import RenewPropertiesResponse
     from .reservation_properties import ReservationProperties
     from .reservation_response import ReservationResponse
     from .reservation_order_response import ReservationOrderResponse
@@ -58,7 +50,9 @@ except (SyntaxError, ImportError):
     from .calculate_price_response_properties_pricing_currency_total import CalculatePriceResponsePropertiesPricingCurrencyTotal
     from .calculate_price_response_properties import CalculatePriceResponseProperties
     from .calculate_price_response import CalculatePriceResponse
+    from .purchase_request_properties_reserved_resource_properties import PurchaseRequestPropertiesReservedResourceProperties
     from .merge_request import MergeRequest
+    from .purchase_request import PurchaseRequest
     from .patch import Patch
     from .split_request import SplitRequest
     from .extended_error_info import ExtendedErrorInfo
@@ -87,11 +81,6 @@ __all__ = [
     'ExtendedStatusInfo',
     'ReservationSplitProperties',
     'ReservationMergeProperties',
-    'PurchaseRequestPropertiesReservedResourceProperties',
-    'PurchaseRequest',
-    'RenewPropertiesResponseLockedPriceTotal',
-    'RenewPropertiesResponseLinks',
-    'RenewPropertiesResponse',
     'ReservationProperties',
     'ReservationResponse',
     'ReservationOrderResponse',
@@ -99,7 +88,9 @@ __all__ = [
     'CalculatePriceResponsePropertiesPricingCurrencyTotal',
     'CalculatePriceResponseProperties',
     'CalculatePriceResponse',
+    'PurchaseRequestPropertiesReservedResourceProperties',
     'MergeRequest',
+    'PurchaseRequest',
     'Patch',
     'SplitRequest',
     'ExtendedErrorInfo',
