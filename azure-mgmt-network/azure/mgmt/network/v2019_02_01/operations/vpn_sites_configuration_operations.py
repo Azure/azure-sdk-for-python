@@ -40,7 +40,7 @@ class VpnSitesConfigurationOperations(object):
 
 
     def _download_initial(
-            self, resource_group_name, virtual_wan_name, vpn_sites=None, output_blob_sas_url=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, virtual_wan_name, output_blob_sas_url, vpn_sites=None, custom_headers=None, raw=False, **operation_config):
         request = models.GetVpnSitesConfigurationRequest(vpn_sites=vpn_sites, output_blob_sas_url=output_blob_sas_url)
 
         # Construct URL
@@ -81,7 +81,7 @@ class VpnSitesConfigurationOperations(object):
             return client_raw_response
 
     def download(
-            self, resource_group_name, virtual_wan_name, vpn_sites=None, output_blob_sas_url=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, virtual_wan_name, output_blob_sas_url, vpn_sites=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Gives the sas-url to download the configurations for vpn-sites in a
         resource group.
 
@@ -90,12 +90,12 @@ class VpnSitesConfigurationOperations(object):
         :param virtual_wan_name: The name of the VirtualWAN for which
          configuration of all vpn-sites is needed.
         :type virtual_wan_name: str
-        :param vpn_sites: List of resource-ids of the vpn-sites for which
-         config is to be downloaded.
-        :type vpn_sites: list[str]
         :param output_blob_sas_url: The sas-url to download the configurations
          for vpn-sites
         :type output_blob_sas_url: str
+        :param vpn_sites: List of resource-ids of the vpn-sites for which
+         config is to be downloaded.
+        :type vpn_sites: list[str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -111,8 +111,8 @@ class VpnSitesConfigurationOperations(object):
         raw_result = self._download_initial(
             resource_group_name=resource_group_name,
             virtual_wan_name=virtual_wan_name,
-            vpn_sites=vpn_sites,
             output_blob_sas_url=output_blob_sas_url,
+            vpn_sites=vpn_sites,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

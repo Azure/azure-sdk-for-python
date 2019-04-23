@@ -15,20 +15,26 @@ from msrest.serialization import Model
 class GetVpnSitesConfigurationRequest(Model):
     """List of Vpn-Sites.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param vpn_sites: List of resource-ids of the vpn-sites for which config
      is to be downloaded.
     :type vpn_sites: list[str]
-    :param output_blob_sas_url: The sas-url to download the configurations for
-     vpn-sites
+    :param output_blob_sas_url: Required. The sas-url to download the
+     configurations for vpn-sites
     :type output_blob_sas_url: str
     """
+
+    _validation = {
+        'output_blob_sas_url': {'required': True},
+    }
 
     _attribute_map = {
         'vpn_sites': {'key': 'vpnSites', 'type': '[str]'},
         'output_blob_sas_url': {'key': 'outputBlobSasUrl', 'type': 'str'},
     }
 
-    def __init__(self, *, vpn_sites=None, output_blob_sas_url: str=None, **kwargs) -> None:
+    def __init__(self, *, output_blob_sas_url: str, vpn_sites=None, **kwargs) -> None:
         super(GetVpnSitesConfigurationRequest, self).__init__(**kwargs)
         self.vpn_sites = vpn_sites
         self.output_blob_sas_url = output_blob_sas_url
