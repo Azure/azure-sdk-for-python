@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class BillingPermissions(Model):
+class BillingPermissionsProperties(Model):
     """The set of allowed action and not allowed actions a caller has on a billing
     account.
 
@@ -35,7 +35,7 @@ class BillingPermissions(Model):
         'not_actions': {'key': 'notActions', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(BillingPermissions, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(BillingPermissionsProperties, self).__init__(**kwargs)
         self.actions = None
         self.not_actions = None

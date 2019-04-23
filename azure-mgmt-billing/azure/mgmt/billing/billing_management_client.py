@@ -31,7 +31,6 @@ from .operations.transfers_operations import TransfersOperations
 from .operations.recipient_transfers_operations import RecipientTransfersOperations
 from .operations.operations import Operations
 from .operations.billing_permissions_operations import BillingPermissionsOperations
-from .operations.billing_profile_billing_permissions_operations import BillingProfileBillingPermissionsOperations
 from .operations.billing_role_definitions_operations import BillingRoleDefinitionsOperations
 from .operations.billing_role_assignments_operations import BillingRoleAssignmentsOperations
 from .operations.agreements_operations import AgreementsOperations
@@ -112,8 +111,6 @@ class BillingManagementClient(SDKClient):
     :vartype operations: azure.mgmt.billing.operations.Operations
     :ivar billing_permissions: BillingPermissions operations
     :vartype billing_permissions: azure.mgmt.billing.operations.BillingPermissionsOperations
-    :ivar billing_profile_billing_permissions: BillingProfileBillingPermissions operations
-    :vartype billing_profile_billing_permissions: azure.mgmt.billing.operations.BillingProfileBillingPermissionsOperations
     :ivar billing_role_definitions: BillingRoleDefinitions operations
     :vartype billing_role_definitions: azure.mgmt.billing.operations.BillingRoleDefinitionsOperations
     :ivar billing_role_assignments: BillingRoleAssignments operations
@@ -175,8 +172,6 @@ class BillingManagementClient(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_permissions = BillingPermissionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.billing_profile_billing_permissions = BillingProfileBillingPermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_role_definitions = BillingRoleDefinitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
