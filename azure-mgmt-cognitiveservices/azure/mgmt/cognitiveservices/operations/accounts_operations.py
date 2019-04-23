@@ -110,7 +110,7 @@ class AccountsOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'}
 
     def update(
-            self, resource_group_name, account_name, sku=None, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, sku=None, tags=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Updates a Cognitive Services account.
 
         :param resource_group_name: The name of the resource group within the
@@ -126,6 +126,9 @@ class AccountsOperations(object):
          resource. Each tag must have a key no greater than 128 characters and
          value no greater than 256 characters.
         :type tags: dict[str, str]
+        :param properties: Additional properties for Account. Only provided
+         fields will be updated.
+        :type properties: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -137,7 +140,7 @@ class AccountsOperations(object):
         :raises:
          :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
-        parameters = models.CognitiveServicesAccountUpdateParameters(sku=sku, tags=tags)
+        parameters = models.CognitiveServicesAccountUpdateParameters(sku=sku, tags=tags, properties=properties)
 
         # Construct URL
         url = self.update.metadata['url']
