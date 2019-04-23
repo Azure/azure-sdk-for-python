@@ -56,11 +56,6 @@ class ReservationProperties(Model):
     :param merge_properties:
     :type merge_properties:
      ~azure.mgmt.reservations.models.ReservationMergeProperties
-    :param renew:
-    :type renew: bool
-    :param renew_properties:
-    :type renew_properties:
-     ~azure.mgmt.reservations.models.RenewPropertiesResponse
     """
 
     _validation = {
@@ -82,11 +77,9 @@ class ReservationProperties(Model):
         'extended_status_info': {'key': 'extendedStatusInfo', 'type': 'ExtendedStatusInfo'},
         'split_properties': {'key': 'splitProperties', 'type': 'ReservationSplitProperties'},
         'merge_properties': {'key': 'mergeProperties', 'type': 'ReservationMergeProperties'},
-        'renew': {'key': 'renew', 'type': 'bool'},
-        'renew_properties': {'key': 'renewProperties', 'type': 'RenewPropertiesResponse'},
     }
 
-    def __init__(self, *, reserved_resource_type=None, instance_flexibility=None, display_name: str=None, applied_scopes=None, applied_scope_type=None, quantity: int=None, provisioning_state: str=None, effective_date_time=None, expiry_date=None, sku_description: str=None, extended_status_info=None, split_properties=None, merge_properties=None, renew: bool=None, renew_properties=None, **kwargs) -> None:
+    def __init__(self, *, reserved_resource_type=None, instance_flexibility=None, display_name: str=None, applied_scopes=None, applied_scope_type=None, quantity: int=None, provisioning_state: str=None, effective_date_time=None, expiry_date=None, sku_description: str=None, extended_status_info=None, split_properties=None, merge_properties=None, **kwargs) -> None:
         super(ReservationProperties, self).__init__(**kwargs)
         self.reserved_resource_type = reserved_resource_type
         self.instance_flexibility = instance_flexibility
@@ -102,5 +95,3 @@ class ReservationProperties(Model):
         self.extended_status_info = extended_status_info
         self.split_properties = split_properties
         self.merge_properties = merge_properties
-        self.renew = renew
-        self.renew_properties = renew_properties

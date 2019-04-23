@@ -36,8 +36,6 @@ class PurchaseRequest(Model):
      ~azure.mgmt.reservations.models.AppliedScopeType
     :param applied_scopes:
     :type applied_scopes: list[str]
-    :param renew:
-    :type renew: bool
     :param reserved_resource_properties: Properties specific to each reserved
      resource type. Not required if not applicable.
     :type reserved_resource_properties:
@@ -54,7 +52,6 @@ class PurchaseRequest(Model):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'applied_scope_type': {'key': 'properties.appliedScopeType', 'type': 'str'},
         'applied_scopes': {'key': 'properties.appliedScopes', 'type': '[str]'},
-        'renew': {'key': 'properties.renew', 'type': 'bool'},
         'reserved_resource_properties': {'key': 'properties.reservedResourceProperties', 'type': 'PurchaseRequestPropertiesReservedResourceProperties'},
     }
 
@@ -69,5 +66,4 @@ class PurchaseRequest(Model):
         self.display_name = kwargs.get('display_name', None)
         self.applied_scope_type = kwargs.get('applied_scope_type', None)
         self.applied_scopes = kwargs.get('applied_scopes', None)
-        self.renew = kwargs.get('renew', None)
         self.reserved_resource_properties = kwargs.get('reserved_resource_properties', None)

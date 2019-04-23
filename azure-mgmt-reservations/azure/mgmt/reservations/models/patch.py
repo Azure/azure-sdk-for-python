@@ -20,10 +20,6 @@ class Patch(Model):
      ~azure.mgmt.reservations.models.AppliedScopeType
     :param applied_scopes:
     :type applied_scopes: list[str]
-    :param renew:
-    :type renew: bool
-    :param renew_properties:
-    :type renew_properties: ~azure.mgmt.reservations.models.PurchaseRequest
     :param instance_flexibility: Possible values include: 'On', 'Off'
     :type instance_flexibility: str or
      ~azure.mgmt.reservations.models.InstanceFlexibility
@@ -34,8 +30,6 @@ class Patch(Model):
     _attribute_map = {
         'applied_scope_type': {'key': 'properties.appliedScopeType', 'type': 'str'},
         'applied_scopes': {'key': 'properties.appliedScopes', 'type': '[str]'},
-        'renew': {'key': 'properties.renew', 'type': 'bool'},
-        'renew_properties': {'key': 'properties.renewProperties', 'type': 'PurchaseRequest'},
         'instance_flexibility': {'key': 'properties.instanceFlexibility', 'type': 'str'},
         'name': {'key': 'properties.name', 'type': 'str'},
     }
@@ -44,7 +38,5 @@ class Patch(Model):
         super(Patch, self).__init__(**kwargs)
         self.applied_scope_type = kwargs.get('applied_scope_type', None)
         self.applied_scopes = kwargs.get('applied_scopes', None)
-        self.renew = kwargs.get('renew', None)
-        self.renew_properties = kwargs.get('renew_properties', None)
         self.instance_flexibility = kwargs.get('instance_flexibility', None)
         self.name = kwargs.get('name', None)
