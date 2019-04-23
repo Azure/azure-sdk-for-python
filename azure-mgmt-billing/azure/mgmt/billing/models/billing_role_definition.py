@@ -28,7 +28,8 @@ class BillingRoleDefinition(Resource):
     :vartype description: str
     :ivar value: The list OF billingPermissions a caller has on a billing
      account.
-    :vartype value: list[~azure.mgmt.billing.models.BillingPermissions]
+    :vartype value:
+     list[~azure.mgmt.billing.models.BillingPermissionsProperties]
     :ivar role_name: The name of the role
     :vartype role_name: str
     """
@@ -47,7 +48,7 @@ class BillingRoleDefinition(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
-        'value': {'key': 'properties.permissions.value', 'type': '[BillingPermissions]'},
+        'value': {'key': 'properties.permissions.value', 'type': '[BillingPermissionsProperties]'},
         'role_name': {'key': 'properties.roleName', 'type': 'str'},
     }
 

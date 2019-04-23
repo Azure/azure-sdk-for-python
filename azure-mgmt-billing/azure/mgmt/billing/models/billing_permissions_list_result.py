@@ -20,7 +20,8 @@ class BillingPermissionsListResult(Model):
 
     :ivar value: The list OF billingPermissions a caller has on a billing
      account.
-    :vartype value: list[~azure.mgmt.billing.models.BillingPermissions]
+    :vartype value:
+     list[~azure.mgmt.billing.models.BillingPermissionsProperties]
     """
 
     _validation = {
@@ -28,7 +29,7 @@ class BillingPermissionsListResult(Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BillingPermissions]'},
+        'value': {'key': 'value', 'type': '[BillingPermissionsProperties]'},
     }
 
     def __init__(self, **kwargs):
