@@ -25,6 +25,12 @@ class AvailabilitySetSkuTypes(str, Enum):
     aligned = "Aligned"
 
 
+class ProximityPlacementGroupType(str, Enum):
+
+    standard = "Standard"
+    ultra = "Ultra"
+
+
 class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"

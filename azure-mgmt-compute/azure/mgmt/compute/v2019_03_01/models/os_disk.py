@@ -47,8 +47,8 @@ class OSDisk(Model):
     :param write_accelerator_enabled: Specifies whether writeAccelerator
      should be enabled or disabled on the disk.
     :type write_accelerator_enabled: bool
-    :param to_be_detached: Specifies whether the disk is detached or in
-     process of detachment from the VM/VMSS
+    :param to_be_detached: Specifies whether the disk is in process of
+     detachment from the VM/VMSS
     :type to_be_detached: bool
     :param diff_disk_settings: Specifies the ephemeral Disk Settings for the
      operating system disk used by the virtual machine.
