@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .resource import Resource
 
 
-class Container(Resource):
-    """An Azure Cosmos DB container.
+class GremlinGraph(Resource):
+    """An Azure Cosmos DB Gremlin graph.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,11 +31,10 @@ class Container(Resource):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param container_id: Required. Name of the Cosmos DB container
-    :type container_id: str
+    :param gremlin_graph_id: Required. Name of the Cosmos DB Gremlin graph
+    :type gremlin_graph_id: str
     :param indexing_policy: The configuration of the indexing policy. By
-     default, the indexing is automatic for all document paths within the
-     container
+     default, the indexing is automatic for all document paths within the graph
     :type indexing_policy: ~azure.mgmt.cosmosdb.models.IndexingPolicy
     :param partition_key: The configuration of the partition key to be used
      for partitioning data into multiple partitions
@@ -47,7 +46,7 @@ class Container(Resource):
      Azure Cosmos DB service.
     :type unique_key_policy: ~azure.mgmt.cosmosdb.models.UniqueKeyPolicy
     :param conflict_resolution_policy: The conflict resolution policy for the
-     container.
+     graph.
     :type conflict_resolution_policy:
      ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
     :param _rid: A system generated property. A unique identifier.
@@ -64,7 +63,7 @@ class Container(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'container_id': {'required': True},
+        'gremlin_graph_id': {'required': True},
     }
 
     _attribute_map = {
@@ -73,7 +72,7 @@ class Container(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'container_id': {'key': 'properties.id', 'type': 'str'},
+        'gremlin_graph_id': {'key': 'properties.id', 'type': 'str'},
         'indexing_policy': {'key': 'properties.indexingPolicy', 'type': 'IndexingPolicy'},
         'partition_key': {'key': 'properties.partitionKey', 'type': 'ContainerPartitionKey'},
         'default_ttl': {'key': 'properties.defaultTtl', 'type': 'int'},
@@ -84,14 +83,14 @@ class Container(Resource):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, container_id: str, location: str=None, tags=None, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, _rid: str=None, _ts=None, _etag: str=None, **kwargs) -> None:
-        super(Container, self).__init__(location=location, tags=tags, **kwargs)
-        self.container_id = container_id
-        self.indexing_policy = indexing_policy
-        self.partition_key = partition_key
-        self.default_ttl = default_ttl
-        self.unique_key_policy = unique_key_policy
-        self.conflict_resolution_policy = conflict_resolution_policy
-        self._rid = _rid
-        self._ts = _ts
-        self._etag = _etag
+    def __init__(self, **kwargs):
+        super(GremlinGraph, self).__init__(**kwargs)
+        self.gremlin_graph_id = kwargs.get('gremlin_graph_id', None)
+        self.indexing_policy = kwargs.get('indexing_policy', None)
+        self.partition_key = kwargs.get('partition_key', None)
+        self.default_ttl = kwargs.get('default_ttl', None)
+        self.unique_key_policy = kwargs.get('unique_key_policy', None)
+        self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
+        self._rid = kwargs.get('_rid', None)
+        self._ts = kwargs.get('_ts', None)
+        self._etag = kwargs.get('_etag', None)

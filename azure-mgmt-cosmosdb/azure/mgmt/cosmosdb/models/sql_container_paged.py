@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class ContainerPaged(Paged):
+class SqlContainerPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Container <azure.mgmt.cosmosdb.models.Container>` object
+    A paging container for iterating over a list of :class:`SqlContainer <azure.mgmt.cosmosdb.models.SqlContainer>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Container]'}
+        'current_page': {'key': 'value', 'type': '[SqlContainer]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ContainerPaged, self).__init__(*args, **kwargs)
+        super(SqlContainerPaged, self).__init__(*args, **kwargs)

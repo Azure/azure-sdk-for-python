@@ -12,12 +12,12 @@
 from msrest.serialization import Model
 
 
-class ContainerResource(Model):
-    """Cosmos DB container resource object.
+class SqlContainerResource(Model):
+    """Cosmos DB SQL container resource object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Name of the Cosmos DB container
+    :param id: Required. Name of the Cosmos DB SQL container
     :type id: str
     :param indexing_policy: The configuration of the indexing policy. By
      default, the indexing is automatic for all document paths within the
@@ -51,11 +51,11 @@ class ContainerResource(Model):
         'conflict_resolution_policy': {'key': 'conflictResolutionPolicy', 'type': 'ConflictResolutionPolicy'},
     }
 
-    def __init__(self, **kwargs):
-        super(ContainerResource, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.indexing_policy = kwargs.get('indexing_policy', None)
-        self.partition_key = kwargs.get('partition_key', None)
-        self.default_ttl = kwargs.get('default_ttl', None)
-        self.unique_key_policy = kwargs.get('unique_key_policy', None)
-        self.conflict_resolution_policy = kwargs.get('conflict_resolution_policy', None)
+    def __init__(self, *, id: str, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, **kwargs) -> None:
+        super(SqlContainerResource, self).__init__(**kwargs)
+        self.id = id
+        self.indexing_policy = indexing_policy
+        self.partition_key = partition_key
+        self.default_ttl = default_ttl
+        self.unique_key_policy = unique_key_policy
+        self.conflict_resolution_policy = conflict_resolution_policy

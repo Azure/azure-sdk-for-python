@@ -1764,9 +1764,9 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Container
+        :return: An iterator like instance of SqlContainer
         :rtype:
-         ~azure.mgmt.cosmosdb.models.ContainerPaged[~azure.mgmt.cosmosdb.models.Container]
+         ~azure.mgmt.cosmosdb.models.SqlContainerPaged[~azure.mgmt.cosmosdb.models.SqlContainer]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1812,11 +1812,11 @@ class DatabaseAccountsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ContainerPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.SqlContainerPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ContainerPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.SqlContainerPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
@@ -1840,8 +1840,8 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Container or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.Container or
+        :return: SqlContainer or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.SqlContainer or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1882,7 +1882,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Container', response)
+            deserialized = self._deserialize('SqlContainer', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1894,7 +1894,7 @@ class DatabaseAccountsOperations(object):
 
     def _create_update_sql_container_initial(
             self, resource_group_name, account_name, database_rid, container_rid, resource, options, custom_headers=None, raw=False, **operation_config):
-        create_update_sql_container_parameters = models.ContainerCreateUpdateParameters(resource=resource, options=options)
+        create_update_sql_container_parameters = models.SqlContainerCreateUpdateParameters(resource=resource, options=options)
 
         # Construct URL
         url = self.create_update_sql_container.metadata['url']
@@ -1923,7 +1923,7 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_update_sql_container_parameters, 'ContainerCreateUpdateParameters')
+        body_content = self._serialize.body(create_update_sql_container_parameters, 'SqlContainerCreateUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -1937,7 +1937,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Container', response)
+            deserialized = self._deserialize('SqlContainer', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1958,7 +1958,7 @@ class DatabaseAccountsOperations(object):
         :param container_rid: Cosmos DB container rid.
         :type container_rid: str
         :param resource: The standard JSON format of a container
-        :type resource: ~azure.mgmt.cosmosdb.models.ContainerResource
+        :type resource: ~azure.mgmt.cosmosdb.models.SqlContainerResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
         :type options: dict[str, str]
@@ -1967,12 +1967,12 @@ class DatabaseAccountsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Container or
-         ClientRawResponse<Container> if raw==True
+        :return: An instance of LROPoller that returns SqlContainer or
+         ClientRawResponse<SqlContainer> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.Container]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlContainer]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.Container]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlContainer]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_update_sql_container_initial(
@@ -1988,7 +1988,7 @@ class DatabaseAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Container', response)
+            deserialized = self._deserialize('SqlContainer', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -4099,9 +4099,9 @@ class DatabaseAccountsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete_gremlin_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}'}
 
-    def list_gremlin_containers(
+    def list_gremlin_graphs(
             self, resource_group_name, account_name, database_rid, custom_headers=None, raw=False, **operation_config):
-        """Lists the Gremlin container under an existing Azure Cosmos DB database
+        """Lists the Gremlin graph under an existing Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
@@ -4115,16 +4115,16 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Container
+        :return: An iterator like instance of GremlinGraph
         :rtype:
-         ~azure.mgmt.cosmosdb.models.ContainerPaged[~azure.mgmt.cosmosdb.models.Container]
+         ~azure.mgmt.cosmosdb.models.GremlinGraphPaged[~azure.mgmt.cosmosdb.models.GremlinGraph]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_gremlin_containers.metadata['url']
+                url = self.list_gremlin_graphs.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -4163,19 +4163,19 @@ class DatabaseAccountsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ContainerPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.GremlinGraphPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ContainerPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.GremlinGraphPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_gremlin_containers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}/containers'}
+    list_gremlin_graphs.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}/graphs'}
 
-    def get_gremlin_container(
-            self, resource_group_name, account_name, database_rid, container_rid, custom_headers=None, raw=False, **operation_config):
-        """Gets the Gremlin container under an existing Azure Cosmos DB database
+    def get_gremlin_graph(
+            self, resource_group_name, account_name, database_rid, graph_rid, custom_headers=None, raw=False, **operation_config):
+        """Gets the Gremlin graph under an existing Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
@@ -4184,26 +4184,26 @@ class DatabaseAccountsOperations(object):
         :type account_name: str
         :param database_rid: Cosmos DB database rid.
         :type database_rid: str
-        :param container_rid: Cosmos DB container rid.
-        :type container_rid: str
+        :param graph_rid: Cosmos DB graph rid.
+        :type graph_rid: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Container or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.Container or
+        :return: GremlinGraph or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.GremlinGraph or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_gremlin_container.metadata['url']
+        url = self.get_gremlin_graph.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
             'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-            'containerRid': self._serialize.url("container_rid", container_rid, 'str')
+            'graphRid': self._serialize.url("graph_rid", graph_rid, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4233,28 +4233,28 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Container', response)
+            deserialized = self._deserialize('GremlinGraph', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_gremlin_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}/containers/{containerRid}'}
+    get_gremlin_graph.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}/graphs/{graphRid}'}
 
 
-    def _create_update_gremlin_container_initial(
-            self, resource_group_name, account_name, database_rid, container_rid, resource, options, custom_headers=None, raw=False, **operation_config):
-        create_update_gremlin_container_parameters = models.ContainerCreateUpdateParameters(resource=resource, options=options)
+    def _create_update_gremlin_graph_initial(
+            self, resource_group_name, account_name, database_rid, graph_rid, resource, options, custom_headers=None, raw=False, **operation_config):
+        create_update_gremlin_graph_parameters = models.GremlinGraphCreateUpdateParameters(resource=resource, options=options)
 
         # Construct URL
-        url = self.create_update_gremlin_container.metadata['url']
+        url = self.create_update_gremlin_graph.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
             'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-            'containerRid': self._serialize.url("container_rid", container_rid, 'str')
+            'graphRid': self._serialize.url("graph_rid", graph_rid, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4274,7 +4274,7 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_update_gremlin_container_parameters, 'ContainerCreateUpdateParameters')
+        body_content = self._serialize.body(create_update_gremlin_graph_parameters, 'GremlinGraphCreateUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -4288,7 +4288,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Container', response)
+            deserialized = self._deserialize('GremlinGraph', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -4296,9 +4296,9 @@ class DatabaseAccountsOperations(object):
 
         return deserialized
 
-    def create_update_gremlin_container(
-            self, resource_group_name, account_name, database_rid, container_rid, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update an Azure Cosmos DB Gremlin container.
+    def create_update_gremlin_graph(
+            self, resource_group_name, account_name, database_rid, graph_rid, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update an Azure Cosmos DB Gremlin graph.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -4306,10 +4306,10 @@ class DatabaseAccountsOperations(object):
         :type account_name: str
         :param database_rid: Cosmos DB database rid.
         :type database_rid: str
-        :param container_rid: Cosmos DB container rid.
-        :type container_rid: str
-        :param resource: The standard JSON format of a container
-        :type resource: ~azure.mgmt.cosmosdb.models.ContainerResource
+        :param graph_rid: Cosmos DB graph rid.
+        :type graph_rid: str
+        :param resource: The standard JSON format of a Gremlin graph
+        :type resource: ~azure.mgmt.cosmosdb.models.GremlinGraphResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
         :type options: dict[str, str]
@@ -4318,19 +4318,19 @@ class DatabaseAccountsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Container or
-         ClientRawResponse<Container> if raw==True
+        :return: An instance of LROPoller that returns GremlinGraph or
+         ClientRawResponse<GremlinGraph> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.Container]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.GremlinGraph]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.Container]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.GremlinGraph]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_update_gremlin_container_initial(
+        raw_result = self._create_update_gremlin_graph_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
             database_rid=database_rid,
-            container_rid=container_rid,
+            graph_rid=graph_rid,
             resource=resource,
             options=options,
             custom_headers=custom_headers,
@@ -4339,7 +4339,7 @@ class DatabaseAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Container', response)
+            deserialized = self._deserialize('GremlinGraph', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -4354,19 +4354,19 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_update_gremlin_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}/containers/{containerRid}'}
+    create_update_gremlin_graph.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}/graphs/{graphRid}'}
 
 
-    def _delete_gremlin_container_initial(
-            self, resource_group_name, account_name, database_rid, container_rid, custom_headers=None, raw=False, **operation_config):
+    def _delete_gremlin_graph_initial(
+            self, resource_group_name, account_name, database_rid, graph_rid, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.delete_gremlin_container.metadata['url']
+        url = self.delete_gremlin_graph.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
             'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-            'containerRid': self._serialize.url("container_rid", container_rid, 'str')
+            'graphRid': self._serialize.url("graph_rid", graph_rid, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4396,9 +4396,9 @@ class DatabaseAccountsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def delete_gremlin_container(
-            self, resource_group_name, account_name, database_rid, container_rid, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes an existing Azure Cosmos DB Gremlin container.
+    def delete_gremlin_graph(
+            self, resource_group_name, account_name, database_rid, graph_rid, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Azure Cosmos DB Gremlin graph.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -4406,8 +4406,8 @@ class DatabaseAccountsOperations(object):
         :type account_name: str
         :param database_rid: Cosmos DB database rid.
         :type database_rid: str
-        :param container_rid: Cosmos DB container rid.
-        :type container_rid: str
+        :param graph_rid: Cosmos DB graph rid.
+        :type graph_rid: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -4419,11 +4419,11 @@ class DatabaseAccountsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._delete_gremlin_container_initial(
+        raw_result = self._delete_gremlin_graph_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
             database_rid=database_rid,
-            container_rid=container_rid,
+            graph_rid=graph_rid,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -4441,4 +4441,4 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_gremlin_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}/containers/{containerRid}'}
+    delete_gremlin_graph.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}/graphs/{graphRid}'}
