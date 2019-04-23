@@ -56,7 +56,7 @@ class ManagedInstanceUpdate(Model):
     :type storage_size_in_gb: int
     :param collation: Collation of the managed instance.
     :type collation: str
-    :ivar dns_zone: The Dns Zone taht the managed instance is in.
+    :ivar dns_zone: The Dns Zone that the managed instance is in.
     :vartype dns_zone: str
     :param dns_zone_partner: The resource id of another managed instance whose
      DNS zone this managed instance will share after creation.
@@ -74,7 +74,7 @@ class ManagedInstanceUpdate(Model):
     :type proxy_override: str
     :param timezone_id: Id of the timezone. Allowed values are timezones
      supported by Windows.
-     Winodws keeps details on supported timezones, including the id, in
+     Windows keeps details on supported timezones, including the id, in
      registry under
      KEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time
      Zones.
