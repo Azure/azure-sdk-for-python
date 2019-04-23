@@ -14,7 +14,7 @@ from .resource_py3 import Resource
 
 class ConfigurationStore(Resource):
     """The configuration store along with all resource properties. The
-    Configuration Store will have all information to begin utlizing it.
+    Configuration Store will have all information to begin utilizing it.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
