@@ -43,7 +43,7 @@ class AsyncPagedMixin(AsyncIterator):
     async def _async_advance_page(self):
         if not self._async_get_next:
             raise NotImplementedError(
-                "The class %s does not support async paging at the moment.",
+                "The class %s does not support async paging.",
                 self.__class__.__name__
             )
         if self.next_link is None:
