@@ -258,7 +258,7 @@ class PolicyExportFormat(str, Enum):
     xml = "xml"  #: The contents are inline and Content type is an XML document.
     xml_link = "xml-link"  #: The policy XML document is hosted on a http endpoint accessible from the API Management service.
     rawxml = "rawxml"  #: The contents are inline and Content type is a non XML encoded policy document.
-    rawxml_link = "rawxml-link"  #: The policy document is not Xml encoded and is hosted on a http endpoint accessible from the API Management service.
+    rawxml_link = "rawxml-link"  #: The policy document is not XML encoded and is hosted on a http endpoint accessible from the API Management service.
 
 
 class TemplateName(str, Enum):
