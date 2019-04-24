@@ -228,7 +228,9 @@ class _HttpResponseBase(object):
 
 
 class HttpResponse(_HttpResponseBase):
-
+    def __init__(self, request, internal_response, block_size):
+        super(HttpResponse, self).__init__(request, internal_response, block_size)
+        self.status_code = internal_response.status_code
 
     def stream_download(self):
 
