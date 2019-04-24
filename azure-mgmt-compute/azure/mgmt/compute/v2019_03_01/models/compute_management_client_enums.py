@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class HyperVGenerationTypes(str, Enum):
+
+    v1 = "V1"
+    v2 = "V2"
+
+
 class StatusLevelTypes(str, Enum):
 
     info = "Info"
