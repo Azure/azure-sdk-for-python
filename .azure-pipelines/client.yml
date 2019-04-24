@@ -87,6 +87,8 @@ jobs:
   
     condition: or(eq(variables['long_running_tests'], False), eq(variables['long_running_tests'], ''))
 
+    timeoutInMinutes: 90
+
     dependsOn:
       - 'Build'
 
