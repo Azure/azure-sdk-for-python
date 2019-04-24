@@ -37,7 +37,7 @@ import xml.etree.ElementTree as ET
 from typing import List, Any, Dict, Union, IO, Tuple, Optional, Callable, Iterator, cast, TYPE_CHECKING  # pylint: disable=unused-import
 
 from .pipeline import Pipeline
-from .pipeline.transport import HttpRequest
+from .pipeline.transport import HttpRequest, RequestsTransport
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -53,6 +53,7 @@ class PipelineClient(object):
             raise ValueError("Config is a required parameter")
         self._config = config
         self._base_url = base_url
+        self._transport = RequestsTransport(config)
         self._pipeline = pipeline or self._build_pipeline(config)
 
     def _build_pipeline(self, config):
@@ -66,7 +67,7 @@ class PipelineClient(object):
         ]
 
         return Pipeline(
-            config.get_transport(),  # Send HTTP request using requests
+            self._transport,  # Send HTTP request using requests
             policies
         )
 
