@@ -26,6 +26,10 @@ class ContextDTO(Model):
      list[~azure.cognitiveservices.knowledge.qnamaker.models.PromptDTO]
     """
 
+    _validation = {
+        'prompts': {'max_items': 20},
+    }
+
     _attribute_map = {
         'is_context_only': {'key': 'isContextOnly', 'type': 'bool'},
         'prompts': {'key': 'prompts', 'type': '[PromptDTO]'},
