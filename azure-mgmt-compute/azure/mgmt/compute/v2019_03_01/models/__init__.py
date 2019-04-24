@@ -346,6 +346,7 @@ from .gallery_paged import GalleryPaged
 from .gallery_image_paged import GalleryImagePaged
 from .gallery_image_version_paged import GalleryImageVersionPaged
 from .compute_management_client_enums import (
+    HyperVGenerationTypes,
     StatusLevelTypes,
     AvailabilitySetSkuTypes,
     ProximityPlacementGroupType,
@@ -556,6 +557,7 @@ __all__ = [
     'GalleryPaged',
     'GalleryImagePaged',
     'GalleryImageVersionPaged',
+    'HyperVGenerationTypes',
     'StatusLevelTypes',
     'AvailabilitySetSkuTypes',
     'ProximityPlacementGroupType',
