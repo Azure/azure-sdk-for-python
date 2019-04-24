@@ -12,42 +12,41 @@
 from msrest.serialization import Model
 
 
-class SsisObjectMetadata(Model):
-    """SSIS object metadata.
+class SsisVariable(Model):
+    """Ssis variable.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SsisEnvironment, SsisPackage, SsisProject, SsisFolder
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Metadata id.
+    :param id: Variable id.
     :type id: long
-    :param name: Metadata name.
+    :param name: Variable name.
     :type name: str
-    :param description: Metadata description.
+    :param description: Variable description.
     :type description: str
-    :param type: Required. Constant filled by server.
-    :type type: str
+    :param data_type: Variable type.
+    :type data_type: str
+    :param sensitive: Whether varaible is sensitive.
+    :type sensitive: bool
+    :param value: Variable value.
+    :type value: str
+    :param sensitive_value: Variable sensitive value.
+    :type sensitive_value: str
     """
-
-    _validation = {
-        'type': {'required': True},
-    }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'long'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'Environment': 'SsisEnvironment', 'Package': 'SsisPackage', 'Project': 'SsisProject', 'Folder': 'SsisFolder'}
+        'data_type': {'key': 'dataType', 'type': 'str'},
+        'sensitive': {'key': 'sensitive', 'type': 'bool'},
+        'value': {'key': 'value', 'type': 'str'},
+        'sensitive_value': {'key': 'sensitiveValue', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(SsisObjectMetadata, self).__init__(**kwargs)
+        super(SsisVariable, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.name = kwargs.get('name', None)
         self.description = kwargs.get('description', None)
-        self.type = None
+        self.data_type = kwargs.get('data_type', None)
+        self.sensitive = kwargs.get('sensitive', None)
+        self.value = kwargs.get('value', None)
+        self.sensitive_value = kwargs.get('sensitive_value', None)

@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .ssis_object_metadata_py3 import SsisObjectMetadata
 
 
-class SsisObjectMetadata(Model):
-    """SSIS object metadata.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SsisEnvironment, SsisPackage, SsisProject, SsisFolder
+class SsisEnvironment(SsisObjectMetadata):
+    """Ssis environment.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -28,6 +25,10 @@ class SsisObjectMetadata(Model):
     :type description: str
     :param type: Required. Constant filled by server.
     :type type: str
+    :param folder_id: Folder id which contains environment.
+    :type folder_id: long
+    :param variables: Variable in environment
+    :type variables: list[~azure.mgmt.datafactory.models.SsisVariable]
     """
 
     _validation = {
@@ -39,15 +40,12 @@ class SsisObjectMetadata(Model):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'folder_id': {'key': 'folderId', 'type': 'long'},
+        'variables': {'key': 'variables', 'type': '[SsisVariable]'},
     }
 
-    _subtype_map = {
-        'type': {'Environment': 'SsisEnvironment', 'Package': 'SsisPackage', 'Project': 'SsisProject', 'Folder': 'SsisFolder'}
-    }
-
-    def __init__(self, *, id: int=None, name: str=None, description: str=None, **kwargs) -> None:
-        super(SsisObjectMetadata, self).__init__(**kwargs)
-        self.id = id
-        self.name = name
-        self.description = description
-        self.type = None
+    def __init__(self, *, id: int=None, name: str=None, description: str=None, folder_id: int=None, variables=None, **kwargs) -> None:
+        super(SsisEnvironment, self).__init__(id=id, name=name, description=description, **kwargs)
+        self.folder_id = folder_id
+        self.variables = variables
+        self.type = 'Environment'
