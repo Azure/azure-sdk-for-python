@@ -35,7 +35,7 @@ class PatternOperations(object):
 
     def add_pattern(
             self, app_id, version_id, pattern=None, intent=None, custom_headers=None, raw=False, **operation_config):
-        """Adds one pattern to the specified application.
+        """Adds a pattern to a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -100,9 +100,9 @@ class PatternOperations(object):
         return deserialized
     add_pattern.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternrule'}
 
-    def get_patterns(
+    def list_patterns(
             self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Returns an application version's patterns.
+        """Gets patterns in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -126,7 +126,7 @@ class PatternOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_patterns.metadata['url']
+        url = self.list_patterns.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
@@ -164,11 +164,11 @@ class PatternOperations(object):
             return client_raw_response
 
         return deserialized
-    get_patterns.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternrules'}
+    list_patterns.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternrules'}
 
     def update_patterns(
             self, app_id, version_id, patterns, custom_headers=None, raw=False, **operation_config):
-        """Updates patterns.
+        """Updates patterns in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -232,7 +232,7 @@ class PatternOperations(object):
 
     def batch_add_patterns(
             self, app_id, version_id, patterns, custom_headers=None, raw=False, **operation_config):
-        """Adds a batch of patterns to the specified application.
+        """Adds a batch of patterns in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -296,7 +296,7 @@ class PatternOperations(object):
 
     def delete_patterns(
             self, app_id, version_id, pattern_ids, custom_headers=None, raw=False, **operation_config):
-        """Deletes the patterns with the specified IDs.
+        """Deletes a list of patterns in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -359,7 +359,7 @@ class PatternOperations(object):
 
     def update_pattern(
             self, app_id, version_id, pattern_id, pattern, custom_headers=None, raw=False, **operation_config):
-        """Updates a pattern.
+        """Updates a pattern in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -426,7 +426,8 @@ class PatternOperations(object):
 
     def delete_pattern(
             self, app_id, version_id, pattern_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes the pattern with the specified ID.
+        """Deletes the pattern with the specified ID from a version of the
+        application..
 
         :param app_id: The application ID.
         :type app_id: str
@@ -484,9 +485,10 @@ class PatternOperations(object):
         return deserialized
     delete_pattern.metadata = {'url': '/apps/{appId}/versions/{versionId}/patternrules/{patternId}'}
 
-    def get_intent_patterns(
+    def list_intent_patterns(
             self, app_id, version_id, intent_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Returns patterns to be retrieved for the specific intent.
+        """Returns patterns for the specific intent in a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -512,7 +514,7 @@ class PatternOperations(object):
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_intent_patterns.metadata['url']
+        url = self.list_intent_patterns.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'appId': self._serialize.url("app_id", app_id, 'str'),
@@ -551,4 +553,4 @@ class PatternOperations(object):
             return client_raw_response
 
         return deserialized
-    get_intent_patterns.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}/patternrules'}
+    list_intent_patterns.metadata = {'url': '/apps/{appId}/versions/{versionId}/intents/{intentId}/patternrules'}
