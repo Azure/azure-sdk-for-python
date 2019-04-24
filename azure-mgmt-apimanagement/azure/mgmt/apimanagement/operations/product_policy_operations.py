@@ -164,7 +164,7 @@ class ProductPolicyOperations(object):
     get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/products/{productId}/policies/{policyId}'}
 
     def get(
-            self, resource_group_name, service_name, product_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, product_id, format="xml", custom_headers=None, raw=False, **operation_config):
         """Get the policy configuration at the Product level.
 
         :param resource_group_name: The name of the resource group.
@@ -174,6 +174,10 @@ class ProductPolicyOperations(object):
         :param product_id: Product identifier. Must be unique in the current
          API Management service instance.
         :type product_id: str
+        :param format: Policy Export Format. Possible values include: 'xml',
+         'xml-link', 'rawxml', 'rawxml-link'
+        :type format: str or
+         ~azure.mgmt.apimanagement.models.PolicyExportFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -198,6 +202,8 @@ class ProductPolicyOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if format is not None:
+            query_parameters['format'] = self._serialize.query("format", format, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
