@@ -15,26 +15,15 @@ from msrest.serialization import Model
 class ControllerConnectionDetails(Model):
     """ControllerConnectionDetails.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar auth_key: Authentication key for communicating with services.
-    :vartype auth_key: str
     :param orchestrator_specific_connection_details:
     :type orchestrator_specific_connection_details:
      ~azure.mgmt.devspaces.models.OrchestratorSpecificConnectionDetails
     """
 
-    _validation = {
-        'auth_key': {'readonly': True},
-    }
-
     _attribute_map = {
-        'auth_key': {'key': 'authKey', 'type': 'str'},
         'orchestrator_specific_connection_details': {'key': 'orchestratorSpecificConnectionDetails', 'type': 'OrchestratorSpecificConnectionDetails'},
     }
 
     def __init__(self, *, orchestrator_specific_connection_details=None, **kwargs) -> None:
         super(ControllerConnectionDetails, self).__init__(**kwargs)
-        self.auth_key = None
         self.orchestrator_specific_connection_details = orchestrator_specific_connection_details

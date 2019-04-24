@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -23,7 +22,7 @@ class ContainerHostMappingsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API version. Constant value: "2019-01-01-preview".
+    :ivar api_version: Client API version. Constant value: "2019-04-01".
     """
 
     models = models
@@ -33,7 +32,7 @@ class ContainerHostMappingsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-01-01-preview"
+        self.api_version = "2019-04-01"
 
         self.config = config
 
@@ -55,9 +54,11 @@ class ContainerHostMappingsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: object or ClientRawResponse if raw=true
-        :rtype: object or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :return: ContainerHostMapping or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.devspaces.models.ContainerHostMapping or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.devspaces.models.ErrorResponseException>`
         """
         container_host_mapping = models.ContainerHostMapping(container_host_resource_id=container_host_resource_id)
 
@@ -92,15 +93,13 @@ class ContainerHostMappingsOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200, 204]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('object', response)
+            deserialized = self._deserialize('ContainerHostMapping', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
