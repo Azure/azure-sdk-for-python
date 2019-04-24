@@ -395,7 +395,7 @@ class QueuesOperations(object):
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param rights: The rights associated with the rule.
         :type rights: list[str or ~azure.mgmt.servicebus.models.AccessRights]
@@ -471,7 +471,7 @@ class QueuesOperations(object):
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -530,7 +530,7 @@ class QueuesOperations(object):
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -598,7 +598,7 @@ class QueuesOperations(object):
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -666,7 +666,7 @@ class QueuesOperations(object):
         :type namespace_name: str
         :param queue_name: The queue name.
         :type queue_name: str
-        :param authorization_rule_name: The authorizationrule name.
+        :param authorization_rule_name: The authorization rule name.
         :type authorization_rule_name: str
         :param key_type: The access key to regenerate. Possible values
          include: 'PrimaryKey', 'SecondaryKey'

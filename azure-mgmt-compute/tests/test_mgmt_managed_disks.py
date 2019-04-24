@@ -93,7 +93,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
                 'location': location,
                 'creation_data': {
                     'create_option': DiskCreateOption.import_enum,
-                    'source_uri': 'https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd'
+                    'source_uri': self.settings.LINUX_OS_VHD  # 'https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd'
                 }
             }
         )
@@ -275,7 +275,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
                     'os_disk': {
                         'os_type': 'Linux',
                         'os_state': "Generalized",
-                        'blob_uri': 'https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd',
+                        'blob_uri': self.settings.LINUX_OS_VHD,  # 'https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd'
                         'caching': "ReadWrite",
                     }
                 }

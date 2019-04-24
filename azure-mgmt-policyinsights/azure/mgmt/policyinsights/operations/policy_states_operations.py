@@ -23,7 +23,7 @@ class PolicyStatesOperations(object):
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
     :ivar management_groups_namespace: The namespace for Microsoft Management RP; only "Microsoft.Management" is allowed. Constant value: "Microsoft.Management".
-    :ivar api_version: API version to use with the client requests. Constant value: "2018-07-01-preview".
+    :ivar api_version: Client Api Version. Constant value: "2018-07-01-preview".
     :ivar policy_states_summary_resource: The virtual resource under PolicyStates resource type for summarize action. In a given time range, 'latest' represents the latest policy state(s) and is the only allowed value. Constant value: "latest".
     :ivar authorization_namespace: The namespace for Microsoft Authorization resource provider; only "Microsoft.Authorization" is allowed. Constant value: "Microsoft.Authorization".
     """
