@@ -27,8 +27,7 @@ class HierarchicalEntityExtractor(Model):
      Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child Entity
      Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
      'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
-     Extractor', 'Regular Expression Entity Extractor', 'Closed List Entity
-     Extractor', 'Regex Entity Extractor'
+     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
     :param roles:
