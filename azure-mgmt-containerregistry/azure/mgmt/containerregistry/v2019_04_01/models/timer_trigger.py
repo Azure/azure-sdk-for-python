@@ -12,15 +12,15 @@
 from msrest.serialization import Model
 
 
-class SchedulerTrigger(Model):
-    """The properties of a scheduler trigger.
+class TimerTrigger(Model):
+    """The properties of a timer trigger.
 
     All required parameters must be populated in order to send to Azure.
 
     :param schedule: Required. The CRON expression for the task schedule
     :type schedule: str
     :param status: The current status of trigger. Possible values include:
-     'Disabled', 'Enabled'
+     'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
      ~azure.mgmt.containerregistry.v2019_04_01.models.TriggerStatus
     :param name: Required. The name of the trigger.
@@ -39,7 +39,7 @@ class SchedulerTrigger(Model):
     }
 
     def __init__(self, **kwargs):
-        super(SchedulerTrigger, self).__init__(**kwargs)
+        super(TimerTrigger, self).__init__(**kwargs)
         self.schedule = kwargs.get('schedule', None)
-        self.status = kwargs.get('status', None)
+        self.status = kwargs.get('status', "Enabled")
         self.name = kwargs.get('name', None)

@@ -66,7 +66,7 @@ try:
     from .identity_properties_py3 import IdentityProperties
     from .base_image_dependency_py3 import BaseImageDependency
     from .task_step_properties_py3 import TaskStepProperties
-    from .scheduler_trigger_py3 import SchedulerTrigger
+    from .timer_trigger_py3 import TimerTrigger
     from .auth_info_py3 import AuthInfo
     from .source_properties_py3 import SourceProperties
     from .source_trigger_py3 import SourceTrigger
@@ -79,6 +79,7 @@ try:
     from .task_py3 import Task
     from .platform_update_parameters_py3 import PlatformUpdateParameters
     from .task_step_update_parameters_py3 import TaskStepUpdateParameters
+    from .timer_trigger_update_parameters_py3 import TimerTriggerUpdateParameters
     from .auth_info_update_parameters_py3 import AuthInfoUpdateParameters
     from .source_update_parameters_py3 import SourceUpdateParameters
     from .source_trigger_update_parameters_py3 import SourceTriggerUpdateParameters
@@ -155,7 +156,7 @@ except (SyntaxError, ImportError):
     from .identity_properties import IdentityProperties
     from .base_image_dependency import BaseImageDependency
     from .task_step_properties import TaskStepProperties
-    from .scheduler_trigger import SchedulerTrigger
+    from .timer_trigger import TimerTrigger
     from .auth_info import AuthInfo
     from .source_properties import SourceProperties
     from .source_trigger import SourceTrigger
@@ -168,6 +169,7 @@ except (SyntaxError, ImportError):
     from .task import Task
     from .platform_update_parameters import PlatformUpdateParameters
     from .task_step_update_parameters import TaskStepUpdateParameters
+    from .timer_trigger_update_parameters import TimerTriggerUpdateParameters
     from .auth_info_update_parameters import AuthInfoUpdateParameters
     from .source_update_parameters import SourceUpdateParameters
     from .source_trigger_update_parameters import SourceTriggerUpdateParameters
@@ -281,7 +283,7 @@ __all__ = [
     'IdentityProperties',
     'BaseImageDependency',
     'TaskStepProperties',
-    'SchedulerTrigger',
+    'TimerTrigger',
     'AuthInfo',
     'SourceProperties',
     'SourceTrigger',
@@ -294,6 +296,7 @@ __all__ = [
     'Task',
     'PlatformUpdateParameters',
     'TaskStepUpdateParameters',
+    'TimerTriggerUpdateParameters',
     'AuthInfoUpdateParameters',
     'SourceUpdateParameters',
     'SourceTriggerUpdateParameters',

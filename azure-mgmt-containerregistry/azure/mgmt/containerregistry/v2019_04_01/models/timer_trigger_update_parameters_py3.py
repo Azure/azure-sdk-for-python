@@ -12,15 +12,13 @@
 from msrest.serialization import Model
 
 
-class BaseImageTriggerUpdateParameters(Model):
-    """The properties for updating base image dependency trigger.
+class TimerTriggerUpdateParameters(Model):
+    """The properties for updating a timer trigger.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param base_image_trigger_type: The type of the auto trigger for base
-     image dependency updates. Possible values include: 'All', 'Runtime'
-    :type base_image_trigger_type: str or
-     ~azure.mgmt.containerregistry.v2019_04_01.models.BaseImageTriggerType
+    :param schedule: The CRON expression for the task schedule
+    :type schedule: str
     :param status: The current status of trigger. Possible values include:
      'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
@@ -34,13 +32,13 @@ class BaseImageTriggerUpdateParameters(Model):
     }
 
     _attribute_map = {
-        'base_image_trigger_type': {'key': 'baseImageTriggerType', 'type': 'str'},
+        'schedule': {'key': 'schedule', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(BaseImageTriggerUpdateParameters, self).__init__(**kwargs)
-        self.base_image_trigger_type = kwargs.get('base_image_trigger_type', None)
-        self.status = kwargs.get('status', "Enabled")
-        self.name = kwargs.get('name', None)
+    def __init__(self, *, name: str, schedule: str=None, status="Enabled", **kwargs) -> None:
+        super(TimerTriggerUpdateParameters, self).__init__(**kwargs)
+        self.schedule = schedule
+        self.status = status
+        self.name = name

@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class TriggerProperties(Model):
     """The properties of a trigger.
 
-    :param scheduler_triggers: The collection of scheduler triggers.
-    :type scheduler_triggers:
-     list[~azure.mgmt.containerregistry.v2019_04_01.models.SchedulerTrigger]
+    :param timer_triggers: The collection of timer triggers.
+    :type timer_triggers:
+     list[~azure.mgmt.containerregistry.v2019_04_01.models.TimerTrigger]
     :param source_triggers: The collection of triggers based on source code
      repository.
     :type source_triggers:
@@ -28,13 +28,13 @@ class TriggerProperties(Model):
     """
 
     _attribute_map = {
-        'scheduler_triggers': {'key': 'schedulerTriggers', 'type': '[SchedulerTrigger]'},
+        'timer_triggers': {'key': 'timerTriggers', 'type': '[TimerTrigger]'},
         'source_triggers': {'key': 'sourceTriggers', 'type': '[SourceTrigger]'},
         'base_image_trigger': {'key': 'baseImageTrigger', 'type': 'BaseImageTrigger'},
     }
 
-    def __init__(self, *, scheduler_triggers=None, source_triggers=None, base_image_trigger=None, **kwargs) -> None:
+    def __init__(self, *, timer_triggers=None, source_triggers=None, base_image_trigger=None, **kwargs) -> None:
         super(TriggerProperties, self).__init__(**kwargs)
-        self.scheduler_triggers = scheduler_triggers
+        self.timer_triggers = timer_triggers
         self.source_triggers = source_triggers
         self.base_image_trigger = base_image_trigger
