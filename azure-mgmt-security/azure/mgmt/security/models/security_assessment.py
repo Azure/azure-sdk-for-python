@@ -31,12 +31,12 @@ class SecurityAssessment(Resource):
     :ivar status: Status of the. Possible values include: 'Passed', 'Failed',
      'NotApplicable'
     :vartype status: str or ~azure.mgmt.security.models.Severity
-    :ivar not_applicable_reason_code: Programmatic code for the reason the
-     assessment result is NotApplicable
-    :vartype not_applicable_reason_code: str
-    :ivar not_applicable_reason_description: Human readable description for
-     the reason the assessment result is NotApplicable
-    :vartype not_applicable_reason_description: str
+    :ivar status_reason_code: Programmatic code for the reason the assessment
+     result status
+    :vartype status_reason_code: str
+    :ivar status_reason_description: Human readable description for the reason
+     the assessment result status
+    :vartype status_reason_description: str
     :ivar additional_data: Additional data regarding the assessment
     :vartype additional_data:
      list[~azure.mgmt.security.models.AssessmentAdditionalData]
@@ -48,8 +48,8 @@ class SecurityAssessment(Resource):
         'type': {'readonly': True},
         'display_name': {'readonly': True},
         'status': {'readonly': True},
-        'not_applicable_reason_code': {'readonly': True},
-        'not_applicable_reason_description': {'readonly': True},
+        'status_reason_code': {'readonly': True},
+        'status_reason_description': {'readonly': True},
         'additional_data': {'readonly': True},
     }
 
@@ -60,8 +60,8 @@ class SecurityAssessment(Resource):
         'resource_details': {'key': 'properties.resourceDetails', 'type': 'ResourceDetails'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
-        'not_applicable_reason_code': {'key': 'properties.notApplicableReasonCode', 'type': 'str'},
-        'not_applicable_reason_description': {'key': 'properties.notApplicableReasonDescription', 'type': 'str'},
+        'status_reason_code': {'key': 'properties.statusReasonCode', 'type': 'str'},
+        'status_reason_description': {'key': 'properties.statusReasonDescription', 'type': 'str'},
         'additional_data': {'key': 'properties.additionalData', 'type': '[AssessmentAdditionalData]'},
     }
 
@@ -70,6 +70,6 @@ class SecurityAssessment(Resource):
         self.resource_details = kwargs.get('resource_details', None)
         self.display_name = None
         self.status = None
-        self.not_applicable_reason_code = None
-        self.not_applicable_reason_description = None
+        self.status_reason_code = None
+        self.status_reason_description = None
         self.additional_data = None

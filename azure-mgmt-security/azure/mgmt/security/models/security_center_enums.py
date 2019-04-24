@@ -108,13 +108,6 @@ class Category(str, Enum):
     io_t = "IoT"
 
 
-class ReleaseStatus(str, Enum):
-
-    ga = "GA"
-    public_preview = "PublicPreview"
-    private_preview = "PrivatePreview"
-
-
 class ConnectionType(str, Enum):
 
     internal = "Internal"

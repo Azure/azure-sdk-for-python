@@ -41,9 +41,8 @@ class SecurityAssessmentMetadata(Resource):
     :ivar secure_score_weight: Weight for the security score calculation. the
      higher this number, this severity  of this assessment is higher
     :vartype secure_score_weight: int
-    :ivar release_status: Stage of the assessment release. Possible values
-     include: 'GA', 'PublicPreview', 'PrivatePreview'
-    :vartype release_status: str or ~azure.mgmt.security.models.ReleaseStatus
+    :ivar preview: True if this assessment is in preview release status
+    :vartype preview: bool
     """
 
     _validation = {
@@ -56,7 +55,7 @@ class SecurityAssessmentMetadata(Resource):
         'remediation_description': {'readonly': True},
         'category': {'readonly': True},
         'secure_score_weight': {'readonly': True},
-        'release_status': {'readonly': True},
+        'preview': {'readonly': True},
     }
 
     _attribute_map = {
@@ -69,7 +68,7 @@ class SecurityAssessmentMetadata(Resource):
         'remediation_description': {'key': 'properties.remediationDescription', 'type': 'str'},
         'category': {'key': 'properties.category', 'type': 'str'},
         'secure_score_weight': {'key': 'properties.secureScoreWeight', 'type': 'int'},
-        'release_status': {'key': 'properties.releaseStatus', 'type': 'str'},
+        'preview': {'key': 'properties.preview', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -80,4 +79,4 @@ class SecurityAssessmentMetadata(Resource):
         self.remediation_description = None
         self.category = None
         self.secure_score_weight = None
-        self.release_status = None
+        self.preview = None

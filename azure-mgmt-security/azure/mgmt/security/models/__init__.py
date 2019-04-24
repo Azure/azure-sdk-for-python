@@ -161,7 +161,6 @@ from .security_center_enums import (
     AlertsToAdmins,
     Severity,
     Category,
-    ReleaseStatus,
     ConnectionType,
 )
 
@@ -256,6 +255,5 @@ __all__ = [
     'AlertsToAdmins',
     'Severity',
     'Category',
-    'ReleaseStatus',
     'ConnectionType',
 ]
