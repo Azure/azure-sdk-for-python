@@ -2,10 +2,19 @@
 
 Release History
 ===============
+
+4.6.2 (2019-04-22)
+++++++++++++++++++
+
+**Bugfix**
+
+- Revert "images" API version introduced in 4.6.0 from 2019-03-01 to 2018-10-01 for backward compatiblity #4891
+
 4.6.1 (2019-04-18)
 ++++++++++++++++++
 
 **Bugfixes**
+
 - Make enum declarations in Compute package consistent, for the sake of code inspection.
 
 4.6.0 (2019-04-12)
