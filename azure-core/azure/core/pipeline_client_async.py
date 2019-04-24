@@ -36,7 +36,7 @@ import xml.etree.ElementTree as ET
 
 from typing import List, Any, Dict, Union, IO, Tuple, Optional, Callable, Iterator, cast, TYPE_CHECKING  # pylint: disable=unused-import
 
-from .pipeline import Pipeline
+from .pipeline import AsyncPipeline
 from .pipeline.transport import HttpRequest, AioHttpTransport
 
 _LOGGER = logging.getLogger(__name__)
@@ -66,7 +66,7 @@ class AsyncPipelineClient(object):
             config.retry_policy
         ]
 
-        return Pipeline(
+        return AsyncPipeline(
             self._transport,  # Send HTTP request using requests
             policies
         )
