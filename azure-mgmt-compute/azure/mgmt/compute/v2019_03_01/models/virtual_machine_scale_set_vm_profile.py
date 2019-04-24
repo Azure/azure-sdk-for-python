@@ -23,12 +23,6 @@ class VirtualMachineScaleSetVMProfile(Model):
      machine disks.
     :type storage_profile:
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineScaleSetStorageProfile
-    :param additional_capabilities: Specifies additional capabilities enabled
-     or disabled on the virtual machine in the scale set. For instance: whether
-     the virtual machine has the capability to support attaching managed data
-     disks with UltraSSD_LRS storage account type.
-    :type additional_capabilities:
-     ~azure.mgmt.compute.v2019_03_01.models.AdditionalCapabilities
     :param network_profile: Specifies properties of the network interfaces of
      the virtual machines in the scale set.
     :type network_profile:
@@ -66,7 +60,6 @@ class VirtualMachineScaleSetVMProfile(Model):
     _attribute_map = {
         'os_profile': {'key': 'osProfile', 'type': 'VirtualMachineScaleSetOSProfile'},
         'storage_profile': {'key': 'storageProfile', 'type': 'VirtualMachineScaleSetStorageProfile'},
-        'additional_capabilities': {'key': 'additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'network_profile': {'key': 'networkProfile', 'type': 'VirtualMachineScaleSetNetworkProfile'},
         'diagnostics_profile': {'key': 'diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
@@ -79,7 +72,6 @@ class VirtualMachineScaleSetVMProfile(Model):
         super(VirtualMachineScaleSetVMProfile, self).__init__(**kwargs)
         self.os_profile = kwargs.get('os_profile', None)
         self.storage_profile = kwargs.get('storage_profile', None)
-        self.additional_capabilities = kwargs.get('additional_capabilities', None)
         self.network_profile = kwargs.get('network_profile', None)
         self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
         self.extension_profile = kwargs.get('extension_profile', None)
