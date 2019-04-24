@@ -890,9 +890,9 @@ class ComputerVisionClient(SDKClient):
         """Use this interface to get the result of a Read operation, employing the
         state-of-the-art Optical Character Recognition (OCR) algorithms
         optimized for text-heavy documents. When you use the Read File
-        interface, the response contains a field called "Operation-Location".
-        The "Operation-Location" field contains the URL that you must use for
-        your "Read Operation Result" operation to access OCR results.​.
+        interface, the response contains a field called 'Operation-Location'.
+        The 'Operation-Location' field contains the URL that you must use for
+        your 'GetReadOperationResult' operation to access OCR results.​.
 
         :param mode: Type of text to recognize. Possible values include:
          'Handwritten', 'Printed'
@@ -950,11 +950,11 @@ class ComputerVisionClient(SDKClient):
     def get_read_operation_result(
             self, operation_id, custom_headers=None, raw=False, **operation_config):
         """This interface is used for getting OCR results of Read operation. The
-        URL to this interface should be retrieved from "Operation-Location"
+        URL to this interface should be retrieved from 'Operation-Location'
         field returned from Batch Read File interface.
 
         :param operation_id: Id of read operation returned in the response of
-         the "Batch Read File" interface.
+         the 'Batch Read File' interface.
         :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -1732,8 +1732,8 @@ class ComputerVisionClient(SDKClient):
         employing the state-of-the-art Optical Character Recognition (OCR)
         algorithms optimized for text-heavy documents. When you use the Read
         Document interface, the response contains a field called
-        "Operation-Location". The "Operation-Location" field contains the URL
-        that you must use for your "Get Read Result operation" to access OCR
+        'Operation-Location'. The 'Operation-Location' field contains the URL
+        that you must use for your 'Get Read Result operation' to access OCR
         results.​.
 
         :param image: An image stream.

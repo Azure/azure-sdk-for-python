@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Line(Model):
-    """Json object representing a recognized text line.
+    """An object representing a recognized text line.
 
     :param bounding_box: Bounding box of a recognized line.
     :type bounding_box: list[int]

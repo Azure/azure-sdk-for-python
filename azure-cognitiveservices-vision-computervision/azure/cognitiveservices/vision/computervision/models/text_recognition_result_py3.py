@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class TextRecognitionResult(Model):
-    """Json object representing a recognized text region.
+    """An object representing a recognized text region.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -27,7 +27,7 @@ class TextRecognitionResult(Model):
     :param height: The height of the image in pixels or the PDF in inches.
     :type height: float
     :param unit: The unit used in the Width, Height and BoundingBox. For
-     images, the unit is "pixel". For PDF, the unit is "inch". Possible values
+     images, the unit is 'pixel'. For PDF, the unit is 'inch'. Possible values
      include: 'pixel', 'inch'
     :type unit: str or
      ~azure.cognitiveservices.vision.computervision.models.TextRecognitionResultDimensionUnit
