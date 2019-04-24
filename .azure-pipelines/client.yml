@@ -112,6 +112,10 @@ jobs:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.7'
+        Linux_Pypy3:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: 'pypy3'
         Windows_Python35:
           OSName: 'Windows'
           OSVmImage: 'vs2017-win2016'
@@ -213,38 +217,3 @@ jobs:
           python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(build_targeting_string)"
         displayName: 'Setup - Run Filtered Tests "Nightly" Python'
         continueOnError: true
-
-  - job: Test_PyPy
-
-    timeoutInMinutes: 90
-
-    condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
-    
-    dependsOn:
-      - 'Test_Alpha_Python'
-
-    pool:
-      vmImage: 'ubuntu-16.04'
-
-    steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python 3.7 For Build Tools'
-        inputs:
-          versionSpec: '3.7'
-
-      - script: |
-          pip install pathlib twine
-        displayName: 'Prep Environment'
-
-      - script: |
-          cd ~/
-          wget https://bitbucket.org/pypy/pypy/downloads/pypy3-v6.0.0-linux64.tar.bz2
-          tar xf pypy3-v6.0.0-linux64.tar.bz2
-          cd $(Build.SourcesDirectory)
-          PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
-          pypy3 -m ensurepip
-          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)" --disablecov
-        displayName: 'Setup and Run Filtered Tests PyPy3'
-        continueOnError: true
-
-
