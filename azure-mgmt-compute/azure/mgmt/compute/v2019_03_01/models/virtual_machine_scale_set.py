@@ -73,6 +73,12 @@ class VirtualMachineScaleSet(Resource):
      assigned to. <br><br>Minimum api-version: 2018-04-01.
     :type proximity_placement_group:
      ~azure.mgmt.compute.v2019_03_01.models.SubResource
+    :param additional_capabilities: Specifies additional capabilities enabled
+     or disabled on the Virtual Machines in the Virtual Machine Scale Set. For
+     instance: whether the Virtual Machines have the capability to support
+     attaching managed data disks with UltraSSD_LRS storage account type.
+    :type additional_capabilities:
+     ~azure.mgmt.compute.v2019_03_01.models.AdditionalCapabilities
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -108,6 +114,7 @@ class VirtualMachineScaleSet(Resource):
         'zone_balance': {'key': 'properties.zoneBalance', 'type': 'bool'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
+        'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
@@ -126,5 +133,6 @@ class VirtualMachineScaleSet(Resource):
         self.zone_balance = kwargs.get('zone_balance', None)
         self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
         self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
+        self.additional_capabilities = kwargs.get('additional_capabilities', None)
         self.identity = kwargs.get('identity', None)
         self.zones = kwargs.get('zones', None)
