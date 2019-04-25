@@ -12,13 +12,13 @@
 from msrest.serialization import Model
 
 
-class MongoCollectionCreateUpdateParameters(Model):
-    """Parameters to create and update Cosmos DB Mongo collection.
+class MongodbDatabaseCreateUpdateParameters(Model):
+    """Parameters to create and update Cosmos DB Mongodb database.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param resource: Required. The standard JSON format of a Mongo collection
-    :type resource: ~azure.mgmt.cosmosdb.models.MongoCollectionResource
+    :param resource: Required. The standard JSON format of a Mongodb database
+    :type resource: ~azure.mgmt.cosmosdb.models.MongodbDatabaseResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -30,11 +30,11 @@ class MongoCollectionCreateUpdateParameters(Model):
     }
 
     _attribute_map = {
-        'resource': {'key': 'properties.resource', 'type': 'MongoCollectionResource'},
+        'resource': {'key': 'properties.resource', 'type': 'MongodbDatabaseResource'},
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
-        super(MongoCollectionCreateUpdateParameters, self).__init__(**kwargs)
+        super(MongodbDatabaseCreateUpdateParameters, self).__init__(**kwargs)
         self.resource = kwargs.get('resource', None)
         self.options = kwargs.get('options', None)

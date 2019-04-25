@@ -26,8 +26,8 @@ try:
     from .unique_key_policy_py3 import UniqueKeyPolicy
     from .conflict_resolution_policy_py3 import ConflictResolutionPolicy
     from .sql_container_py3 import SqlContainer
-    from .mongo_database_py3 import MongoDatabase
-    from .mongo_collection_py3 import MongoCollection
+    from .mongodb_database_py3 import MongodbDatabase
+    from .mongodb_collection_py3 import MongodbCollection
     from .table_py3 import Table
     from .cassandra_keyspace_py3 import CassandraKeyspace
     from .cassandra_table_py3 import CassandraTable
@@ -49,13 +49,13 @@ try:
     from .sql_database_create_update_parameters_py3 import SqlDatabaseCreateUpdateParameters
     from .sql_container_resource_py3 import SqlContainerResource
     from .sql_container_create_update_parameters_py3 import SqlContainerCreateUpdateParameters
-    from .mongo_database_resource_py3 import MongoDatabaseResource
-    from .mongo_database_create_update_parameters_py3 import MongoDatabaseCreateUpdateParameters
+    from .mongodb_database_resource_py3 import MongodbDatabaseResource
+    from .mongodb_database_create_update_parameters_py3 import MongodbDatabaseCreateUpdateParameters
     from .mongo_index_keys_py3 import MongoIndexKeys
     from .mongo_index_options_py3 import MongoIndexOptions
     from .mongo_index_py3 import MongoIndex
-    from .mongo_collection_resource_py3 import MongoCollectionResource
-    from .mongo_collection_create_update_parameters_py3 import MongoCollectionCreateUpdateParameters
+    from .mongodb_collection_resource_py3 import MongodbCollectionResource
+    from .mongodb_collection_create_update_parameters_py3 import MongodbCollectionCreateUpdateParameters
     from .table_resource_py3 import TableResource
     from .table_create_update_parameters_py3 import TableCreateUpdateParameters
     from .cassandra_keyspace_resource_py3 import CassandraKeyspaceResource
@@ -99,8 +99,8 @@ except (SyntaxError, ImportError):
     from .unique_key_policy import UniqueKeyPolicy
     from .conflict_resolution_policy import ConflictResolutionPolicy
     from .sql_container import SqlContainer
-    from .mongo_database import MongoDatabase
-    from .mongo_collection import MongoCollection
+    from .mongodb_database import MongodbDatabase
+    from .mongodb_collection import MongodbCollection
     from .table import Table
     from .cassandra_keyspace import CassandraKeyspace
     from .cassandra_table import CassandraTable
@@ -122,13 +122,13 @@ except (SyntaxError, ImportError):
     from .sql_database_create_update_parameters import SqlDatabaseCreateUpdateParameters
     from .sql_container_resource import SqlContainerResource
     from .sql_container_create_update_parameters import SqlContainerCreateUpdateParameters
-    from .mongo_database_resource import MongoDatabaseResource
-    from .mongo_database_create_update_parameters import MongoDatabaseCreateUpdateParameters
+    from .mongodb_database_resource import MongodbDatabaseResource
+    from .mongodb_database_create_update_parameters import MongodbDatabaseCreateUpdateParameters
     from .mongo_index_keys import MongoIndexKeys
     from .mongo_index_options import MongoIndexOptions
     from .mongo_index import MongoIndex
-    from .mongo_collection_resource import MongoCollectionResource
-    from .mongo_collection_create_update_parameters import MongoCollectionCreateUpdateParameters
+    from .mongodb_collection_resource import MongodbCollectionResource
+    from .mongodb_collection_create_update_parameters import MongodbCollectionCreateUpdateParameters
     from .table_resource import TableResource
     from .table_create_update_parameters import TableCreateUpdateParameters
     from .cassandra_keyspace_resource import CassandraKeyspaceResource
@@ -161,8 +161,8 @@ from .usage_paged import UsagePaged
 from .metric_definition_paged import MetricDefinitionPaged
 from .sql_database_paged import SqlDatabasePaged
 from .sql_container_paged import SqlContainerPaged
-from .mongo_database_paged import MongoDatabasePaged
-from .mongo_collection_paged import MongoCollectionPaged
+from .mongodb_database_paged import MongodbDatabasePaged
+from .mongodb_collection_paged import MongodbCollectionPaged
 from .table_paged import TablePaged
 from .cassandra_keyspace_paged import CassandraKeyspacePaged
 from .cassandra_table_paged import CassandraTablePaged
@@ -203,8 +203,8 @@ __all__ = [
     'UniqueKeyPolicy',
     'ConflictResolutionPolicy',
     'SqlContainer',
-    'MongoDatabase',
-    'MongoCollection',
+    'MongodbDatabase',
+    'MongodbCollection',
     'Table',
     'CassandraKeyspace',
     'CassandraTable',
@@ -226,13 +226,13 @@ __all__ = [
     'SqlDatabaseCreateUpdateParameters',
     'SqlContainerResource',
     'SqlContainerCreateUpdateParameters',
-    'MongoDatabaseResource',
-    'MongoDatabaseCreateUpdateParameters',
+    'MongodbDatabaseResource',
+    'MongodbDatabaseCreateUpdateParameters',
     'MongoIndexKeys',
     'MongoIndexOptions',
     'MongoIndex',
-    'MongoCollectionResource',
-    'MongoCollectionCreateUpdateParameters',
+    'MongodbCollectionResource',
+    'MongodbCollectionCreateUpdateParameters',
     'TableResource',
     'TableCreateUpdateParameters',
     'CassandraKeyspaceResource',
@@ -265,8 +265,8 @@ __all__ = [
     'MetricDefinitionPaged',
     'SqlDatabasePaged',
     'SqlContainerPaged',
-    'MongoDatabasePaged',
-    'MongoCollectionPaged',
+    'MongodbDatabasePaged',
+    'MongodbCollectionPaged',
     'TablePaged',
     'CassandraKeyspacePaged',
     'CassandraTablePaged',

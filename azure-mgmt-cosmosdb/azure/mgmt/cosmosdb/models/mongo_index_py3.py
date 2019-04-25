@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class MongoIndex(Model):
-    """Cosmos DB Mongo collection index key.
+    """Cosmos DB Mongodb collection index key.
 
-    :param key: Cosmos DB Mongo collection index keys
+    :param key: Cosmos DB Mongodb collection index keys
     :type key: ~azure.mgmt.cosmosdb.models.MongoIndexKeys
-    :param options: Cosmos DB Mongo collection index key options
+    :param options: Cosmos DB Mongodb collection index key options
     :type options: ~azure.mgmt.cosmosdb.models.MongoIndexOptions
     """
 

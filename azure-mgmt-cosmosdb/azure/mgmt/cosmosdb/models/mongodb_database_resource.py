@@ -12,21 +12,23 @@
 from msrest.serialization import Model
 
 
-class MongoIndexOptions(Model):
-    """Cosmos DB Mongodb collection index options.
+class MongodbDatabaseResource(Model):
+    """Cosmos DB Mongodb database id object.
 
-    :param expire_after_seconds: Expire after seconds
-    :type expire_after_seconds: int
-    :param unique: Is unique or not
-    :type unique: bool
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Name of the Cosmos DB Mongodb database
+    :type id: str
     """
 
+    _validation = {
+        'id': {'required': True},
+    }
+
     _attribute_map = {
-        'expire_after_seconds': {'key': 'expireAfterSeconds', 'type': 'int'},
-        'unique': {'key': 'unique', 'type': 'bool'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(MongoIndexOptions, self).__init__(**kwargs)
-        self.expire_after_seconds = kwargs.get('expire_after_seconds', None)
-        self.unique = kwargs.get('unique', None)
+        super(MongodbDatabaseResource, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
