@@ -30,7 +30,17 @@ class Database(TrackedResource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param sku: The name and tier of the SKU.
+    :param sku: The database SKU.
+     To determine the SKUs (including the SKU name, tier/edition, family, and
+     capacity) that are available to your subscription in an Azure location,
+     use the `Capabilities_ListByLocation` REST API or one of the following
+     interfaces:
+     ```azurecli
+     az sql db list-editions -l <location> -o table
+     ````
+     ```powershell
+     Get-AzSqlServerServiceObjective -Location <location>
+     ````
     :type sku: ~azure.mgmt.sql.models.Sku
     :ivar kind: Kind of database. This is metadata used for the Azure portal
      experience.
@@ -85,7 +95,8 @@ class Database(TrackedResource):
      'Online', 'Restoring', 'RecoveryPending', 'Recovering', 'Suspect',
      'Offline', 'Standby', 'Shutdown', 'EmergencyMode', 'AutoClosed',
      'Copying', 'Creating', 'Inaccessible', 'OfflineSecondary', 'Pausing',
-     'Paused', 'Resuming', 'Scaling'
+     'Paused', 'Resuming', 'Scaling', 'OfflineChangingDwPerformanceTiers',
+     'OnlineChangingDwPerformanceTiers'
     :vartype status: str or ~azure.mgmt.sql.models.DatabaseStatus
     :ivar database_id: The ID of the database.
     :vartype database_id: str

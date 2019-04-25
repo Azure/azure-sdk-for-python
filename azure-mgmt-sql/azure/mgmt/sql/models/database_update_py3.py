@@ -68,7 +68,8 @@ class DatabaseUpdate(Model):
      'Online', 'Restoring', 'RecoveryPending', 'Recovering', 'Suspect',
      'Offline', 'Standby', 'Shutdown', 'EmergencyMode', 'AutoClosed',
      'Copying', 'Creating', 'Inaccessible', 'OfflineSecondary', 'Pausing',
-     'Paused', 'Resuming', 'Scaling'
+     'Paused', 'Resuming', 'Scaling', 'OfflineChangingDwPerformanceTiers',
+     'OnlineChangingDwPerformanceTiers'
     :vartype status: str or ~azure.mgmt.sql.models.DatabaseStatus
     :ivar database_id: The ID of the database.
     :vartype database_id: str
