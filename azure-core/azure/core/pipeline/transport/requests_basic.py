@@ -99,11 +99,7 @@ class StreamDownloadGenerator(object):
             raise
 
 
-class RequestsTransportResponse(_RequestsTransportResponseBase, HttpResponse):
-    def __init__(self, request, internal_response, block_size):
-        super(RequestsTransportResponse, self).__init__(request, internal_response, block_size)
-        self.status_code = internal_response.status_code
-
+class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
 
     def stream_download(self):
         # type: (Optional[int], Optional[Callable]) -> Iterator[bytes]
