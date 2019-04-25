@@ -19,7 +19,7 @@ class IPConfiguration(SubResource):
     :type id: str
     :param private_ip_address: The private IP address of the IP configuration.
     :type private_ip_address: str
-    :param private_ip_allocation_method: The private IP adress allocation
+    :param private_ip_allocation_method: The private IP address allocation
      method. Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_02_01.models.IPAllocationMethod
