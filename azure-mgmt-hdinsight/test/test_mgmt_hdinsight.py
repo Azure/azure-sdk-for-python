@@ -7,7 +7,7 @@
 #--------------------------------------------------------------------------
 import unittest
 
-from azure.keyvault import KeyVaultId, KeyVaultClient, KeyVaultAuthentication, AccessToken
+from azure.keyvault import VaultClient
 from azure.mgmt.hdinsight import HDInsightManagementClient
 from azure.mgmt.hdinsight.models import *
 from azure.mgmt.keyvault import KeyVaultManagementClient
@@ -38,12 +38,6 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         self.hdinsight_client = self.create_mgmt_client(HDInsightManagementClient)
         self.msi_client = self.create_mgmt_client(ManagedServiceIdentityClient)
         self.vault_mgmt_client = self.create_mgmt_client(KeyVaultManagementClient)
-        if self.is_live:
-            self.vault_client = self.create_basic_client(KeyVaultClient)
-        else:
-            def _auth_callback(server, resource, scope):
-                return AccessToken('Bearer', 'fake-token')
-            self.vault_client = KeyVaultClient(KeyVaultAuthentication(authorization_callback=_auth_callback))
 
         # sensitive test configs
         self.tenant_id = self.settings.TENANT_ID
@@ -154,11 +148,11 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         vault = self.vault_mgmt_client.vaults.create_or_update(resource_group.name, vault.name, update_params).result()
         self.assertIsNotNone(vault)
 
+        vault_client = VaultClient(vault_url=vault.properties.vault_uri, credentials=self.settings.get_credentials(resource='https://vault.azure.net'))
+
         # create key
-        vault_uri = vault.properties.vault_uri
         key_name = self.get_resource_name('hdipykey1')
-        created_bundle = self.vault_client.create_key(vault_uri, key_name, 'RSA')
-        vault_key = KeyVaultId.parse_key_id(created_bundle.key.kid)
+        key = vault_client.keys.create_key(key_name, 'RSA')
 
         # create HDInsight cluster with Kafka disk encryption
         rg_name = resource_group.name
@@ -176,9 +170,9 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
             user_assigned_identities={msi.id: ClusterIdentityUserAssignedIdentitiesValue()}
         )
         create_params.properties.disk_encryption_properties = DiskEncryptionProperties(
-            vault_uri=vault_key.vault,
-            key_name=vault_key.name,
-            key_version=vault_key.version,
+            vault_uri=key.vault_url,
+            key_name=key.name,
+            key_version=key.version,
             msi_resource_id=msi.id
         )
         cluster = self.hdinsight_client.clusters.create(resource_group.name, cluster_name, create_params).result()
@@ -192,12 +186,11 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
 
         # create a new key
         new_key_name = self.get_resource_name('hdipykey2')
-        created_bundle = self.vault_client.create_key(vault_uri, new_key_name, 'RSA')
-        new_vault_key = KeyVaultId.parse_key_id(created_bundle.key.kid)
+        key = vault_client.keys.create_key(new_key_name, 'RSA')
         rotate_params = ClusterDiskEncryptionParameters(
-            vault_uri=new_vault_key.vault,
-            key_name=new_vault_key.name,
-            key_version=new_vault_key.version
+            vault_uri=key.vault_url,
+            key_name=key.name,
+            key_version=key.version
         )
 
         # rotate cluster key
