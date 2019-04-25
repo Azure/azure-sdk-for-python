@@ -3,6 +3,13 @@
 Release History
 ===============
 
+2.6.0 (2019-04-25)
+++++++++++++++++++
+
+**Features**
+
+- Added operation DdosProtectionPlansOperations.update_tags
+
 2.6.0 (2019-03-21)
 ++++++++++++++++++
 
