@@ -79,8 +79,8 @@ class UsageDetailsOperations(object):
          recent N usageDetails.
         :type top: int
         :param metric: Allows to select different type of cost/usage records.
-         Possible values include: 'UsageMetricType', 'ActualCostMetricType',
-         'AmortizedCostMetricType'
+         Possible values include: 'ActualCostMetricType',
+         'AmortizedCostMetricType', 'UsageMetricType'
         :type metric: str or ~azure.mgmt.consumption.models.Metrictype
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

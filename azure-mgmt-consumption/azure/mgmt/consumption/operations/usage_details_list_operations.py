@@ -113,8 +113,8 @@ class UsageDetailsListOperations(object):
          '/providers/Microsoft.Billing/departments/{departmentId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'
         :type scope: str
         :param metric: Allows to select different type of cost/usage records.
-         Possible values include: 'UsageMetricType', 'ActualCostMetricType',
-         'AmortizedCostMetricType'
+         Possible values include: 'ActualCostMetricType',
+         'AmortizedCostMetricType', 'UsageMetricType'
         :type metric: str or ~azure.mgmt.consumption.models.Metrictype
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the

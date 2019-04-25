@@ -66,6 +66,6 @@ class Datagrain(str, Enum):
 
 class Metrictype(str, Enum):
 
-    usage_metric_type = "usage"  #: Usage data.
     actual_cost_metric_type = "actualcost"  #: Actual cost data.
     amortized_cost_metric_type = "amortizedcost"  #: Amortized cost data.
+    usage_metric_type = "usage"  #: Usage data.
