@@ -38,6 +38,7 @@ from typing import List, Any, Dict, Union, IO, Tuple, Optional, Callable, Iterat
 
 from .pipeline import Pipeline
 from .pipeline.transport import HttpRequest, RequestsTransport
+from .pipeline.policies import ContentDecodePolicy
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -48,22 +49,22 @@ class PipelineClient(object):
     :param Configuration config: Service configuration.
     """
 
-    def __init__(self, base_url, config, pipeline=None):
+    def __init__(self, base_url, config, **kwargs):
         if config is None:
             raise ValueError("Config is a required parameter")
         self._config = config
         self._base_url = base_url
-        self._transport = RequestsTransport(config)
-        self._pipeline = pipeline or self._build_pipeline(config)
+        self._transport = kwargs.get('transport', RequestsTransport(config))
+        self._pipeline = kwargs.get('pipeline', self._build_pipeline(config))
 
     def _build_pipeline(self, config):
         policies = [
-            config.user_agent_policy,  # UserAgent policy
-            config.logging_policy,
             config.headers_policy,
-            config.proxy_policy,
+            config.user_agent_policy,
+            ContentDecodePolicy(),
             config.redirect_policy,
-            config.retry_policy
+            config.retry_policy,
+            config.logging_policy,
         ]
 
         return Pipeline(
