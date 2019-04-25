@@ -165,7 +165,7 @@ class PolicyOperations(object):
         :param service_name: The name of the API Management service.
         :type service_name: str
         :param format: Policy Export Format. Possible values include: 'xml',
-         'xml-link', 'rawxml', 'rawxml-link'
+         'rawxml'
         :type format: str or
          ~azure.mgmt.apimanagement.models.PolicyExportFormat
         :param dict custom_headers: headers that will be added to the request

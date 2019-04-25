@@ -179,7 +179,7 @@ class ApiPolicyOperations(object):
          suffix where n is the revision number.
         :type api_id: str
         :param format: Policy Export Format. Possible values include: 'xml',
-         'xml-link', 'rawxml', 'rawxml-link'
+         'rawxml'
         :type format: str or
          ~azure.mgmt.apimanagement.models.PolicyExportFormat
         :param dict custom_headers: headers that will be added to the request

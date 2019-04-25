@@ -109,7 +109,7 @@ class ApiOperationPolicyOperations(object):
     list_by_operation.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/operations/{operationId}/policies'}
 
     def get_entity_tag(
-            self, resource_group_name, service_name, api_id, operation_id, format="xml", custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, api_id, operation_id, custom_headers=None, raw=False, **operation_config):
         """Gets the entity state (Etag) version of the API operation policy
         specified by its identifier.
 
@@ -124,10 +124,6 @@ class ApiOperationPolicyOperations(object):
         :param operation_id: Operation identifier within an API. Must be
          unique in the current API Management service instance.
         :type operation_id: str
-        :param format: Policy Export Format. Possible values include: 'xml',
-         'xml-link', 'rawxml', 'rawxml-link'
-        :type format: str or
-         ~azure.mgmt.apimanagement.models.PolicyExportFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -152,8 +148,6 @@ class ApiOperationPolicyOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        if format is not None:
-            query_parameters['format'] = self._serialize.query("format", format, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
@@ -181,7 +175,7 @@ class ApiOperationPolicyOperations(object):
     get_entity_tag.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiId}/operations/{operationId}/policies/{policyId}'}
 
     def get(
-            self, resource_group_name, service_name, api_id, operation_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, service_name, api_id, operation_id, format="xml", custom_headers=None, raw=False, **operation_config):
         """Get the policy configuration at the API Operation level.
 
         :param resource_group_name: The name of the resource group.
@@ -195,6 +189,10 @@ class ApiOperationPolicyOperations(object):
         :param operation_id: Operation identifier within an API. Must be
          unique in the current API Management service instance.
         :type operation_id: str
+        :param format: Policy Export Format. Possible values include: 'xml',
+         'rawxml'
+        :type format: str or
+         ~azure.mgmt.apimanagement.models.PolicyExportFormat
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -220,6 +218,8 @@ class ApiOperationPolicyOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if format is not None:
+            query_parameters['format'] = self._serialize.query("format", format, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers

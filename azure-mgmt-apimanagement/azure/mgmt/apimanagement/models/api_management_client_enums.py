@@ -256,9 +256,7 @@ class NotificationName(str, Enum):
 class PolicyExportFormat(str, Enum):
 
     xml = "xml"  #: The contents are inline and Content type is an XML document.
-    xml_link = "xml-link"  #: The policy XML document is exported to a storage blob with SAS key valid for 5 minutes.
     rawxml = "rawxml"  #: The contents are inline and Content type is a non XML encoded policy document.
-    rawxml_link = "rawxml-link"  #: The policy document is not XML encoded is exported to a storage blob with SAS Key valid for 5 minutes.
 
 
 class TemplateName(str, Enum):
