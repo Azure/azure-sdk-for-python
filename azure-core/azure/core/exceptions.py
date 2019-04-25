@@ -109,7 +109,7 @@ class HttpRequestError(ServiceRequestError):
         self.reason = None
         if response:
             self.reason=response.reason
-        message = "Operation returned an invalid status code {}".format(self.reason)
+        message = "Operation returned an invalid status code '{}'".format(self.reason)
         try:
             try:
                 if self.error.error.code or self.error.error.message:
