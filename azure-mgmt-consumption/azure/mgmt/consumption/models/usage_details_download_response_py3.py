@@ -28,8 +28,8 @@ class UsageDetailsDownloadResponse(Resource):
     :vartype tags: dict[str, str]
     :ivar download_url: The URL to the csv file.
     :vartype download_url: str
-    :ivar expiry_time: The time in UTC at which this download URL will expire.
-    :vartype expiry_time: str
+    :ivar valid_till: The time in UTC at which this download URL will expire.
+    :vartype valid_till: str
     """
 
     _validation = {
@@ -38,7 +38,7 @@ class UsageDetailsDownloadResponse(Resource):
         'type': {'readonly': True},
         'tags': {'readonly': True},
         'download_url': {'readonly': True},
-        'expiry_time': {'readonly': True},
+        'valid_till': {'readonly': True},
     }
 
     _attribute_map = {
@@ -47,10 +47,10 @@ class UsageDetailsDownloadResponse(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'download_url': {'key': 'properties.downloadUrl', 'type': 'str'},
-        'expiry_time': {'key': 'properties.expiryTime', 'type': 'str'},
+        'valid_till': {'key': 'properties.validTill', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(UsageDetailsDownloadResponse, self).__init__(**kwargs)
         self.download_url = None
-        self.expiry_time = None
+        self.valid_till = None

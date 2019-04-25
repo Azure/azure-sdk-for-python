@@ -92,6 +92,7 @@ from .consumption_management_client_enums import (
     ChargeType,
     Bound,
     Datagrain,
+    Metrictype,
 )
 
 __all__ = [
@@ -143,4 +144,5 @@ __all__ = [
     'ChargeType',
     'Bound',
     'Datagrain',
+    'Metrictype',
 ]

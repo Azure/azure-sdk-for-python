@@ -62,3 +62,10 @@ class Datagrain(str, Enum):
 
     daily_grain = "daily"  #: Daily grain of data
     monthly_grain = "monthly"  #: Monthly grain of data
+
+
+class Metrictype(str, Enum):
+
+    usage_metric_type = "usage"  #: Usage data.
+    actual_cost_metric_type = "actualcost"  #: Actual cost data.
+    amortized_cost_metric_type = "amortizedcost"  #: Amortized cost data.

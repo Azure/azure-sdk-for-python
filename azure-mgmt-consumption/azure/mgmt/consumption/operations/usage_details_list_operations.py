@@ -65,7 +65,7 @@ class UsageDetailsListOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
@@ -113,9 +113,9 @@ class UsageDetailsListOperations(object):
          '/providers/Microsoft.Billing/departments/{departmentId}/providers/Microsoft.Billing/billingPeriods/{billingPeriodName}'
         :type scope: str
         :param metric: Allows to select different type of cost/usage records.
-         Allowed values: Usage, ActualCost, AmortizedCost. Default is
-         ActualCost.
-        :type metric: str
+         Possible values include: 'UsageMetricType', 'ActualCostMetricType',
+         'AmortizedCostMetricType'
+        :type metric: str or ~azure.mgmt.consumption.models.Metrictype
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -158,7 +158,7 @@ class UsageDetailsListOperations(object):
         lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **operation_config)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
