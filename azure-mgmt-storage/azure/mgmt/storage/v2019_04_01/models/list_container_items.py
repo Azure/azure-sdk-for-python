@@ -13,17 +13,31 @@ from msrest.serialization import Model
 
 
 class ListContainerItems(Model):
-    """The list of blob containers.
+    """Response schema. Contains list of blobs returned, and if paging is
+    requested or required, a URL to next page of containers.
 
-    :param value: The list of blob containers.
-    :type value:
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: List of blobs containers returned.
+    :vartype value:
      list[~azure.mgmt.storage.v2019_04_01.models.ListContainerItem]
+    :param next_link: Request URL that can be used to query next page of
+     containers. Returned when total number of requested containers exceed
+     maximum page size.
+    :type next_link: str
     """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[ListContainerItem]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ListContainerItems, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        self.value = None
+        self.next_link = kwargs.get('next_link', None)
