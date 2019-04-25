@@ -10,7 +10,7 @@ import sys
 import os
 import pytest
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from azure.servicebus.aio import (
     ServiceBusClient,
@@ -963,7 +963,7 @@ async def test_async_queue_schedule_message(live_servicebus_config, standard_que
         debug=True)
     import uuid
     queue_client = client.get_queue(standard_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.now(tz=timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
     async with queue_client.get_receiver() as receiver:
         async with queue_client.get_sender() as sender:
             content = str(uuid.uuid4())
@@ -998,7 +998,7 @@ async def test_async_queue_schedule_multiple_messages(live_servicebus_config, st
         debug=True)
     import uuid
     queue_client = client.get_queue(standard_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.now(tz=timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
     messages = []
     async with queue_client.get_receiver(prefetch=20) as receiver:
         async with queue_client.get_sender() as sender:
@@ -1040,7 +1040,7 @@ async def test_async_queue_cancel_scheduled_messages(live_servicebus_config, sta
         debug=True)
 
     queue_client = client.get_queue(standard_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.now(tz=timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
     async with queue_client.get_receiver() as receiver:
         async with queue_client.get_sender() as sender:
             message_a = Message("Test scheduled message")

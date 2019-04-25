@@ -141,6 +141,14 @@ def _convert_etree_element_to_rule(entry_element):
 
     rule_element = entry_element.find('./atom:content/sb:RuleDescription', _etree_sb_feed_namespaces)
     if rule_element is not None:
+        mappings = [
+            ('Name', 'name', None),
+            ('CreatedAt', 'created_at', None)
+        ]
+
+        for mapping in mappings:
+            _read_etree_element(rule_element, mapping[0], rule, mapping[1], mapping[2])
+
         filter_element = rule_element.find('./sb:Filter', _etree_sb_feed_namespaces)
         if filter_element is not None:
             rule.filter_type = filter_element.attrib.get(
@@ -161,6 +169,8 @@ def _convert_etree_element_to_rule(entry_element):
     # extract id, updated and name value from feed entry and set them of rule.
     for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
             entry_element, True, '/rules').items():
+        if name == 'name' and '?' in str(value):
+            value = value.split('?', 1)[0]
         setattr(rule, name, value)
 
     return rule
@@ -228,11 +238,24 @@ def _convert_etree_element_to_queue(entry_element):
             ('MaxDeliveryCount', 'max_delivery_count', int),
             ('MessageCount', 'message_count', int),
             ('SizeInBytes', 'size_in_bytes', int),
+            ('AutoDeleteOnIdle', 'auto_delete_on_idle', None),
+            ('EnablePartitioning', 'enable_partitioning', _parse_bool),
+            ('ForwardDeadLetteredMessagesTo', 'forward_dead_lettered_message_to', None),
+            ('ForwardTo', 'foward_to', None),
+            ('Path', 'path', None),
+            ('Status', 'status', None),
+            ('UserMetadata', 'user_metadata', None)
         ]
 
         for mapping in mappings:
             if _read_etree_element(queue_element, mapping[0], queue, mapping[1], mapping[2]):
                 invalid_queue = False
+
+        rules_nodes = queue_element.find('./sb:AuthorizationRules', _etree_sb_feed_namespaces)
+        if rules_nodes is not None:
+            invalid_queue = False
+            _convert_etree_element_to_authorization_rules_in_entity(queue, rules_nodes)
+
 
     if invalid_queue:
         raise AzureServiceBusResourceNotFound(_ERROR_QUEUE_NOT_FOUND)
@@ -240,6 +263,8 @@ def _convert_etree_element_to_queue(entry_element):
     # extract id, updated and name value from feed entry and set them of queue.
     for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
             entry_element, True).items():
+        if name == 'name' and '?' in str(value):
+            value = value.split('?', 1)[0]
         setattr(queue, name, value)
 
     return queue
@@ -272,20 +297,32 @@ def _convert_etree_element_to_topic(entry_element):
 
     invalid_topic = True
 
-    topic_element = entry_element.find('./atom:content/sb:TopicDescription', _etree_sb_feed_namespaces)
+    topic_element = entry_element.find('./atom:content/sb:TopicDescription',\
+         _etree_sb_feed_namespaces)
     if topic_element is not None:
         mappings = [
             ('DefaultMessageTimeToLive', 'default_message_time_to_live', None),
             ('MaxSizeInMegabytes', 'max_size_in_megabytes', int),
             ('RequiresDuplicateDetection', 'requires_duplicate_detection', _parse_bool),
-            ('DuplicateDetectionHistoryTimeWindow', 'duplicate_detection_history_time_window', None),
+            ('DuplicateDetectionHistoryTimeWindow',\
+                 'duplicate_detection_history_time_window', None),
             ('EnableBatchedOperations', 'enable_batched_operations', _parse_bool),
             ('SizeInBytes', 'size_in_bytes', int),
+            ('Status', 'status', None),
+            ('UserMetadata', 'user_metadata', None),
+            ('AutoDeleteOnIdle', 'auto_delete_on_idle', None),
+            ('EnablePartitioning', 'enable_partitioning', _parse_bool),
+            ('SupportOrdering', 'support_ordering', _parse_bool)
         ]
 
         for mapping in mappings:
             if _read_etree_element(topic_element, mapping[0], topic, mapping[1], mapping[2]):
                 invalid_topic = False
+
+        rules_nodes = topic_element.find('./sb:AuthorizationRules', _etree_sb_feed_namespaces)
+        if rules_nodes is not None:
+            invalid_topic = False
+            _convert_etree_element_to_authorization_rules_in_entity(topic, rules_nodes)
 
     if invalid_topic:
         raise AzureServiceBusResourceNotFound(_ERROR_TOPIC_NOT_FOUND)
@@ -293,6 +330,8 @@ def _convert_etree_element_to_topic(entry_element):
     # extract id, updated and name value from feed entry and set them of topic.
     for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
             entry_element, True).items():
+        if name == 'name' and '?' in str(value):
+            value = value.split('?', 1)[0]
         setattr(topic, name, value)
 
     return topic
@@ -334,6 +373,12 @@ def _convert_etree_element_to_subscription(entry_element):
             ('EnableBatchedOperations', 'enable_batched_operations', _parse_bool),
             ('MaxDeliveryCount', 'max_delivery_count', int),
             ('MessageCount', 'message_count', int),
+            ('Status', 'status', None),
+            ('ForwardTo', 'forward_to', None),
+            ('UserMetadata', 'user_metadata', None),
+            ('ForwardDeadLetteredMessagesTo', 'forward_dead_lettered_message_to', None),
+            ('AutoDeleteOnIdle', 'auto_delete_on_idle', None),
+            ('SizeInBytes', 'size_in_bytes', None),
         ]
 
         for mapping in mappings:
@@ -341,6 +386,9 @@ def _convert_etree_element_to_subscription(entry_element):
 
     for name, value in _ETreeXmlToObject.get_entry_properties_from_element(
             entry_element, True, '/subscriptions').items():
+
+        if name == 'name' and '?' in str(value):  # The service side returns name with api-version appended
+            value = value.split('?', 1)[0]
         setattr(subscription, name, value)
 
     return subscription
@@ -462,11 +510,21 @@ def _convert_subscription_to_xml(sub):
             ('RequiresSession', sub.requires_session, _lower),
             ('DefaultMessageTimeToLive', sub.default_message_time_to_live, None),
             ('DeadLetteringOnMessageExpiration', sub.dead_lettering_on_message_expiration, _lower),
-            ('DeadLetteringOnFilterEvaluationExceptions', sub.dead_lettering_on_filter_evaluation_exceptions, _lower),
-            ('EnableBatchedOperations', sub.enable_batched_operations, _lower),
+            ('DeadLetteringOnFilterEvaluationExceptions', sub.dead_lettering_on_filter_evaluation_exceptions, _lower)
+        ])
+
+        if sub.default_rule_description:
+            _convert_rule_in_subscription_to_xml(writer, sub.default_rule_description)
+
+        writer.elements([
             ('MaxDeliveryCount', sub.max_delivery_count, None),
-            ('MessageCount', sub.message_count, None),
-            ])
+            ('EnableBatchedOperations', sub.enable_batched_operations, _lower),
+            ('Status', sub.status, None),
+            ('ForwardTo', sub.forward_to, None),
+            ('UserMetadata', sub.user_metadata, None),
+            ('ForwardDeadLetteredMessagesTo', sub.forward_dead_lettered_message_to, None),
+            ('AutoDeleteOnIdle', sub.auto_delete_on_idle, None)
+        ])
 
     return _convert_object_to_feed_entry(
         sub, 'SubscriptionDescription', _subscription_to_xml)
@@ -490,6 +548,10 @@ def _convert_rule_to_xml(rule):
                 writer.element('CompatibilityLevel', '20')
             writer.end('Action')
 
+        writer.elements([
+            ('Name', rule.name, None)
+        ])
+
     return _convert_object_to_feed_entry(
         rule, 'RuleDescription', _rule_to_xml)
 
@@ -502,9 +564,19 @@ def _convert_topic_to_xml(topic):
             ('MaxSizeInMegabytes', topic.max_size_in_megabytes, None),
             ('RequiresDuplicateDetection', topic.requires_duplicate_detection, _lower),
             ('DuplicateDetectionHistoryTimeWindow', topic.duplicate_detection_history_time_window, None),
-            ('EnableBatchedOperations', topic.enable_batched_operations, _lower),
-            ('SizeInBytes', topic.size_in_bytes, None),
-            ])
+            ('EnableBatchedOperations', topic.enable_batched_operations, _lower)
+        ])
+
+        if topic.authorization_rules:
+            _convert_authorization_rules_in_entity_to_xml(writer, topic.authorization_rules)
+
+        writer.elements([
+            ('Status', topic.status, None),
+            ('UserMetadata', topic.user_metadata, None),
+            ('SupportOrdering', topic.support_ordering, _lower),
+            ('AutoDeleteOnIdle', topic.auto_delete_on_idle, None),
+            ('EnablePartitioning', topic.enable_partitioning, _lower)
+        ])
 
     return _convert_object_to_feed_entry(
         topic, 'TopicDescription', _topic_to_xml)
@@ -525,7 +597,21 @@ def _convert_queue_to_xml(queue):
             ('EnableBatchedOperations', queue.enable_batched_operations, _lower),
             ('SizeInBytes', queue.size_in_bytes, None),
             ('MessageCount', queue.message_count, None),
-            ])
+        ])
+
+
+        if queue.authorization_rules:
+            _convert_authorization_rules_in_entity_to_xml(writer, queue.authorization_rules)
+
+        writer.elements([
+            ('Status', queue.status, None),
+            ('ForwardTo', queue.forward_to, None),
+            ('UserMetadata', queue.user_metadata, None),
+            ('AutoDeleteOnIdle', queue.auto_delete_on_idle, None),
+            ('EnablePartitioning', queue.enable_partitioning, _lower),
+            ('ForwardDeadLetteredMessagesTo', queue.forward_dead_lettered_message_to, None),
+        ])
+
 
     return _convert_object_to_feed_entry(
         queue, 'QueueDescription', _queue_to_xml)
@@ -537,28 +623,14 @@ def _convert_event_hub_to_xml(hub):
         writer.elements(
             [('MessageRetentionInDays', hub.message_retention_in_days, None)])
         if hub.authorization_rules:
-            writer.start('AuthorizationRules')
-            for rule in hub.authorization_rules:
-                writer.start('AuthorizationRule',
-                             [('i:type', 'SharedAccessAuthorizationRule', None)])
-                writer.elements(
-                    [('ClaimType', rule.claim_type, None),
-                     ('ClaimValue', rule.claim_value, None)])
-                if rule.rights:
-                    writer.start('Rights')
-                    for right in rule.rights:
-                        writer.element('AccessRights', right)
-                    writer.end('Rights')
-                writer.elements(
-                    [('KeyName', rule.key_name, None),
-                     ('PrimaryKey', rule.primary_key, None),
-                     ('SecondaryKey', rule.secondary_key, None)])
-                writer.end('AuthorizationRule')
-            writer.end('AuthorizationRules')
-        writer.elements(
-            [('Status', hub.status, None),
-             ('UserMetadata', hub.user_metadata, None),
-             ('PartitionCount', hub.partition_count, None)])
+            _convert_authorization_rules_in_entity_to_xml(writer, hub.authorization_rules)
+        writer.elements([
+            ('Status', hub.status, None),
+            ('UserMetadata', hub.user_metadata, None),
+            ('PartitionCount', hub.partition_count, None),
+            ('CreatedAt', hub.created_at, None),
+            ('IsReadOnly', hub.is_read_only, _lower)
+        ])
 
     return _convert_object_to_feed_entry(
         hub, 'EventHubDescription', _hub_to_xml)
@@ -567,3 +639,81 @@ def _convert_event_hub_to_xml(hub):
 def _service_bus_error_handler(http_error):
     ''' Simple error handler for Service Bus service. '''
     return _general_error_handler(http_error)
+
+
+def _convert_authorization_rules_in_entity_to_xml(writer, authorization_rules_in_model):
+    ''' Convert authorization rules in an entity to xml. '''
+    writer.start('AuthorizationRules')
+    for rule in authorization_rules_in_model:
+        writer.start('AuthorizationRule',
+                     [('i:type', 'SharedAccessAuthorizationRule', None)])
+        writer.elements([
+            ('ClaimType', rule.claim_type, None),
+            ('ClaimValue', rule.claim_value, None)
+        ])
+        if rule.rights:
+            writer.start('Rights')
+            for right in rule.rights:
+                writer.element('AccessRights', right)
+            writer.end('Rights')
+        writer.elements([
+            ('KeyName', rule.key_name, None),
+            ('PrimaryKey', rule.primary_key, None),
+            ('SecondaryKey', rule.secondary_key, None),
+        ])
+        writer.end('AuthorizationRule')
+    writer.end('AuthorizationRules')
+
+
+def _convert_etree_element_to_authorization_rules_in_entity(entity, rules_nodes):
+    ''' Convert xml data to rules in an entity. '''
+    for rule_node in rules_nodes.findall('./sb:AuthorizationRule', _etree_sb_feed_namespaces):
+        rule = AuthorizationRule()
+
+        mappings = [
+            ('ClaimType', 'claim_type', None),
+            ('ClaimValue', 'claim_value', None),
+            ('ModifiedTime', 'modified_time', None),
+            ('CreatedTime', 'created_time', None),
+            ('KeyName', 'key_name', None),
+            ('PrimaryKey', 'primary_key', None),
+            ('SecondaryKey', 'secondary_key', None),
+            ('Revision', 'revision', None),
+            ('IssuerName', 'issuer_name', None)
+        ]
+
+        for mapping in mappings:
+            _read_etree_element(rule_node, mapping[0], rule, mapping[1], mapping[2])
+
+        rights_nodes = rule_node.find('./sb:Rights', _etree_sb_feed_namespaces)
+        if rights_nodes is not None:
+            for access_rights_node in rights_nodes.findall('./sb:AccessRights', _etree_sb_feed_namespaces):
+                node_value = _get_etree_text(access_rights_node)
+                if node_value:
+                    rule.rights.append(node_value)
+
+        entity.authorization_rules.append(rule)
+
+
+def _convert_rule_in_subscription_to_xml(writer, rule_in_subscription):
+    writer.start('DefaultRuleDescription')
+
+    if rule_in_subscription.filter_type:
+        writer.start('Filter', [('i:type', rule_in_subscription.filter_type, None)])
+        if rule_in_subscription.filter_type == 'CorrelationFilter':
+            writer.element('CorrelationId', rule_in_subscription.filter_expression)
+        else:
+            writer.element('SqlExpression', rule_in_subscription.filter_expression)
+            writer.element('CompatibilityLevel', '20')
+        writer.end('Filter')
+    if rule_in_subscription.action_type:
+        writer.start('Action', [('i:type', rule_in_subscription.action_type, None)])
+        if rule_in_subscription.action_type == 'SqlRuleAction':
+            writer.element('SqlExpression', rule_in_subscription.action_expression)
+            writer.element('CompatibilityLevel', '20')
+        writer.end('Action')
+
+    writer.elements([
+        ('Name', rule_in_subscription.name, None)
+    ])
+    writer.end('DefaultRuleDescription')

@@ -1,71 +1,118 @@
 interactions:
 - request:
-    body: !!binary |
-      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9InllcyI/Pjxl
-      bnRyeSB4bWxuczpkPSJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL2Fkby8yMDA3LzA4L2Rh
-      dGFzZXJ2aWNlcyIgeG1sbnM6bT0iaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9hZG8vMjAw
-      Ny8wOC9kYXRhc2VydmljZXMvbWV0YWRhdGEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDA1
-      L0F0b20iPjx0aXRsZT48L3RpdGxlPjx1cGRhdGVkPjIwMTUtMDYtMzBUMjA6NTQ6MDIuODYxNTU1
-      KzAwOjAwPC91cGRhdGVkPjxhdXRob3I+PG5hbWU+PC9uYW1lPjwvYXV0aG9yPjxpZD48L2lkPjxj
-      b250ZW50IHR5cGU9ImFwcGxpY2F0aW9uL3htbCI+PFRvcGljRGVzY3JpcHRpb24geG1sbnM6aT0i
-      aHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zPSJodHRwOi8v
-      c2NoZW1hcy5taWNyb3NvZnQuY29tL25ldHNlcnZpY2VzLzIwMTAvMTAvc2VydmljZWJ1cy9jb25u
-      ZWN0Ij48L1RvcGljRGVzY3JpcHRpb24+PC9jb250ZW50PjwvZW50cnk+
+    body: <?xml version="1.0" encoding="utf-8" standalone="yes"?><entry xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+      xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom"><title></title><updated>2019-04-25T06:35:52.623986+00:00</updated><author><name></name></author><id></id><content
+      type="application/xml"><TopicDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"></TopicDescription></content></entry>
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['555']
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.0]
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '555'
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      User-Agent:
+      - azure-servicebus/0.50.0 Azure-SDK-For-Python
     method: PUT
-    uri: https://fakesbnamespace.servicebus.windows.net/uttopic60f21a96
+    uri: https://fakesbnamespace.servicebus.windows.net/uttopic60f21a96?api-version=2017-04
   response:
-    body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/uttopic60f21a96</id><title
-        type="text">uttopic60f21a96</title><published>2015-06-30T20:54:04Z</published><updated>2015-06-30T20:54:05Z</updated><author><name>fakesbnamespace</name></author><link
-        rel="self" href="https://fakesbnamespace.servicebus.windows.net/uttopic60f21a96"/><content
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/uttopic60f21a96?api-version=2017-04</id><title
+        type="text">uttopic60f21a96</title><published>2019-04-25T06:35:52Z</published><updated>2019-04-25T06:35:53Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="https://fakesbnamespace.servicebus.windows.net/uttopic60f21a96?api-version=2017-04"/><content
         type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><CreatedAt>2015-06-30T20:54:04.91</CreatedAt><UpdatedAt>2015-06-30T20:54:05.027</UpdatedAt></TopicDescription></content></entry>'}
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2019-04-25T06:35:52.98Z</CreatedAt><UpdatedAt>2019-04-25T06:35:53.183Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><IsExpress>false</IsExpress><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry>
     headers:
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      Date: ['Tue, 30 Jun 2015 20:54:04 GMT']
-      Server: [Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-    status: {code: 201, message: Created}
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      Date:
+      - Thu, 25 Apr 2019 06:35:53 GMT
+      Server:
+      - Microsoft-HTTPAPI/2.0
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.0]
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      User-Agent:
+      - azure-servicebus/0.50.0 Azure-SDK-For-Python
     method: DELETE
-    uri: https://fakesbnamespace.servicebus.windows.net/uttopic60f21a96
+    uri: https://fakesbnamespace.servicebus.windows.net/uttopic60f21a96?api-version=2017-04
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Content-Length: ['0']
-      Date: ['Tue, 30 Jun 2015 20:54:05 GMT']
-      Server: [Microsoft-HTTPAPI/2.0]
-    status: {code: 200, message: OK}
+      Content-Length:
+      - '0'
+      Date:
+      - Thu, 25 Apr 2019 06:35:54 GMT
+      ETag:
+      - '636917709531830000'
+      Server:
+      - Microsoft-HTTPAPI/2.0
+      Strict-Transport-Security:
+      - max-age=31536000
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azure-servicebus/0.50.0 Azure-SDK-For-Python
     method: GET
-    uri: https://fakesbnamespace.servicebus.windows.net/$Resources/Topics
+    uri: https://fakesbnamespace.servicebus.windows.net/$Resources/Topics?api-version=2017-04
   response:
-    body: {string: '<feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://fakesbnamespace.servicebus.windows.net/$Resources/Topics</id><updated>2015-06-30T20:54:06Z</updated><link
-        rel="self" href="https://fakesbnamespace.servicebus.windows.net/$Resources/Topics"/></feed>'}
+    body:
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Topics</title><id>https://fakesbnamespace.servicebus.windows.net/$Resources/Topics?api-version=2017-04</id><updated>2019-04-25T06:35:57Z</updated><link
+        rel="self" href="https://fakesbnamespace.servicebus.windows.net/$Resources/Topics?api-version=2017-04"/><entry
+        xml:base="https://fakesbnamespace.servicebus.windows.net/$Resources/Topics?api-version=2017-04"><id>https://fakesbnamespace.servicebus.windows.net/test_sb_topic?api-version=2017-04</id><title
+        type="text">test_sb_topic</title><published>2019-04-07T05:28:54Z</published><updated>2019-04-07T05:28:54Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="../test_sb_topic?api-version=2017-04"/><content type="application/xml"><TopicDescription
+        xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P14D</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2019-04-07T05:28:54.683Z</CreatedAt><UpdatedAt>2019-04-07T05:28:54.84Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
+        xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><SubscriptionCount>0</SubscriptionCount><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><IsExpress>false</IsExpress><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry><entry
+        xml:base="https://fakesbnamespace.servicebus.windows.net/$Resources/Topics?api-version=2017-04"><id>https://fakesbnamespace.servicebus.windows.net/test_sb_topic_no_partition?api-version=2017-04</id><title
+        type="text">test_sb_topic_no_partition</title><published>2019-04-18T00:27:36Z</published><updated>2019-04-18T00:27:36Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="../test_sb_topic_no_partition?api-version=2017-04"/><content
+        type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P14D</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2019-04-18T00:27:36.783Z</CreatedAt><UpdatedAt>2019-04-18T00:27:36.84Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
+        xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><SubscriptionCount>0</SubscriptionCount><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><IsExpress>false</IsExpress><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry><entry
+        xml:base="https://fakesbnamespace.servicebus.windows.net/$Resources/Topics?api-version=2017-04"><id>https://fakesbnamespace.servicebus.windows.net/test_sb_topic_with_partition?api-version=2017-04</id><title
+        type="text">test_sb_topic_with_partition</title><published>2019-04-18T00:28:16Z</published><updated>2019-04-18T00:28:18Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="../test_sb_topic_with_partition?api-version=2017-04"/><content
+        type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P14D</DefaultMessageTimeToLive><MaxSizeInMegabytes>16384</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2019-04-18T00:28:16.657Z</CreatedAt><UpdatedAt>2019-04-18T00:28:18.14Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>false</SupportOrdering><CountDetails
+        xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><SubscriptionCount>0</SubscriptionCount><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><IsExpress>false</IsExpress><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry></feed>
     headers:
-      Content-Type: [application/atom+xml;type=feed;charset=utf-8]
-      Date: ['Tue, 30 Jun 2015 20:54:05 GMT']
-      Server: [Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-    status: {code: 200, message: OK}
+      Content-Type:
+      - application/atom+xml;type=feed;charset=utf-8
+      Date:
+      - Thu, 25 Apr 2019 06:35:57 GMT
+      Server:
+      - Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
 version: 1

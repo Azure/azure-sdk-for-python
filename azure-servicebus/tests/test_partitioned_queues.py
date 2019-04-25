@@ -9,7 +9,7 @@ import sys
 import os
 import pytest
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from azure.servicebus import ServiceBusClient, QueueClient, AutoLockRenew
 from azure.servicebus.common.message import Message, PeekMessage, BatchMessage, DeferredMessage
@@ -274,8 +274,8 @@ def test_pqueue_by_servicebus_client_iter_messages_with_retrieve_deferred_client
             message.complete()
 
     with pytest.raises(ValueError):
-        queue_client.settle_deferred_messages('foo', message)
-    queue_client.settle_deferred_messages('completed', message)
+        queue_client.settle_deferred_messages('foo', deferred)
+    queue_client.settle_deferred_messages('completed', deferred)
 
     with pytest.raises(ServiceBusError):
         queue_client.receive_deferred_messages(deferred_messages)
@@ -919,7 +919,7 @@ def test_pqueue_schedule_message(live_servicebus_config, partitioned_queue):
         debug=True)
     import uuid
     queue_client = client.get_queue(partitioned_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.now(tz=timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
     with queue_client.get_receiver() as receiver:
         with queue_client.get_sender() as sender:
             content = str(uuid.uuid4())
@@ -953,7 +953,7 @@ def test_pqueue_schedule_multiple_messages(live_servicebus_config, partitioned_q
         debug=True)
     import uuid
     queue_client = client.get_queue(partitioned_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.now(tz=timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
     with queue_client.get_receiver(prefetch=20) as receiver:
         with queue_client.get_sender() as sender:
             content = str(uuid.uuid4())
@@ -991,7 +991,7 @@ def test_pqueue_cancel_scheduled_messages(live_servicebus_config, partitioned_qu
         debug=True)
 
     queue_client = client.get_queue(partitioned_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.now(tz=timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
     with queue_client.get_receiver() as receiver:
         with queue_client.get_sender() as sender:
             message_a = Message("Test scheduled message")

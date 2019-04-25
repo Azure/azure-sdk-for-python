@@ -17,6 +17,7 @@ from ._common_error import (
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_UNLOCK,
     _ERROR_MESSAGE_NOT_PEEK_LOCKED_ON_RENEW_LOCK)
 
+
 class AzureServiceBusPeekLockError(AzureException):
     '''Indicates that peek-lock is required for this operation.'''
 
@@ -36,7 +37,10 @@ class Queue(WindowsAzureData):
                  dead_lettering_on_message_expiration=None,
                  duplicate_detection_history_time_window=None,
                  max_delivery_count=None, enable_batched_operations=None,
-                 size_in_bytes=None, message_count=None):
+                 auto_delete_on_idle=None, enable_partitioning=None,
+                 forward_dead_lettered_message_to=None,
+                 forward_to=None, path=None, status=None,
+                 user_metadata=None):
 
         self.lock_duration = lock_duration
         self.max_size_in_megabytes = max_size_in_megabytes
@@ -49,8 +53,17 @@ class Queue(WindowsAzureData):
             duplicate_detection_history_time_window
         self.max_delivery_count = max_delivery_count
         self.enable_batched_operations = enable_batched_operations
-        self.size_in_bytes = size_in_bytes
-        self.message_count = message_count
+        self.size_in_bytes = None
+        self.message_count = None
+        self.authorization_rules = []
+        self.auto_delete_on_idle = auto_delete_on_idle
+        self.availability_status = None
+        self.enable_partitioning = enable_partitioning
+        self.forward_dead_lettered_message_to = forward_dead_lettered_message_to
+        self.forward_to = forward_to
+        self.path = path
+        self.status = status
+        self.user_metadata = user_metadata
 
 
 class Topic(WindowsAzureData):
@@ -61,15 +74,26 @@ class Topic(WindowsAzureData):
     def __init__(self, default_message_time_to_live=None,
                  max_size_in_megabytes=None, requires_duplicate_detection=None,
                  duplicate_detection_history_time_window=None,
-                 enable_batched_operations=None, size_in_bytes=None):
-
+                 enable_batched_operations=None,
+                 auto_delete_on_idle=None,
+                 enable_partitioning=None, status=None,
+                 support_ordering=None, user_metadata=None
+                 ):
         self.default_message_time_to_live = default_message_time_to_live
         self.max_size_in_megabytes = max_size_in_megabytes
         self.requires_duplicate_detection = requires_duplicate_detection
         self.duplicate_detection_history_time_window = \
             duplicate_detection_history_time_window
         self.enable_batched_operations = enable_batched_operations
-        self.size_in_bytes = size_in_bytes
+        self.size_in_bytes = None
+        self.authorization_rules = []
+        self.auto_delete_on_idle = auto_delete_on_idle
+        self.enable_partitioning = enable_partitioning
+        self.path = None
+        self.status = status
+        self.support_ordering = support_ordering
+        self.user_metadata = user_metadata
+
 
     @property
     def max_size_in_mega_bytes(self):
@@ -93,7 +117,10 @@ class Subscription(WindowsAzureData):
                  dead_lettering_on_message_expiration=None,
                  dead_lettering_on_filter_evaluation_exceptions=None,
                  enable_batched_operations=None, max_delivery_count=None,
-                 message_count=None):
+                 auto_delete_on_idle=None,
+                 forward_dead_lettered_message_to=None,
+                 forward_to=None, status=None, user_metadata=None,
+                 default_rule_description=None):
 
         self.lock_duration = lock_duration
         self.requires_session = requires_session
@@ -104,7 +131,14 @@ class Subscription(WindowsAzureData):
             dead_lettering_on_filter_evaluation_exceptions
         self.enable_batched_operations = enable_batched_operations
         self.max_delivery_count = max_delivery_count
-        self.message_count = message_count
+        self.message_count = None
+        self.auto_delete_on_idle = auto_delete_on_idle
+        self.forward_dead_lettered_message_to = forward_dead_lettered_message_to
+        self.forward_to = forward_to
+        self.status = status
+        self.topic_path = None
+        self.user_metadata = user_metadata
+        self.default_rule_description = default_rule_description
 
 
 class Rule(WindowsAzureData):
@@ -113,29 +147,40 @@ class Rule(WindowsAzureData):
     http://msdn.microsoft.com/en-us/library/windowsazure/hh780753. '''
 
     def __init__(self, filter_type=None, filter_expression=None,
-                 action_type=None, action_expression=None):
+                 action_type=None, action_expression=None,
+                 is_read_only=None, name=None):
         self.filter_type = filter_type
         self.filter_expression = filter_expression
         self.action_type = action_type
         self.action_expression = action_expression
+        self.created_at = None
+        self.is_read_only = is_read_only
+        self.name = name
 
 
 class EventHub(WindowsAzureData):
 
     def __init__(self, message_retention_in_days=None, status=None,
-                 user_metadata=None, partition_count=None):
+                 user_metadata=None, partition_count=None,
+                 is_read_only=None):
         self.message_retention_in_days = message_retention_in_days
         self.status = status
         self.user_metadata = user_metadata
         self.partition_count = partition_count
         self.authorization_rules = []
         self.partition_ids = []
+        self.created_at = None
+        self.is_read_only = is_read_only
+        self.path = None
+        self.updated_at = None
 
 
 class AuthorizationRule(WindowsAzureData):
 
     def __init__(self, claim_type=None, claim_value=None, rights=None,
-                 key_name=None, primary_key=None, secondary_key=None):
+                 key_name=None, primary_key=None, secondary_key=None,
+                 created_time=None, modified_time=None,
+                 issuer_name=None, revision=None):
         self.claim_type = claim_type
         self.claim_value = claim_value
         self.rights = rights or []
@@ -144,6 +189,17 @@ class AuthorizationRule(WindowsAzureData):
         self.key_name = key_name
         self.primary_key = primary_key
         self.secondary_key = secondary_key
+        self.issuer_name = issuer_name
+        self.revision = revision
+
+
+class MessageCountDetails(WindowsAzureData):
+    def __init__(self):
+        self.active_message_count = None
+        self.dead_letter_message_count = None
+        self.scheduled_message_count = None
+        self.transfer_dead_letter_message_count = None
+        self.transfer_message_count = None
 
 
 class Message(WindowsAzureData):
