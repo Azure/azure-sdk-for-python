@@ -130,6 +130,12 @@ class DatabaseUpdate(Model):
     :type read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
     :ivar current_sku: The name and tier of the SKU.
     :vartype current_sku: ~azure.mgmt.sql.models.Sku
+    :param auto_pause_delay: Time in minutes after which database is
+     automatically paused. A value of -1 means that automatic pause is disabled
+    :type auto_pause_delay: int
+    :param min_capacity: Minimal capacity that database will always have
+     allocated, if not paused
+    :type min_capacity: float
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -175,10 +181,12 @@ class DatabaseUpdate(Model):
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
         'read_scale': {'key': 'properties.readScale', 'type': 'str'},
         'current_sku': {'key': 'properties.currentSku', 'type': 'Sku'},
+        'auto_pause_delay': {'key': 'properties.autoPauseDelay', 'type': 'int'},
+        'min_capacity': {'key': 'properties.minCapacity', 'type': 'float'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, sku=None, create_mode=None, collation: str=None, max_size_bytes: int=None, sample_name=None, elastic_pool_id: str=None, source_database_id: str=None, restore_point_in_time=None, source_database_deletion_date=None, recovery_services_recovery_point_id: str=None, long_term_retention_backup_resource_id: str=None, recoverable_database_id: str=None, restorable_dropped_database_id: str=None, catalog_collation=None, zone_redundant: bool=None, license_type=None, read_scale=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, create_mode=None, collation: str=None, max_size_bytes: int=None, sample_name=None, elastic_pool_id: str=None, source_database_id: str=None, restore_point_in_time=None, source_database_deletion_date=None, recovery_services_recovery_point_id: str=None, long_term_retention_backup_resource_id: str=None, recoverable_database_id: str=None, restorable_dropped_database_id: str=None, catalog_collation=None, zone_redundant: bool=None, license_type=None, read_scale=None, auto_pause_delay: int=None, min_capacity: float=None, tags=None, **kwargs) -> None:
         super(DatabaseUpdate, self).__init__(**kwargs)
         self.sku = sku
         self.create_mode = create_mode
@@ -207,4 +215,6 @@ class DatabaseUpdate(Model):
         self.earliest_restore_date = None
         self.read_scale = read_scale
         self.current_sku = None
+        self.auto_pause_delay = auto_pause_delay
+        self.min_capacity = min_capacity
         self.tags = tags
