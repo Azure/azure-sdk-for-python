@@ -37,6 +37,7 @@ import xml.etree.ElementTree as ET
 from typing import List, Any, Dict, Union, IO, Tuple, Optional, Callable, Iterator, cast, TYPE_CHECKING  # pylint: disable=unused-import
 
 from .pipeline import AsyncPipeline
+from .pipeline.policies import ContentDecodePolicy
 from .pipeline.transport import HttpRequest, AioHttpTransport
 
 _LOGGER = logging.getLogger(__name__)
@@ -48,22 +49,22 @@ class AsyncPipelineClient(object):
     :param Configuration config: Service configuration.
     """
 
-    def __init__(self, base_url, config, pipeline=None):
+    def __init__(self, base_url, config, **kwargs):
         if config is None:
             raise ValueError("Config is a required parameter")
         self._config = config
         self._base_url = base_url
-        self._transport = AioHttpTransport(config)
-        self._pipeline = pipeline or self._build_pipeline(config)
+        self._transport = kwargs.get('transport', AioHttpTransport(config))
+        self._pipeline = kwargs.get('pipeline', self._build_pipeline(config))
 
     def _build_pipeline(self, config):
         policies = [
-            config.user_agent_policy,  # UserAgent policy
-            config.logging_policy,
             config.headers_policy,
-            config.proxy_policy,
+            config.user_agent_policy,
+            ContentDecodePolicy(),
             config.redirect_policy,
-            config.retry_policy
+            config.retry_policy,
+            config.logging_policy,
         ]
 
         return AsyncPipeline(

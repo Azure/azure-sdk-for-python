@@ -301,7 +301,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         :raises xml.etree.ElementTree.ParseError: If bytes is not valid XML
         """
         # If response was asked as stream, do NOT read anything and quit now
-        if request.context.options.get("stream", True):
+        if request.context.options.get("stream", False):
             return
 
         http_response = response.http_response

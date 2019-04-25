@@ -28,7 +28,11 @@ from typing import Any, Callable, AsyncIterator, Optional
 import aiohttp
 
 from .base import HttpRequest
-from .base_async import AsyncHttpTransport, AsyncHttpResponse
+from .base_async import (
+    AsyncHttpTransport,
+    AsyncHttpResponse,
+    _ResponseStopIteration,
+    _iterate_response_content)
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -95,10 +99,33 @@ class AioHttpTransport(AsyncHttpTransport):
         return response
 
 
+class AioHttpStreamDownloadGenerator(AsyncIterator):
+
+    def __init__(self, response: aiohttp.ClientResponse, block_size: int) -> None:
+        self.response = response
+        self.block_size = block_size
+        self.iter_content_func = self.response.content.read(self.block_size)
+        self.content_length = int(response.headers.get('Content-Length', 0))
+
+    def __len__(self):
+        return self.content_length
+
+    async def __anext__(self):
+        try:
+            chunk = await self.iter_content_func
+            if not chunk:
+                self.response.close()
+                raise StopAsyncIteration()
+            return chunk
+        except Exception as err:
+            _LOGGER.warning("Unable to stream download: %s", err)
+            self.response.close()
+            raise
+
 class AioHttpTransportResponse(AsyncHttpResponse):
 
-    def __init__(self, request: HttpRequest, aiohttp_response: aiohttp.ClientResponse, blob_size: int) -> None:
-        super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, blob_size)
+    def __init__(self, request: HttpRequest, aiohttp_response: aiohttp.ClientResponse, block_size: int) -> None:
+        super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         self.status_code = aiohttp_response.status
         self.headers = aiohttp_response.headers
@@ -116,14 +143,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         """Load in memory the body, so it could be accessible from sync methods."""
         self._body = await self.internal_response.read()
 
-    def stream_download(self, chunk_size: Optional[int] = None, callback: Optional[Callable] = None) -> AsyncIterator[bytes]:
+    def stream_download(self) -> AsyncIterator[bytes]:
         """Generator for streaming request body data.
         """
-        chunk_size = chunk_size or CONTENT_CHUNK_SIZE
-        async def async_gen(resp):
-            while True:
-                chunk = await resp.content.read(chunk_size)
-                if not chunk:
-                    break
-                callback(chunk, resp)
-        return async_gen(self.internal_response)
+        return AioHttpStreamDownloadGenerator(self.internal_response, self.block_size)
