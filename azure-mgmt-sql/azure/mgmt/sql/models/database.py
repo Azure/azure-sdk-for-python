@@ -146,6 +146,12 @@ class Database(TrackedResource):
     :type read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
     :ivar current_sku: The name and tier of the SKU.
     :vartype current_sku: ~azure.mgmt.sql.models.Sku
+    :param auto_pause_delay: Time in minutes after which database is
+     automatically paused. A value of -1 means that automatic pause is disabled
+    :type auto_pause_delay: int
+    :param min_capacity: Minimal capacity that database will always have
+     allocated, if not paused
+    :type min_capacity: float
     """
 
     _validation = {
@@ -202,6 +208,8 @@ class Database(TrackedResource):
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
         'read_scale': {'key': 'properties.readScale', 'type': 'str'},
         'current_sku': {'key': 'properties.currentSku', 'type': 'Sku'},
+        'auto_pause_delay': {'key': 'properties.autoPauseDelay', 'type': 'int'},
+        'min_capacity': {'key': 'properties.minCapacity', 'type': 'float'},
     }
 
     def __init__(self, **kwargs):
@@ -235,3 +243,5 @@ class Database(TrackedResource):
         self.earliest_restore_date = None
         self.read_scale = kwargs.get('read_scale', None)
         self.current_sku = None
+        self.auto_pause_delay = kwargs.get('auto_pause_delay', None)
+        self.min_capacity = kwargs.get('min_capacity', None)
