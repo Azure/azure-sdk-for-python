@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class HierarchicalEntityModel(Model):
-    """A Hierarchical Entity Extractor.
+    """A hierarchical entity extractor.
 
     :param children: Child entities.
     :type children: list[str]

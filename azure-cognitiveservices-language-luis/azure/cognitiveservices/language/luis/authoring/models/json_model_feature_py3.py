@@ -22,17 +22,14 @@ class JSONModelFeature(Model):
     :param words: List of comma-separated phrases that represent the
      Phraselist.
     :type words: str
-    :param mode: An exchangeable phrase list feature are serves as single
-     feature to the LUIS underlying training algorithm. It is used as a lexicon
+    :param mode: An interchangeable phrase list feature serves as a list of
+     synonyms for training. A non-exchangeable phrase list serves as separate
+     features for training. So, if your non-interchangeable phrase list
+     contains 5 phrases, they will be mapped to 5 separate features. You can
+     think of the non-interchangeable phrase list as an additional bag of words
+     to add to LUIS existing vocabulary features. It is used as a lexicon
      lookup feature where its value is 1 if the lexicon contains a given word
-     or 0 if it doesn’t. Think of an exchangeable as a synonyms list. A
-     non-exchangeable phrase list feature has all the phrases in the list serve
-     as separate features to the underlying training algorithm. So, if you your
-     phrase list feature contains 5 phrases, they will be mapped to 5 separate
-     features. You can think of the non-exchangeable phrase list feature as an
-     additional bag of words that you are willing to add to LUIS existing
-     vocabulary features. Think of a non-exchangeable as set of different
-     words. Default value is true.
+     or 0 if it doesn’t.  Default value is true.
     :type mode: bool
     """
 
