@@ -76,7 +76,8 @@ class HeadersPolicy(SansIOHTTPPolicy):
         # type: (PipelineRequest, Any) -> None
         additional_headers = request.context.options.pop('headers', {})
         request.http_request.headers.update(self.headers)
-        request.http_request.headers.update(additional_headers)
+        if additional_headers:
+            request.http_request.headers.update(additional_headers)
 
 
 class UserAgentPolicy(SansIOHTTPPolicy):
