@@ -14,7 +14,6 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.usage_details_operations import UsageDetailsOperations
-from .operations.usage_details_list_operations import UsageDetailsListOperations
 from .operations.marketplaces_operations import MarketplacesOperations
 from .operations.budgets_operations import BudgetsOperations
 from .operations.tags_operations import TagsOperations
@@ -70,8 +69,6 @@ class ConsumptionManagementClient(SDKClient):
 
     :ivar usage_details: UsageDetails operations
     :vartype usage_details: azure.mgmt.consumption.operations.UsageDetailsOperations
-    :ivar usage_details_list: UsageDetailsList operations
-    :vartype usage_details_list: azure.mgmt.consumption.operations.UsageDetailsListOperations
     :ivar marketplaces: Marketplaces operations
     :vartype marketplaces: azure.mgmt.consumption.operations.MarketplacesOperations
     :ivar budgets: Budgets operations
@@ -117,8 +114,6 @@ class ConsumptionManagementClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
         self.usage_details = UsageDetailsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.usage_details_list = UsageDetailsListOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.marketplaces = MarketplacesOperations(
             self._client, self.config, self._serialize, self._deserialize)

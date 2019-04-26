@@ -10,7 +10,6 @@
 # --------------------------------------------------------------------------
 
 from .usage_details_operations import UsageDetailsOperations
-from .usage_details_list_operations import UsageDetailsListOperations
 from .marketplaces_operations import MarketplacesOperations
 from .budgets_operations import BudgetsOperations
 from .tags_operations import TagsOperations
@@ -26,7 +25,6 @@ from .aggregated_cost_operations import AggregatedCostOperations
 
 __all__ = [
     'UsageDetailsOperations',
-    'UsageDetailsListOperations',
     'MarketplacesOperations',
     'BudgetsOperations',
     'TagsOperations',
