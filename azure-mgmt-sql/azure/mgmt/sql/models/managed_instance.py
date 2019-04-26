@@ -86,8 +86,10 @@ class ManagedInstance(TrackedResource):
     :param restore_point_in_time: Specifies the point in time (ISO8601 format)
      of the source database that will be restored to create the new database.
     :type restore_point_in_time: datetime
-    :param proxy_override: Proxy override of the managed instance.
-    :type proxy_override: str
+    :param proxy_override: Connection type used for connecting to the
+     instance. Possible values include: 'Proxy', 'Redirect', 'Default'
+    :type proxy_override: str or
+     ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
     :param timezone_id: Id of the timezone. Allowed values are timezones
      supported by Windows.
      Windows keeps details on supported timezones, including the id, in

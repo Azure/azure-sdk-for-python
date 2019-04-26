@@ -86,8 +86,10 @@ class ManagedInstance(TrackedResource):
     :param restore_point_in_time: Specifies the point in time (ISO8601 format)
      of the source database that will be restored to create the new database.
     :type restore_point_in_time: datetime
-    :param proxy_override: Proxy override of the managed instance.
-    :type proxy_override: str
+    :param proxy_override: Connection type used for connecting to the
+     instance. Possible values include: 'Proxy', 'Redirect', 'Default'
+    :type proxy_override: str or
+     ~azure.mgmt.sql.models.ManagedInstanceProxyOverride
     :param timezone_id: Id of the timezone. Allowed values are timezones
      supported by Windows.
      Windows keeps details on supported timezones, including the id, in
@@ -144,7 +146,7 @@ class ManagedInstance(TrackedResource):
         'instance_pool_id': {'key': 'properties.instancePoolId', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, sku=None, managed_instance_create_mode=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, public_data_endpoint_enabled: bool=None, source_managed_instance_id: str=None, restore_point_in_time=None, proxy_override: str=None, timezone_id: str=None, instance_pool_id: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, sku=None, managed_instance_create_mode=None, administrator_login: str=None, administrator_login_password: str=None, subnet_id: str=None, license_type=None, v_cores: int=None, storage_size_in_gb: int=None, collation: str=None, dns_zone_partner: str=None, public_data_endpoint_enabled: bool=None, source_managed_instance_id: str=None, restore_point_in_time=None, proxy_override=None, timezone_id: str=None, instance_pool_id: str=None, **kwargs) -> None:
         super(ManagedInstance, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.sku = sku
