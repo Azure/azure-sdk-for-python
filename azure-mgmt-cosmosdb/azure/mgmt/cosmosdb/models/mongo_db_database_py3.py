@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
-class MongodbDatabase(Resource):
-    """An Azure Cosmos DB Mongodb database.
+class MongoDBDatabase(Resource):
+    """An Azure Cosmos DB MongoDB database.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,16 +31,16 @@ class MongodbDatabase(Resource):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param mongodb_database_id: Required. Name of the Cosmos DB Mongodb
+    :param mongo_db_database_id: Required. Name of the Cosmos DB MongoDB
      database
-    :type mongodb_database_id: str
+    :type mongo_db_database_id: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'mongodb_database_id': {'required': True},
+        'mongo_db_database_id': {'required': True},
     }
 
     _attribute_map = {
@@ -49,9 +49,9 @@ class MongodbDatabase(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'mongodb_database_id': {'key': 'properties.id', 'type': 'str'},
+        'mongo_db_database_id': {'key': 'properties.id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(MongodbDatabase, self).__init__(**kwargs)
-        self.mongodb_database_id = kwargs.get('mongodb_database_id', None)
+    def __init__(self, *, mongo_db_database_id: str, location: str=None, tags=None, **kwargs) -> None:
+        super(MongoDBDatabase, self).__init__(location=location, tags=tags, **kwargs)
+        self.mongo_db_database_id = mongo_db_database_id

@@ -12,13 +12,18 @@
 from msrest.serialization import Model
 
 
-class MongodbDatabaseResource(Model):
-    """Cosmos DB Mongodb database id object.
+class MongoDBCollectionResource(Model):
+    """Cosmos DB MongoDB collection resource object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Name of the Cosmos DB Mongodb database
+    :param id: Required. Name of the Cosmos DB MongoDB collection
     :type id: str
+    :param shard_key: A key-value pair of shard keys to be applied for the
+     request.
+    :type shard_key: dict[str, str]
+    :param indexes: List of index keys
+    :type indexes: list[~azure.mgmt.cosmosdb.models.MongoIndex]
     """
 
     _validation = {
@@ -27,8 +32,12 @@ class MongodbDatabaseResource(Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
+        'shard_key': {'key': 'shardKey', 'type': '{str}'},
+        'indexes': {'key': 'indexes', 'type': '[MongoIndex]'},
     }
 
-    def __init__(self, **kwargs):
-        super(MongodbDatabaseResource, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
+    def __init__(self, *, id: str, shard_key=None, indexes=None, **kwargs) -> None:
+        super(MongoDBCollectionResource, self).__init__(**kwargs)
+        self.id = id
+        self.shard_key = shard_key
+        self.indexes = indexes

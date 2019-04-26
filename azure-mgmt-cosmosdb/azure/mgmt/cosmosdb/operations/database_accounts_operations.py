@@ -2092,9 +2092,9 @@ class DatabaseAccountsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete_sql_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers/{containerName}'}
 
-    def list_mongodb_databases(
+    def list_mongo_db_databases(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the Mongodb databases under an existing Azure Cosmos DB database
+        """Lists the MongoDB databases under an existing Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
@@ -2106,16 +2106,16 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of MongodbDatabase
+        :return: An iterator like instance of MongoDBDatabase
         :rtype:
-         ~azure.mgmt.cosmosdb.models.MongodbDatabasePaged[~azure.mgmt.cosmosdb.models.MongodbDatabase]
+         ~azure.mgmt.cosmosdb.models.MongoDBDatabasePaged[~azure.mgmt.cosmosdb.models.MongoDBDatabase]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_mongodb_databases.metadata['url']
+                url = self.list_mongo_db_databases.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -2153,19 +2153,19 @@ class DatabaseAccountsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.MongodbDatabasePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.MongoDBDatabasePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.MongodbDatabasePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.MongoDBDatabasePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_mongodb_databases.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases'}
+    list_mongo_db_databases.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases'}
 
-    def get_mongodb_database(
+    def get_mongo_db_database(
             self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the Mongodb databases under an existing Azure Cosmos DB database
+        """Gets the MongoDB databases under an existing Azure Cosmos DB database
         account with the provided name.
 
         :param resource_group_name: Name of an Azure resource group.
@@ -2179,13 +2179,13 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: MongodbDatabase or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.MongodbDatabase or
+        :return: MongoDBDatabase or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.MongoDBDatabase or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_mongodb_database.metadata['url']
+        url = self.get_mongo_db_database.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -2220,22 +2220,22 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('MongodbDatabase', response)
+            deserialized = self._deserialize('MongoDBDatabase', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_mongodb_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}'}
+    get_mongo_db_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}'}
 
 
-    def _create_update_mongodb_database_initial(
+    def _create_update_mongo_db_database_initial(
             self, resource_group_name, account_name, database_name, resource, options, custom_headers=None, raw=False, **operation_config):
-        create_update_mongodb_database_parameters = models.MongodbDatabaseCreateUpdateParameters(resource=resource, options=options)
+        create_update_mongo_db_database_parameters = models.MongoDBDatabaseCreateUpdateParameters(resource=resource, options=options)
 
         # Construct URL
-        url = self.create_update_mongodb_database.metadata['url']
+        url = self.create_update_mongo_db_database.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -2260,7 +2260,7 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_update_mongodb_database_parameters, 'MongodbDatabaseCreateUpdateParameters')
+        body_content = self._serialize.body(create_update_mongo_db_database_parameters, 'MongoDBDatabaseCreateUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -2274,7 +2274,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('MongodbDatabase', response)
+            deserialized = self._deserialize('MongoDBDatabase', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -2282,9 +2282,9 @@ class DatabaseAccountsOperations(object):
 
         return deserialized
 
-    def create_update_mongodb_database(
+    def create_update_mongo_db_database(
             self, resource_group_name, account_name, database_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or updates Azure Cosmos DB Mongodb database.
+        """Create or updates Azure Cosmos DB MongoDB database.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -2292,8 +2292,8 @@ class DatabaseAccountsOperations(object):
         :type account_name: str
         :param database_name: Cosmos DB database name.
         :type database_name: str
-        :param resource: The standard JSON format of a Mongodb database
-        :type resource: ~azure.mgmt.cosmosdb.models.MongodbDatabaseResource
+        :param resource: The standard JSON format of a MongoDB database
+        :type resource: ~azure.mgmt.cosmosdb.models.MongoDBDatabaseResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
         :type options: dict[str, str]
@@ -2302,15 +2302,15 @@ class DatabaseAccountsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns MongodbDatabase or
-         ClientRawResponse<MongodbDatabase> if raw==True
+        :return: An instance of LROPoller that returns MongoDBDatabase or
+         ClientRawResponse<MongoDBDatabase> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongodbDatabase]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongoDBDatabase]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongodbDatabase]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongoDBDatabase]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_update_mongodb_database_initial(
+        raw_result = self._create_update_mongo_db_database_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
             database_name=database_name,
@@ -2322,7 +2322,7 @@ class DatabaseAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('MongodbDatabase', response)
+            deserialized = self._deserialize('MongoDBDatabase', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -2337,13 +2337,13 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_update_mongodb_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}'}
+    create_update_mongo_db_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}'}
 
 
-    def _delete_mongodb_database_initial(
+    def _delete_mongo_db_database_initial(
             self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.delete_mongodb_database.metadata['url']
+        url = self.delete_mongo_db_database.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -2378,9 +2378,9 @@ class DatabaseAccountsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def delete_mongodb_database(
+    def delete_mongo_db_database(
             self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes an existing Azure Cosmos DB Mongodb database.
+        """Deletes an existing Azure Cosmos DB MongoDB database.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -2399,7 +2399,7 @@ class DatabaseAccountsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._delete_mongodb_database_initial(
+        raw_result = self._delete_mongo_db_database_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
             database_name=database_name,
@@ -2420,11 +2420,11 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_mongodb_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}'}
+    delete_mongo_db_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}'}
 
-    def list_mongodb_collections(
+    def list_mongo_db_collections(
             self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the Mongodb collection under an existing Azure Cosmos DB database
+        """Lists the MongoDB collection under an existing Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
@@ -2438,16 +2438,16 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of MongodbCollection
+        :return: An iterator like instance of MongoDBCollection
         :rtype:
-         ~azure.mgmt.cosmosdb.models.MongodbCollectionPaged[~azure.mgmt.cosmosdb.models.MongodbCollection]
+         ~azure.mgmt.cosmosdb.models.MongoDBCollectionPaged[~azure.mgmt.cosmosdb.models.MongoDBCollection]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_mongodb_collections.metadata['url']
+                url = self.list_mongo_db_collections.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -2486,19 +2486,19 @@ class DatabaseAccountsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.MongodbCollectionPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.MongoDBCollectionPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.MongodbCollectionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.MongoDBCollectionPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_mongodb_collections.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections'}
+    list_mongo_db_collections.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections'}
 
-    def get_mongodb_collection(
+    def get_mongo_db_collection(
             self, resource_group_name, account_name, database_name, collection_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the Mongodb collection under an existing Azure Cosmos DB database
+        """Gets the MongoDB collection under an existing Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
@@ -2514,13 +2514,13 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: MongodbCollection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.MongodbCollection or
+        :return: MongoDBCollection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.MongoDBCollection or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_mongodb_collection.metadata['url']
+        url = self.get_mongo_db_collection.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -2556,22 +2556,22 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('MongodbCollection', response)
+            deserialized = self._deserialize('MongoDBCollection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_mongodb_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections/{collectionName}'}
+    get_mongo_db_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections/{collectionName}'}
 
 
-    def _create_update_mongodb_collection_initial(
+    def _create_update_mongo_db_collection_initial(
             self, resource_group_name, account_name, database_name, collection_name, resource, options, custom_headers=None, raw=False, **operation_config):
-        create_update_mongodb_collection_parameters = models.MongodbCollectionCreateUpdateParameters(resource=resource, options=options)
+        create_update_mongo_db_collection_parameters = models.MongoDBCollectionCreateUpdateParameters(resource=resource, options=options)
 
         # Construct URL
-        url = self.create_update_mongodb_collection.metadata['url']
+        url = self.create_update_mongo_db_collection.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -2597,7 +2597,7 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_update_mongodb_collection_parameters, 'MongodbCollectionCreateUpdateParameters')
+        body_content = self._serialize.body(create_update_mongo_db_collection_parameters, 'MongoDBCollectionCreateUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -2611,7 +2611,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('MongodbCollection', response)
+            deserialized = self._deserialize('MongoDBCollection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -2619,9 +2619,9 @@ class DatabaseAccountsOperations(object):
 
         return deserialized
 
-    def create_update_mongodb_collection(
+    def create_update_mongo_db_collection(
             self, resource_group_name, account_name, database_name, collection_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update an Azure Cosmos DB Mongodb Collection.
+        """Create or update an Azure Cosmos DB MongoDB Collection.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -2631,8 +2631,8 @@ class DatabaseAccountsOperations(object):
         :type database_name: str
         :param collection_name: Cosmos DB collection name.
         :type collection_name: str
-        :param resource: The standard JSON format of a Mongodb collection
-        :type resource: ~azure.mgmt.cosmosdb.models.MongodbCollectionResource
+        :param resource: The standard JSON format of a MongoDB collection
+        :type resource: ~azure.mgmt.cosmosdb.models.MongoDBCollectionResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
         :type options: dict[str, str]
@@ -2641,15 +2641,15 @@ class DatabaseAccountsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns MongodbCollection or
-         ClientRawResponse<MongodbCollection> if raw==True
+        :return: An instance of LROPoller that returns MongoDBCollection or
+         ClientRawResponse<MongoDBCollection> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongodbCollection]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongoDBCollection]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongodbCollection]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongoDBCollection]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_update_mongodb_collection_initial(
+        raw_result = self._create_update_mongo_db_collection_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
             database_name=database_name,
@@ -2662,7 +2662,7 @@ class DatabaseAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('MongodbCollection', response)
+            deserialized = self._deserialize('MongoDBCollection', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -2677,13 +2677,13 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_update_mongodb_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections/{collectionName}'}
+    create_update_mongo_db_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections/{collectionName}'}
 
 
-    def _delete_mongodb_collection_initial(
+    def _delete_mongo_db_collection_initial(
             self, resource_group_name, account_name, database_name, collection_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.delete_mongodb_collection.metadata['url']
+        url = self.delete_mongo_db_collection.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -2719,9 +2719,9 @@ class DatabaseAccountsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def delete_mongodb_collection(
+    def delete_mongo_db_collection(
             self, resource_group_name, account_name, database_name, collection_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes an existing Azure Cosmos DB Mongodb Collection.
+        """Deletes an existing Azure Cosmos DB MongoDB Collection.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -2742,7 +2742,7 @@ class DatabaseAccountsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._delete_mongodb_collection_initial(
+        raw_result = self._delete_mongo_db_collection_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
             database_name=database_name,
@@ -2764,7 +2764,7 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_mongodb_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections/{collectionName}'}
+    delete_mongo_db_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections/{collectionName}'}
 
     def list_tables(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):

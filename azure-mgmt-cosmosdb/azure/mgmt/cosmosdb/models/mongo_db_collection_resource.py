@@ -12,12 +12,12 @@
 from msrest.serialization import Model
 
 
-class MongodbCollectionResource(Model):
-    """Cosmos DB Mongodb collection resource object.
+class MongoDBCollectionResource(Model):
+    """Cosmos DB MongoDB collection resource object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Name of the Cosmos DB Mongodb collection
+    :param id: Required. Name of the Cosmos DB MongoDB collection
     :type id: str
     :param shard_key: A key-value pair of shard keys to be applied for the
      request.
@@ -37,7 +37,7 @@ class MongodbCollectionResource(Model):
     }
 
     def __init__(self, **kwargs):
-        super(MongodbCollectionResource, self).__init__(**kwargs)
+        super(MongoDBCollectionResource, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.shard_key = kwargs.get('shard_key', None)
         self.indexes = kwargs.get('indexes', None)

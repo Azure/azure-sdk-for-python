@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class MongodbDatabasePaged(Paged):
+class MongoDBCollectionPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`MongodbDatabase <azure.mgmt.cosmosdb.models.MongodbDatabase>` object
+    A paging container for iterating over a list of :class:`MongoDBCollection <azure.mgmt.cosmosdb.models.MongoDBCollection>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[MongodbDatabase]'}
+        'current_page': {'key': 'value', 'type': '[MongoDBCollection]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(MongodbDatabasePaged, self).__init__(*args, **kwargs)
+        super(MongoDBCollectionPaged, self).__init__(*args, **kwargs)

@@ -12,12 +12,12 @@
 from msrest.serialization import Model
 
 
-class MongodbDatabaseResource(Model):
-    """Cosmos DB Mongodb database id object.
+class MongoDBDatabaseResource(Model):
+    """Cosmos DB MongoDB database id object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. Name of the Cosmos DB Mongodb database
+    :param id: Required. Name of the Cosmos DB MongoDB database
     :type id: str
     """
 
@@ -29,6 +29,6 @@ class MongodbDatabaseResource(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, **kwargs) -> None:
-        super(MongodbDatabaseResource, self).__init__(**kwargs)
-        self.id = id
+    def __init__(self, **kwargs):
+        super(MongoDBDatabaseResource, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

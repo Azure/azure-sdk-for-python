@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .resource import Resource
 
 
-class MongodbDatabase(Resource):
-    """An Azure Cosmos DB Mongodb database.
+class MongoDBCollection(Resource):
+    """An Azure Cosmos DB MongoDB collection.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,16 +31,21 @@ class MongodbDatabase(Resource):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param mongodb_database_id: Required. Name of the Cosmos DB Mongodb
-     database
-    :type mongodb_database_id: str
+    :param mongo_db_collection_id: Required. Name of the Cosmos DB MongoDB
+     collection
+    :type mongo_db_collection_id: str
+    :param shard_key: A key-value pair of shard keys to be applied for the
+     request.
+    :type shard_key: dict[str, str]
+    :param indexes: List of index keys
+    :type indexes: list[~azure.mgmt.cosmosdb.models.MongoIndex]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'mongodb_database_id': {'required': True},
+        'mongo_db_collection_id': {'required': True},
     }
 
     _attribute_map = {
@@ -49,9 +54,13 @@ class MongodbDatabase(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'mongodb_database_id': {'key': 'properties.id', 'type': 'str'},
+        'mongo_db_collection_id': {'key': 'properties.id', 'type': 'str'},
+        'shard_key': {'key': 'properties.shardKey', 'type': '{str}'},
+        'indexes': {'key': 'properties.indexes', 'type': '[MongoIndex]'},
     }
 
-    def __init__(self, *, mongodb_database_id: str, location: str=None, tags=None, **kwargs) -> None:
-        super(MongodbDatabase, self).__init__(location=location, tags=tags, **kwargs)
-        self.mongodb_database_id = mongodb_database_id
+    def __init__(self, **kwargs):
+        super(MongoDBCollection, self).__init__(**kwargs)
+        self.mongo_db_collection_id = kwargs.get('mongo_db_collection_id', None)
+        self.shard_key = kwargs.get('shard_key', None)
+        self.indexes = kwargs.get('indexes', None)
