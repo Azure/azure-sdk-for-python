@@ -12,21 +12,21 @@
 from msrest.serialization import Model
 
 
-class SubClosedList(Model):
-    """Sublist of items for a list entity.
+class AppVersionSettingObject(Model):
+    """Object model of an application version setting.
 
-    :param canonical_form: The standard form that the list represents.
-    :type canonical_form: str
-    :param list: List of synonym words.
-    :type list: list[str]
+    :param name: The application version setting name.
+    :type name: str
+    :param value: The application version setting value.
+    :type value: str
     """
 
     _attribute_map = {
-        'canonical_form': {'key': 'canonicalForm', 'type': 'str'},
-        'list': {'key': 'list', 'type': '[str]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(SubClosedList, self).__init__(**kwargs)
-        self.canonical_form = kwargs.get('canonical_form', None)
-        self.list = kwargs.get('list', None)
+        super(AppVersionSettingObject, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)

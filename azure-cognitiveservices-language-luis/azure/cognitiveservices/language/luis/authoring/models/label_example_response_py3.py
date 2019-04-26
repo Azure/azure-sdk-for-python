@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class LabelExampleResponse(Model):
-    """Response when adding a labeled example.
+    """Response when adding a labeled example utterance.
 
-    :param utterance_text: The sample's utterance.
+    :param utterance_text: The example utterance.
     :type utterance_text: str
     :param example_id: The newly created sample ID.
     :type example_id: int
