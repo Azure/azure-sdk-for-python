@@ -37,7 +37,7 @@ class MonitoringDetails(Model):
         'hana_subnet': {'key': 'hanaSubnet', 'type': 'str'},
         'hana_hostname': {'key': 'hanaHostname', 'type': 'str'},
         'hana_db_name': {'key': 'hanaDbName', 'type': 'str'},
-        'hana_db_sql_port': {'key': 'hanaDbSQLPort', 'type': 'int'},
+        'hana_db_sql_port': {'key': 'hanaDbSqlPort', 'type': 'int'},
         'hana_db_username': {'key': 'hanaDbUsername', 'type': 'str'},
         'hana_db_password': {'key': 'hanaDbPassword', 'type': 'str'},
     }
