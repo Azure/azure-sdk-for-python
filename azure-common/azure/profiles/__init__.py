@@ -154,12 +154,6 @@ class KnownProfiles(Enum):
             "azure.keyvault.KeyVaultClient": {
                 None: "2016-10-01"
             },
-            "azure.multiapi.storage": {
-                None: "2017-11-09"
-            },
-            "azure.multiapi.cosmosdb": {
-                None: "2017-04-17"
-            },
             "azure.mgmt.authorization.AuthorizationManagementClient": {
                 None: "2015-07-01"
             },
