@@ -38,11 +38,9 @@ class DeploymentOperations(object):
         self.config = config
 
     def get_at_management_group_scope(
-            self, deployment_name, operation_id, custom_headers=None, raw=False, **operation_config):
+            self, operation_id, custom_headers=None, raw=False, **operation_config):
         """Gets a deployments operation.
 
-        :param deployment_name: The name of the deployment.
-        :type deployment_name: str
         :param operation_id: The ID of the operation to get.
         :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -60,7 +58,7 @@ class DeploymentOperations(object):
         url = self.get_at_management_group_scope.metadata['url']
         path_format_arguments = {
             'groupId': self._serialize.url("self.config.group_id", self.config.group_id, 'str', max_length=90, min_length=1),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("self.config.deployment_name", self.config.deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'operationId': self._serialize.url("operation_id", operation_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -101,12 +99,9 @@ class DeploymentOperations(object):
     get_at_management_group_scope.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/operations/{operationId}'}
 
     def list_at_subscription_scope(
-            self, deployment_name, top=None, custom_headers=None, raw=False, **operation_config):
+            self, top=None, custom_headers=None, raw=False, **operation_config):
         """Gets all deployments operations for a deployment.
 
-        :param deployment_name: The name of the deployment with the operation
-         to get.
-        :type deployment_name: str
         :param top: The number of results to return.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
@@ -126,7 +121,7 @@ class DeploymentOperations(object):
                 url = self.list_at_subscription_scope.metadata['url']
                 path_format_arguments = {
                     'groupId': self._serialize.url("self.config.group_id", self.config.group_id, 'str', max_length=90, min_length=1),
-                    'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+                    'deploymentName': self._serialize.url("self.config.deployment_name", self.config.deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -173,11 +168,9 @@ class DeploymentOperations(object):
     list_at_subscription_scope.metadata = {'url': '/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/operations'}
 
     def get_at_subscription_scope(
-            self, deployment_name, operation_id, custom_headers=None, raw=False, **operation_config):
+            self, operation_id, custom_headers=None, raw=False, **operation_config):
         """Gets a deployments operation.
 
-        :param deployment_name: The name of the deployment.
-        :type deployment_name: str
         :param operation_id: The ID of the operation to get.
         :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -194,7 +187,7 @@ class DeploymentOperations(object):
         # Construct URL
         url = self.get_at_subscription_scope.metadata['url']
         path_format_arguments = {
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("self.config.deployment_name", self.config.deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'operationId': self._serialize.url("operation_id", operation_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -236,12 +229,9 @@ class DeploymentOperations(object):
     get_at_subscription_scope.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/operations/{operationId}'}
 
     def list_at_subscription_scope1(
-            self, deployment_name, top=None, custom_headers=None, raw=False, **operation_config):
+            self, top=None, custom_headers=None, raw=False, **operation_config):
         """Gets all deployments operations for a deployment.
 
-        :param deployment_name: The name of the deployment with the operation
-         to get.
-        :type deployment_name: str
         :param top: The number of results to return.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
@@ -260,7 +250,7 @@ class DeploymentOperations(object):
                 # Construct URL
                 url = self.list_at_subscription_scope1.metadata['url']
                 path_format_arguments = {
-                    'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'deploymentName': self._serialize.url("self.config.deployment_name", self.config.deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -308,14 +298,12 @@ class DeploymentOperations(object):
     list_at_subscription_scope1.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/operations'}
 
     def get(
-            self, resource_group_name, deployment_name, operation_id, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, operation_id, custom_headers=None, raw=False, **operation_config):
         """Gets a deployments operation.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param deployment_name: The name of the deployment.
-        :type deployment_name: str
         :param operation_id: The ID of the operation to get.
         :type operation_id: str
         :param dict custom_headers: headers that will be added to the request
@@ -333,7 +321,7 @@ class DeploymentOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'deploymentName': self._serialize.url("self.config.deployment_name", self.config.deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'operationId': self._serialize.url("operation_id", operation_id, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -375,15 +363,12 @@ class DeploymentOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/deployments/{deploymentName}/operations/{operationId}'}
 
     def list(
-            self, resource_group_name, deployment_name, top=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, top=None, custom_headers=None, raw=False, **operation_config):
         """Gets all deployments operations for a deployment.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
         :type resource_group_name: str
-        :param deployment_name: The name of the deployment with the operation
-         to get.
-        :type deployment_name: str
         :param top: The number of results to return.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
@@ -403,7 +388,7 @@ class DeploymentOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'deploymentName': self._serialize.url("deployment_name", deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'deploymentName': self._serialize.url("self.config.deployment_name", self.config.deployment_name, 'str', max_length=64, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)

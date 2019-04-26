@@ -17,20 +17,20 @@ class GenericResourceFilter(Model):
 
     :param resource_type: The resource type.
     :type resource_type: str
-    :param tagname: The tag name.
-    :type tagname: str
-    :param tagvalue: The tag value.
-    :type tagvalue: str
+    :param tag_name: The tag name.
+    :type tag_name: str
+    :param tag_value: The tag value.
+    :type tag_value: str
     """
 
     _attribute_map = {
         'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'tagname': {'key': 'tagname', 'type': 'str'},
-        'tagvalue': {'key': 'tagvalue', 'type': 'str'},
+        'tag_name': {'key': 'tagName', 'type': 'str'},
+        'tag_value': {'key': 'tagValue', 'type': 'str'},
     }
 
-    def __init__(self, *, resource_type: str=None, tagname: str=None, tagvalue: str=None, **kwargs) -> None:
+    def __init__(self, *, resource_type: str=None, tag_name: str=None, tag_value: str=None, **kwargs) -> None:
         super(GenericResourceFilter, self).__init__(**kwargs)
         self.resource_type = resource_type
-        self.tagname = tagname
-        self.tagvalue = tagvalue
+        self.tag_name = tag_name
+        self.tag_value = tag_value
