@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
-class MongoCollection(Resource):
-    """An Azure Cosmos DB Mongo collection.
+class MongoDBDatabase(Resource):
+    """An Azure Cosmos DB MongoDB database.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,21 +31,16 @@ class MongoCollection(Resource):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param mongo_collection_id: Required. Name of the Cosmos DB Mongo
-     collection
-    :type mongo_collection_id: str
-    :param shard_key: A key-value pair of shard keys to be applied for the
-     request.
-    :type shard_key: dict[str, str]
-    :param indexes: List of index keys
-    :type indexes: list[~azure.mgmt.cosmosdb.models.MongoIndex]
+    :param mongo_db_database_id: Required. Name of the Cosmos DB MongoDB
+     database
+    :type mongo_db_database_id: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'mongo_collection_id': {'required': True},
+        'mongo_db_database_id': {'required': True},
     }
 
     _attribute_map = {
@@ -54,13 +49,9 @@ class MongoCollection(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'mongo_collection_id': {'key': 'properties.id', 'type': 'str'},
-        'shard_key': {'key': 'properties.shardKey', 'type': '{str}'},
-        'indexes': {'key': 'properties.indexes', 'type': '[MongoIndex]'},
+        'mongo_db_database_id': {'key': 'properties.id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(MongoCollection, self).__init__(**kwargs)
-        self.mongo_collection_id = kwargs.get('mongo_collection_id', None)
-        self.shard_key = kwargs.get('shard_key', None)
-        self.indexes = kwargs.get('indexes', None)
+    def __init__(self, *, mongo_db_database_id: str, location: str=None, tags=None, **kwargs) -> None:
+        super(MongoDBDatabase, self).__init__(location=location, tags=tags, **kwargs)
+        self.mongo_db_database_id = mongo_db_database_id

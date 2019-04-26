@@ -13,10 +13,10 @@ from msrest.serialization import Model
 
 
 class MongoIndexKeys(Model):
-    """Cosmos DB Mongo collection resource object.
+    """Cosmos DB MongoDB collection resource object.
 
-    :param keys: List of keys for each Mongo collection in the Azure Cosmos DB
-     service
+    :param keys: List of keys for each MongoDB collection in the Azure Cosmos
+     DB service
     :type keys: list[str]
     """
 

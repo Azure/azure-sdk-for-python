@@ -12,13 +12,13 @@
 from msrest.serialization import Model
 
 
-class MongoDatabaseCreateUpdateParameters(Model):
-    """Parameters to create and update Cosmos DB Mongo database.
+class GremlinGraphCreateUpdateParameters(Model):
+    """Parameters to create and update Cosmos DB Gremlin graph.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param resource: Required. The standard JSON format of a Mongo database
-    :type resource: ~azure.mgmt.cosmosdb.models.MongoDatabaseResource
+    :param resource: Required. The standard JSON format of a Gremlin graph
+    :type resource: ~azure.mgmt.cosmosdb.models.GremlinGraphResource
     :param options: Required. A key-value pair of options to be applied for
      the request. This corresponds to the headers sent with the request.
     :type options: dict[str, str]
@@ -30,11 +30,11 @@ class MongoDatabaseCreateUpdateParameters(Model):
     }
 
     _attribute_map = {
-        'resource': {'key': 'properties.resource', 'type': 'MongoDatabaseResource'},
+        'resource': {'key': 'properties.resource', 'type': 'GremlinGraphResource'},
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
     def __init__(self, *, resource, options, **kwargs) -> None:
-        super(MongoDatabaseCreateUpdateParameters, self).__init__(**kwargs)
+        super(GremlinGraphCreateUpdateParameters, self).__init__(**kwargs)
         self.resource = resource
         self.options = options

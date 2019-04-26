@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class MongoIndexOptions(Model):
-    """Cosmos DB Mongo collection index options.
+    """Cosmos DB MongoDB collection index options.
 
     :param expire_after_seconds: Expire after seconds
     :type expire_after_seconds: int

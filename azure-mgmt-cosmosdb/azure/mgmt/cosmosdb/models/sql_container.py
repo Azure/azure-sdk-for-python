@@ -12,7 +12,7 @@
 from .resource import Resource
 
 
-class Container(Resource):
+class SqlContainer(Resource):
     """An Azure Cosmos DB container.
 
     Variables are only populated by the server, and will be ignored when
@@ -31,8 +31,8 @@ class Container(Resource):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param container_id: Required. Name of the Cosmos DB container
-    :type container_id: str
+    :param sql_container_id: Required. Name of the Cosmos DB SQL container
+    :type sql_container_id: str
     :param indexing_policy: The configuration of the indexing policy. By
      default, the indexing is automatic for all document paths within the
      container
@@ -64,7 +64,7 @@ class Container(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'container_id': {'required': True},
+        'sql_container_id': {'required': True},
     }
 
     _attribute_map = {
@@ -73,7 +73,7 @@ class Container(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'container_id': {'key': 'properties.id', 'type': 'str'},
+        'sql_container_id': {'key': 'properties.id', 'type': 'str'},
         'indexing_policy': {'key': 'properties.indexingPolicy', 'type': 'IndexingPolicy'},
         'partition_key': {'key': 'properties.partitionKey', 'type': 'ContainerPartitionKey'},
         'default_ttl': {'key': 'properties.defaultTtl', 'type': 'int'},
@@ -85,8 +85,8 @@ class Container(Resource):
     }
 
     def __init__(self, **kwargs):
-        super(Container, self).__init__(**kwargs)
-        self.container_id = kwargs.get('container_id', None)
+        super(SqlContainer, self).__init__(**kwargs)
+        self.sql_container_id = kwargs.get('sql_container_id', None)
         self.indexing_policy = kwargs.get('indexing_policy', None)
         self.partition_key = kwargs.get('partition_key', None)
         self.default_ttl = kwargs.get('default_ttl', None)

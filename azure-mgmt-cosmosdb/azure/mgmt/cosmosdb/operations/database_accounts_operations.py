@@ -1490,16 +1490,16 @@ class DatabaseAccountsOperations(object):
     list_sql_databases.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases'}
 
     def get_sql_database(
-            self, resource_group_name, account_name, database_rid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
         """Gets the SQL databases under an existing Azure Cosmos DB database
-        account with the provided id.
+        account with the provided name.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1516,7 +1516,7 @@ class DatabaseAccountsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1553,11 +1553,11 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_sql_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseRid}'}
+    get_sql_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}'}
 
 
     def _create_update_sql_database_initial(
-            self, resource_group_name, account_name, database_rid, resource, options, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, database_name, resource, options, custom_headers=None, raw=False, **operation_config):
         create_update_sql_database_parameters = models.SqlDatabaseCreateUpdateParameters(resource=resource, options=options)
 
         # Construct URL
@@ -1566,7 +1566,7 @@ class DatabaseAccountsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1609,15 +1609,15 @@ class DatabaseAccountsOperations(object):
         return deserialized
 
     def create_update_sql_database(
-            self, resource_group_name, account_name, database_rid, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, database_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update an Azure Cosmos DB SQL database.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
         :param resource: The standard JSON format of a SQL database
         :type resource: ~azure.mgmt.cosmosdb.models.SqlDatabaseResource
         :param options: A key-value pair of options to be applied for the
@@ -1639,7 +1639,7 @@ class DatabaseAccountsOperations(object):
         raw_result = self._create_update_sql_database_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            database_rid=database_rid,
+            database_name=database_name,
             resource=resource,
             options=options,
             custom_headers=custom_headers,
@@ -1663,18 +1663,18 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_update_sql_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseRid}'}
+    create_update_sql_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}'}
 
 
     def _delete_sql_database_initial(
-            self, resource_group_name, account_name, database_rid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete_sql_database.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1705,15 +1705,15 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
     def delete_sql_database(
-            self, resource_group_name, account_name, database_rid, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes an existing Azure Cosmos DB SQL database.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1728,7 +1728,7 @@ class DatabaseAccountsOperations(object):
         raw_result = self._delete_sql_database_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            database_rid=database_rid,
+            database_name=database_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -1746,10 +1746,10 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_sql_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseRid}'}
+    delete_sql_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}'}
 
     def list_sql_containers(
-            self, resource_group_name, account_name, database_rid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
         """Lists the SQL container under an existing Azure Cosmos DB database
         account.
 
@@ -1757,16 +1757,16 @@ class DatabaseAccountsOperations(object):
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Container
+        :return: An iterator like instance of SqlContainer
         :rtype:
-         ~azure.mgmt.cosmosdb.models.ContainerPaged[~azure.mgmt.cosmosdb.models.Container]
+         ~azure.mgmt.cosmosdb.models.SqlContainerPaged[~azure.mgmt.cosmosdb.models.SqlContainer]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -1778,7 +1778,7 @@ class DatabaseAccountsOperations(object):
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-                    'databaseRid': self._serialize.url("database_rid", database_rid, 'str')
+                    'databaseName': self._serialize.url("database_name", database_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -1812,18 +1812,18 @@ class DatabaseAccountsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ContainerPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.SqlContainerPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ContainerPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.SqlContainerPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_sql_containers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseRid}/containers'}
+    list_sql_containers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers'}
 
     def get_sql_container(
-            self, resource_group_name, account_name, database_rid, container_rid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, database_name, container_name, custom_headers=None, raw=False, **operation_config):
         """Gets the SQL container under an existing Azure Cosmos DB database
         account.
 
@@ -1831,17 +1831,17 @@ class DatabaseAccountsOperations(object):
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
-        :param container_rid: Cosmos DB container rid.
-        :type container_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param container_name: Cosmos DB container name.
+        :type container_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Container or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.Container or
+        :return: SqlContainer or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.SqlContainer or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -1851,8 +1851,8 @@ class DatabaseAccountsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-            'containerRid': self._serialize.url("container_rid", container_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'containerName': self._serialize.url("container_name", container_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1882,19 +1882,19 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Container', response)
+            deserialized = self._deserialize('SqlContainer', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_sql_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseRid}/containers/{containerRid}'}
+    get_sql_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers/{containerName}'}
 
 
     def _create_update_sql_container_initial(
-            self, resource_group_name, account_name, database_rid, container_rid, resource, options, custom_headers=None, raw=False, **operation_config):
-        create_update_sql_container_parameters = models.ContainerCreateUpdateParameters(resource=resource, options=options)
+            self, resource_group_name, account_name, database_name, container_name, resource, options, custom_headers=None, raw=False, **operation_config):
+        create_update_sql_container_parameters = models.SqlContainerCreateUpdateParameters(resource=resource, options=options)
 
         # Construct URL
         url = self.create_update_sql_container.metadata['url']
@@ -1902,8 +1902,8 @@ class DatabaseAccountsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-            'containerRid': self._serialize.url("container_rid", container_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'containerName': self._serialize.url("container_name", container_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -1923,7 +1923,7 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_update_sql_container_parameters, 'ContainerCreateUpdateParameters')
+        body_content = self._serialize.body(create_update_sql_container_parameters, 'SqlContainerCreateUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -1937,7 +1937,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Container', response)
+            deserialized = self._deserialize('SqlContainer', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -1946,19 +1946,19 @@ class DatabaseAccountsOperations(object):
         return deserialized
 
     def create_update_sql_container(
-            self, resource_group_name, account_name, database_rid, container_rid, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, database_name, container_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update an Azure Cosmos DB SQL container.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
-        :param container_rid: Cosmos DB container rid.
-        :type container_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param container_name: Cosmos DB container name.
+        :type container_name: str
         :param resource: The standard JSON format of a container
-        :type resource: ~azure.mgmt.cosmosdb.models.ContainerResource
+        :type resource: ~azure.mgmt.cosmosdb.models.SqlContainerResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
         :type options: dict[str, str]
@@ -1967,19 +1967,19 @@ class DatabaseAccountsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Container or
-         ClientRawResponse<Container> if raw==True
+        :return: An instance of LROPoller that returns SqlContainer or
+         ClientRawResponse<SqlContainer> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.Container]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlContainer]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.Container]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlContainer]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_update_sql_container_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            database_rid=database_rid,
-            container_rid=container_rid,
+            database_name=database_name,
+            container_name=container_name,
             resource=resource,
             options=options,
             custom_headers=custom_headers,
@@ -1988,7 +1988,7 @@ class DatabaseAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Container', response)
+            deserialized = self._deserialize('SqlContainer', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -2003,19 +2003,19 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_update_sql_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseRid}/containers/{containerRid}'}
+    create_update_sql_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers/{containerName}'}
 
 
     def _delete_sql_container_initial(
-            self, resource_group_name, account_name, database_rid, container_rid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, database_name, container_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete_sql_container.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-            'containerRid': self._serialize.url("container_rid", container_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'containerName': self._serialize.url("container_name", container_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2046,17 +2046,17 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
     def delete_sql_container(
-            self, resource_group_name, account_name, database_rid, container_rid, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, database_name, container_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes an existing Azure Cosmos DB SQL container.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
-        :param container_rid: Cosmos DB container rid.
-        :type container_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param container_name: Cosmos DB container name.
+        :type container_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -2071,8 +2071,8 @@ class DatabaseAccountsOperations(object):
         raw_result = self._delete_sql_container_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            database_rid=database_rid,
-            container_rid=container_rid,
+            database_name=database_name,
+            container_name=container_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -2090,11 +2090,11 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_sql_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseRid}/containers/{containerRid}'}
+    delete_sql_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers/{containerName}'}
 
-    def list_mongo_databases(
+    def list_mongo_db_databases(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the Mongo databases under an existing Azure Cosmos DB database
+        """Lists the MongoDB databases under an existing Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
@@ -2106,16 +2106,16 @@ class DatabaseAccountsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of MongoDatabase
+        :return: An iterator like instance of MongoDBDatabase
         :rtype:
-         ~azure.mgmt.cosmosdb.models.MongoDatabasePaged[~azure.mgmt.cosmosdb.models.MongoDatabase]
+         ~azure.mgmt.cosmosdb.models.MongoDBDatabasePaged[~azure.mgmt.cosmosdb.models.MongoDBDatabase]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_mongo_databases.metadata['url']
+                url = self.list_mongo_db_databases.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -2153,44 +2153,44 @@ class DatabaseAccountsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.MongoDatabasePaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.MongoDBDatabasePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.MongoDatabasePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.MongoDBDatabasePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_mongo_databases.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongo/databases'}
+    list_mongo_db_databases.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases'}
 
-    def get_mongo_database(
-            self, resource_group_name, account_name, database_rid, custom_headers=None, raw=False, **operation_config):
-        """Gets the Mongo databases under an existing Azure Cosmos DB database
-        account with the provided id.
+    def get_mongo_db_database(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the MongoDB databases under an existing Azure Cosmos DB database
+        account with the provided name.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: MongoDatabase or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.MongoDatabase or
+        :return: MongoDBDatabase or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.MongoDBDatabase or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_mongo_database.metadata['url']
+        url = self.get_mongo_db_database.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2220,27 +2220,27 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('MongoDatabase', response)
+            deserialized = self._deserialize('MongoDBDatabase', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_mongo_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongo/databases/{databaseRid}'}
+    get_mongo_db_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}'}
 
 
-    def _create_update_mongo_database_initial(
-            self, resource_group_name, account_name, database_rid, resource, options, custom_headers=None, raw=False, **operation_config):
-        create_update_mongo_database_parameters = models.MongoDatabaseCreateUpdateParameters(resource=resource, options=options)
+    def _create_update_mongo_db_database_initial(
+            self, resource_group_name, account_name, database_name, resource, options, custom_headers=None, raw=False, **operation_config):
+        create_update_mongo_db_database_parameters = models.MongoDBDatabaseCreateUpdateParameters(resource=resource, options=options)
 
         # Construct URL
-        url = self.create_update_mongo_database.metadata['url']
+        url = self.create_update_mongo_db_database.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2260,7 +2260,7 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_update_mongo_database_parameters, 'MongoDatabaseCreateUpdateParameters')
+        body_content = self._serialize.body(create_update_mongo_db_database_parameters, 'MongoDBDatabaseCreateUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -2274,7 +2274,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('MongoDatabase', response)
+            deserialized = self._deserialize('MongoDBDatabase', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -2282,18 +2282,18 @@ class DatabaseAccountsOperations(object):
 
         return deserialized
 
-    def create_update_mongo_database(
-            self, resource_group_name, account_name, database_rid, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or updates Azure Cosmos DB Mongo database.
+    def create_update_mongo_db_database(
+            self, resource_group_name, account_name, database_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or updates Azure Cosmos DB MongoDB database.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
-        :param resource: The standard JSON format of a Mongo database
-        :type resource: ~azure.mgmt.cosmosdb.models.MongoDatabaseResource
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param resource: The standard JSON format of a MongoDB database
+        :type resource: ~azure.mgmt.cosmosdb.models.MongoDBDatabaseResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
         :type options: dict[str, str]
@@ -2302,18 +2302,18 @@ class DatabaseAccountsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns MongoDatabase or
-         ClientRawResponse<MongoDatabase> if raw==True
+        :return: An instance of LROPoller that returns MongoDBDatabase or
+         ClientRawResponse<MongoDBDatabase> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongoDatabase]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongoDBDatabase]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongoDatabase]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongoDBDatabase]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_update_mongo_database_initial(
+        raw_result = self._create_update_mongo_db_database_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            database_rid=database_rid,
+            database_name=database_name,
             resource=resource,
             options=options,
             custom_headers=custom_headers,
@@ -2322,7 +2322,7 @@ class DatabaseAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('MongoDatabase', response)
+            deserialized = self._deserialize('MongoDBDatabase', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -2337,18 +2337,18 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_update_mongo_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongo/databases/{databaseRid}'}
+    create_update_mongo_db_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}'}
 
 
-    def _delete_mongo_database_initial(
-            self, resource_group_name, account_name, database_rid, custom_headers=None, raw=False, **operation_config):
+    def _delete_mongo_db_database_initial(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.delete_mongo_database.metadata['url']
+        url = self.delete_mongo_db_database.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2378,16 +2378,16 @@ class DatabaseAccountsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def delete_mongo_database(
-            self, resource_group_name, account_name, database_rid, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes an existing Azure Cosmos DB Mongo database.
+    def delete_mongo_db_database(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Azure Cosmos DB MongoDB database.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -2399,10 +2399,10 @@ class DatabaseAccountsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._delete_mongo_database_initial(
+        raw_result = self._delete_mongo_db_database_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            database_rid=database_rid,
+            database_name=database_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -2420,39 +2420,39 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_mongo_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongo/databases/{databaseRid}'}
+    delete_mongo_db_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}'}
 
-    def list_mongo_collections(
-            self, resource_group_name, account_name, database_rid, custom_headers=None, raw=False, **operation_config):
-        """Lists the Mongo collection under an existing Azure Cosmos DB database
+    def list_mongo_db_collections(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the MongoDB collection under an existing Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of MongoCollection
+        :return: An iterator like instance of MongoDBCollection
         :rtype:
-         ~azure.mgmt.cosmosdb.models.MongoCollectionPaged[~azure.mgmt.cosmosdb.models.MongoCollection]
+         ~azure.mgmt.cosmosdb.models.MongoDBCollectionPaged[~azure.mgmt.cosmosdb.models.MongoDBCollection]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_mongo_collections.metadata['url']
+                url = self.list_mongo_db_collections.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-                    'databaseRid': self._serialize.url("database_rid", database_rid, 'str')
+                    'databaseName': self._serialize.url("database_name", database_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -2486,47 +2486,47 @@ class DatabaseAccountsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.MongoCollectionPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.MongoDBCollectionPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.MongoCollectionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.MongoDBCollectionPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_mongo_collections.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongo/databases/{databaseRid}/collections'}
+    list_mongo_db_collections.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections'}
 
-    def get_mongo_collection(
-            self, resource_group_name, account_name, database_rid, collection_rid, custom_headers=None, raw=False, **operation_config):
-        """Gets the Mongo collection under an existing Azure Cosmos DB database
+    def get_mongo_db_collection(
+            self, resource_group_name, account_name, database_name, collection_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the MongoDB collection under an existing Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
-        :param collection_rid: Cosmos DB collection rid.
-        :type collection_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param collection_name: Cosmos DB collection name.
+        :type collection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: MongoCollection or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.MongoCollection or
+        :return: MongoDBCollection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.MongoDBCollection or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_mongo_collection.metadata['url']
+        url = self.get_mongo_db_collection.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-            'collectionRid': self._serialize.url("collection_rid", collection_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2556,28 +2556,28 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('MongoCollection', response)
+            deserialized = self._deserialize('MongoDBCollection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_mongo_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongo/databases/{databaseRid}/collections/{collectionRid}'}
+    get_mongo_db_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections/{collectionName}'}
 
 
-    def _create_update_mongo_collection_initial(
-            self, resource_group_name, account_name, database_rid, collection_rid, resource, options, custom_headers=None, raw=False, **operation_config):
-        create_update_mongo_collection_parameters = models.MongoCollectionCreateUpdateParameters(resource=resource, options=options)
+    def _create_update_mongo_db_collection_initial(
+            self, resource_group_name, account_name, database_name, collection_name, resource, options, custom_headers=None, raw=False, **operation_config):
+        create_update_mongo_db_collection_parameters = models.MongoDBCollectionCreateUpdateParameters(resource=resource, options=options)
 
         # Construct URL
-        url = self.create_update_mongo_collection.metadata['url']
+        url = self.create_update_mongo_db_collection.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-            'collectionRid': self._serialize.url("collection_rid", collection_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2597,7 +2597,7 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_update_mongo_collection_parameters, 'MongoCollectionCreateUpdateParameters')
+        body_content = self._serialize.body(create_update_mongo_db_collection_parameters, 'MongoDBCollectionCreateUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -2611,7 +2611,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('MongoCollection', response)
+            deserialized = self._deserialize('MongoDBCollection', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -2619,20 +2619,20 @@ class DatabaseAccountsOperations(object):
 
         return deserialized
 
-    def create_update_mongo_collection(
-            self, resource_group_name, account_name, database_rid, collection_rid, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update an Azure Cosmos DB Mongo Collection.
+    def create_update_mongo_db_collection(
+            self, resource_group_name, account_name, database_name, collection_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update an Azure Cosmos DB MongoDB Collection.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
-        :param collection_rid: Cosmos DB collection rid.
-        :type collection_rid: str
-        :param resource: The standard JSON format of a Mongo collection
-        :type resource: ~azure.mgmt.cosmosdb.models.MongoCollectionResource
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param collection_name: Cosmos DB collection name.
+        :type collection_name: str
+        :param resource: The standard JSON format of a MongoDB collection
+        :type resource: ~azure.mgmt.cosmosdb.models.MongoDBCollectionResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
         :type options: dict[str, str]
@@ -2641,19 +2641,19 @@ class DatabaseAccountsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns MongoCollection or
-         ClientRawResponse<MongoCollection> if raw==True
+        :return: An instance of LROPoller that returns MongoDBCollection or
+         ClientRawResponse<MongoDBCollection> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongoCollection]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongoDBCollection]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongoCollection]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongoDBCollection]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_update_mongo_collection_initial(
+        raw_result = self._create_update_mongo_db_collection_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            database_rid=database_rid,
-            collection_rid=collection_rid,
+            database_name=database_name,
+            collection_name=collection_name,
             resource=resource,
             options=options,
             custom_headers=custom_headers,
@@ -2662,7 +2662,7 @@ class DatabaseAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('MongoCollection', response)
+            deserialized = self._deserialize('MongoDBCollection', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -2677,19 +2677,19 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_update_mongo_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongo/databases/{databaseRid}/collections/{collectionRid}'}
+    create_update_mongo_db_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections/{collectionName}'}
 
 
-    def _delete_mongo_collection_initial(
-            self, resource_group_name, account_name, database_rid, collection_rid, custom_headers=None, raw=False, **operation_config):
+    def _delete_mongo_db_collection_initial(
+            self, resource_group_name, account_name, database_name, collection_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.delete_mongo_collection.metadata['url']
+        url = self.delete_mongo_db_collection.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-            'collectionRid': self._serialize.url("collection_rid", collection_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2719,18 +2719,18 @@ class DatabaseAccountsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def delete_mongo_collection(
-            self, resource_group_name, account_name, database_rid, collection_rid, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes an existing Azure Cosmos DB Mongo Collection.
+    def delete_mongo_db_collection(
+            self, resource_group_name, account_name, database_name, collection_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Azure Cosmos DB MongoDB Collection.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
-        :param collection_rid: Cosmos DB collection rid.
-        :type collection_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param collection_name: Cosmos DB collection name.
+        :type collection_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -2742,11 +2742,11 @@ class DatabaseAccountsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._delete_mongo_collection_initial(
+        raw_result = self._delete_mongo_db_collection_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            database_rid=database_rid,
-            collection_rid=collection_rid,
+            database_name=database_name,
+            collection_name=collection_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -2764,7 +2764,7 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_mongo_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongo/databases/{databaseRid}/collections/{collectionRid}'}
+    delete_mongo_db_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections/{collectionName}'}
 
     def list_tables(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
@@ -2837,16 +2837,16 @@ class DatabaseAccountsOperations(object):
     list_tables.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/table/tables'}
 
     def get_table(
-            self, resource_group_name, account_name, table_rid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, table_name, custom_headers=None, raw=False, **operation_config):
         """Gets the Tables under an existing Azure Cosmos DB database account with
-        the provided id.
+        the provided name.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param table_rid: Cosmos DB table rid.
-        :type table_rid: str
+        :param table_name: Cosmos DB table name.
+        :type table_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -2863,7 +2863,7 @@ class DatabaseAccountsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'tableRid': self._serialize.url("table_rid", table_rid, 'str')
+            'tableName': self._serialize.url("table_name", table_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2900,11 +2900,11 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/table/tables/{tableRid}'}
+    get_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/table/tables/{tableName}'}
 
 
     def _create_update_table_initial(
-            self, resource_group_name, account_name, table_rid, resource, options, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, table_name, resource, options, custom_headers=None, raw=False, **operation_config):
         create_update_table_parameters = models.TableCreateUpdateParameters(resource=resource, options=options)
 
         # Construct URL
@@ -2913,7 +2913,7 @@ class DatabaseAccountsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'tableRid': self._serialize.url("table_rid", table_rid, 'str')
+            'tableName': self._serialize.url("table_name", table_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -2956,15 +2956,15 @@ class DatabaseAccountsOperations(object):
         return deserialized
 
     def create_update_table(
-            self, resource_group_name, account_name, table_rid, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, table_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update an Azure Cosmos DB Table.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param table_rid: Cosmos DB table rid.
-        :type table_rid: str
+        :param table_name: Cosmos DB table name.
+        :type table_name: str
         :param resource: The standard JSON format of a Table
         :type resource: ~azure.mgmt.cosmosdb.models.TableResource
         :param options: A key-value pair of options to be applied for the
@@ -2986,7 +2986,7 @@ class DatabaseAccountsOperations(object):
         raw_result = self._create_update_table_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            table_rid=table_rid,
+            table_name=table_name,
             resource=resource,
             options=options,
             custom_headers=custom_headers,
@@ -3010,18 +3010,18 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_update_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/table/tables/{tableRid}'}
+    create_update_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/table/tables/{tableName}'}
 
 
     def _delete_table_initial(
-            self, resource_group_name, account_name, table_rid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, table_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete_table.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'tableRid': self._serialize.url("table_rid", table_rid, 'str')
+            'tableName': self._serialize.url("table_name", table_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3052,15 +3052,15 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
     def delete_table(
-            self, resource_group_name, account_name, table_rid, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, table_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes an existing Azure Cosmos DB Table.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param table_rid: Cosmos DB table rid.
-        :type table_rid: str
+        :param table_name: Cosmos DB table name.
+        :type table_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -3075,7 +3075,7 @@ class DatabaseAccountsOperations(object):
         raw_result = self._delete_table_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            table_rid=table_rid,
+            table_name=table_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -3093,7 +3093,7 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/table/tables/{tableRid}'}
+    delete_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/table/tables/{tableName}'}
 
     def list_cassandra_keyspaces(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
@@ -3167,16 +3167,16 @@ class DatabaseAccountsOperations(object):
     list_cassandra_keyspaces.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces'}
 
     def get_cassandra_keyspace(
-            self, resource_group_name, account_name, keyspace_rid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, keyspace_name, custom_headers=None, raw=False, **operation_config):
         """Gets the Cassandra keyspaces under an existing Azure Cosmos DB database
-        account with the provided id.
+        account with the provided name.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param keyspace_rid: Cosmos DB keyspace rid.
-        :type keyspace_rid: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -3193,7 +3193,7 @@ class DatabaseAccountsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'keyspaceRid': self._serialize.url("keyspace_rid", keyspace_rid, 'str')
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3230,11 +3230,11 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_cassandra_keyspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceRid}'}
+    get_cassandra_keyspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceName}'}
 
 
     def _create_update_cassandra_keyspace_initial(
-            self, resource_group_name, account_name, keyspace_rid, resource, options, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, keyspace_name, resource, options, custom_headers=None, raw=False, **operation_config):
         create_update_cassandra_keyspace_parameters = models.CassandraKeyspaceCreateUpdateParameters(resource=resource, options=options)
 
         # Construct URL
@@ -3243,7 +3243,7 @@ class DatabaseAccountsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'keyspaceRid': self._serialize.url("keyspace_rid", keyspace_rid, 'str')
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3286,15 +3286,15 @@ class DatabaseAccountsOperations(object):
         return deserialized
 
     def create_update_cassandra_keyspace(
-            self, resource_group_name, account_name, keyspace_rid, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, keyspace_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update an Azure Cosmos DB Cassandra keyspace.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param keyspace_rid: Cosmos DB keyspace rid.
-        :type keyspace_rid: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
         :param resource: The standard JSON format of a Cassandra keyspace
         :type resource: ~azure.mgmt.cosmosdb.models.CassandraKeyspaceResource
         :param options: A key-value pair of options to be applied for the
@@ -3316,7 +3316,7 @@ class DatabaseAccountsOperations(object):
         raw_result = self._create_update_cassandra_keyspace_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            keyspace_rid=keyspace_rid,
+            keyspace_name=keyspace_name,
             resource=resource,
             options=options,
             custom_headers=custom_headers,
@@ -3340,18 +3340,18 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_update_cassandra_keyspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceRid}'}
+    create_update_cassandra_keyspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceName}'}
 
 
     def _delete_cassandra_keyspace_initial(
-            self, resource_group_name, account_name, keyspace_rid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, keyspace_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete_cassandra_keyspace.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'keyspaceRid': self._serialize.url("keyspace_rid", keyspace_rid, 'str')
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3382,15 +3382,15 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
     def delete_cassandra_keyspace(
-            self, resource_group_name, account_name, keyspace_rid, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, keyspace_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes an existing Azure Cosmos DB Cassandra keyspace.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param keyspace_rid: Cosmos DB keyspace rid.
-        :type keyspace_rid: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -3405,7 +3405,7 @@ class DatabaseAccountsOperations(object):
         raw_result = self._delete_cassandra_keyspace_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            keyspace_rid=keyspace_rid,
+            keyspace_name=keyspace_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -3423,10 +3423,10 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_cassandra_keyspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceRid}'}
+    delete_cassandra_keyspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceName}'}
 
     def list_cassandra_tables(
-            self, resource_group_name, account_name, keyspace_rid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, keyspace_name, custom_headers=None, raw=False, **operation_config):
         """Lists the Cassandra table under an existing Azure Cosmos DB database
         account.
 
@@ -3434,8 +3434,8 @@ class DatabaseAccountsOperations(object):
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param keyspace_rid: Cosmos DB keyspace rid.
-        :type keyspace_rid: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -3455,7 +3455,7 @@ class DatabaseAccountsOperations(object):
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-                    'keyspaceRid': self._serialize.url("keyspace_rid", keyspace_rid, 'str')
+                    'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -3497,10 +3497,10 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_cassandra_tables.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceRid}/tables'}
+    list_cassandra_tables.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceName}/tables'}
 
     def get_cassandra_table(
-            self, resource_group_name, account_name, keyspace_rid, table_rid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, keyspace_name, table_name, custom_headers=None, raw=False, **operation_config):
         """Gets the Cassandra table under an existing Azure Cosmos DB database
         account.
 
@@ -3508,10 +3508,10 @@ class DatabaseAccountsOperations(object):
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param keyspace_rid: Cosmos DB keyspace rid.
-        :type keyspace_rid: str
-        :param table_rid: Cosmos DB table rid.
-        :type table_rid: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param table_name: Cosmos DB table name.
+        :type table_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -3528,8 +3528,8 @@ class DatabaseAccountsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'keyspaceRid': self._serialize.url("keyspace_rid", keyspace_rid, 'str'),
-            'tableRid': self._serialize.url("table_rid", table_rid, 'str')
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3566,11 +3566,11 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_cassandra_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceRid}/tables/{tableRid}'}
+    get_cassandra_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceName}/tables/{tableName}'}
 
 
     def _create_update_cassandra_table_initial(
-            self, resource_group_name, account_name, keyspace_rid, table_rid, resource, options, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, keyspace_name, table_name, resource, options, custom_headers=None, raw=False, **operation_config):
         create_update_cassandra_table_parameters = models.CassandraTableCreateUpdateParameters(resource=resource, options=options)
 
         # Construct URL
@@ -3579,8 +3579,8 @@ class DatabaseAccountsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'keyspaceRid': self._serialize.url("keyspace_rid", keyspace_rid, 'str'),
-            'tableRid': self._serialize.url("table_rid", table_rid, 'str')
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3623,17 +3623,17 @@ class DatabaseAccountsOperations(object):
         return deserialized
 
     def create_update_cassandra_table(
-            self, resource_group_name, account_name, keyspace_rid, table_rid, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, keyspace_name, table_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update an Azure Cosmos DB Cassandra Table.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param keyspace_rid: Cosmos DB keyspace rid.
-        :type keyspace_rid: str
-        :param table_rid: Cosmos DB table rid.
-        :type table_rid: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param table_name: Cosmos DB table name.
+        :type table_name: str
         :param resource: The standard JSON format of a Cassandra table
         :type resource: ~azure.mgmt.cosmosdb.models.CassandraTableResource
         :param options: A key-value pair of options to be applied for the
@@ -3655,8 +3655,8 @@ class DatabaseAccountsOperations(object):
         raw_result = self._create_update_cassandra_table_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            keyspace_rid=keyspace_rid,
-            table_rid=table_rid,
+            keyspace_name=keyspace_name,
+            table_name=table_name,
             resource=resource,
             options=options,
             custom_headers=custom_headers,
@@ -3680,19 +3680,19 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_update_cassandra_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceRid}/tables/{tableRid}'}
+    create_update_cassandra_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceName}/tables/{tableName}'}
 
 
     def _delete_cassandra_table_initial(
-            self, resource_group_name, account_name, keyspace_rid, table_rid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, keyspace_name, table_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete_cassandra_table.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'keyspaceRid': self._serialize.url("keyspace_rid", keyspace_rid, 'str'),
-            'tableRid': self._serialize.url("table_rid", table_rid, 'str')
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3723,17 +3723,17 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
     def delete_cassandra_table(
-            self, resource_group_name, account_name, keyspace_rid, table_rid, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, keyspace_name, table_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes an existing Azure Cosmos DB Cassandra table.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param keyspace_rid: Cosmos DB keyspace rid.
-        :type keyspace_rid: str
-        :param table_rid: Cosmos DB table rid.
-        :type table_rid: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param table_name: Cosmos DB table name.
+        :type table_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -3748,8 +3748,8 @@ class DatabaseAccountsOperations(object):
         raw_result = self._delete_cassandra_table_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            keyspace_rid=keyspace_rid,
-            table_rid=table_rid,
+            keyspace_name=keyspace_name,
+            table_name=table_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -3767,7 +3767,7 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_cassandra_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceRid}/tables/{tableRid}'}
+    delete_cassandra_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceName}/tables/{tableName}'}
 
     def list_gremlin_databases(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
@@ -3841,16 +3841,16 @@ class DatabaseAccountsOperations(object):
     list_gremlin_databases.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases'}
 
     def get_gremlin_database(
-            self, resource_group_name, account_name, database_rid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
         """Gets the Gremlin databases under an existing Azure Cosmos DB database
-        account with the provided id.
+        account with the provided name.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -3867,7 +3867,7 @@ class DatabaseAccountsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3904,11 +3904,11 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_gremlin_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}'}
+    get_gremlin_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseName}'}
 
 
     def _create_update_gremlin_database_initial(
-            self, resource_group_name, account_name, database_rid, resource, options, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, database_name, resource, options, custom_headers=None, raw=False, **operation_config):
         create_update_gremlin_database_parameters = models.GremlinDatabaseCreateUpdateParameters(resource=resource, options=options)
 
         # Construct URL
@@ -3917,7 +3917,7 @@ class DatabaseAccountsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3960,15 +3960,15 @@ class DatabaseAccountsOperations(object):
         return deserialized
 
     def create_update_gremlin_database(
-            self, resource_group_name, account_name, database_rid, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, database_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update an Azure Cosmos DB Gremlin database.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
         :param resource: The standard JSON format of a Gremlin database
         :type resource: ~azure.mgmt.cosmosdb.models.GremlinDatabaseResource
         :param options: A key-value pair of options to be applied for the
@@ -3990,7 +3990,7 @@ class DatabaseAccountsOperations(object):
         raw_result = self._create_update_gremlin_database_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            database_rid=database_rid,
+            database_name=database_name,
             resource=resource,
             options=options,
             custom_headers=custom_headers,
@@ -4014,18 +4014,18 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_update_gremlin_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}'}
+    create_update_gremlin_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseName}'}
 
 
     def _delete_gremlin_database_initial(
-            self, resource_group_name, account_name, database_rid, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete_gremlin_database.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4056,15 +4056,15 @@ class DatabaseAccountsOperations(object):
             return client_raw_response
 
     def delete_gremlin_database(
-            self, resource_group_name, account_name, database_rid, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes an existing Azure Cosmos DB Gremlin database.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -4079,7 +4079,7 @@ class DatabaseAccountsOperations(object):
         raw_result = self._delete_gremlin_database_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            database_rid=database_rid,
+            database_name=database_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -4097,39 +4097,39 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_gremlin_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}'}
+    delete_gremlin_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseName}'}
 
-    def list_gremlin_containers(
-            self, resource_group_name, account_name, database_rid, custom_headers=None, raw=False, **operation_config):
-        """Lists the Gremlin container under an existing Azure Cosmos DB database
+    def list_gremlin_graphs(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the Gremlin graph under an existing Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Container
+        :return: An iterator like instance of GremlinGraph
         :rtype:
-         ~azure.mgmt.cosmosdb.models.ContainerPaged[~azure.mgmt.cosmosdb.models.Container]
+         ~azure.mgmt.cosmosdb.models.GremlinGraphPaged[~azure.mgmt.cosmosdb.models.GremlinGraph]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list_gremlin_containers.metadata['url']
+                url = self.list_gremlin_graphs.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-                    'databaseRid': self._serialize.url("database_rid", database_rid, 'str')
+                    'databaseName': self._serialize.url("database_name", database_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -4163,47 +4163,47 @@ class DatabaseAccountsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ContainerPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.GremlinGraphPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ContainerPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.GremlinGraphPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_gremlin_containers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}/containers'}
+    list_gremlin_graphs.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseName}/graphs'}
 
-    def get_gremlin_container(
-            self, resource_group_name, account_name, database_rid, container_rid, custom_headers=None, raw=False, **operation_config):
-        """Gets the Gremlin container under an existing Azure Cosmos DB database
+    def get_gremlin_graph(
+            self, resource_group_name, account_name, database_name, graph_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the Gremlin graph under an existing Azure Cosmos DB database
         account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
-        :param container_rid: Cosmos DB container rid.
-        :type container_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param graph_name: Cosmos DB graph name.
+        :type graph_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Container or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.cosmosdb.models.Container or
+        :return: GremlinGraph or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.GremlinGraph or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_gremlin_container.metadata['url']
+        url = self.get_gremlin_graph.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-            'containerRid': self._serialize.url("container_rid", container_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'graphName': self._serialize.url("graph_name", graph_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4233,28 +4233,28 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Container', response)
+            deserialized = self._deserialize('GremlinGraph', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get_gremlin_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}/containers/{containerRid}'}
+    get_gremlin_graph.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseName}/graphs/{graphName}'}
 
 
-    def _create_update_gremlin_container_initial(
-            self, resource_group_name, account_name, database_rid, container_rid, resource, options, custom_headers=None, raw=False, **operation_config):
-        create_update_gremlin_container_parameters = models.ContainerCreateUpdateParameters(resource=resource, options=options)
+    def _create_update_gremlin_graph_initial(
+            self, resource_group_name, account_name, database_name, graph_name, resource, options, custom_headers=None, raw=False, **operation_config):
+        create_update_gremlin_graph_parameters = models.GremlinGraphCreateUpdateParameters(resource=resource, options=options)
 
         # Construct URL
-        url = self.create_update_gremlin_container.metadata['url']
+        url = self.create_update_gremlin_graph.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-            'containerRid': self._serialize.url("container_rid", container_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'graphName': self._serialize.url("graph_name", graph_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4274,7 +4274,7 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(create_update_gremlin_container_parameters, 'ContainerCreateUpdateParameters')
+        body_content = self._serialize.body(create_update_gremlin_graph_parameters, 'GremlinGraphCreateUpdateParameters')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -4288,7 +4288,7 @@ class DatabaseAccountsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Container', response)
+            deserialized = self._deserialize('GremlinGraph', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -4296,20 +4296,20 @@ class DatabaseAccountsOperations(object):
 
         return deserialized
 
-    def create_update_gremlin_container(
-            self, resource_group_name, account_name, database_rid, container_rid, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update an Azure Cosmos DB Gremlin container.
+    def create_update_gremlin_graph(
+            self, resource_group_name, account_name, database_name, graph_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update an Azure Cosmos DB Gremlin graph.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
-        :param container_rid: Cosmos DB container rid.
-        :type container_rid: str
-        :param resource: The standard JSON format of a container
-        :type resource: ~azure.mgmt.cosmosdb.models.ContainerResource
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param graph_name: Cosmos DB graph name.
+        :type graph_name: str
+        :param resource: The standard JSON format of a Gremlin graph
+        :type resource: ~azure.mgmt.cosmosdb.models.GremlinGraphResource
         :param options: A key-value pair of options to be applied for the
          request. This corresponds to the headers sent with the request.
         :type options: dict[str, str]
@@ -4318,19 +4318,19 @@ class DatabaseAccountsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns Container or
-         ClientRawResponse<Container> if raw==True
+        :return: An instance of LROPoller that returns GremlinGraph or
+         ClientRawResponse<GremlinGraph> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.Container]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.GremlinGraph]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.Container]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.GremlinGraph]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_update_gremlin_container_initial(
+        raw_result = self._create_update_gremlin_graph_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            database_rid=database_rid,
-            container_rid=container_rid,
+            database_name=database_name,
+            graph_name=graph_name,
             resource=resource,
             options=options,
             custom_headers=custom_headers,
@@ -4339,7 +4339,7 @@ class DatabaseAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('Container', response)
+            deserialized = self._deserialize('GremlinGraph', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -4354,19 +4354,19 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_update_gremlin_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}/containers/{containerRid}'}
+    create_update_gremlin_graph.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseName}/graphs/{graphName}'}
 
 
-    def _delete_gremlin_container_initial(
-            self, resource_group_name, account_name, database_rid, container_rid, custom_headers=None, raw=False, **operation_config):
+    def _delete_gremlin_graph_initial(
+            self, resource_group_name, account_name, database_name, graph_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.delete_gremlin_container.metadata['url']
+        url = self.delete_gremlin_graph.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseRid': self._serialize.url("database_rid", database_rid, 'str'),
-            'containerRid': self._serialize.url("container_rid", container_rid, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'graphName': self._serialize.url("graph_name", graph_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -4396,18 +4396,18 @@ class DatabaseAccountsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-    def delete_gremlin_container(
-            self, resource_group_name, account_name, database_rid, container_rid, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes an existing Azure Cosmos DB Gremlin container.
+    def delete_gremlin_graph(
+            self, resource_group_name, account_name, database_name, graph_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Azure Cosmos DB Gremlin graph.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_rid: Cosmos DB database rid.
-        :type database_rid: str
-        :param container_rid: Cosmos DB container rid.
-        :type container_rid: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param graph_name: Cosmos DB graph name.
+        :type graph_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -4419,11 +4419,11 @@ class DatabaseAccountsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._delete_gremlin_container_initial(
+        raw_result = self._delete_gremlin_graph_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            database_rid=database_rid,
-            container_rid=container_rid,
+            database_name=database_name,
+            graph_name=graph_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -4441,4 +4441,4 @@ class DatabaseAccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete_gremlin_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseRid}/containers/{containerRid}'}
+    delete_gremlin_graph.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseName}/graphs/{graphName}'}
