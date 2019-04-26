@@ -337,6 +337,13 @@ class ManagedInstanceLicenseType(str, Enum):
     base_price = "BasePrice"
 
 
+class ManagedInstanceProxyOverride(str, Enum):
+
+    proxy = "Proxy"
+    redirect = "Redirect"
+    default = "Default"
+
+
 class OperationOrigin(str, Enum):
 
     user = "user"
