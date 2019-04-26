@@ -143,7 +143,7 @@ class KnownProfiles(Enum):
             "azure.mgmt.resource.subscriptions.SubscriptionClient": {
                 None: "2016-06-01"
             },
-            "azure.mgmt.dns": {
+            "azure.mgmt.dns.DnsManagementClient": {
                 None: "2016-04-01"
             }
         },
@@ -190,7 +190,7 @@ class KnownProfiles(Enum):
             "azure.mgmt.resource.subscriptions.SubscriptionClient": {
                 None: "2016-06-01"
             },
-            "azure.mgmt.dns": {
+            "azure.mgmt.dns.DnsManagementClient": {
                 None: "2016-04-01"
             }
         },
