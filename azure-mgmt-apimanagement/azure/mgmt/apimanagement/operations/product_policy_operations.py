@@ -175,7 +175,7 @@ class ProductPolicyOperations(object):
          API Management service instance.
         :type product_id: str
         :param format: Policy Export Format. Possible values include: 'xml',
-         'xml-link', 'rawxml', 'rawxml-link'
+         'rawxml'
         :type format: str or
          ~azure.mgmt.apimanagement.models.PolicyExportFormat
         :param dict custom_headers: headers that will be added to the request
