@@ -149,7 +149,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             timestamp = self.message.annotations.get(self._X_OPT_ENQUEUED_TIME)
             if timestamp:
                 in_seconds = timestamp/1000.0
-                return datetime.datetime.fromtimestamp(in_seconds, datetime.timezone.utc)
+                return datetime.datetime.utcfromtimestamp(in_seconds)
         return None
 
     @property
@@ -158,7 +158,7 @@ class Message(object):  # pylint: disable=too-many-public-methods,too-many-insta
             timestamp = self.message.annotations.get(self._x_OPT_SCHEDULED_ENQUEUE_TIME)
             if timestamp:
                 in_seconds = timestamp/1000.0
-                return datetime.datetime.fromtimestamp(in_seconds, datetime.timezone.utc)
+                return datetime.datetime.utcfromtimestamp(in_seconds)
         return None
 
     @property

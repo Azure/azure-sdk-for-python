@@ -11,7 +11,7 @@ import os
 import pytest
 import time
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 from azure.servicebus import ServiceBusClient, QueueClient, AutoLockRenew
 from azure.servicebus.common.message import Message, PeekMessage, BatchMessage, DeferredMessage
@@ -573,7 +573,7 @@ def test_session_schedule_message(live_servicebus_config, session_queue):
     import uuid
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(session_queue)
-    enqueue_time = (datetime.now(tz=timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
     with queue_client.get_receiver(session=session_id) as receiver:
         with queue_client.get_sender(session=session_id) as sender:
             content = str(uuid.uuid4())
@@ -607,7 +607,7 @@ def test_session_schedule_multiple_messages(live_servicebus_config, session_queu
     import uuid
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(session_queue)
-    enqueue_time = (datetime.now(tz=timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
 
     with queue_client.get_receiver(session=session_id, prefetch=20) as receiver:
         with queue_client.get_sender(session=session_id) as sender:
@@ -646,7 +646,7 @@ def test_session_cancel_scheduled_messages(live_servicebus_config, session_queue
 
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(session_queue)
-    enqueue_time = (datetime.now(tz=timezone.utc) + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
 
     with queue_client.get_sender(session=session_id) as sender:
         message_a = Message("Test scheduled message")

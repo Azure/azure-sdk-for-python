@@ -11,7 +11,7 @@ import sys
 import os
 import pytest
 import time
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 from azure.servicebus.aio import (
     ServiceBusClient,
@@ -176,14 +176,14 @@ async def test_async_snippet_queues(live_servicebus_config, standard_queue):
     # [START schedule_messages]
     async with queue_client.get_sender() as sender:
 
-        enqueue_time = datetime.now(tz=timezone.utc) + timedelta(minutes=10)
+        enqueue_time = datetime.utcnow() + timedelta(minutes=10)
         await sender.schedule(enqueue_time, Message("First"), Message("Second"))
     # [END schedule_messages]
 
     # [START cancel_schedule_messages]
     async with queue_client.get_sender() as sender:
 
-        enqueue_time = datetime.now(tz=timezone.utc) + timedelta(minutes=10)
+        enqueue_time = datetime.utcnow() + timedelta(minutes=10)
         sequence_numbers = await sender.schedule(enqueue_time, Message("First"), Message("Second"))
 
         await sender.cancel_scheduled_messages(*sequence_numbers)
@@ -266,7 +266,7 @@ async def test_async_snippet_sessions(live_servicebus_config, session_queue):
     # [START schedule_session_messages]
     async with queue_client.get_sender(session="MySessionID") as sender:
 
-        enqueue_time = datetime.now(tz=timezone.utc) + timedelta(minutes=10)
+        enqueue_time = datetime.utcnow() + timedelta(minutes=10)
         await sender.schedule(enqueue_time, Message("First"), Message("Second"))
     # [END schedule_session_messages]
 
