@@ -48,9 +48,3 @@ class HanaInstancePowerStateEnum(str, Enum):
     stopped = "stopped"
     restarting = "restarting"
     unknown = "unknown"
-
-
-class HanaDatabaseContainersEnum(str, Enum):
-
-    single = "single"
-    multiple = "multiple"
