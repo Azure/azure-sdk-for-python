@@ -8,7 +8,21 @@ Release History
 
 **Features**
 
+- Model P2SVpnGateway has a new parameter custom_routes
+- Model Subnet has a new parameter nat_gateway
+- Model VpnConnection has a new parameter use_local_azure_ip_address
+- Model EffectiveRoute has a new parameter disable_bgp_route_propagation
+- Model VirtualNetworkGateway has a new parameter custom_routes
+- Added operation ApplicationGatewaysOperations.backend_health_on_demand
 - Added operation DdosProtectionPlansOperations.update_tags
+- Added operation group NatGatewaysOperations
+
+**Breaking changes**
+
+- Parameter output_blob_sas_url of model GetVpnSitesConfigurationRequest is now required
+- Operation VpnSitesConfigurationOperations.download has a new signature
+- Operation VpnSitesConfigurationOperations.download has a new signature
+- Model ExpressRouteCircuit no longer has parameter allow_global_reach
 
 2.6.0 (2019-03-21)
 ++++++++++++++++++
