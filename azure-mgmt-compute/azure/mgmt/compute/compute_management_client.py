@@ -87,7 +87,6 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
             'resource_skus': '2017-09-01',
             'disks': '2018-09-30',
             'snapshots': '2018-09-30',
-            'images': '2018-10-01',
             'proximity_placement_groups': '2018-10-01',
             None: DEFAULT_API_VERSION
         }},

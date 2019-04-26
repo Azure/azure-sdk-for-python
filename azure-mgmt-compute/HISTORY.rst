@@ -3,6 +3,14 @@
 Release History
 ===============
 
+5.0.0 (2019-04-26)
+++++++++++++++++++
+
+**Breaking changes**
+
+- Latest version of disks/snapshot renamed the enum StorageAccountTypes to DiskStorageAccountTypes
+- images.create_or_update requires hyperv_generation parameter if disk is OS type
+
 4.6.2 (2019-04-22)
 ++++++++++++++++++
 
