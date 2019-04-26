@@ -56,6 +56,14 @@ def raise_with_traceback(exception, *args, **kwargs):
         error.__traceback__ = exc_traceback
         raise error
 
+def map_error(self, status_code, response, error_map):
+    if not error_map:
+        return
+    error_type = error_map.get(status_code)
+    if not error_type:
+        return
+    error = error_type(response=response)
+    raise error
 
 class AzureError(Exception):
     """Base exception for all errors."""
