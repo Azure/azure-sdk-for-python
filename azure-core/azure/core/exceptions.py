@@ -56,7 +56,7 @@ def raise_with_traceback(exception, *args, **kwargs):
         error.__traceback__ = exc_traceback
         raise error
 
-def map_error(self, status_code, response, error_map):
+def map_error(status_code, response, error_map):
     if not error_map:
         return
     error_type = error_map.get(status_code)
