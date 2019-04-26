@@ -3,7 +3,7 @@
 Release History
 ===============
 
-3.0.0 (2019-04-25)
+2.7.0 (2019-04-25)
 ++++++++++++++++++
 
 **Features**
@@ -17,10 +17,9 @@ Release History
 - Added operation DdosProtectionPlansOperations.update_tags
 - Added operation group NatGatewaysOperations
 
-**Breaking changes**
+**Bug fixes and preview API updates**
 
 - Parameter output_blob_sas_url of model GetVpnSitesConfigurationRequest is now required
-- Operation VpnSitesConfigurationOperations.download has a new signature
 - Operation VpnSitesConfigurationOperations.download has a new signature
 - Model ExpressRouteCircuit no longer has parameter allow_global_reach
 
