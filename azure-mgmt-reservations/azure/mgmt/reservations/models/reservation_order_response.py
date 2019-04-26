@@ -35,8 +35,7 @@ class ReservationOrderResponse(Model):
     :type created_date_time: datetime
     :param expiry_date: This is the date when the Reservation will expire.
     :type expiry_date: date
-    :param original_quantity: Total Quantity of the SKUs purchased in the
-     Reservation.
+    :param original_quantity:
     :type original_quantity: int
     :param term: Possible values include: 'P1Y', 'P3Y'
     :type term: str or ~azure.mgmt.reservations.models.ReservationTerm
