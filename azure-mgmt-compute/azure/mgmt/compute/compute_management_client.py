@@ -84,7 +84,7 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
     _PROFILE_TAG = "azure.mgmt.compute.ComputeManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
-            'resource_skus': '2017-09-01',
+            'resource_skus': '2019-04-01',
             'disks': '2018-09-30',
             'snapshots': '2018-09-30',
             None: DEFAULT_API_VERSION
