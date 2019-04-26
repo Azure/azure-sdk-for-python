@@ -80,7 +80,6 @@ class UsageDetailsListOperations(object):
                 'Location': 'str',
                 'Retry-After': 'str',
                 'Azure-AsyncOperation': 'str',
-                'OData-EntityId': 'str',
             }
 
         if raw:
@@ -144,7 +143,6 @@ class UsageDetailsListOperations(object):
                 'Location': 'str',
                 'Retry-After': 'str',
                 'Azure-AsyncOperation': 'str',
-                'OData-EntityId': 'str',
             }
             deserialized = self._deserialize('UsageDetailsDownloadResponse', response)
 
