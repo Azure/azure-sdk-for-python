@@ -94,6 +94,8 @@ class SecretClient:
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.KeyVaultErrorException>`
         """
+        if version is None:
+            version = ""
         url = '/'.join((self._vault_url, 'secrets', name, version))
 
         query_parameters = {'api-version': self._api_version}
