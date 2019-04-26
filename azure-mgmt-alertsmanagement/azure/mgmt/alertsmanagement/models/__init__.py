@@ -13,8 +13,7 @@ try:
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
     from .resource_py3 import Resource
-    from .essentials_py3 import Essentials
-    from .alert_properties_py3 import AlertProperties
+    from .managed_resource_py3 import ManagedResource
     from .alert_py3 import Alert
     from .alert_modification_item_py3 import AlertModificationItem
     from .alert_modification_properties_py3 import AlertModificationProperties
@@ -22,18 +21,46 @@ try:
     from .smart_group_modification_item_py3 import SmartGroupModificationItem
     from .smart_group_modification_properties_py3 import SmartGroupModificationProperties
     from .smart_group_modification_py3 import SmartGroupModification
-    from .alerts_summary_group_item_py3 import AlertsSummaryGroupItem
-    from .alerts_summary_group_py3 import AlertsSummaryGroup
+    from .alerts_summary_properties_summary_by_state_py3 import AlertsSummaryPropertiesSummaryByState
+    from .alerts_summary_properties_summary_by_severity_sev0_py3 import AlertsSummaryPropertiesSummaryBySeveritySev0
+    from .alerts_summary_properties_summary_by_severity_sev1_py3 import AlertsSummaryPropertiesSummaryBySeveritySev1
+    from .alerts_summary_properties_summary_by_severity_sev2_py3 import AlertsSummaryPropertiesSummaryBySeveritySev2
+    from .alerts_summary_properties_summary_by_severity_sev3_py3 import AlertsSummaryPropertiesSummaryBySeveritySev3
+    from .alerts_summary_properties_summary_by_severity_sev4_py3 import AlertsSummaryPropertiesSummaryBySeveritySev4
+    from .alerts_summary_properties_summary_by_severity_py3 import AlertsSummaryPropertiesSummaryBySeverity
+    from .alerts_summary_properties_summary_by_severity_and_monitor_condition_py3 import AlertsSummaryPropertiesSummaryBySeverityAndMonitorCondition
+    from .alerts_summary_properties_summary_by_monitor_service_py3 import AlertsSummaryPropertiesSummaryByMonitorService
     from .alerts_summary_py3 import AlertsSummary
+    from .alerts_summary_by_state_py3 import AlertsSummaryByState
+    from .alerts_summary_by_severity_and_monitor_condition_sev0_py3 import AlertsSummaryBySeverityAndMonitorConditionSev0
+    from .alerts_summary_by_severity_and_monitor_condition_sev1_py3 import AlertsSummaryBySeverityAndMonitorConditionSev1
+    from .alerts_summary_by_severity_and_monitor_condition_sev2_py3 import AlertsSummaryBySeverityAndMonitorConditionSev2
+    from .alerts_summary_by_severity_and_monitor_condition_sev3_py3 import AlertsSummaryBySeverityAndMonitorConditionSev3
+    from .alerts_summary_by_severity_and_monitor_condition_sev4_py3 import AlertsSummaryBySeverityAndMonitorConditionSev4
+    from .alerts_summary_by_severity_and_monitor_condition_py3 import AlertsSummaryBySeverityAndMonitorCondition
+    from .alerts_summary_by_monitor_condition_py3 import AlertsSummaryByMonitorCondition
+    from .alerts_summary_by_monitor_service_py3 import AlertsSummaryByMonitorService
     from .smart_group_aggregated_property_py3 import SmartGroupAggregatedProperty
     from .smart_group_py3 import SmartGroup
     from .smart_groups_list_py3 import SmartGroupsList
+    from .scope_py3 import Scope
+    from .condition_py3 import Condition
+    from .conditions_py3 import Conditions
+    from .suppression_schedule_py3 import SuppressionSchedule
+    from .suppression_config_py3 import SuppressionConfig
+    from .action_rule_properties_py3 import ActionRuleProperties
+    from .action_rule_py3 import ActionRule
+    from .suppression_py3 import Suppression
+    from .action_group_py3 import ActionGroup
+    from .diagnostics_py3 import Diagnostics
+    from .action_rules_list_py3 import ActionRulesList
+    from .patch_properties_py3 import PatchProperties
+    from .patch_object_py3 import PatchObject
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .operation import Operation
     from .resource import Resource
-    from .essentials import Essentials
-    from .alert_properties import AlertProperties
+    from .managed_resource import ManagedResource
     from .alert import Alert
     from .alert_modification_item import AlertModificationItem
     from .alert_modification_properties import AlertModificationProperties
@@ -41,12 +68,41 @@ except (SyntaxError, ImportError):
     from .smart_group_modification_item import SmartGroupModificationItem
     from .smart_group_modification_properties import SmartGroupModificationProperties
     from .smart_group_modification import SmartGroupModification
-    from .alerts_summary_group_item import AlertsSummaryGroupItem
-    from .alerts_summary_group import AlertsSummaryGroup
+    from .alerts_summary_properties_summary_by_state import AlertsSummaryPropertiesSummaryByState
+    from .alerts_summary_properties_summary_by_severity_sev0 import AlertsSummaryPropertiesSummaryBySeveritySev0
+    from .alerts_summary_properties_summary_by_severity_sev1 import AlertsSummaryPropertiesSummaryBySeveritySev1
+    from .alerts_summary_properties_summary_by_severity_sev2 import AlertsSummaryPropertiesSummaryBySeveritySev2
+    from .alerts_summary_properties_summary_by_severity_sev3 import AlertsSummaryPropertiesSummaryBySeveritySev3
+    from .alerts_summary_properties_summary_by_severity_sev4 import AlertsSummaryPropertiesSummaryBySeveritySev4
+    from .alerts_summary_properties_summary_by_severity import AlertsSummaryPropertiesSummaryBySeverity
+    from .alerts_summary_properties_summary_by_severity_and_monitor_condition import AlertsSummaryPropertiesSummaryBySeverityAndMonitorCondition
+    from .alerts_summary_properties_summary_by_monitor_service import AlertsSummaryPropertiesSummaryByMonitorService
     from .alerts_summary import AlertsSummary
+    from .alerts_summary_by_state import AlertsSummaryByState
+    from .alerts_summary_by_severity_and_monitor_condition_sev0 import AlertsSummaryBySeverityAndMonitorConditionSev0
+    from .alerts_summary_by_severity_and_monitor_condition_sev1 import AlertsSummaryBySeverityAndMonitorConditionSev1
+    from .alerts_summary_by_severity_and_monitor_condition_sev2 import AlertsSummaryBySeverityAndMonitorConditionSev2
+    from .alerts_summary_by_severity_and_monitor_condition_sev3 import AlertsSummaryBySeverityAndMonitorConditionSev3
+    from .alerts_summary_by_severity_and_monitor_condition_sev4 import AlertsSummaryBySeverityAndMonitorConditionSev4
+    from .alerts_summary_by_severity_and_monitor_condition import AlertsSummaryBySeverityAndMonitorCondition
+    from .alerts_summary_by_monitor_condition import AlertsSummaryByMonitorCondition
+    from .alerts_summary_by_monitor_service import AlertsSummaryByMonitorService
     from .smart_group_aggregated_property import SmartGroupAggregatedProperty
     from .smart_group import SmartGroup
     from .smart_groups_list import SmartGroupsList
+    from .scope import Scope
+    from .condition import Condition
+    from .conditions import Conditions
+    from .suppression_schedule import SuppressionSchedule
+    from .suppression_config import SuppressionConfig
+    from .action_rule_properties import ActionRuleProperties
+    from .action_rule import ActionRule
+    from .suppression import Suppression
+    from .action_group import ActionGroup
+    from .diagnostics import Diagnostics
+    from .action_rules_list import ActionRulesList
+    from .patch_properties import PatchProperties
+    from .patch_object import PatchObject
 from .operation_paged import OperationPaged
 from .alert_paged import AlertPaged
 from .alerts_management_client_enums import (
@@ -58,9 +114,13 @@ from .alerts_management_client_enums import (
     AlertModificationEvent,
     SmartGroupModificationEvent,
     State,
+    ScopeType,
+    Operator,
+    SuppressionType,
+    ActionRuleStatus,
+    ApiVersion,
     TimeRange,
     AlertsSortByFields,
-    AlertsSummaryGroupByFields,
     SmartGroupsSortByFields,
 )
 
@@ -68,8 +128,7 @@ __all__ = [
     'OperationDisplay',
     'Operation',
     'Resource',
-    'Essentials',
-    'AlertProperties',
+    'ManagedResource',
     'Alert',
     'AlertModificationItem',
     'AlertModificationProperties',
@@ -77,12 +136,41 @@ __all__ = [
     'SmartGroupModificationItem',
     'SmartGroupModificationProperties',
     'SmartGroupModification',
-    'AlertsSummaryGroupItem',
-    'AlertsSummaryGroup',
+    'AlertsSummaryPropertiesSummaryByState',
+    'AlertsSummaryPropertiesSummaryBySeveritySev0',
+    'AlertsSummaryPropertiesSummaryBySeveritySev1',
+    'AlertsSummaryPropertiesSummaryBySeveritySev2',
+    'AlertsSummaryPropertiesSummaryBySeveritySev3',
+    'AlertsSummaryPropertiesSummaryBySeveritySev4',
+    'AlertsSummaryPropertiesSummaryBySeverity',
+    'AlertsSummaryPropertiesSummaryBySeverityAndMonitorCondition',
+    'AlertsSummaryPropertiesSummaryByMonitorService',
     'AlertsSummary',
+    'AlertsSummaryByState',
+    'AlertsSummaryBySeverityAndMonitorConditionSev0',
+    'AlertsSummaryBySeverityAndMonitorConditionSev1',
+    'AlertsSummaryBySeverityAndMonitorConditionSev2',
+    'AlertsSummaryBySeverityAndMonitorConditionSev3',
+    'AlertsSummaryBySeverityAndMonitorConditionSev4',
+    'AlertsSummaryBySeverityAndMonitorCondition',
+    'AlertsSummaryByMonitorCondition',
+    'AlertsSummaryByMonitorService',
     'SmartGroupAggregatedProperty',
     'SmartGroup',
     'SmartGroupsList',
+    'Scope',
+    'Condition',
+    'Conditions',
+    'SuppressionSchedule',
+    'SuppressionConfig',
+    'ActionRuleProperties',
+    'ActionRule',
+    'Suppression',
+    'ActionGroup',
+    'Diagnostics',
+    'ActionRulesList',
+    'PatchProperties',
+    'PatchObject',
     'OperationPaged',
     'AlertPaged',
     'Severity',
@@ -93,8 +181,12 @@ __all__ = [
     'AlertModificationEvent',
     'SmartGroupModificationEvent',
     'State',
+    'ScopeType',
+    'Operator',
+    'SuppressionType',
+    'ActionRuleStatus',
+    'ApiVersion',
     'TimeRange',
     'AlertsSortByFields',
-    'AlertsSummaryGroupByFields',
     'SmartGroupsSortByFields',
 ]
