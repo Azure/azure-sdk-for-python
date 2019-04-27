@@ -12,18 +12,17 @@
 from msrest.serialization import Model
 
 
-class EHNamespaceIdListResult(Model):
-    """The response of the List Namespace IDs operation.
+class EHNamespaceIdContainer(Model):
+    """The full ARM ID of an Event Hubs Namespace.
 
-    :param value: Result of the List Namespace IDs operation
-    :type value:
-     list[~azure.mgmt.eventhub.v2018_01_01_preview.models.EHNamespaceIdContainer]
+    :param id:
+    :type id: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EHNamespaceIdContainer]'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(EHNamespaceIdListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+        super(EHNamespaceIdContainer, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)

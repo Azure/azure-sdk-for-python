@@ -57,6 +57,10 @@ class ClustersOperations(object):
         """
         # Construct URL
         url = self.list_available_clusters.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -89,7 +93,7 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
-    list_available_clusters.metadata = {'url': '/providers/Microsoft.EventHub/availableClusters'}
+    list_available_clusters.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventHub/availableClusters'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):

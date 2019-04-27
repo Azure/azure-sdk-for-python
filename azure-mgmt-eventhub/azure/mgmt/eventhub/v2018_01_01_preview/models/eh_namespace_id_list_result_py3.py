@@ -16,11 +16,12 @@ class EHNamespaceIdListResult(Model):
     """The response of the List Namespace IDs operation.
 
     :param value: Result of the List Namespace IDs operation
-    :type value: list[str]
+    :type value:
+     list[~azure.mgmt.eventhub.v2018_01_01_preview.models.EHNamespaceIdContainer]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[str]'},
+        'value': {'key': 'value', 'type': '[EHNamespaceIdContainer]'},
     }
 
     def __init__(self, *, value=None, **kwargs) -> None:
