@@ -3,45 +3,36 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
-"""
-The methods in this module preprocess the parameters for the methods in
-:class:`azure.configuration.AzureConfigurationClient` and
-:class:`azure.configuration.aio.AzureConfigurationClientSync`
-"""
-
 from abc import abstractmethod
 import re
 from requests.structures import CaseInsensitiveDict
 from msrest.paging import Paged
-from azure.core import ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
+from azure.core.exceptions import (
+    ResourceExistsError,
+    ResourceModifiedError,
+    ResourceNotFoundError,
+)
+from ._generated.models import ConfigurationSetting
 
 
 class AzureConfigurationClientAbstract(object):
-    """
-    Represents an client that calls restful API of Azure App Configuration service
+    """Represents an client that calls restful API of Azure App Configuration service
 
-    :param connection_string: Connection String used to access the Azure App Configuration. Looks like "Endpoint= \
-     https://appconfigname.azconfig.io;Id=1-l1-s0:gLY4fS/9qc8tXKudKsH6;Secret=c333C5sWw5B7PIDQeE8vd6k38SQFxiRbsTN0VmbjxfQ="
+    :param connection_string: Connection String used to access the Azure App Configuration.
     :type connection_string: str
 
-    Example
-
-    .. literalinclude:: ../examples/test_example_configurationservice.py
-        :start-after: [START create_app_configuration_client]
-        :end-before: [END create_app_configuration_client]
-        :language: python
-        :dedent: 4
-        :caption: Create an Azure configuration client
     """
 
+    def __init__(self):
+        self._impl = None  # to be set by subclass
+
+    @abstractmethod
     def list_configuration_settings(
-            self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
+        self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
     ):
         # type: (list, list, datetime, list, dict) -> Paged
 
-        """
-        List the configuration settings stored in the configuration service, optionally filtered by
+        """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_date_time
 
         :param labels: filter results based on their label. '*' can be
@@ -56,17 +47,9 @@ class AzureConfigurationClientAbstract(object):
         :type fields: list[str]
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
-        :rtype: :class:`ConfigurationSettingPaged`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :rtype: :class:`Paged`
+        :raises: :class:`HttpRequestError`
 
-        Example
-
-        .. literalinclude:: ../examples/test_example_configurationservice.py
-            :start-after: [START list_configuration_setting]
-            :end-before: [END list_configuration_setting]
-            :language: python
-            :dedent: 4
-            :caption: List ConfigurationService
         """
         labels = AzureConfigurationClientAbstract.escape_and_tolist(labels)
         keys = AzureConfigurationClientAbstract.escape_and_tolist(keys)
@@ -78,13 +61,13 @@ class AzureConfigurationClientAbstract(object):
             headers=kwargs.get("headers"),
         )
 
+    @abstractmethod
     def get_configuration_setting(
-            self, key, label=None, accept_date_time=None, **kwargs
+        self, key, label=None, accept_date_time=None, **kwargs
     ):
         # type: (str, str, datetime, dict) -> ConfigurationSetting
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
-
 
         :param key: key of the ConfigurationSetting
         :type key: str
@@ -95,22 +78,10 @@ class AzureConfigurationClientAbstract(object):
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The matched ConfigurationSetting object
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`ResourceNotFoundError`, :class:`HttpRequestError`
 
-
-        Example
-
-        .. literalinclude:: ../examples/test_example_configurationservice.py
-            :start-after: [START get_configuration_setting]
-            :end-before: [END get_configuration_setting]
-            :language: python
-            :dedent: 4
-            :caption: Get a ConfigurationSetting
         """
-        error_map = {
-            404: ResourceNotFoundError,
-            412: ResourceNotFoundError,
-        }
+        error_map = {404: ResourceNotFoundError, 412: ResourceNotFoundError}
         return self._impl.get_configuration_setting(
             key=key,
             label=label,
@@ -119,30 +90,19 @@ class AzureConfigurationClientAbstract(object):
             error_map=error_map,
         )
 
+    @abstractmethod
     def add_configuration_setting(self, configuration_setting, **kwargs):
         # type: (ConfigurationSetting, dict) -> ConfigurationSetting
 
         """Add a ConfigurationSetting into the Azure App Configuration service.
-        Exception is raised if it already exists.
 
-        .. seealso::
-            :meth:`set_configuration_setting`
-
-        :param configuration_setting:
+        :param configuration_setting: the ConfigurationSetting object to be added
         :type configuration_setting: :class:`ConfigurationSetting<azure.configuration.ConfigurationSetting>`
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
-        :return: The ConfigurationSetting object returned from the App Configuration service.
+        :return: The ConfigurationSetting object returned from the App Configuration service
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`ResourceExistsError`, :class:`HttpRequestError`
 
-        Example:
-
-        .. literalinclude:: ../examples/test_example_configurationservice.py
-            :start-after: [START add_configuration_setting]
-            :end-before: [END add_configuration_setting]
-            :language: python
-            :dedent: 4
-            :caption: Add a new ConfigurationService
         """
 
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
@@ -152,9 +112,7 @@ class AzureConfigurationClientAbstract(object):
             key=configuration_setting.key,
             label=configuration_setting.label,
             headers=custom_headers,
-            error_map={
-                412: ResourceExistsError
-            },
+            error_map={412: ResourceExistsError},
         )
 
     @abstractmethod
@@ -169,19 +127,29 @@ class AzureConfigurationClientAbstract(object):
         **kwargs
     ):
         # type: (str, str, str, dict, str, str, dict) -> ConfigurationSetting
+        """Update specified attributes of the ConfigurationSetting
+
+        :param key: key used to identify the ConfigurationSetting
+        :param value: the value to be updated to the ConfigurationSetting. None means unchanged.
+        :param content_type: the content type to be updated to the ConfigurationSetting. None means unchanged.
+        :param tags: tags to be updated to the ConfigurationSetting. None means unchanged.
+        :param label: lable used together with key to identify the ConfigurationSetting.
+        :param etag: the ETag (http entity tag) of the ConfigurationSetting.
+            Used to check if the configuration setting has changed. Leave None to skip the check.
+        :param kwargs: if "headers" exists, its value (a dict) will be added to the http request header
+        :rtype: :class:`ConfigurationSetting`
+        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+
+        """
         pass
 
+    @abstractmethod
     def set_configuration_setting(self, configuration_setting, **kwargs):
         # type: (ConfigurationSetting, dict) -> ConfigurationSetting
 
-        """
-        Add or update a ConfigurationSetting.
-        If the configuration setting identified by key and label does not exist, this is a create. Otherwise this is an
-        update.
-
-        .. seealso::
-            :meth:`update_configuration_setting`
-            :meth:`add_configuration_setting`
+        """Add or update a ConfigurationSetting.
+        If the configuration setting identified by key and label does not exist, this is a create.
+        Otherwise this is an update.
 
         :param configuration_setting: the ConfigurationSetting to be added (if not exists) or updated (if exists) to the service
         :type configuration_setting: :class:`ConfigurationSetting`
@@ -189,40 +157,32 @@ class AzureConfigurationClientAbstract(object):
         :type kwargs: dict
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`ResourceModifiedError`, :class:`HttpRequestError`
 
-        Example
-
-        .. literalinclude:: ../examples/test_example_configurationservice.py
-            :start-after: [START set_configuration_setting]
-            :end-before: [END set_configuration_setting]
-            :language: python
-            :dedent: 4
-            :caption: Set a ConfigurationSetting
         """
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         etag = configuration_setting.etag
         if etag:
-            custom_headers["if-match"] = AzureConfigurationClientAbstract.quote_etag(etag)
+            custom_headers["if-match"] = AzureConfigurationClientAbstract.quote_etag(
+                etag
+            )
         return self._impl.create_or_update_configuration_setting(
             configuration_setting=configuration_setting,
             key=configuration_setting.key,
             label=configuration_setting.label,
             headers=custom_headers,
-            error_map={
-                412: ResourceModifiedError
-            },
+            error_map={412: ResourceModifiedError},
         )
 
+    @abstractmethod
     def delete_configuration_setting(self, key, label=None, etag=None, **kwargs):
         # type: (str, str, str, dict) -> ConfigurationSetting
 
-        """
-        Delete a ConfigurationSetting if it exists. Otherwise raise an exception.
+        """Delete a ConfigurationSetting if it exists
 
-        :param key: identify the ConfigurationSetting
+        :param key: key used to identify the ConfigurationSetting
         :type key: str
-        :param label: identify the ConfigurationSetting
+        :param label: label used to identify the ConfigurationSetting
         :type label: str
         :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :type etag: str
@@ -230,32 +190,29 @@ class AzureConfigurationClientAbstract(object):
         :type kwargs: dict
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
 
-        Example
-
-        .. literalinclude:: ../examples/test_example_configurationservice.py
-            :start-after: [START delete_configuration_setting]
-            :end-before: [END delete_configuration_setting]
-            :language: python
-            :dedent: 4
-            :caption: Delete a ConfigurationSetting
         """
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         if etag:
-            custom_headers["if-match"] = AzureConfigurationClientAbstract.quote_etag(etag)
+            custom_headers["if-match"] = AzureConfigurationClientAbstract.quote_etag(
+                etag
+            )
         return self._impl.delete_configuration_setting(
-            key=key, label=label, headers=custom_headers,
+            key=key,
+            label=label,
+            headers=custom_headers,
             error_map={
                 404: ResourceNotFoundError,  # 404 doesn't happen actually. return None if no match
                 412: ResourceModifiedError,
             },
         )
 
+    @abstractmethod
     def list_revisions(
-            self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
+        self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
     ):
-        # type: (list, list, datetime, list, dict) -> ConfigurationSettingPaged
+        # type: (list, list, datetime, list, dict) -> Paged
 
         """
         Find the ConfigurationSetting revision history.
@@ -272,17 +229,9 @@ class AzureConfigurationClientAbstract(object):
         :type fields: list[str]
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
-        :rtype: :class:`ConfigurationSettingPaged`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :rtype: :class:`Paged`
+        :raises: :class:`HttpRequestError`
 
-        Example
-
-        .. literalinclude:: ../examples/test_example_configurationservice.py
-            :start-after: [START list_revisions]
-            :end-before: [END list_revisions]
-            :language: python
-            :dedent: 4
-            :caption: List ConfigurationSetting revisions
         """
 
         labels = AzureConfigurationClientAbstract.escape_and_tolist(labels)
@@ -295,6 +244,7 @@ class AzureConfigurationClientAbstract(object):
             headers=kwargs.get("headers"),
         )
 
+    @abstractmethod
     def lock_configuration_setting(self, key, label=None, **kwargs):
         # type: (str, str, dict) -> ConfigurationSetting
 
@@ -308,25 +258,17 @@ class AzureConfigurationClientAbstract(object):
         :param dict kwargs: if headers key exists, it will be added to the http request header
         :return: The locked ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
 
-        Example
-
-        .. literalinclude:: ../examples/test_example_configurationservice.py
-            :start-after: [START lock_configuration_setting]
-            :end-before: [END lock_configuration_setting]
-            :language: python
-            :dedent: 4
-            :caption: Lock a ConfigurationSetting
         """
         return self._impl.lock_configuration_setting(
-            key=key, label=label, headers=kwargs.get("header"),
-            error_map={
-                404: ResourceNotFoundError,
-                412: ResourceModifiedError,
-            },
+            key=key,
+            label=label,
+            headers=kwargs.get("header"),
+            error_map={404: ResourceNotFoundError, 412: ResourceModifiedError},
         )
 
+    @abstractmethod
     def unlock_configuration_setting(self, key, label=None, **kwargs):
         # type: (str, str, dict) -> ConfigurationSetting
 
@@ -339,23 +281,14 @@ class AzureConfigurationClientAbstract(object):
         :param dict kwargs: if headers key exists, it will be added to the http request header
         :return: The locked ConfigurationSetting returned from the service.
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
 
-        Example
-
-        .. literalinclude:: ../examples/test_example_configurationservice.py
-            :start-after: [START unlock_configuration_setting]
-            :end-before: [END unlock_configuration_setting]
-            :language: python
-            :dedent: 4
-            :caption: Unlock a ConfigurationSetting
         """
         return self._impl.unlock_configuration_setting(
-            key=key, label=label, headers=kwargs.get("header"),
-            error_map={
-                404: ResourceNotFoundError,
-                412: ResourceModifiedError,
-            },
+            key=key,
+            label=label,
+            headers=kwargs.get("header"),
+            error_map={404: ResourceNotFoundError, 412: ResourceModifiedError},
         )
 
     @staticmethod
@@ -366,7 +299,9 @@ class AzureConfigurationClientAbstract(object):
 
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         if etag:
-            custom_headers["if-match"] = AzureConfigurationClientAbstract.quote_etag(etag)
+            custom_headers["if-match"] = AzureConfigurationClientAbstract.quote_etag(
+                etag
+            )
         elif "if-match" not in custom_headers:
             custom_headers["if-match"] = "*"
 
@@ -374,7 +309,7 @@ class AzureConfigurationClientAbstract(object):
 
     @staticmethod
     def quote_etag(etag):
-        if etag != '*' and etag is not None:
+        if etag != "*" and etag is not None:
             return '"' + etag + '"'
         else:
             return etag
@@ -393,7 +328,9 @@ class AzureConfigurationClientAbstract(object):
             return "\0"  # '\0' will be encoded to %00 in the url.
         else:
             if isinstance(value, list):
-                return [AzureConfigurationClientAbstract.escape_reserved(s) for s in value]
+                return [
+                    AzureConfigurationClientAbstract.escape_reserved(s) for s in value
+                ]
             else:
                 value = str(value)  # value is unicode for Python 2.7
                 # precede all reserved characters with a backslash.
@@ -407,4 +344,3 @@ class AzureConfigurationClientAbstract(object):
                 value = [value]
             value = AzureConfigurationClientAbstract.escape_reserved(value)
         return value
-
