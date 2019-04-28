@@ -16,7 +16,7 @@ class MultiMetricCriteria(Model):
     """The types of conditions for a multi resource alert.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: StaticMetricCriteria, DynamicMetricCriteria
+    sub-classes are: MetricCriteria, DynamicMetricCriteria
 
     All required parameters must be populated in order to send to Azure.
 
@@ -55,7 +55,7 @@ class MultiMetricCriteria(Model):
     }
 
     _subtype_map = {
-        'criterion_type': {'StaticThresholdCriterion': 'StaticMetricCriteria', 'DynamicThresholdCriterion': 'DynamicMetricCriteria'}
+        'criterion_type': {'StaticThresholdCriterion': 'MetricCriteria', 'DynamicThresholdCriterion': 'DynamicMetricCriteria'}
     }
 
     def __init__(self, *, name: str, metric_name: str, time_aggregation, additional_properties=None, metric_namespace: str=None, dimensions=None, **kwargs) -> None:

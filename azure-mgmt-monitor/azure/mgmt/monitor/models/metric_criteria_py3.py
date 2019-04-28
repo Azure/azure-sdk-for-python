@@ -12,7 +12,7 @@
 from .multi_metric_criteria_py3 import MultiMetricCriteria
 
 
-class StaticMetricCriteria(MultiMetricCriteria):
+class MetricCriteria(MultiMetricCriteria):
     """Criterion to filter metrics.
 
     All required parameters must be populated in order to send to Azure.
@@ -61,7 +61,7 @@ class StaticMetricCriteria(MultiMetricCriteria):
     }
 
     def __init__(self, *, name: str, metric_name: str, time_aggregation, operator, threshold: float, additional_properties=None, metric_namespace: str=None, dimensions=None, **kwargs) -> None:
-        super(StaticMetricCriteria, self).__init__(additional_properties=additional_properties, name=name, metric_name=metric_name, metric_namespace=metric_namespace, time_aggregation=time_aggregation, dimensions=dimensions, **kwargs)
+        super(MetricCriteria, self).__init__(additional_properties=additional_properties, name=name, metric_name=metric_name, metric_namespace=metric_namespace, time_aggregation=time_aggregation, dimensions=dimensions, **kwargs)
         self.operator = operator
         self.threshold = threshold
         self.criterion_type = 'StaticThresholdCriterion'

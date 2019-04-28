@@ -24,7 +24,7 @@ class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param all_of: The list of metric criteria for this 'all of' operation.
-    :type all_of: list[~azure.mgmt.monitor.models.StaticMetricCriteria]
+    :type all_of: list[~azure.mgmt.monitor.models.MetricCriteria]
     """
 
     _validation = {
@@ -34,7 +34,7 @@ class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'odatatype': {'key': 'odata\\.type', 'type': 'str'},
-        'all_of': {'key': 'allOf', 'type': '[StaticMetricCriteria]'},
+        'all_of': {'key': 'allOf', 'type': '[MetricCriteria]'},
     }
 
     def __init__(self, **kwargs):

@@ -100,7 +100,7 @@ try:
     from .metric_alert_status_properties_py3 import MetricAlertStatusProperties
     from .metric_alert_status_py3 import MetricAlertStatus
     from .metric_alert_status_collection_py3 import MetricAlertStatusCollection
-    from .static_metric_criteria_py3 import StaticMetricCriteria
+    from .metric_criteria_py3 import MetricCriteria
     from .metric_alert_single_resource_multiple_metric_criteria_py3 import MetricAlertSingleResourceMultipleMetricCriteria
     from .metric_dimension_py3 import MetricDimension
     from .multi_metric_criteria_py3 import MultiMetricCriteria
@@ -218,7 +218,7 @@ except (SyntaxError, ImportError):
     from .metric_alert_status_properties import MetricAlertStatusProperties
     from .metric_alert_status import MetricAlertStatus
     from .metric_alert_status_collection import MetricAlertStatusCollection
-    from .static_metric_criteria import StaticMetricCriteria
+    from .metric_criteria import MetricCriteria
     from .metric_alert_single_resource_multiple_metric_criteria import MetricAlertSingleResourceMultipleMetricCriteria
     from .metric_dimension import MetricDimension
     from .multi_metric_criteria import MultiMetricCriteria
@@ -376,7 +376,7 @@ __all__ = [
     'MetricAlertStatusProperties',
     'MetricAlertStatus',
     'MetricAlertStatusCollection',
-    'StaticMetricCriteria',
+    'MetricCriteria',
     'MetricAlertSingleResourceMultipleMetricCriteria',
     'MetricDimension',
     'MultiMetricCriteria',
