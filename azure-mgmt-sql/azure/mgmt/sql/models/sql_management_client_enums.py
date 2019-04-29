@@ -85,6 +85,9 @@ class DatabaseEdition(str, Enum):
     data_warehouse = "DataWarehouse"
     system = "System"
     system2 = "System2"
+    general_purpose = "GeneralPurpose"
+    business_critical = "BusinessCritical"
+    hyperscale = "Hyperscale"
 
 
 class ServiceObjectiveName(str, Enum):
@@ -203,6 +206,8 @@ class ElasticPoolEdition(str, Enum):
     basic = "Basic"
     standard = "Standard"
     premium = "Premium"
+    general_purpose = "GeneralPurpose"
+    business_critical = "BusinessCritical"
 
 
 class ReplicationRole(str, Enum):
@@ -624,6 +629,8 @@ class DatabaseStatus(str, Enum):
     paused = "Paused"
     resuming = "Resuming"
     scaling = "Scaling"
+    offline_changing_dw_performance_tiers = "OfflineChangingDwPerformanceTiers"
+    online_changing_dw_performance_tiers = "OnlineChangingDwPerformanceTiers"
 
 
 class DatabaseLicenseType(str, Enum):
