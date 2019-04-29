@@ -17,9 +17,9 @@ class ProvisioningError(Model):
 
     :param provisioning_error_code: Error code of the provisioning failure.
      Possible values include: 'BadSourceType', 'BadPIRSource', 'BadISOSource',
-     'BadManagedImageSource', 'BadCustomizerType', 'UnsupportedCustomizerType',
-     'NoCustomizerScript', 'BadDistributeType', 'BadSharedImageDistribute',
-     'ServerError', 'Other'
+     'BadManagedImageSource', 'BadSharedImageVersionSource',
+     'BadCustomizerType', 'UnsupportedCustomizerType', 'NoCustomizerScript',
+     'BadDistributeType', 'BadSharedImageDistribute', 'ServerError', 'Other'
     :type provisioning_error_code: str or ~azure.mgmt.imagebuilder.models.enum
     :param message: Verbose error message about the provisioning failure
     :type message: str

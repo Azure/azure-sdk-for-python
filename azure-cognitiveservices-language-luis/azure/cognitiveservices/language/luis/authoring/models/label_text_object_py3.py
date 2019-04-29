@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class LabelTextObject(Model):
-    """An object containing the example's text.
+    """An object containing the example utterance's text.
 
     :param id: The ID of the Label.
     :type id: int

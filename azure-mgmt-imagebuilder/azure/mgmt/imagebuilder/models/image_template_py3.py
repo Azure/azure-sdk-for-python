@@ -42,7 +42,7 @@ class ImageTemplate(Resource):
     :type distribute:
      list[~azure.mgmt.imagebuilder.models.ImageTemplateDistributor]
     :ivar provisioning_state: Provisioning state of the resource. Possible
-     values include: 'Creating', 'Succeeded', 'Failed', 'Deleting'
+     values include: 'Creating', 'Updating', 'Succeeded', 'Failed', 'Deleting'
     :vartype provisioning_state: str or ~azure.mgmt.imagebuilder.models.enum
     :ivar provisioning_error: Provisioning error, if any
     :vartype provisioning_error:
@@ -51,6 +51,11 @@ class ImageTemplate(Resource):
      last executed.
     :vartype last_run_status:
      ~azure.mgmt.imagebuilder.models.ImageTemplateLastRunStatus
+    :param build_timeout_in_minutes: Maximum duration to wait while building
+     the image template. Omit or specify 0 to use the default (60 minutes).
+    :type build_timeout_in_minutes: int
+    :param identity: The identity of the image template, if configured.
+    :type identity: ~azure.mgmt.imagebuilder.models.ImageTemplateIdentity
     """
 
     _validation = {
@@ -63,6 +68,7 @@ class ImageTemplate(Resource):
         'provisioning_state': {'readonly': True},
         'provisioning_error': {'readonly': True},
         'last_run_status': {'readonly': True},
+        'build_timeout_in_minutes': {'maximum': 960, 'minimum': 0},
     }
 
     _attribute_map = {
@@ -77,9 +83,11 @@ class ImageTemplate(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'provisioning_error': {'key': 'properties.provisioningError', 'type': 'ProvisioningError'},
         'last_run_status': {'key': 'properties.lastRunStatus', 'type': 'ImageTemplateLastRunStatus'},
+        'build_timeout_in_minutes': {'key': 'properties.buildTimeoutInMinutes', 'type': 'int'},
+        'identity': {'key': 'identity', 'type': 'ImageTemplateIdentity'},
     }
 
-    def __init__(self, *, location: str, source, distribute, tags=None, customize=None, **kwargs) -> None:
+    def __init__(self, *, location: str, source, distribute, tags=None, customize=None, build_timeout_in_minutes: int=None, identity=None, **kwargs) -> None:
         super(ImageTemplate, self).__init__(location=location, tags=tags, **kwargs)
         self.source = source
         self.customize = customize
@@ -87,3 +95,5 @@ class ImageTemplate(Resource):
         self.provisioning_state = None
         self.provisioning_error = None
         self.last_run_status = None
+        self.build_timeout_in_minutes = build_timeout_in_minutes
+        self.identity = identity

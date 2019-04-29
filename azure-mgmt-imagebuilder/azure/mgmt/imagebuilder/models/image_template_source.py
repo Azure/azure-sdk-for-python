@@ -17,7 +17,7 @@ class ImageTemplateSource(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ImageTemplateIsoSource, ImageTemplatePlatformImageSource,
-    ImageTemplateManagedImageSource
+    ImageTemplateManagedImageSource, ImageTemplateSharedImageVersionSource
 
     All required parameters must be populated in order to send to Azure.
 
@@ -34,7 +34,7 @@ class ImageTemplateSource(Model):
     }
 
     _subtype_map = {
-        'type': {'ISO': 'ImageTemplateIsoSource', 'PlatformImage': 'ImageTemplatePlatformImageSource', 'ManagedImage': 'ImageTemplateManagedImageSource'}
+        'type': {'ISO': 'ImageTemplateIsoSource', 'PlatformImage': 'ImageTemplatePlatformImageSource', 'ManagedImage': 'ImageTemplateManagedImageSource', 'SharedImageVersion': 'ImageTemplateSharedImageVersionSource'}
     }
 
     def __init__(self, **kwargs):
