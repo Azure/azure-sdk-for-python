@@ -3,6 +3,20 @@
 Release History
 ===============
 
+2.6.0 (2019-04-29)
+++++++++++++++++++
+
+**Preview features**
+
+- Added operation ClustersOperations.put
+- Added operation ClustersOperations.list_available_clusters
+- Added operation ClustersOperations.list_namespaces
+- Added operation ClustersOperations.delete
+
+**Bugfixes**
+
+- Remove useless files packaged by mistake (azure.mgmt.eventhub.operations folder)
+
 2.5.0 (2019-04-09)
 ++++++++++++++++++
 
