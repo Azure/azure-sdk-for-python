@@ -16,6 +16,9 @@ from .version import VERSION
 from .operations.pricings_operations import PricingsOperations
 from .operations.alerts_operations import AlertsOperations
 from .operations.settings_operations import SettingsOperations
+from .operations.regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
+from .operations.regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
+from .operations.regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
 from .operations.allowed_connections_operations import AllowedConnectionsOperations
 from .operations.discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
 from .operations.external_security_solutions_operations import ExternalSecuritySolutionsOperations
@@ -83,6 +86,12 @@ class SecurityCenter(SDKClient):
     :vartype alerts: azure.mgmt.security.operations.AlertsOperations
     :ivar settings: Settings operations
     :vartype settings: azure.mgmt.security.operations.SettingsOperations
+    :ivar regulatory_compliance_standards: RegulatoryComplianceStandards operations
+    :vartype regulatory_compliance_standards: azure.mgmt.security.operations.RegulatoryComplianceStandardsOperations
+    :ivar regulatory_compliance_controls: RegulatoryComplianceControls operations
+    :vartype regulatory_compliance_controls: azure.mgmt.security.operations.RegulatoryComplianceControlsOperations
+    :ivar regulatory_compliance_assessments: RegulatoryComplianceAssessments operations
+    :vartype regulatory_compliance_assessments: azure.mgmt.security.operations.RegulatoryComplianceAssessmentsOperations
     :ivar allowed_connections: AllowedConnections operations
     :vartype allowed_connections: azure.mgmt.security.operations.AllowedConnectionsOperations
     :ivar discovered_security_solutions: DiscoveredSecuritySolutions operations
@@ -138,6 +147,12 @@ class SecurityCenter(SDKClient):
         self.alerts = AlertsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.settings = SettingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.regulatory_compliance_standards = RegulatoryComplianceStandardsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.regulatory_compliance_controls = RegulatoryComplianceControlsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.regulatory_compliance_assessments = RegulatoryComplianceAssessmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.allowed_connections = AllowedConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

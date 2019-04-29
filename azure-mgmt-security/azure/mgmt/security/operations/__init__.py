@@ -12,6 +12,9 @@
 from .pricings_operations import PricingsOperations
 from .alerts_operations import AlertsOperations
 from .settings_operations import SettingsOperations
+from .regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
+from .regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
+from .regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
 from .allowed_connections_operations import AllowedConnectionsOperations
 from .discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
 from .external_security_solutions_operations import ExternalSecuritySolutionsOperations
@@ -31,6 +34,9 @@ __all__ = [
     'PricingsOperations',
     'AlertsOperations',
     'SettingsOperations',
+    'RegulatoryComplianceStandardsOperations',
+    'RegulatoryComplianceControlsOperations',
+    'RegulatoryComplianceAssessmentsOperations',
     'AllowedConnectionsOperations',
     'DiscoveredSecuritySolutionsOperations',
     'ExternalSecuritySolutionsOperations',
