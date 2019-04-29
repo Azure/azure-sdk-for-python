@@ -162,7 +162,6 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
             error_map={404: ResourceNotFoundError, 412: ResourceModifiedError},
         )
 
-
     def set_configuration_setting(
         self, configuration_setting, **kwargs
     ):  # type: (ConfigurationSetting, dict) -> ConfigurationSetting

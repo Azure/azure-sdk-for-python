@@ -1,4 +1,4 @@
-from asyncio import *
+from asyncio import get_event_loop
 from azure.configuration.aio import AzureConfigurationClient
 
 
@@ -16,7 +16,7 @@ class AzureConfigurationClientProxy(object):
         self.obj = AzureConfigurationClient(connection_str)
 
     def get_configuration_setting(
-        self, key, label=None, accept_date_time=None, **kwargs
+            self, key, label=None, accept_date_time=None, **kwargs
     ):
         return get_event_loop().run_until_complete(
             self.obj.get_configuration_setting(
@@ -55,14 +55,14 @@ class AzureConfigurationClientProxy(object):
         return _to_list(paged)
 
     def update_configuration_setting(
-        self,
-        key,
-        value=None,
-        content_type=None,
-        tags=None,
-        label=None,
-        etag=None,
-        **kwargs
+            self,
+            key,
+            value=None,
+            content_type=None,
+            tags=None,
+            label=None,
+            etag=None,
+            **kwargs
     ):
         return get_event_loop().run_until_complete(
             self.obj.update_configuration_setting(

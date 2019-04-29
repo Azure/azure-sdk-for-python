@@ -16,9 +16,10 @@ from ._generated.models import ConfigurationSetting
 
 
 class AzureConfigurationClientAbstract(object):
-    """Represents an client that calls restful API of Azure App Configuration service
+    """Represents an client that calls restful API of Azure App Configuration service.
 
-    :param connection_string: Connection String used to access the Azure App Configuration.
+    :param connection_string: Connection String (one of the access keys of the Azure App Configuration resource)
+        used to access the Azure App Configuration.
     :type connection_string: str
 
     """
