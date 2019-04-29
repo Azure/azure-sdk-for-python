@@ -30,6 +30,9 @@ from .operations.compliances_operations import CompliancesOperations
 from .operations.information_protection_policies_operations import InformationProtectionPoliciesOperations
 from .operations.security_contacts_operations import SecurityContactsOperations
 from .operations.workspace_settings_operations import WorkspaceSettingsOperations
+from .operations.regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
+from .operations.regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
+from .operations.regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
 from . import models
 
 
@@ -111,6 +114,12 @@ class SecurityCenter(SDKClient):
     :vartype security_contacts: azure.mgmt.security.operations.SecurityContactsOperations
     :ivar workspace_settings: WorkspaceSettings operations
     :vartype workspace_settings: azure.mgmt.security.operations.WorkspaceSettingsOperations
+    :ivar regulatory_compliance_standards: RegulatoryComplianceStandards operations
+    :vartype regulatory_compliance_standards: azure.mgmt.security.operations.RegulatoryComplianceStandardsOperations
+    :ivar regulatory_compliance_controls: RegulatoryComplianceControls operations
+    :vartype regulatory_compliance_controls: azure.mgmt.security.operations.RegulatoryComplianceControlsOperations
+    :ivar regulatory_compliance_assessments: RegulatoryComplianceAssessments operations
+    :vartype regulatory_compliance_assessments: azure.mgmt.security.operations.RegulatoryComplianceAssessmentsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -166,4 +175,10 @@ class SecurityCenter(SDKClient):
         self.security_contacts = SecurityContactsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workspace_settings = WorkspaceSettingsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.regulatory_compliance_standards = RegulatoryComplianceStandardsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.regulatory_compliance_controls = RegulatoryComplianceControlsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.regulatory_compliance_assessments = RegulatoryComplianceAssessmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
