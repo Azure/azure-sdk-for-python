@@ -1,5 +1,4 @@
 
-v0.0.1 (unreleased)
+v0.1 (preview)
 -------------------
-
 - New azure app configuration
