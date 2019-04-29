@@ -27,7 +27,6 @@
 __version__ = "0.0.1"
 
 from .pipeline_client import PipelineClient
-from .pipeline_client_async import AsyncPipelineClient
 from .configuration import Configuration
 from .pipeline.transport import HttpRequest
 from .exceptions import *
@@ -35,7 +34,12 @@ from .exceptions import *
 
 __all__ = [
     "Configuration",
-    "AsyncPipelineClient",
     "PipelineClient",
     "HttpRequestError",
 ]
+
+try:
+    from .pipeline_client_async import AsyncPipelineClient
+    __all__.extend(["AsyncPipelineClient"])
+except ImportError: # Python <= 3.5
+    pass
