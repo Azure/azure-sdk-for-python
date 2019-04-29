@@ -9,4 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.6.0"
+from msrest.serialization import Model
+
+
+class EHNamespaceIdContainer(Model):
+    """The full ARM ID of an Event Hubs Namespace.
+
+    :param id:
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(EHNamespaceIdContainer, self).__init__(**kwargs)
+        self.id = id
