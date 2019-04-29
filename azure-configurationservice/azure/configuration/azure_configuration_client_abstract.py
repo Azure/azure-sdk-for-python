@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 from abc import abstractmethod
 import re
+from datetime import datetime
 from requests.structures import CaseInsensitiveDict
 from msrest.paging import Paged
 from azure.core.exceptions import (
@@ -243,53 +244,6 @@ class AzureConfigurationClientAbstract(object):
             fields=fields,
             accept_date_time=accept_date_time,
             headers=kwargs.get("headers"),
-        )
-
-    @abstractmethod
-    def lock_configuration_setting(self, key, label=None, **kwargs):
-        # type: (str, str, dict) -> ConfigurationSetting
-
-        """
-        Lock a ConfigurationSetting
-
-        :param key: identify the ConfigurationSetting
-        :type key: str
-        :param label: identify the ConfigurationSetting
-        :type label: str
-        :param dict kwargs: if headers key exists, it will be added to the http request header
-        :return: The locked ConfigurationSetting returned from the service
-        :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
-
-        """
-        return self._impl.lock_configuration_setting(
-            key=key,
-            label=label,
-            headers=kwargs.get("header"),
-            error_map={404: ResourceNotFoundError, 412: ResourceModifiedError},
-        )
-
-    @abstractmethod
-    def unlock_configuration_setting(self, key, label=None, **kwargs):
-        # type: (str, str, dict) -> ConfigurationSetting
-
-        """ Unlock a ConfigurationSetting
-
-        :param key: identify the ConfigurationSetting
-        :type key: str
-        :param label: identify the ConfigurationSetting
-        :type label: str
-        :param dict kwargs: if headers key exists, it will be added to the http request header
-        :return: The locked ConfigurationSetting returned from the service.
-        :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
-
-        """
-        return self._impl.unlock_configuration_setting(
-            key=key,
-            label=label,
-            headers=kwargs.get("header"),
-            error_map={404: ResourceNotFoundError, 412: ResourceModifiedError},
         )
 
     @staticmethod
