@@ -31,10 +31,10 @@ class ElasticPool(TrackedResource):
     :param tags: Resource tags.
     :type tags: dict[str, str]
     :param sku: The elastic pool SKU.
-     To determine the SKUs (including the SKU name, tier/edition, family, and
-     capacity) that are available to your subscription in an Azure location,
-     use the `Capabilities_ListByLocation` REST API or one of the following
-     interfaces:
+     The list of SKUs may vary by region and support offer. To determine the
+     SKUs (including the SKU name, tier/edition, family, and capacity) that are
+     available to your subscription in an Azure region, use the
+     `Capabilities_ListByLocation` REST API or the following command:
      ```azurecli
      az sql elastic-pool list-editions -l <location> -o table
      ````
