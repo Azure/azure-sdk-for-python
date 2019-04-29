@@ -24,7 +24,9 @@
 #
 # --------------------------------------------------------------------------
 
+import asyncio
 import abc
+
 from .base import _HttpResponseBase
 from azure.core.pipeline import PipelineRequest, PipelineResponse, Pipeline
 from azure.core.pipeline.policies import SansIOHTTPPolicy
