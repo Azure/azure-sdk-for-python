@@ -33,6 +33,12 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     :param single_placement_group: When true this limits the scale set to a
      single placement group, of max size 100 virtual machines.
     :type single_placement_group: bool
+    :param additional_capabilities: Specifies additional capabilities enabled
+     or disabled on the Virtual Machines in the Virtual Machine Scale Set. For
+     instance: whether the Virtual Machines have the capability to support
+     attaching managed data disks with UltraSSD_LRS storage account type.
+    :type additional_capabilities:
+     ~azure.mgmt.compute.v2019_03_01.models.AdditionalCapabilities
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -47,6 +53,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetUpdateVMProfile'},
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
+        'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
@@ -58,4 +65,5 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         self.virtual_machine_profile = kwargs.get('virtual_machine_profile', None)
         self.overprovision = kwargs.get('overprovision', None)
         self.single_placement_group = kwargs.get('single_placement_group', None)
+        self.additional_capabilities = kwargs.get('additional_capabilities', None)
         self.identity = kwargs.get('identity', None)

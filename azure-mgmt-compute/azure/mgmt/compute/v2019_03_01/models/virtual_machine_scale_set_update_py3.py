@@ -33,6 +33,12 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     :param single_placement_group: When true this limits the scale set to a
      single placement group, of max size 100 virtual machines.
     :type single_placement_group: bool
+    :param additional_capabilities: Specifies additional capabilities enabled
+     or disabled on the Virtual Machines in the Virtual Machine Scale Set. For
+     instance: whether the Virtual Machines have the capability to support
+     attaching managed data disks with UltraSSD_LRS storage account type.
+    :type additional_capabilities:
+     ~azure.mgmt.compute.v2019_03_01.models.AdditionalCapabilities
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -47,10 +53,11 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetUpdateVMProfile'},
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
+        'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
-    def __init__(self, *, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, single_placement_group: bool=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, single_placement_group: bool=None, additional_capabilities=None, identity=None, **kwargs) -> None:
         super(VirtualMachineScaleSetUpdate, self).__init__(tags=tags, **kwargs)
         self.sku = sku
         self.plan = plan
@@ -58,4 +65,5 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         self.virtual_machine_profile = virtual_machine_profile
         self.overprovision = overprovision
         self.single_placement_group = single_placement_group
+        self.additional_capabilities = additional_capabilities
         self.identity = identity

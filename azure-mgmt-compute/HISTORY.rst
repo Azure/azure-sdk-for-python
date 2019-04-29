@@ -3,6 +3,32 @@
 Release History
 ===============
 
+5.0.0 (2019-04-26)
+++++++++++++++++++
+
+**Features**
+
+- Model ImageUpdate has a new parameter hyper_vgeneration
+- Model Image has a new parameter hyper_vgeneration
+
+- Model AvailabilitySet has a new parameter proximity_placement_group
+- Model VirtualMachine has a new parameter proximity_placement_group
+- Model VirtualMachineUpdate has a new parameter proximity_placement_group
+- Model VirtualMachineScaleSet has a new parameter proximity_placement_group
+- Model VirtualMachineScaleSet has a new parameter additional_capabilities
+- Model VirtualMachineScaleSetUpdate has a new parameter additional_capabilities
+- Model AvailabilitySetUpdate has a new parameter proximity_placement_group
+- Added operation group ProximityPlacementGroupsOperations
+- Model DataDisk has a new parameter to_be_detached
+
+- Model ResourceSkuLocationInfo has a new output zone_details
+
+**Breaking changes**
+
+- Model VirtualMachineScaleSetVMProfile no longer has parameter additional_capabilities
+- Latest version of disks/snapshot renamed the enum StorageAccountTypes to DiskStorageAccountTypes
+- images.create_or_update requires hyper_vgeneration parameter if disk is OS type
+
 4.6.2 (2019-04-22)
 ++++++++++++++++++
 

@@ -42,6 +42,10 @@ class Image(Resource):
      ~azure.mgmt.compute.v2019_03_01.models.ImageStorageProfile
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
+    :param hyper_vgeneration: Gets the HyperVGenerationType of the
+     VirtualMachine created from the image. Possible values include: 'V1', 'V2'
+    :type hyper_vgeneration: str or
+     ~azure.mgmt.compute.v2019_03_01.models.HyperVGenerationTypes
     """
 
     _validation = {
@@ -61,6 +65,7 @@ class Image(Resource):
         'source_virtual_machine': {'key': 'properties.sourceVirtualMachine', 'type': 'SubResource'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'ImageStorageProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'hyper_vgeneration': {'key': 'properties.hyperVGeneration', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -68,3 +73,4 @@ class Image(Resource):
         self.source_virtual_machine = kwargs.get('source_virtual_machine', None)
         self.storage_profile = kwargs.get('storage_profile', None)
         self.provisioning_state = None
+        self.hyper_vgeneration = kwargs.get('hyper_vgeneration', None)
