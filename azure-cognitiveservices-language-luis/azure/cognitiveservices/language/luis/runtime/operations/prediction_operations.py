@@ -33,62 +33,52 @@ class PredictionOperations(object):
 
         self.config = config
 
-    def resolve(
-            self, app_id, query, timezone_offset=None, verbose=None, staging=None, spell_check=None, bing_spell_check_subscription_key=None, log=None, custom_headers=None, raw=False, **operation_config):
-        """Gets predictions for a given utterance, in the form of intents and
-        entities. The current maximum query size is 500 characters.
+    def get_version_prediction(
+            self, app_id, version_id, prediction_request, verbose=None, show_all_intents=None, log=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the predictions for an application version.
 
-        :param app_id: The LUIS application ID (Guid).
+        :param app_id: The application ID.
         :type app_id: str
-        :param query: The utterance to predict.
-        :type query: str
-        :param timezone_offset: The timezone offset for the location of the
-         request.
-        :type timezone_offset: float
-        :param verbose: If true, return all intents instead of just the top
-         scoring intent.
+        :param version_id: The application version ID.
+        :type version_id: str
+        :param prediction_request: The prediction request parameters.
+        :type prediction_request:
+         ~azure.cognitiveservices.language.luis.runtime.models.PredictionRequest
+        :param verbose: Indicates whether to get extra metadata for the
+         entities predictions or not.
         :type verbose: bool
-        :param staging: Use the staging endpoint slot.
-        :type staging: bool
-        :param spell_check: Enable spell checking.
-        :type spell_check: bool
-        :param bing_spell_check_subscription_key: The subscription key to use
-         when enabling Bing spell check
-        :type bing_spell_check_subscription_key: str
-        :param log: Log query (default is true)
+        :param show_all_intents: Indicates whether to return all the intents
+         in the response or just the top intent.
+        :type show_all_intents: bool
+        :param log: Indicates whether to log the endpoint query or not.
         :type log: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: LuisResult or ClientRawResponse if raw=true
+        :return: PredictionResponse or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.language.luis.runtime.models.LuisResult or
-         ~msrest.pipeline.ClientRawResponse
+         ~azure.cognitiveservices.language.luis.runtime.models.PredictionResponse
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`APIErrorException<azure.cognitiveservices.language.luis.runtime.models.APIErrorException>`
+         :class:`ErrorException<azure.cognitiveservices.language.luis.runtime.models.ErrorException>`
         """
         # Construct URL
-        url = self.resolve.metadata['url']
+        url = self.get_version_prediction.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'appId': self._serialize.url("app_id", app_id, 'str')
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
-        if timezone_offset is not None:
-            query_parameters['timezoneOffset'] = self._serialize.query("timezone_offset", timezone_offset, 'float')
         if verbose is not None:
             query_parameters['verbose'] = self._serialize.query("verbose", verbose, 'bool')
-        if staging is not None:
-            query_parameters['staging'] = self._serialize.query("staging", staging, 'bool')
-        if spell_check is not None:
-            query_parameters['spellCheck'] = self._serialize.query("spell_check", spell_check, 'bool')
-        if bing_spell_check_subscription_key is not None:
-            query_parameters['bing-spell-check-subscription-key'] = self._serialize.query("bing_spell_check_subscription_key", bing_spell_check_subscription_key, 'str')
+        if show_all_intents is not None:
+            query_parameters['show-all-intents'] = self._serialize.query("show_all_intents", show_all_intents, 'bool')
         if log is not None:
             query_parameters['log'] = self._serialize.query("log", log, 'bool')
 
@@ -100,23 +90,101 @@ class PredictionOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(query, 'str')
+        body_content = self._serialize.body(prediction_request, 'PredictionRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.APIErrorException(self._deserialize, response)
+            raise models.ErrorException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('LuisResult', response)
+            deserialized = self._deserialize('PredictionResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    resolve.metadata = {'url': '/apps/{appId}'}
+    get_version_prediction.metadata = {'url': '/apps/{appId}/versions/{versionId}/predict'}
+
+    def get_slot_prediction(
+            self, app_id, slot_name, prediction_request, verbose=None, show_all_intents=None, log=None, custom_headers=None, raw=False, **operation_config):
+        """Gets the predictions for an application slot.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param slot_name: The application slot name.
+        :type slot_name: str
+        :param prediction_request: The prediction request parameters.
+        :type prediction_request:
+         ~azure.cognitiveservices.language.luis.runtime.models.PredictionRequest
+        :param verbose: Indicates whether to get extra metadata for the
+         entities predictions or not.
+        :type verbose: bool
+        :param show_all_intents: Indicates whether to return all the intents
+         in the response or just the top intent.
+        :type show_all_intents: bool
+        :param log: Indicates whether to log the endpoint query or not.
+        :type log: bool
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PredictionResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.luis.runtime.models.PredictionResponse
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorException<azure.cognitiveservices.language.luis.runtime.models.ErrorException>`
+        """
+        # Construct URL
+        url = self.get_slot_prediction.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'slotName': self._serialize.url("slot_name", slot_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if verbose is not None:
+            query_parameters['verbose'] = self._serialize.query("verbose", verbose, 'bool')
+        if show_all_intents is not None:
+            query_parameters['show-all-intents'] = self._serialize.query("show_all_intents", show_all_intents, 'bool')
+        if log is not None:
+            query_parameters['log'] = self._serialize.query("log", log, 'bool')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(prediction_request, 'PredictionRequest')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('PredictionResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_slot_prediction.metadata = {'url': '/apps/{appId}/slots/{slotName}/predict'}

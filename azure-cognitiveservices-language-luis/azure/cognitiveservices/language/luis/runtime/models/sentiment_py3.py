@@ -13,22 +13,26 @@ from msrest.serialization import Model
 
 
 class Sentiment(Model):
-    """Sentiment of the input utterance.
+    """The result of the sentiment analaysis.
 
-    :param label: The polarity of the sentiment, can be positive, neutral or
-     negative.
-    :type label: str
-    :param score: Score of the sentiment, ranges from 0 (most negative) to 1
-     (most positive).
+    All required parameters must be populated in order to send to Azure.
+
+    :param score: Required. The sentiment score of the query.
     :type score: float
+    :param label: The label of the sentiment analysis result.
+    :type label: str
     """
 
-    _attribute_map = {
-        'label': {'key': 'label', 'type': 'str'},
-        'score': {'key': 'score', 'type': 'float'},
+    _validation = {
+        'score': {'required': True},
     }
 
-    def __init__(self, *, label: str=None, score: float=None, **kwargs) -> None:
+    _attribute_map = {
+        'score': {'key': 'score', 'type': 'float'},
+        'label': {'key': 'label', 'type': 'str'},
+    }
+
+    def __init__(self, *, score: float, label: str=None, **kwargs) -> None:
         super(Sentiment, self).__init__(**kwargs)
-        self.label = label
         self.score = score
+        self.label = label

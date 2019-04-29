@@ -12,25 +12,22 @@
 from msrest.serialization import Model
 
 
-class IntentModel(Model):
-    """An intent detected from the utterance.
+class Intent(Model):
+    """Represents an intent prediction.
 
-    :param intent: Name of the intent, as defined in LUIS.
-    :type intent: str
-    :param score: Associated prediction score for the intent (float).
+    :param score: The score of the fired intent.
     :type score: float
+    :param child_app: The prediction of the dispatched application.
+    :type child_app:
+     ~azure.cognitiveservices.language.luis.runtime.models.Prediction
     """
 
-    _validation = {
-        'score': {'maximum': 1, 'minimum': 0},
-    }
-
     _attribute_map = {
-        'intent': {'key': 'intent', 'type': 'str'},
         'score': {'key': 'score', 'type': 'float'},
+        'child_app': {'key': 'childApp', 'type': 'Prediction'},
     }
 
     def __init__(self, **kwargs):
-        super(IntentModel, self).__init__(**kwargs)
-        self.intent = kwargs.get('intent', None)
+        super(Intent, self).__init__(**kwargs)
         self.score = kwargs.get('score', None)
+        self.child_app = kwargs.get('child_app', None)
