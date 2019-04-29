@@ -9,17 +9,28 @@ Use the client library for App Configuration to create and manage application co
 
 ## Getting started
 
+### Supported Python version
+Python 2.7 and 3.4+
 ### Install the package
 
 Install the Azure App Configuration client library for Python with pip:
 
 ```commandline
-pip install azure-configurationservice
+pip install azure-configuration
 ```
 
 **Prerequisites**: You must have an [Azure subscription][azure_sub], and a [Configuration Store][configuration_store] to use this package.
 
-To create a Configuration Store, you can use the Azure Portal or [Azure CLI][azure_cli] with the following command:
+To create a Configuration Store, you can use the Azure Portal or [Azure CLI][azure_cli].
+
+You need to install the Azure App Configuration CLI extension first by executing the following command:
+
+After that, create the Configuration Store:
+```Powershell
+az extension add -n appconfig
+```
+
+
 
 ```Powershell
 az appconfig create --name <config-store-name> --resource-group <resource-group-name> --location eastus
@@ -126,7 +137,7 @@ updated_kv = client.update_configuration_setting(
 ```
 
 ### Delete a Configuration Setting
-Delete an existing Configuration Setting by calling DeleteAsync
+Delete an existing Configuration Setting by calling delete_configuration_setting
 
 ```python
 deleted_config_setting = client.delete_configuration_setting(
@@ -146,19 +157,20 @@ for item in filtered_listed:
 ```
 
 ## Async Client
-To use the async client library for Python, create the AzureConfigurationClient from package azure.configuration.aio instead of azure.configuration
+Async client is supported for python 3.5+. 
+To use the async client library, import the AzureConfigurationClient from package azure.configuration.aio instead of azure.configuration
 ```python
-    from azure.configuration.aio import AzureConfigurationClient
+from azure.configuration.aio import AzureConfigurationClient
 
-    connection_str = "<connection_string>"
-    async_client = AzureConfigurationClient(connection_str)
+connection_str = "<connection_string>"
+async_client = AzureConfigurationClient(connection_str)
 ```
 This async AzureConfigurationClient has the same method signatures as the sync ones except that they're async.
 For instance, to retrieve a Configuration Setting asynchronously, async_client can be used:
 ```python
-    fetched_config_setting = await async_client.get_configuration_setting(
-        key="MyKey", label="MyLabel"
-    )
+fetched_config_setting = await async_client.get_configuration_setting(
+    key="MyKey", label="MyLabel"
+)
 ```
 
 To use list_configuration_settings, call it synchronously and iterate over the returned async iterator asynchronously 
@@ -174,10 +186,10 @@ async for item in filtered_listed:
 
 ## Troubleshooting
 
-### General
+### Logging
 
 This SDK uses Python standard logging library.
-You can configure logging as follows to print out debugging information to the stdout.
+You can configure logging print out debugging information to the stdout or anywhere you want.
 
 ```python
 import logging
@@ -185,14 +197,8 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 ````
 
-You will notice that additional information is logged, for instance the http request and response details are printed out.
+Http request and response details are printed to stdout with this logging config.
 
-
-
-## Next Steps
-TODO
-
-# Contributing
 
 <!-- LINKS -->
 [azconfig_docs]: https://docs.microsoft.com/en-us/azure/azure-app-configuration/
@@ -200,4 +206,4 @@ TODO
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
 [configuration_client_class]: ./azure/configuration/azure_configuration_client.py
-[package]: http://todo
+[package]: https://pypi.org/project/azure-app-configuration/
