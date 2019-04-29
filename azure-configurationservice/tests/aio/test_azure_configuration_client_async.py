@@ -188,41 +188,6 @@ class AzConfigurationClientTest(AzureConfigurationClientTestBase):
                 compare_kv.key, compare_kv.label + "a"
             )
 
-    # method: lock_configuration_setting and unlock_configuration_setting
-    def test_lock_unlock_no_label(self):
-        # lock, assert locked, then unlock and assert locked
-        to_lock_kv = self.test_config_setting_no_label
-        locked_kv = self.get_config_client().lock_configuration_setting(to_lock_kv.key)
-        assert locked_kv.locked is True
-        unlocked_kv = self.get_config_client().unlock_configuration_setting(
-            to_lock_kv.key
-        )
-        assert unlocked_kv.locked is False
-
-    def test_lock_unlock_with_label(self):
-        # lock, assert locked, then unlock and assert locked
-        to_lock_kv = self.test_config_setting
-        locked_kv = self.get_config_client().lock_configuration_setting(
-            to_lock_kv.key, to_lock_kv.label
-        )
-        assert locked_kv.locked is True
-        unlocked_kv = self.get_config_client().unlock_configuration_setting(
-            to_lock_kv.key, to_lock_kv.label
-        )
-        assert unlocked_kv.locked is False
-
-    def test_lock_no_existing(self):
-        with pytest.raises(ResourceNotFoundError):
-            self.get_config_client().lock_configuration_setting(
-                KEY + "A", LABEL + "A"
-            )
-
-    def test_unlock_no_existing(self):
-        with pytest.raises(ResourceNotFoundError):
-            self.get_config_client().unlock_configuration_setting(
-                KEY + "A", LABEL + "A"
-            )
-
     # method: delete_configuration_setting
     def test_delete_with_key_no_label(self):
         to_delete_kv = self.test_config_setting_no_label

@@ -220,16 +220,6 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
         """
         return super().list_revisions(labels, keys, accept_date_time, fields, **kwargs)
 
-    def lock_configuration_setting(
-        self, key, label=None, **kwargs
-    ):  # type: (str, str, dict) -> ConfigurationSetting
-        return super().lock_configuration_setting(key, label, **kwargs)
-
-    def unlock_configuration_setting(
-        self, key, label=None, **kwargs
-    ):  # type: (str, str, dict) -> ConfigurationSetting
-        return super().unlock_configuration_setting(key, label, **kwargs)
-
 
 AzureConfigurationClient.__doc__ = (
     AzureConfigurationClientAbstract.__doc__ + AzureConfigurationClient.__doc__

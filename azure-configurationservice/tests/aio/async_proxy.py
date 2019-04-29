@@ -76,17 +76,3 @@ class AzureConfigurationClientProxy(object):
                 configuration_setting, **kwargs
             )
         )
-
-    def lock_configuration_setting(self, key, label=None, **kwargs):
-        return get_event_loop().run_until_complete(
-            self.obj.lock_configuration_setting(
-                key, label=label, **kwargs
-            )
-        )
-
-    def unlock_configuration_setting(self, key, label=None, **kwargs):
-        return get_event_loop().run_until_complete(
-            self.obj.unlock_configuration_setting(
-                key, label=label, **kwargs
-            )
-        )

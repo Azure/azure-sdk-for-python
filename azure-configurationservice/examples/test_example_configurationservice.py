@@ -84,14 +84,6 @@ class AzConfigurationClientExamples(AzureMgmtTestCase):
         returned_config_setting = client.set_configuration_setting(config_setting)
         # [END set_configuration_setting]
 
-        # [START lock_configuration_setting]
-        locked_config_setting = client.lock_configuration_setting(key="MyKey", label="MyLabel")
-        # [END lock_configuration_setting]
-
-        # [START unlock_configuration_setting]
-        unlocked_config_setting = client.unlock_configuration_setting(key="MyKey", label="MyLabel")
-        # [END unlock_configuration_setting]
-
         # [START get_configuration_setting]
         fetched_config_setting = client.get_configuration_setting(
             key="MyKey", label="MyLabel"
