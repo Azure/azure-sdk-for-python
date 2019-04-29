@@ -26,7 +26,15 @@
 from typing import Any, Callable, AsyncIterator, Optional
 
 import aiohttp
+import logging
 
+from azure.core.exceptions import (
+    ServiceRequestError,
+    ServiceResponseError,
+    ConnectError,
+    ReadTimeoutError,
+    raise_with_traceback
+)
 from .base import HttpRequest
 from .base_async import (
     AsyncHttpTransport,
@@ -36,6 +44,7 @@ from .base_async import (
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
+_LOGGER = logging.getLogger(__name__)
 
 
 class AioHttpContext(object):
@@ -74,28 +83,35 @@ class AioHttpTransport(AsyncHttpTransport):
         Will pre-load the body into memory to be available with a sync method.
         pass stream=True to avoid this behavior.
         """
+        error = None
         # TODO SSL config
         # ssl_ctx = None
         # if self.config.connection.verify not in (True, False):
         #    import ssl
          #   ssl_ctx = ssl.create_default_context(cafile=self.config.connection.verify)
 
-        stream_response = config.pop("stream", False)
-        result = await self.session.request(
-            request.method,
-            request.url,
-            headers=request.headers,
-            data=request.data,
-            # files=request.files,  # TODO: What is aiohttp equivalent...?
-            # verify=config.get('connection_verify', self.config.connection.verify),
-            timeout=config.get('connection_timeout', self.config.connection.timeout),
-            # cert=config.get('connection_cert', self.config.connection.cert),
-            allow_redirects=False,
-            **config
-        )
-        response = AioHttpTransportResponse(request, result, self.config.connection.data_block_size)
-        if not stream_response:
-            await response.load_body()
+        try:
+            stream_response = config.pop("stream", False)
+            result = await self.session.request(
+                request.method,
+                request.url,
+                headers=request.headers,
+                data=request.data,
+                # files=request.files,  # TODO: What is aiohttp equivalent...?
+                # verify=config.get('connection_verify', self.config.connection.verify),
+                timeout=config.get('connection_timeout', self.config.connection.timeout),
+                # cert=config.get('connection_cert', self.config.connection.cert),
+                allow_redirects=False,
+                **config
+            )
+            response = AioHttpTransportResponse(request, result, self.config.connection.data_block_size)
+            if not stream_response:
+                await response.load_body()
+        except aiohttp.client_exceptions.ClientConnectorError as err:
+            error = ConnectError(err, error=err)
+
+        if error:
+            raise error
         return response
 
 
