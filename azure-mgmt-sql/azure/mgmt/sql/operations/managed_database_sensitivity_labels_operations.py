@@ -417,7 +417,7 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
     enable_recommendation.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/managedInstances/{managedInstanceName}/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/columns/{columnName}/sensitivityLabels/{sensitivityLabelSource}/enable'}
 
     def list_current_by_database(
-            self, resource_group_name, managed_instance_name, database_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, managed_instance_name, database_name, skip_token=None, count=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Gets the sensitivity labels of a given database.
 
         :param resource_group_name: The name of the resource group that
@@ -428,6 +428,10 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
         :type managed_instance_name: str
         :param database_name: The name of the database.
         :type database_name: str
+        :param skip_token:
+        :type skip_token: str
+        :param count:
+        :type count: bool
         :param filter: An OData filter expression that filters elements in the
          collection.
         :type filter: str
@@ -456,6 +460,10 @@ class ManagedDatabaseSensitivityLabelsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
+                if skip_token is not None:
+                    query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+                if count is not None:
+                    query_parameters['$count'] = self._serialize.query("count", count, 'bool')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
