@@ -71,7 +71,7 @@ async def test_sans_io_exception():
 async def test_basic_aiohttp():
 
     conf = Configuration()
-    request = HttpRequest("GET", "http://bing.com")
+    request = HttpRequest("GET", "https://bing.com")
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -85,7 +85,7 @@ async def test_basic_aiohttp():
 @pytest.mark.asyncio
 async def test_basic_async_requests():
 
-    request = HttpRequest("GET", "http://bing.com")
+    request = HttpRequest("GET", "https://bing.com")
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -99,7 +99,7 @@ async def test_basic_async_requests():
 async def test_conf_async_requests():
 
     conf = Configuration()
-    request = HttpRequest("GET", "http://bing.com/")
+    request = HttpRequest("GET", "https://bing.com/")
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
@@ -113,7 +113,7 @@ def test_conf_async_trio_requests():
 
     async def do():
         conf = Configuration()
-        request = HttpRequest("GET", "http://bing.com/")
+        request = HttpRequest("GET", "https://bing.com/")
         policies = [
             UserAgentPolicy("myusergant"),
             AsyncRedirectPolicy()
