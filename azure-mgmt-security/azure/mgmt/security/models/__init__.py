@@ -20,9 +20,6 @@ try:
     from .setting_py3 import Setting
     from .data_export_setting_py3 import DataExportSetting
     from .setting_resource_py3 import SettingResource
-    from .regulatory_compliance_standard_py3 import RegulatoryComplianceStandard
-    from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
-    from .regulatory_compliance_assessment_py3 import RegulatoryComplianceAssessment
     from .connected_resource_py3 import ConnectedResource
     from .connectable_resource_py3 import ConnectableResource
     from .allowed_connections_resource_py3 import AllowedConnectionsResource
@@ -67,6 +64,9 @@ try:
     from .information_protection_policy_py3 import InformationProtectionPolicy
     from .security_contact_py3 import SecurityContact
     from .workspace_setting_py3 import WorkspaceSetting
+    from .regulatory_compliance_standard_py3 import RegulatoryComplianceStandard
+    from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
+    from .regulatory_compliance_assessment_py3 import RegulatoryComplianceAssessment
 except (SyntaxError, ImportError):
     from .pricing import Pricing
     from .pricing_list import PricingList
@@ -78,9 +78,6 @@ except (SyntaxError, ImportError):
     from .setting import Setting
     from .data_export_setting import DataExportSetting
     from .setting_resource import SettingResource
-    from .regulatory_compliance_standard import RegulatoryComplianceStandard
-    from .regulatory_compliance_control import RegulatoryComplianceControl
-    from .regulatory_compliance_assessment import RegulatoryComplianceAssessment
     from .connected_resource import ConnectedResource
     from .connectable_resource import ConnectableResource
     from .allowed_connections_resource import AllowedConnectionsResource
@@ -125,11 +122,11 @@ except (SyntaxError, ImportError):
     from .information_protection_policy import InformationProtectionPolicy
     from .security_contact import SecurityContact
     from .workspace_setting import WorkspaceSetting
+    from .regulatory_compliance_standard import RegulatoryComplianceStandard
+    from .regulatory_compliance_control import RegulatoryComplianceControl
+    from .regulatory_compliance_assessment import RegulatoryComplianceAssessment
 from .alert_paged import AlertPaged
 from .setting_paged import SettingPaged
-from .regulatory_compliance_standard_paged import RegulatoryComplianceStandardPaged
-from .regulatory_compliance_control_paged import RegulatoryComplianceControlPaged
-from .regulatory_compliance_assessment_paged import RegulatoryComplianceAssessmentPaged
 from .allowed_connections_resource_paged import AllowedConnectionsResourcePaged
 from .discovered_security_solution_paged import DiscoveredSecuritySolutionPaged
 from .external_security_solution_paged import ExternalSecuritySolutionPaged
@@ -143,11 +140,13 @@ from .compliance_paged import CompliancePaged
 from .information_protection_policy_paged import InformationProtectionPolicyPaged
 from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
+from .regulatory_compliance_standard_paged import RegulatoryComplianceStandardPaged
+from .regulatory_compliance_control_paged import RegulatoryComplianceControlPaged
+from .regulatory_compliance_assessment_paged import RegulatoryComplianceAssessmentPaged
 from .security_center_enums import (
     PricingTier,
     ReportedSeverity,
     SettingKind,
-    State,
     SecurityFamily,
     AadConnectivityState,
     ExternalSecuritySolutionKind,
@@ -157,6 +156,7 @@ from .security_center_enums import (
     AutoProvision,
     AlertNotifications,
     AlertsToAdmins,
+    State,
     ConnectionType,
 )
 
@@ -171,9 +171,6 @@ __all__ = [
     'Setting',
     'DataExportSetting',
     'SettingResource',
-    'RegulatoryComplianceStandard',
-    'RegulatoryComplianceControl',
-    'RegulatoryComplianceAssessment',
     'ConnectedResource',
     'ConnectableResource',
     'AllowedConnectionsResource',
@@ -218,11 +215,11 @@ __all__ = [
     'InformationProtectionPolicy',
     'SecurityContact',
     'WorkspaceSetting',
+    'RegulatoryComplianceStandard',
+    'RegulatoryComplianceControl',
+    'RegulatoryComplianceAssessment',
     'AlertPaged',
     'SettingPaged',
-    'RegulatoryComplianceStandardPaged',
-    'RegulatoryComplianceControlPaged',
-    'RegulatoryComplianceAssessmentPaged',
     'AllowedConnectionsResourcePaged',
     'DiscoveredSecuritySolutionPaged',
     'ExternalSecuritySolutionPaged',
@@ -236,10 +233,12 @@ __all__ = [
     'InformationProtectionPolicyPaged',
     'SecurityContactPaged',
     'WorkspaceSettingPaged',
+    'RegulatoryComplianceStandardPaged',
+    'RegulatoryComplianceControlPaged',
+    'RegulatoryComplianceAssessmentPaged',
     'PricingTier',
     'ReportedSeverity',
     'SettingKind',
-    'State',
     'SecurityFamily',
     'AadConnectivityState',
     'ExternalSecuritySolutionKind',
@@ -249,5 +248,6 @@ __all__ = [
     'AutoProvision',
     'AlertNotifications',
     'AlertsToAdmins',
+    'State',
     'ConnectionType',
 ]
