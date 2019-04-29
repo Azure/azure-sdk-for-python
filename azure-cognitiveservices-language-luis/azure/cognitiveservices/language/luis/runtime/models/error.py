@@ -13,28 +13,31 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
-class APIError(Model):
-    """Error information returned by the API.
+class Error(Model):
+    """Represents the error that occurred.
 
-    :param status_code: HTTP Status code
-    :type status_code: str
-    :param message: Cause of the error.
-    :type message: str
+    All required parameters must be populated in order to send to Azure.
+
+    :param error: Required.
+    :type error:
+     ~azure.cognitiveservices.language.luis.runtime.models.ErrorBody
     """
 
+    _validation = {
+        'error': {'required': True},
+    }
+
     _attribute_map = {
-        'status_code': {'key': 'statusCode', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'ErrorBody'},
     }
 
     def __init__(self, **kwargs):
-        super(APIError, self).__init__(**kwargs)
-        self.status_code = kwargs.get('status_code', None)
-        self.message = kwargs.get('message', None)
+        super(Error, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
 
 
-class APIErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'APIError'.
+class ErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'Error'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.
@@ -42,4 +45,4 @@ class APIErrorException(HttpOperationError):
 
     def __init__(self, deserialize, response, *args):
 
-        super(APIErrorException, self).__init__(deserialize, response, 'APIError', *args)
+        super(ErrorException, self).__init__(deserialize, response, 'Error', *args)

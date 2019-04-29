@@ -12,28 +12,28 @@
 from msrest.serialization import Model
 
 
-class CompositeChildModel(Model):
-    """Child entity in a LUIS Composite Entity.
+class ErrorBody(Model):
+    """Represents the definition of the error that occurred.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Type of child entity.
-    :type type: str
-    :param value: Required. Value extracted by LUIS.
-    :type value: str
+    :param code: Required. The error code.
+    :type code: str
+    :param message: Required. The error message.
+    :type message: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'value': {'required': True},
+        'code': {'required': True},
+        'message': {'required': True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(CompositeChildModel, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.value = kwargs.get('value', None)
+        super(ErrorBody, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)

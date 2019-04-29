@@ -12,27 +12,29 @@
 from msrest.serialization import Model
 
 
-class Sentiment(Model):
-    """The result of the sentiment analaysis.
+class PredictionResponse(Model):
+    """Represents the prediction response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param score: Required. The sentiment score of the query.
-    :type score: float
-    :param label: The label of the sentiment analysis result.
-    :type label: str
+    :param query: Required. The query used in the prediction.
+    :type query: str
+    :param prediction: Required. The prediction of the requested query.
+    :type prediction:
+     ~azure.cognitiveservices.language.luis.runtime.models.Prediction
     """
 
     _validation = {
-        'score': {'required': True},
+        'query': {'required': True},
+        'prediction': {'required': True},
     }
 
     _attribute_map = {
-        'score': {'key': 'score', 'type': 'float'},
-        'label': {'key': 'label', 'type': 'str'},
+        'query': {'key': 'query', 'type': 'str'},
+        'prediction': {'key': 'prediction', 'type': 'Prediction'},
     }
 
     def __init__(self, **kwargs):
-        super(Sentiment, self).__init__(**kwargs)
-        self.score = kwargs.get('score', None)
-        self.label = kwargs.get('label', None)
+        super(PredictionResponse, self).__init__(**kwargs)
+        self.query = kwargs.get('query', None)
+        self.prediction = kwargs.get('prediction', None)

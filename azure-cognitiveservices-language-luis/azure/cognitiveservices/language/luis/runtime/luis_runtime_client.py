@@ -36,7 +36,7 @@ class LUISRuntimeClientConfiguration(Configuration):
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/luis/v2.0'
+        base_url = '{Endpoint}/luis/v3.0-preview'
 
         super(LUISRuntimeClientConfiguration, self).__init__(base_url)
 
@@ -70,7 +70,7 @@ class LUISRuntimeClient(SDKClient):
         super(LUISRuntimeClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2.0'
+        self.api_version = '3.0-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

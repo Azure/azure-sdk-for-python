@@ -10,34 +10,40 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .intent_model_py3 import IntentModel
-    from .entity_model_py3 import EntityModel
-    from .composite_child_model_py3 import CompositeChildModel
-    from .composite_entity_model_py3 import CompositeEntityModel
+    from .prediction_request_options_py3 import PredictionRequestOptions
+    from .external_entity_py3 import ExternalEntity
+    from .request_list_py3 import RequestList
+    from .dynamic_list_py3 import DynamicList
+    from .prediction_request_py3 import PredictionRequest
+    from .intent_py3 import Intent
     from .sentiment_py3 import Sentiment
-    from .luis_result_py3 import LuisResult
-    from .entity_with_score_py3 import EntityWithScore
-    from .entity_with_resolution_py3 import EntityWithResolution
-    from .api_error_py3 import APIError, APIErrorException
+    from .prediction_py3 import Prediction
+    from .prediction_response_py3 import PredictionResponse
+    from .error_body_py3 import ErrorBody
+    from .error_py3 import Error, ErrorException
 except (SyntaxError, ImportError):
-    from .intent_model import IntentModel
-    from .entity_model import EntityModel
-    from .composite_child_model import CompositeChildModel
-    from .composite_entity_model import CompositeEntityModel
+    from .prediction_request_options import PredictionRequestOptions
+    from .external_entity import ExternalEntity
+    from .request_list import RequestList
+    from .dynamic_list import DynamicList
+    from .prediction_request import PredictionRequest
+    from .intent import Intent
     from .sentiment import Sentiment
-    from .luis_result import LuisResult
-    from .entity_with_score import EntityWithScore
-    from .entity_with_resolution import EntityWithResolution
-    from .api_error import APIError, APIErrorException
+    from .prediction import Prediction
+    from .prediction_response import PredictionResponse
+    from .error_body import ErrorBody
+    from .error import Error, ErrorException
 
 __all__ = [
-    'IntentModel',
-    'EntityModel',
-    'CompositeChildModel',
-    'CompositeEntityModel',
+    'PredictionRequestOptions',
+    'ExternalEntity',
+    'RequestList',
+    'DynamicList',
+    'PredictionRequest',
+    'Intent',
     'Sentiment',
-    'LuisResult',
-    'EntityWithScore',
-    'EntityWithResolution',
-    'APIError', 'APIErrorException',
+    'Prediction',
+    'PredictionResponse',
+    'ErrorBody',
+    'Error', 'ErrorException',
 ]
