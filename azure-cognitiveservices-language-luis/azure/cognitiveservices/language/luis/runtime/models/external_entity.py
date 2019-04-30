@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ExternalEntity(Model):
-    """Defines a user perdicted entity that extends an already existing one.
+    """Defines a user predicted entity that extends an already existing one.
 
     All required parameters must be populated in order to send to Azure.
 
