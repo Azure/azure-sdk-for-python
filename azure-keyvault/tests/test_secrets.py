@@ -13,6 +13,7 @@ from azure.core.exceptions import ClientRequestError
 from dateutil import parser as date_parse
 import time
 
+
 class KeyVaultSecretTest(KeyvaultTestCase):
 
     def _assert_secret_attributes_equal(self, s1, s2):
@@ -195,7 +196,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         expected = {}
 
         # create secrets to delete
-        for i in range(0, self.list_test_size):
+        for _ in range(0, self.list_test_size):
             expected[secret_name] = client.set_secret(
                 secret_name, secret_value)
 

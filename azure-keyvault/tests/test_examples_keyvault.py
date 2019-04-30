@@ -13,6 +13,11 @@ from keyvault_preparer import KeyVaultPreparer
 from keyvault_testcase import KeyvaultTestCase
 
 def create_vault_client():
+    client_id = ''
+    client_secret = ''
+    tenant_id = ''
+    vault_url = ''
+
     # [START create_vault_client
     from azure.keyvault.vault_client import VaultClient
     from azure.common.credentials import ServicePrincipalCredentials
@@ -25,8 +30,7 @@ def create_vault_client():
     )
 
     # Create a new Vault client using Azure credentials
-    vault_client = VaultClient(
-        vault_url=vault_url, credentials=credentials)
+    vault_client = VaultClient(vault_url=vault_url, credentials=credentials)
     # [END create_vault_client]
     return vault_client
 
@@ -34,8 +38,10 @@ def create_secret_client():
     client_id = ''
     client_secret = ''
     tenant_id = ''
+    vault_url = ''
 
     # [START create_secret_client
+    from azure.common.credentials import ServicePrincipalCredentials
     from azure.keyvault.secrets._client import SecretClient
 
     credentials = ServicePrincipalCredentials(
@@ -147,10 +153,9 @@ class TestExamplesKeyVault(KeyvaultTestCase):
         except ClientRequestError:
             pass
 
+        # pylint: disable=unused-variable
         try:
             # [START list_secret_versions]
-            from azure.keyvault.vault_client import VaultClient
-
             # gets a list of all versions of a secret
             secret_versions = secret_client.list_secret_versions('secret-name')
 
