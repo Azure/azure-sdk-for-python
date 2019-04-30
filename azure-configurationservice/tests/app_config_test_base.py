@@ -8,7 +8,7 @@ import datetime
 import logging
 import pytest
 
-from azure.core import ResourceModifiedError, ResourceNotFoundError, ResourceExistsError, AzureError
+from azure.core.exceptions import ResourceModifiedError, ResourceNotFoundError, ResourceExistsError, AzureError
 from azure.configuration import AzureConfigurationClient
 from azure.configuration import ConfigurationSetting
 from devtools_testutils import AzureMgmtTestCase
