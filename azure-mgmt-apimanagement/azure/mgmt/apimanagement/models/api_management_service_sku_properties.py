@@ -21,7 +21,7 @@ class ApiManagementServiceSkuProperties(Model):
      'Developer', 'Standard', 'Premium', 'Basic', 'Consumption'
     :type name: str or ~azure.mgmt.apimanagement.models.SkuType
     :param capacity: Capacity of the SKU (number of deployed units of the
-     SKU). The default value is 1. Default value: 1 .
+     SKU).
     :type capacity: int
     """
 
@@ -37,4 +37,4 @@ class ApiManagementServiceSkuProperties(Model):
     def __init__(self, **kwargs):
         super(ApiManagementServiceSkuProperties, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.capacity = kwargs.get('capacity', 1)
+        self.capacity = kwargs.get('capacity', None)
