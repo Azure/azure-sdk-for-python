@@ -4,11 +4,30 @@
   :caption: Developer Documentation
 
   ref/azure.common
+  ./ref/azure.applicationinsights.rst
   ./ref/azure.batch.rst
+  ./ref/azure.cognitiveservices.language.spellcheck.rst
+  ./ref/azure.cognitiveservices.language.textanalytics.rst
+  ./ref/azure.cognitiveservices.search.customsearch.rst
+  ./ref/azure.cognitiveservices.search.entitysearch.rst
+  ./ref/azure.cognitiveservices.search.imagesearch.rst
+  ./ref/azure.cognitiveservices.search.newssearch.rst
+  ./ref/azure.cognitiveservices.search.videosearch.rst
+  ./ref/azure.cognitiveservices.search.visualsearch.rst
+  ./ref/azure.cognitiveservices.search.websearch.rst
+  ./ref/azure.cognitiveservices.vision.computervision.rst
+  ./ref/azure.cognitiveservices.vision.contentmoderator.rst
+  ./ref/azure.cognitiveservices.vision.customvision.prediction.rst
+  ./ref/azure.cognitiveservices.vision.customvision.training.rst
+  ./ref/azure.cognitiveservices.vision.face.rst
+  ./ref/azure.eventgrid.rst
   ./ref/azure.graphrbac.rst
   ./ref/azure.keyvault.rst
+  ./ref/azure.loganalytics.rst
+  ./ref/azure.mgmt.advisor.rst
   ./ref/azure.mgmt.authorization.rst
   ./ref/azure.mgmt.batch.rst
+  ./ref/azure.mgmt.batchai.rst
   ./ref/azure.mgmt.billing.rst
   ./ref/azure.mgmt.cdn.rst
   ./ref/azure.mgmt.cognitiveservices.rst
@@ -28,20 +47,28 @@
   ./ref/azure.mgmt.dns.rst
   ./ref/azure.mgmt.eventgrid.rst
   ./ref/azure.mgmt.eventhub.rst
+  ./ref/azure.mgmt.hanaonazure.rst
+  ./ref/azure.mgmt.hdinsight.rst
   ./ref/azure.mgmt.iothub.rst
+  ./ref/azure.mgmt.iothubprovisioningservices.rst
   ./ref/azure.mgmt.keyvault.rst
+  ./ref/azure.mgmt.loganalytics.rst
   ./ref/azure.mgmt.logic.rst
   ./ref/azure.mgmt.machinelearningcompute.rst
+  ./ref/azure.mgmt.managementgroups.rst
   ./ref/azure.mgmt.media.rst
   ./ref/azure.mgmt.monitor.rst
+  ./ref/azure.mgmt.msi.rst
   ./ref/azure.mgmt.network.rst
   ./ref/azure.mgmt.notificationhubs.rst
+  ./ref/azure.mgmt.policyinsights.rst
   ./ref/azure.mgmt.powerbiembedded.rst
   ./ref/azure.mgmt.rdbms.mysql.rst
   ./ref/azure.mgmt.rdbms.postgresql.rst
   ./ref/azure.mgmt.recoveryservices.rst
   ./ref/azure.mgmt.recoveryservicesbackup.rst
   ./ref/azure.mgmt.redis.rst
+  ./ref/azure.mgmt.relay.rst
   ./ref/azure.mgmt.resource.features.rst
   ./ref/azure.mgmt.resource.links.rst
   ./ref/azure.mgmt.resource.locks.rst
@@ -56,9 +83,9 @@
   ./ref/azure.mgmt.servicefabric.rst
   ./ref/azure.mgmt.sql.rst
   ./ref/azure.mgmt.storage.rst
+  ./ref/azure.mgmt.subscription.rst
   ./ref/azure.mgmt.trafficmanager.rst
   ./ref/azure.mgmt.web.rst
-  ./ref/azure.monitor.rst
   ./ref/azure.servicefabric.rst
   ref/azure.servicebus
-  ref/azure.servicemanagement  
+  ref/azure.servicemanagement
