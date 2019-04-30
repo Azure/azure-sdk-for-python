@@ -48,9 +48,7 @@ class Paged(AsyncPagedMixin, Iterator):
 
     :param HttpResponse response: server response object.
     :param callable command: Function to retrieve the next page of items.
-    :param dict classes: A dictionary of class dependencies for
-     deserialization.
-    :param dict raw_headers: A dict of raw headers to add if "raw" is called
+    :param Deserializer deserializer: a Deserializer instance to use
     """
     _validation = {}  # type: Dict[str, Dict[str, Any]]
     _attribute_map = {}  # type: Dict[str, Dict[str, Any]]
@@ -62,7 +60,7 @@ class Paged(AsyncPagedMixin, Iterator):
         self.next_link = ""
         self.current_page = []  # type: List[Model]
         self._current_page_iter_index = 0
-        self._deserializer = deserializer(classes)
+        self._deserializer = deserializer
         self._get_next = command
         self._response = None  # type: Optional[HttpResponse]
 
