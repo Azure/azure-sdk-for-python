@@ -143,11 +143,52 @@ class KnownProfiles(Enum):
             "azure.mgmt.resource.subscriptions.SubscriptionClient": {
                 None: "2016-06-01"
             },
-            "azure.mgmt.dns": {
+            "azure.mgmt.dns.DnsManagementClient": {
                 None: "2016-04-01"
             }
         },
         "2018-03-01-hybrid"
+    )
+    v2019_03_01_hybrid = ProfileDefinition(
+        {
+            "azure.keyvault.KeyVaultClient": {
+                None: "2016-10-01"
+            },
+            "azure.mgmt.authorization.AuthorizationManagementClient": {
+                None: "2015-07-01"
+            },
+            "azure.mgmt.compute.ComputeManagementClient": {
+                None: "2017-12-01"
+            },
+            "azure.mgmt.keyvault.KeyVaultManagementClient":{
+                None: "2016-10-01"
+            },
+            "azure.mgmt.network.NetworkManagementClient": {
+                None: "2017-10-01"
+            },
+            "azure.mgmt.storage.StorageManagementClient": {
+                None: "2017-10-01"
+            },
+            "azure.mgmt.resource.policy.PolicyClient": {
+                None: "2016-12-01"
+            },
+            "azure.mgmt.resource.locks.ManagementLockClient": {
+                None: "2016-09-01"
+            },
+            "azure.mgmt.resource.links.ManagementLinkClient": {
+                None: "2016-09-01"
+            },
+            "azure.mgmt.resource.resources.ResourceManagementClient": {
+                None: "2018-05-01"
+            },
+            "azure.mgmt.resource.subscriptions.SubscriptionClient": {
+                None: "2016-06-01"
+            },
+            "azure.mgmt.dns.DnsManagementClient": {
+                None: "2016-04-01"
+            }
+        },
+        "2019-03-01-hybrid"
     )
 
 
