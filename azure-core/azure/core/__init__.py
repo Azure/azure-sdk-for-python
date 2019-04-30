@@ -41,5 +41,5 @@ __all__ = [
 try:
     from .pipeline_client_async import AsyncPipelineClient
     __all__.extend(["AsyncPipelineClient"])
-except ImportError: # Python <= 3.5
+except (ImportError, SyntaxError): # Python <= 3.5
     pass
