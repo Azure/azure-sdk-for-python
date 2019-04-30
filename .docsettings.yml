@@ -52,4 +52,4 @@ known_content_issues:
   - ['azure/README.rst', 'nspkg and common']
   - ['azure-common/README.rst', 'nspkg and common']
   - ['azure-nspkg/README.rst', 'nspkg and common']
-  - ['azure-core/README.rst', 'nspkg and common']
+  - ['azure-core/README.md', 'nspkg and common']

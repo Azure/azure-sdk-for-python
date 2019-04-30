@@ -67,7 +67,7 @@ class AioHttpTransport(AsyncHttpTransport):
         self.session = None
         self.config.connection.keep_alive = False
 
-    def _build_ssl_confg(self, **config):
+    def _build_ssl_config(self, **config):
         verify = config.get('connection_verify', self.config.connection.verify)
         cert = config.get('connection_cert', self.config.connection.cert)
         ssl_ctx = None
@@ -95,7 +95,7 @@ class AioHttpTransport(AsyncHttpTransport):
             session = aiohttp.ClientSession(loop=self._loop)
         error = None
         response = None
-        config['ssl'] = self._build_ssl_confg(**config)
+        config['ssl'] = self._build_ssl_config(**config)
         try:
             stream_response = config.pop("stream", False)
             result = await session.request(

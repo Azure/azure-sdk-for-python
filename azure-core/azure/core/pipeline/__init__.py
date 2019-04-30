@@ -50,7 +50,7 @@ class PipelineContext(dict):
     def __init__(self, transport, **kwargs):
         self.transport = transport
         self.options = kwargs
-        self._protected = ['transport', 'session', 'options']
+        self._protected = ['transport', 'options']
 
     def __setitem__(self, key, item):
         if key in self._protected:
