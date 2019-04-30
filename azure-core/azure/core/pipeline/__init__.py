@@ -45,6 +45,36 @@ except ImportError: # Python <= 3.5
             return None
 
 
+class PipelineContext(dict):
+
+    def __init__(self, transport, **kwargs):
+        self.transport = transport
+        self.session = transport.session if hasattr(transport, 'session') else None
+        self.options = kwargs
+        self._protected = ['transport', 'session', 'options']
+
+    def __setitem__(self, key, item):
+        if key in self._protected:
+            raise ValueError('Context value {} cannot be overwritten.'.format(key))
+        return super(PipelineContext, self).__setitem__(key, item)
+
+    def __delitem__(self, key):
+        if key in self._protected:
+            raise ValueError('Context value {} cannot be deleted.'.format(key))
+        return super(PipelineContext, self).__delitem__(key)
+
+    def clear(self):
+        raise TypeError("Context objects cannot be cleared.")
+
+    def update(self, *args, **kwargs):
+        raise TypeError("Context objects cannot be updated.")
+
+    def pop(self, *args):
+        if args and args[0] in self._protected:
+            raise ValueError('Context value {} cannot be popped.'.format(args[0]))
+        return super(PipelineContext, self).pop(*args)
+
+
 class PipelineRequest(object):
     """Represents a HTTP request in a Pipeline.
 
@@ -61,7 +91,7 @@ class PipelineRequest(object):
     :param data: Body to be sent.
     :type data: bytes or str.
     """
-    def __init__(self, http_request, context=None):
+    def __init__(self, http_request, context):
         # type: (HTTPRequestType, Optional[Any]) -> None
         self.http_request = http_request
         self.context = context
@@ -73,15 +103,15 @@ class PipelineResponse(object):
     The PipelineResponse interface exposes an HTTP response object as it returns through the pipeline of Policy objects.
     This ensures that Policy objects have access to the HTTP response.
 
-    This also have a "context" dictionnary where policy can put additional fields.
-    Policy SHOULD update the "context" dictionary with additional post-processed field if they create them.
+    This also have a "context" object where policy can put additional fields.
+    Policy SHOULD update the "context" with additional post-processed field if they create them.
     However, nothing prevents a policy to actually sub-class this class a return it instead of the initial instance.
     """
-    def __init__(self, http_request, http_response, context=None):
+    def __init__(self, http_request, http_response, context):
         # type: (HttpRequest[HTTPRequestType], HTTPResponseType, Optional[Dict[str, Any]]) -> None
         self.http_request = http_request
         self.http_response = http_response
-        self.context = context or {}
+        self.context = context
 
 
 from .base import Pipeline
@@ -89,7 +119,8 @@ from .base import Pipeline
 __all__ = [
     'Pipeline',
     'PipelineRequest',
-    'PipelineResponse'
+    'PipelineResponse',
+    'PipelineContext'
 ]
 
 try:
