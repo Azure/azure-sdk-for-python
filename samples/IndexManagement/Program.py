@@ -547,6 +547,99 @@ def PerformIndexTransformations(db):
         else:
             raise
 
+def PerformMultiOrderbyQuery(db):
+    try:
+        DeleteContainerIfExists(db, CONTAINER_ID)
+
+        # Create a collection with composite indexes
+        indexing_policy = {
+            "compositeIndexes": [
+                [
+                    {
+                        "path": "/numberField",
+                        "order": "ascending"
+                    },
+                    {
+                        "path": "/stringField",
+                        "order": "descending"
+                    }
+                ],
+                [
+                    {
+                        "path": "/numberField",
+                        "order": "descending"
+                    },
+                    {
+                        "path": "/stringField",
+                        "order": "ascending"
+                    },
+                    {
+                        "path": "/numberField2",
+                        "order": "descending"
+                    },
+                    {
+                        "path": "/stringField2",
+                        "order": "ascending"
+                    }
+                ]
+            ]
+        }
+
+        created_container = db.create_container(
+            id=CONTAINER_ID,
+            indexing_policy=indexing_policy,
+            partition_key=PARTITION_KEY
+        )
+
+        print(created_container)
+
+        print("\n" + "-" * 25 + "\n8. Collection created with index policy")
+        print_dictionary_items(created_container.properties["indexingPolicy"])
+
+        # Insert some documents
+        doc1 = created_container.create_item(body={"id": "doc1", "numberField": 1, "stringField": "1", "numberField2": 1, "stringField2": "1"})
+        doc2 = created_container.create_item(body={"id": "doc2", "numberField": 1, "stringField": "1", "numberField2": 1, "stringField2": "2"})
+        doc3 = created_container.create_item(body={"id": "doc3", "numberField": 1, "stringField": "1", "numberField2": 2, "stringField2": "1"})
+        doc4 = created_container.create_item(body={"id": "doc4", "numberField": 1, "stringField": "1", "numberField2": 2, "stringField2": "2"})
+        doc5 = created_container.create_item(body={"id": "doc5", "numberField": 1, "stringField": "2", "numberField2": 1, "stringField2": "1"})
+        doc6 = created_container.create_item(body={"id": "doc6", "numberField": 1, "stringField": "2", "numberField2": 1, "stringField2": "2"})
+        doc7 = created_container.create_item(body={"id": "doc7", "numberField": 1, "stringField": "2", "numberField2": 2, "stringField2": "1"})
+        doc8 = created_container.create_item(body={"id": "doc8", "numberField": 1, "stringField": "2", "numberField2": 2, "stringField2": "2"})
+        doc9 = created_container.create_item(body={"id": "doc9", "numberField": 2, "stringField": "1", "numberField2": 1, "stringField2": "1"})
+        doc10 = created_container.create_item(body={"id": "doc10", "numberField": 2, "stringField": "1", "numberField2": 1, "stringField2": "2"})
+        doc11 = created_container.create_item(body={"id": "doc11", "numberField": 2, "stringField": "1", "numberField2": 2, "stringField2": "1"})
+        doc12 = created_container.create_item(body={"id": "doc12", "numberField": 2, "stringField": "1", "numberField2": 2, "stringField2": "2"})
+        doc13 = created_container.create_item(body={"id": "doc13", "numberField": 2, "stringField": "2", "numberField2": 1, "stringField2": "1"})
+        doc14 = created_container.create_item(body={"id": "doc14", "numberField": 2, "stringField": "2", "numberField2": 1, "stringField2": "2"})
+        doc15 = created_container.create_item(body={"id": "doc15", "numberField": 2, "stringField": "2", "numberField2": 2, "stringField2": "1"})
+        doc16 = created_container.create_item(body={"id": "doc16", "numberField": 2, "stringField": "2", "numberField2": 2, "stringField2": "2"})
+
+        print("Query documents and Order by 1st composite index: Ascending numberField and Descending stringField:")
+
+        query = {
+                "query": "SELECT * FROM r ORDER BY r.numberField ASC, r.stringField DESC",
+                }
+        QueryDocumentsWithCustomQuery(created_container, query)
+
+        print("Query documents and Order by inverted 2nd composite index -")
+        print("Ascending numberField, Descending stringField, Ascending numberField2, Descending stringField2")
+
+        query = {
+                "query": "SELECT * FROM r ORDER BY r.numberField ASC, r.stringField DESC, r.numberField2 ASC, r.stringField2 DESC",
+                }
+        QueryDocumentsWithCustomQuery(created_container, query)
+
+        # Cleanup
+        db.delete_container(created_container)
+        print("\n")
+    except errors.HTTPFailure as e:
+        if e.status_code == 409:
+            print("Entity already exists")
+        elif e.status_code == 404:
+            print("Entity doesn't exist")
+        else:
+            raise
+
 def RunIndexDemo():
     try:
         client = ObtainClient()
@@ -573,6 +666,9 @@ def RunIndexDemo():
 
         # 7. Perform an index transform
         PerformIndexTransformations(created_db)
+
+        # 8. Perform Multi Orderby queries using composite indexes
+        PerformMultiOrderbyQuery(created_db)
 
     except errors.CosmosError as e:
         raise e

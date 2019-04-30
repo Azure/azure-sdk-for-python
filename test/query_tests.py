@@ -31,7 +31,7 @@ class QueryTest(unittest.TestCase):
     def test_query_change_feed(self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
         # The test targets partition #3
-        pkRangeId = "3"
+        pkRangeId = "2"
 
         # Read change feed without passing any options
         query_iterable = created_collection.query_items_change_feed()
