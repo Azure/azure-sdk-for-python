@@ -13,12 +13,10 @@ from azure.core.exceptions import ClientRequestError
 from dateutil import parser as date_parse
 import time
 
-
 class KeyVaultSecretTest(KeyvaultTestCase):
 
-
     def _assert_secret_attributes_equal(self, s1, s2):
-        self.assertEqual(s1.id , s2.id)
+        self.assertEqual(s1.id, s2.id)
         self.assertEqual(s1.content_type, s2.content_type)
         self.assertEqual(s1.enabled, s2.enabled)
         self.assertEqual(s1.not_before, s2.not_before)
@@ -28,27 +26,27 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         self.assertEqual(s1.recovery_level, s2.recovery_level)
         self.assertEqual(s1.key_id, s2.key_id)
 
-    def _validate_secret_bundle(self, bundle, vault, secret_name, secret_value):
-        prefix = "/".join(s.strip("/") for s in [vault, "secrets", secret_name])
-        id = bundle.id
+    def _validate_secret_bundle(self, secret_attributes, vault, secret_name, secret_value):
+        prefix = "/".join(s.strip("/")
+                          for s in [vault, "secrets", secret_name])
+        id = secret_attributes.id
         self.assertTrue(id.index(prefix) == 0,
-                        "String should start with '{}', but value is '{}'".format(prefix, id))
-        self.assertEqual(bundle.value, secret_value,
-                         "value should be '{}', but is '{}'".format(secret_value, bundle.value))
-        self.assertTrue(bundle.created and bundle.updated,
+                        "Id should start with '{}', but value is '{}'".format(prefix, id))
+        self.assertEqual(secret_attributes.value, secret_value,
+                         "value should be '{}', but is '{}'".format(secret_value, secret_attributes.value))
+        self.assertTrue(secret_attributes.created and secret_attributes.updated,
                         'Missing required date attributes.')
 
     def _validate_secret_list(self, secrets, expected):
         for secret in secrets:
-            # TODO: what if secrets contains unexpected entries?
-            if secret.id in expected.keys():
-                expected_secret = expected[secret.id]
-                self._assert_secret_attributes_equal(expected_secret, secret)
-                del expected[secret.id]
+            if secret.name in expected.keys():
+                del expected[secret.name]
+        self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer()
+    @KeyVaultPreparer(enable_soft_delete=True)
     def test_secret_crud_operations(self, vault_client, **kwargs):
+
         self.assertIsNotNone(vault_client)
         client = vault_client.secrets
         secret_name = 'crud-secret'
@@ -58,15 +56,39 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         created = client.set_secret(secret_name, secret_value)
         self._validate_secret_bundle(created, vault_client.vault_url, secret_name, secret_value)
 
+        # set secret with optional arguments
+        expires = date_parse.parse('2050-02-02T08:00:00.000Z')
+        not_before = date_parse.parse('2015-02-02T08:00:00.000Z')
+        content_type = 'password'
+        enabled = True
+        tags = {'foo': 'created tag'}
+        created = client.set_secret(
+            secret_name,
+            secret_value,
+            enabled=enabled,
+            content_type=content_type,
+            not_before=not_before,
+            expires=expires,
+            tags=tags)
+        self._validate_secret_bundle(
+            created, vault_client.vault_url, secret_name, secret_value)
+        self.assertEqual(content_type, created.content_type)
+        self.assertEqual(enabled, created.enabled)
+        self.assertEqual(not_before, created.not_before)
+        self.assertEqual(expires, created.expires)
+        self.assertEqual(tags, created.tags)
+
         # get secret without version
-        self._assert_secret_attributes_equal(created, client.get_secret(created.name, ''))
+        self._assert_secret_attributes_equal(
+            created, client.get_secret(created.name, ''))
 
         # get secret with version
-        self._assert_secret_attributes_equal(created, client.get_secret(created.name, created.version))
+        self._assert_secret_attributes_equal(
+            created, client.get_secret(created.name, created.version))
 
         def _update_secret(secret):
             content_type = 'text/plain'
-            expires = date_parse.parse('2050-02-02T08:00:00.000Z')
+            expires = date_parse.parse('2050-01-02T08:00:00.000Z')
             tags = {'foo': 'updated tag'}
             secret_bundle = client.update_secret_attributes(
                 secret.name, secret.version,
@@ -80,12 +102,21 @@ class KeyVaultSecretTest(KeyvaultTestCase):
 
         # update secret with version
         if self.is_live:
-            # wait a second to ensure the secret's update time won't equal its creation time
+            # wait to ensure the secret's update time won't equal its creation time
             time.sleep(1)
         updated = _update_secret(created)
 
         # delete secret
-        client.delete_secret(updated.name)
+        deleted = client.delete_secret(updated.name)
+        self.assertIsNotNone(deleted)
+
+        if self.is_live:
+            # wait to ensure the secret has been deleted
+            time.sleep(20)
+
+        # get the deleted secret
+        deleted_secret = client.get_deleted_secret(deleted.name)
+        self.assertIsNotNone(deleted_secret)
 
         # TestCase.assertRaisesRegexp was deprecated in 3.2
         if hasattr(self, "assertRaisesRegex"):
@@ -95,11 +126,12 @@ class KeyVaultSecretTest(KeyvaultTestCase):
 
         # deleted secret isn't found
         with assertRaises(ClientRequestError, r"not found"):
-            client.get_secret(updated.name, '')
+            client.get_secret(deleted.name, '')
 
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
     def test_secret_list(self, vault_client, **kwargs):
+
         self.assertIsNotNone(vault_client)
         client = vault_client.secrets
 
@@ -113,7 +145,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
             secret = None
             while not secret:
                 secret = client.set_secret(secret_name, secret_value)
-                expected[secret.id] = secret
+                expected[secret.name] = secret
 
         # list secrets
         result = list(client.list_secrets(max_page_size=max_secrets))
@@ -122,12 +154,14 @@ class KeyVaultSecretTest(KeyvaultTestCase):
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
     def test_list_versions(self, vault_client, **kwargs):
+
         self.assertIsNotNone(vault_client)
         client = vault_client.secrets
-        secret_name = self.get_resource_name('sec')
+        secret_name = self.get_resource_name('secVer')
         secret_value = self.get_resource_name('secVal')
 
         max_secrets = self.list_test_size
+        max_page_size = 2
         expected = {}
 
         # create many secret versions
@@ -137,12 +171,47 @@ class KeyVaultSecretTest(KeyvaultTestCase):
                 secret = client.set_secret(secret_name, secret_value)
                 expected[secret.id] = secret
 
-        # list secret versions
-        self._validate_secret_list(list(client.list_secret_versions(secret_name)), expected)
+        result = client.list_secret_versions(
+            secret_name, max_page_size=max_page_size)
+
+        # validate list secret versions with attributes
+        for secret in result:
+            if secret.id in expected.keys():
+                expected_secret = expected[secret.id]
+                del expected[secret.id]
+                self._assert_secret_attributes_equal(expected_secret, secret)
+        self.assertEqual(len(expected), 0)
+
+    @ResourceGroupPreparer()
+    @KeyVaultPreparer(enable_soft_delete=True)
+    def test_list_deleted_secrets(self, vault_client, **kwargs):
+
+        self.assertIsNotNone(vault_client)
+        client = vault_client.secrets
+
+        secret_name = self.get_resource_name('sec')
+        secret_value = self.get_resource_name('secval')
+        expected = {}
+
+        # create secrets to delete
+        for i in range(0, self.list_test_size):
+            expected[secret_name] = client.set_secret(
+                secret_name, secret_value)
+
+        # delete all secrets
+        for secret_name in expected.keys():
+            client.delete_secret(secret_name)
+
+        if not self.is_playback():
+            time.sleep(20)
+
+        # validate all our deleted secrets are returned by list_deleted_secrets
+        self._validate_secret_list(list(client.list_deleted_secrets()), expected)
 
     @ResourceGroupPreparer()
     @KeyVaultPreparer()
     def test_backup_restore(self, vault_client, **kwargs):
+
         self.assertIsNotNone(vault_client)
         client = vault_client.secrets
         secret_name = self.get_resource_name('secbak')
@@ -157,9 +226,6 @@ class KeyVaultSecretTest(KeyvaultTestCase):
 
         # delete secret
         client.delete_secret(created_bundle.name)
-
-        # get the deleted secret
-        # deleted = client.get_deleted_secret(created_bundle.name)
 
         # restore secret
         restored = client.restore_secret(secret_backup)
@@ -176,13 +242,13 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         # create secrets to recover
         for i in range(0, self.list_test_size):
             secret_name = self.get_resource_name('secrec{}'.format(str(i)))
-            secret_value = self.get_resource_name('secval{}'.format((str(i))))
+            secret_value = self.get_resource_name('secval{}'.format(str(i)))
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
         # create secrets to purge
         for i in range(0, self.list_test_size):
             secret_name = self.get_resource_name('secprg{}'.format(str(i)))
-            secret_value = self.get_resource_name('secval{}'.format((str(i))))
+            secret_value = self.get_resource_name('secval{}'.format(str(i)))
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
         # delete all secrets
@@ -194,6 +260,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         deleted = [s.name for s in client.list_deleted_secrets()]
+
         self.assertTrue(all(s in deleted for s in secrets.keys()))
 
         # recover select secrets

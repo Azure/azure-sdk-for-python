@@ -11,6 +11,3 @@ class KeyvaultTestCase(AzureMgmtTestCase):
 
     def tearDown(self):
         super(KeyvaultTestCase, self).tearDown()
-
-
-

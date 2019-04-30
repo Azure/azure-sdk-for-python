@@ -37,11 +37,32 @@ from ._models import (
 
 
 class SecretClient:
+    """
+    The SecretClient class defines a high level interface for
+    managing secrets in the specified vault.
 
-    _api_version = '7.0'
+    :param credentials:  A credential or credential provider which can be used to authenticate to the vault,
+        a ValueError will be raised if the entity is not provided
+    :type credentials: azure.authentication.Credential or azure.authentication.CredentialProvider
+    :param str vault_url: The url of the vault to which the client will connect,
+        a ValueError will be raised if the entity is not provided
+    :param ~azure.core.configuration.Configuration config:  The configuration for the SecretClient
+
+    Example:
+        .. literalinclude:: ../tests/test_examples_keyvault.py
+            :start-after: [START create_secret_client]
+            :end-before: [END create_secret_client]
+            :language: python
+            :dedent: 4
+            :caption: Creates a new instance of the Secret client
+    """
+    _api_version = "7.0"
 
     @staticmethod
     def create_config(**kwargs):
+        """
+        Creates a default configuration for SecretClient.
+        """
         config = Configuration(**kwargs)
         config.user_agent = UserAgentPolicy('SecretClient', **kwargs)
         config.headers = None
@@ -50,13 +71,6 @@ class SecretClient:
         return config
 
     def __init__(self, vault_url, credentials, config=None, **kwargs):
-        """Creates a SecretClient with the for managing secrets in the specified vault.
-
-        :param credentials:  A credential or credential provider which can be used to authenticate to the vault
-        :type credentials: azure.authenctication.Credential or azure.authenctication.CredentialProvider
-        :param str vault_url: The url of the vault
-        :param azure.core.configuration.Configuration config:  The configuration for the SecretClient
-        """
         if not credentials:
             raise ValueError('credentials')
 
@@ -81,18 +95,26 @@ class SecretClient:
         return self._vault_url
 
     def get_secret(self, name, version, **kwargs):
-        """Get a specified from the vault.
+        """Get a specified secret from the vault.
 
         The GET operation is applicable to any secret stored in Azure Key
         Vault. This operation requires the secrets/get permission.
 
         :param str name: The name of the secret.
-        :param str version: The version of the secret.  If not specified the latest version of
+        :param str version: The version of the secret. If version is None or the empty string, the latest version of
             the secret is returned
-        :return: Secret
-        :rtype: ~azure.keyvault.secrets.Secret
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.KeyVaultErrorException>`
+        :returns: An instance of Secret
+        :rtype: ~azure.keyvault.secrets._models.Secret
+        :raises: ~azure.core.exceptions.ClientRequestError if the client failed to get the secret
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_keyvault.py
+                :start-after: [START get_secret]
+                :end-before: [END get_secret]
+                :language: python
+                :dedent: 4
+                :caption: Get secret from the key vault
+
         """
         if version is None:
             version = ""
@@ -119,7 +141,7 @@ class SecretClient:
         return Secret._from_secret_bundle(bundle)
 
     def set_secret(
-        self, name, value, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
+            self, name, value, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
     ):
         """Sets a secret in the vault.
 
@@ -130,16 +152,26 @@ class SecretClient:
         :param str name: The name of the secret
         :param str value: The value of the secret
         :param str content_type: Type of the secret value such as a password
-        :param attributes: The secret management attributes
-        :type attributes: ~azure.keyvault.secrets.SecretAttributes
-        :param dict[str, str] tags: Application specific metadata in the form of key-value
-            deserialized response
-        :param operation_config: :ref:`Operation configuration
-            overrides<msrest:optionsforoperations>`.
-        :return: The created secret
-        :rtype: ~azure.keyvault.secret.Secret
-        :raises:
-        :class:`azure.core.ClientRequestError`
+        :param enabled: Determines whether the object is enabled.
+        :type enabled: bool
+        :param not_before: Not before date of the secret in UTC
+        :type not_before: datetime.datetime
+        :param expires: Expiry date of the secret  in UTC.
+        :type expires: datetime.datetime
+        :param tags: Application specific metadata in the form of key-value pairs.
+        :type tags: dict(str, str)
+        :returns: The created secret
+        :rtype: ~azure.keyvault.secrets._models.Secret
+        :raises: ~azure.core.exceptions.ClientRequestError if the client failed to create the secret
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_keyvault.py
+                :start-after: [START set_secret]
+                :end-before: [END set_secret]
+                :language: python
+                :dedent: 4
+                :caption: Set a secret in the key vault
+
         """
         url = '/'.join((self._vault_url, 'secrets', name))
 
@@ -161,15 +193,47 @@ class SecretClient:
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise ClientRequestError('Request failed status code {}.  {}'.format(
+                response.status_code, response.text()))
 
         bundle = DESERIALIZE('SecretBundle', response)
 
         return Secret._from_secret_bundle(bundle)
 
     def update_secret_attributes(
-        self, name, version, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
+            self, name, version, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
     ):
+        # type: () -> SecretAttributes
+        """Updates the attributes associated with a specified secret in the key vault.
+
+        The UPDATE operation changes specified attributes of an existing stored secret.
+        Attributes that are not specified in the request are left unchanged. The value
+        of a secret itself cannot be changed. This operation requires the secrets/set permission.
+
+        :param str name: The name of the secret
+        :param str version: The version of the secret.
+        :param str content_type: Type of the secret value such as a password
+        :param enabled: Determines whether the object is enabled.
+        :type enabled: bool
+        :param not_before: Not before date of the secret  in UTC
+        :type not_before: datetime.datetime
+        :param expires: Expiry date  of the secret in UTC.
+        :type expires: datetime.datetime
+        :param tags: Application specific metadata in the form of key-value pairs.
+        :type tags: dict(str, str)
+        :returns: The created secret
+        :rtype: ~azure.keyvault.secrets._models.SecretAttributes
+        :raises: ~azure.core.exceptions.ClientRequestError if the client failed to create the secret
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_keyvault.py
+                :start-after: [START update_secret_attributes]
+                :end-before: [END update_secret_attributes]
+                :language: python
+                :dedent: 4
+                :caption: Updates the attributes associated with a specified secret in the key vault
+
+        """
         url = '/'.join((self._vault_url, 'secrets', name, version))
 
         attributes = _SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
@@ -205,14 +269,18 @@ class SecretClient:
         response. No secret values are returned and individual secret versions are
         not listed in the response.  This operation requires the secrets/list permission.
 
-        :param max_page_size: Maximum number of results to return in a page. If
-         not max_page_size, the service will return up to 25 results.
-        :type maxresults: int
-        :return: An iterator like instance of Secrets
+        :returns: An iterator like instance of Secrets
         :rtype:
-         ~azure.keyvault.secrets.SecretAttributesPaged[~azure.keyvault.secret.Secret]
-        :raises:
-         :class:`ClientRequestError<azure.core.ClientRequestError>`
+         ~azure.keyvault.secrets._models.SecretAttributesPaged[~azure.keyvault.secrets._models.SecretAttributes]
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_keyvault.py
+                :start-after: [START list_secrets]
+                :end-before: [END list_secrets]
+                :language: python
+                :dedent: 4
+                :caption: Lists all the secrets in the vault
+
         """
         url = '{}/secrets'.format(self._vault_url)
         max_page_size = kwargs.get("max_page_size", None)
@@ -227,16 +295,19 @@ class SecretClient:
         No values are returned for the secrets. This operations requires the
         secrets/list permission.
 
-        :param name: The name of the secret.
-        :type name: str
-        :param max_page_size: Maximum number of results to return in a page. If
-         not max_page_size, the service will return up to 25 results.
-        :type maxresults: int
-        :return: An iterator like instance of Secret
+        :param str name: The name of the secret.
+        :returns: An iterator like instance of Secret
         :rtype:
-         ~azure.keyvault.secrets.SecretAttributesPaged[~azure.keyvault.secret.Secret]
-        :raises:
-         :class:`ClientRequestError<azure.core.ClientRequestError>`
+         ~azure.keyvault.secrets._models.SecretAttributesPaged[~azure.keyvault.secrets._models.SecretAttributes]
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_keyvault.py
+                :start-after: [START list_secret_versions]
+                :end-before: [END list_secret_versions]
+                :language: python
+                :dedent: 4
+                :caption: List all versions of the specified secret
+
         """
 
         url = '{}/secrets/{}/versions'.format(self._vault_url, name)
@@ -253,10 +324,18 @@ class SecretClient:
         requires the secrets/backup permission.
 
         :param str name: The name of the secret.
-        :return: The raw bytes of the secret backup.
+        :returns: The raw bytes of the secret backup.
         :rtype: bytes
-        :raises:
-         :class:azure.core.ClientRequestError
+        :raises: ~azure.core.exceptions.ClientRequestError, if client failed to back up the secret
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_keyvault.py
+                :start-after: [START backup_secret]
+                :end-before: [END backup_secret]
+                :language: python
+                :dedent: 4
+                :caption: Backs up the specified secret
+
         """
         url = '/'.join((self._vault_url, 'secrets', name, 'backup'))
 
@@ -281,16 +360,24 @@ class SecretClient:
         return result.value
 
     def restore_secret(self, backup, **kwargs):
-        """Restores a backed up secret to a vault.
+        """Restore a backed up secret to the vault.
 
         Restores a backed up secret, and all its versions, to a vault. This
         operation requires the secrets/restore permission.
 
         :param bytes backup: The raw bytes of the secret backup
-        :return: The restored secret
-        :rtype: ~azure.keyvault.secrets.Secret
-        :raises:
-         :class:azure.core.ClientRequestError
+        :returns: The restored secret
+        :rtype: ~azure.keyvault.secrets._models.SecretAttributes
+        :raises: ~azure.core.exceptions.ClientRequestError, if client failed to restore the secret
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_keyvault.py
+                :start-after: [START restore_secret]
+                :end-before: [END restore_secret]
+                :language: python
+                :dedent: 4
+                :caption: Restores a backed up secret to the vault
+
         """
         url = '/'.join((self._vault_url, 'secrets', 'restore'))
 
@@ -319,6 +406,26 @@ class SecretClient:
 
     def delete_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> DeletedSecret
+        """Deletes a secret from the vault.
+
+        The DELETE operation applies to any secret stored in Azure Key Vault.
+        DELETE cannot be applied to an individual version of a secret. This
+        operation requires the secrets/delete permission.
+
+        :param str name: The name of the secret
+        :return: The deleted secret.
+        :rtype: ~azure.keyvault.secrets._models.DeletedSecret
+        :raises: ~azure.core.exceptions.ClientRequestError, if client failed to delete the secret
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_keyvault.py
+                :start-after: [START delete_secret]
+                :end-before: [END delete_secret]
+                :language: python
+                :dedent: 4
+                :caption: Deletes a secret
+
+        """
         url = '/'.join([self._vault_url, 'secrets', name])
 
         request = HttpRequest('DELETE', url)
@@ -333,7 +440,26 @@ class SecretClient:
 
     def get_deleted_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> DeletedSecret
-        url = '/'.join([self._vault_url, 'deletedsecrets', name])
+        """Gets the specified deleted secret.
+
+        The Get Deleted Secret operation returns the specified deleted secret
+        along with its attributes. This operation requires the secrets/get permission.
+
+        :param str name: The name of the secret
+        :return: The deleted secret.
+        :rtype: ~azure.keyvault.secrets._models.DeletedSecret
+        :raises: ~azure.core.exceptions.ClientRequestError, if client failed to get the deleted secret
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_keyvault.py
+                :start-after: [START get_deleted_secret]
+                :end-before: [END get_deleted_secret]
+                :language: python
+                :dedent: 4
+                :caption: Gets the deleted secret
+
+        """
+        url = "/".join([self.vault_url, "deletedsecrets", name])
 
         request = HttpRequest('GET', url)
         request.format_parameters({'api-version': self._api_version})
@@ -347,6 +473,25 @@ class SecretClient:
 
     def list_deleted_secrets(self, **kwargs):
         # type: (Optional[int], Mapping[str, Any]) -> DeletedSecretPaged
+        """Lists deleted secrets of the vault.
+
+        The Get Deleted Secrets operation returns the secrets that have
+        been deleted for a vault enabled for soft-delete. This
+        operation requires the secrets/list permission.
+
+        :returns: An iterator like instance of DeletedSecrets
+        :rtype:
+         ~azure.keyvault.secrets._models.DeletedSecretPaged[~azure.keyvault.secrets._models.DeletedSecret]
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_keyvault.py
+                :start-after: [START list_deleted_secrets]
+                :end-before: [END list_deleted_secrets]
+                :language: python
+                :dedent: 4
+                :caption: Lists the deleted secrets of the vault
+
+        """
         url = '{}/deletedsecrets'.format(self._vault_url)
         max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
@@ -355,7 +500,26 @@ class SecretClient:
 
     def purge_deleted_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> None
-        url = '/'.join([self._vault_url, 'deletedsecrets', name])
+        """Permanently deletes the specified secret.
+
+        The purge deleted secret operation removes the secret permanently, without the
+        possibility of recovery. This operation can only be enabled on a soft-delete enabled
+        vault. This operation requires the secrets/purge permission.
+
+        :param str name: The name of the secret
+        :returns: None
+        :raises: ~azure.core.exceptions.ClientRequestError, if client failed to return the purged secret
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_keyvault.py
+                :start-after: [START purge_deleted_secret]
+                :end-before: [END purge_deleted_secret]
+                :language: python
+                :dedent: 4
+                :caption: Restores a backed up secret to the vault
+
+        """
+        url = "/".join([self.vault_url, "deletedsecrets", name])
 
         request = HttpRequest('DELETE', url)
         request.format_parameters({'api-version': self._api_version})
@@ -367,7 +531,27 @@ class SecretClient:
 
     def recover_deleted_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> SecretAttributes
-        url = '/'.join([self._vault_url, 'deletedsecrets', name, 'recover'])
+        """Recovers the deleted secret to the latest version.
+
+        Recovers the deleted secret in the specified vault.
+        This operation can only be performed on a soft-delete enabled
+        vault. This operation requires the secrets/recover permission.
+
+        :param str name: The name of the secret
+        :returns: The recovered deleted secret
+        :rtype: ~azure.keyvault.secrets._models.SecretAttributes
+        :raises: ~azure.core.exceptions.ClientRequestError, if client failed to recover the deleted secret
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_keyvault.py
+                :start-after: [START recover_deleted_secret]
+                :end-before: [END recover_deleted_secret]
+                :language: python
+                :dedent: 4
+                :caption: Restores a backed up secret to the vault
+
+        """
+        url = "/".join([self.vault_url, "deletedsecrets", name, "recover"])
 
         request = HttpRequest('POST', url)
         request.format_parameters({'api-version': self._api_version})

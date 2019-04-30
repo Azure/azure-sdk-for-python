@@ -12,21 +12,21 @@ class VaultClient(object):
     @property
     def secrets(self):
         """
-        :rtype:`azure.security.keyvault.SecretClient`
+        :rtype: ~azure.keyvault.secrets.SecretClient
         """
         return self._secrets
 
     @property
     def keys(self):
         """
-        :rtype:`azure.security.keyvault.KeyClient`
+        :rtype: ~azure.keyvault.keys.KeyClient
         """
         return self._keys
 
     @property
     def certificates(self):
         """
-        :rtype:`azure.security.keyvault.CertificateClient`
+        :rtype: ~azure.keyvault.certificates.CertificateClient
         """
         pass
 

@@ -12,6 +12,9 @@ from .._internal import _parse_vault_id
 
 
 class SecretAttributes(object):
+    """A secret's id and attributes.
+    """
+
     def __init__(self, attributes, vault_id, **kwargs):
         # type: (models.SecretAttributes, str, Mapping[str, Any]) -> None
         self._attributes = attributes
@@ -50,78 +53,99 @@ class SecretAttributes(object):
     @property
     def content_type(self):
         # type: () -> str
+        """Type of the secret value such as a password
+        :rtype: str"""
         return self._content_type
 
     @property
     def id(self):
         # type: () -> str
+        """The secret id
+        :rtype: str"""
         return self._id
 
     @property
     def key_id(self):
         # type: () -> str
+        """Specifies the corresponding key id backing the KV certificate
+        :rtype: str"""
         return self._key_id
 
     @property
     def enabled(self):
         # type: () -> bool
-        """Gets the Secret's 'enabled' attribute"""
+        """The Secret's 'enabled' attribute
+        :rtype: bool"""
         return self._attributes.enabled
 
     @property
     def not_before(self):
         # type: () -> datetime
-        """Gets the Secret's 'not_before' attribute"""
+        """The Secret's not_before date in UTC
+        :rtype: datetime"""
         return self._attributes.not_before
 
     @property
     def expires(self):
         # type: () -> datetime
-        """Gets the Secret's 'expires' attribute"""
+        """The Secret's expiry date in UTC
+        :rtype: datetime"""
         return self._attributes.expires
 
     @property
     def created(self):
         # type: () -> datetime
-        """Gets the Secret's 'created' attribute"""
+        """The Secret's creation time in UTC
+        :rtype: datetime"""
         return self._attributes.created
 
     @property
     def updated(self):
         # type: () -> datetime
-        """Gets the Secret's 'updated' attribute"""
+        """The Secret's last updated time in UTC
+        :rtype: datetime"""
         return self._attributes.updated
 
     @property
     def recovery_level(self):
         # type: () -> str
-        """Gets the Secret's 'recovery_level' attribute"""
+        """Reflects the deletion recovery level currently in effect for secrets in the current vault
+        :rtype: str"""
         return self._attributes.recovery_level
 
     @property
     def vault_url(self):
         # type: () -> str
-        """The url of the vault containing the secret"""
+        """The url of the vault containing the secret
+        :rtype: str"""
         return self._vault_id.vault_url
 
     @property
     def name(self):
         # type: () -> str
-        """The name of the secret"""
+        """The name of the secret
+        :rtype: str"""
         return self._vault_id.name
 
     @property
     def version(self):
         # type: () -> str
-        """The version of the secret"""
+        """The version of the secret
+        :rtype: str"""
         return self._vault_id.version
 
     @property
     def tags(self):
+        # type: Dict[str, str]
+        """Application specific metadata in the form of key-value pairs.
+        :rtype: dict"""
         return self._tags
 
 
 class Secret(SecretAttributes):
+    """A secret consisting of all SecretAttributes and value information.
+    """
+
     def __init__(self, attributes, vault_id, value, **kwargs):
         super(Secret, self).__init__(attributes, vault_id, **kwargs)
         self._value = value
@@ -147,8 +171,13 @@ class Secret(SecretAttributes):
 
 
 class DeletedSecret(SecretAttributes):
+    # type: (models.SecretAttributes, str, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
+    """A Deleted Secret consisting of its previous id, attributes and its tags, as
+    well as information on when it will be purged.
+        """
+
     def __init__(self, attributes, vault_id, deleted_date=None, recovery_id=None, scheduled_purge_date=None, **kwargs):
-        # type: (models.SecretAttributes, str, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
+        # type: (models.SecretAttributes, str, Optional[datetime], Optional[str],
         super(DeletedSecret, self).__init__(attributes, vault_id, **kwargs)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
@@ -185,14 +214,20 @@ class DeletedSecret(SecretAttributes):
     @property
     def deleted_date(self):
         # type: () -> datetime
+        """The time when the secret was deleted, in UTC
+        :rtype: datetime"""
         return self._deleted_date
 
     @property
     def recovery_id(self):
         # type: () -> str
+        """The url of the recovery object, used to identify and recover the deleted secret
+        :rtype: str"""
         return self._recovery_id
 
     @property
     def scheduled_purge_date(self):
         # type: () -> datetime
+        """The time when the secret is scheduled to be purged, in UTC
+        :rtype: datetime"""
         return self._scheduled_purge_date
