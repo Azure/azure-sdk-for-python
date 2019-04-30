@@ -6,8 +6,14 @@
   ref/azure.common
   ./ref/azure.applicationinsights.rst
   ./ref/azure.batch.rst
+  ./ref/azure.cognitiveservices.anomalydetector.rst
+  ./ref/azure.cognitiveservices.knowledge.qnamaker.rst
+  ./ref/azure.cognitiveservices.language.luis.authoring.rst
+  ./ref/azure.cognitiveservices.language.luis.runtime.rst
   ./ref/azure.cognitiveservices.language.spellcheck.rst
   ./ref/azure.cognitiveservices.language.textanalytics.rst
+  ./ref/azure.cognitiveservices.search.autosuggest.rst
+  ./ref/azure.cognitiveservices.search.customimagesearch.rst
   ./ref/azure.cognitiveservices.search.customsearch.rst
   ./ref/azure.cognitiveservices.search.entitysearch.rst
   ./ref/azure.cognitiveservices.search.imagesearch.rst
@@ -25,7 +31,10 @@
   ./ref/azure.keyvault.rst
   ./ref/azure.loganalytics.rst
   ./ref/azure.mgmt.advisor.rst
+  ./ref/azure.mgmt.alertsmanagement.rst
+  ./ref/azure.mgmt.applicationinsights.rst
   ./ref/azure.mgmt.authorization.rst
+  ./ref/azure.mgmt.automation.rst
   ./ref/azure.mgmt.batch.rst
   ./ref/azure.mgmt.batchai.rst
   ./ref/azure.mgmt.billing.rst
@@ -38,31 +47,44 @@
   ./ref/azure.mgmt.containerregistry.rst
   ./ref/azure.mgmt.containerservice.rst
   ./ref/azure.mgmt.cosmosdb.rst
+  ./ref/azure.mgmt.databricks.rst
   ./ref/azure.mgmt.datafactory.rst
   ./ref/azure.mgmt.datalake.analytics.account.rst
   ./ref/azure.mgmt.datalake.analytics.catalog.rst
   ./ref/azure.mgmt.datalake.analytics.job.rst
   ./ref/azure.mgmt.datalake.store.rst
+  ./ref/azure.mgmt.datamigration.rst
+  ./ref/azure.mgmt.devspaces.rst
   ./ref/azure.mgmt.devtestlabs.rst
   ./ref/azure.mgmt.dns.rst
   ./ref/azure.mgmt.eventgrid.rst
   ./ref/azure.mgmt.eventhub.rst
   ./ref/azure.mgmt.hanaonazure.rst
   ./ref/azure.mgmt.hdinsight.rst
+  ./ref/azure.mgmt.imagebuilder.rst
+  ./ref/azure.mgmt.iotcentral.rst
   ./ref/azure.mgmt.iothub.rst
   ./ref/azure.mgmt.iothubprovisioningservices.rst
   ./ref/azure.mgmt.keyvault.rst
+  ./ref/azure.mgmt.kusto.rst
+  ./ref/azure.mgmt.labservices.rst
   ./ref/azure.mgmt.loganalytics.rst
   ./ref/azure.mgmt.logic.rst
   ./ref/azure.mgmt.machinelearningcompute.rst
   ./ref/azure.mgmt.managementgroups.rst
+  ./ref/azure.mgmt.managementpartner.rst
+  ./ref/azure.mgmt.maps.rst
+  ./ref/azure.mgmt.marketplaceordering.rst
   ./ref/azure.mgmt.media.rst
+  ./ref/azure.mgmt.mixedreality.rst
   ./ref/azure.mgmt.monitor.rst
   ./ref/azure.mgmt.msi.rst
+  ./ref/azure.mgmt.netapp.rst
   ./ref/azure.mgmt.network.rst
   ./ref/azure.mgmt.notificationhubs.rst
   ./ref/azure.mgmt.policyinsights.rst
   ./ref/azure.mgmt.powerbiembedded.rst
+  ./ref/azure.mgmt.rdbms.mariadb.rst
   ./ref/azure.mgmt.rdbms.mysql.rst
   ./ref/azure.mgmt.rdbms.postgresql.rst
   ./ref/azure.mgmt.recoveryservices.rst
@@ -76,12 +98,16 @@
   ./ref/azure.mgmt.resource.policy.rst
   ./ref/azure.mgmt.resource.resources.rst
   ./ref/azure.mgmt.resource.subscriptions.rst
+  ./ref/azure.mgmt.resourcegraph.rst
   ./ref/azure.mgmt.scheduler.rst
   ./ref/azure.mgmt.search.rst
+  ./ref/azure.mgmt.security.rst
   ./ref/azure.mgmt.servermanager.rst
   ./ref/azure.mgmt.servicebus.rst
   ./ref/azure.mgmt.servicefabric.rst
+  ./ref/azure.mgmt.signalr.rst
   ./ref/azure.mgmt.sql.rst
+  ./ref/azure.mgmt.sqlvirtualmachine.rst
   ./ref/azure.mgmt.storage.rst
   ./ref/azure.mgmt.subscription.rst
   ./ref/azure.mgmt.trafficmanager.rst
