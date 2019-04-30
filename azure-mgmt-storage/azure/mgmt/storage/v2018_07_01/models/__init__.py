@@ -60,6 +60,8 @@ try:
     from .cors_rules_py3 import CorsRules
     from .delete_retention_policy_py3 import DeleteRetentionPolicy
     from .blob_service_properties_py3 import BlobServiceProperties
+    from .lease_container_request_py3 import LeaseContainerRequest
+    from .lease_container_response_py3 import LeaseContainerResponse
     from .storage_account_management_policies_py3 import StorageAccountManagementPolicies
     from .management_policies_rules_set_parameter_py3 import ManagementPoliciesRulesSetParameter
 except (SyntaxError, ImportError):
@@ -113,6 +115,8 @@ except (SyntaxError, ImportError):
     from .cors_rules import CorsRules
     from .delete_retention_policy import DeleteRetentionPolicy
     from .blob_service_properties import BlobServiceProperties
+    from .lease_container_request import LeaseContainerRequest
+    from .lease_container_response import LeaseContainerResponse
     from .storage_account_management_policies import StorageAccountManagementPolicies
     from .management_policies_rules_set_parameter import ManagementPoliciesRulesSetParameter
 from .operation_paged import OperationPaged
@@ -201,6 +205,8 @@ __all__ = [
     'CorsRules',
     'DeleteRetentionPolicy',
     'BlobServiceProperties',
+    'LeaseContainerRequest',
+    'LeaseContainerResponse',
     'StorageAccountManagementPolicies',
     'ManagementPoliciesRulesSetParameter',
     'OperationPaged',
