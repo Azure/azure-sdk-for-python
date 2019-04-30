@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ServerProperties(Model):
-    """Server properties for Oracle, MySQL type source.
+    """Server properties for MySQL type source.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

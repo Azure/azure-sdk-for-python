@@ -12,46 +12,40 @@
 from msrest.serialization import Model
 
 
-class ConnectToSourceNonSqlTaskOutput(Model):
-    """Output for connect to MySQL type source.
+class ConnectToSourceOracleSyncTaskOutput(Model):
+    """Output for the task that validates Oracle database connection.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Result identifier
-    :vartype id: str
-    :ivar source_server_brand_version: Server brand version
-    :vartype source_server_brand_version: str
-    :ivar server_properties: Server properties
-    :vartype server_properties:
-     ~azure.mgmt.datamigration.models.ServerProperties
-    :ivar databases: List of databases on the server
+    :ivar source_server_version: Version of the source server
+    :vartype source_server_version: str
+    :ivar databases: List of schemas on source server
     :vartype databases: list[str]
+    :ivar source_server_brand_version: Source server brand version
+    :vartype source_server_brand_version: str
     :ivar validation_errors: Validation errors associated with the task
     :vartype validation_errors:
      list[~azure.mgmt.datamigration.models.ReportableException]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'source_server_brand_version': {'readonly': True},
-        'server_properties': {'readonly': True},
+        'source_server_version': {'readonly': True},
         'databases': {'readonly': True},
+        'source_server_brand_version': {'readonly': True},
         'validation_errors': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'source_server_brand_version': {'key': 'sourceServerBrandVersion', 'type': 'str'},
-        'server_properties': {'key': 'serverProperties', 'type': 'ServerProperties'},
+        'source_server_version': {'key': 'sourceServerVersion', 'type': 'str'},
         'databases': {'key': 'databases', 'type': '[str]'},
+        'source_server_brand_version': {'key': 'sourceServerBrandVersion', 'type': 'str'},
         'validation_errors': {'key': 'validationErrors', 'type': '[ReportableException]'},
     }
 
-    def __init__(self, **kwargs):
-        super(ConnectToSourceNonSqlTaskOutput, self).__init__(**kwargs)
-        self.id = None
-        self.source_server_brand_version = None
-        self.server_properties = None
+    def __init__(self, **kwargs) -> None:
+        super(ConnectToSourceOracleSyncTaskOutput, self).__init__(**kwargs)
+        self.source_server_version = None
         self.databases = None
+        self.source_server_brand_version = None
         self.validation_errors = None
