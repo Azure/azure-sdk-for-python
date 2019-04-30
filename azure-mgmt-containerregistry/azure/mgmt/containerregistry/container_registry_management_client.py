@@ -65,9 +65,10 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
      missing in profile.
     :param str base_url: Service URL
     :param profile: A dict using operation group name to API version.
-    :type profile: dict[str, str]    """
+    :type profile: dict[str, str]
+    """
 
-    DEFAULT_API_VERSION = '2018-09-01'
+    DEFAULT_API_VERSION = '2019-04-01'
     _PROFILE_TAG = "azure.mgmt.containerregistry.ContainerRegistryManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
