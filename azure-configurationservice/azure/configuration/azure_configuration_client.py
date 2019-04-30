@@ -31,7 +31,7 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
     """
 
     def __init__(self, connection_string):
-        super().__init__()
+        super(AzureConfigurationClient, self).__init__()
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         program_name = os.path.basename(sys.argv[0]) or "noprogram"
         self.config = AzureConfigurationClientImpConfiguration(
@@ -82,7 +82,7 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
             for item in filtered_listed:
                 pass  # do something
         """
-        return super().list_configuration_settings(
+        return super(AzureConfigurationClient, self).list_configuration_settings(
             labels, keys, accept_date_time, fields, **kwargs
         )
 
@@ -98,7 +98,7 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
                 key="MyKey", label="MyLabel"
             )
         """
-        return super().get_configuration_setting(
+        return super(AzureConfigurationClient, self).get_configuration_setting(
             key, label=label, accept_date_time=accept_date_time, **kwargs
         )
 
@@ -118,7 +118,7 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
             )
             added_config_setting = client.add_configuration_setting(config_setting)
         """
-        return super().add_configuration_setting(configuration_setting, **kwargs)
+        return super(AzureConfigurationClient, self).add_configuration_setting(configuration_setting, **kwargs)
 
     def update_configuration_setting(
         self,
@@ -179,7 +179,7 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
             )
             returned_config_setting = client.set_configuration_setting(config_setting)
         """
-        return super().set_configuration_setting(configuration_setting, **kwargs)
+        return super(AzureConfigurationClient, self).set_configuration_setting(configuration_setting, **kwargs)
 
     def delete_configuration_setting(
         self, key, label=None, etag=None, **kwargs
@@ -193,7 +193,7 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
                 key="MyKey", label="MyLabel"
             )
         """
-        return super().delete_configuration_setting(key, label, etag, **kwargs)
+        return super(AzureConfigurationClient, self).delete_configuration_setting(key, label, etag, **kwargs)
 
     def list_revisions(
         self, labels=None, keys=None, accept_date_time=None, fields=None, **kwargs
@@ -217,37 +217,38 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
             for item in filtered_revisions:
                 pass  # do something
         """
-        return super().list_revisions(labels, keys, accept_date_time, fields, **kwargs)
+        return super(AzureConfigurationClient, self).list_revisions(labels, keys, accept_date_time, fields, **kwargs)
 
 
-AzureConfigurationClient.__doc__ = (
-    AzureConfigurationClientAbstract.__doc__ + AzureConfigurationClient.__doc__
-)
-AzureConfigurationClient.get_configuration_setting.__doc__ = (
-    AzureConfigurationClientAbstract.get_configuration_setting.__doc__
-    + AzureConfigurationClient.get_configuration_setting.__doc__
-)
-AzureConfigurationClient.add_configuration_setting.__doc__ = (
-    AzureConfigurationClientAbstract.add_configuration_setting.__doc__
-    + AzureConfigurationClient.add_configuration_setting.__doc__
-)
-AzureConfigurationClient.set_configuration_setting.__doc__ = (
-    AzureConfigurationClientAbstract.set_configuration_setting.__doc__
-    + AzureConfigurationClient.set_configuration_setting.__doc__
-)
-AzureConfigurationClient.update_configuration_setting.__doc__ = (
-    AzureConfigurationClientAbstract.update_configuration_setting.__doc__
-    + AzureConfigurationClient.update_configuration_setting.__doc__
-)
-AzureConfigurationClient.delete_configuration_setting.__doc__ = (
-    AzureConfigurationClientAbstract.delete_configuration_setting.__doc__
-    + AzureConfigurationClient.delete_configuration_setting.__doc__
-)
-AzureConfigurationClient.list_configuration_settings.__doc__ = (
-    AzureConfigurationClientAbstract.list_configuration_settings.__doc__
-    + AzureConfigurationClient.list_configuration_settings.__doc__
-)
-AzureConfigurationClient.list_revisions.__doc__ = (
-    AzureConfigurationClientAbstract.list_revisions.__doc__
-    + AzureConfigurationClient.list_revisions.__doc__
-)
+if platform.python_version() > "3.0":
+    AzureConfigurationClient.__doc__ = (
+        AzureConfigurationClientAbstract.__doc__ + AzureConfigurationClient.__doc__
+    )
+    AzureConfigurationClient.get_configuration_setting.__doc__ = (
+        AzureConfigurationClientAbstract.get_configuration_setting.__doc__
+        + AzureConfigurationClient.get_configuration_setting.__doc__
+    )
+    AzureConfigurationClient.add_configuration_setting.__doc__ = (
+        AzureConfigurationClientAbstract.add_configuration_setting.__doc__
+        + AzureConfigurationClient.add_configuration_setting.__doc__
+    )
+    AzureConfigurationClient.set_configuration_setting.__doc__ = (
+        AzureConfigurationClientAbstract.set_configuration_setting.__doc__
+        + AzureConfigurationClient.set_configuration_setting.__doc__
+    )
+    AzureConfigurationClient.update_configuration_setting.__doc__ = (
+        AzureConfigurationClientAbstract.update_configuration_setting.__doc__
+        + AzureConfigurationClient.update_configuration_setting.__doc__
+    )
+    AzureConfigurationClient.delete_configuration_setting.__doc__ = (
+        AzureConfigurationClientAbstract.delete_configuration_setting.__doc__
+        + AzureConfigurationClient.delete_configuration_setting.__doc__
+    )
+    AzureConfigurationClient.list_configuration_settings.__doc__ = (
+        AzureConfigurationClientAbstract.list_configuration_settings.__doc__
+        + AzureConfigurationClient.list_configuration_settings.__doc__
+    )
+    AzureConfigurationClient.list_revisions.__doc__ = (
+        AzureConfigurationClientAbstract.list_revisions.__doc__
+        + AzureConfigurationClient.list_revisions.__doc__
+    )
