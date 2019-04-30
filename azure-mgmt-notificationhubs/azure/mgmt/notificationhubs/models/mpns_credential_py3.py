@@ -19,7 +19,7 @@ class MpnsCredential(Model):
     :type mpns_certificate: str
     :param certificate_key: The certificate key for this credential.
     :type certificate_key: str
-    :param thumbprint: The Mpns certificate Thumbprint
+    :param thumbprint: The MPNS certificate Thumbprint
     :type thumbprint: str
     """
 
