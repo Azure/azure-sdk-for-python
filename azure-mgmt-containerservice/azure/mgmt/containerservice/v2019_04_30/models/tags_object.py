@@ -9,9 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .v2017_07_01.models import *
-from .v2018_03_31.models import *
-from .v2018_08_01_preview.models import *
-from .v2018_09_30_preview.models import *
-from .v2019_02_01.models import *
-from .v2019_04_30.models import *
+from msrest.serialization import Model
+
+
+class TagsObject(Model):
+    """Tags object for patch operations.
+
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TagsObject, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)

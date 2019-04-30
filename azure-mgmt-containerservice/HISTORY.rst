@@ -3,6 +3,15 @@
 Release History
 ===============
 
+5.2.0 (2019-04-30)
+++++++++++++++++++
+
+**Features**
+
+- OpenShift is now using a GA api version
+- Model OpenShiftManagedCluster has a new parameter cluster_version
+- Model NetworkProfile has a new parameter vnet_id
+
 5.1.0 (2019-04-08)
 ++++++++++++++++++
 
