@@ -15,22 +15,34 @@ from msrest.serialization import Model
 class OracleOCIDriverInfo(Model):
     """Information about an Oracle OCI driver.
 
-    :param driver_name: The name of the driver package
-    :type driver_name: str
-    :param driver_size: The size in bytes of the driver package
-    :type driver_size: str
-    :param archive_checksum: The MD5 Base64 encoded checksum for the driver
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar driver_name: The name of the driver package
+    :vartype driver_name: str
+    :ivar driver_size: The size in bytes of the driver package
+    :vartype driver_size: str
+    :ivar archive_checksum: The MD5 Base64 encoded checksum for the driver
      package.
-    :type archive_checksum: str
-    :param oracle_checksum: The checksum for the driver package provided by
+    :vartype archive_checksum: str
+    :ivar oracle_checksum: The checksum for the driver package provided by
      Oracle.
-    :type oracle_checksum: str
-    :param assembly_version: Version listed in the OCI assembly 'oci.dll'
-    :type assembly_version: str
-    :param supported_oracle_versions: List of Oracle database versions
+    :vartype oracle_checksum: str
+    :ivar assembly_version: Version listed in the OCI assembly 'oci.dll'
+    :vartype assembly_version: str
+    :ivar supported_oracle_versions: List of Oracle database versions
      supported by this driver. Only major minor of the version is listed.
-    :type supported_oracle_versions: list[str]
+    :vartype supported_oracle_versions: list[str]
     """
+
+    _validation = {
+        'driver_name': {'readonly': True},
+        'driver_size': {'readonly': True},
+        'archive_checksum': {'readonly': True},
+        'oracle_checksum': {'readonly': True},
+        'assembly_version': {'readonly': True},
+        'supported_oracle_versions': {'readonly': True},
+    }
 
     _attribute_map = {
         'driver_name': {'key': 'driverName', 'type': 'str'},
@@ -43,9 +55,9 @@ class OracleOCIDriverInfo(Model):
 
     def __init__(self, **kwargs):
         super(OracleOCIDriverInfo, self).__init__(**kwargs)
-        self.driver_name = kwargs.get('driver_name', None)
-        self.driver_size = kwargs.get('driver_size', None)
-        self.archive_checksum = kwargs.get('archive_checksum', None)
-        self.oracle_checksum = kwargs.get('oracle_checksum', None)
-        self.assembly_version = kwargs.get('assembly_version', None)
-        self.supported_oracle_versions = kwargs.get('supported_oracle_versions', None)
+        self.driver_name = None
+        self.driver_size = None
+        self.archive_checksum = None
+        self.oracle_checksum = None
+        self.assembly_version = None
+        self.supported_oracle_versions = None
