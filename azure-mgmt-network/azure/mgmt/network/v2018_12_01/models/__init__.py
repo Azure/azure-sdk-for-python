@@ -110,6 +110,7 @@ try:
     from .express_route_circuit_stats_py3 import ExpressRouteCircuitStats
     from .express_route_connection_id_py3 import ExpressRouteConnectionId
     from .express_route_circuit_connection_py3 import ExpressRouteCircuitConnection
+    from .peer_express_route_circuit_connection_py3 import PeerExpressRouteCircuitConnection
     from .express_route_circuit_peering_py3 import ExpressRouteCircuitPeering
     from .route_filter_py3 import RouteFilter
     from .ipv6_express_route_circuit_peering_config_py3 import Ipv6ExpressRouteCircuitPeeringConfig
@@ -296,6 +297,11 @@ try:
     from .p2_svpn_gateway_py3 import P2SVpnGateway
     from .p2_svpn_profile_parameters_py3 import P2SVpnProfileParameters
     from .vpn_profile_response_py3 import VpnProfileResponse
+    from .policy_settings_py3 import PolicySettings
+    from .match_variable_py3 import MatchVariable
+    from .match_condition_py3 import MatchCondition
+    from .web_application_firewall_custom_rule_py3 import WebApplicationFirewallCustomRule
+    from .web_application_firewall_policy_py3 import WebApplicationFirewallPolicy
 except (SyntaxError, ImportError):
     from .network_interface_tap_configuration import NetworkInterfaceTapConfiguration
     from .sub_resource import SubResource
@@ -397,6 +403,7 @@ except (SyntaxError, ImportError):
     from .express_route_circuit_stats import ExpressRouteCircuitStats
     from .express_route_connection_id import ExpressRouteConnectionId
     from .express_route_circuit_connection import ExpressRouteCircuitConnection
+    from .peer_express_route_circuit_connection import PeerExpressRouteCircuitConnection
     from .express_route_circuit_peering import ExpressRouteCircuitPeering
     from .route_filter import RouteFilter
     from .ipv6_express_route_circuit_peering_config import Ipv6ExpressRouteCircuitPeeringConfig
@@ -583,6 +590,11 @@ except (SyntaxError, ImportError):
     from .p2_svpn_gateway import P2SVpnGateway
     from .p2_svpn_profile_parameters import P2SVpnProfileParameters
     from .vpn_profile_response import VpnProfileResponse
+    from .policy_settings import PolicySettings
+    from .match_variable import MatchVariable
+    from .match_condition import MatchCondition
+    from .web_application_firewall_custom_rule import WebApplicationFirewallCustomRule
+    from .web_application_firewall_policy import WebApplicationFirewallPolicy
 from .application_gateway_paged import ApplicationGatewayPaged
 from .application_gateway_ssl_predefined_policy_paged import ApplicationGatewaySslPredefinedPolicyPaged
 from .application_security_group_paged import ApplicationSecurityGroupPaged
@@ -594,6 +606,7 @@ from .endpoint_service_result_paged import EndpointServiceResultPaged
 from .express_route_circuit_authorization_paged import ExpressRouteCircuitAuthorizationPaged
 from .express_route_circuit_peering_paged import ExpressRouteCircuitPeeringPaged
 from .express_route_circuit_connection_paged import ExpressRouteCircuitConnectionPaged
+from .peer_express_route_circuit_connection_paged import PeerExpressRouteCircuitConnectionPaged
 from .express_route_circuit_paged import ExpressRouteCircuitPaged
 from .express_route_service_provider_paged import ExpressRouteServiceProviderPaged
 from .express_route_cross_connection_paged import ExpressRouteCrossConnectionPaged
@@ -646,6 +659,7 @@ from .vpn_gateway_paged import VpnGatewayPaged
 from .vpn_connection_paged import VpnConnectionPaged
 from .p2_svpn_server_configuration_paged import P2SVpnServerConfigurationPaged
 from .p2_svpn_gateway_paged import P2SVpnGatewayPaged
+from .web_application_firewall_policy_paged import WebApplicationFirewallPolicyPaged
 from .network_management_client_enums import (
     IPAllocationMethod,
     SecurityRuleProtocol,
@@ -741,6 +755,14 @@ from .network_management_client_enums import (
     VirtualWanSecurityProviderType,
     TunnelConnectionStatus,
     HubVirtualNetworkConnectionStatus,
+    WebApplicationFirewallEnabledState,
+    WebApplicationFirewallMode,
+    WebApplicationFirewallRuleType,
+    WebApplicationFirewallMatchVariable,
+    WebApplicationFirewallOperator,
+    WebApplicationFirewallTransform,
+    WebApplicationFirewallAction,
+    WebApplicationFirewallPolicyResourceState,
 )
 
 __all__ = [
@@ -844,6 +866,7 @@ __all__ = [
     'ExpressRouteCircuitStats',
     'ExpressRouteConnectionId',
     'ExpressRouteCircuitConnection',
+    'PeerExpressRouteCircuitConnection',
     'ExpressRouteCircuitPeering',
     'RouteFilter',
     'Ipv6ExpressRouteCircuitPeeringConfig',
@@ -1030,6 +1053,11 @@ __all__ = [
     'P2SVpnGateway',
     'P2SVpnProfileParameters',
     'VpnProfileResponse',
+    'PolicySettings',
+    'MatchVariable',
+    'MatchCondition',
+    'WebApplicationFirewallCustomRule',
+    'WebApplicationFirewallPolicy',
     'ApplicationGatewayPaged',
     'ApplicationGatewaySslPredefinedPolicyPaged',
     'ApplicationSecurityGroupPaged',
@@ -1041,6 +1069,7 @@ __all__ = [
     'ExpressRouteCircuitAuthorizationPaged',
     'ExpressRouteCircuitPeeringPaged',
     'ExpressRouteCircuitConnectionPaged',
+    'PeerExpressRouteCircuitConnectionPaged',
     'ExpressRouteCircuitPaged',
     'ExpressRouteServiceProviderPaged',
     'ExpressRouteCrossConnectionPaged',
@@ -1093,6 +1122,7 @@ __all__ = [
     'VpnConnectionPaged',
     'P2SVpnServerConfigurationPaged',
     'P2SVpnGatewayPaged',
+    'WebApplicationFirewallPolicyPaged',
     'IPAllocationMethod',
     'SecurityRuleProtocol',
     'SecurityRuleAccess',
@@ -1187,4 +1217,12 @@ __all__ = [
     'VirtualWanSecurityProviderType',
     'TunnelConnectionStatus',
     'HubVirtualNetworkConnectionStatus',
+    'WebApplicationFirewallEnabledState',
+    'WebApplicationFirewallMode',
+    'WebApplicationFirewallRuleType',
+    'WebApplicationFirewallMatchVariable',
+    'WebApplicationFirewallOperator',
+    'WebApplicationFirewallTransform',
+    'WebApplicationFirewallAction',
+    'WebApplicationFirewallPolicyResourceState',
 ]

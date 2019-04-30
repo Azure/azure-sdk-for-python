@@ -48,6 +48,11 @@ class AvailabilitySet(Resource):
      the availability set.
     :type virtual_machines:
      list[~azure.mgmt.compute.v2018_06_01.models.SubResource]
+    :param proximity_placement_group: Specifies information about the
+     proximity placement group that the availability set should be assigned to.
+     <br><br>Minimum api-version: 2018-04-01.
+    :type proximity_placement_group:
+     ~azure.mgmt.compute.v2018_06_01.models.SubResource
     :ivar statuses: The resource status information.
     :vartype statuses:
      list[~azure.mgmt.compute.v2018_06_01.models.InstanceViewStatus]
@@ -75,14 +80,16 @@ class AvailabilitySet(Resource):
         'platform_update_domain_count': {'key': 'properties.platformUpdateDomainCount', 'type': 'int'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResource]'},
+        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'statuses': {'key': 'properties.statuses', 'type': '[InstanceViewStatus]'},
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
 
-    def __init__(self, *, location: str, tags=None, platform_update_domain_count: int=None, platform_fault_domain_count: int=None, virtual_machines=None, sku=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, platform_update_domain_count: int=None, platform_fault_domain_count: int=None, virtual_machines=None, proximity_placement_group=None, sku=None, **kwargs) -> None:
         super(AvailabilitySet, self).__init__(location=location, tags=tags, **kwargs)
         self.platform_update_domain_count = platform_update_domain_count
         self.platform_fault_domain_count = platform_fault_domain_count
         self.virtual_machines = virtual_machines
+        self.proximity_placement_group = proximity_placement_group
         self.statuses = None
         self.sku = sku

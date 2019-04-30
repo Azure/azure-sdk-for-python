@@ -28,7 +28,7 @@ class SecurityContact(Resource):
     :vartype type: str
     :param email: Required. The email of this security contact
     :type email: str
-    :param phone: Required. The phone number of this security contact
+    :param phone: The phone number of this security contact
     :type phone: str
     :param alert_notifications: Required. Whether to send security alerts
      notifications to the security contact. Possible values include: 'On',
@@ -45,7 +45,6 @@ class SecurityContact(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'email': {'required': True},
-        'phone': {'required': True},
         'alert_notifications': {'required': True},
         'alerts_to_admins': {'required': True},
     }
@@ -60,7 +59,7 @@ class SecurityContact(Resource):
         'alerts_to_admins': {'key': 'properties.alertsToAdmins', 'type': 'str'},
     }
 
-    def __init__(self, *, email: str, phone: str, alert_notifications, alerts_to_admins, **kwargs) -> None:
+    def __init__(self, *, email: str, alert_notifications, alerts_to_admins, phone: str=None, **kwargs) -> None:
         super(SecurityContact, self).__init__(**kwargs)
         self.email = email
         self.phone = phone

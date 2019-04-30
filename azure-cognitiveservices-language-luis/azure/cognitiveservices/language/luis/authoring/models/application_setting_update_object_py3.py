@@ -15,15 +15,15 @@ from msrest.serialization import Model
 class ApplicationSettingUpdateObject(Model):
     """Object model for updating an application's settings.
 
-    :param public: Setting your application as public allows other people to
-     use your application's endpoint using their own keys.
-    :type public: bool
+    :param is_public: Setting your application as public allows other people
+     to use your application's endpoint using their own keys.
+    :type is_public: bool
     """
 
     _attribute_map = {
-        'public': {'key': 'public', 'type': 'bool'},
+        'is_public': {'key': 'public', 'type': 'bool'},
     }
 
-    def __init__(self, *, public: bool=None, **kwargs) -> None:
+    def __init__(self, *, is_public: bool=None, **kwargs) -> None:
         super(ApplicationSettingUpdateObject, self).__init__(**kwargs)
-        self.public = public
+        self.is_public = is_public

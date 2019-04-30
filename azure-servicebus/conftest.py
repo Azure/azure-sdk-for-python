@@ -16,7 +16,6 @@ if sys.version_info < (3, 5):
     collect_ignore.append("tests/async_tests")
     collect_ignore.append("examples/async_examples")
 
-
 def get_live_servicebus_config():
     config = {}
     config['hostname'] = os.environ['SERVICE_BUS_HOSTNAME']

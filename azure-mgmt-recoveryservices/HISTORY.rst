@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.4.0 (2019-04-05)
+++++++++++++++++++
+
+**Features**
+
+- Added operation recovery_services.check_name_availability
+
 0.3.0 (2018-05-25)
 ++++++++++++++++++
 
@@ -33,7 +40,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
   - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
   - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
-  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
     without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
   - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
     the response of the initial call will be returned without polling.
@@ -53,6 +60,11 @@ This version uses a next-generation code generator that *might* introduce breaki
 * blob_duration is now a str (from iso-8601)
 * "service_specification" is renamed "properties.service_specification"
 * Fix operations list
+
+0.1.1 (2019-03-12)
+++++++++++++++++++
+
+* Updating permissible versions of the msrestazure package to unblock `Azure/azure-cli#6973 <https://github.com/Azure/azure-cli/issues/6973>`_.
 
 0.1.0 (2017-07-20)
 ++++++++++++++++++

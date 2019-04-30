@@ -33,7 +33,7 @@ def get_logger(level):
 
 _logger = get_logger(logging.DEBUG)
 
-
+@pytest.mark.liveTest
 def test_subscription_by_subscription_client_conn_str_receive_basic(live_servicebus_config, standard_subscription):
     topic_name, subscription_name = standard_subscription
     topic_client = TopicClient.from_connection_string(live_servicebus_config['conn_str'], name=topic_name, debug=True)
@@ -49,7 +49,7 @@ def test_subscription_by_subscription_client_conn_str_receive_basic(live_service
             message.complete()
     assert count == 1
 
-
+@pytest.mark.liveTest
 def test_subscription_by_servicebus_client_conn_str_send_basic(live_servicebus_config, standard_subscription):
     topic_name, subscription_name = standard_subscription
     client = ServiceBusClient(
@@ -72,7 +72,7 @@ def test_subscription_by_servicebus_client_conn_str_send_basic(live_servicebus_c
             message.complete()
     assert count == 1
 
-
+@pytest.mark.liveTest
 def test_subscription_by_servicebus_client_list_subscriptions(live_servicebus_config, standard_subscription):
     topic_name, subscription_name = standard_subscription
     client = ServiceBusClient(
@@ -87,7 +87,7 @@ def test_subscription_by_servicebus_client_list_subscriptions(live_servicebus_co
     assert subs[0].name == subscription_name
     assert subs[0].topic_name == topic_name
 
-
+@pytest.mark.liveTest
 def test_subscription_by_subscription_client_conn_str_send_fail(live_servicebus_config, standard_subscription):
     topic_name, subscription_name = standard_subscription
 
