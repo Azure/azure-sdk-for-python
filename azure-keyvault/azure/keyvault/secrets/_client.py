@@ -5,7 +5,8 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import Mapping, Any
+from typing import Any, Dict, Generator, Mapping, Optional
+from datetime import datetime
 import uuid
 
 from azure.core.configuration import Configuration
@@ -14,7 +15,7 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     RedirectPolicy,
 )
-from azure.core.pipeline.transport import RequestsTransport, HttpRequest
+from azure.core.pipeline.transport import RequestsTransport, HttpRequest, HttpResponse
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import ClientRequestError
 from azure.keyvault._internal import _BearerTokenCredentialPolicy
@@ -37,8 +38,7 @@ from ._models import (
 
 
 class SecretClient:
-    """
-    The SecretClient class defines a high level interface for
+    """SecretClient defines a high level interface for
     managing secrets in the specified vault.
 
     :param credentials:  A credential or credential provider which can be used to authenticate to the vault,
@@ -60,8 +60,7 @@ class SecretClient:
 
     @staticmethod
     def create_config(**kwargs):
-        """
-        Creates a default configuration for SecretClient.
+        """Creates a default configuration for SecretClient.
         """
         config = Configuration(**kwargs)
         config.user_agent = UserAgentPolicy('SecretClient', **kwargs)
@@ -92,9 +91,11 @@ class SecretClient:
 
     @property
     def vault_url(self):
+        # type: () -> str
         return self._vault_url
 
     def get_secret(self, name, version, **kwargs):
+        # type: (str, str, Mapping[str, Any]) -> Secret
         """Get a specified secret from the vault.
 
         The GET operation is applicable to any secret stored in Azure Key
@@ -143,6 +144,7 @@ class SecretClient:
     def set_secret(
             self, name, value, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
     ):
+        # type: (str, str, Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Secret
         """Sets a secret in the vault.
 
         The SET operation adds a secret to the Azure Key Vault. If the named
@@ -203,7 +205,7 @@ class SecretClient:
     def update_secret_attributes(
             self, name, version, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
     ):
-        # type: () -> SecretAttributes
+        # type: (str, str, Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> SecretAttributes
         """Updates the attributes associated with a specified secret in the key vault.
 
         The UPDATE operation changes specified attributes of an existing stored secret.
@@ -262,6 +264,7 @@ class SecretClient:
         return SecretAttributes._from_secret_bundle(bundle)
 
     def list_secrets(self, **kwargs):
+        # type: (Mapping[str, Any]) -> Generator[SecretAttributes]
         """List secrets in the vault.
 
         The Get Secrets operation is applicable to the entire vault. However,
@@ -289,6 +292,7 @@ class SecretClient:
         return (SecretAttributes._from_secret_item(item) for item in pages)
 
     def list_secret_versions(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> Generator[SecretAttributes]
         """List all versions of the specified secret.
 
         The full secret identifier and attributes are provided in the response.
@@ -317,6 +321,7 @@ class SecretClient:
         return (SecretAttributes._from_secret_item(item) for item in pages)
 
     def backup_secret(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> bytes
         """Backs up the specified secret.
 
         Requests that a backup of the specified secret be downloaded to the
@@ -360,6 +365,7 @@ class SecretClient:
         return result.value
 
     def restore_secret(self, backup, **kwargs):
+        # type: (bytes, Mapping[str, Any]) -> SecretAttributes
         """Restore a backed up secret to the vault.
 
         Restores a backed up secret, and all its versions, to a vault. This
@@ -472,7 +478,7 @@ class SecretClient:
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     def list_deleted_secrets(self, **kwargs):
-        # type: (Optional[int], Mapping[str, Any]) -> DeletedSecretPaged
+        # type: (Mapping[str, Any]) -> Generator[DeletedSecret]
         """Lists deleted secrets of the vault.
 
         The Get Deleted Secrets operation returns the secrets that have

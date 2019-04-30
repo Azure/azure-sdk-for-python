@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 from datetime import datetime
-from typing import Any, Mapping, Optional
+from typing import Any, Dict, Mapping, Optional
 from .._generated.v7_0 import models
 from .._internal import _parse_vault_id
 
@@ -17,7 +17,7 @@ class SecretAttributes(object):
     def __init__(self, attributes, vault_id, **kwargs):
         # type: (models.SecretAttributes, str, Mapping[str, Any]) -> None
         self._attributes = attributes
-        self._id = vault_id  # TODO: is the unparsed id useful?
+        self._id = vault_id
         self._vault_id = _parse_vault_id(vault_id)
         self._content_type = kwargs.get("content_type", None)
         self._key_id = kwargs.get("key_id", None)
@@ -135,7 +135,7 @@ class SecretAttributes(object):
 
     @property
     def tags(self):
-        # type: Dict[str, str]
+        # type: () -> Dict[str, str]
         """Application specific metadata in the form of key-value pairs.
         :rtype: dict"""
         return self._tags
@@ -172,13 +172,12 @@ class Secret(SecretAttributes):
 
 
 class DeletedSecret(SecretAttributes):
-    # type: (models.SecretAttributes, str, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
     """A Deleted Secret consisting of its id, attributes, and tags, as
     well as when it will be purged, if soft-delete is enabled for the vault.
     """
 
     def __init__(self, attributes, vault_id, deleted_date=None, recovery_id=None, scheduled_purge_date=None, **kwargs):
-        # type: (models.SecretAttributes, str, Optional[datetime], Optional[str],
+        # type: (models.SecretAttributes, str, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
         super(DeletedSecret, self).__init__(attributes, vault_id, **kwargs)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
