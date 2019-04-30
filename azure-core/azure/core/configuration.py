@@ -65,4 +65,4 @@ class ConnectionConfiguration(object):
         self.verify = kwargs.pop('connection_verify', True)
         self.cert = kwargs.pop('connection_cert', None)
         self.data_block_size = kwargs.pop('connection_data_block_size', 4096)
-        self.keep_alive = kwargs.pop('connection_keep_alive', True)
+        self.keep_alive = kwargs.pop('connection_keep_alive', False)

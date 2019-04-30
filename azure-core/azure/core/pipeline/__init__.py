@@ -49,7 +49,6 @@ class PipelineContext(dict):
 
     def __init__(self, transport, **kwargs):
         self.transport = transport
-        self.session = transport.session if hasattr(transport, 'session') else None
         self.options = kwargs
         self._protected = ['transport', 'session', 'options']
 

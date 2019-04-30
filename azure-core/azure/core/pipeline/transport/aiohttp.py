@@ -52,19 +52,20 @@ class AioHttpTransport(AsyncHttpTransport):
     """
 
     def __init__(self, configuration=None, *, loop=None):
-        self.session = aiohttp.ClientSession(loop=loop)
+        self._loop = loop
+        self.session = None
         self.config = configuration
-        self._init_session(self.session)
 
     async def __aenter__(self):
+        self.config.connection.keep_alive = True
+        self.session = aiohttp.ClientSession(loop=self._loop)
         await self.session.__aenter__()
         return self
 
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         await self.session.__aexit__(*exc_details)
-
-    def _init_session(self, session):
-        pass  # configure sesison
+        self.session = None
+        self.config.connection.keep_alive = False
 
     def _build_ssl_confg(self, **config):
         verify = config.get('connection_verify', self.config.connection.verify)
@@ -88,11 +89,16 @@ class AioHttpTransport(AsyncHttpTransport):
         Will pre-load the body into memory to be available with a sync method.
         pass stream=True to avoid this behavior.
         """
+        if self.config.connection.keep_alive and self.session:
+            session = self.session
+        else:
+            session = aiohttp.ClientSession(loop=self._loop)
         error = None
+        response = None
         config['ssl'] = self._build_ssl_confg(**config)
         try:
             stream_response = config.pop("stream", False)
-            result = await self.session.request(
+            result = await session.request(
                 request.method,
                 request.url,
                 headers=request.headers,
@@ -107,6 +113,9 @@ class AioHttpTransport(AsyncHttpTransport):
                 await response.load_body()
         except aiohttp.client_exceptions.ClientConnectorError as err:
             error = ConnectError(err, error=err)
+        finally:
+            if not self.config.connection.keep_alive and (not response or not stream_response):
+                await session.close()
 
         if error:
             raise error
