@@ -76,7 +76,7 @@ class ContainerServiceClient(MultiApiClientMixin, SDKClient):
     _PROFILE_TAG = "azure.mgmt.containerservice.ContainerServiceClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
-            'open_shift_managed_clusters': '2018-09-30-preview',
+            'open_shift_managed_clusters': '2019-04-30',
             'container_services': '2017-07-01',
             None: DEFAULT_API_VERSION
         }},
