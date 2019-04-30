@@ -34,7 +34,7 @@ from typing import Dict, Any, List, Callable, Optional, TYPE_CHECKING  # pylint:
 
 if TYPE_CHECKING:
     from .pipeline import HttpResponse  # pylint: disable=unused-import
-    from msrest.serialization import Model  # pylint: disable=unused-import
+    from msrest.serialization import Deserializer, Model  # pylint: disable=unused-import
 
 if sys.version_info >= (3, 5, 2):
     # Not executed on old Python, no syntax error
@@ -54,7 +54,7 @@ class Paged(AsyncPagedMixin, Iterator):
     _attribute_map = {}  # type: Dict[str, Dict[str, Any]]
 
     def __init__(self, command, deserializer, **kwargs):
-        # type: (Callable[[str], HttpResponse], Dict[str, Model], Callable, Any) -> None
+        # type: (Callable[[str], HttpResponse], Deserializer, Any) -> None
         super(Paged, self).__init__(**kwargs)  # type: ignore
         # Sets next_link, current_page, and _current_page_iter_index.
         self.next_link = ""
