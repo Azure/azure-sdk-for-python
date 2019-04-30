@@ -36,7 +36,7 @@ class CognitiveServiceFormRecognizerAPIV1PreviewConfiguration(Configuration):
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/formrecognizer/v1.0-preview/custom'
+        base_url = '{Endpoint}/formrecognizer/v1.0-preview'
 
         super(CognitiveServiceFormRecognizerAPIV1PreviewConfiguration, self).__init__(base_url)
 
@@ -72,7 +72,7 @@ class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
         self._deserialize = Deserializer(client_models)
 
 
-    def train_custom_model(
+    def train_model(
             self, source, custom_headers=None, raw=False, **operation_config):
         """Train Model.
 
@@ -105,7 +105,7 @@ class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
         train_request = models.TrainRequest(source=source)
 
         # Construct URL
-        url = self.train_custom_model.metadata['url']
+        url = self.train_model.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
@@ -141,9 +141,9 @@ class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
             return client_raw_response
 
         return deserialized
-    train_custom_model.metadata = {'url': '/train'}
+    train_model.metadata = {'url': '/custom/train'}
 
-    def get_extracted_keys_by_custom_model_id(
+    def get_extracted_keys(
             self, id, custom_headers=None, raw=False, **operation_config):
         """Get Keys.
 
@@ -164,7 +164,7 @@ class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
          :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_extracted_keys_by_custom_model_id.metadata['url']
+        url = self.get_extracted_keys.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'id': self._serialize.url("id", id, 'str')
@@ -197,9 +197,9 @@ class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
             return client_raw_response
 
         return deserialized
-    get_extracted_keys_by_custom_model_id.metadata = {'url': '/models/{id}/keys'}
+    get_extracted_keys.metadata = {'url': '/custom/models/{id}/keys'}
 
-    def get_list_of_custom_models(
+    def get_models(
             self, custom_headers=None, raw=False, **operation_config):
         """Get Models.
 
@@ -217,7 +217,7 @@ class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
          :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_list_of_custom_models.metadata['url']
+        url = self.get_models.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
         }
@@ -249,9 +249,9 @@ class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
             return client_raw_response
 
         return deserialized
-    get_list_of_custom_models.metadata = {'url': '/models'}
+    get_models.metadata = {'url': '/custom/models'}
 
-    def get_custom_model_by_id(
+    def get_model(
             self, id, custom_headers=None, raw=False, **operation_config):
         """Get Model.
 
@@ -271,7 +271,7 @@ class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
          :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.get_custom_model_by_id.metadata['url']
+        url = self.get_model.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'id': self._serialize.url("id", id, 'str')
@@ -304,9 +304,9 @@ class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
             return client_raw_response
 
         return deserialized
-    get_custom_model_by_id.metadata = {'url': '/models/{id}/'}
+    get_model.metadata = {'url': '/custom/models/{id}'}
 
-    def delete_custom_model_by_id(
+    def delete_model(
             self, id, custom_headers=None, raw=False, **operation_config):
         """Delete Model.
 
@@ -325,7 +325,7 @@ class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
          :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.delete_custom_model_by_id.metadata['url']
+        url = self.delete_model.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'id': self._serialize.url("id", id, 'str')
@@ -350,9 +350,9 @@ class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete_custom_model_by_id.metadata = {'url': '/models/{id}/'}
+    delete_model.metadata = {'url': '/custom/models/{id}'}
 
-    def analyze_custom_model(
+    def analyze_with_model(
             self, id, form_stream, keys=None, custom_headers=None, raw=False, **operation_config):
         """Analyze Form.
 
@@ -363,8 +363,7 @@ class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
 
         :param id: Model Identifier to analyze the document with.
         :type id: str
-        :param form_stream: Upload content of type 'application/pdf',
-         'image/jpeg' or 'image/png' for processing.
+        :param form_stream: A pdf document or image (jpg,png) file to analyze.
         :type form_stream: Generator
         :param keys: An optional list of known keys to extract the values for.
         :type keys: list[str]
@@ -380,7 +379,7 @@ class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
          :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.analyze_custom_model.metadata['url']
+        url = self.analyze_with_model.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'id': self._serialize.url("id", id, 'str')
@@ -421,4 +420,4 @@ class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
             return client_raw_response
 
         return deserialized
-    analyze_custom_model.metadata = {'url': '/models/{id}/analyze'}
+    analyze_with_model.metadata = {'url': '/custom/models/{id}/analyze'}
