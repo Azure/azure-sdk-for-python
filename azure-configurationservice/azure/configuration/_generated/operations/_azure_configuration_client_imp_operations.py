@@ -5,25 +5,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.pipeline import ClientRawResponse
-from azure.core import HttpRequestError
+from azure.core.exceptions import HttpRequestError, map_error
 from .. import models
 import uuid
 
 
 class AzureConfigurationClientImpOperationsMixin(object):
-    def _map_error(self, status_code, response, **config):
-        error_map = config.get("error_map")
-        if error_map is None:
-            return
-        error_type = error_map.get(status_code)
-        if error_type is None:
-            return
-        error = error_type(response=response)
-        raise error
 
     def list_configuration_settings(
-            self, label=None, key=None, accept_date_time=None, fields=None, raw=False, **kwargs):
+            self, label=None, key=None, accept_date_time=None, fields=None, cls=None, **kwargs):
         """List configuration settings.
 
         List the configuration settings in the configuration store, optionally
@@ -40,8 +30,6 @@ class AzureConfigurationClientImpOperationsMixin(object):
         :type accept_date_time: datetime
         :param fields: Specify which fields to return
         :type fields: list[str]
-        :param bool raw: returns the direct response alongside the
-         deserialized response
         :return: An iterator like instance of ConfigurationSetting
         :rtype:
          ~azconfig.models.ConfigurationSettingPaged[~azconfig.models.ConfigurationSetting]
@@ -70,42 +58,36 @@ class AzureConfigurationClientImpOperationsMixin(object):
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            headers = kwargs.get('headers')
-            if headers:
-                header_parameters.update(headers)
             if accept_date_time is not None:
                 header_parameters['Accept-DateTime'] = self._serialize.header("accept_date_time", accept_date_time, 'iso-8601')
             if self._config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
-            request = self.get(url, query_parameters, header_parameters)
+            request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def internal_paging(next_link=None):
+            error_map = kwargs.pop('error_map', None)
             request = prepare_request(next_link)
 
-            pipeline_response = self._pipeline.run(request)
-            response = pipeline_response.http_response.internal_response
+            pipeline_response = self._client._pipeline.run(request)
+            response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
-                exp = HttpRequestError(response=response)
-                raise exp
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpRequestError(response=response)
 
             return response
 
         # Deserialize response
         header_dict = None
-        if raw:
-            header_dict = {}
         deserialized = models.ConfigurationSettingPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_configuration_settings.metadata = {'url': '/kv'}
 
-    def get_configuration_setting(
-            self, key, label="%00", accept_date_time=None, raw=False, **kwargs):
+    def get_configuration_setting(self, key, label="%00", accept_date_time=None, cls=None, **kwargs):
         """Get a ConfigurationSetting.
 
         Get the ConfigurationSetting for the given key and label.
@@ -117,19 +99,19 @@ class AzureConfigurationClientImpOperationsMixin(object):
         :param accept_date_time: Obtain representation of the result related
          to past time.
         :type accept_date_time: datetime
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: ConfigurationSetting or ClientRawResponse if raw=true
-        :rtype: ~azconfig.models.ConfigurationSetting or
-         ~msrest.pipeline.ClientRawResponse
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: ConfigurationSetting or the result of cls(response)
+        :rtype: ~azconfig.models.ConfigurationSetting
         :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
         """
+        error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.get_configuration_setting.metadata['url']
         path_format_arguments = {
             'key': self._serialize.url("key", key, 'str')
         }
-        url = self.format_url(url, **path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -141,42 +123,35 @@ class AzureConfigurationClientImpOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        headers = kwargs.get('headers')
-        if headers:
-            header_parameters.update(headers)
         if accept_date_time is not None:
             header_parameters['Accept-DateTime'] = self._serialize.header("accept_date_time", accept_date_time, 'iso-8601')
         if self._config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
-        request = self.get(url, query_parameters, header_parameters)
-        pipeline_response = self._pipeline.run(request)
-        response = pipeline_response.http_response.internal_response
+        request = self._client.get(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
         if response.status_code not in [200, 304]:
-            error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
-            exp = HttpRequestError(response=response)
-            raise exp
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpRequestError(response=response)
 
         header_dict = {}
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('ConfigurationSetting', response)
             header_dict = {
-                'Last-Modified': 'str',
+                'Last-Modified': self._deserialize('str', response.headers.get('Last-Modified')),
             }
 
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
-            return client_raw_response
+        if cls:
+            return cls(response, deserialized, header_dict)
 
         return deserialized
     get_configuration_setting.metadata = {'url': '/kv/{key}'}
 
-    def create_or_update_configuration_setting(
-            self, configuration_setting, key, label="%00", raw=False, **kwargs):
+    def create_or_update_configuration_setting(self, configuration_setting, key, label="%00", cls=None, **kwargs):
         """Create (or update) a ConfigurationSetting.
 
         Create (or update) a ConfigurationSetting.
@@ -187,19 +162,19 @@ class AzureConfigurationClientImpOperationsMixin(object):
         :type key: str
         :param label:
         :type label: str
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: ConfigurationSetting or ClientRawResponse if raw=true
-        :rtype: ~azconfig.models.ConfigurationSetting or
-         ~msrest.pipeline.ClientRawResponse
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: ConfigurationSetting or the result of cls(response)
+        :rtype: ~azconfig.models.ConfigurationSetting
         :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
         """
+        error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.create_or_update_configuration_setting.metadata['url']
         path_format_arguments = {
             'key': self._serialize.url("key", key, 'str')
         }
-        url = self.format_url(url, **path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -212,9 +187,6 @@ class AzureConfigurationClientImpOperationsMixin(object):
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        headers = kwargs.get('headers')
-        if headers:
-            header_parameters.update(headers)
         if self._config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
@@ -222,47 +194,44 @@ class AzureConfigurationClientImpOperationsMixin(object):
         body_content = self._serialize.body(configuration_setting, 'ConfigurationSetting')
 
         # Construct and send request
-        request = self.put(url, query_parameters, header_parameters, body_content)
-        pipeline_response = self._pipeline.run(request)
-        response = pipeline_response.http_response.internal_response
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
-            exp = HttpRequestError(response=response)
-            raise exp
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpRequestError(response=response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('ConfigurationSetting', response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+        if cls:
+            return cls(response, deserialized, None)
 
         return deserialized
     create_or_update_configuration_setting.metadata = {'url': '/kv/{key}'}
 
-    def delete_configuration_setting(
-            self, key, label=None, raw=False, **kwargs):
+    def delete_configuration_setting(self, key, label=None, cls=None, **kwargs):
         """Delete a ConfigurationSetting.
 
         :param key: string
         :type key: str
         :param label:
         :type label: str
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: ConfigurationSetting or ClientRawResponse if raw=true
-        :rtype: ~azconfig.models.ConfigurationSetting or
-         ~msrest.pipeline.ClientRawResponse
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: ConfigurationSetting or the result of cls(response)
+        :rtype: ~azconfig.models.ConfigurationSetting
         :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
         """
+        error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.delete_configuration_setting.metadata['url']
         path_format_arguments = {
             'key': self._serialize.url("key", key, 'str')
         }
-        url = self.format_url(url, **path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -274,35 +243,30 @@ class AzureConfigurationClientImpOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        headers = kwargs.get('headers')
-        if headers:
-            header_parameters.update(headers)
         if self._config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
-        request = self.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._pipeline.run(request)
-        response = pipeline_response.http_response.internal_response
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
-            error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
-            exp = HttpRequestError(response=response)
-            raise exp
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpRequestError(response=response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('ConfigurationSetting', response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+        if cls:
+            return cls(response, deserialized, None)
 
         return deserialized
     delete_configuration_setting.metadata = {'url': '/kv/{key}'}
 
     def list_keys(
-            self, name=None, accept_date_time=None, raw=False, **kwargs):
+            self, name=None, accept_date_time=None, cls=None, **kwargs):
         """
 
         :param name:
@@ -310,8 +274,6 @@ class AzureConfigurationClientImpOperationsMixin(object):
         :param accept_date_time: Obtain representation of the result related
          to past time.
         :type accept_date_time: datetime
-        :param bool raw: returns the direct response alongside the
-         deserialized response
         :return: An iterator like instance of Key
         :rtype: ~azconfig.models.KeyPaged[~azconfig.models.Key]
         :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
@@ -335,42 +297,37 @@ class AzureConfigurationClientImpOperationsMixin(object):
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            headers = kwargs.get('headers')
-            if headers:
-                header_parameters.update(headers)
             if accept_date_time is not None:
                 header_parameters['Accept-DateTime'] = self._serialize.header("accept_date_time", accept_date_time, 'iso-8601')
             if self._config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
-            request = self.get(url, query_parameters, header_parameters)
+            request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def internal_paging(next_link=None):
+            error_map = kwargs.pop('error_map', None)
             request = prepare_request(next_link)
 
-            pipeline_response = self._pipeline.run(request)
-            response = pipeline_response.http_response.internal_response
+            pipeline_response = self._client._pipeline.run(request)
+            response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
-                exp = HttpRequestError(response=response)
-                raise exp
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpRequestError(response=response)
 
             return response
 
         # Deserialize response
         header_dict = None
-        if raw:
-            header_dict = {}
         deserialized = models.KeyPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_keys.metadata = {'url': '/keys'}
 
     def list_labels(
-            self, accept_date_time=None, fields=None, name=None, raw=False, **kwargs):
+            self, accept_date_time=None, fields=None, name=None, cls=None, **kwargs):
         """List labels.
 
         :param accept_date_time: Obtain representation of the result related
@@ -380,8 +337,6 @@ class AzureConfigurationClientImpOperationsMixin(object):
         :type fields: list[str]
         :param name:
         :type name: str
-        :param bool raw: returns the direct response alongside the
-         deserialized response
         :return: An iterator like instance of Label
         :rtype: ~azconfig.models.LabelPaged[~azconfig.models.Label]
         :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
@@ -407,61 +362,55 @@ class AzureConfigurationClientImpOperationsMixin(object):
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            headers = kwargs.get('headers')
-            if headers:
-                header_parameters.update(headers)
             if accept_date_time is not None:
                 header_parameters['Accept-DateTime'] = self._serialize.header("accept_date_time", accept_date_time, 'iso-8601')
             if self._config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
-            request = self.get(url, query_parameters, header_parameters)
+            request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def internal_paging(next_link=None):
+            error_map = kwargs.pop('error_map', None)
             request = prepare_request(next_link)
 
-            pipeline_response = self._pipeline.run(request)
-            response = pipeline_response.http_response.internal_response
+            pipeline_response = self._client._pipeline.run(request)
+            response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
-                exp = HttpRequestError(response=response)
-                raise exp
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpRequestError(response=response)
 
             return response
 
         # Deserialize response
         header_dict = None
-        if raw:
-            header_dict = {}
         deserialized = models.LabelPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_labels.metadata = {'url': '/labels'}
 
-    def lock_configuration_setting(
-            self, key, label=None, raw=False, **kwargs):
+    def lock_configuration_setting(self, key, label=None, cls=None, **kwargs):
         """
 
         :param key:
         :type key: str
         :param label:
         :type label: str
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: ConfigurationSetting or ClientRawResponse if raw=true
-        :rtype: ~azconfig.models.ConfigurationSetting or
-         ~msrest.pipeline.ClientRawResponse
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: ConfigurationSetting or the result of cls(response)
+        :rtype: ~azconfig.models.ConfigurationSetting
         :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
         """
+        error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.lock_configuration_setting.metadata['url']
         path_format_arguments = {
             'key': self._serialize.url("key", key, 'str')
         }
-        url = self.format_url(url, **path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -473,54 +422,48 @@ class AzureConfigurationClientImpOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        headers = kwargs.get('headers')
-        if headers:
-            header_parameters.update(headers)
         if self._config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
-        request = self.put(url, query_parameters, header_parameters)
-        pipeline_response = self._pipeline.run(request)
-        response = pipeline_response.http_response.internal_response
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
-            exp = HttpRequestError(response=response)
-            raise exp
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpRequestError(response=response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('ConfigurationSetting', response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+        if cls:
+            return cls(response, deserialized, None)
 
         return deserialized
     lock_configuration_setting.metadata = {'url': '/locks/{key}'}
 
-    def unlock_configuration_setting(
-            self, key, label=None, raw=False, **kwargs):
+    def unlock_configuration_setting(self, key, label=None, cls=None, **kwargs):
         """
 
         :param key:
         :type key: str
         :param label:
         :type label: str
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :return: ConfigurationSetting or ClientRawResponse if raw=true
-        :rtype: ~azconfig.models.ConfigurationSetting or
-         ~msrest.pipeline.ClientRawResponse
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: ConfigurationSetting or the result of cls(response)
+        :rtype: ~azconfig.models.ConfigurationSetting
         :raises: :class:`HttpRequestError<azure.core.HttpRequestError>`
         """
+        error_map = kwargs.pop('error_map', None)
         # Construct URL
         url = self.unlock_configuration_setting.metadata['url']
         path_format_arguments = {
             'key': self._serialize.url("key", key, 'str')
         }
-        url = self.format_url(url, **path_format_arguments)
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -532,35 +475,30 @@ class AzureConfigurationClientImpOperationsMixin(object):
         header_parameters['Accept'] = 'application/json'
         if self._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        headers = kwargs.get('headers')
-        if headers:
-            header_parameters.update(headers)
         if self._config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
         # Construct and send request
-        request = self.delete(url, query_parameters, header_parameters)
-        pipeline_response = self._pipeline.run(request)
-        response = pipeline_response.http_response.internal_response
+        request = self._client.delete(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
-            exp = HttpRequestError(response=response)
-            raise exp
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpRequestError(response=response)
 
         deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('ConfigurationSetting', response)
 
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
+        if cls:
+            return cls(response, deserialized, None)
 
         return deserialized
     unlock_configuration_setting.metadata = {'url': '/locks/{key}'}
 
     def list_revisions(
-            self, label=None, key=None, fields=None, accept_date_time=None, raw=False, **kwargs):
+            self, label=None, key=None, fields=None, accept_date_time=None, cls=None, **kwargs):
         """
 
         :param label: Filter returned values based on their label. '*' can be
@@ -574,8 +512,6 @@ class AzureConfigurationClientImpOperationsMixin(object):
         :param accept_date_time: Obtain representation of the result related
          to past time.
         :type accept_date_time: datetime
-        :param bool raw: returns the direct response alongside the
-         deserialized response
         :return: An iterator like instance of ConfigurationSetting
         :rtype:
          ~azconfig.models.ConfigurationSettingPaged[~azconfig.models.ConfigurationSetting]
@@ -604,35 +540,30 @@ class AzureConfigurationClientImpOperationsMixin(object):
             header_parameters['Accept'] = 'application/json'
             if self._config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-            headers = kwargs.get('headers')
-            if headers:
-                header_parameters.update(headers)
             if accept_date_time is not None:
                 header_parameters['Accept-DateTime'] = self._serialize.header("accept_date_time", accept_date_time, 'iso-8601')
             if self._config.accept_language is not None:
                 header_parameters['accept-language'] = self._serialize.header("self._config.accept_language", self._config.accept_language, 'str')
 
             # Construct and send request
-            request = self.get(url, query_parameters, header_parameters)
+            request = self._client.get(url, query_parameters, header_parameters)
             return request
 
         def internal_paging(next_link=None):
+            error_map = kwargs.pop('error_map', None)
             request = prepare_request(next_link)
 
-            pipeline_response = self._pipeline.run(request)
-            response = pipeline_response.http_response.internal_response
+            pipeline_response = self._client._pipeline.run(request)
+            response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._map_error(status_code=response.status_code, response=response, error_map=kwargs.get('error_map'))
-                exp = HttpRequestError(response=response)
-                raise exp
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpRequestError(response=response)
 
             return response
 
         # Deserialize response
         header_dict = None
-        if raw:
-            header_dict = {}
         deserialized = models.ConfigurationSettingPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
