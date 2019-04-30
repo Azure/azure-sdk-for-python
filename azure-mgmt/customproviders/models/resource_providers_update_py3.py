@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class ResourceProvidersUpdate(Model):
     """custom resource provider update information.
 
-    :param tags: resouce tags
+    :param tags: Resource tags
     :type tags: dict[str, str]
     """
 

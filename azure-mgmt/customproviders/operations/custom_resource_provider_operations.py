@@ -289,7 +289,7 @@ class CustomResourceProviderOperations(object):
         :type resource_group_name: str
         :param resource_provider_name: The name of the resource provider.
         :type resource_provider_name: str
-        :param tags: resouce tags
+        :param tags: Resource tags
         :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

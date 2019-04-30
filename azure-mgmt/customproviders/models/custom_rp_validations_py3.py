@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class CustomRPValidations(Model):
-    """A validation to apply on custom resource provider requets.
+    """A validation to apply on custom resource provider requests.
 
     All required parameters must be populated in order to send to Azure.
 
