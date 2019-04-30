@@ -30,6 +30,10 @@ class Target(Model):
     :type url: str
     :param tag: The tag name.
     :type tag: str
+    :param name: The name of the artifact.
+    :type name: str
+    :param version: The version of the artifact.
+    :type version: str
     """
 
     _attribute_map = {
@@ -40,9 +44,11 @@ class Target(Model):
         'repository': {'key': 'repository', 'type': 'str'},
         'url': {'key': 'url', 'type': 'str'},
         'tag': {'key': 'tag', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
     }
 
-    def __init__(self, *, media_type: str=None, size: int=None, digest: str=None, length: int=None, repository: str=None, url: str=None, tag: str=None, **kwargs) -> None:
+    def __init__(self, *, media_type: str=None, size: int=None, digest: str=None, length: int=None, repository: str=None, url: str=None, tag: str=None, name: str=None, version: str=None, **kwargs) -> None:
         super(Target, self).__init__(**kwargs)
         self.media_type = media_type
         self.size = size
@@ -51,3 +57,5 @@ class Target(Model):
         self.repository = repository
         self.url = url
         self.tag = tag
+        self.name = name
+        self.version = version
