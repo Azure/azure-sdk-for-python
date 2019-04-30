@@ -5,190 +5,229 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
-from msrest.paging import Paged
+from datetime import datetime
+from typing import Any, Dict, Mapping, Optional
+from .._generated.v7_0 import models
 from .._internal import _parse_vault_id
 
 
-class Secret(Model):
-    """A secret consisting of a value, id and its attributes.
+class SecretAttributes(object):
+    """A secret's id and attributes."""
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    def __init__(self, attributes, vault_id, **kwargs):
+        # type: (models.SecretAttributes, str, Mapping[str, Any]) -> None
+        self._attributes = attributes
+        self._id = vault_id
+        self._vault_id = _parse_vault_id(vault_id)
+        self._content_type = kwargs.get("content_type", None)
+        self._key_id = kwargs.get("key_id", None)
+        self._managed = kwargs.get("managed", None)
+        self._tags = kwargs.get("tags", None)
 
-    :param str value: The secret value.
-    :param str id: The secret id.
-    :param str content_type: The content type of the secret.
-    :param attributes: The secret management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.SecretAttributes
-    :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :ivar str kid: If this is a secret backing a KV certificate, then this field
-     specifies the corresponding key backing the KV certificate.
-    :ivar bool managed: True if the secret's lifetime is managed by key vault. If
-     this is a secret backing a certificate, then managed will be true.
-    """
+    @classmethod
+    def _from_secret_bundle(cls, secret_bundle):
+        # type: (models.SecretBundle) -> SecretAttributes
+        """Construct a Secret from an autorest-generated SecretBundle"""
+        return cls(
+            secret_bundle.attributes,
+            secret_bundle.id,
+            content_type=secret_bundle.content_type,
+            key_id=secret_bundle.kid,
+            managed=secret_bundle.managed,
+            tags=secret_bundle.tags,
+        )
 
-    _validation = {
-        'kid': {'readonly': True},
-        'managed': {'readonly': True},
-    }
+    @classmethod
+    def _from_secret_item(cls, secret_item):
+        # type: (models.SecretItem) -> SecretAttributes
+        """Construct a Secret from an autorest-generated SecretItem"""
+        return cls(
+            secret_item.attributes,
+            secret_item.id,
+            content_type=secret_item.content_type,
+            managed=secret_item.managed,
+            tags=secret_item.tags,
+        )
 
-    _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'attributes': {'key': 'attributes', 'type': 'SecretAttributes'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'key_id': {'key': 'kid', 'type': 'str'},
-        'managed': {'key': 'managed', 'type': 'bool'},
-    }
+    @property
+    def content_type(self):
+        # type: () -> str
+        """Type of the secret value such as a password
+        :rtype: str"""
+        return self._content_type
+
+    @property
+    def id(self):
+        # type: () -> str
+        """The secret id
+        :rtype: str"""
+        return self._id
+
+    @property
+    def key_id(self):
+        # type: () -> str
+        """Specifies the corresponding key id backing the KV certificate
+        :rtype: str"""
+        return self._key_id
+
+    @property
+    def enabled(self):
+        # type: () -> bool
+        """The Secret's 'enabled' attribute
+        :rtype: bool"""
+        return self._attributes.enabled
+
+    @property
+    def not_before(self):
+        # type: () -> datetime
+        """The Secret's not_before date in UTC
+        :rtype: datetime"""
+        return self._attributes.not_before
+
+    @property
+    def expires(self):
+        # type: () -> datetime
+        """The Secret's expiry date in UTC
+        :rtype: datetime"""
+        return self._attributes.expires
+
+    @property
+    def created(self):
+        # type: () -> datetime
+        """The Secret's creation time in UTC
+        :rtype: datetime"""
+        return self._attributes.created
+
+    @property
+    def updated(self):
+        # type: () -> datetime
+        """The Secret's last updated time in UTC
+        :rtype: datetime"""
+        return self._attributes.updated
+
+    @property
+    def recovery_level(self):
+        # type: () -> str
+        """Reflects the deletion recovery level currently in effect for secrets in the current vault
+        :rtype: str"""
+        return self._attributes.recovery_level
 
     @property
     def vault_url(self):
-        """The url to the vault containing the secret"""
-        vault_id = self._get_vault_id()
-        return vault_id.vault_url if vault_id else None
+        # type: () -> str
+        """The url of the vault containing the secret
+        :rtype: str"""
+        return self._vault_id.vault_url
 
     @property
     def name(self):
-        """The name of the secret"""
-        vault_id = self._get_vault_id()
-        return vault_id.name if vault_id else None
+        # type: () -> str
+        """The name of the secret
+        :rtype: str"""
+        return self._vault_id.name
 
     @property
     def version(self):
-        """The version of the secret"""
-        vault_id = self._get_vault_id()
-        return vault_id.version if vault_id else None
+        # type: () -> str
+        """The version of the secret
+        :rtype: str"""
+        return self._vault_id.version
 
-    def __init__(self, **kwargs):
-        super(Secret, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.id = kwargs.get('id', None)
-        self.content_type = kwargs.get('content_type', None)
-        self.attributes = kwargs.get('attributes', None)
-        self.tags = kwargs.get('tags', None)
-        self.key_id = None
-        self.managed = None
-        self._vault_id = None
-
-    def _get_vault_id(self):
-        if not self._vault_id and self.id:
-            self._vault_id = _parse_vault_id(self.id)
-        return self._vault_id
+    @property
+    def tags(self):
+        # type: () -> Dict[str, str]
+        """Application specific metadata in the form of key-value pairs.
+        :rtype: dict"""
+        return self._tags
 
 
-class SecretAttributes(Model):
-    """The secret management attributes.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param bool enabled: Determines whether the object is enabled.
-    :param datetime not_before: Not before date in UTC.
-    :param datetime expires: Expiry date in UTC.
-    :ivar datetime created: Creation time in UTC.
-    :ivar datetime updated: Last updated time in UTC.
-    :ivar str recovery_level: Reflects the deletion recovery level currently in
-     effect for secrets in the current vault. If it contains 'Purgeable', the
-     secret can be permanently deleted by a privileged user; otherwise, only
-     the system can purge the secret, at the end of the retention interval.
-     Possible values include: 'Purgeable', 'Recoverable+Purgeable',
-     'Recoverable', 'Recoverable+ProtectedSubscription'
+class Secret(SecretAttributes):
+    """A secret consisting of all SecretAttributes and value information.
     """
 
-    _validation = {
-        'created': {'readonly': True},
-        'updated': {'readonly': True},
-        'recovery_level': {'readonly': True},
-    }
+    def __init__(self, attributes, vault_id, value, **kwargs):
+        super(Secret, self).__init__(attributes, vault_id, **kwargs)
+        self._value = value
 
-    _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'not_before': {'key': 'nbf', 'type': 'unix-time'},
-        'expires': {'key': 'exp', 'type': 'unix-time'},
-        'created': {'key': 'created', 'type': 'unix-time'},
-        'updated': {'key': 'updated', 'type': 'unix-time'},
-        'recovery_level': {'key': 'recoveryLevel', 'type': 'str'},
-    }
+    @classmethod
+    def _from_secret_bundle(cls, secret_bundle):
+        # type: (models.SecretBundle) -> Secret
+        """Construct a Secret from an autorest-generated SecretBundle"""
+        return cls(
+            secret_bundle.attributes,
+            secret_bundle.id,
+            secret_bundle.value,
+            content_type=secret_bundle.content_type,
+            key_id=secret_bundle.kid,
+            managed=secret_bundle.managed,
+            tags=secret_bundle.tags,
+        )
 
-    def __init__(self, **kwargs):
-        super(SecretAttributes, self).__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', None)
-        self.not_before = kwargs.get('not_before', None)
-        self.expires = kwargs.get('expires', None)
-        self.created = None
-        self.updated = None
-        self.recovery_level = None
-
-
-class SecretPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Secret <azure.keyvault.secrets.Secret>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Secret]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(SecretPaged, self).__init__(*args, **kwargs)
+    @property
+    def value(self):
+        # type: () -> str
+        """The secret's value.
+        :rtype: str"""
+        return self._value
 
 
-class DeletedSecret(Secret):
-    """A Deleted Secret consisting of its previous id, attributes and its tags, as
-    well as information on when it will be purged.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param str id: The secret id.
-    :param content_type: The content type of the secret.
-    :type content_type: str
-    :param attributes: The secret management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.SecretAttributes
-    :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :ivar kid: If this is a secret backing a KV certificate, then this field
-     specifies the corresponding key backing the KV certificate.
-    :vartype kid: str
-    :ivar managed: True if the secret's lifetime is managed by key vault. If
-     this is a secret backing a certificate, then managed will be true.
-    :vartype managed: bool
-    :param recovery_id: The url of the recovery object, used to identify and
-     recover the deleted secret.
-    :type recovery_id: str
-    :ivar scheduled_purge_date: The time when the secret is scheduled to be
-     purged, in UTC
-    :vartype scheduled_purge_date: datetime
-    :ivar deleted_date: The time when the secret was deleted, in UTC
-    :vartype deleted_date: datetime
+class DeletedSecret(SecretAttributes):
+    """A Deleted Secret consisting of its id, attributes, and tags, as
+    well as when it will be purged, if soft-delete is enabled for the vault.
     """
 
-    _validation = {
-        'kid': {'readonly': True},
-        'managed': {'readonly': True},
-        'scheduled_purge_date': {'readonly': True},
-        'deleted_date': {'readonly': True},
-    }
+    def __init__(self, attributes, vault_id, deleted_date=None, recovery_id=None, scheduled_purge_date=None, **kwargs):
+        # type: (models.SecretAttributes, str, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
+        super(DeletedSecret, self).__init__(attributes, vault_id, **kwargs)
+        self._deleted_date = deleted_date
+        self._recovery_id = recovery_id
+        self._scheduled_purge_date = scheduled_purge_date
 
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'attributes': {'key': 'attributes', 'type': 'SecretAttributes'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kid': {'key': 'kid', 'type': 'str'},
-        'managed': {'key': 'managed', 'type': 'bool'},
-        'recovery_id': {'key': 'recoveryId', 'type': 'str'},
-        'scheduled_purge_date': {'key': 'scheduledPurgeDate', 'type': 'unix-time'},
-        'deleted_date': {'key': 'deletedDate', 'type': 'unix-time'},
-    }
+    @classmethod
+    def _from_deleted_secret_bundle(cls, deleted_secret_bundle):
+        # type: (models.DeletedSecretBundle) -> DeletedSecret
+        """Construct a DeletedSecret from an autorest-generated DeletedSecretBundle"""
+        return cls(
+            deleted_secret_bundle.attributes,
+            deleted_secret_bundle.id,
+            content_type=deleted_secret_bundle.content_type,
+            key_id=deleted_secret_bundle.kid,
+            managed=deleted_secret_bundle.managed,
+            tags=deleted_secret_bundle.tags,
+        )
 
-    def __init__(self, **kwargs):
-        super(DeletedSecret, self).__init__(**kwargs)
-        self.recovery_id = kwargs.get('recovery_id', None)
-        self.scheduled_purge_date = None
-        self.deleted_date = None
+    @classmethod
+    def _from_deleted_secret_item(cls, deleted_secret_item):
+        # type: (models.DeletedSecretItem) -> DeletedSecret
+        """Construct a DeletedSecret from an autorest-generated DeletedSecretItem"""
+        return cls(
+            deleted_secret_item.attributes,
+            deleted_secret_item.id,
+            deleted_date=deleted_secret_item.deleted_date,
+            recovery_id=deleted_secret_item.recovery_id,
+            scheduled_purge_date=deleted_secret_item.scheduled_purge_date,
+            content_type=deleted_secret_item.content_type,
+            managed=deleted_secret_item.managed,
+            tags=deleted_secret_item.tags,
+        )
+
+    @property
+    def deleted_date(self):
+        # type: () -> datetime
+        """The time when the secret was deleted, in UTC
+        :rtype: datetime"""
+        return self._deleted_date
+
+    @property
+    def recovery_id(self):
+        # type: () -> str
+        """The url of the recovery object, used to identify and recover the deleted secret
+        :rtype: str"""
+        return self._recovery_id
+
+    @property
+    def scheduled_purge_date(self):
+        # type: () -> datetime
+        """The time when the secret is scheduled to be purged, in UTC
+        :rtype: datetime"""
+        return self._scheduled_purge_date

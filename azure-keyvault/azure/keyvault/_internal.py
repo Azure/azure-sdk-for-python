@@ -4,8 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from msrest.serialization import Model
+from azure.core.pipeline.policies import HTTPPolicy
 
 try:
     import urllib.parse as parse
@@ -37,23 +36,13 @@ def _parse_vault_id(url):
                     version=path[2] if len(path) == 3 else None)
 
 
-class _BackupResult(Model):
-    """The backup secret result, containing the backup blob.
+# TODO: integrate with azure.core
+class _BearerTokenCredentialPolicy(HTTPPolicy):
+    def __init__(self, credentials):
+        self._credentials = credentials
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    def send(self, request, **kwargs):
+        auth_header = 'Bearer ' + self._credentials.token['access_token']
+        request.http_request.headers['Authorization'] = auth_header
 
-    :ivar value: The backup blob containing the backed up secret.
-    :vartype value: bytes
-    """
-
-    _validation = {
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': 'base64'},
-    }
-
-    def __init__(self, **kwargs):
-        super(_BackupResult, self).__init__(**kwargs)
-        self.value = None
+        return self.next.send(request, **kwargs)
