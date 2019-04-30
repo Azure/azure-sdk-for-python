@@ -40,7 +40,7 @@ class BlobContainersOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, skip_token=None, maxpagesize=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists all containers and does not support a prefix like data plane.
         Also SRP today does not return continuation token.
 
@@ -51,6 +51,15 @@ class BlobContainersOperations(object):
          specified resource group. Storage account names must be between 3 and
          24 characters in length and use numbers and lower-case letters only.
         :type account_name: str
+        :param skip_token: Optional. Continuation token for the list
+         operation.
+        :type skip_token: str
+        :param maxpagesize: Optional. Specified maximum number of containers
+         that can be included in the list.
+        :type maxpagesize: str
+        :param filter: Optional. When specified, only container names starting
+         with the filter will be listed.
+        :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -73,6 +82,12 @@ class BlobContainersOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+        if skip_token is not None:
+            query_parameters['$skipToken'] = self._serialize.query("skip_token", skip_token, 'str')
+        if maxpagesize is not None:
+            query_parameters['$maxpagesize'] = self._serialize.query("maxpagesize", maxpagesize, 'str')
+        if filter is not None:
+            query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
 
         # Construct headers
         header_parameters = {}
