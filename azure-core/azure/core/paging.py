@@ -55,7 +55,7 @@ class Paged(AsyncPagedMixin, Iterator):
     _validation = {}  # type: Dict[str, Dict[str, Any]]
     _attribute_map = {}  # type: Dict[str, Dict[str, Any]]
 
-    def __init__(self, command, classes, deserializer**kwargs):
+    def __init__(self, command, deserializer, **kwargs):
         # type: (Callable[[str], HttpResponse], Dict[str, Model], Callable, Any) -> None
         super(Paged, self).__init__(**kwargs)  # type: ignore
         # Sets next_link, current_page, and _current_page_iter_index.
