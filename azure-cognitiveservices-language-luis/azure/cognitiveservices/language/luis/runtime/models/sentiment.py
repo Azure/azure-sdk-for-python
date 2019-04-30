@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Sentiment(Model):
-    """The result of the sentiment analaysis.
+    """The result of the sentiment analysis.
 
     All required parameters must be populated in order to send to Azure.
 
