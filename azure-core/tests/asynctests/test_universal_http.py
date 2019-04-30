@@ -48,7 +48,7 @@ async def test_basic_aiohttp():
         response = await sender.send(request)
         assert response.body() is not None
 
-    assert sender.session.closed
+    assert sender.session is None
     assert response.status_code == 200
 
 @pytest.mark.asyncio
