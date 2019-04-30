@@ -216,8 +216,9 @@ class PermissionsOperations(object):
 
     def update(
             self, app_id, emails=None, custom_headers=None, raw=False, **operation_config):
-        """Replaces the current users access list with the one sent in the body.
-        If an empty list is sent, all access to other users will be removed.
+        """Replaces the current user access list with the new list sent in the
+        body. If an empty list is sent, all access to other users will be
+        removed.
 
         :param app_id: The application ID.
         :type app_id: str

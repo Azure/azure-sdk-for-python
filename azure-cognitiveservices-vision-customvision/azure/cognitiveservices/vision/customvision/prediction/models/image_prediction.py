@@ -13,20 +13,20 @@ from msrest.serialization import Model
 
 
 class ImagePrediction(Model):
-    """ImagePrediction.
+    """Result of an image prediction request.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id:
+    :ivar id: Prediction Id.
     :vartype id: str
-    :ivar project:
+    :ivar project: Project Id.
     :vartype project: str
-    :ivar iteration:
+    :ivar iteration: Iteration Id.
     :vartype iteration: str
-    :ivar created:
+    :ivar created: Date this prediction was created.
     :vartype created: datetime
-    :ivar predictions:
+    :ivar predictions: List of predictions.
     :vartype predictions:
      list[~azure.cognitiveservices.vision.customvision.prediction.models.Prediction]
     """

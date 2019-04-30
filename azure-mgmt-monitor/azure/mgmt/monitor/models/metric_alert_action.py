@@ -17,7 +17,7 @@ class MetricAlertAction(Model):
 
     :param action_group_id: the id of the action group to use.
     :type action_group_id: str
-    :param webhook_properties:
+    :param webhook_properties: The properties of a webhook object.
     :type webhook_properties: dict[str, str]
     """
 

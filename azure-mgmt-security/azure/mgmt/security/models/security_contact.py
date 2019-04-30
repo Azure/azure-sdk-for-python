@@ -28,7 +28,7 @@ class SecurityContact(Resource):
     :vartype type: str
     :param email: Required. The email of this security contact
     :type email: str
-    :param phone: Required. The phone number of this security contact
+    :param phone: The phone number of this security contact
     :type phone: str
     :param alert_notifications: Required. Whether to send security alerts
      notifications to the security contact. Possible values include: 'On',
@@ -45,7 +45,6 @@ class SecurityContact(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'email': {'required': True},
-        'phone': {'required': True},
         'alert_notifications': {'required': True},
         'alerts_to_admins': {'required': True},
     }

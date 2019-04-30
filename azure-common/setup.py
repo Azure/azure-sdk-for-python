@@ -75,8 +75,5 @@ setup(
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
-        'autorest':[
-            'msrestazure>=0.4.0,<2.0.0',
-        ]
     }
 )

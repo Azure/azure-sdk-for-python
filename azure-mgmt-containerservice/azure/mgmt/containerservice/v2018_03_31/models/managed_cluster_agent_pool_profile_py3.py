@@ -89,7 +89,7 @@ class ManagedClusterAgentPoolProfile(Model):
      'ManagedDisks'
     :vartype storage_profile: str or
      ~azure.mgmt.containerservice.v2018_03_31.models.ContainerServiceStorageProfileTypes
-    :param vnet_subnet_id: VNet SubnetID specifies the vnet's subnet
+    :param vnet_subnet_id: VNet SubnetID specifies the VNet's subnet
      identifier.
     :type vnet_subnet_id: str
     :param max_pods: Maximum number of pods that can run on a node.
@@ -102,7 +102,7 @@ class ManagedClusterAgentPoolProfile(Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        'name': {'required': True, 'pattern': r'^[a-z][a-z0-9]{0,11}$'},
         'count': {'maximum': 100, 'minimum': 1},
         'vm_size': {'required': True},
         'storage_profile': {'readonly': True},

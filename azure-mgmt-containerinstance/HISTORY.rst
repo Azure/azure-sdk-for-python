@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.4.1 (2019-04-01)
+++++++++++++++++++
+
+**Bugfix**
+
+- Fix incorrect wheel METADATA caused by setuptools 40.6.0
+
 1.4.0 (2018-11-12)
 ++++++++++++++++++
 

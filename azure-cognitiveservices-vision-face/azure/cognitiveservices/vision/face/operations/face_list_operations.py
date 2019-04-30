@@ -34,9 +34,37 @@ class FaceListOperations(object):
         self.config = config
 
     def create(
-            self, face_list_id, name=None, user_data=None, custom_headers=None, raw=False, **operation_config):
-        """Create an empty face list. Up to 64 face lists are allowed to exist in
-        one subscription.
+            self, face_list_id, name=None, user_data=None, recognition_model="recognition_01", custom_headers=None, raw=False, **operation_config):
+        """Create an empty face list with user-specified faceListId, name, an
+        optional userData and recognitionModel. Up to 64 face lists are allowed
+        in one subscription.
+        <br /> Face list is a list of faces, up to 1,000 faces, and used by
+        [Face - Find
+        Similar](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395237).
+        <br /> After creation, user should use [FaceList - Add
+        Face](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395250)
+        to import the faces. Faces are stored on server until [FaceList -
+        Delete](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039524f)
+        is called.
+        <br /> Find Similar is used for scenario like finding celebrity-like
+        faces, similar face filtering, or as a light way face identification.
+        But if the actual use is to identify person, please use
+        [PersonGroup](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395244)
+        /
+        [LargePersonGroup](/docs/services/563879b61984550e40cbbe8d/operations/599acdee6ac60f11b48b5a9d)
+        and [Face -
+        Identify](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395239).
+        <br /> Please consider
+        [LargeFaceList](/docs/services/563879b61984550e40cbbe8d/operations/5a157b68d2de3616c086f2cc)
+        when the face number is large. It can support up to 1,000,000 faces.
+        'recognitionModel' should be specified to associate with this face
+        list. The default value for 'recognitionModel' is 'recognition_01', if
+        the latest model needed, please explicitly specify the model you need
+        in this parameter. New faces that are added to an existing face list
+        will use the recognition model that's already associated with the
+        collection. Existing face features in a face list can't be updated to
+        features extracted by another version of recognition model.
+        .
 
         :param face_list_id: Id referencing a particular face list.
         :type face_list_id: str
@@ -44,6 +72,10 @@ class FaceListOperations(object):
         :type name: str
         :param user_data: User specified data. Length should not exceed 16KB.
         :type user_data: str
+        :param recognition_model: Possible values include: 'recognition_01',
+         'recognition_02'
+        :type recognition_model: str or
+         ~azure.cognitiveservices.vision.face.models.RecognitionModel
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -54,7 +86,7 @@ class FaceListOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
-        body = models.NameAndUserDataContract(name=name, user_data=user_data)
+        body = models.MetaDataContract(name=name, user_data=user_data, recognition_model=recognition_model)
 
         # Construct URL
         url = self.create.metadata['url']
@@ -74,7 +106,7 @@ class FaceListOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(body, 'NameAndUserDataContract')
+        body_content = self._serialize.body(body, 'MetaDataContract')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -89,11 +121,16 @@ class FaceListOperations(object):
     create.metadata = {'url': '/facelists/{faceListId}'}
 
     def get(
-            self, face_list_id, custom_headers=None, raw=False, **operation_config):
-        """Retrieve a face list's information.
+            self, face_list_id, return_recognition_model=False, custom_headers=None, raw=False, **operation_config):
+        """Retrieve a face list’s faceListId, name, userData, recognitionModel and
+        faces in the face list.
+        .
 
         :param face_list_id: Id referencing a particular face list.
         :type face_list_id: str
+        :param return_recognition_model: A value indicating whether the
+         operation should return 'recognitionModel' in response.
+        :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -115,6 +152,8 @@ class FaceListOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if return_recognition_model is not None:
+            query_parameters['returnRecognitionModel'] = self._serialize.query("return_recognition_model", return_recognition_model, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -241,10 +280,16 @@ class FaceListOperations(object):
     delete.metadata = {'url': '/facelists/{faceListId}'}
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Retrieve information about all existing face lists. Only faceListId,
-        name and userData will be returned.
+            self, return_recognition_model=False, custom_headers=None, raw=False, **operation_config):
+        """List face lists’ faceListId, name, userData and recognitionModel. <br
+        />
+        To get face information inside faceList use [FaceList -
+        Get](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f3039524c)
+        .
 
+        :param return_recognition_model: A value indicating whether the
+         operation should return 'recognitionModel' in response.
+        :type return_recognition_model: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -265,6 +310,8 @@ class FaceListOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if return_recognition_model is not None:
+            query_parameters['returnRecognitionModel'] = self._serialize.query("return_recognition_model", return_recognition_model, 'bool')
 
         # Construct headers
         header_parameters = {}
@@ -293,7 +340,7 @@ class FaceListOperations(object):
 
     def delete_face(
             self, face_list_id, persisted_face_id, custom_headers=None, raw=False, **operation_config):
-        """Delete an existing face from a face list (given by a persisitedFaceId
+        """Delete an existing face from a face list (given by a persistedFaceId
         and a faceListId). Persisted image related to the face will also be
         deleted.
 

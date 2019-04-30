@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class DatabasePrincipal(Model):
-    """DatabasePrincipal.
+    """A class representing database principal entity.
 
     All required parameters must be populated in order to send to Azure.
 

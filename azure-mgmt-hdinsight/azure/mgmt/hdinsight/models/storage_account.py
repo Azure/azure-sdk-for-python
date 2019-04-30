@@ -28,6 +28,13 @@ class StorageAccount(Model):
     :type file_system: str
     :param key: The storage account access key.
     :type key: str
+    :param resource_id: The resource ID of storage account, only to be
+     specified for Azure Data Lake Storage Gen 2.
+    :type resource_id: str
+    :param msi_resource_id: The managed identity (MSI) that is allowed to
+     access the storage account, only to be specified for Azure Data Lake
+     Storage Gen 2.
+    :type msi_resource_id: str
     """
 
     _attribute_map = {
@@ -36,6 +43,8 @@ class StorageAccount(Model):
         'container': {'key': 'container', 'type': 'str'},
         'file_system': {'key': 'fileSystem', 'type': 'str'},
         'key': {'key': 'key', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'msi_resource_id': {'key': 'msiResourceId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -45,3 +54,5 @@ class StorageAccount(Model):
         self.container = kwargs.get('container', None)
         self.file_system = kwargs.get('file_system', None)
         self.key = kwargs.get('key', None)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.msi_resource_id = kwargs.get('msi_resource_id', None)

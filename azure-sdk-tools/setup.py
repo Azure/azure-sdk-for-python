@@ -38,5 +38,8 @@ setup(
         'console_scripts': [
             'generate_package=packaging_tools.generate_package:generate_main',
         ],
+    },
+    extras_require={
+        ":python_version>='3.5'": ['pytest-asyncio>=0.9.0']
     }
 )

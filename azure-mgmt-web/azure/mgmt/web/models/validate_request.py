@@ -35,7 +35,7 @@ class ValidateRequest(Model):
     :param is_spot: <code>true</code> if App Service plan is for Spot
      instances; otherwise, <code>false</code>.
     :type is_spot: bool
-    :param capacity: Target capacity of the App Service plan (number of VM's).
+    :param capacity: Target capacity of the App Service plan (number of VMs).
     :type capacity: int
     :param hosting_environment: Name of App Service Environment where app or
      App Service plan should be created.

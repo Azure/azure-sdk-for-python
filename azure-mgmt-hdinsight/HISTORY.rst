@@ -3,6 +3,27 @@
 Release History
 ===============
 
+1.0.0 (2019-04-08)
+++++++++++++++++++
+
+Stable versionning of the 0.3.0 (no changes)
+
+0.3.0 (2019-04-08)
+++++++++++++++++++
+
+**Features**
+
+- Added operation ConfigurationsOperations.list
+- Added operation ClustersOperations.get_gateway_settings
+- Added operation ClustersOperations.update_gateway_settings
+
+0.2.1 (2019-01-28)
+++++++++++++++++++
+
+**Features**
+
+- Add MSI support
+
 0.2.0 (2018-12-11)
 ++++++++++++++++++
 

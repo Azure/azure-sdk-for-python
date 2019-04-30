@@ -23,6 +23,6 @@ class EvaluatePoliciesResponse(Model):
         'results': {'key': 'results', 'type': '[PolicySetResult]'},
     }
 
-    def __init__(self, results=None):
-        super(EvaluatePoliciesResponse, self).__init__()
-        self.results = results
+    def __init__(self, **kwargs):
+        super(EvaluatePoliciesResponse, self).__init__(**kwargs)
+        self.results = kwargs.get('results', None)

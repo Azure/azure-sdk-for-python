@@ -3,6 +3,33 @@
 Release History
 ===============
 
+0.12.0 (2019-03-28)
++++++++++++++++++++
+
+**Features**
+
+- Model ManagedDatabase has a new parameter recoverable_database_id
+- Model ManagedDatabase has a new parameter restorable_dropped_database_id
+- Model ServerSecurityAlertPolicy has a new parameter creation_time
+- Model ManagedInstanceUpdate has a new parameter public_data_endpoint_enabled
+- Model ManagedInstanceUpdate has a new parameter proxy_override
+- Model ManagedInstanceUpdate has a new parameter timezone_id
+- Model ManagedDatabaseUpdate has a new parameter recoverable_database_id
+- Model ManagedDatabaseUpdate has a new parameter restorable_dropped_database_id
+- Model ManagedInstance has a new parameter public_data_endpoint_enabled
+- Model ManagedInstance has a new parameter proxy_override
+- Model ManagedInstance has a new parameter timezone_id
+- Added operation group ManagedServerSecurityAlertPoliciesOperations
+- Added operation group VirtualClustersOperations
+- Added operation group ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
+- Added operation group RestorableDroppedManagedDatabasesOperations
+- Added operation group ManagedDatabaseSensitivityLabelsOperations
+- Added operation group RecoverableManagedDatabasesOperations
+- Added operation group ServerVulnerabilityAssessmentsOperations
+- Added operation group ManagedInstanceVulnerabilityAssessmentsOperations
+- Added operation group ManagedDatabaseSecurityAlertPoliciesOperations
+- Added operation group SensitivityLabelsOperations
+
 0.11.0 (2018-11-08)
 +++++++++++++++++++
 
