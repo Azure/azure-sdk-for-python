@@ -12,8 +12,7 @@ from .._internal import _parse_vault_id
 
 
 class SecretAttributes(object):
-    """A secret's id and attributes.
-    """
+    """A secret's id and attributes."""
 
     def __init__(self, attributes, vault_id, **kwargs):
         # type: (models.SecretAttributes, str, Mapping[str, Any]) -> None
@@ -167,14 +166,16 @@ class Secret(SecretAttributes):
     @property
     def value(self):
         # type: () -> str
+        """The secret's value.
+        :rtype: str"""
         return self._value
 
 
 class DeletedSecret(SecretAttributes):
     # type: (models.SecretAttributes, str, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
-    """A Deleted Secret consisting of its previous id, attributes and its tags, as
-    well as information on when it will be purged.
-        """
+    """A Deleted Secret consisting of its id, attributes, and tags, as
+    well as when it will be purged, if soft-delete is enabled for the vault.
+    """
 
     def __init__(self, attributes, vault_id, deleted_date=None, recovery_id=None, scheduled_purge_date=None, **kwargs):
         # type: (models.SecretAttributes, str, Optional[datetime], Optional[str],

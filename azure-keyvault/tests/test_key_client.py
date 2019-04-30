@@ -10,7 +10,7 @@ from azure.keyvault._internal import _VaultId as KeyVaultId
 
 class KeyClientTests(KeyvaultTestCase):
     @ResourceGroupPreparer()
-    @KeyVaultPreparer()
+    @KeyVaultPreparer(enable_soft_delete=True)
     def test_new_client(self, vault_client, **kwargs):
         client = vault_client.keys
 
@@ -42,6 +42,10 @@ class KeyClientTests(KeyvaultTestCase):
         assert delete_result.key.kid == new_key.id
 
         # verify deletion
+        if self.is_live:
+            # TODO: replace sleep with polling
+            # (client won't do it by default because 404 isn't retryable)
+            sleep(20)
         deleted_key = client.get_deleted_key(key_name)
         assert deleted_key.key.kid == key.id
         keys_after_delete = client.get_all_keys()
@@ -50,13 +54,19 @@ class KeyClientTests(KeyvaultTestCase):
         all_deleted_keys = client.get_all_deleted_keys()
         recovery_ids = {key.recovery_id for key in all_deleted_keys}
         assert delete_result.recovery_id in recovery_ids
+        if self.is_live:
+            sleep(20)
 
         # recover the deleted key
         recovered_key = client.recover_deleted_key(key_name)
         assert recovered_key.id == key.id
 
         # purge the key
+        if self.is_live:
+            sleep(30)
         second_delete_result = client.delete_key(key_name)
+        if self.is_live:
+            sleep(30)
         client.purge_deleted_key(key_name)
         # verify the purge
         recovery_ids_after_purge = {

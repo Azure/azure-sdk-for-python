@@ -112,7 +112,8 @@ class KeyVaultSecretTest(KeyvaultTestCase):
 
         if self.is_live:
             # wait to ensure the secret has been deleted
-            time.sleep(20)
+            # TODO: replace sleeps with polling (client won't do it by default because 404 isn't retryable)
+            time.sleep(30)
 
         # get the deleted secret
         deleted_secret = client.get_deleted_secret(deleted.name)

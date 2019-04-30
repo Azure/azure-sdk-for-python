@@ -64,7 +64,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
 
             # create a secret with optional arguments
             secret = secret_client.set_secret('secret-name', 'secret-value', enabled=True, expires=expires)
-            
+
             print(secret.version)
             print(secret.created)
             print(secret.enabled)
@@ -81,7 +81,8 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             # get secret with version
             secret = secret_client.get_secret('secret-name', secret_version)
 
-            # get secret with version as none, returns secret's latest version
+            # if the version argument is the empty string or None, the latest
+            # version of the secret will be returned
             secret = secret_client.get_secret('secret-name', '')
 
             # gets a secret properties
@@ -96,17 +97,15 @@ class TestExamplesKeyVault(KeyvaultTestCase):
         try:
             # [START update_secret_attributes]
 
-            # update attributes of an existing secret using name and version
+            # update attributes of an existing secret
 
             content_type = 'text/plain'
             tags = {'foo': 'updated tag'}
             secret_version = secret.version
             updated_secret = secret_client.update_secret_attributes(
-                'secret-name', secret_version,
-                content_type=content_type,
-                tags=tags)
-                
-            # should get a new version and updated value
+                'secret-name', secret_version, content_type=content_type, tags=tags
+            )
+
             print(updated_secret.version)
             print(updated_secret.updated)
             print(updated_secret.content_type)
@@ -136,13 +135,13 @@ class TestExamplesKeyVault(KeyvaultTestCase):
         try:
             # [START list_secrets]
 
-            # list secrets without max_page_size (default = 25)
+            # list secrets
             secrets = secret_client.list_secrets()
 
-            # prints a list of secrets from the generator object
-            print(list(secrets))
-
-            # Note: list operation does not return values or versions of the secrets.
+            for secret in secrets:
+                # the list doesn't include values or versions of the secrets
+                print(secret.id)
+                print(secret.name)
 
             # [END list_secrets]
         except ClientRequestError:
@@ -152,16 +151,12 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             # [START list_secret_versions]
             from azure.keyvault.vault_client import VaultClient
 
-            # gets a list of all versions of a secret, with max_page_size
-            secret_versions = secret_client.list_secret_versions('secret-name', max_page_size=26)
-
-            # gets a list of all versions of a secret, without max_page_size
+            # gets a list of all versions of a secret
             secret_versions = secret_client.list_secret_versions('secret-name')
 
-            # prints a list of versions of a secret from the generator object
-            print(list(secret_versions))
-
-            # Note: list operation does not return values of the secrets. 
+            for secret in secrets:
+                # the list doesn't include secret values
+                print(secret.version)
 
             # [END list_secret_versions]
         except ClientRequestError:
@@ -170,16 +165,13 @@ class TestExamplesKeyVault(KeyvaultTestCase):
         try:
             # [START list_deleted_secrets]
 
-            # get a list of deleted secrets with max_page_size
-            deleted_secrets = secret_client.list_deleted_secrets(max_page_size=26)
-
-            # get a list of deleted secrets without max_page_size
+            # get a list of deleted secrets (requires soft-delete enabled for the vault)
             deleted_secrets = secret_client.list_deleted_secrets()
 
-            # prints a list of deleted secrets from the generator object
-            print(list(deleted_secrets))
-
-            # Note: list operation does not return versions or values of the secrets. 
+            for secret in deleted_secrets:
+                # the list doesn't include values or versions of the deleted secrets
+                print(secret.id)
+                print(secret.name)
 
             # [END list_deleted_secrets]
         except ClientRequestError:
@@ -210,7 +202,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
                 time.sleep(1)
 
             # [START get_deleted_secret]
-            # gets a deleted secret
+            # gets a deleted secret (requires soft-delete enabled for the vault)
             deleted_secret = secret_client.get_deleted_secret('secret-name')
             print(deleted_secret.name)
 
@@ -244,7 +236,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
         try:
             # [START recover_deleted_secret]
 
-            # recover deleted secret to the latest version
+            # recover deleted secret to its latest version
             recover_deleted_secret = secret_client.recover_deleted_secret('secret-name')
             print(recover_deleted_secret.id)
             print(recover_deleted_secret.name)
@@ -263,7 +255,8 @@ class TestExamplesKeyVault(KeyvaultTestCase):
                 time.sleep(1)
             # [START purge_deleted_secret]
 
-            # purge deleted secret, performs permanent deletion of a secret
+            # if the vault has soft-delete enabled, purge permanently deletes the secret
+            # (without soft-delete, an ordinary delete is permanent)
             secret_client.purge_deleted_secret('secret-name')
 
             # [END purge_deleted_secret]
