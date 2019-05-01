@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
-import contextlib
 import requests
 import threading
 import urllib3
@@ -44,17 +43,10 @@ from azure.core.exceptions import (
 )
 
 
-class RequestsContext(object):
-    def __init__(self, session, transport, **kwargs):
-        self.session = session
-        self.transport = transport
-        self.options = kwargs
-
-
 class _RequestsTransportResponseBase(_HttpResponseBase):
 
-    def __init__(self, request, requests_response, block_size):
-        super(_RequestsTransportResponseBase, self).__init__(request, requests_response, block_size)
+    def __init__(self, request, requests_response, block_size=None):
+        super(_RequestsTransportResponseBase, self).__init__(request, requests_response, block_size=block_size)
         self.status_code = requests_response.status_code
         self.headers = requests_response.headers
         self.reason = requests_response.reason
@@ -160,10 +152,6 @@ class RequestsTransport(HttpTransport):
     def session(self, value):
         self._init_session(value)
         self._session_mapping.session = value
-
-    def build_context(self, **kwargs):
-        # type: () -> RequestsContext
-        return RequestsContext(session=self.session, transport=self, **kwargs)
 
     def close(self):
         self.session.close()

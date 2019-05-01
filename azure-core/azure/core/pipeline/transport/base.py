@@ -62,16 +62,6 @@ class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPRe
         """
         pass
 
-    def build_context(self, **kwargs):
-        # type: () -> Any
-        """Allow the sender to build a context that will be passed
-        across the pipeline with the request.
-
-        Return type has no constraints. Implementation is not
-        required and None by default.
-        """
-        return None
-
     def sleep(self, duration):
         time.sleep(duration)
 
@@ -201,14 +191,14 @@ class _HttpResponseBase(object):
     will provide async ways to access the body
     Full in-memory using "body" as bytes.
     """
-    def __init__(self, request, internal_response, block_size):
+    def __init__(self, request, internal_response, block_size=None):
         # type: (HttpRequest, Any) -> None
         self.request = request
         self.internal_response = internal_response
         self.status_code = None  # type: Optional[int]
         self.headers = {}  # type: Dict[str, str]
         self.reason = None  # type: Optional[str]
-        self.block_size = block_size
+        self.block_size = block_size or 4096  # Default to same as Requests
 
 
     def body(self):

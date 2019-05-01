@@ -79,7 +79,7 @@ async def test_basic_aiohttp():
     async with AsyncPipeline(AioHttpTransport(conf), policies=policies) as pipeline:
         response = await pipeline.run(request)
 
-    assert pipeline._transport.session.closed
+    assert pipeline._transport.session is None
     assert response.http_response.status_code == 200
 
 @pytest.mark.asyncio

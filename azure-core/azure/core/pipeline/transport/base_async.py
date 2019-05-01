@@ -89,15 +89,6 @@ class AsyncHttpTransport(AbstractAsyncContextManager, abc.ABC, Generic[HTTPReque
         """
         pass
 
-    def build_context(self, **kwargs) -> Any:
-        """Allow the sender to build a context that will be passed
-        across the pipeline with the request.
-
-        Return type has no constraints. Implementation is not
-        required and None by default.
-        """
-        return None
-
     async def sleep(self, duration):
         await asyncio.sleep(duration)
 
