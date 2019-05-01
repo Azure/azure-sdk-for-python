@@ -32,34 +32,34 @@ class AzureConfigurationClient(AzureConfigurationClientAbstract):
         async_client = AzureConfigurationClient(connection_str)
     """
 
-    def __init__(self, connection_string):
+    def __init__(self, connection_string, config=None):
         super().__init__()
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         program_name = os.path.basename(sys.argv[0]) or "noprogram"
-        self.config = AzureConfigurationClientImpConfiguration(
+        self._config = config or AzureConfigurationClientImpConfiguration(
             connection_string, base_user_agent=program_name, logging_enable=True
         )
-        self.config.user_agent_policy.add_user_agent(
+        self._config.user_agent_policy.add_user_agent(
             "{}{}".format(platform.python_implementation(), platform.python_version())
         )
-        self.config.user_agent_policy.add_user_agent(platform.platform())
+        self._config.user_agent_policy.add_user_agent(platform.platform())
         self._impl = AzureConfigurationClientImp(
             connection_string,
             base_url,
-            config=self.config,
+            config=self._config,
             pipeline=self._create_azconfig_pipeline(),
         )
 
     def _create_azconfig_pipeline(self):
         policies = [
-            self.config.headers_policy,
-            self.config.user_agent_policy,
-            self.config.logging_policy,  # HTTP request/response log
-            AzConfigRequestsCredentialsPolicy(self.config.credentials),
+            self._config.headers_policy,
+            self._config.user_agent_policy,
+            self._config.logging_policy,  # HTTP request/response log
+            AzConfigRequestsCredentialsPolicy(self._config.credentials),
         ]
 
         return AsyncPipeline(
-            AsyncioRequestsTransport(self.config),  # Send HTTP request using requests
+            AsyncioRequestsTransport(self._config),  # Send HTTP request using requests
             policies,
         )
 
