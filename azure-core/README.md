@@ -292,18 +292,18 @@ The API for PipelineRequest and PipelineResponse is as follows:
 ```python
 class PipelineRequest(object):
 
-    def __init__(self, http_request, context=None):
+    def __init__(self, http_request, context):
         self.http_request = http_request  # The HttpRequest
         self.context = context # A transport specific data container object
 
 
 class PipelineResponse(object):
 
-    def __init__(self, http_request, http_response, context=None):
+    def __init__(self, http_request, http_response, context):
         self.http_request = http_request  # The HttpRequest
         self.http_response = http_response  # The HttpResponse
         self.history = []  # A list of redirect attempts.
-        self.context = context or {}  # A transport specific data container object
+        self.context = context  # A transport specific data container object
 ```
 
 ### Policies
@@ -414,9 +414,9 @@ class Pipeline:
 
     def run(self, request, **kwargs):
         # type: (HTTPRequestType, Any) -> PipelineResponse
-        context = self._transport.build_context()
+        context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context)  # type: PipelineRequest[HTTPRequestType]
         first_node = self._impl_policies[0] if self._impl_policies else _TransportRunner(self._transport)
-        return first_node.send(pipeline_request, **kwargs)  # type: ignore
+        return first_node.send(pipeline_request)  # type: ignore
 
 ```
