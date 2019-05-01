@@ -14,7 +14,7 @@ Release History
 
 **Breaking changes**
 
-- Remove linited enum Kind and SkuName. Replace all usage by a simple string (e.g. "Bing.SpellCheck.v7")
+- Remove limited enum Kind and SkuName. Replace all usage by a simple string (e.g. "Bing.SpellCheck.v7")
 
 3.0.0 (2018-05-21)
 ++++++++++++++++++
