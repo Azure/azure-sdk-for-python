@@ -37,6 +37,7 @@ from azure.core.configuration import Configuration
 from azure.core.pipeline import (
     PipelineResponse,
     PipelineRequest,
+    PipelineContext
 )
 from azure.core.pipeline.transport import (
     HttpRequest,
@@ -57,15 +58,15 @@ def test_user_agent():
         assert policy.user_agent.endswith("mytools")
 
         request = HttpRequest('GET', 'http://127.0.0.1/')
-        policy.on_request(PipelineRequest(request))
+        policy.on_request(PipelineRequest(request, PipelineContext(None)))
         assert request.headers["user-agent"].endswith("mytools")
 
 @mock.patch('azure.core.pipeline.policies.universal._LOGGER')
 def test_no_log(mock_http_logger):
     universal_request = HttpRequest('GET', 'http://127.0.0.1/')
-    request = PipelineRequest(universal_request)
+    request = PipelineRequest(universal_request, PipelineContext(None))
     http_logger = NetworkTraceLoggingPolicy()
-    response = PipelineResponse(request, HttpResponse(universal_request, None))
+    response = PipelineResponse(request, HttpResponse(universal_request, None), request.context)
 
     # By default, no log handler for HTTP
     http_logger.on_request(request)
@@ -75,21 +76,26 @@ def test_no_log(mock_http_logger):
     mock_http_logger.reset_mock()
 
     # I can enable it per request
-    http_logger.on_request(request, **{"logging_enable": True})
+    request.context.options['logging_enable'] = True
+    http_logger.on_request(request)
     assert mock_http_logger.debug.call_count >= 1
     mock_http_logger.reset_mock()
-    http_logger.on_response(request, response, **{"logging_enable": True})
+    request.context.options['logging_enable'] = True
+    http_logger.on_response(request, response)
     assert mock_http_logger.debug.call_count >= 1
     mock_http_logger.reset_mock()
 
     # I can enable it per request (bool value should be honored)
-    http_logger.on_request(request, **{"logging_enable": False})
+    request.context.options['logging_enable'] = False
+    http_logger.on_request(request)
     mock_http_logger.debug.assert_not_called()
-    http_logger.on_response(request, response, **{"logging_enable": False})
+    request.context.options['logging_enable'] = False
+    http_logger.on_response(request, response)
     mock_http_logger.debug.assert_not_called()
     mock_http_logger.reset_mock()
 
     # I can enable it globally
+    request.context.options = {}
     http_logger.enable_http_logger = True
     http_logger.on_request(request)
     assert mock_http_logger.debug.call_count >= 1
@@ -99,9 +105,11 @@ def test_no_log(mock_http_logger):
 
     # I can enable it globally and override it locally
     http_logger.enable_http_logger = True
-    http_logger.on_request(request, **{"logging_enable": False})
+    request.context.options['logging_enable'] = False
+    http_logger.on_request(request)
     mock_http_logger.debug.assert_not_called()
-    http_logger.on_response(request, response, **{"logging_enable": False})
+    response.context['logging_enable'] = False
+    http_logger.on_response(request, response)
     mock_http_logger.debug.assert_not_called()
     mock_http_logger.reset_mock()
 
@@ -119,36 +127,36 @@ def test_raw_deserializer():
 
             def body(self):
                 return self._body
-        return PipelineResponse(None, MockResponse(body, content_type))
+        return PipelineResponse(None, MockResponse(body, content_type), PipelineContext(None, stream=False))
 
     response = build_response(b"<groot/>", content_type="application/xml")
-    raw_deserializer.on_response(None, response, stream=False)
+    raw_deserializer.on_response(None, response)
     result = response.context["deserialized_data"]
     assert result.tag == "groot"
 
     # Catch some weird situation where content_type is XML, but content is JSON
     response = build_response(b'{"ugly": true}', content_type="application/xml")
-    raw_deserializer.on_response(None, response, stream=False)
+    raw_deserializer.on_response(None, response)
     result = response.context["deserialized_data"]
     assert result["ugly"] is True
 
     # Be sure I catch the correct exception if it's neither XML nor JSON
     with pytest.raises(DecodeError):
         response = build_response(b'gibberish', content_type="application/xml")
-        raw_deserializer.on_response(None, response, stream=False)
+        raw_deserializer.on_response(None, response,)
     with pytest.raises(DecodeError):
         response = build_response(b'{{gibberish}}', content_type="application/xml")
-        raw_deserializer.on_response(None, response, stream=False)
+        raw_deserializer.on_response(None, response)
 
     # Simple JSON
     response = build_response(b'{"success": true}', content_type="application/json")
-    raw_deserializer.on_response(None, response, stream=False)
+    raw_deserializer.on_response(None, response)
     result = response.context["deserialized_data"]
     assert result["success"] is True
 
     # For compat, if no content-type, decode JSON
     response = build_response(b'"data"')
-    raw_deserializer.on_response(None, response, stream=False)
+    raw_deserializer.on_response(None, response)
     result = response.context["deserialized_data"]
     assert result == "data"
 
@@ -158,8 +166,8 @@ def test_raw_deserializer():
     req_response.headers["content-type"] = "application/json"
     req_response._content = b'{"success": true}'
     req_response._content_consumed = True
-    response = PipelineResponse(None, RequestsTransportResponse(None, req_response))
+    response = PipelineResponse(None, RequestsTransportResponse(None, req_response), PipelineContext(None, stream=False))
 
-    raw_deserializer.on_response(None, response, stream=False)
+    raw_deserializer.on_response(None, response)
     result = response.context["deserialized_data"]
     assert result["success"] is True

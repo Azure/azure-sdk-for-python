@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 from .base import HttpTransport, HttpRequest, HttpResponse
-from .requests_basic import RequestsTransport, RequestsTransportResponse, RequestsContext
+from .requests_basic import RequestsTransport, RequestsTransportResponse
 
 __all__ = [
     'HttpTransport',
@@ -33,7 +33,6 @@ __all__ = [
     'HttpResponse',
     'RequestsTransport',
     'RequestsTransportResponse',
-    'RequestsContext'
 ]
 
 try:
@@ -56,11 +55,10 @@ try:
         pass  # Trio not installed
 
     try:
-        from .aiohttp import AioHttpTransport, AioHttpTransportResponse, AioHttpContext
+        from .aiohttp import AioHttpTransport, AioHttpTransportResponse
         __all__.extend([
             'AioHttpTransport',
             'AioHttpTransportResponse',
-            'AioHttpContext'
         ])
     except ImportError:
         pass  # Aiohttp not installed

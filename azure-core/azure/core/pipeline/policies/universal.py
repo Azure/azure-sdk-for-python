@@ -74,8 +74,8 @@ class HeadersPolicy(SansIOHTTPPolicy):
 
     def on_request(self, request):
         # type: (PipelineRequest, Any) -> None
-        additional_headers = request.context.options.pop('headers', {})
         request.http_request.headers.update(self.headers)
+        additional_headers = request.context.options.pop('headers', {})
         if additional_headers:
             request.http_request.headers.update(additional_headers)
 
@@ -135,15 +135,17 @@ class UserAgentPolicy(SansIOHTTPPolicy):
 class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
     """A policy that logs HTTP request and response to the DEBUG logger.
 
-    This accepts both global configuration, and kwargs request level with "enable_http_logger"
+    This accepts both global configuration, and per-request level with "enable_http_logger"
     """
-    def __init__(self, logging_enable=False, **kwargs):
+    def __init__(self, logging_enable=False):
         self.enable_http_logger = logging_enable
 
     def on_request(self, request):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
-        if request.context.options.pop("logging_enable", self.enable_http_logger):
+        options = request.context.options
+        if options.pop("logging_enable", self.enable_http_logger):
+            request.context["logging_enable"] = True
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 
@@ -167,7 +169,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
 
     def on_response(self, request, response):
         # type: (PipelineRequest, PipelineResponse, Any) -> None
-        if request.context.options.pop("logging_enable", self.enable_http_logger):
+        if response.context.pop("logging_enable", self.enable_http_logger):
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 
@@ -190,7 +192,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                 elif response.http_response.headers.get("content-type", "").startswith("image"):
                     _LOGGER.debug("Body contains image data.")
                 else:
-                    if kwargs.get('stream', False):
+                    if response.context.options.get('stream', False):
                         _LOGGER.debug("Body is streamable")
                     else:
                         _LOGGER.debug(response.http_response.text())
@@ -302,7 +304,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         :raises xml.etree.ElementTree.ParseError: If bytes is not valid XML
         """
         # If response was asked as stream, do NOT read anything and quit now
-        if request.context.options.get("stream", False):
+        if response.context.options.get("stream", True):
             return
 
         http_response = response.http_response
