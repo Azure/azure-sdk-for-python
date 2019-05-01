@@ -45,6 +45,7 @@ try:
     from .sampling_settings_py3 import SamplingSettings
     from .diagnostic_contract_py3 import DiagnosticContract
     from .schema_contract_py3 import SchemaContract
+    from .schema_create_or_update_contract_py3 import SchemaCreateOrUpdateContract
     from .policy_contract_py3 import PolicyContract
     from .policy_collection_py3 import PolicyCollection
     from .product_contract_py3 import ProductContract
@@ -200,6 +201,7 @@ except (SyntaxError, ImportError):
     from .sampling_settings import SamplingSettings
     from .diagnostic_contract import DiagnosticContract
     from .schema_contract import SchemaContract
+    from .schema_create_or_update_contract import SchemaCreateOrUpdateContract
     from .policy_contract import PolicyContract
     from .policy_collection import PolicyCollection
     from .product_contract import ProductContract
@@ -428,6 +430,7 @@ __all__ = [
     'SamplingSettings',
     'DiagnosticContract',
     'SchemaContract',
+    'SchemaCreateOrUpdateContract',
     'PolicyContract',
     'PolicyCollection',
     'ProductContract',

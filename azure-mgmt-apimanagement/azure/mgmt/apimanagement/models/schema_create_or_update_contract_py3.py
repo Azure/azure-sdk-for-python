@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
-class SchemaContract(Resource):
+class SchemaCreateOrUpdateContract(Resource):
     """Schema Contract details.
 
     Variables are only populated by the server, and will be ignored when
@@ -34,8 +34,9 @@ class SchemaContract(Resource):
      `OpenApi` Schema use `application/vnd.oai.openapi.components+json` </br> -
      `WADL Schema` use `application/vnd.ms-azure-apim.wadl.grammars+xml`.
     :type content_type: str
-    :param document: Properties of the Schema Document.
-    :type document: object
+    :param value: Json escaped string defining the document representing the
+     Schema.
+    :type value: str
     """
 
     _validation = {
@@ -50,10 +51,10 @@ class SchemaContract(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'content_type': {'key': 'properties.contentType', 'type': 'str'},
-        'document': {'key': 'properties.document', 'type': 'object'},
+        'value': {'key': 'properties.document.value', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(SchemaContract, self).__init__(**kwargs)
-        self.content_type = kwargs.get('content_type', None)
-        self.document = kwargs.get('document', None)
+    def __init__(self, *, content_type: str, value: str=None, **kwargs) -> None:
+        super(SchemaCreateOrUpdateContract, self).__init__(**kwargs)
+        self.content_type = content_type
+        self.value = value
