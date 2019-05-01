@@ -13,6 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.recommendation_metadata_operations import RecommendationMetadataOperations
 from .operations.configurations_operations import ConfigurationsOperations
 from .operations.recommendations_operations import RecommendationsOperations
 from .operations.operations import Operations
@@ -58,6 +59,8 @@ class AdvisorManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: AdvisorManagementClientConfiguration
 
+    :ivar recommendation_metadata: RecommendationMetadata operations
+    :vartype recommendation_metadata: azure.mgmt.advisor.operations.RecommendationMetadataOperations
     :ivar configurations: Configurations operations
     :vartype configurations: azure.mgmt.advisor.operations.ConfigurationsOperations
     :ivar recommendations: Recommendations operations
@@ -86,6 +89,8 @@ class AdvisorManagementClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.recommendation_metadata = RecommendationMetadataOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.configurations = ConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.recommendations = RecommendationsOperations(

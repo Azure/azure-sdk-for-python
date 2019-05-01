@@ -10,6 +10,9 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .metadata_supported_value_detail_py3 import MetadataSupportedValueDetail
+    from .metadata_entity_py3 import MetadataEntity
+    from .metadata_entity_list_result_py3 import MetadataEntityListResult
     from .config_data_properties_py3 import ConfigDataProperties
     from .config_data_py3 import ConfigData
     from .arm_error_response_body_py3 import ARMErrorResponseBody
@@ -20,6 +23,9 @@ try:
     from .operation_entity_py3 import OperationEntity
     from .suppression_contract_py3 import SuppressionContract
 except (SyntaxError, ImportError):
+    from .metadata_supported_value_detail import MetadataSupportedValueDetail
+    from .metadata_entity import MetadataEntity
+    from .metadata_entity_list_result import MetadataEntityListResult
     from .config_data_properties import ConfigDataProperties
     from .config_data import ConfigData
     from .arm_error_response_body import ARMErrorResponseBody
@@ -40,6 +46,9 @@ from .advisor_management_client_enums import (
 )
 
 __all__ = [
+    'MetadataSupportedValueDetail',
+    'MetadataEntity',
+    'MetadataEntityListResult',
     'ConfigDataProperties',
     'ConfigData',
     'ARMErrorResponseBody',
