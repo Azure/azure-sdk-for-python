@@ -283,11 +283,12 @@ class ApiSchemaOperations(object):
         :type schema_id: str
         :param content_type: Must be a valid a media type used in a
          Content-Type header as defined in the RFC 2616. Media type of the
-         schema document (e.g. application/json, application/xml). - Swagger
-         Schema use application/vnd.ms-azure-apim.swagger.definitions+json, -
-         WSDL Schema use application/vnd.ms-azure-apim.xsd+xml, -OpenApi Schema
-         use application/vnd.oai.openapi.components+json, -WADL Schema use
-         application/vnd.ms-azure-apim.wadl.grammars+xml.
+         schema document (e.g. application/json, application/xml). </br> -
+         `Swagger` Schema use
+         `application/vnd.ms-azure-apim.swagger.definitions+json` </br> - WSDL
+         Schema use application/vnd.ms-azure-apim.xsd+xml </br> - `OpenApi`
+         Schema use `application/vnd.oai.openapi.components+json` </br> - `WADL
+         Schema` use `application/vnd.ms-azure-apim.wadl.grammars+xml`.
         :type content_type: str
         :param if_match: ETag of the Entity. Not required when creating an
          entity, but required when updating an entity.
