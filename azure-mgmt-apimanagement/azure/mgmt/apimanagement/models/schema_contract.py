@@ -28,11 +28,14 @@ class SchemaContract(Resource):
     :vartype type: str
     :param content_type: Required. Must be a valid a media type used in a
      Content-Type header as defined in the RFC 2616. Media type of the schema
-     document (e.g. application/json, application/xml).
+     document (e.g. application/json, application/xml). - Swagger Schema use
+     application/vnd.ms-azure-apim.swagger.definitions+json, - WSDL Schema use
+     application/vnd.ms-azure-apim.xsd+xml, -OpenApi Schema use
+     application/vnd.oai.openapi.components+json, -WADL Schema use
+     application/vnd.ms-azure-apim.wadl.grammars+xml.
     :type content_type: str
-    :param value: Json escaped string defining the document representing the
-     Schema.
-    :type value: str
+    :param document: Properties of the Schema Document.
+    :type document: object
     """
 
     _validation = {
@@ -47,10 +50,10 @@ class SchemaContract(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'content_type': {'key': 'properties.contentType', 'type': 'str'},
-        'value': {'key': 'properties.document.value', 'type': 'str'},
+        'document': {'key': 'properties.document', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(SchemaContract, self).__init__(**kwargs)
         self.content_type = kwargs.get('content_type', None)
-        self.value = kwargs.get('value', None)
+        self.document = kwargs.get('document', None)
