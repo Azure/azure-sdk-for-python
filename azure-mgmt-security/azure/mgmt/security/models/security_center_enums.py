@@ -108,6 +108,14 @@ class Category(str, Enum):
     io_t = "IoT"
 
 
+class State(str, Enum):
+
+    passed = "Passed"  #: All supported regulatory compliance controls in the given standard have a passed state
+    failed = "Failed"  #: At least one supported regulatory compliance control in the given standard has a state of failed
+    skipped = "Skipped"  #: All supported regulatory compliance controls in the given standard have a state of skipped
+    unsupported = "Unsupported"  #: No supported regulatory compliance data for the given standard
+
+
 class ConnectionType(str, Enum):
 
     internal = "Internal"

@@ -69,6 +69,9 @@ try:
     from .security_assessment_py3 import SecurityAssessment
     from .azure_resource_details_py3 import AzureResourceDetails
     from .security_assessment_metadata_py3 import SecurityAssessmentMetadata
+    from .regulatory_compliance_standard_py3 import RegulatoryComplianceStandard
+    from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
+    from .regulatory_compliance_assessment_py3 import RegulatoryComplianceAssessment
 except (SyntaxError, ImportError):
     from .pricing import Pricing
     from .pricing_list import PricingList
@@ -129,6 +132,9 @@ except (SyntaxError, ImportError):
     from .security_assessment import SecurityAssessment
     from .azure_resource_details import AzureResourceDetails
     from .security_assessment_metadata import SecurityAssessmentMetadata
+    from .regulatory_compliance_standard import RegulatoryComplianceStandard
+    from .regulatory_compliance_control import RegulatoryComplianceControl
+    from .regulatory_compliance_assessment import RegulatoryComplianceAssessment
 from .alert_paged import AlertPaged
 from .setting_paged import SettingPaged
 from .allowed_connections_resource_paged import AllowedConnectionsResourcePaged
@@ -146,6 +152,9 @@ from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
 from .security_assessment_paged import SecurityAssessmentPaged
 from .security_assessment_metadata_paged import SecurityAssessmentMetadataPaged
+from .regulatory_compliance_standard_paged import RegulatoryComplianceStandardPaged
+from .regulatory_compliance_control_paged import RegulatoryComplianceControlPaged
+from .regulatory_compliance_assessment_paged import RegulatoryComplianceAssessmentPaged
 from .security_center_enums import (
     PricingTier,
     ReportedSeverity,
@@ -161,6 +170,7 @@ from .security_center_enums import (
     AlertsToAdmins,
     Severity,
     Category,
+    State,
     ConnectionType,
 )
 
@@ -224,6 +234,9 @@ __all__ = [
     'SecurityAssessment',
     'AzureResourceDetails',
     'SecurityAssessmentMetadata',
+    'RegulatoryComplianceStandard',
+    'RegulatoryComplianceControl',
+    'RegulatoryComplianceAssessment',
     'AlertPaged',
     'SettingPaged',
     'AllowedConnectionsResourcePaged',
@@ -241,6 +254,9 @@ __all__ = [
     'WorkspaceSettingPaged',
     'SecurityAssessmentPaged',
     'SecurityAssessmentMetadataPaged',
+    'RegulatoryComplianceStandardPaged',
+    'RegulatoryComplianceControlPaged',
+    'RegulatoryComplianceAssessmentPaged',
     'PricingTier',
     'ReportedSeverity',
     'SettingKind',
@@ -255,5 +271,6 @@ __all__ = [
     'AlertsToAdmins',
     'Severity',
     'Category',
+    'State',
     'ConnectionType',
 ]
