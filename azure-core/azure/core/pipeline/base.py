@@ -32,7 +32,7 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
-from azure.core.pipeline import AbstractContextManager, PipelineRequest, PipelineResponse
+from azure.core.pipeline import AbstractContextManager, PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
 from typing import TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional, Tuple, Callable, Iterator  # pylint: disable=unused-import
 
@@ -75,7 +75,7 @@ class _TransportRunner(HTTPPolicy):
         return PipelineResponse(
             request.http_request,
             self._sender.send(request.http_request, **request.context.options),
-            #context=request.context
+            context=request.context
         )
 
 
@@ -111,7 +111,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
     def run(self, request, **kwargs):
         # type: (HTTPRequestType, Any) -> PipelineResponse
-        context = self._transport.build_context(**kwargs)
+        context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context)  # type: PipelineRequest[HTTPRequestType]
         first_node = self._impl_policies[0] if self._impl_policies else _TransportRunner(self._transport)
         return first_node.send(pipeline_request)  # type: ignore

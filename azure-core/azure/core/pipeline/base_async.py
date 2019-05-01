@@ -28,7 +28,7 @@ import abc
 
 from typing import Any, List, Union, Callable, AsyncIterator, Optional, Generic, TypeVar
 
-from azure.core.pipeline import PipelineRequest, PipelineResponse, Pipeline
+from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext, Pipeline
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
@@ -79,7 +79,7 @@ class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseTy
         return PipelineResponse(
             request.http_request,
             await self._sender.send(request.http_request, **request.context.options),
-            #context=request.context
+            request.context
         )
 
 
@@ -119,7 +119,7 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         await self._transport.__aexit__(*exc_details)
 
     async def run(self, request: PipelineRequest, **kwargs: Any):
-        context = self._transport.build_context(**kwargs)
+        context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context)
         first_node = self._impl_policies[0] if self._impl_policies else _AsyncTransportRunner(self._transport)
         return await first_node.send(pipeline_request)  # type: ignore

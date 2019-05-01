@@ -113,3 +113,4 @@ class RequestHistory(object):
         self.http_request = copy.deepcopy(http_request)
         self.http_response = http_response
         self.error = error
+        self.context = context
