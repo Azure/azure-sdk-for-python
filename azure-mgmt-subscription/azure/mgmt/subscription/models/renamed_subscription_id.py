@@ -12,21 +12,24 @@
 from msrest.serialization import Model
 
 
-class Operation(Model):
-    """REST API operation.
+class RenamedSubscriptionId(Model):
+    """Renamed Subscription Id.
 
-    :param name: Operation name: {provider}/{resource}/{operation}
-    :type name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.subscription.models.OperationDisplay
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: Renamed Subscription Id
+    :vartype value: str
     """
 
+    _validation = {
+        'value': {'readonly': True},
+    }
+
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(Operation, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.display = kwargs.get('display', None)
+        super(RenamedSubscriptionId, self).__init__(**kwargs)
+        self.value = None

@@ -10,29 +10,19 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .subscription_creation_result_py3 import SubscriptionCreationResult
-    from .ad_principal_py3 import AdPrincipal
-    from .subscription_creation_parameters_py3 import SubscriptionCreationParameters
     from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .subscription_operation_py3 import SubscriptionOperation
-    from .subscription_operation_list_result_py3 import SubscriptionOperationListResult
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .operation_list_result_py3 import OperationListResult
+    from .canceled_subscription_id_py3 import CanceledSubscriptionId
+    from .renamed_subscription_id_py3 import RenamedSubscriptionId
+    from .subscription_name_py3 import SubscriptionName
     from .location_py3 import Location
     from .subscription_policies_py3 import SubscriptionPolicies
     from .subscription_py3 import Subscription
     from .tenant_id_description_py3 import TenantIdDescription
 except (SyntaxError, ImportError):
-    from .subscription_creation_result import SubscriptionCreationResult
-    from .ad_principal import AdPrincipal
-    from .subscription_creation_parameters import SubscriptionCreationParameters
     from .error_response import ErrorResponse, ErrorResponseException
-    from .subscription_operation import SubscriptionOperation
-    from .subscription_operation_list_result import SubscriptionOperationListResult
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .operation_list_result import OperationListResult
+    from .canceled_subscription_id import CanceledSubscriptionId
+    from .renamed_subscription_id import RenamedSubscriptionId
+    from .subscription_name import SubscriptionName
     from .location import Location
     from .subscription_policies import SubscriptionPolicies
     from .subscription import Subscription
@@ -46,15 +36,10 @@ from .subscription_client_enums import (
 )
 
 __all__ = [
-    'SubscriptionCreationResult',
-    'AdPrincipal',
-    'SubscriptionCreationParameters',
     'ErrorResponse', 'ErrorResponseException',
-    'SubscriptionOperation',
-    'SubscriptionOperationListResult',
-    'OperationDisplay',
-    'Operation',
-    'OperationListResult',
+    'CanceledSubscriptionId',
+    'RenamedSubscriptionId',
+    'SubscriptionName',
     'Location',
     'SubscriptionPolicies',
     'Subscription',
