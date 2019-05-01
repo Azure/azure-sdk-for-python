@@ -9,5 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0"
+from .cognitive_service_form_recognizer_apiv1_preview import CognitiveServiceFormRecognizerAPIV1Preview
+from .version import VERSION
+
+__all__ = ['CognitiveServiceFormRecognizerAPIV1Preview']
+
+__version__ = VERSION
 
