@@ -9,24 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ActionRulesList(Model):
-    """List of action rules.
-
-    :param next_link: URL to fetch the next set of action rules
-    :type next_link: str
-    :param value: List of action rules
-    :type value: list[~azure.mgmt.alertsmanagement.models.ActionRule]
+class ActionRulePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ActionRule <azure.mgmt.alertsmanagement.models.ActionRule>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ActionRule]'},
+        'current_page': {'key': 'value', 'type': '[ActionRule]'}
     }
 
-    def __init__(self, **kwargs):
-        super(ActionRulesList, self).__init__(**kwargs)
-        self.next_link = kwargs.get('next_link', None)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *args, **kwargs):
+
+        super(ActionRulePaged, self).__init__(*args, **kwargs)

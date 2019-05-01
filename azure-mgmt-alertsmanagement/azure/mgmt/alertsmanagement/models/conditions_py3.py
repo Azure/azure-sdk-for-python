@@ -16,19 +16,19 @@ class Conditions(Model):
     """Conditions in alert instance to be matched for a given action rule. Default
     value is all. Multiple values could be provided with comma separation.
 
-    :param severity:
+    :param severity: filter alerts by severity
     :type severity: ~azure.mgmt.alertsmanagement.models.Condition
-    :param monitor_service:
+    :param monitor_service: filter alerts by monitor service
     :type monitor_service: ~azure.mgmt.alertsmanagement.models.Condition
-    :param monitor_condition:
+    :param monitor_condition: filter alerts by monitor condition
     :type monitor_condition: ~azure.mgmt.alertsmanagement.models.Condition
-    :param target_resource_type:
+    :param target_resource_type: filter alerts by target resource type
     :type target_resource_type: ~azure.mgmt.alertsmanagement.models.Condition
-    :param alert_rule_id:
+    :param alert_rule_id: filter alerts by alert rule id
     :type alert_rule_id: ~azure.mgmt.alertsmanagement.models.Condition
-    :param description:
+    :param description: filter alerts by slert rule description
     :type description: ~azure.mgmt.alertsmanagement.models.Condition
-    :param alert_context:
+    :param alert_context: filter alerts by alert context (payload)
     :type alert_context: ~azure.mgmt.alertsmanagement.models.Condition
     """
 

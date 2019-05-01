@@ -53,8 +53,6 @@ try:
     from .suppression_py3 import Suppression
     from .action_group_py3 import ActionGroup
     from .diagnostics_py3 import Diagnostics
-    from .action_rules_list_py3 import ActionRulesList
-    from .patch_properties_py3 import PatchProperties
     from .patch_object_py3 import PatchObject
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
@@ -100,11 +98,10 @@ except (SyntaxError, ImportError):
     from .suppression import Suppression
     from .action_group import ActionGroup
     from .diagnostics import Diagnostics
-    from .action_rules_list import ActionRulesList
-    from .patch_properties import PatchProperties
     from .patch_object import PatchObject
 from .operation_paged import OperationPaged
 from .alert_paged import AlertPaged
+from .action_rule_paged import ActionRulePaged
 from .alerts_management_client_enums import (
     Severity,
     SignalType,
@@ -168,11 +165,10 @@ __all__ = [
     'Suppression',
     'ActionGroup',
     'Diagnostics',
-    'ActionRulesList',
-    'PatchProperties',
     'PatchObject',
     'OperationPaged',
     'AlertPaged',
+    'ActionRulePaged',
     'Severity',
     'SignalType',
     'AlertState',

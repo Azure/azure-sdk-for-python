@@ -24,9 +24,9 @@ class ActionRuleProperties(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param scope:
+    :param scope: scope on which action rule will apply
     :type scope: ~azure.mgmt.alertsmanagement.models.Scope
-    :param conditions:
+    :param conditions: conditions on which alerts will be filtered
     :type conditions: ~azure.mgmt.alertsmanagement.models.Conditions
     :param description: Description of action rule
     :type description: str

@@ -22,9 +22,9 @@ class Suppression(ActionRuleProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param scope:
+    :param scope: scope on which action rule will apply
     :type scope: ~azure.mgmt.alertsmanagement.models.Scope
-    :param conditions:
+    :param conditions: conditions on which alerts will be filtered
     :type conditions: ~azure.mgmt.alertsmanagement.models.Conditions
     :param description: Description of action rule
     :type description: str
@@ -43,7 +43,8 @@ class Suppression(ActionRuleProperties):
     :type status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
     :param type: Required. Constant filled by server.
     :type type: str
-    :param suppression_config: Required.
+    :param suppression_config: Required. suppression configuration for the
+     action rule
     :type suppression_config:
      ~azure.mgmt.alertsmanagement.models.SuppressionConfig
     """

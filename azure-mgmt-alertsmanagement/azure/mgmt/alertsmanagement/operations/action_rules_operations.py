@@ -34,7 +34,7 @@ class ActionRulesOperations(object):
 
         self.config = config
 
-    def get_all_by_subscription(
+    def list_by_subscription(
             self, target_resource_group=None, target_resource_type=None, target_resource=None, severity=None, monitor_service=None, impacted_scope=None, description=None, alert_rule_id=None, action_group=None, name=None, custom_headers=None, raw=False, **operation_config):
         """Get all action rule in a given subscription.
 
@@ -75,77 +75,80 @@ class ActionRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ActionRulesList or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.alertsmanagement.models.ActionRulesList or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of ActionRule
+        :rtype:
+         ~azure.mgmt.alertsmanagement.models.ActionRulePaged[~azure.mgmt.alertsmanagement.models.ActionRule]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
         """
-        # Construct URL
-        url = self.get_all_by_subscription.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if target_resource_group is not None:
-            query_parameters['targetResourceGroup'] = self._serialize.query("target_resource_group", target_resource_group, 'str')
-        if target_resource_type is not None:
-            query_parameters['targetResourceType'] = self._serialize.query("target_resource_type", target_resource_type, 'str')
-        if target_resource is not None:
-            query_parameters['targetResource'] = self._serialize.query("target_resource", target_resource, 'str')
-        if severity is not None:
-            query_parameters['severity'] = self._serialize.query("severity", severity, 'str')
-        if monitor_service is not None:
-            query_parameters['monitorService'] = self._serialize.query("monitor_service", monitor_service, 'str')
-        if impacted_scope is not None:
-            query_parameters['impactedScope'] = self._serialize.query("impacted_scope", impacted_scope, 'str')
-        if description is not None:
-            query_parameters['description'] = self._serialize.query("description", description, 'str')
-        if alert_rule_id is not None:
-            query_parameters['alertRuleId'] = self._serialize.query("alert_rule_id", alert_rule_id, 'str')
-        if action_group is not None:
-            query_parameters['actionGroup'] = self._serialize.query("action_group", action_group, 'str')
-        if name is not None:
-            query_parameters['name'] = self._serialize.query("name", name, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.list_by_subscription.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if target_resource_group is not None:
+                    query_parameters['targetResourceGroup'] = self._serialize.query("target_resource_group", target_resource_group, 'str')
+                if target_resource_type is not None:
+                    query_parameters['targetResourceType'] = self._serialize.query("target_resource_type", target_resource_type, 'str')
+                if target_resource is not None:
+                    query_parameters['targetResource'] = self._serialize.query("target_resource", target_resource, 'str')
+                if severity is not None:
+                    query_parameters['severity'] = self._serialize.query("severity", severity, 'str')
+                if monitor_service is not None:
+                    query_parameters['monitorService'] = self._serialize.query("monitor_service", monitor_service, 'str')
+                if impacted_scope is not None:
+                    query_parameters['impactedScope'] = self._serialize.query("impacted_scope", impacted_scope, 'str')
+                if description is not None:
+                    query_parameters['description'] = self._serialize.query("description", description, 'str')
+                if alert_rule_id is not None:
+                    query_parameters['alertRuleId'] = self._serialize.query("alert_rule_id", alert_rule_id, 'str')
+                if action_group is not None:
+                    query_parameters['actionGroup'] = self._serialize.query("action_group", action_group, 'str')
+                if name is not None:
+                    query_parameters['name'] = self._serialize.query("name", name, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
-        header_dict = {}
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('ActionRulesList', response)
-            header_dict = {
-                'x-ms-request-id': 'str',
-            }
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ActionRulePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
+            header_dict = {}
+            client_raw_response = models.ActionRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    get_all_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/actionRules'}
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/actionRules'}
 
-    def get_all_by_resource_group(
+    def list_by_resource_group(
             self, resource_group_name, target_resource_group=None, target_resource_type=None, target_resource=None, severity=None, monitor_service=None, impacted_scope=None, description=None, alert_rule_id=None, action_group=None, name=None, custom_headers=None, raw=False, **operation_config):
         """Get all action rules created in a resource group.
 
@@ -190,76 +193,79 @@ class ActionRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ActionRulesList or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.alertsmanagement.models.ActionRulesList or
-         ~msrest.pipeline.ClientRawResponse
+        :return: An iterator like instance of ActionRule
+        :rtype:
+         ~azure.mgmt.alertsmanagement.models.ActionRulePaged[~azure.mgmt.alertsmanagement.models.ActionRule]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
         """
-        # Construct URL
-        url = self.get_all_by_resource_group.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        def internal_paging(next_link=None, raw=False):
 
-        # Construct parameters
-        query_parameters = {}
-        if target_resource_group is not None:
-            query_parameters['targetResourceGroup'] = self._serialize.query("target_resource_group", target_resource_group, 'str')
-        if target_resource_type is not None:
-            query_parameters['targetResourceType'] = self._serialize.query("target_resource_type", target_resource_type, 'str')
-        if target_resource is not None:
-            query_parameters['targetResource'] = self._serialize.query("target_resource", target_resource, 'str')
-        if severity is not None:
-            query_parameters['severity'] = self._serialize.query("severity", severity, 'str')
-        if monitor_service is not None:
-            query_parameters['monitorService'] = self._serialize.query("monitor_service", monitor_service, 'str')
-        if impacted_scope is not None:
-            query_parameters['impactedScope'] = self._serialize.query("impacted_scope", impacted_scope, 'str')
-        if description is not None:
-            query_parameters['description'] = self._serialize.query("description", description, 'str')
-        if alert_rule_id is not None:
-            query_parameters['alertRuleId'] = self._serialize.query("alert_rule_id", alert_rule_id, 'str')
-        if action_group is not None:
-            query_parameters['actionGroup'] = self._serialize.query("action_group", action_group, 'str')
-        if name is not None:
-            query_parameters['name'] = self._serialize.query("name", name, 'str')
+            if not next_link:
+                # Construct URL
+                url = self.list_by_resource_group.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                # Construct parameters
+                query_parameters = {}
+                if target_resource_group is not None:
+                    query_parameters['targetResourceGroup'] = self._serialize.query("target_resource_group", target_resource_group, 'str')
+                if target_resource_type is not None:
+                    query_parameters['targetResourceType'] = self._serialize.query("target_resource_type", target_resource_type, 'str')
+                if target_resource is not None:
+                    query_parameters['targetResource'] = self._serialize.query("target_resource", target_resource, 'str')
+                if severity is not None:
+                    query_parameters['severity'] = self._serialize.query("severity", severity, 'str')
+                if monitor_service is not None:
+                    query_parameters['monitorService'] = self._serialize.query("monitor_service", monitor_service, 'str')
+                if impacted_scope is not None:
+                    query_parameters['impactedScope'] = self._serialize.query("impacted_scope", impacted_scope, 'str')
+                if description is not None:
+                    query_parameters['description'] = self._serialize.query("description", description, 'str')
+                if alert_rule_id is not None:
+                    query_parameters['alertRuleId'] = self._serialize.query("alert_rule_id", alert_rule_id, 'str')
+                if action_group is not None:
+                    query_parameters['actionGroup'] = self._serialize.query("action_group", action_group, 'str')
+                if name is not None:
+                    query_parameters['name'] = self._serialize.query("name", name, 'str')
 
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
+            else:
+                url = next_link
+                query_parameters = {}
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        deserialized = None
-        header_dict = {}
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('ActionRulesList', response)
-            header_dict = {
-                'x-ms-request-id': 'str',
-            }
+            if response.status_code not in [200]:
+                raise models.ErrorResponseException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        deserialized = models.ActionRulePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
+            header_dict = {}
+            client_raw_response = models.ActionRulePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    get_all_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules'}
 
     def get_by_name(
             self, resource_group_name, action_rule_name, custom_headers=None, raw=False, **operation_config):
@@ -472,8 +478,8 @@ class ActionRulesOperations(object):
         return deserialized
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules/{actionRuleName}'}
 
-    def patch(
-            self, resource_group_name, action_rule_name, properties=None, tags=None, custom_headers=None, raw=False, **operation_config):
+    def update(
+            self, resource_group_name, action_rule_name, status=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """Patch action rule.
 
         Update enabled flag and/or tags for the given action rule.
@@ -483,8 +489,10 @@ class ActionRulesOperations(object):
         :type resource_group_name: str
         :param action_rule_name: The name that needs to be updated
         :type action_rule_name: str
-        :param properties:
-        :type properties: ~azure.mgmt.alertsmanagement.models.PatchProperties
+        :param status: Indicates if the given action rule is enabled or
+         disabled. Possible values include: 'Enabled', 'Disabled'
+        :type status: str or
+         ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
         :param tags: tags to be updated
         :type tags: object
         :param dict custom_headers: headers that will be added to the request
@@ -498,10 +506,10 @@ class ActionRulesOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.alertsmanagement.models.ErrorResponseException>`
         """
-        action_rule_patch = models.PatchObject(properties=properties, tags=tags)
+        action_rule_patch = models.PatchObject(status=status, tags=tags)
 
         # Construct URL
-        url = self.patch.metadata['url']
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -548,4 +556,4 @@ class ActionRulesOperations(object):
             return client_raw_response
 
         return deserialized
-    patch.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules/{actionRuleName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AlertsManagement/actionRules/{actionRuleName}'}

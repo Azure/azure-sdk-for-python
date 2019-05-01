@@ -22,7 +22,7 @@ class SuppressionConfig(Model):
      'Monthly'
     :type recurrence_type: str or
      ~azure.mgmt.alertsmanagement.models.SuppressionType
-    :param schedule:
+    :param schedule: suppression schedule configuration
     :type schedule: ~azure.mgmt.alertsmanagement.models.SuppressionSchedule
     """
 

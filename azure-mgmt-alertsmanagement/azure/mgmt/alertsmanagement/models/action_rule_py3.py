@@ -31,8 +31,25 @@ class ActionRule(ManagedResource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param properties:
-    :type properties: ~azure.mgmt.alertsmanagement.models.ActionRuleProperties
+    :param scope: scope on which action rule will apply
+    :type scope: ~azure.mgmt.alertsmanagement.models.Scope
+    :param conditions: conditions on which alerts will be filtered
+    :type conditions: ~azure.mgmt.alertsmanagement.models.Conditions
+    :param description: Description of action rule
+    :type description: str
+    :ivar created_at: Creation time of action rule. Date-Time in ISO-8601
+     format.
+    :vartype created_at: datetime
+    :ivar last_modified_at: Last updated time of action rule. Date-Time in
+     ISO-8601 format.
+    :vartype last_modified_at: datetime
+    :ivar created_by: Created by user name.
+    :vartype created_by: str
+    :ivar last_modified_by: Last modified by user name.
+    :vartype last_modified_by: str
+    :param status: Indicates if the given action rule is enabled or disabled.
+     Possible values include: 'Enabled', 'Disabled'
+    :type status: str or ~azure.mgmt.alertsmanagement.models.ActionRuleStatus
     """
 
     _validation = {
@@ -40,6 +57,10 @@ class ActionRule(ManagedResource):
         'type': {'readonly': True},
         'name': {'readonly': True},
         'location': {'required': True},
+        'created_at': {'readonly': True},
+        'last_modified_at': {'readonly': True},
+        'created_by': {'readonly': True},
+        'last_modified_by': {'readonly': True},
     }
 
     _attribute_map = {
@@ -48,9 +69,23 @@ class ActionRule(ManagedResource):
         'name': {'key': 'name', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'ActionRuleProperties'},
+        'scope': {'key': 'properties.scope', 'type': 'Scope'},
+        'conditions': {'key': 'properties.conditions', 'type': 'Conditions'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
+        'last_modified_at': {'key': 'properties.lastModifiedAt', 'type': 'iso-8601'},
+        'created_by': {'key': 'properties.createdBy', 'type': 'str'},
+        'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, properties=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, scope=None, conditions=None, description: str=None, status=None, **kwargs) -> None:
         super(ActionRule, self).__init__(location=location, tags=tags, **kwargs)
-        self.properties = properties
+        self.scope = scope
+        self.conditions = conditions
+        self.description = description
+        self.created_at = None
+        self.last_modified_at = None
+        self.created_by = None
+        self.last_modified_by = None
+        self.status = status
