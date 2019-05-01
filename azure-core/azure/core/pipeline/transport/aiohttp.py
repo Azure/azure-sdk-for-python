@@ -83,6 +83,18 @@ class AioHttpTransport(AsyncHttpTransport):
             return ssl_ctx
         return verify
 
+    def _get_request_data(self, request):
+        if request.files:
+            form_data = aiohttp.FormData()
+            for form_file, data in request.files.items():
+                content_type = data[2] if len(data) > 2 else None
+                try:
+                    form_data.add_field(form_file, data[1], filename=data[0], content_type=content_type)
+                except IndexError:
+                    raise ValueError("Invalid formdata formatting: {}".format(data))
+            return form_data
+        return request.data
+
     async def send(self, request: HttpRequest, **config: Any) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
@@ -102,8 +114,7 @@ class AioHttpTransport(AsyncHttpTransport):
                 request.method,
                 request.url,
                 headers=request.headers,
-                data=request.data,
-                # files=request.files,  # TODO: What is aiohttp equivalent...?
+                data=self._get_request_data(request),
                 timeout=config.get('connection_timeout', self.config.connection.timeout),
                 allow_redirects=False,
                 **config
@@ -127,7 +138,6 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
     def __init__(self, response: aiohttp.ClientResponse, block_size: int) -> None:
         self.response = response
         self.block_size = block_size
-        self.iter_content_func = self.response.content.read(self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
 
     def __len__(self):
@@ -135,7 +145,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
 
     async def __anext__(self):
         try:
-            chunk = await self.iter_content_func
+            chunk = await self.response.content.read(self.block_size)
             if not chunk:
                 self.response.close()
                 raise StopAsyncIteration()
