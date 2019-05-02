@@ -110,8 +110,6 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :param availability_zones: (PREVIEW) Availability zones for nodes. Must
      use VirtualMachineScaleSets AgentPoolType.
     :type availability_zones: list[str]
-    :param enable_node_public_ip: Enable public IP for nodes
-    :type enable_node_public_ip: bool
     :param name: Required. Unique name of the agent pool profile in the
      context of the subscription and resource group.
     :type name: str
@@ -138,10 +136,9 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         'orchestrator_version': {'key': 'orchestratorVersion', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'availability_zones': {'key': 'availabilityZones', 'type': '[str]'},
-        'enable_node_public_ip': {'key': 'enableNodePublicIP', 'type': 'bool'},
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, *, vm_size, name: str, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, orchestrator_version: str=None, availability_zones=None, enable_node_public_ip: bool=None, **kwargs) -> None:
-        super(ManagedClusterAgentPoolProfile, self).__init__(count=count, vm_size=vm_size, os_disk_size_gb=os_disk_size_gb, vnet_subnet_id=vnet_subnet_id, max_pods=max_pods, os_type=os_type, max_count=max_count, min_count=min_count, enable_auto_scaling=enable_auto_scaling, type=type, orchestrator_version=orchestrator_version, availability_zones=availability_zones, enable_node_public_ip=enable_node_public_ip, **kwargs)
+    def __init__(self, *, vm_size, name: str, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, orchestrator_version: str=None, availability_zones=None, **kwargs) -> None:
+        super(ManagedClusterAgentPoolProfile, self).__init__(count=count, vm_size=vm_size, os_disk_size_gb=os_disk_size_gb, vnet_subnet_id=vnet_subnet_id, max_pods=max_pods, os_type=os_type, max_count=max_count, min_count=min_count, enable_auto_scaling=enable_auto_scaling, type=type, orchestrator_version=orchestrator_version, availability_zones=availability_zones, **kwargs)
         self.name = name

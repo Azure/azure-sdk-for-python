@@ -117,8 +117,6 @@ class AgentPool(SubResource):
     :param availability_zones: (PREVIEW) Availability zones for nodes. Must
      use VirtualMachineScaleSets AgentPoolType.
     :type availability_zones: list[str]
-    :param enable_node_public_ip: Enable public IP for nodes
-    :type enable_node_public_ip: bool
     """
 
     _validation = {
@@ -147,10 +145,9 @@ class AgentPool(SubResource):
         'orchestrator_version': {'key': 'properties.orchestratorVersion', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'availability_zones': {'key': 'properties.availabilityZones', 'type': '[str]'},
-        'enable_node_public_ip': {'key': 'properties.enableNodePublicIP', 'type': 'bool'},
     }
 
-    def __init__(self, *, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, agent_pool_type=None, orchestrator_version: str=None, availability_zones=None, enable_node_public_ip: bool=None, **kwargs) -> None:
+    def __init__(self, *, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, agent_pool_type=None, orchestrator_version: str=None, availability_zones=None, **kwargs) -> None:
         super(AgentPool, self).__init__(**kwargs)
         self.count = count
         self.vm_size = vm_size
@@ -165,4 +162,3 @@ class AgentPool(SubResource):
         self.orchestrator_version = orchestrator_version
         self.provisioning_state = None
         self.availability_zones = availability_zones
-        self.enable_node_public_ip = enable_node_public_ip
