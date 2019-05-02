@@ -15,11 +15,11 @@ from msrest.serialization import Model
 class MetadataEntity(Model):
     """The metadata entity contract.
 
-    :param id: The resource Id of the configuration resource.
+    :param id: The resource Id of the metadata entity.
     :type id: str
-    :param type: The type of the configuration resource.
+    :param type: The type of the metadata entity.
     :type type: str
-    :param name: The name of the configuration resource.
+    :param name: The name of the metadata entity.
     :type name: str
     :param display_name: The display name.
     :type display_name: str
