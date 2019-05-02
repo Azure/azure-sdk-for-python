@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class MetadataEntityListResult(Model):
-    """The list of metadata entities.
-
-    :param value: The list of metadata entities.
-    :type value: list[~azure.mgmt.advisor.models.MetadataEntity]
+class MetadataEntityPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`MetadataEntity <azure.mgmt.advisor.models.MetadataEntity>` object
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MetadataEntity]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[MetadataEntity]'}
     }
 
-    def __init__(self, **kwargs):
-        super(MetadataEntityListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *args, **kwargs):
+
+        super(MetadataEntityPaged, self).__init__(*args, **kwargs)

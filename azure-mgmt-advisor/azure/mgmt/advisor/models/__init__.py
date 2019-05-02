@@ -12,7 +12,6 @@
 try:
     from .metadata_supported_value_detail_py3 import MetadataSupportedValueDetail
     from .metadata_entity_py3 import MetadataEntity
-    from .metadata_entity_list_result_py3 import MetadataEntityListResult
     from .config_data_properties_py3 import ConfigDataProperties
     from .config_data_py3 import ConfigData
     from .arm_error_response_body_py3 import ARMErrorResponseBody
@@ -25,7 +24,6 @@ try:
 except (SyntaxError, ImportError):
     from .metadata_supported_value_detail import MetadataSupportedValueDetail
     from .metadata_entity import MetadataEntity
-    from .metadata_entity_list_result import MetadataEntityListResult
     from .config_data_properties import ConfigDataProperties
     from .config_data import ConfigData
     from .arm_error_response_body import ARMErrorResponseBody
@@ -35,6 +33,7 @@ except (SyntaxError, ImportError):
     from .operation_display_info import OperationDisplayInfo
     from .operation_entity import OperationEntity
     from .suppression_contract import SuppressionContract
+from .metadata_entity_paged import MetadataEntityPaged
 from .config_data_paged import ConfigDataPaged
 from .resource_recommendation_base_paged import ResourceRecommendationBasePaged
 from .operation_entity_paged import OperationEntityPaged
@@ -48,7 +47,6 @@ from .advisor_management_client_enums import (
 __all__ = [
     'MetadataSupportedValueDetail',
     'MetadataEntity',
-    'MetadataEntityListResult',
     'ConfigDataProperties',
     'ConfigData',
     'ARMErrorResponseBody',
@@ -58,6 +56,7 @@ __all__ = [
     'OperationDisplayInfo',
     'OperationEntity',
     'SuppressionContract',
+    'MetadataEntityPaged',
     'ConfigDataPaged',
     'ResourceRecommendationBasePaged',
     'OperationEntityPaged',
