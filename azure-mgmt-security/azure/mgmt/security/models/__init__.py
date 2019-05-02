@@ -67,6 +67,9 @@ try:
     from .information_protection_policy_py3 import InformationProtectionPolicy
     from .security_contact_py3 import SecurityContact
     from .workspace_setting_py3 import WorkspaceSetting
+    from .regulatory_compliance_standard_py3 import RegulatoryComplianceStandard
+    from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
+    from .regulatory_compliance_assessment_py3 import RegulatoryComplianceAssessment
 except (SyntaxError, ImportError):
     from .pricing import Pricing
     from .pricing_list import PricingList
@@ -125,6 +128,9 @@ except (SyntaxError, ImportError):
     from .information_protection_policy import InformationProtectionPolicy
     from .security_contact import SecurityContact
     from .workspace_setting import WorkspaceSetting
+    from .regulatory_compliance_standard import RegulatoryComplianceStandard
+    from .regulatory_compliance_control import RegulatoryComplianceControl
+    from .regulatory_compliance_assessment import RegulatoryComplianceAssessment
 from .alert_paged import AlertPaged
 from .setting_paged import SettingPaged
 from .allowed_connections_resource_paged import AllowedConnectionsResourcePaged
@@ -140,6 +146,9 @@ from .compliance_paged import CompliancePaged
 from .information_protection_policy_paged import InformationProtectionPolicyPaged
 from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
+from .regulatory_compliance_standard_paged import RegulatoryComplianceStandardPaged
+from .regulatory_compliance_control_paged import RegulatoryComplianceControlPaged
+from .regulatory_compliance_assessment_paged import RegulatoryComplianceAssessmentPaged
 from .security_center_enums import (
     PricingTier,
     ReportedSeverity,
@@ -153,6 +162,7 @@ from .security_center_enums import (
     AutoProvision,
     AlertNotifications,
     AlertsToAdmins,
+    State,
     ConnectionType,
 )
 
@@ -214,6 +224,9 @@ __all__ = [
     'InformationProtectionPolicy',
     'SecurityContact',
     'WorkspaceSetting',
+    'RegulatoryComplianceStandard',
+    'RegulatoryComplianceControl',
+    'RegulatoryComplianceAssessment',
     'AlertPaged',
     'SettingPaged',
     'AllowedConnectionsResourcePaged',
@@ -229,6 +242,9 @@ __all__ = [
     'InformationProtectionPolicyPaged',
     'SecurityContactPaged',
     'WorkspaceSettingPaged',
+    'RegulatoryComplianceStandardPaged',
+    'RegulatoryComplianceControlPaged',
+    'RegulatoryComplianceAssessmentPaged',
     'PricingTier',
     'ReportedSeverity',
     'SettingKind',
@@ -241,5 +257,6 @@ __all__ = [
     'AutoProvision',
     'AlertNotifications',
     'AlertsToAdmins',
+    'State',
     'ConnectionType',
 ]
