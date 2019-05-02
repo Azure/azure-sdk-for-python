@@ -52,8 +52,14 @@ from azure.core.configuration import Configuration
 
 def test_sans_io_exception():
     class BrokenSender(HttpTransport):
-        def send(self, request, **config):
+        def send(self, session, request, **config):
             raise ValueError("Broken")
+
+        def create_session(self):
+            return requests.Session()
+
+        def close_session(self, session):
+            pass
 
         def __exit__(self, exc_type, exc_value, traceback):
             """Raise any exception triggered within the runtime context."""

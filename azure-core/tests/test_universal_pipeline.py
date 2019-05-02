@@ -58,13 +58,13 @@ def test_user_agent():
         assert policy.user_agent.endswith("mytools")
 
         request = HttpRequest('GET', 'http://127.0.0.1/')
-        policy.on_request(PipelineRequest(request, PipelineContext(None)))
+        policy.on_request(PipelineRequest(request, PipelineContext(None, None)))
         assert request.headers["user-agent"].endswith("mytools")
 
 @mock.patch('azure.core.pipeline.policies.universal._LOGGER')
 def test_no_log(mock_http_logger):
     universal_request = HttpRequest('GET', 'http://127.0.0.1/')
-    request = PipelineRequest(universal_request, PipelineContext(None))
+    request = PipelineRequest(universal_request, PipelineContext(None, None))
     http_logger = NetworkTraceLoggingPolicy()
     response = PipelineResponse(request, HttpResponse(universal_request, None), request.context)
 
@@ -127,7 +127,7 @@ def test_raw_deserializer():
 
             def body(self):
                 return self._body
-        return PipelineResponse(None, MockResponse(body, content_type), PipelineContext(None, stream=False))
+        return PipelineResponse(None, MockResponse(body, content_type), PipelineContext(None, None, stream=False))
 
     response = build_response(b"<groot/>", content_type="application/xml")
     raw_deserializer.on_response(None, response)
@@ -166,7 +166,7 @@ def test_raw_deserializer():
     req_response.headers["content-type"] = "application/json"
     req_response._content = b'{"success": true}'
     req_response._content_consumed = True
-    response = PipelineResponse(None, RequestsTransportResponse(None, req_response), PipelineContext(None, stream=False))
+    response = PipelineResponse(None, RequestsTransportResponse(None, req_response), PipelineContext(None, None, stream=False))
 
     raw_deserializer.on_response(None, response)
     result = response.context["deserialized_data"]

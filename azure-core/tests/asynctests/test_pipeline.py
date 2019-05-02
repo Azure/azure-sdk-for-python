@@ -36,6 +36,7 @@ from azure.core.pipeline.transport import (
     AioHttpTransport
 )
 
+import requests
 import trio
 
 import pytest
@@ -44,8 +45,14 @@ import pytest
 @pytest.mark.asyncio
 async def test_sans_io_exception():
     class BrokenSender(AsyncHttpTransport):
-        async def send(self, request, **config):
+        async def send(self, session, request, **config):
             raise ValueError("Broken")
+
+        async def create_session(self):
+            return requests.Session()
+
+        async def close_session(self, session, **kwargs):
+            pass
 
         async def __aexit__(self, exc_type, exc_value, traceback):
             """Raise any exception triggered within the runtime context."""

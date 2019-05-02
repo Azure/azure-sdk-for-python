@@ -47,10 +47,11 @@ except ImportError: # Python <= 3.5
 
 class PipelineContext(dict):
 
-    def __init__(self, transport, **kwargs):
+    def __init__(self, session, transport, **kwargs):
+        self.session = session
         self.transport = transport
         self.options = kwargs
-        self._protected = ['transport', 'options']
+        self._protected = ['session', 'transport', 'options']
 
     def __setitem__(self, key, item):
         if key in self._protected:

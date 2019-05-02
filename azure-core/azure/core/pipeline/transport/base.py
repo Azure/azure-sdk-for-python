@@ -62,6 +62,14 @@ class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPRe
         """
         pass
 
+    @abc.abstractmethod
+    def create_session(self):
+        pass
+
+    @abc.abstractmethod
+    def close_session(self, session, **kwargs):
+        pass
+
     def sleep(self, duration):
         time.sleep(duration)
 
@@ -218,6 +226,7 @@ class _HttpResponseBase(object):
 
 
 class HttpResponse(_HttpResponseBase):
+
     def stream_download(self):
 
         # type: () -> Iterator[bytes]

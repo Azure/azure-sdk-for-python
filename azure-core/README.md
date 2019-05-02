@@ -37,11 +37,10 @@ class FooServiceClient():
         config.redirect_policy = RedirectPolicy(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.proxy_policy = ProxyPolicy(**kwargs)
-        config.transport = kwargs.get('transport', RequestsTransport)
 
     def __init__(self, endpoint=None, credentials=None, configuration=None, **kwargs):
         config = configuration or FooServiceClient.create_config(**kwargs)
-        transport = config.get_transport(**kwargs)
+        transport = kwargs.get('transport') or RequestsTransport(config, **kwargs)
         policies = [
             config.user_agent_policy,
             config.headers_policy,
@@ -178,15 +177,12 @@ class ConnectionConfiguration(object):
     :param verify: SSL certificate verification. Enabled by default. Set to False to disable, alternatively
      can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs.
     :param cert: Client-side certificates. You can specify a local cert to use as client side certificate, as a single   file (containing the private key and the certificate) or as a tuple of both files’ paths.
-    :param keep_alive: Whether to keep the connection session open and reuse between requests. If the client
-     is run within a context manager, this will be set to True. Otherwise the default is False.
     """
 
     def __init__(self, **kwargs):
         self.timeout = kwargs.pop('connection_timeout', 100)
         self.verify = kwargs.pop('connection_verify', True)
         self.cert = kwargs.pop('connection_cert', None)
-        self.keep_alive = kwargs.pop('connection_keep_alive', False)
 ```
 
 ### HttpRequest and HttpResponse

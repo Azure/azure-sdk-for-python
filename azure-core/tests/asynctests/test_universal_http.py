@@ -45,7 +45,8 @@ async def test_basic_aiohttp():
     conf = Configuration()
     request = HttpRequest("GET", "https://www.bing.com/")
     async with AioHttpTransport(conf) as sender:
-        response = await sender.send(request)
+        session = await sender.create_session()
+        response = await sender.send(session, request)
         assert response.body() is not None
 
     assert sender.session is None
@@ -56,7 +57,8 @@ async def test_basic_async_requests():
 
     request = HttpRequest("GET", "https://www.bing.com/")
     async with AsyncioRequestsTransport() as sender:
-        response = await sender.send(request)
+        session = await sender.create_session()
+        response = await sender.send(session, request)
         assert response.body() is not None
 
     assert response.status_code == 200
@@ -67,7 +69,8 @@ async def test_conf_async_requests():
     conf = Configuration()
     request = HttpRequest("GET", "https://www.bing.com/")
     async with AsyncioRequestsTransport(conf) as sender:
-        response = await sender.send(request)
+        session = await sender.create_session()
+        response = await sender.send(session, request)
         assert response.body() is not None
 
     assert response.status_code == 200
@@ -78,7 +81,8 @@ def test_conf_async_trio_requests():
         conf = Configuration()
         request = HttpRequest("GET", "https://www.bing.com/")
         async with TrioRequestsTransport(conf) as sender:
-            return await sender.send(request)
+            session = await sender.create_session()
+            return await sender.send(session, request)
             assert response.body() is not None
 
     response = trio.run(do)

@@ -117,16 +117,16 @@ class RequestsTransport(HttpTransport):
         # type: (Optional[requests.Session]) -> None
         self._session_mapping = threading.local()
         self.config = configuration or Configuration()
-        self.session = session or requests.Session()
+        self.session = session
 
     def __enter__(self):
         # type: () -> RequestsTransport
-        self.config.connection.keep_alive = True
+        self.session = requests.Session()
         return self
 
     def __exit__(self, *exc_details):  # pylint: disable=arguments-differ
-        self.config.connection.keep_alive = False
-        self.close()
+        self.session.close()
+        self.session = None
 
     def _init_session(self, session):
         # type: (requests.Session) -> None
@@ -134,12 +134,20 @@ class RequestsTransport(HttpTransport):
 
         This is initialization I want to do once only on a session.
         """
-        if self.config.proxy_policy:
-            session.trust_env = self.config.proxy_policy.use_env_settings
-        disable_retries = Retry(total=False, redirect=False, raise_on_status=False)
-        adapter = requests.adapters.HTTPAdapter(max_retries=disable_retries)
-        for p in self._protocols:
-            session.mount(p, adapter)
+        if session:
+            if self.config.proxy_policy:
+                session.trust_env = self.config.proxy_policy.use_env_settings
+            disable_retries = Retry(total=False, redirect=False, raise_on_status=False)
+            adapter = requests.adapters.HTTPAdapter(max_retries=disable_retries)
+            for p in self._protocols:
+                session.mount(p, adapter)
+
+    def create_session(self):
+        return self.session or requests.Session()
+
+    def close_session(self, session, **kwargs):
+        if session is not self.session and not kwargs.get('stream', False):
+            session.close()
 
     @property  # type: ignore
     def session(self):
@@ -155,10 +163,7 @@ class RequestsTransport(HttpTransport):
         self._init_session(value)
         self._session_mapping.session = value
 
-    def close(self):
-        self.session.close()
-
-    def send(self, request, **kwargs):
+    def send(self, session, request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
         """Send request object according to configuration.
 
@@ -174,7 +179,7 @@ class RequestsTransport(HttpTransport):
             kwargs['proxies'] = self.config.proxy_policy.proxies
 
         try:
-            response = self.session.request(
+            response = session.request(
                 request.method,
                 request.url,
                 headers=request.headers,
@@ -197,9 +202,6 @@ class RequestsTransport(HttpTransport):
                 error = ConnectError(err, error=err)
         except requests.RequestException as err:
             error = ServiceRequestError(err, error=err)
-        finally:
-            if not self.config.connection.keep_alive and (not response or not kwargs['stream']):
-                self.session.close()
 
         if error:
             raise error

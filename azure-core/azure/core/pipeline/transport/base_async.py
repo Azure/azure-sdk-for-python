@@ -89,6 +89,14 @@ class AsyncHttpTransport(AbstractAsyncContextManager, abc.ABC, Generic[HTTPReque
         """
         pass
 
+    @abc.abstractmethod
+    async def create_session(self):
+        pass
+
+    @abc.abstractmethod
+    async def close_session(self, session, **kwargs):
+        pass
+
     async def sleep(self, duration):
         await asyncio.sleep(duration)
 

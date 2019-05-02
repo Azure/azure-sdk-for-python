@@ -104,7 +104,15 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
     async def sleep(self, duration):
         await trio.sleep(duration)
 
-    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
+    async def create_session(self):
+        return self.session or requests.Session()
+
+    async def close_session(self, session, **kwargs):
+        if session is not self.session and not kwargs.get('stream', False):
+            trio_limiter = kwargs.get("trio_limiter", None)
+            await trio.run_sync_in_worker_thread(functools.partial(session.close), limiter=trio_limiter)
+
+    async def send(self, session, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
         """Send the request using this HTTP sender.
         """
         trio_limiter = kwargs.get("trio_limiter", None)
@@ -115,7 +123,7 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
         try:
             response = await trio.run_sync_in_worker_thread(
                 functools.partial(
-                    self.session.request,
+                    session.request,
                     request.method,
                     request.url,
                     headers=request.headers,
@@ -139,9 +147,6 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
                 error = ConnectError(err, error=err)
         except requests.RequestException as err:
             error = ServiceRequestError(err, error=err)
-        finally:
-            if not self.config.connection.keep_alive and (not response or not kwargs['stream']):
-                self.session.close()
         if error:
             raise error
 

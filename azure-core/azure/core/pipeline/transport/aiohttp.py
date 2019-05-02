@@ -51,13 +51,12 @@ class AioHttpTransport(AsyncHttpTransport):
     """AioHttp HTTP sender implementation.
     """
 
-    def __init__(self, configuration=None, *, loop=None):
+    def __init__(self, configuration=None, *, session=None, loop=None):
         self._loop = loop
-        self.session = None
+        self.session = session
         self.config = configuration
 
     async def __aenter__(self):
-        self.config.connection.keep_alive = True
         self.session = aiohttp.ClientSession(loop=self._loop)
         await self.session.__aenter__()
         return self
@@ -65,7 +64,6 @@ class AioHttpTransport(AsyncHttpTransport):
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         await self.session.__aexit__(*exc_details)
         self.session = None
-        self.config.connection.keep_alive = False
 
     def _build_ssl_config(self, **config):
         verify = config.get('connection_verify', self.config.connection.verify)
@@ -95,16 +93,24 @@ class AioHttpTransport(AsyncHttpTransport):
             return form_data
         return request.data
 
-    async def send(self, request: HttpRequest, **config: Any) -> AsyncHttpResponse:
+    async def create_session(self):
+        if self.session:
+            return self.session
+        session = aiohttp.ClientSession(loop=self._loop)
+        await session.__aenter__()
+        return session
+
+    async def close_session(self, session, **kwargs):
+        if session is not self.session and not kwargs.get('stream', False):
+            await session.close()
+
+    async def send(self, session, request: HttpRequest, **config: Any) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
         pass stream=True to avoid this behavior.
         """
-        if self.config.connection.keep_alive and self.session:
-            session = self.session
-        else:
-            session = aiohttp.ClientSession(loop=self._loop)
+        
         error = None
         response = None
         config['ssl'] = self._build_ssl_config(**config)
@@ -124,9 +130,6 @@ class AioHttpTransport(AsyncHttpTransport):
                 await response.load_body()
         except aiohttp.client_exceptions.ClientConnectorError as err:
             error = ConnectError(err, error=err)
-        finally:
-            if not self.config.connection.keep_alive and (not response or not stream_response):
-                await session.close()
 
         if error:
             raise error

@@ -78,7 +78,7 @@ class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseTy
     async def send(self, request):
         return PipelineResponse(
             request.http_request,
-            await self._sender.send(request.http_request, **request.context.options),
+            await self._sender.send(request.context.session, request.http_request, **request.context.options),
             request.context
         )
 
@@ -119,8 +119,13 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         await self._transport.__aexit__(*exc_details)
 
     async def run(self, request: PipelineRequest, **kwargs: Any):
-        context = PipelineContext(self._transport, **kwargs)
+        session = await self._transport.create_session()
+        context = PipelineContext(session, self._transport, **kwargs)
+
         pipeline_request = PipelineRequest(request, context)
         first_node = self._impl_policies[0] if self._impl_policies else _AsyncTransportRunner(self._transport)
-        return await first_node.send(pipeline_request)  # type: ignore
+        try:
+            return await first_node.send(pipeline_request)  # type: ignore
+        finally:
+            await self._transport.close_session(session, **kwargs)
 

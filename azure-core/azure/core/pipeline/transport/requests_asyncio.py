@@ -69,7 +69,15 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         return super(AsyncioRequestsTransport, self).__exit__()
 
-    async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
+    async def create_session(self):
+        return self.session or requests.Session()
+    
+    async def close_session(self, session, **kwargs):
+        if session is not self.session and not kwargs.get('stream', False):
+            loop = kwargs.get("loop", _get_running_loop())
+            await loop.run_in_executor(None, functools.partial(session.close))
+
+    async def send(self, session, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
         """Send the request using this HTTP sender.
         """
         loop = kwargs.get("loop", _get_running_loop())
@@ -81,7 +89,7 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
             response = await loop.run_in_executor(
                 None,
                 functools.partial(
-                    self.session.request,
+                    session.request,
                     request.method,
                     request.url,
                     headers=request.headers,
@@ -104,9 +112,6 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
                 error = ConnectError(err, error=err)
         except requests.RequestException as err:
             error = ServiceRequestError(err, error=err)
-        finally:
-            if not self.config.connection.keep_alive and (not response or not kwargs['stream']):
-                self.session.close()
         if error:
             raise error
 

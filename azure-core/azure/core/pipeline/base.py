@@ -74,7 +74,7 @@ class _TransportRunner(HTTPPolicy):
     def send(self, request):
         return PipelineResponse(
             request.http_request,
-            self._sender.send(request.http_request, **request.context.options),
+            self._sender.send(request.context.session, request.http_request, **request.context.options),
             context=request.context
         )
 
@@ -111,7 +111,12 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
     def run(self, request, **kwargs):
         # type: (HTTPRequestType, Any) -> PipelineResponse
-        context = PipelineContext(self._transport, **kwargs)
+        session = self._transport.create_session()
+        context = PipelineContext(session, self._transport, **kwargs)
+
         pipeline_request = PipelineRequest(request, context)  # type: PipelineRequest[HTTPRequestType]
         first_node = self._impl_policies[0] if self._impl_policies else _TransportRunner(self._transport)
-        return first_node.send(pipeline_request)  # type: ignore
+        try:
+            return first_node.send(pipeline_request)  # type: ignore
+        finally:
+            self._transport.close_session(session, **kwargs)
