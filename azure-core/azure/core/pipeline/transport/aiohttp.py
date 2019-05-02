@@ -57,7 +57,8 @@ class AioHttpTransport(AsyncHttpTransport):
         self.config = configuration
 
     async def __aenter__(self):
-        self.session = aiohttp.ClientSession(loop=self._loop)
+        if not self.session:
+            self.session = aiohttp.ClientSession(loop=self._loop)
         await self.session.__aenter__()
         return self
 

@@ -121,7 +121,8 @@ class RequestsTransport(HttpTransport):
 
     def __enter__(self):
         # type: () -> RequestsTransport
-        self.session = requests.Session()
+        if not self.session:
+            self.session = requests.Session()
         return self
 
     def __exit__(self, *exc_details):  # pylint: disable=arguments-differ
