@@ -13,7 +13,7 @@ from .resource_py3 import Resource
 
 
 class AlertsSummary(Resource):
-    """Summary of alerts based on the input filters and 'groupby' parameters.
+    """Summary of the alerts.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,8 +24,25 @@ class AlertsSummary(Resource):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param properties:
-    :type properties: ~azure.mgmt.alertsmanagement.models.AlertsSummaryGroup
+    :param total: Total number of alerts.
+    :type total: int
+    :param smart_groups_count: Total number of smart groups.
+    :type smart_groups_count: int
+    :param summary_by_state: Summary of alerts by state
+    :type summary_by_state:
+     ~azure.mgmt.alertsmanagement.models.AlertsSummaryPropertiesSummaryByState
+    :param summary_by_severity: Summary of alerts by severity
+    :type summary_by_severity:
+     ~azure.mgmt.alertsmanagement.models.AlertsSummaryPropertiesSummaryBySeverity
+    :param summary_by_severity_and_monitor_condition: Summary of alerts by
+     severity and monitor condition
+    :type summary_by_severity_and_monitor_condition:
+     ~azure.mgmt.alertsmanagement.models.AlertsSummaryPropertiesSummaryBySeverityAndMonitorCondition
+    :param summary_by_monitor_service: Summary of alerts by severity
+    :type summary_by_monitor_service:
+     ~azure.mgmt.alertsmanagement.models.AlertsSummaryPropertiesSummaryByMonitorService
+    :param next_link: URL to fetch the next set of results.
+    :type next_link: str
     """
 
     _validation = {
@@ -38,9 +55,21 @@ class AlertsSummary(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'AlertsSummaryGroup'},
+        'total': {'key': 'properties.total', 'type': 'int'},
+        'smart_groups_count': {'key': 'properties.smartGroupsCount', 'type': 'int'},
+        'summary_by_state': {'key': 'properties.summaryByState', 'type': 'AlertsSummaryPropertiesSummaryByState'},
+        'summary_by_severity': {'key': 'properties.summaryBySeverity', 'type': 'AlertsSummaryPropertiesSummaryBySeverity'},
+        'summary_by_severity_and_monitor_condition': {'key': 'properties.summaryBySeverityAndMonitorCondition', 'type': 'AlertsSummaryPropertiesSummaryBySeverityAndMonitorCondition'},
+        'summary_by_monitor_service': {'key': 'properties.summaryByMonitorService', 'type': 'AlertsSummaryPropertiesSummaryByMonitorService'},
+        'next_link': {'key': 'properties.nextLink', 'type': 'str'},
     }
 
-    def __init__(self, *, properties=None, **kwargs) -> None:
+    def __init__(self, *, total: int=None, smart_groups_count: int=None, summary_by_state=None, summary_by_severity=None, summary_by_severity_and_monitor_condition=None, summary_by_monitor_service=None, next_link: str=None, **kwargs) -> None:
         super(AlertsSummary, self).__init__(**kwargs)
-        self.properties = properties
+        self.total = total
+        self.smart_groups_count = smart_groups_count
+        self.summary_by_state = summary_by_state
+        self.summary_by_severity = summary_by_severity
+        self.summary_by_severity_and_monitor_condition = summary_by_severity_and_monitor_condition
+        self.summary_by_monitor_service = summary_by_monitor_service
+        self.next_link = next_link
