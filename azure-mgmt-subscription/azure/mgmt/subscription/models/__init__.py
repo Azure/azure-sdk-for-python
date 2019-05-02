@@ -14,6 +14,9 @@ try:
     from .canceled_subscription_id_py3 import CanceledSubscriptionId
     from .renamed_subscription_id_py3 import RenamedSubscriptionId
     from .subscription_name_py3 import SubscriptionName
+    from .operation_display_py3 import OperationDisplay
+    from .operation_py3 import Operation
+    from .operation_list_result_py3 import OperationListResult
     from .location_py3 import Location
     from .subscription_policies_py3 import SubscriptionPolicies
     from .subscription_py3 import Subscription
@@ -23,6 +26,9 @@ except (SyntaxError, ImportError):
     from .canceled_subscription_id import CanceledSubscriptionId
     from .renamed_subscription_id import RenamedSubscriptionId
     from .subscription_name import SubscriptionName
+    from .operation_display import OperationDisplay
+    from .operation import Operation
+    from .operation_list_result import OperationListResult
     from .location import Location
     from .subscription_policies import SubscriptionPolicies
     from .subscription import Subscription
@@ -40,6 +46,9 @@ __all__ = [
     'CanceledSubscriptionId',
     'RenamedSubscriptionId',
     'SubscriptionName',
+    'OperationDisplay',
+    'Operation',
+    'OperationListResult',
     'Location',
     'SubscriptionPolicies',
     'Subscription',

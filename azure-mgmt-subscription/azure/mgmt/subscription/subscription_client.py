@@ -13,6 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.operations import Operations
 from .operations.subscriptions_operations import SubscriptionsOperations
 from .operations.tenants_operations import TenantsOperations
 from . import models
@@ -56,6 +57,8 @@ class SubscriptionClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: SubscriptionClientConfiguration
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.subscription.operations.Operations
     :ivar subscriptions: Subscriptions operations
     :vartype subscriptions: azure.mgmt.subscription.operations.SubscriptionsOperations
     :ivar tenants: Tenants operations
@@ -79,6 +82,8 @@ class SubscriptionClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.subscriptions = SubscriptionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.tenants = TenantsOperations(
