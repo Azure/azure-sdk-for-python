@@ -27,7 +27,6 @@ class AzureConfigurationClientAbstract(object):
 
     def __init__(self):
         self._impl = None  # to be set by subclass
-        self._config = None
 
     @abstractmethod
     def list_configuration_settings(
