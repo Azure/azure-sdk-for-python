@@ -110,8 +110,6 @@ class ManagedClusterAgentPoolProfileProperties(Model):
     :param availability_zones: (PREVIEW) Availability zones for nodes. Must
      use VirtualMachineScaleSets AgentPoolType.
     :type availability_zones: list[str]
-    :param enable_node_public_ip: Enable public IP for nodes
-    :type enable_node_public_ip: bool
     """
 
     _validation = {
@@ -134,10 +132,9 @@ class ManagedClusterAgentPoolProfileProperties(Model):
         'orchestrator_version': {'key': 'orchestratorVersion', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'availability_zones': {'key': 'availabilityZones', 'type': '[str]'},
-        'enable_node_public_ip': {'key': 'enableNodePublicIP', 'type': 'bool'},
     }
 
-    def __init__(self, *, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, orchestrator_version: str=None, availability_zones=None, enable_node_public_ip: bool=None, **kwargs) -> None:
+    def __init__(self, *, vm_size, count: int=1, os_disk_size_gb: int=None, vnet_subnet_id: str=None, max_pods: int=None, os_type="Linux", max_count: int=None, min_count: int=None, enable_auto_scaling: bool=None, type=None, orchestrator_version: str=None, availability_zones=None, **kwargs) -> None:
         super(ManagedClusterAgentPoolProfileProperties, self).__init__(**kwargs)
         self.count = count
         self.vm_size = vm_size
@@ -152,4 +149,3 @@ class ManagedClusterAgentPoolProfileProperties(Model):
         self.orchestrator_version = orchestrator_version
         self.provisioning_state = None
         self.availability_zones = availability_zones
-        self.enable_node_public_ip = enable_node_public_ip
