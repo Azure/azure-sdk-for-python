@@ -94,7 +94,7 @@ class RecommendationMetadataOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/providers/Microsoft.Advisor/recommendations/metadata/{name}'}
+    get.metadata = {'url': '/providers/Microsoft.Advisor/metadata/{name}'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -146,4 +146,4 @@ class RecommendationMetadataOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Advisor/recommendations/metadata'}
+    list.metadata = {'url': '/providers/Microsoft.Advisor/metadata'}
