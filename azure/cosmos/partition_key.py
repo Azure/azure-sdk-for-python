@@ -43,12 +43,14 @@ class PartitionKey(dict):
 
     :ivar path: The path of the partition key
     :ivar kind: What kind of partition key is being defined
+    :ivar version: The version of the partition key
     """
 
-    def __init__(self, path, kind="Hash"):
+    def __init__(self, path, kind="Hash", version=2):
         # (str, str) -> None
         self.path = path
         self.kind = kind
+        self.version = version
 
     @property
     def kind(self):
@@ -67,3 +69,11 @@ class PartitionKey(dict):
     def path(self, value):
         # (str) -> None
         self["paths"] = [value]
+
+    @property
+    def version(self):
+        return self["version"]
+
+    @kind.setter
+    def version(self, value):
+        self["version"] = value

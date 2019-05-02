@@ -22,6 +22,8 @@ import samples.Shared.config as cfg
 #    2.2 - Create container with custom IndexPolicy
 #    2.3 - Create container with offer throughput set
 #    2.4 - Create container with unique key
+#    2.5 - Create Collection with partition key V2
+#    2.6 - Create Collection with partition key V1
 #
 # 3. Manage Container Offer Throughput
 #    3.1 - Get Container performance tier
@@ -155,6 +157,40 @@ class ContainerManagement:
             if e.status_code == 409:
                print('A container with id \'{0}\' already exists'.format(container.id))
             else: 
+                raise errors.HTTPFailure(e.status_code)
+
+        print("\n2.5 Create Collection - With Partition key V2 (Default)")
+
+        try:
+            container = db.create_container(
+                id="collection_partition_key_v2",
+                partition_key=PartitionKey(path='/id', kind='Hash')
+            )
+
+            print('Container with id \'{0}\' created'.format(container.id))
+            print('Partition Key - \'{0}\''.format(container.properties['partitionKey']))
+
+        except errors.CosmosError as e:
+            if e.status_code == 409:
+                print('A container with id \'{0}\' already exists'.format(container.id))
+            else:
+                raise errors.HTTPFailure(e.status_code)
+
+        print("\n2.6 Create Collection - With Partition key V1")
+
+        try:
+            container = db.create_container(
+                id="collection_partition_key_v1",
+                partition_key=PartitionKey(path='/id', kind='Hash', version=1)
+            )
+
+            print('Container with id \'{0}\' created'.format(container.id))
+            print('Partition Key - \'{0}\''.format(container.properties['partitionKey']))
+
+        except errors.CosmosError as e:
+            if e.status_code == 409:
+                print('A container with id \'{0}\' already exists'.format(container.id))
+            else:
                 raise errors.HTTPFailure(e.status_code)
 
     @staticmethod
