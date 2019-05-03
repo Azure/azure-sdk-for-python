@@ -13,7 +13,10 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.open_shift_managed_clusters_operations import OpenShiftManagedClustersOperations
+from .operations.operations import Operations
+from .operations.managed_clusters_operations import ManagedClustersOperations
+from .operations.agent_pools_operations import AgentPoolsOperations
+from .operations.container_services_operations import ContainerServicesOperations
 from . import models
 
 
@@ -57,8 +60,14 @@ class ContainerServiceClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: ContainerServiceClientConfiguration
 
-    :ivar open_shift_managed_clusters: OpenShiftManagedClusters operations
-    :vartype open_shift_managed_clusters: azure.mgmt.containerservice.v2019_04_30.operations.OpenShiftManagedClustersOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.containerservice.v2019_04_01.operations.Operations
+    :ivar managed_clusters: ManagedClusters operations
+    :vartype managed_clusters: azure.mgmt.containerservice.v2019_04_01.operations.ManagedClustersOperations
+    :ivar agent_pools: AgentPools operations
+    :vartype agent_pools: azure.mgmt.containerservice.v2019_04_01.operations.AgentPoolsOperations
+    :ivar container_services: ContainerServices operations
+    :vartype container_services: azure.mgmt.containerservice.v2019_04_01.operations.ContainerServicesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -77,9 +86,15 @@ class ContainerServiceClient(SDKClient):
         super(ContainerServiceClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-04-30'
+        self.api_version = '2019-04-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.open_shift_managed_clusters = OpenShiftManagedClustersOperations(
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_clusters = ManagedClustersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.agent_pools = AgentPoolsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.container_services = ContainerServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)

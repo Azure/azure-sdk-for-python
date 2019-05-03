@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2019-04-30"
+from msrest.serialization import Model
 
+
+class TagsObject(Model):
+    """Tags object for patch operations.
+
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TagsObject, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)

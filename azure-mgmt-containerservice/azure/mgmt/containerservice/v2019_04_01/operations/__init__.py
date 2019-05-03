@@ -9,5 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2019-04-30"
+from .operations import Operations
+from .managed_clusters_operations import ManagedClustersOperations
+from .agent_pools_operations import AgentPoolsOperations
+from .container_services_operations import ContainerServicesOperations
 
+__all__ = [
+    'Operations',
+    'ManagedClustersOperations',
+    'AgentPoolsOperations',
+    'ContainerServicesOperations',
+]
