@@ -84,39 +84,31 @@ class AzureError(Exception):
             self.__traceback__ = self.exc_traceback
             raise self
 
-class DecodeError(AzureError):
-    """Error raised during response deserialization."""
 
 class ServiceRequestError(AzureError):
-    """An error occurred while attempt to make a request to the service."""
+    """An error occurred while attempt to make a request to the service.
 
-
-class ConnectError(ServiceRequestError):
-    """An error occurred while attempting to establish the connection.
-    These errors are safe to retry."""
+    No request was sent.
+    """
 
 
 class ServiceResponseError(AzureError):
     """The request was sent, but the client failed to understand the response.
-    These errors may not be safe to retry"""
+    The connection may have timed out. These errors can be retried for idempotent or
+    safe operations"""
 
 
-class ReadTimeoutError(ServiceResponseError):
-    """The server did not send any data in the allotted amount of time.
-    These errors may not be safe to retry."""
-
-
-class HttpRequestError(ServiceRequestError):
+class HttpResponseError(AzureError):
     """A request was made, and a non-success status code was received from the service.
 
     :ivar status_code: HttpResponse's status code
     :ivar response: The response that triggered the exception.
     """
 
-    def __init__(self, message=None, response=None, **kwargs):       
+    def __init__(self, message=None, response=None, **kwargs):
         self.reason = None
         if response:
-            self.reason=response.reason
+            self.reason = response.reason
         message = "Operation returned an invalid status code '{}'".format(self.reason)
         try:
             try:
@@ -129,34 +121,34 @@ class HttpRequestError(ServiceRequestError):
                     message = self.error.message
         except AttributeError:
             pass
-        super(HttpRequestError, self).__init__(message=message, response=response, **kwargs)
+        super(HttpResponseError, self).__init__(message=message, response=response, **kwargs)
 
-class ResourceExistsError(HttpRequestError):
+
+class DecodeError(HttpResponseError):
+    """Error raised during response deserialization."""
+
+
+class ResourceExistsError(HttpResponseError):
     """An error response with status code 4xx.
     This will not be raised directly by the Azure core pipeline."""
 
 
-class ResourceNotFoundError(HttpRequestError):
+class ResourceNotFoundError(HttpResponseError):
     """ An error response, typically triggered by a 412 response (for update) or 404 (for get/post)
     """
 
 
-class ClientAuthenticationError(HttpRequestError):
+class ClientAuthenticationError(HttpResponseError):
     """An error response with status code 4xx.
     This will not be raised directly by the Azure core pipeline."""
 
 
-class ResourceModifiedError(HttpRequestError):
+class ResourceModifiedError(HttpResponseError):
     """An error response with status code 4xx, typically 412 Conflict.
     This will not be raised directly by the Azure core pipeline."""
 
 
-class ServerError(HttpRequestError):
-    """An error response with status code 5xx.
-    This will not be raised directly by the Azure core pipeline."""
-
-
-class TooManyRedirectsError(HttpRequestError):
+class TooManyRedirectsError(HttpResponseError):
     """Reached the maximum number of redirect attempts."""
 
     def __init__(self, history, *args, **kwargs):

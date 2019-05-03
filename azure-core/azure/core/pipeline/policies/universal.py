@@ -210,18 +210,22 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
     CONTEXT_NAME = "deserialized_data"
 
     @classmethod
-    def deserialize_from_text(cls, data, content_type=None):
+    def deserialize_from_text(cls, response, content_type=None):
         # type: (Optional[Union[AnyStr, IO]], Optional[str]) -> Any
-        """Decode data according to content-type.
+        """Decode response data according to content-type.
 
         Accept a stream of data as well, but will be load at once in memory for now.
 
         If no content-type, will return the string version (not bytes, not stream)
 
-        :param data: Input, could be bytes or stream (will be decoded with UTF8) or text
-        :type data: str or bytes or IO
+        :param response: The HTTP response.
+        :type response: ~azure.core.pipeline.transport.HttpResponse
         :param str content_type: The content type.
         """
+        data = response.text()
+        if not data:
+            return None
+
         if hasattr(data, 'read'):
             # Assume a stream
             data = cast(IO, data).read()
@@ -239,7 +243,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
             try:
                 return json.loads(data_as_str)
             except ValueError as err:
-                raise DecodeError("JSON is invalid: {}".format(err), error=err)
+                raise DecodeError(message="JSON is invalid: {}".format(err), response=response, error=err)
         elif "xml" in (content_type or []):
             try:
                 return ET.fromstring(data_as_str)
@@ -261,11 +265,11 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
                 # The function hack is because Py2.7 messes up with exception
                 # context otherwise.
                 _LOGGER.critical("Wasn't XML not JSON, failing")
-                raise_with_traceback(DecodeError, "XML is invalid")
+                raise_with_traceback(DecodeError, message="XML is invalid", response=response)
         raise DecodeError("Cannot deserialize content-type: {}".format(content_type))
 
     @classmethod
-    def deserialize_from_http_generics(cls, body_bytes, headers):
+    def deserialize_from_http_generics(cls, response):
         # type: (Optional[Union[AnyStr, IO]], Mapping) -> Any
         """Deserialize from HTTP response.
 
@@ -275,8 +279,8 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         """
         # Try to use content-type from headers if available
         content_type = None
-        if 'content-type' in headers:
-            content_type = headers['content-type'].split(";")[0].strip().lower()
+        if 'content-type' in response.headers:
+            content_type = response.headers['content-type'].split(";")[0].strip().lower()
         # Ouch, this server did not declare what it sent...
         # Let's guess it's JSON...
         # Also, since Autorest was considering that an empty body was a valid JSON,
@@ -284,9 +288,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         else:
             content_type = "application/json"
 
-        if body_bytes:
-            return cls.deserialize_from_text(body_bytes, content_type)
-        return None
+        return cls.deserialize_from_text(response, content_type)
 
     def on_response(self, request, response):
         # type: (PipelineRequest, PipelineResponse, Any) -> None
@@ -307,12 +309,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         if response.context.options.get("stream", True):
             return
 
-        http_response = response.http_response
-
-        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(
-            http_response.text(),
-            http_response.headers
-        )
+        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(response.http_response)
 
 
 class ProxyPolicy(SansIOHTTPPolicy):
