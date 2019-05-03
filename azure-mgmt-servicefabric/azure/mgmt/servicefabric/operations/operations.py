@@ -42,8 +42,8 @@ class Operations(object):
         Get the list of available Service Fabric resource provider API
         operations.
 
-        :param api_version: The version of the Service Fabric resouce provider
-         API
+        :param api_version: The version of the Service Fabric resource
+         provider API
         :type api_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
