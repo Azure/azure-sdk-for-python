@@ -13,7 +13,7 @@ from .delivery_rule_condition import DeliveryRuleCondition
 
 
 class DeliveryRuleUrlFileExtensionCondition(DeliveryRuleCondition):
-    """Defines the UrlFileExtension condition for the delivery rule.
+    """Defines the URL file extension condition for the delivery rule.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -21,7 +21,7 @@ class DeliveryRuleUrlFileExtensionCondition(DeliveryRuleCondition):
     :type name: str
     :param parameters: Required. Defines the parameters for the condition.
     :type parameters:
-     ~azure.mgmt.cdn.models.UrlFileExtensionMatchConditionParameters
+     ~azure.mgmt.cdn.models.UrlFileExtensionConditionParameters
     """
 
     _validation = {
@@ -31,7 +31,7 @@ class DeliveryRuleUrlFileExtensionCondition(DeliveryRuleCondition):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'UrlFileExtensionMatchConditionParameters'},
+        'parameters': {'key': 'parameters', 'type': 'UrlFileExtensionConditionParameters'},
     }
 
     def __init__(self, **kwargs):

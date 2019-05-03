@@ -23,9 +23,10 @@ class CacheExpirationActionParameters(Model):
     :ivar odatatype: Required.  Default value:
      "Microsoft.Azure.Cdn.Models.DeliveryRuleCacheExpirationActionParameters" .
     :vartype odatatype: str
-    :param cache_behavior: Required. Caching behavior for the requests.
-     Possible values include: 'BypassCache', 'Override', 'SetIfMissing'
-    :type cache_behavior: str or ~azure.mgmt.cdn.models.CacheBehavior
+    :param cache_behavior: Required. Caching behavior for the requests that
+     include query strings. Possible values include: 'BypassCache', 'Override',
+     'SetIfMissing'
+    :type cache_behavior: str or ~azure.mgmt.cdn.models.enum
     :ivar cache_type: Required. The level at which the content needs to be
      cached. Default value: "All" .
     :vartype cache_type: str

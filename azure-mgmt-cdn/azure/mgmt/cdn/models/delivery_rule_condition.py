@@ -16,13 +16,8 @@ class DeliveryRuleCondition(Model):
     """A condition for the delivery rule.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DeliveryRuleRemoteAddressCondition,
-    DeliveryRuleRequestMethodCondition, DeliveryRuleQueryStringCondition,
-    DeliveryRulePostArgsCondition, DeliveryRuleRequestUriCondition,
-    DeliveryRuleRequestHeaderCondition, DeliveryRuleRequestBodyCondition,
-    DeliveryRuleRequestSchemeCondition, DeliveryRuleUrlPathCondition,
-    DeliveryRuleUrlFileExtensionCondition, DeliveryRuleUrlFileNameCondition,
-    DeliveryRuleIsDeviceCondition
+    sub-classes are: DeliveryRuleUrlPathCondition,
+    DeliveryRuleUrlFileExtensionCondition
 
     All required parameters must be populated in order to send to Azure.
 
@@ -39,7 +34,7 @@ class DeliveryRuleCondition(Model):
     }
 
     _subtype_map = {
-        'name': {'RemoteAddress': 'DeliveryRuleRemoteAddressCondition', 'RequestMethod': 'DeliveryRuleRequestMethodCondition', 'QueryString': 'DeliveryRuleQueryStringCondition', 'PostArgs': 'DeliveryRulePostArgsCondition', 'RequestUri': 'DeliveryRuleRequestUriCondition', 'RequestHeader': 'DeliveryRuleRequestHeaderCondition', 'RequestBody': 'DeliveryRuleRequestBodyCondition', 'RequestScheme': 'DeliveryRuleRequestSchemeCondition', 'UrlPath': 'DeliveryRuleUrlPathCondition', 'UrlFileExtension': 'DeliveryRuleUrlFileExtensionCondition', 'UrlFileName': 'DeliveryRuleUrlFileNameCondition', 'IsDevice': 'DeliveryRuleIsDeviceCondition'}
+        'name': {'UrlPath': 'DeliveryRuleUrlPathCondition', 'UrlFileExtension': 'DeliveryRuleUrlFileExtensionCondition'}
     }
 
     def __init__(self, **kwargs):
