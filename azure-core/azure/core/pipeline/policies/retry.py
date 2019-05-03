@@ -39,8 +39,7 @@ from azure.core.exceptions import (
     AzureError,
     ServiceRequestError,
     ServiceResponseError,
-    ConnectError,
-    HttpRequestError
+    HttpResponseError
 )
 
 from .base import HTTPPolicy, RequestHistory
@@ -169,7 +168,7 @@ class RetryPolicy(HTTPPolicy):
         """ Errors when we're fairly sure that the server did not receive the
         request, so it should be safe to retry.
         """
-        return isinstance(err, ConnectError)
+        return isinstance(err, ServiceRequestError)
 
     def _is_read_error(self, err):
         """ Errors that occur after the request has been started, so we should

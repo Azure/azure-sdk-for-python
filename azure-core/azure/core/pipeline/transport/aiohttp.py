@@ -31,8 +31,6 @@ import logging
 from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError,
-    ConnectError,
-    ReadTimeoutError,
     raise_with_traceback
 )
 from .base import HttpRequest
@@ -123,7 +121,7 @@ class AioHttpTransport(AsyncHttpTransport):
             if not stream_response:
                 await response.load_body()
         except aiohttp.client_exceptions.ClientConnectorError as err:
-            error = ConnectError(err, error=err)
+            error = ServiceRequestError(err, error=err)
         finally:
             if not self.config.connection.keep_alive and (not response or not stream_response):
                 await session.close()
