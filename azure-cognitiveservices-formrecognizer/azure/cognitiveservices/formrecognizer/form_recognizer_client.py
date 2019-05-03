@@ -16,8 +16,8 @@ from msrest.pipeline import ClientRawResponse
 from . import models
 
 
-class CognitiveServiceFormRecognizerAPIV1PreviewConfiguration(Configuration):
-    """Configuration for CognitiveServiceFormRecognizerAPIV1Preview
+class FormRecognizerClientConfiguration(Configuration):
+    """Configuration for FormRecognizerClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -38,7 +38,7 @@ class CognitiveServiceFormRecognizerAPIV1PreviewConfiguration(Configuration):
             raise ValueError("Parameter 'credentials' must not be None.")
         base_url = '{Endpoint}/formrecognizer/v1.0-preview'
 
-        super(CognitiveServiceFormRecognizerAPIV1PreviewConfiguration, self).__init__(base_url)
+        super(FormRecognizerClientConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-cognitiveservices-formrecognizer/{}'.format(VERSION))
 
@@ -46,11 +46,11 @@ class CognitiveServiceFormRecognizerAPIV1PreviewConfiguration(Configuration):
         self.credentials = credentials
 
 
-class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
+class FormRecognizerClient(SDKClient):
     """Extracts information from forms and images into structured data based on a model created by a set of representative training forms.
 
     :ivar config: Configuration for client.
-    :vartype config: CognitiveServiceFormRecognizerAPIV1PreviewConfiguration
+    :vartype config: FormRecognizerClientConfiguration
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and
      hostname, for example: https://westus2.api.cognitive.microsoft.com).
@@ -63,8 +63,8 @@ class CognitiveServiceFormRecognizerAPIV1Preview(SDKClient):
     def __init__(
             self, endpoint, credentials):
 
-        self.config = CognitiveServiceFormRecognizerAPIV1PreviewConfiguration(endpoint, credentials)
-        super(CognitiveServiceFormRecognizerAPIV1Preview, self).__init__(self.config.credentials, self.config)
+        self.config = FormRecognizerClientConfiguration(endpoint, credentials)
+        super(FormRecognizerClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = 'v1.0-preview'
