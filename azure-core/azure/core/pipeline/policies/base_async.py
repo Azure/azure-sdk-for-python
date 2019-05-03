@@ -26,7 +26,7 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Generic, TypeVar, Any, List, Union, Callable, AsyncIterator, Optional
+from typing import Generic, TypeVar, Union, Callable, AsyncIterator, Optional
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 
@@ -54,7 +54,9 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
     """
     def __init__(self) -> None:
         # next will be set once in the pipeline
-        self.next = None  # type: Optional[Union[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType], AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]]]
+        # type: Optional[Union[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType], \
+        # AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]]]
+        self.next = None
 
     @abc.abstractmethod
     async def send(self, request: PipelineRequest):
@@ -62,4 +64,3 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
 
         Context content is dependent on the HttpTransport.
         """
-        pass

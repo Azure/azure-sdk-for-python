@@ -25,8 +25,8 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, AsyncIterator, Optional
 
-import aiohttp
 import logging
+import aiohttp
 
 from azure.core.exceptions import (
     ServiceRequestError,

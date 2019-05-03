@@ -32,9 +32,10 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
+from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional, # pylint: disable=unused-import
+                    Tuple, Callable, Iterator)
 from azure.core.pipeline import AbstractContextManager, PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
-from typing import TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional, Tuple, Callable, Iterator  # pylint: disable=unused-import
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -56,7 +57,7 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseT
         self._policy.on_request(request)
         try:
             response = self.next.send(request)
-        except Exception:
+        except Exception: #pylint: disable=broad-except
             if not self._policy.on_exception(request):
                 raise
         else:

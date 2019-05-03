@@ -50,7 +50,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class RetryPolicy(HTTPPolicy):
     """A retry policy.
-    
+
     :param retry_total: Total number of retries to allow. Takes precedence over other counts.
      Default value is 10.
     :param retry_connect: How many connection-related errors to retry on.
@@ -200,7 +200,7 @@ class RetryPolicy(HTTPPolicy):
             return True
         if not self._is_method_retryable(settings, response.http_request, response=response.http_response):
             return False
-        return (settings['total'] and response.http_response.status_code in self._retry_on_status_codes)
+        return settings['total'] and response.http_response.status_code in self._retry_on_status_codes
 
     def is_exhausted(self, settings):
         """Are we out of retries?"""

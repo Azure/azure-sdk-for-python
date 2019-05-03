@@ -100,7 +100,7 @@ class RedirectPolicy(HTTPPolicy):
         # TODO: Revise some of the logic here.
         settings['redirects'] -= 1
         settings['history'].append(RequestHistory(response.http_request, http_response=response.http_response))
-        
+
         redirected = urlparse(redirect_location)
         if not redirected.netloc:
             base_url = urlparse(response.http_request.url)

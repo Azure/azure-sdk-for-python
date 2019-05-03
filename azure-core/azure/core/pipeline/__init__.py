@@ -113,7 +113,7 @@ class PipelineResponse(object):
         self.context = context
 
 
-from .base import Pipeline
+from .base import Pipeline #pylint: disable=wrong-import-position
 
 __all__ = [
     'Pipeline',
@@ -127,5 +127,3 @@ try:
     __all__.append('AsyncPipeline')
 except (SyntaxError, ImportError):
     pass  # Asynchronous pipelines not supported.
-
-

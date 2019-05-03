@@ -33,20 +33,20 @@ import logging
 import os
 import platform
 import threading
-from typing import TYPE_CHECKING, cast, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 import xml.etree.ElementTree as ET
 import warnings
 import types
 import re
-
-from azure.core import __version__  as azcore_version
-from .base import HTTPPolicy, SansIOHTTPPolicy
+from typing import TYPE_CHECKING, cast, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 from urllib3 import Retry  # Needs requests 2.16 at least to be safe
 
+from azure.core import __version__  as azcore_version
 from azure.core.exceptions import (
     DecodeError,
     raise_with_traceback
 )
+
+from .base import HTTPPolicy, SansIOHTTPPolicy
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -317,4 +317,3 @@ class ProxyPolicy(SansIOHTTPPolicy):
     def __init__(self, proxies=None, **kwargs):
         self.proxies = proxies
         self.use_env_settings = kwargs.pop('proxies_use_env_settings', True)
-

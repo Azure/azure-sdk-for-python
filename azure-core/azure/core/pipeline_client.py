@@ -25,13 +25,10 @@
 # --------------------------------------------------------------------------
 
 import logging
-import os
-import sys
 try:
     from urlparse import urljoin, urlparse
 except ImportError:
     from urllib.parse import urljoin, urlparse
-import warnings
 import xml.etree.ElementTree as ET
 
 from typing import List, Any, Dict, Union, IO, Tuple, Optional, Callable, Iterator, cast, TYPE_CHECKING  # pylint: disable=unused-import
@@ -73,7 +70,8 @@ class PipelineClient(object):
         )
 
     def _request(self, method, url, params, headers, content, form_content, stream_content):
-        # type: (str, str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
+        # type: (str, str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]])
+        # -> HttpRequest
         """Create HttpRequest object.
 
         :param str url: URL for the request.
@@ -166,7 +164,7 @@ class PipelineClient(object):
         :param dict headers: Headers
         :param dict form_content: Form content
         """
-        request = self._request('HEAD', url, params, headers, content, form_content, None)
+        request = self._request('HEAD', url, params, headers, content, form_content, stream_content)
         return request
 
     def patch(self, url, params=None, headers=None, content=None, form_content=None, stream_content=None):

@@ -24,22 +24,22 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
-import requests
 import threading
+import requests
 import urllib3
 from urllib3.util.retry import Retry
-
-from .base import (
-    HttpTransport,
-    HttpResponse,
-    _HttpResponseBase
-)
 
 from azure.core.configuration import Configuration
 from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError,
     raise_with_traceback
+)
+
+from .base import (
+    HttpTransport,
+    HttpResponse,
+    _HttpResponseBase
 )
 
 

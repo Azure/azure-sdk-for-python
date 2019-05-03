@@ -35,7 +35,6 @@ from requests.models import CONTENT_CHUNK_SIZE
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 
 
-class AsyncCredentialsPolicy(AsyncHTTPPolicy):
+class AsyncCredentialsPolicy(AsyncHTTPPolicy): # pylint: disable=abstract-method
     """Implementation of request-oauthlib except and retry logic.
     """
-    pass  # TODO

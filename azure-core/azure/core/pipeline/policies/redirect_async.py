@@ -28,11 +28,10 @@ from collections.abc import AsyncIterator
 import functools
 import logging
 from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
+from azure.core.exceptions import TooManyRedirectsError
 
 from . import AsyncHTTPPolicy
 from .redirect import RedirectPolicy
-
-from azure.core.exceptions import TooManyRedirectsError
 
 
 class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):

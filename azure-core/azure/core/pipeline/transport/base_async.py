@@ -27,10 +27,10 @@
 import asyncio
 import abc
 
-from .base import _HttpResponseBase
+from typing import Any, List, Union, Callable, AsyncIterator, Optional, Generic, TypeVar
 from azure.core.pipeline import PipelineRequest, PipelineResponse, Pipeline
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from typing import Any, List, Union, Callable, AsyncIterator, Optional, Generic, TypeVar
+from .base import _HttpResponseBase
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore
@@ -76,7 +76,6 @@ class AsyncHttpResponse(_HttpResponseBase):
         :param callback: Custom callback for monitoring progress.
         :param int chunk_size:
         """
-        pass
 
 
 class AsyncHttpTransport(AbstractAsyncContextManager, abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
@@ -87,7 +86,6 @@ class AsyncHttpTransport(AbstractAsyncContextManager, abc.ABC, Generic[HTTPReque
     async def send(self, request, **kwargs):
         """Send the request using this HTTP sender.
         """
-        pass
 
     async def sleep(self, duration):
         await asyncio.sleep(duration)

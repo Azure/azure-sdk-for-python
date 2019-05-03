@@ -30,14 +30,13 @@ from __future__ import absolute_import  # we have a "requests" module that confl
 import contextlib
 import logging
 import threading
-from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 import warnings
+from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
+from azure.core.exceptions import AzureError
 
 from .base import HTTPPolicy
 from .base_async import AsyncHTTPPolicy
 from .retry import RetryPolicy
-
-from azure.core.exceptions import AzureError
 
 _LOGGER = logging.getLogger(__name__)
 

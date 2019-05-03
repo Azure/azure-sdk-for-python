@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 
-class Configuration(object):
+class Configuration:
 
     def __init__(self, transport=None, **kwargs):
         # Communication configuration - applied per transport.
@@ -36,7 +36,7 @@ class Configuration(object):
 
         # Proxy settings (Currently used to configure transport, could be pipeline policy instead)
         self.proxy_policy = None
- 
+
         # Redirect configuration
         self.redirect_policy = None
 
@@ -57,7 +57,7 @@ class Configuration(object):
             return self.transport(configuration=self, **kwargs)
 
 
-class ConnectionConfiguration(object):
+class ConnectionConfiguration:
     """HTTP transport connection configuration settings."""
 
     def __init__(self, **kwargs):

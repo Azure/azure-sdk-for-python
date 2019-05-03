@@ -24,10 +24,9 @@
 #
 # --------------------------------------------------------------------------
 import threading
-import time
 import uuid
 try:
-    from urlparse import urlparse
+    from urlparse import urlparse # pylint: disable=unused-import
 except ImportError:
     from urllib.parse import urlparse
 
@@ -77,7 +76,6 @@ class NoPolling(PollingMethod):
         # type: () -> None
         """Empty run, no polling.
         """
-        pass
 
     def status(self):
         # type: () -> str
@@ -105,7 +103,8 @@ class LROPoller(object):
     :type client: azure.core.pipeline.PipelineClient
     :param initial_response: The initial call response
     :type initial_response: azure.core.pipeline.HttpResponse
-    :param deserialization_callback: A callback that takes a Response and return a deserialized object. If a subclass of Model is given, this passes "deserialize" as callback.
+    :param deserialization_callback: A callback that takes a Response and return a deserialized object.
+                                     If a subclass of Model is given, this passes "deserialize" as callback.
     :type deserialization_callback: callable or msrest.serialization.Model
     :param polling_method: The polling strategy to adopt
     :type polling_method: msrest.polling.PollingMethod
@@ -113,12 +112,12 @@ class LROPoller(object):
 
     def __init__(self, client, initial_response, deserialization_callback, polling_method):
         # type: (Any, HttpResponse, Union[Model, Callable[[requests.Response], Model]], PollingMethod) -> None
-        self._client = client 
+        self._client = client
         self._response = initial_response
         self._callbacks = []  # type: List[Callable]
         self._polling_method = polling_method
 
-        # This implicit test avoids bringing in an explicit dependency on Model directly 
+        # This implicit test avoids bringing in an explicit dependency on Model directly
         try:
             deserialization_callback = deserialization_callback.deserialize
         except AttributeError:
@@ -148,7 +147,7 @@ class LROPoller(object):
         """
         try:
             self._polling_method.run()
-        except Exception as err:
+        except Exception as err: #pylint: disable=broad-except
             self._exception = err
 
         finally:

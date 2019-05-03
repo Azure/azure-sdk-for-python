@@ -28,7 +28,8 @@ import abc
 import copy
 import logging
 
-from typing import TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional, Tuple, Callable, Iterator  # pylint: disable=unused-import
+from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional,  # pylint: disable=unused-import
+                    Tuple, Callable, Iterator)
 
 from azure.core.pipeline import ABC
 
@@ -51,7 +52,6 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
 
         Context content is dependent on the HttpTransport.
         """
-        pass
 
 class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     """Represents a sans I/O policy.
@@ -71,17 +71,15 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         # type: (PipelineRequest[HTTPRequestType], Any) -> None
         """Is executed before sending the request to next policy.
         """
-        pass
 
     def on_response(self, request, response, **kwargs):
         # type: (PipelineRequest[HTTPRequestType], PipelineResponse[HTTPRequestType, HTTPResponseType], Any) -> None
         """Is executed after the request comes back from the policy.
         """
-        pass
 
     def on_exception(self, request, **kwargs):
         # type: (PipelineRequest[HTTPRequestType], Any) -> bool
-        """Is executed if an exception comes back fron the following
+        """Is executed if an exception comes back from the following
         policy.
 
         Return True if the exception has been handled and should not
@@ -107,7 +105,7 @@ class RequestHistory(object):
 
     This is used to document requests/responses that resulted in redirected requests.
     """
- 
+
     def __init__(self, http_request, http_response=None, error=None, context=None):
         # type: (PipelineRequest[HTTPRequestType], Exception, Optional[Dict[str, Any]]) -> None
         self.http_request = copy.deepcopy(http_request)

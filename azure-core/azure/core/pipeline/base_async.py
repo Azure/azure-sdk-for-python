@@ -61,7 +61,7 @@ class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPRes
         self._policy.on_request(request)
         try:
             response = await self.next.send(request)  # type: ignore
-        except Exception:
+        except Exception: #pylint: disable=broad-except
             if not self._policy.on_exception(request):
                 raise
         else:
@@ -123,4 +123,3 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         pipeline_request = PipelineRequest(request, context)
         first_node = self._impl_policies[0] if self._impl_policies else _AsyncTransportRunner(self._transport)
         return await first_node.send(pipeline_request)  # type: ignore
-
