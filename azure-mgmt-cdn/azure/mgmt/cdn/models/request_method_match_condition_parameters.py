@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class RequestMethodMatchConditionParameters(Model):
-    """Defines the parameters for match conditions for RequestMethod.
+    """Defines the parameters for RequestMethod match conditions.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class RequestHeaderMatchConditionParameters(Model):
-    """Defines the parameters for generall match conditions.
+    """Defines the parameters for RequestHeader match conditions.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
