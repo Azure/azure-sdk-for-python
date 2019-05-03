@@ -16,10 +16,10 @@ from .version import VERSION
 from .operations.clusters_operations import ClustersOperations
 from .operations.cluster_versions_operations import ClusterVersionsOperations
 from .operations.operations import Operations
-from .operations.application_type_operations import ApplicationTypeOperations
-from .operations.version_operations import VersionOperations
-from .operations.application_operations import ApplicationOperations
-from .operations.service_operations import ServiceOperations
+from .operations.application_types_operations import ApplicationTypesOperations
+from .operations.application_type_versions_operations import ApplicationTypeVersionsOperations
+from .operations.applications_operations import ApplicationsOperations
+from .operations.services_operations import ServicesOperations
 from . import models
 
 
@@ -31,7 +31,7 @@ class ServiceFabricManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The customer subscription identifier
+    :param subscription_id: The customer subscription identifier.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -67,19 +67,19 @@ class ServiceFabricManagementClient(SDKClient):
     :vartype cluster_versions: azure.mgmt.servicefabric.operations.ClusterVersionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.servicefabric.operations.Operations
-    :ivar application_type: ApplicationType operations
-    :vartype application_type: azure.mgmt.servicefabric.operations.ApplicationTypeOperations
-    :ivar version: Version operations
-    :vartype version: azure.mgmt.servicefabric.operations.VersionOperations
-    :ivar application: Application operations
-    :vartype application: azure.mgmt.servicefabric.operations.ApplicationOperations
-    :ivar service: Service operations
-    :vartype service: azure.mgmt.servicefabric.operations.ServiceOperations
+    :ivar application_types: ApplicationTypes operations
+    :vartype application_types: azure.mgmt.servicefabric.operations.ApplicationTypesOperations
+    :ivar application_type_versions: ApplicationTypeVersions operations
+    :vartype application_type_versions: azure.mgmt.servicefabric.operations.ApplicationTypeVersionsOperations
+    :ivar applications: Applications operations
+    :vartype applications: azure.mgmt.servicefabric.operations.ApplicationsOperations
+    :ivar services: Services operations
+    :vartype services: azure.mgmt.servicefabric.operations.ServicesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The customer subscription identifier
+    :param subscription_id: The customer subscription identifier.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -91,7 +91,6 @@ class ServiceFabricManagementClient(SDKClient):
         super(ServiceFabricManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-07-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -101,11 +100,11 @@ class ServiceFabricManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.application_type = ApplicationTypeOperations(
+        self.application_types = ApplicationTypesOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.version = VersionOperations(
+        self.application_type_versions = ApplicationTypeVersionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.application = ApplicationOperations(
+        self.applications = ApplicationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.service = ServiceOperations(
+        self.services = ServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)

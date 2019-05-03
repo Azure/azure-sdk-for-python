@@ -13,11 +13,18 @@ from msrest.serialization import Model
 
 
 class ServiceTypeDeltaHealthPolicy(Model):
-    """Service health policy
+    """Represents the delta health policy used to evaluate the health of services
+    belonging to a service type when upgrading the cluster.
     .
 
-    :param max_percent_delta_unhealthy_services: Maximum percentage of
-     unhealthy services in cluster
+    :param max_percent_delta_unhealthy_services: The maximum allowed
+     percentage of services health degradation allowed during cluster upgrades.
+     The delta is measured between the state of the services at the beginning
+     of upgrade and the state of the services at the time of the health
+     evaluation.
+     The check is performed after every upgrade domain upgrade completion to
+     make sure the global state of the cluster is within tolerated limits.
+     . Default value: 0 .
     :type max_percent_delta_unhealthy_services: int
     """
 
@@ -31,4 +38,4 @@ class ServiceTypeDeltaHealthPolicy(Model):
 
     def __init__(self, **kwargs):
         super(ServiceTypeDeltaHealthPolicy, self).__init__(**kwargs)
-        self.max_percent_delta_unhealthy_services = kwargs.get('max_percent_delta_unhealthy_services', None)
+        self.max_percent_delta_unhealthy_services = kwargs.get('max_percent_delta_unhealthy_services', 0)

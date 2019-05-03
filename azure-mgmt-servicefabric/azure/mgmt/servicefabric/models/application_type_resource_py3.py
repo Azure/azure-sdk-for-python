@@ -18,15 +18,13 @@ class ApplicationTypeResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Azure resource ID.
+    :ivar id: Azure resource identifier.
     :vartype id: str
     :ivar name: Azure resource name.
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
+    :param location: Azure resource location.
     :type location: str
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
@@ -37,7 +35,6 @@ class ApplicationTypeResource(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -49,6 +46,6 @@ class ApplicationTypeResource(ProxyResource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, **kwargs) -> None:
+    def __init__(self, *, location: str=None, **kwargs) -> None:
         super(ApplicationTypeResource, self).__init__(location=location, **kwargs)
         self.provisioning_state = None

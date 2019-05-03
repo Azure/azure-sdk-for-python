@@ -20,15 +20,15 @@ class Resource(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Azure resource ID.
+    :ivar id: Azure resource identifier.
     :vartype id: str
     :ivar name: Azure resource name.
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
+    :param location: Required. Azure resource location.
     :type location: str
-    :param tags: Resource tags.
+    :param tags: Azure resource tags.
     :type tags: dict[str, str]
     """
 

@@ -12,17 +12,21 @@
 from msrest.serialization import Model
 
 
-class VersionResourceList(Model):
-    """The list of version resources for the specified application type name.
+class ErrorModelError(Model):
+    """The error details.
 
-    :param value:
-    :type value: list[~azure.mgmt.servicefabric.models.VersionResource]
+    :param code: The error code.
+    :type code: str
+    :param message: The error message.
+    :type message: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VersionResource]'},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, *, value=None, **kwargs) -> None:
-        super(VersionResourceList, self).__init__(**kwargs)
-        self.value = value
+    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
+        super(ErrorModelError, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
