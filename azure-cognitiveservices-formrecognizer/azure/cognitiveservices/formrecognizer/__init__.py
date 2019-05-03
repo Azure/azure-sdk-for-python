@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .cognitive_service_form_recognizer_apiv1_preview import CognitiveServiceFormRecognizerAPIV1Preview
+from .form_recognizer_client import FormRecognizerClient
 from .version import VERSION
 
-__all__ = ['CognitiveServiceFormRecognizerAPIV1Preview']
+__all__ = ['FormRecognizerClient']
 
 __version__ = VERSION
 
