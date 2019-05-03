@@ -18,15 +18,40 @@ try:
     from .deep_created_origin_py3 import DeepCreatedOrigin
     from .endpoint_py3 import Endpoint
     from .geo_filter_py3 import GeoFilter
-    from .delivery_rule_action_py3 import DeliveryRuleAction
     from .delivery_rule_condition_py3 import DeliveryRuleCondition
+    from .delivery_rule_action_py3 import DeliveryRuleAction
     from .delivery_rule_py3 import DeliveryRule
     from .endpoint_properties_update_parameters_delivery_policy_py3 import EndpointPropertiesUpdateParametersDeliveryPolicy
     from .endpoint_update_parameters_py3 import EndpointUpdateParameters
-    from .url_path_condition_parameters_py3 import UrlPathConditionParameters
+    from .remote_address_match_condition_parameters_py3 import RemoteAddressMatchConditionParameters
+    from .delivery_rule_remote_address_condition_py3 import DeliveryRuleRemoteAddressCondition
+    from .request_method_match_condition_parameters_py3 import RequestMethodMatchConditionParameters
+    from .delivery_rule_request_method_condition_py3 import DeliveryRuleRequestMethodCondition
+    from .query_string_match_condition_parameters_py3 import QueryStringMatchConditionParameters
+    from .delivery_rule_query_string_condition_py3 import DeliveryRuleQueryStringCondition
+    from .post_args_match_condition_parameters_py3 import PostArgsMatchConditionParameters
+    from .delivery_rule_post_args_condition_py3 import DeliveryRulePostArgsCondition
+    from .request_uri_match_condition_parameters_py3 import RequestUriMatchConditionParameters
+    from .delivery_rule_request_uri_condition_py3 import DeliveryRuleRequestUriCondition
+    from .request_header_match_condition_parameters_py3 import RequestHeaderMatchConditionParameters
+    from .delivery_rule_request_header_condition_py3 import DeliveryRuleRequestHeaderCondition
+    from .request_body_match_condition_parameters_py3 import RequestBodyMatchConditionParameters
+    from .delivery_rule_request_body_condition_py3 import DeliveryRuleRequestBodyCondition
+    from .request_scheme_match_condition_parameters_py3 import RequestSchemeMatchConditionParameters
+    from .delivery_rule_request_scheme_condition_py3 import DeliveryRuleRequestSchemeCondition
+    from .url_path_match_condition_parameters_py3 import UrlPathMatchConditionParameters
     from .delivery_rule_url_path_condition_py3 import DeliveryRuleUrlPathCondition
-    from .url_file_extension_condition_parameters_py3 import UrlFileExtensionConditionParameters
+    from .url_file_extension_match_condition_parameters_py3 import UrlFileExtensionMatchConditionParameters
     from .delivery_rule_url_file_extension_condition_py3 import DeliveryRuleUrlFileExtensionCondition
+    from .url_file_name_match_condition_parameters_py3 import UrlFileNameMatchConditionParameters
+    from .delivery_rule_url_file_name_condition_py3 import DeliveryRuleUrlFileNameCondition
+    from .is_device_match_condition_parameters_py3 import IsDeviceMatchConditionParameters
+    from .delivery_rule_is_device_condition_py3 import DeliveryRuleIsDeviceCondition
+    from .url_redirect_action_parameters_py3 import UrlRedirectActionParameters
+    from .url_redirect_action_py3 import UrlRedirectAction
+    from .header_action_parameters_py3 import HeaderActionParameters
+    from .delivery_rule_request_header_action_py3 import DeliveryRuleRequestHeaderAction
+    from .delivery_rule_response_header_action_py3 import DeliveryRuleResponseHeaderAction
     from .cache_expiration_action_parameters_py3 import CacheExpirationActionParameters
     from .delivery_rule_cache_expiration_action_py3 import DeliveryRuleCacheExpirationAction
     from .purge_parameters_py3 import PurgeParameters
@@ -65,15 +90,40 @@ except (SyntaxError, ImportError):
     from .deep_created_origin import DeepCreatedOrigin
     from .endpoint import Endpoint
     from .geo_filter import GeoFilter
-    from .delivery_rule_action import DeliveryRuleAction
     from .delivery_rule_condition import DeliveryRuleCondition
+    from .delivery_rule_action import DeliveryRuleAction
     from .delivery_rule import DeliveryRule
     from .endpoint_properties_update_parameters_delivery_policy import EndpointPropertiesUpdateParametersDeliveryPolicy
     from .endpoint_update_parameters import EndpointUpdateParameters
-    from .url_path_condition_parameters import UrlPathConditionParameters
+    from .remote_address_match_condition_parameters import RemoteAddressMatchConditionParameters
+    from .delivery_rule_remote_address_condition import DeliveryRuleRemoteAddressCondition
+    from .request_method_match_condition_parameters import RequestMethodMatchConditionParameters
+    from .delivery_rule_request_method_condition import DeliveryRuleRequestMethodCondition
+    from .query_string_match_condition_parameters import QueryStringMatchConditionParameters
+    from .delivery_rule_query_string_condition import DeliveryRuleQueryStringCondition
+    from .post_args_match_condition_parameters import PostArgsMatchConditionParameters
+    from .delivery_rule_post_args_condition import DeliveryRulePostArgsCondition
+    from .request_uri_match_condition_parameters import RequestUriMatchConditionParameters
+    from .delivery_rule_request_uri_condition import DeliveryRuleRequestUriCondition
+    from .request_header_match_condition_parameters import RequestHeaderMatchConditionParameters
+    from .delivery_rule_request_header_condition import DeliveryRuleRequestHeaderCondition
+    from .request_body_match_condition_parameters import RequestBodyMatchConditionParameters
+    from .delivery_rule_request_body_condition import DeliveryRuleRequestBodyCondition
+    from .request_scheme_match_condition_parameters import RequestSchemeMatchConditionParameters
+    from .delivery_rule_request_scheme_condition import DeliveryRuleRequestSchemeCondition
+    from .url_path_match_condition_parameters import UrlPathMatchConditionParameters
     from .delivery_rule_url_path_condition import DeliveryRuleUrlPathCondition
-    from .url_file_extension_condition_parameters import UrlFileExtensionConditionParameters
+    from .url_file_extension_match_condition_parameters import UrlFileExtensionMatchConditionParameters
     from .delivery_rule_url_file_extension_condition import DeliveryRuleUrlFileExtensionCondition
+    from .url_file_name_match_condition_parameters import UrlFileNameMatchConditionParameters
+    from .delivery_rule_url_file_name_condition import DeliveryRuleUrlFileNameCondition
+    from .is_device_match_condition_parameters import IsDeviceMatchConditionParameters
+    from .delivery_rule_is_device_condition import DeliveryRuleIsDeviceCondition
+    from .url_redirect_action_parameters import UrlRedirectActionParameters
+    from .url_redirect_action import UrlRedirectAction
+    from .header_action_parameters import HeaderActionParameters
+    from .delivery_rule_request_header_action import DeliveryRuleRequestHeaderAction
+    from .delivery_rule_response_header_action import DeliveryRuleResponseHeaderAction
     from .cache_expiration_action_parameters import CacheExpirationActionParameters
     from .delivery_rule_cache_expiration_action import DeliveryRuleCacheExpirationAction
     from .purge_parameters import PurgeParameters
@@ -117,6 +167,20 @@ from .cdn_management_client_enums import (
     EndpointResourceState,
     QueryStringCachingBehavior,
     GeoFilterActions,
+    RemoteAddressOperator,
+    Transform,
+    QueryStringOperator,
+    PostArgsOperator,
+    RequestUriOperator,
+    RequestHeaderOperator,
+    RequestBodyOperator,
+    UrlPathOperator,
+    UrlFileExtensionOperator,
+    UrlFileNameOperator,
+    RedirectType,
+    DestinationProtocol,
+    HeaderAction,
+    CacheBehavior,
     OriginResourceState,
     CustomDomainResourceState,
     CustomHttpsProvisioningState,
@@ -135,15 +199,40 @@ __all__ = [
     'DeepCreatedOrigin',
     'Endpoint',
     'GeoFilter',
-    'DeliveryRuleAction',
     'DeliveryRuleCondition',
+    'DeliveryRuleAction',
     'DeliveryRule',
     'EndpointPropertiesUpdateParametersDeliveryPolicy',
     'EndpointUpdateParameters',
-    'UrlPathConditionParameters',
+    'RemoteAddressMatchConditionParameters',
+    'DeliveryRuleRemoteAddressCondition',
+    'RequestMethodMatchConditionParameters',
+    'DeliveryRuleRequestMethodCondition',
+    'QueryStringMatchConditionParameters',
+    'DeliveryRuleQueryStringCondition',
+    'PostArgsMatchConditionParameters',
+    'DeliveryRulePostArgsCondition',
+    'RequestUriMatchConditionParameters',
+    'DeliveryRuleRequestUriCondition',
+    'RequestHeaderMatchConditionParameters',
+    'DeliveryRuleRequestHeaderCondition',
+    'RequestBodyMatchConditionParameters',
+    'DeliveryRuleRequestBodyCondition',
+    'RequestSchemeMatchConditionParameters',
+    'DeliveryRuleRequestSchemeCondition',
+    'UrlPathMatchConditionParameters',
     'DeliveryRuleUrlPathCondition',
-    'UrlFileExtensionConditionParameters',
+    'UrlFileExtensionMatchConditionParameters',
     'DeliveryRuleUrlFileExtensionCondition',
+    'UrlFileNameMatchConditionParameters',
+    'DeliveryRuleUrlFileNameCondition',
+    'IsDeviceMatchConditionParameters',
+    'DeliveryRuleIsDeviceCondition',
+    'UrlRedirectActionParameters',
+    'UrlRedirectAction',
+    'HeaderActionParameters',
+    'DeliveryRuleRequestHeaderAction',
+    'DeliveryRuleResponseHeaderAction',
     'CacheExpirationActionParameters',
     'DeliveryRuleCacheExpirationAction',
     'PurgeParameters',
@@ -186,6 +275,20 @@ __all__ = [
     'EndpointResourceState',
     'QueryStringCachingBehavior',
     'GeoFilterActions',
+    'RemoteAddressOperator',
+    'Transform',
+    'QueryStringOperator',
+    'PostArgsOperator',
+    'RequestUriOperator',
+    'RequestHeaderOperator',
+    'RequestBodyOperator',
+    'UrlPathOperator',
+    'UrlFileExtensionOperator',
+    'UrlFileNameOperator',
+    'RedirectType',
+    'DestinationProtocol',
+    'HeaderAction',
+    'CacheBehavior',
     'OriginResourceState',
     'CustomDomainResourceState',
     'CustomHttpsProvisioningState',
