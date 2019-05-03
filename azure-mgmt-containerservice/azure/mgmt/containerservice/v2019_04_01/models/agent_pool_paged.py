@@ -9,4 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "5.3.0"
+from msrest.paging import Paged
+
+
+class AgentPoolPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AgentPool <azure.mgmt.containerservice.v2019_04_01.models.AgentPool>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AgentPool]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AgentPoolPaged, self).__init__(*args, **kwargs)

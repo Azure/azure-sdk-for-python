@@ -3,6 +3,19 @@
 Release History
 ===============
 
+5.3.0 (2019-05-03)
+++++++++++++++++++
+
+**Features**
+
+- Model OrchestratorProfile has a new parameter is_preview
+- Model OrchestratorVersionProfile has a new parameter is_preview
+- Model ContainerServiceNetworkProfile has a new parameter load_balancer_sku
+- Model ManagedCluster has a new parameter identity
+- Model ManagedCluster has a new parameter max_agent_pools
+- Model ManagedCluster has a new parameter windows_profile
+
+
 5.2.0 (2019-04-30)
 ++++++++++++++++++
 
