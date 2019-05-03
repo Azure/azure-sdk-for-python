@@ -46,9 +46,6 @@ try:
     from .managed_cluster_upgrade_profile_py3 import ManagedClusterUpgradeProfile
     from .credential_result_py3 import CredentialResult
     from .credential_results_py3 import CredentialResults
-    from .orchestrator_profile_py3 import OrchestratorProfile
-    from .orchestrator_version_profile_py3 import OrchestratorVersionProfile
-    from .orchestrator_version_profile_list_result_py3 import OrchestratorVersionProfileListResult
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .purchase_plan import PurchasePlan
@@ -86,9 +83,6 @@ except (SyntaxError, ImportError):
     from .managed_cluster_upgrade_profile import ManagedClusterUpgradeProfile
     from .credential_result import CredentialResult
     from .credential_results import CredentialResults
-    from .orchestrator_profile import OrchestratorProfile
-    from .orchestrator_version_profile import OrchestratorVersionProfile
-    from .orchestrator_version_profile_list_result import OrchestratorVersionProfileListResult
 from .open_shift_managed_cluster_paged import OpenShiftManagedClusterPaged
 from .operation_value_paged import OperationValuePaged
 from .managed_cluster_paged import ManagedClusterPaged
@@ -143,9 +137,6 @@ __all__ = [
     'ManagedClusterUpgradeProfile',
     'CredentialResult',
     'CredentialResults',
-    'OrchestratorProfile',
-    'OrchestratorVersionProfile',
-    'OrchestratorVersionProfileListResult',
     'OpenShiftManagedClusterPaged',
     'OperationValuePaged',
     'ManagedClusterPaged',
