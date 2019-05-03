@@ -17,6 +17,7 @@ from .operations.open_shift_managed_clusters_operations import OpenShiftManagedC
 from .operations.operations import Operations
 from .operations.managed_clusters_operations import ManagedClustersOperations
 from .operations.agent_pools_operations import AgentPoolsOperations
+from .operations.container_services_operations import ContainerServicesOperations
 from . import models
 
 
@@ -68,6 +69,8 @@ class ContainerServiceClient(SDKClient):
     :vartype managed_clusters: azure.mgmt.containerservice.v2019_04_30.operations.ManagedClustersOperations
     :ivar agent_pools: AgentPools operations
     :vartype agent_pools: azure.mgmt.containerservice.v2019_04_30.operations.AgentPoolsOperations
+    :ivar container_services: ContainerServices operations
+    :vartype container_services: azure.mgmt.containerservice.v2019_04_30.operations.ContainerServicesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -96,4 +99,6 @@ class ContainerServiceClient(SDKClient):
         self.managed_clusters = ManagedClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.agent_pools = AgentPoolsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.container_services = ContainerServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
