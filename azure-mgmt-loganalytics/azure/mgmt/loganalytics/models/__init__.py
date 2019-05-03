@@ -10,29 +10,6 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .link_target_py3 import LinkTarget
-    from .tag_py3 import Tag
-    from .core_summary_py3 import CoreSummary
-    from .search_sort_py3 import SearchSort
-    from .search_metadata_schema_py3 import SearchMetadataSchema
-    from .search_metadata_py3 import SearchMetadata
-    from .saved_search_py3 import SavedSearch
-    from .saved_searches_list_result_py3 import SavedSearchesListResult
-    from .search_error_py3 import SearchError
-    from .search_results_response_py3 import SearchResultsResponse
-    from .search_schema_value_py3 import SearchSchemaValue
-    from .search_get_schema_response_py3 import SearchGetSchemaResponse
-    from .search_highlight_py3 import SearchHighlight
-    from .search_parameters_py3 import SearchParameters
-    from .storage_account_py3 import StorageAccount
-    from .storage_insight_status_py3 import StorageInsightStatus
-    from .storage_insight_py3 import StorageInsight
-    from .resource_py3 import Resource
-    from .proxy_resource_py3 import ProxyResource
-    from .workspace_purge_body_filters_py3 import WorkspacePurgeBodyFilters
-    from .workspace_purge_body_py3 import WorkspacePurgeBody
-    from .workspace_purge_response_py3 import WorkspacePurgeResponse
-    from .workspace_purge_status_response_py3 import WorkspacePurgeStatusResponse
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
     from .linked_service_py3 import LinkedService
@@ -45,30 +22,9 @@ try:
     from .management_group_py3 import ManagementGroup
     from .sku_py3 import Sku
     from .workspace_py3 import Workspace
+    from .resource_py3 import Resource
+    from .proxy_resource_py3 import ProxyResource
 except (SyntaxError, ImportError):
-    from .link_target import LinkTarget
-    from .tag import Tag
-    from .core_summary import CoreSummary
-    from .search_sort import SearchSort
-    from .search_metadata_schema import SearchMetadataSchema
-    from .search_metadata import SearchMetadata
-    from .saved_search import SavedSearch
-    from .saved_searches_list_result import SavedSearchesListResult
-    from .search_error import SearchError
-    from .search_results_response import SearchResultsResponse
-    from .search_schema_value import SearchSchemaValue
-    from .search_get_schema_response import SearchGetSchemaResponse
-    from .search_highlight import SearchHighlight
-    from .search_parameters import SearchParameters
-    from .storage_account import StorageAccount
-    from .storage_insight_status import StorageInsightStatus
-    from .storage_insight import StorageInsight
-    from .resource import Resource
-    from .proxy_resource import ProxyResource
-    from .workspace_purge_body_filters import WorkspacePurgeBodyFilters
-    from .workspace_purge_body import WorkspacePurgeBody
-    from .workspace_purge_response import WorkspacePurgeResponse
-    from .workspace_purge_status_response import WorkspacePurgeStatusResponse
     from .operation_display import OperationDisplay
     from .operation import Operation
     from .linked_service import LinkedService
@@ -81,46 +37,21 @@ except (SyntaxError, ImportError):
     from .management_group import ManagementGroup
     from .sku import Sku
     from .workspace import Workspace
-from .storage_insight_paged import StorageInsightPaged
+    from .resource import Resource
+    from .proxy_resource import ProxyResource
+from .linked_service_paged import LinkedServicePaged
+from .data_source_paged import DataSourcePaged
 from .usage_metric_paged import UsageMetricPaged
 from .management_group_paged import ManagementGroupPaged
 from .workspace_paged import WorkspacePaged
-from .linked_service_paged import LinkedServicePaged
-from .data_source_paged import DataSourcePaged
 from .operation_paged import OperationPaged
-from .log_analytics_management_client_enums import (
-    SearchSortEnum,
-    StorageInsightState,
-    PurgeState,
+from .operational_insights_management_client_enums import (
     DataSourceKind,
     SkuNameEnum,
     EntityStatus,
 )
 
 __all__ = [
-    'LinkTarget',
-    'Tag',
-    'CoreSummary',
-    'SearchSort',
-    'SearchMetadataSchema',
-    'SearchMetadata',
-    'SavedSearch',
-    'SavedSearchesListResult',
-    'SearchError',
-    'SearchResultsResponse',
-    'SearchSchemaValue',
-    'SearchGetSchemaResponse',
-    'SearchHighlight',
-    'SearchParameters',
-    'StorageAccount',
-    'StorageInsightStatus',
-    'StorageInsight',
-    'Resource',
-    'ProxyResource',
-    'WorkspacePurgeBodyFilters',
-    'WorkspacePurgeBody',
-    'WorkspacePurgeResponse',
-    'WorkspacePurgeStatusResponse',
     'OperationDisplay',
     'Operation',
     'LinkedService',
@@ -133,16 +64,14 @@ __all__ = [
     'ManagementGroup',
     'Sku',
     'Workspace',
-    'StorageInsightPaged',
+    'Resource',
+    'ProxyResource',
+    'LinkedServicePaged',
+    'DataSourcePaged',
     'UsageMetricPaged',
     'ManagementGroupPaged',
     'WorkspacePaged',
-    'LinkedServicePaged',
-    'DataSourcePaged',
     'OperationPaged',
-    'SearchSortEnum',
-    'StorageInsightState',
-    'PurgeState',
     'DataSourceKind',
     'SkuNameEnum',
     'EntityStatus',
