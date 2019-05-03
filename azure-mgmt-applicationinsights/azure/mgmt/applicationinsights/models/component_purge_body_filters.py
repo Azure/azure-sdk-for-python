@@ -20,7 +20,7 @@ class ComponentPurgeBodyFilters(Model):
     :type column: str
     :param operator: A query operator to evaluate over the provided column and
      value(s). Supported operators are ==, =~, in, in~, >, >=, <, <=, between,
-     and have the same behaviour as they would in a KQL query.
+     and have the same behavior as they would in a KQL query.
     :type operator: str
     :param value: the value for the operator to function over. This can be a
      number (e.g., > 100), a string (timestamp >= '2017-09-01') or array of
