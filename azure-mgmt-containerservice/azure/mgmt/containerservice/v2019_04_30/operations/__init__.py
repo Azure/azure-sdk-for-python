@@ -10,13 +10,7 @@
 # --------------------------------------------------------------------------
 
 from .open_shift_managed_clusters_operations import OpenShiftManagedClustersOperations
-from .operations import Operations
-from .managed_clusters_operations import ManagedClustersOperations
-from .agent_pools_operations import AgentPoolsOperations
 
 __all__ = [
     'OpenShiftManagedClustersOperations',
-    'Operations',
-    'ManagedClustersOperations',
-    'AgentPoolsOperations',
 ]

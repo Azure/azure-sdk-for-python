@@ -9,5 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2019-04-30"
+from .container_service_client import ContainerServiceClient
+from .version import VERSION
+
+__all__ = ['ContainerServiceClient']
+
+__version__ = VERSION
 
