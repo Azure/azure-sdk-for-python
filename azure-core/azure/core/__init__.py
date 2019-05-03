@@ -35,7 +35,7 @@ from .exceptions import *
 __all__ = [
     "Configuration",
     "PipelineClient",
-    "HttpRequestError",
+    "HttpResponseError",
 ]
 
 try:
