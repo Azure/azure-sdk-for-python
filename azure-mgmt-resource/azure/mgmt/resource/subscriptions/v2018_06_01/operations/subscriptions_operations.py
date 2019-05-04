@@ -23,6 +23,7 @@ class SubscriptionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
+    :ivar api_version: The API version to use for the operation. Constant value: "2016-06-01".
     """
 
     models = models
@@ -32,130 +33,9 @@ class SubscriptionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
+        self.api_version = "2016-06-01"
 
         self.config = config
-
-    def cancel(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Cancels the subscription.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: CanceledSubscriptionId or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.subscription.models.CanceledSubscriptionId or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
-        """
-        api_version = "2019-03-01-preview"
-
-        # Construct URL
-        url = self.cancel.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('CanceledSubscriptionId', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    cancel.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Subscription/cancel'}
-
-    def rename(
-            self, subscription_name=None, custom_headers=None, raw=False, **operation_config):
-        """Renames the subscription.
-
-        :param subscription_name: New subscription name
-        :type subscription_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: RenamedSubscriptionId or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.subscription.models.RenamedSubscriptionId or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.subscription.models.ErrorResponseException>`
-        """
-        body = models.SubscriptionName(subscription_name=subscription_name)
-
-        api_version = "2019-03-01-preview"
-
-        # Construct URL
-        url = self.rename.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(body, 'SubscriptionName')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('RenamedSubscriptionId', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    rename.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Subscription/rename'}
 
     def list_locations(
             self, subscription_id, custom_headers=None, raw=False, **operation_config):
@@ -174,11 +54,9 @@ class SubscriptionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Location
         :rtype:
-         ~azure.mgmt.subscription.models.LocationPaged[~azure.mgmt.subscription.models.Location]
+         ~azure.mgmt.resource.subscriptions.v2018_06_01.models.LocationPaged[~azure.mgmt.resource.subscriptions.v2018_06_01.models.Location]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2016-06-01"
-
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -191,7 +69,7 @@ class SubscriptionsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -241,12 +119,11 @@ class SubscriptionsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Subscription or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.subscription.models.Subscription or
+        :rtype:
+         ~azure.mgmt.resource.subscriptions.v2018_06_01.models.Subscription or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2016-06-01"
-
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
@@ -256,7 +133,7 @@ class SubscriptionsOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -300,11 +177,9 @@ class SubscriptionsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of Subscription
         :rtype:
-         ~azure.mgmt.subscription.models.SubscriptionPaged[~azure.mgmt.subscription.models.Subscription]
+         ~azure.mgmt.resource.subscriptions.v2018_06_01.models.SubscriptionPaged[~azure.mgmt.resource.subscriptions.v2018_06_01.models.Subscription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2016-06-01"
-
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
@@ -313,7 +188,7 @@ class SubscriptionsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link

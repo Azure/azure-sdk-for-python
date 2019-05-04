@@ -12,23 +12,24 @@
 from msrest.serialization import Model
 
 
-class AdPrincipal(Model):
-    """Active Directory Principal for subscription creation delegated permission.
+class CanceledSubscriptionId(Model):
+    """Canceled Subscription Id.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
-    :param object_id: Required. Object id of the Principal
-    :type object_id: str
+    :ivar value: Canceled Subscription Id
+    :vartype value: str
     """
 
     _validation = {
-        'object_id': {'required': True},
+        'value': {'readonly': True},
     }
 
     _attribute_map = {
-        'object_id': {'key': 'objectId', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(AdPrincipal, self).__init__(**kwargs)
-        self.object_id = kwargs.get('object_id', None)
+    def __init__(self, **kwargs) -> None:
+        super(CanceledSubscriptionId, self).__init__(**kwargs)
+        self.value = None

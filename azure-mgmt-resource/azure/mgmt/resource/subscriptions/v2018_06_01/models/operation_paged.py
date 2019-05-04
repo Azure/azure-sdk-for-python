@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class SubscriptionCreationResult(Model):
-    """The created subscription object.
-
-    :param subscription_link: The link to the new subscription.
-    :type subscription_link: str
+class OperationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.resource.subscriptions.v2018_06_01.models.Operation>` object
     """
 
     _attribute_map = {
-        'subscription_link': {'key': 'subscriptionLink', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Operation]'}
     }
 
-    def __init__(self, *, subscription_link: str=None, **kwargs) -> None:
-        super(SubscriptionCreationResult, self).__init__(**kwargs)
-        self.subscription_link = subscription_link
+    def __init__(self, *args, **kwargs):
+
+        super(OperationPaged, self).__init__(*args, **kwargs)

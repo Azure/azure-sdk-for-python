@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = ""
+from enum import Enum
 
+
+class SubscriptionState(str, Enum):
+
+    enabled = "Enabled"
+    warned = "Warned"
+    past_due = "PastDue"
+    disabled = "Disabled"
+    deleted = "Deleted"
+
+
+class SpendingLimit(str, Enum):
+
+    on = "On"
+    off = "Off"
+    current_period_off = "CurrentPeriodOff"

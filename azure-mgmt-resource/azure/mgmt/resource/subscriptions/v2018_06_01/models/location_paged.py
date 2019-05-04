@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = ""
+from msrest.paging import Paged
 
+
+class LocationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Location <azure.mgmt.resource.subscriptions.v2018_06_01.models.Location>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Location]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(LocationPaged, self).__init__(*args, **kwargs)
