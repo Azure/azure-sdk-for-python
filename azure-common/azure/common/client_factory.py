@@ -7,6 +7,7 @@
 import io
 import json
 import os
+import re
 import sys
 try:
     from inspect import getfullargspec as get_arg_spec
@@ -34,6 +35,19 @@ def _instantiate_client(client_class, **kwargs):
     return client_class(**kwargs)
 
 
+def _client_resource(client_class, cloud):
+    """Return a tuple of the resource (used to get the right access token), and the base URL for the client.
+    Either or both can be None to signify that the default value should be used.
+    """
+    if client_class.__name__ == 'GraphRbacManagementClient':
+        return cloud.endpoints.active_directory_graph_resource_id, cloud.endpoints.active_directory_graph_resource_id
+    if client_class.__name__ == 'KeyVaultClient':
+        vault_host = cloud.suffixes.keyvault_dns[1:]
+        vault_url = 'https://{}'.format(vault_host)
+        return vault_url, None
+    return None, None
+
+
 def get_client_from_cli_profile(client_class, **kwargs):
     """Return a SDK client initialized with current CLI credentials, CLI default subscription and CLI default cloud.
 
@@ -58,15 +72,12 @@ def get_client_from_cli_profile(client_class, **kwargs):
     :return: An instantiated client
     :raises: ImportError if azure-cli-core package is not available
     """
-    is_graphrbac = client_class.__name__ == 'GraphRbacManagementClient'
     cloud = get_cli_active_cloud()
     parameters = {}
     if 'credentials' not in kwargs or 'subscription_id' not in kwargs:
-        if is_graphrbac:
-            resource = cloud.endpoints.active_directory_graph_resource_id
-        else:
-            resource = None
-        credentials, subscription_id, tenant_id = get_azure_cli_credentials(resource=resource, with_tenant=True)
+        resource, _ = _client_resource(client_class, cloud)
+        credentials, subscription_id, tenant_id = get_azure_cli_credentials(resource=resource,
+                                                                            with_tenant=True)
         parameters.update({
             'credentials': kwargs.get('credentials', credentials),
             'subscription_id': kwargs.get('subscription_id', subscription_id)
@@ -78,14 +89,16 @@ def get_client_from_cli_profile(client_class, **kwargs):
         # ADL endpoint and no manual suffix was given
         parameters['adla_job_dns_suffix'] = cloud.suffixes.azure_datalake_analytics_catalog_and_job_endpoint
     elif 'base_url' in args and 'base_url' not in kwargs:
-        if is_graphrbac:
-            parameters['base_url'] = cloud.endpoints.active_directory_graph_resource_id
+        _, base_url = _client_resource(client_class, cloud)
+        if base_url:
+            parameters['base_url'] = base_url
         else:
             parameters['base_url'] = cloud.endpoints.resource_manager
     if 'tenant_id' in args and 'tenant_id' not in kwargs:
         parameters['tenant_id'] = tenant_id
     parameters.update(kwargs)
     return _instantiate_client(client_class, **parameters)
+
 
 def get_client_from_json_dict(client_class, config_dict, **kwargs):
     """Return a SDK client initialized with a JSON auth dict.
@@ -144,10 +157,22 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
         if is_graphrbac:
             resource = config_dict['activeDirectoryGraphResourceId']
         else:
-            resource = config_dict['resourceManagerEndpointUrl']
-        authority_url = (config_dict['activeDirectoryEndpointUrl'] + '/' +
-                         config_dict['tenantId'])
-        context = adal.AuthenticationContext(authority_url, api_version=None)
+            if "activeDirectoryResourceId" not in config_dict and 'resourceManagerEndpointUrl' not in config_dict:
+                raise ValueError("Need activeDirectoryResourceId or resourceManagerEndpointUrl key")
+            resource = config_dict.get('activeDirectoryResourceId', config_dict['resourceManagerEndpointUrl'])
+
+        authority_url = config_dict['activeDirectoryEndpointUrl']
+        is_adfs = bool(re.match('.+(/adfs|/adfs/)$', authority_url, re.I))
+        if is_adfs:
+            authority_url = authority_url.rstrip('/')  # workaround: ADAL is known to reject auth urls with trailing /
+        else:
+            authority_url = authority_url + '/' + config_dict['tenantId']
+
+        context = adal.AuthenticationContext(
+            authority_url,
+            api_version=None,
+            validate_authority=not is_adfs
+        )
         parameters['credentials'] = AdalAuthentication(
             context.acquire_token_with_client_credentials,
             resource,

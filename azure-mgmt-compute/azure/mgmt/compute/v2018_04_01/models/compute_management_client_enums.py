@@ -19,6 +19,12 @@ class StatusLevelTypes(str, Enum):
     error = "Error"
 
 
+class ProximityPlacementGroupType(str, Enum):
+
+    standard = "Standard"
+    ultra = "Ultra"
+
+
 class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"

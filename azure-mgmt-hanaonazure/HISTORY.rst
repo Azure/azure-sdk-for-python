@@ -3,6 +3,48 @@
 Release History
 ===============
 
+0.5.1 (2019-04-26)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fixing incorrect RestAPI descriptio
+
+0.5.0 (2019-04-15)
+++++++++++++++++++
+
+**Features**
+
+- Added operation enable_monitoring
+
+0.4.0 (2019-02-21)
+++++++++++++++++++
+
+**Features**
+
+- Model HanaInstance has a new parameter hw_revision
+
+0.3.2 (2019-01-29)
+++++++++++++++++++
+
+**Features**
+
+- Add proximity_placement_group
+
+0.3.1 (2019-01-24)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix restart operation
+
+0.3.0 (2019-01-03)
+++++++++++++++++++
+
+**Features**
+
+- Added operation HanaInstancesOperations.update
+
 0.2.1 (2018-08-31)
 ++++++++++++++++++
 

@@ -14,7 +14,7 @@ from msrest.exceptions import HttpOperationError
 
 
 class ErrorResponse(Model):
-    """Error reponse indicates Microsoft.MarketplaceOrdering service is not able
+    """Error response indicates Microsoft.MarketplaceOrdering service is not able
     to process the incoming request. The reason is provided in the error
     message.
 
@@ -26,9 +26,9 @@ class ErrorResponse(Model):
         'error': {'key': 'error', 'type': 'ErrorResponseError'},
     }
 
-    def __init__(self, error=None):
-        super(ErrorResponse, self).__init__()
-        self.error = error
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
 
 
 class ErrorResponseException(HttpOperationError):

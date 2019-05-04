@@ -35,19 +35,25 @@ class GeoReplicationStats(Model):
      Element may be default value if value of LastSyncTime is not available,
      this can happen if secondary is offline or we are in bootstrap.
     :vartype last_sync_time: datetime
+    :ivar can_failover: A boolean flag which indicates whether or not account
+     failover is supported for the account.
+    :vartype can_failover: bool
     """
 
     _validation = {
         'status': {'readonly': True},
         'last_sync_time': {'readonly': True},
+        'can_failover': {'readonly': True},
     }
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
         'last_sync_time': {'key': 'lastSyncTime', 'type': 'iso-8601'},
+        'can_failover': {'key': 'canFailover', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(GeoReplicationStats, self).__init__(**kwargs)
         self.status = None
         self.last_sync_time = None
+        self.can_failover = None

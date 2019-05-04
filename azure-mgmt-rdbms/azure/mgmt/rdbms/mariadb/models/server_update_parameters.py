@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ServerUpdateParameters(Model):
-    """Parameters allowd to update for a server.
+    """Parameters allowed to update for a server.
 
     :param sku: The SKU (pricing tier) of the server.
     :type sku: ~azure.mgmt.rdbms.mariadb.models.Sku
@@ -29,6 +29,8 @@ class ServerUpdateParameters(Model):
      server. Possible values include: 'Enabled', 'Disabled'
     :type ssl_enforcement: str or
      ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+    :param replication_role: The replication role of the server.
+    :type replication_role: str
     :param tags: Application-specific metadata in the form of key-value pairs.
     :type tags: dict[str, str]
     """
@@ -39,6 +41,7 @@ class ServerUpdateParameters(Model):
         'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
         'ssl_enforcement': {'key': 'properties.sslEnforcement', 'type': 'SslEnforcementEnum'},
+        'replication_role': {'key': 'properties.replicationRole', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -49,4 +52,5 @@ class ServerUpdateParameters(Model):
         self.administrator_login_password = kwargs.get('administrator_login_password', None)
         self.version = kwargs.get('version', None)
         self.ssl_enforcement = kwargs.get('ssl_enforcement', None)
+        self.replication_role = kwargs.get('replication_role', None)
         self.tags = kwargs.get('tags', None)

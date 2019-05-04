@@ -61,7 +61,7 @@ class JobOutputAsset(JobOutput):
 
     _attribute_map = {
         'error': {'key': 'error', 'type': 'JobError'},
-        'state': {'key': 'state', 'type': 'JobState'},
+        'state': {'key': 'state', 'type': 'str'},
         'progress': {'key': 'progress', 'type': 'int'},
         'label': {'key': 'label', 'type': 'str'},
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},

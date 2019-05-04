@@ -151,6 +151,7 @@ class IntegrationAccountSkuName(str, Enum):
 
     not_specified = "NotSpecified"
     free = "Free"
+    basic = "Basic"
     standard = "Standard"
 
 
@@ -164,6 +165,9 @@ class MapType(str, Enum):
 
     not_specified = "NotSpecified"
     xslt = "Xslt"
+    xslt20 = "Xslt20"
+    xslt30 = "Xslt30"
+    liquid = "Liquid"
 
 
 class PartnerType(str, Enum):
@@ -328,10 +332,3 @@ class TrackingRecordType(str, Enum):
     edifact_interchange_acknowledgment = "EdifactInterchangeAcknowledgment"
     edifact_functional_group_acknowledgment = "EdifactFunctionalGroupAcknowledgment"
     edifact_transaction_set_acknowledgment = "EdifactTransactionSetAcknowledgment"
-
-
-class AccessKeyType(str, Enum):
-
-    not_specified = "NotSpecified"
-    primary = "Primary"
-    secondary = "Secondary"

@@ -21,14 +21,18 @@ class TestAllRoutesInput(Model):
     :type routing_source: str or ~azure.mgmt.iothub.models.RoutingSource
     :param message: Routing message
     :type message: ~azure.mgmt.iothub.models.RoutingMessage
+    :param twin: Routing Twin Reference
+    :type twin: ~azure.mgmt.iothub.models.RoutingTwin
     """
 
     _attribute_map = {
         'routing_source': {'key': 'routingSource', 'type': 'str'},
         'message': {'key': 'message', 'type': 'RoutingMessage'},
+        'twin': {'key': 'twin', 'type': 'RoutingTwin'},
     }
 
-    def __init__(self, *, routing_source=None, message=None, **kwargs) -> None:
+    def __init__(self, *, routing_source=None, message=None, twin=None, **kwargs) -> None:
         super(TestAllRoutesInput, self).__init__(**kwargs)
         self.routing_source = routing_source
         self.message = message
+        self.twin = twin
