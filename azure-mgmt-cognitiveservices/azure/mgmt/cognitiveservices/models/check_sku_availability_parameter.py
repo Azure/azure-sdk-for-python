@@ -18,14 +18,9 @@ class CheckSkuAvailabilityParameter(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param skus: Required. The SKU of the resource.
-    :type skus: list[str or ~azure.mgmt.cognitiveservices.models.SkuName]
-    :param kind: Required. The Kind of the resource. Possible values include:
-     'Bing.Autosuggest.v7', 'Bing.CustomSearch', 'Bing.Search.v7',
-     'Bing.Speech', 'Bing.SpellCheck.v7', 'ComputerVision', 'ContentModerator',
-     'CustomSpeech', 'CustomVision.Prediction', 'CustomVision.Training',
-     'Emotion', 'Face', 'LUIS', 'QnAMaker', 'SpeakerRecognition',
-     'SpeechTranslation', 'TextAnalytics', 'TextTranslation', 'WebLM'
-    :type kind: str or ~azure.mgmt.cognitiveservices.models.Kind
+    :type skus: list[str]
+    :param kind: Required. The Kind of the resource.
+    :type kind: str
     :param type: Required. The Type of the resource.
     :type type: str
     """

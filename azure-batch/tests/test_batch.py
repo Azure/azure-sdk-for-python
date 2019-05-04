@@ -886,6 +886,12 @@ class BatchTest(AzureMgmtTestCase):
             client.task.add_collection,
             batch_job.id,
             tasks_to_add)
+        self.assertCreateTasksError(
+            "RequestBodyTooLarge",
+            client.task.add_collection,
+            batch_job.id,
+            tasks_to_add,
+            threads=3)
 
         # Test Bulk Add Task Success
         task_id = "mytask"

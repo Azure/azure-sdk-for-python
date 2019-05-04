@@ -14,17 +14,12 @@ from msrest.exceptions import HttpOperationError
 
 
 class ComputerVisionError(Model):
-    """ComputerVisionError.
+    """Details about the API request error.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. The error code. Possible values include:
-     'InvalidImageUrl', 'InvalidImageFormat', 'InvalidImageSize',
-     'NotSupportedVisualFeature', 'NotSupportedImage', 'InvalidDetails',
-     'NotSupportedLanguage', 'BadArgument', 'FailedToProcess', 'Timeout',
-     'InternalServerError', 'Unspecified', 'StorageException'
-    :type code: str or
-     ~azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorCodes
+    :param code: Required. The error code.
+    :type code: object
     :param message: Required. A message explaining the error reported by the
      service.
     :type message: str
@@ -38,7 +33,7 @@ class ComputerVisionError(Model):
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'ComputerVisionErrorCodes'},
+        'code': {'key': 'code', 'type': 'object'},
         'message': {'key': 'message', 'type': 'str'},
         'request_id': {'key': 'requestId', 'type': 'str'},
     }

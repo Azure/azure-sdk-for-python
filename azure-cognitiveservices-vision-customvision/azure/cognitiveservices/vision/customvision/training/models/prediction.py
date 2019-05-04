@@ -13,18 +13,18 @@ from msrest.serialization import Model
 
 
 class Prediction(Model):
-    """Prediction.
+    """Prediction result.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar probability:
+    :ivar probability: Probability of the tag.
     :vartype probability: float
-    :ivar tag_id:
+    :ivar tag_id: Id of the predicted tag.
     :vartype tag_id: str
-    :ivar tag_name:
+    :ivar tag_name: Name of the predicted tag.
     :vartype tag_name: str
-    :ivar bounding_box:
+    :ivar bounding_box: Bounding box of the prediction.
     :vartype bounding_box:
      ~azure.cognitiveservices.vision.customvision.training.models.BoundingBox
     """

@@ -3,6 +3,17 @@
 Release History
 ===============
 
+1.1.20 (2019-04-30)
++++++++++++++++++++
+
+- Add support for profile v2019_03_01_hybrid
+- Fix profile v2018_03_01_hybrid for DNS definition
+
+1.1.19 (2019-04-18)
++++++++++++++++++++
+
+- Azure Stack support for get_client_from_auth_file and get_client_from_json_dict
+
 1.1.18 (2019-01-29)
 +++++++++++++++++++
 

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ExplicitListItemCreateObject(Model):
-    """Object model for creating an explicit list item.
+    """Object model for creating an explicit (exception) list item.
 
     :param explicit_list_item: The explicit list item.
     :type explicit_list_item: str

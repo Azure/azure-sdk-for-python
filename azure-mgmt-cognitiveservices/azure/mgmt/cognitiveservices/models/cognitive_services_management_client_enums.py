@@ -12,49 +12,11 @@
 from enum import Enum
 
 
-class SkuName(str, Enum):
-
-    f0 = "F0"
-    p0 = "P0"
-    p1 = "P1"
-    p2 = "P2"
-    s0 = "S0"
-    s1 = "S1"
-    s2 = "S2"
-    s3 = "S3"
-    s4 = "S4"
-    s5 = "S5"
-    s6 = "S6"
-
-
 class SkuTier(str, Enum):
 
     free = "Free"
     standard = "Standard"
     premium = "Premium"
-
-
-class Kind(str, Enum):
-
-    bing_autosuggestv7 = "Bing.Autosuggest.v7"
-    bing_custom_search = "Bing.CustomSearch"
-    bing_searchv7 = "Bing.Search.v7"
-    bing_speech = "Bing.Speech"
-    bing_spell_checkv7 = "Bing.SpellCheck.v7"
-    computer_vision = "ComputerVision"
-    content_moderator = "ContentModerator"
-    custom_speech = "CustomSpeech"
-    custom_vision_prediction = "CustomVision.Prediction"
-    custom_vision_training = "CustomVision.Training"
-    emotion = "Emotion"
-    face = "Face"
-    luis = "LUIS"
-    qn_amaker = "QnAMaker"
-    speaker_recognition = "SpeakerRecognition"
-    speech_translation = "SpeechTranslation"
-    text_analytics = "TextAnalytics"
-    text_translation = "TextTranslation"
-    web_lm = "WebLM"
 
 
 class ProvisioningState(str, Enum):
