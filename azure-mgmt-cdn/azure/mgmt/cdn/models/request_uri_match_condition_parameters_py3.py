@@ -21,7 +21,7 @@ class RequestUriMatchConditionParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar odatatype: Required.  Default value:
-     "Microsoft.Azure.Cdn.Models.DeliveryRuleRequestUriConditionParameters" .
+     "#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestUriConditionParameters" .
     :vartype odatatype: str
     :param operator: Required. Describes operator to be matched. Possible
      values include: 'Any', 'Equal', 'Contains', 'BeginsWith', 'EndsWith',
@@ -50,7 +50,7 @@ class RequestUriMatchConditionParameters(Model):
         'transforms': {'key': 'transforms', 'type': '[str]'},
     }
 
-    odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRuleRequestUriConditionParameters"
+    odatatype = "#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestUriConditionParameters"
 
     def __init__(self, *, operator, match_values, negate_condition: bool=None, transforms=None, **kwargs) -> None:
         super(RequestUriMatchConditionParameters, self).__init__(**kwargs)

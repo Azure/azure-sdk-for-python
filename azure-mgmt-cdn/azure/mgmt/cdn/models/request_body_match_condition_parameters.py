@@ -21,7 +21,7 @@ class RequestBodyMatchConditionParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar odatatype: Required.  Default value:
-     "Microsoft.Azure.Cdn.Models.DeliveryRuleRequestBodyConditionParameters" .
+     "#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestBodyConditionParameters" .
     :vartype odatatype: str
     :param operator: Required. Describes operator to be matched. Possible
      values include: 'Any', 'Equal', 'Contains', 'BeginsWith', 'EndsWith',
@@ -50,7 +50,7 @@ class RequestBodyMatchConditionParameters(Model):
         'transforms': {'key': 'transforms', 'type': '[str]'},
     }
 
-    odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRuleRequestBodyConditionParameters"
+    odatatype = "#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestBodyConditionParameters"
 
     def __init__(self, **kwargs):
         super(RequestBodyMatchConditionParameters, self).__init__(**kwargs)

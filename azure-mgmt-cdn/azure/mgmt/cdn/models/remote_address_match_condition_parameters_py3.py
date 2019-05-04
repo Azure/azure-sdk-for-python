@@ -21,7 +21,7 @@ class RemoteAddressMatchConditionParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar odatatype: Required.  Default value:
-     "Microsoft.Azure.Cdn.Models.DeliveryRuleRemoteAddressConditionParameters"
+     "#Microsoft.Azure.Cdn.Models.DeliveryRuleRemoteAddressConditionParameters"
      .
     :vartype odatatype: str
     :param operator: Required. Describes operator to be matched. Possible
@@ -52,7 +52,7 @@ class RemoteAddressMatchConditionParameters(Model):
         'transforms': {'key': 'transforms', 'type': '[str]'},
     }
 
-    odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRuleRemoteAddressConditionParameters"
+    odatatype = "#Microsoft.Azure.Cdn.Models.DeliveryRuleRemoteAddressConditionParameters"
 
     def __init__(self, *, operator, match_values, negate_condition: bool=None, transforms=None, **kwargs) -> None:
         super(RemoteAddressMatchConditionParameters, self).__init__(**kwargs)

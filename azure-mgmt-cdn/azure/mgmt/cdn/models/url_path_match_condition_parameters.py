@@ -21,7 +21,8 @@ class UrlPathMatchConditionParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar odatatype: Required.  Default value:
-     "Microsoft.Azure.Cdn.Models.DeliveryRuleUrlPathMatchConditionParameters" .
+     "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlPathMatchConditionParameters"
+     .
     :vartype odatatype: str
     :param operator: Required. Describes operator to be matched. Possible
      values include: 'Any', 'Equal', 'Contains', 'BeginsWith', 'EndsWith',
@@ -51,7 +52,7 @@ class UrlPathMatchConditionParameters(Model):
         'transforms': {'key': 'transforms', 'type': '[str]'},
     }
 
-    odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRuleUrlPathMatchConditionParameters"
+    odatatype = "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlPathMatchConditionParameters"
 
     def __init__(self, **kwargs):
         super(UrlPathMatchConditionParameters, self).__init__(**kwargs)

@@ -21,7 +21,7 @@ class QueryStringMatchConditionParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar odatatype: Required.  Default value:
-     "Microsoft.Azure.Cdn.Models.DeliveryRuleQueryStringConditionParameters" .
+     "#Microsoft.Azure.Cdn.Models.DeliveryRuleQueryStringConditionParameters" .
     :vartype odatatype: str
     :param operator: Required. Describes operator to be matched. Possible
      values include: 'Any', 'Equal', 'Contains', 'BeginsWith', 'EndsWith',
@@ -50,7 +50,7 @@ class QueryStringMatchConditionParameters(Model):
         'transforms': {'key': 'transforms', 'type': '[str]'},
     }
 
-    odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRuleQueryStringConditionParameters"
+    odatatype = "#Microsoft.Azure.Cdn.Models.DeliveryRuleQueryStringConditionParameters"
 
     def __init__(self, *, operator, match_values, negate_condition: bool=None, transforms=None, **kwargs) -> None:
         super(QueryStringMatchConditionParameters, self).__init__(**kwargs)

@@ -21,7 +21,7 @@ class IsDeviceMatchConditionParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar odatatype: Required.  Default value:
-     "Microsoft.Azure.Cdn.Models.DeliveryRuleIsDeviceConditionParameters" .
+     "#Microsoft.Azure.Cdn.Models.DeliveryRuleIsDeviceConditionParameters" .
     :vartype odatatype: str
     :ivar operator: Required. Describes operator to be matched. Default value:
      "Equal" .
@@ -49,7 +49,7 @@ class IsDeviceMatchConditionParameters(Model):
         'transforms': {'key': 'transforms', 'type': '[str]'},
     }
 
-    odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRuleIsDeviceConditionParameters"
+    odatatype = "#Microsoft.Azure.Cdn.Models.DeliveryRuleIsDeviceConditionParameters"
 
     operator = "Equal"
 

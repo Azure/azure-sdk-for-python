@@ -21,7 +21,7 @@ class UrlFileNameMatchConditionParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar odatatype: Required.  Default value:
-     "Microsoft.Azure.Cdn.Models.DeliveryRuleUrlFilenameConditionParameters" .
+     "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlFilenameConditionParameters" .
     :vartype odatatype: str
     :param operator: Required. Describes operator to be matched. Possible
      values include: 'Any', 'Equal', 'Contains', 'BeginsWith', 'EndsWith',
@@ -50,7 +50,7 @@ class UrlFileNameMatchConditionParameters(Model):
         'transforms': {'key': 'transforms', 'type': '[str]'},
     }
 
-    odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRuleUrlFilenameConditionParameters"
+    odatatype = "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlFilenameConditionParameters"
 
     def __init__(self, **kwargs):
         super(UrlFileNameMatchConditionParameters, self).__init__(**kwargs)

@@ -21,7 +21,7 @@ class RequestHeaderMatchConditionParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar odatatype: Required.  Default value:
-     "Microsoft.Azure.Cdn.Models.DeliveryRuleRequestHeaderConditionParameters"
+     "#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestHeaderConditionParameters"
      .
     :vartype odatatype: str
     :param selector: Required. Name of Header to be matched
@@ -55,7 +55,7 @@ class RequestHeaderMatchConditionParameters(Model):
         'transforms': {'key': 'transforms', 'type': '[str]'},
     }
 
-    odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRuleRequestHeaderConditionParameters"
+    odatatype = "#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestHeaderConditionParameters"
 
     def __init__(self, **kwargs):
         super(RequestHeaderMatchConditionParameters, self).__init__(**kwargs)

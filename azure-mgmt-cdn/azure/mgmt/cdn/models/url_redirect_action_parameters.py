@@ -21,7 +21,7 @@ class UrlRedirectActionParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar odatatype: Required.  Default value:
-     "Microsoft.Azure.Cdn.Models.DeliveryRuleUrlRedirectActionParameters" .
+     "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlRedirectActionParameters" .
     :vartype odatatype: str
     :param redirect_type: Required. The redirect type the rule will use when
      redirecting traffic. Possible values include: 'Moved', 'Found',
@@ -65,7 +65,7 @@ class UrlRedirectActionParameters(Model):
         'custom_fragment': {'key': 'customFragment', 'type': 'str'},
     }
 
-    odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRuleUrlRedirectActionParameters"
+    odatatype = "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlRedirectActionParameters"
 
     def __init__(self, **kwargs):
         super(UrlRedirectActionParameters, self).__init__(**kwargs)

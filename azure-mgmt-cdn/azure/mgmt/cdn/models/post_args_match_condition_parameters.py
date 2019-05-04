@@ -21,7 +21,7 @@ class PostArgsMatchConditionParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar odatatype: Required.  Default value:
-     "Microsoft.Azure.Cdn.Models.DeliveryRulePostArgsConditionParameters" .
+     "#Microsoft.Azure.Cdn.Models.DeliveryRulePostArgsConditionParameters" .
     :vartype odatatype: str
     :param selector: Required. Name of PostArg to be matched
     :type selector: str
@@ -54,7 +54,7 @@ class PostArgsMatchConditionParameters(Model):
         'transforms': {'key': 'transforms', 'type': '[str]'},
     }
 
-    odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRulePostArgsConditionParameters"
+    odatatype = "#Microsoft.Azure.Cdn.Models.DeliveryRulePostArgsConditionParameters"
 
     def __init__(self, **kwargs):
         super(PostArgsMatchConditionParameters, self).__init__(**kwargs)

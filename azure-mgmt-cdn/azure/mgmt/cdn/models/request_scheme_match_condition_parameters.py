@@ -21,7 +21,7 @@ class RequestSchemeMatchConditionParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar odatatype: Required.  Default value:
-     "Microsoft.Azure.Cdn.Models.DeliveryRuleRequestSchemeConditionParameters"
+     "#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestSchemeConditionParameters"
      .
     :vartype odatatype: str
     :ivar operator: Required. Describes operator to be matched. Default value:
@@ -47,7 +47,7 @@ class RequestSchemeMatchConditionParameters(Model):
         'match_values': {'key': 'matchValues', 'type': '[str]'},
     }
 
-    odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRuleRequestSchemeConditionParameters"
+    odatatype = "#Microsoft.Azure.Cdn.Models.DeliveryRuleRequestSchemeConditionParameters"
 
     operator = "Equal"
 

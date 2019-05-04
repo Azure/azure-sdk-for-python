@@ -21,7 +21,7 @@ class UrlFileExtensionMatchConditionParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar odatatype: Required.  Default value:
-     "Microsoft.Azure.Cdn.Models.DeliveryRuleUrlFileExtensionMatchConditionParameters"
+     "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlFileExtensionMatchConditionParameters"
      .
     :vartype odatatype: str
     :param operator: Required. Describes operator to be matched. Possible
@@ -51,7 +51,7 @@ class UrlFileExtensionMatchConditionParameters(Model):
         'transforms': {'key': 'transforms', 'type': '[str]'},
     }
 
-    odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRuleUrlFileExtensionMatchConditionParameters"
+    odatatype = "#Microsoft.Azure.Cdn.Models.DeliveryRuleUrlFileExtensionMatchConditionParameters"
 
     def __init__(self, *, operator, match_values, negate_condition: bool=None, transforms=None, **kwargs) -> None:
         super(UrlFileExtensionMatchConditionParameters, self).__init__(**kwargs)

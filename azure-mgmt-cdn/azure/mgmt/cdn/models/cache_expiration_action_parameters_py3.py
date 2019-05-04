@@ -21,7 +21,8 @@ class CacheExpirationActionParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar odatatype: Required.  Default value:
-     "Microsoft.Azure.Cdn.Models.DeliveryRuleCacheExpirationActionParameters" .
+     "#Microsoft.Azure.Cdn.Models.DeliveryRuleCacheExpirationActionParameters"
+     .
     :vartype odatatype: str
     :param cache_behavior: Required. Caching behavior for the requests.
      Possible values include: 'BypassCache', 'Override', 'SetIfMissing'
@@ -47,7 +48,7 @@ class CacheExpirationActionParameters(Model):
         'cache_duration': {'key': 'cacheDuration', 'type': 'str'},
     }
 
-    odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRuleCacheExpirationActionParameters"
+    odatatype = "#Microsoft.Azure.Cdn.Models.DeliveryRuleCacheExpirationActionParameters"
 
     cache_type = "All"
 

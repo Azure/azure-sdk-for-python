@@ -21,7 +21,7 @@ class HeaderActionParameters(Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar odatatype: Required.  Default value:
-     "Microsoft.Azure.Cdn.Models.DeliveryRuleHeaderActionParameters" .
+     "#Microsoft.Azure.Cdn.Models.DeliveryRuleHeaderActionParameters" .
     :vartype odatatype: str
     :param header_action: Required. Action to perform. Possible values
      include: 'Append', 'Overwrite', 'Delete'
@@ -45,7 +45,7 @@ class HeaderActionParameters(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    odatatype = "Microsoft.Azure.Cdn.Models.DeliveryRuleHeaderActionParameters"
+    odatatype = "#Microsoft.Azure.Cdn.Models.DeliveryRuleHeaderActionParameters"
 
     def __init__(self, *, header_action, header_name: str, value: str=None, **kwargs) -> None:
         super(HeaderActionParameters, self).__init__(**kwargs)
