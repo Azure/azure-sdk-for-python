@@ -18,7 +18,7 @@ class ApplicationInsightsComponentAPIKey(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The unique ID of the API key inside an Applciation Insights
+    :ivar id: The unique ID of the API key inside an Application Insights
      component. It is auto generated when the API key is created.
     :vartype id: str
     :ivar api_key: The API key value. It will be only return once when the API
@@ -48,11 +48,11 @@ class ApplicationInsightsComponentAPIKey(Model):
         'linked_write_properties': {'key': 'linkedWriteProperties', 'type': '[str]'},
     }
 
-    def __init__(self, created_date=None, name=None, linked_read_properties=None, linked_write_properties=None):
-        super(ApplicationInsightsComponentAPIKey, self).__init__()
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentAPIKey, self).__init__(**kwargs)
         self.id = None
         self.api_key = None
-        self.created_date = created_date
-        self.name = name
-        self.linked_read_properties = linked_read_properties
-        self.linked_write_properties = linked_write_properties
+        self.created_date = kwargs.get('created_date', None)
+        self.name = kwargs.get('name', None)
+        self.linked_read_properties = kwargs.get('linked_read_properties', None)
+        self.linked_write_properties = kwargs.get('linked_write_properties', None)

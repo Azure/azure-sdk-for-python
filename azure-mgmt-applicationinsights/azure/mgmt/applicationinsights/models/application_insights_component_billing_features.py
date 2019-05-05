@@ -16,7 +16,7 @@ class ApplicationInsightsComponentBillingFeatures(Model):
     """An Application Insights component billing features.
 
     :param data_volume_cap: An Application Insights component daily data
-     volumne cap
+     volume cap
     :type data_volume_cap:
      ~azure.mgmt.applicationinsights.models.ApplicationInsightsComponentDataVolumeCap
     :param current_billing_features: Current enabled pricing plan. When the
@@ -30,7 +30,7 @@ class ApplicationInsightsComponentBillingFeatures(Model):
         'current_billing_features': {'key': 'CurrentBillingFeatures', 'type': '[str]'},
     }
 
-    def __init__(self, data_volume_cap=None, current_billing_features=None):
-        super(ApplicationInsightsComponentBillingFeatures, self).__init__()
-        self.data_volume_cap = data_volume_cap
-        self.current_billing_features = current_billing_features
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentBillingFeatures, self).__init__(**kwargs)
+        self.data_volume_cap = kwargs.get('data_volume_cap', None)
+        self.current_billing_features = kwargs.get('current_billing_features', None)

@@ -12,23 +12,90 @@
 from enum import Enum
 
 
-class ApplicationType(Enum):
+class ApplicationType(str, Enum):
 
     web = "web"
     other = "other"
 
 
-class FlowType(Enum):
+class FlowType(str, Enum):
 
     bluefield = "Bluefield"
 
 
-class RequestSource(Enum):
+class RequestSource(str, Enum):
 
     rest = "rest"
 
 
-class WebTestKind(Enum):
+class PurgeState(str, Enum):
+
+    pending = "pending"
+    completed = "completed"
+
+
+class FavoriteType(str, Enum):
+
+    shared = "shared"
+    user = "user"
+
+
+class WebTestKind(str, Enum):
 
     ping = "ping"
     multistep = "multistep"
+
+
+class ItemScope(str, Enum):
+
+    shared = "shared"
+    user = "user"
+
+
+class ItemType(str, Enum):
+
+    query = "query"
+    function = "function"
+    folder = "folder"
+    recent = "recent"
+
+
+class SharedTypeKind(str, Enum):
+
+    user = "user"
+    shared = "shared"
+
+
+class FavoriteSourceType(str, Enum):
+
+    retention = "retention"
+    notebook = "notebook"
+    sessions = "sessions"
+    events = "events"
+    userflows = "userflows"
+    funnel = "funnel"
+    impact = "impact"
+    segmentation = "segmentation"
+
+
+class ItemScopePath(str, Enum):
+
+    analytics_items = "analyticsItems"
+    myanalytics_items = "myanalyticsItems"
+
+
+class ItemTypeParameter(str, Enum):
+
+    none = "none"
+    query = "query"
+    function = "function"
+    folder = "folder"
+    recent = "recent"
+
+
+class CategoryType(str, Enum):
+
+    workbook = "workbook"
+    tsg = "TSG"
+    performance = "performance"
+    retention = "retention"

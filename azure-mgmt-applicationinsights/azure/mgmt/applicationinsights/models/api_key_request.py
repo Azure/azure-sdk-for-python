@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class APIKeyRequest(Model):
-    """An Application Insights component API Key createion request definition.
+    """An Application Insights component API Key creation request definition.
 
     :param name: The name of the API Key.
     :type name: str
@@ -29,8 +29,8 @@ class APIKeyRequest(Model):
         'linked_write_properties': {'key': 'linkedWriteProperties', 'type': '[str]'},
     }
 
-    def __init__(self, name=None, linked_read_properties=None, linked_write_properties=None):
-        super(APIKeyRequest, self).__init__()
-        self.name = name
-        self.linked_read_properties = linked_read_properties
-        self.linked_write_properties = linked_write_properties
+    def __init__(self, **kwargs):
+        super(APIKeyRequest, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.linked_read_properties = kwargs.get('linked_read_properties', None)
+        self.linked_write_properties = kwargs.get('linked_write_properties', None)

@@ -12,11 +12,13 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
+class ComponentsResource(Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Azure resource Id
     :vartype id: str
@@ -24,7 +26,7 @@ class Resource(Model):
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -45,10 +47,10 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, location, tags=None):
-        super(Resource, self).__init__()
+    def __init__(self, **kwargs):
+        super(ComponentsResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = location
-        self.tags = tags
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
