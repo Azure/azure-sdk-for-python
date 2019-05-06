@@ -21,6 +21,8 @@ class TimeframeType(str, Enum):
     the_last_month = "TheLastMonth"
     the_last_year = "TheLastYear"
     custom = "Custom"
+    billing_month_to_date = "BillingMonthToDate"
+    the_last_billing_month = "TheLastBillingMonth"
 
 
 class GranularityType(str, Enum):
