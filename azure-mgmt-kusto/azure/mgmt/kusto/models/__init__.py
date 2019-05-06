@@ -32,7 +32,6 @@ try:
     from .database_check_name_request_py3 import DatabaseCheckNameRequest
     from .data_connection_check_name_request_py3 import DataConnectionCheckNameRequest
     from .check_name_result_py3 import CheckNameResult
-    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
     from .tracked_resource_py3 import TrackedResource
@@ -62,7 +61,6 @@ except (SyntaxError, ImportError):
     from .database_check_name_request import DatabaseCheckNameRequest
     from .data_connection_check_name_request import DataConnectionCheckNameRequest
     from .check_name_result import CheckNameResult
-    from .check_name_availability_result import CheckNameAvailabilityResult
     from .operation_display import OperationDisplay
     from .operation import Operation
     from .tracked_resource import TrackedResource
@@ -84,7 +82,7 @@ from .kusto_management_client_enums import (
     DataFormat,
     DatabasePrincipalRole,
     DatabasePrincipalType,
-    NameAvailable,
+    Reason,
 )
 
 __all__ = [
@@ -110,7 +108,6 @@ __all__ = [
     'DatabaseCheckNameRequest',
     'DataConnectionCheckNameRequest',
     'CheckNameResult',
-    'CheckNameAvailabilityResult',
     'OperationDisplay',
     'Operation',
     'TrackedResource',
@@ -131,5 +128,5 @@ __all__ = [
     'DataFormat',
     'DatabasePrincipalRole',
     'DatabasePrincipalType',
-    'NameAvailable',
+    'Reason',
 ]

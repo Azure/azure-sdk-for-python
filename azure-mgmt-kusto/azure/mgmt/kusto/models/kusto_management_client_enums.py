@@ -84,7 +84,7 @@ class DatabasePrincipalType(str, Enum):
     user = "User"
 
 
-class NameAvailable(str, Enum):
+class Reason(str, Enum):
 
-    available = "Available"
-    not_available = "NotAvailable"
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
