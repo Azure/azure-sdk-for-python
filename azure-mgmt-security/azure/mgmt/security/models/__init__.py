@@ -10,10 +10,12 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .pricing_py3 import Pricing
-    from .pricing_list_py3 import PricingList
+    from .compliance_result_py3 import ComplianceResult
+    from .compliance_result_list_py3 import ComplianceResultList
     from .asc_location_py3 import AscLocation
     from .resource_py3 import Resource
+    from .pricing_py3 import Pricing
+    from .pricing_list_py3 import PricingList
     from .alert_entity_py3 import AlertEntity
     from .alert_confidence_reason_py3 import AlertConfidenceReason
     from .alert_py3 import Alert
@@ -68,10 +70,12 @@ try:
     from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
     from .regulatory_compliance_assessment_py3 import RegulatoryComplianceAssessment
 except (SyntaxError, ImportError):
-    from .pricing import Pricing
-    from .pricing_list import PricingList
+    from .compliance_result import ComplianceResult
+    from .compliance_result_list import ComplianceResultList
     from .asc_location import AscLocation
     from .resource import Resource
+    from .pricing import Pricing
+    from .pricing_list import PricingList
     from .alert_entity import AlertEntity
     from .alert_confidence_reason import AlertConfidenceReason
     from .alert import Alert
@@ -144,6 +148,7 @@ from .regulatory_compliance_standard_paged import RegulatoryComplianceStandardPa
 from .regulatory_compliance_control_paged import RegulatoryComplianceControlPaged
 from .regulatory_compliance_assessment_paged import RegulatoryComplianceAssessmentPaged
 from .security_center_enums import (
+    ResourceStatus,
     PricingTier,
     ReportedSeverity,
     SettingKind,
@@ -161,10 +166,12 @@ from .security_center_enums import (
 )
 
 __all__ = [
-    'Pricing',
-    'PricingList',
+    'ComplianceResult',
+    'ComplianceResultList',
     'AscLocation',
     'Resource',
+    'Pricing',
+    'PricingList',
     'AlertEntity',
     'AlertConfidenceReason',
     'Alert',
@@ -236,6 +243,7 @@ __all__ = [
     'RegulatoryComplianceStandardPaged',
     'RegulatoryComplianceControlPaged',
     'RegulatoryComplianceAssessmentPaged',
+    'ResourceStatus',
     'PricingTier',
     'ReportedSeverity',
     'SettingKind',
