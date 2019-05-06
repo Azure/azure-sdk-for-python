@@ -26,7 +26,7 @@ class Conditions(Model):
     :type target_resource_type: ~azure.mgmt.alertsmanagement.models.Condition
     :param alert_rule_id: filter alerts by alert rule id
     :type alert_rule_id: ~azure.mgmt.alertsmanagement.models.Condition
-    :param description: filter alerts by slert rule description
+    :param description: filter alerts by alert rule description
     :type description: ~azure.mgmt.alertsmanagement.models.Condition
     :param alert_context: filter alerts by alert context (payload)
     :type alert_context: ~azure.mgmt.alertsmanagement.models.Condition
