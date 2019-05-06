@@ -53,7 +53,7 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
     :type metrics: list[~microsoft.aadiam.models.MetricSettings]
     :param logs: The list of logs settings.
     :type logs: list[~microsoft.aadiam.models.LogSettings]
-    :param log_analytics_destination_type: The type of log analyitics
+    :param log_analytics_destination_type: The type of log analytics
      destination.
     :type log_analytics_destination_type: str
     """
