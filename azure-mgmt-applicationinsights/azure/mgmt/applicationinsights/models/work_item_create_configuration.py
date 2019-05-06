@@ -20,17 +20,17 @@ class WorkItemCreateConfiguration(Model):
     :param connector_data_configuration: Serialized JSON object for detailed
      properties
     :type connector_data_configuration: str
-    :param validate_only: Boolean indicating validate only
-    :type validate_only: bool
+    :param validate_only: True or false string indicating validate only
+    :type validate_only: str
     :param work_item_properties: Custom work item properties
-    :type work_item_properties: str
+    :type work_item_properties: dict[str, str]
     """
 
     _attribute_map = {
         'connector_id': {'key': 'ConnectorId', 'type': 'str'},
         'connector_data_configuration': {'key': 'ConnectorDataConfiguration', 'type': 'str'},
-        'validate_only': {'key': 'ValidateOnly', 'type': 'bool'},
-        'work_item_properties': {'key': 'WorkItemProperties', 'type': 'str'},
+        'validate_only': {'key': 'ValidateOnly', 'type': 'str'},
+        'work_item_properties': {'key': 'WorkItemProperties', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):

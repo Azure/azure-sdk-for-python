@@ -20,20 +20,20 @@ class WorkItemCreateConfiguration(Model):
     :param connector_data_configuration: Serialized JSON object for detailed
      properties
     :type connector_data_configuration: str
-    :param validate_only: Boolean indicating validate only
-    :type validate_only: bool
+    :param validate_only: True or false string indicating validate only
+    :type validate_only: str
     :param work_item_properties: Custom work item properties
-    :type work_item_properties: str
+    :type work_item_properties: dict[str, str]
     """
 
     _attribute_map = {
         'connector_id': {'key': 'ConnectorId', 'type': 'str'},
         'connector_data_configuration': {'key': 'ConnectorDataConfiguration', 'type': 'str'},
-        'validate_only': {'key': 'ValidateOnly', 'type': 'bool'},
-        'work_item_properties': {'key': 'WorkItemProperties', 'type': 'str'},
+        'validate_only': {'key': 'ValidateOnly', 'type': 'str'},
+        'work_item_properties': {'key': 'WorkItemProperties', 'type': '{str}'},
     }
 
-    def __init__(self, *, connector_id: str=None, connector_data_configuration: str=None, validate_only: bool=None, work_item_properties: str=None, **kwargs) -> None:
+    def __init__(self, *, connector_id: str=None, connector_data_configuration: str=None, validate_only: str=None, work_item_properties=None, **kwargs) -> None:
         super(WorkItemCreateConfiguration, self).__init__(**kwargs)
         self.connector_id = connector_id
         self.connector_data_configuration = connector_data_configuration
