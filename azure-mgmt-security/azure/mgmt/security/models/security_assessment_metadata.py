@@ -34,13 +34,14 @@ class SecurityAssessmentMetadata(Resource):
     :ivar remediation_description: Human readable description of what you
      should do to mitigate this security issue
     :vartype remediation_description: str
-    :ivar category: The category of resource that is at risk when the
-     assessment is unhealthy. Possible values include: 'Compute', 'Network',
-     'Data', 'IdentityAndAccess', 'IoT'
-    :vartype category: str or ~azure.mgmt.security.models.Category
+    :ivar category:
+    :vartype category: list[str or ~azure.mgmt.security.models.Category]
     :ivar secure_score_weight: Weight for the security score calculation. the
      higher this number, this severity  of this assessment is higher
     :vartype secure_score_weight: int
+    :ivar required_pricing_bundle:
+    :vartype required_pricing_bundle: list[str or
+     ~azure.mgmt.security.models.RequiredPricingBundle]
     :ivar preview: True if this assessment is in preview release status
     :vartype preview: bool
     """
@@ -55,6 +56,7 @@ class SecurityAssessmentMetadata(Resource):
         'remediation_description': {'readonly': True},
         'category': {'readonly': True},
         'secure_score_weight': {'readonly': True},
+        'required_pricing_bundle': {'readonly': True},
         'preview': {'readonly': True},
     }
 
@@ -66,8 +68,9 @@ class SecurityAssessmentMetadata(Resource):
         'policy_definition_id': {'key': 'properties.policyDefinitionId', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'remediation_description': {'key': 'properties.remediationDescription', 'type': 'str'},
-        'category': {'key': 'properties.category', 'type': 'str'},
+        'category': {'key': 'properties.category', 'type': '[str]'},
         'secure_score_weight': {'key': 'properties.secureScoreWeight', 'type': 'int'},
+        'required_pricing_bundle': {'key': 'properties.requiredPricingBundle', 'type': '[str]'},
         'preview': {'key': 'properties.preview', 'type': 'bool'},
     }
 
@@ -79,4 +82,5 @@ class SecurityAssessmentMetadata(Resource):
         self.remediation_description = None
         self.category = None
         self.secure_score_weight = None
+        self.required_pricing_bundle = None
         self.preview = None

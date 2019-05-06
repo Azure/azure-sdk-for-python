@@ -108,6 +108,14 @@ class Category(str, Enum):
     io_t = "IoT"
 
 
+class RequiredPricingBundle(str, Enum):
+
+    virtual_machines = "VirtualMachines"
+    sql_servers = "SqlServers"
+    app_services = "AppServices"
+    storage_accounts = "StorageAccounts"
+
+
 class State(str, Enum):
 
     passed = "Passed"  #: All supported regulatory compliance controls in the given standard have a passed state

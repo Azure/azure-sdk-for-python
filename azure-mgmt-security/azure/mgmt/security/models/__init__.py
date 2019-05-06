@@ -170,6 +170,7 @@ from .security_center_enums import (
     AlertsToAdmins,
     Severity,
     Category,
+    RequiredPricingBundle,
     State,
     ConnectionType,
 )
@@ -271,6 +272,7 @@ __all__ = [
     'AlertsToAdmins',
     'Severity',
     'Category',
+    'RequiredPricingBundle',
     'State',
     'ConnectionType',
 ]
