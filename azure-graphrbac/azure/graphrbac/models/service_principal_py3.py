@@ -32,7 +32,7 @@ class ServicePrincipal(DirectoryObject):
     :type object_type: str
     :param account_enabled: whether or not the service principal account is
      enabled
-    :type account_enabled: str
+    :type account_enabled: bool
     :param alternative_names: alternative names
     :type alternative_names: list[str]
     :ivar app_display_name: The display name exposed by the associated
@@ -107,7 +107,7 @@ class ServicePrincipal(DirectoryObject):
         'object_id': {'key': 'objectId', 'type': 'str'},
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
-        'account_enabled': {'key': 'accountEnabled', 'type': 'str'},
+        'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},
         'alternative_names': {'key': 'alternativeNames', 'type': '[str]'},
         'app_display_name': {'key': 'appDisplayName', 'type': 'str'},
         'app_id': {'key': 'appId', 'type': 'str'},
@@ -130,7 +130,7 @@ class ServicePrincipal(DirectoryObject):
         'tags': {'key': 'tags', 'type': '[str]'},
     }
 
-    def __init__(self, *, additional_properties=None, account_enabled: str=None, alternative_names=None, app_id: str=None, app_role_assignment_required: bool=None, app_roles=None, display_name: str=None, error_url: str=None, homepage: str=None, key_credentials=None, logout_url: str=None, password_credentials=None, preferred_token_signing_key_thumbprint: str=None, publisher_name: str=None, reply_urls=None, saml_metadata_url: str=None, service_principal_names=None, service_principal_type: str=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, account_enabled: bool=None, alternative_names=None, app_id: str=None, app_role_assignment_required: bool=None, app_roles=None, display_name: str=None, error_url: str=None, homepage: str=None, key_credentials=None, logout_url: str=None, password_credentials=None, preferred_token_signing_key_thumbprint: str=None, publisher_name: str=None, reply_urls=None, saml_metadata_url: str=None, service_principal_names=None, service_principal_type: str=None, tags=None, **kwargs) -> None:
         super(ServicePrincipal, self).__init__(additional_properties=additional_properties, **kwargs)
         self.account_enabled = account_enabled
         self.alternative_names = alternative_names
