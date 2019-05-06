@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class HyperVGenerationTypes(str, Enum):
+
+    v1 = "V1"
+    v2 = "V2"
+
+
 class StatusLevelTypes(str, Enum):
 
     info = "Info"
@@ -23,6 +29,12 @@ class AvailabilitySetSkuTypes(str, Enum):
 
     classic = "Classic"
     aligned = "Aligned"
+
+
+class ProximityPlacementGroupType(str, Enum):
+
+    standard = "Standard"
+    ultra = "Ultra"
 
 
 class OperatingSystemTypes(str, Enum):

@@ -22,6 +22,7 @@ try:
     from .operation_py3 import Operation
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .tags_py3 import Tags
+    from .monitoring_details_py3 import MonitoringDetails
 except (SyntaxError, ImportError):
     from .resource import Resource
     from .hardware_profile import HardwareProfile
@@ -35,6 +36,7 @@ except (SyntaxError, ImportError):
     from .operation import Operation
     from .error_response import ErrorResponse, ErrorResponseException
     from .tags import Tags
+    from .monitoring_details import MonitoringDetails
 from .operation_paged import OperationPaged
 from .hana_instance_paged import HanaInstancePaged
 from .hana_management_client_enums import (
@@ -56,6 +58,7 @@ __all__ = [
     'Operation',
     'ErrorResponse', 'ErrorResponseException',
     'Tags',
+    'MonitoringDetails',
     'OperationPaged',
     'HanaInstancePaged',
     'HanaHardwareTypeNamesEnum',

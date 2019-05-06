@@ -13,11 +13,11 @@ from msrest.serialization import Model
 
 
 class ClosedList(Model):
-    """Exported Model - A Closed List.
+    """Exported Model - A list entity.
 
-    :param name: Name of the closed list feature.
+    :param name: Name of the list entity.
     :type name: str
-    :param sub_lists: Sublists for the feature.
+    :param sub_lists: Sublists for the list entity.
     :type sub_lists:
      list[~azure.cognitiveservices.language.luis.authoring.models.SubClosedList]
     :param roles:

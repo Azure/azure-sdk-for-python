@@ -23,12 +23,6 @@ class VirtualMachineScaleSetVMProfile(Model):
      machine disks.
     :type storage_profile:
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineScaleSetStorageProfile
-    :param additional_capabilities: Specifies additional capabilities enabled
-     or disabled on the virtual machine in the scale set. For instance: whether
-     the virtual machine has the capability to support attaching managed data
-     disks with UltraSSD_LRS storage account type.
-    :type additional_capabilities:
-     ~azure.mgmt.compute.v2019_03_01.models.AdditionalCapabilities
     :param network_profile: Specifies properties of the network interfaces of
      the virtual machines in the scale set.
     :type network_profile:
@@ -66,7 +60,6 @@ class VirtualMachineScaleSetVMProfile(Model):
     _attribute_map = {
         'os_profile': {'key': 'osProfile', 'type': 'VirtualMachineScaleSetOSProfile'},
         'storage_profile': {'key': 'storageProfile', 'type': 'VirtualMachineScaleSetStorageProfile'},
-        'additional_capabilities': {'key': 'additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'network_profile': {'key': 'networkProfile', 'type': 'VirtualMachineScaleSetNetworkProfile'},
         'diagnostics_profile': {'key': 'diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
@@ -75,11 +68,10 @@ class VirtualMachineScaleSetVMProfile(Model):
         'eviction_policy': {'key': 'evictionPolicy', 'type': 'str'},
     }
 
-    def __init__(self, *, os_profile=None, storage_profile=None, additional_capabilities=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, priority=None, eviction_policy=None, **kwargs) -> None:
+    def __init__(self, *, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, priority=None, eviction_policy=None, **kwargs) -> None:
         super(VirtualMachineScaleSetVMProfile, self).__init__(**kwargs)
         self.os_profile = os_profile
         self.storage_profile = storage_profile
-        self.additional_capabilities = additional_capabilities
         self.network_profile = network_profile
         self.diagnostics_profile = diagnostics_profile
         self.extension_profile = extension_profile

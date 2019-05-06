@@ -52,7 +52,7 @@ class ImageTemplate(Resource):
     :vartype last_run_status:
      ~azure.mgmt.imagebuilder.models.ImageTemplateLastRunStatus
     :param build_timeout_in_minutes: Maximum duration to wait while building
-     the image template. Default is 60 minutes.
+     the image template. Omit or specify 0 to use the default (60 minutes).
     :type build_timeout_in_minutes: int
     :param identity: The identity of the image template, if configured.
     :type identity: ~azure.mgmt.imagebuilder.models.ImageTemplateIdentity
@@ -68,6 +68,7 @@ class ImageTemplate(Resource):
         'provisioning_state': {'readonly': True},
         'provisioning_error': {'readonly': True},
         'last_run_status': {'readonly': True},
+        'build_timeout_in_minutes': {'maximum': 960, 'minimum': 0},
     }
 
     _attribute_map = {
