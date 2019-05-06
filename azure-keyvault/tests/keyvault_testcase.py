@@ -8,6 +8,5 @@ class KeyvaultTestCase(AzureMgmtTestCase):
         self.list_test_size = 7
         super(KeyvaultTestCase, self).setUp()
 
-
     def tearDown(self):
         super(KeyvaultTestCase, self).tearDown()

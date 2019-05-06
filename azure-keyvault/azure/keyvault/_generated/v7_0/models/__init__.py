@@ -22,6 +22,25 @@ from .secret_update_parameters import SecretUpdateParameters
 from .backup_secret_result import BackupSecretResult
 from .secret_item_paged import SecretItemPaged
 from .deleted_secret_item_paged import DeletedSecretItemPaged
+from .backup_key_result import BackupKeyResult
+from .json_web_key import JsonWebKey
+from .key_attributes import KeyAttributes
+from .key_bundle import KeyBundle
+from .key_create_parameters import KeyCreateParameters
+from .key_update_parameters import KeyUpdateParameters
+from .key_restore_parameters import KeyRestoreParameters
+from .key_vault_error import KeyVaultError, KeyVaultErrorException
+from .key_item_paged import KeyItemPaged
+from .key_item import KeyItem
+from .deleted_key_item import DeletedKeyItem
+from .deleted_key_item_paged import DeletedKeyItemPaged
+from .deleted_key_bundle import DeletedKeyBundle
+from .json_web_key import JsonWebKey
+from .key_vault_client_enums import (
+    JsonWebKeyType,
+    JsonWebKeyCurveName,
+    DeletionRecoveryLevel,
+)
 
 __all__ = [
     'Attributes',
@@ -37,4 +56,19 @@ __all__ = [
     'BackupSecretResult',
     'SecretItemPaged',
     'DeletedSecretItemPaged',
+    'BackupKeyResult'
+    'JsonWebKey',
+    'JsonWebKeyType',
+    'JsonWebKeyCurveName',
+    'KeyAttributes',
+    'KeyBundle',
+    'KeyItem',
+    'KeyCreateParameters',
+    'KeyUpdateParameters',
+    'KeyRestoreParameters',
+    'KeyItemPaged',
+    'DeletionRecoveryLevel',
+    'DeletedKeyItem',
+    'DeletedKeyItemPaged',
+    'DeletedKeyBundle',
 ]

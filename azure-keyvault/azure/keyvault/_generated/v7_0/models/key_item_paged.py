@@ -9,9 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-# from .key_vault_client import KeyVaultClient
-from .version import VERSION
+from msrest.paging import Paged
 
-# __all__ = ['KeyVaultClient']
 
-__version__ = VERSION
+class KeyItemPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`KeyItem <azure.keyvault.v7_0.models.KeyItem>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[KeyItem]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(KeyItemPaged, self).__init__(*args, **kwargs)

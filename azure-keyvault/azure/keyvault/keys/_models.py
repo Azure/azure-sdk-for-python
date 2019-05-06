@@ -1,423 +1,219 @@
-from msrest.paging import Paged
-from msrest.serialization import Model
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
+from datetime import datetime
+from typing import Any, Dict, Mapping, Optional
+from .._generated.v7_0 import models
 from .._internal import _parse_vault_id
 
 
-class JsonWebKey(Model):
-    """As of http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18.
+class KeyAttributes(object):
+    """A key's id and attributes."""
 
-    :param kid: Key identifier.
-    :type kid: str
-    :param kty: JsonWebKey Key Type (kty), as defined in
-     https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40.
-     Possible values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM', 'oct'
-    :type kty: str or ~azure.keyvault.v7_0.models.JsonWebKeyType
-    :param key_ops:
-    :type key_ops: list[str]
-    :param n: RSA modulus.
-    :type n: bytes
-    :param e: RSA public exponent.
-    :type e: bytes
-    :param d: RSA private exponent, or the D component of an EC private key.
-    :type d: bytes
-    :param dp: RSA private key parameter.
-    :type dp: bytes
-    :param dq: RSA private key parameter.
-    :type dq: bytes
-    :param qi: RSA private key parameter.
-    :type qi: bytes
-    :param p: RSA secret prime.
-    :type p: bytes
-    :param q: RSA secret prime, with p < q.
-    :type q: bytes
-    :param k: Symmetric key.
-    :type k: bytes
-    :param t: HSM Token, used with 'Bring Your Own Key'.
-    :type t: bytes
-    :param crv: Elliptic curve name. For valid values, see
-     JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384', 'P-521',
-     'P-256K'
-    :type crv: str or ~azure.keyvault.v7_0.models.JsonWebKeyCurveName
-    :param x: X component of an EC public key.
-    :type x: bytes
-    :param y: Y component of an EC public key.
-    :type y: bytes
-    """
+    def __init__(self, attributes, vault_id, **kwargs):
+        # type: (models.KeyAttributes, str, Mapping[str, Any]) -> None
+        self._attributes = attributes
+        self._id = vault_id     # we don't want to call this kid, right?
+        self._vault_id = _parse_vault_id(vault_id)
+        self._managed = kwargs.get("managed", None)
+        self._tags = kwargs.get("tags", None)
 
-    _attribute_map = {
-        "kid": {"key": "kid", "type": "str"},
-        "kty": {"key": "kty", "type": "str"},
-        "key_ops": {"key": "key_ops", "type": "[str]"},
-        "n": {"key": "n", "type": "base64"},
-        "e": {"key": "e", "type": "base64"},
-        "d": {"key": "d", "type": "base64"},
-        "dp": {"key": "dp", "type": "base64"},
-        "dq": {"key": "dq", "type": "base64"},
-        "qi": {"key": "qi", "type": "base64"},
-        "p": {"key": "p", "type": "base64"},
-        "q": {"key": "q", "type": "base64"},
-        "k": {"key": "k", "type": "base64"},
-        "t": {"key": "key_hsm", "type": "base64"},
-        "crv": {"key": "crv", "type": "str"},
-        "x": {"key": "x", "type": "base64"},
-        "y": {"key": "y", "type": "base64"},
-    }
+    @classmethod
+    def _from_key_bundle(cls, key_bundle):
+        # type: (models.KeyBundle) -> KeyAttributes
+        """Construct a key from an autorest-generated KeyBundle"""
+        return cls(
+            key_bundle.attributes,
+            key_bundle.key.kid,
+            managed=None,
+            tags=key_bundle.tags,
+        )
 
-    def __init__(self, **kwargs):
-        super(JsonWebKey, self).__init__(**kwargs)
-        self.kid = kwargs.get("kid", None)
-        self.kty = kwargs.get("kty", None)
-        self.key_ops = kwargs.get("key_ops", None)
-        self.n = kwargs.get("n", None)
-        self.e = kwargs.get("e", None)
-        self.d = kwargs.get("d", None)
-        self.dp = kwargs.get("dp", None)
-        self.dq = kwargs.get("dq", None)
-        self.qi = kwargs.get("qi", None)
-        self.p = kwargs.get("p", None)
-        self.q = kwargs.get("q", None)
-        self.k = kwargs.get("k", None)
-        self.t = kwargs.get("t", None)
-        self.crv = kwargs.get("crv", None)
-        self.x = kwargs.get("x", None)
-        self.y = kwargs.get("y", None)
-
-class ExposeKeyAttributesMixin:
-    @property
-    def created(self):
-        return self._attributes.created
-
-    @property
-    def enabled(self):
-        return self._attributes.enabled
-
-    @property
-    def expires(self):
-        return self._attributes.expires
-
-    @property
-    def not_before(self):
-        return self._attributes.not_before
-
-    @property
-    def recovery_level(self):
-        return self._attributes.recovery_level
-
-    @property
-    def updated(self):
-        return self._attributes.updated
-
-
-class Key(Model, ExposeKeyAttributesMixin):
-    _validation = {"managed": {"readonly": True}}
-
-    _attribute_map = {
-        "key_material": {"key": "key", "type": "JsonWebKey"},
-        "_attributes": {"key": "attributes", "type": "KeyAttributes"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "managed": {"key": "managed", "type": "bool"},
-    }
-
-    def __init__(self, **kwargs):
-        super(Key, self).__init__(**kwargs)
-        self._attributes = kwargs.get("_attributes", None)
-        self.tags = kwargs.get("tags", None)
-        self.managed = None
-        try:
-            self._vault_id = _parse_vault_id(self.key_material.kid)
-        except AttributeError:
-            self._vault_id = None
+    @classmethod
+    def _from_key_item(cls, key_item):
+        # type: (models.KeyItem) -> KeyAttributes
+        """Construct a Key from an autorest-generated KeyItem"""
+        return cls(
+            key_item.attributes,
+            key_item.kid,
+            managed=key_item.managed,
+            tags=key_item.tags,
+        )
 
     @property
     def id(self):
-        return self.key_material.kid
+        # type: () -> str
+        """The key id
+        :rtype: str"""
+        return self._id
 
     @property
     def name(self):
-        return self._vault_id.name if self._vault_id else None
-
-    @property
-    def vault_url(self):
-        return self._vault_id.vault_url if self._vault_id else None
+        # type: () -> str
+        """The name of the key
+        :rtype: str"""
+        return self._vault_id.name
 
     @property
     def version(self):
-        return self._vault_id.version if self._vault_id else None
+        # type: () -> str
+        """The version of the key
+        :rtype: str"""
+        return self._vault_id.version
+
+    @property
+    def enabled(self):
+        # type: () -> bool
+        """The Key's 'enabled' attribute
+        :rtype: bool"""
+        return self._attributes.enabled
+
+    @property
+    def not_before(self):
+        # type: () -> datetime
+        """The Key's not_before date in UTC
+        :rtype: datetime"""
+        return self._attributes.not_before
+
+    @property
+    def expires(self):
+        # type: () -> datetime
+        """The Key's expiry date in UTC
+        :rtype: datetime"""
+        return self._attributes.expires
+
+    @property
+    def created(self):
+        # type: () -> datetime
+        """The Key's creation time in UTC
+        :rtype: datetime"""
+        return self._attributes.created
+
+    @property
+    def updated(self):
+        # type: () -> datetime
+        """The Key's last updated time in UTC
+        :rtype: datetime"""
+        return self._attributes.updated
+
+    @property
+    def vault_url(self):
+        # type: () -> str
+        """The url of the vault containing the key
+        :rtype: str"""
+        return self._vault_id.vault_url
+
+    @property
+    def recovery_level(self):
+        # type: () -> str
+        """Reflects the deletion recovery level currently in effect for keys in the current vault
+        :rtype: str"""
+        return self._attributes.recovery_level
+
+    @property
+    def tags(self):
+        # type: () -> Dict[str, str]
+        """Application specific metadata in the form of key-value pairs.
+        :rtype: dict"""
+        return self._tags
 
 
-class DeletedKey(Key):
-    """A DeletedKey consisting of a JsonWebKey plus its Attributes and deletion
-    info.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param key: The Json web key.
-    :type key: ~azure.keyvault.v7_0.models.JsonWebKey
-    :param attributes: The key management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.KeyAttributes
-    :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :ivar managed: True if the key's lifetime is managed by key vault. If this
-     is a key backing a certificate, then managed will be true.
-    :vartype managed: bool
-    :param recovery_id: The url of the recovery object, used to identify and
-     recover the deleted key.
-    :type recovery_id: str
-    :ivar scheduled_purge_date: The time when the key is scheduled to be
-     purged, in UTC
-    :vartype scheduled_purge_date: datetime
-    :ivar deleted_date: The time when the key was deleted, in UTC
-    :vartype deleted_date: datetime
+class Key(KeyAttributes):
+    """A key consisting of all KeyAttributes and key_material information.
     """
 
-    _validation = {
-        "scheduled_purge_date": {"readonly": True},
-        "deleted_date": {"readonly": True},
-        **Key._validation
-    }
+    def __init__(self, attributes, key, **kwargs):
+        super(Key, self).__init__(attributes, key.kid, **kwargs)
+        self._key_material = key
 
-    _attribute_map = {
-        "recovery_id": {"key": "recoveryId", "type": "str"},
-        "scheduled_purge_date": {"key": "scheduledPurgeDate", "type": "unix-time"},
-        "deleted_date": {"key": "deletedDate", "type": "unix-time"},
-        **Key._attribute_map
-    }
+    @classmethod
+    def _from_key_bundle(cls, key_bundle):
+        # type: (models.KeyBundle) -> key
+        """Construct a key from an autorest-generated KeyBundle"""
+        return cls(
+            key_bundle.attributes,
+            key_bundle.key,
+            managed=key_bundle.managed,
+            tags=key_bundle.tags,
+        )
 
-    def __init__(self, **kwargs):
-        super(DeletedKey, self).__init__(**kwargs)
-        self.recovery_id = kwargs.get("recovery_id", None)
-        self.scheduled_purge_date = None
-        self.deleted_date = None
+    @property
+    def key_material(self):
+        # type: () -> Dict[str, str]
+        return self._key_material
 
 
-class KeyAttributes(Model):
-    """The attributes of a key managed by the key vault service.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param enabled: Determines whether the object is enabled.
-    :type enabled: bool
-    :param not_before: Not before date in UTC.
-    :type not_before: datetime
-    :param expires: Expiry date in UTC.
-    :type expires: datetime
-    :ivar created: Creation time in UTC.
-    :vartype created: datetime
-    :ivar updated: Last updated time in UTC.
-    :vartype updated: datetime
-    :ivar recovery_level: Reflects the deletion recovery level currently in
-     effect for keys in the current vault. If it contains 'Purgeable' the key
-     can be permanently deleted by a privileged user; otherwise, only the
-     system can purge the key, at the end of the retention interval. Possible
-     values include: 'Purgeable', 'Recoverable+Purgeable', 'Recoverable',
-     'Recoverable+ProtectedSubscription'
-    :vartype recovery_level: str or
-     ~azure.keyvault.v7_0.models.DeletionRecoveryLevel
+class DeletedKey(KeyAttributes):
+    """A Deleted key consisting of its id, attributes, and tags, as
+    well as when it will be purged, if soft-delete is enabled for the vault.
     """
 
-    _validation = {
-        "created": {"readonly": True},
-        "updated": {"readonly": True},
-        "recovery_level": {"readonly": True},
-    }
+    def __init__(self, attributes, vault_id, deleted_date=None, recovery_id=None, scheduled_purge_date=None, **kwargs):
+        # type: (models.KeyAttributes, str, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
+        super(DeletedKey, self).__init__(attributes, vault_id, **kwargs)
+        self._deleted_date = deleted_date
+        self._recovery_id = recovery_id
+        self._scheduled_purge_date = scheduled_purge_date
+        # self._key_material = key # we don't expose the key i.e jsonWebKey just like we don't expose the value on deleted secret? why?
 
-    _attribute_map = {
-        "enabled": {"key": "enabled", "type": "bool"},
-        "not_before": {"key": "nbf", "type": "unix-time"},
-        "expires": {"key": "exp", "type": "unix-time"},
-        "created": {"key": "created", "type": "unix-time"},
-        "updated": {"key": "updated", "type": "unix-time"},
-        "recovery_level": {"key": "recoveryLevel", "type": "str"},
-    }
+    @classmethod
+    def _from_deleted_key_bundle(cls, deleted_key_bundle):
+        # type: (models.DeletedKeyBundle) -> DeletedKey
+        """Construct a DeletedKey from an autorest-generated DeletedKeyBundle"""
+        return cls(
+            deleted_key_bundle.attributes,
+            deleted_key_bundle.key.kid,
+            deleted_key_bundle.deleted_date,
+            deleted_key_bundle.recovery_id,
+            deleted_key_bundle.scheduled_purge_date,
+            managed=deleted_key_bundle.managed,
+            tags=deleted_key_bundle.tags,
+            # deleted_key_bundle.key, 
+            # TODO: deleted key item doesn't have the jsonWebKey.
+            # Option 1 - Is it fine if DeletedKey does not have the jsonWebKey property OR
+            # Option 2- Should we just have the other deletedKey properties such as deleted_date, recovery_id, scheduled_purge_date as None initialy on KeyATtributes class and
+            # have the "new" DeletedKey class to have the jsonWebKey + KeyAttributes properties
+        )
 
-    def __init__(self, **kwargs):
-        super(KeyAttributes, self).__init__(**kwargs)
-        self.enabled = kwargs.get("enabled", None)
-        self.not_before = kwargs.get("not_before", None)
-        self.expires = kwargs.get("expires", None)
-        self.created = None
-        self.updated = None
-        self.recovery_level = None
+    @classmethod
+    def _from_deleted_key_item(cls, deleted_key_item):
+        # type: (models.DeletedKeyItem) -> DeletedKey
+        """Construct a DeletedKey from an autorest-generated DeletedKeyItem"""
+        return cls(
+            deleted_key_item.attributes,
+            deleted_key_item.kid,
+            deleted_date=deleted_key_item.deleted_date,
+            recovery_id=deleted_key_item.recovery_id,
+            scheduled_purge_date=deleted_key_item.scheduled_purge_date,
+            managed=deleted_key_item.managed,
+            tags=deleted_key_item.tags,
+        )
 
+    @property
+    def deleted_date(self):
+        # type: () -> datetime
+        """The time when the key was deleted, in UTC
+        :rtype: datetime"""
+        return self._deleted_date
 
-class KeyUpdateParameters(Model):
-    """The key update parameters.
-    :param key_ops: Json web key operations. For more information on possible
-     key operations, see JsonWebKeyOperation.
-    :type key_ops: list[str or
-     ~azure.keyvault.v7_0.models.JsonWebKeyOperation]
-    :param key_attributes:
-    :type key_attributes: ~azure.keyvault.v7_0.models.KeyAttributes
-    :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    """
+    @property
+    def recovery_id(self):
+        # type: () -> str
+        """The url of the recovery object, used to identify and recover the deleted key
+        :rtype: str"""
+        return self._recovery_id
 
-    _attribute_map = {
-        "key_ops": {"key": "key_ops", "type": "[str]"},
-        "key_attributes": {"key": "attributes", "type": "KeyAttributes"},
-        "tags": {"key": "tags", "type": "{str}"},
-    }
+    @property
+    def scheduled_purge_date(self):
+        # type: () -> datetime
+        """The time when the key is scheduled to be purged, in UTC
+        :rtype: datetime"""
+        return self._scheduled_purge_date
 
-    def __init__(self, **kwargs):
-        super(KeyUpdateParameters, self).__init__(**kwargs)
-        self.key_ops = kwargs.get("key_ops", None)
-        self.key_attributes = kwargs.get("key_attributes", None)
-        self.tags = kwargs.get("tags", None)
-
-
-class KeyCreateParameters(Model):
-    """The key create parameters.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param kty: Required. The type of key to create. For valid values, see
-     JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM',
-     'oct'
-    :type kty: str or ~azure.keyvault.v7_0.models.JsonWebKeyType
-    :param key_size: The key size in bits. For example: 2048, 3072, or 4096
-     for RSA.
-    :type key_size: int
-    :param key_ops:
-    :type key_ops: list[str or
-     ~azure.keyvault.v7_0.models.JsonWebKeyOperation]
-    :param key_attributes:
-    :type key_attributes: ~azure.keyvault.v7_0.models.KeyAttributes
-    :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param curve: Elliptic curve name. For valid values, see
-     JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384', 'P-521',
-     'P-256K'
-    :type curve: str or ~azure.keyvault.v7_0.models.JsonWebKeyCurveName
-    """
-
-    _validation = {"kty": {"required": True, "min_length": 1}}
-
-    _attribute_map = {
-        "kty": {"key": "kty", "type": "str"},
-        "key_size": {"key": "key_size", "type": "int"},
-        "key_ops": {"key": "key_ops", "type": "[str]"},
-        "key_attributes": {"key": "attributes", "type": "KeyAttributes"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "curve": {"key": "crv", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        super(KeyCreateParameters, self).__init__(**kwargs)
-        self.kty = kwargs.get("kty", None)
-        self.key_size = kwargs.get("key_size", None)
-        self.key_ops = kwargs.get("key_ops", None)
-        self.key_attributes = kwargs.get("key_attributes", None)
-        self.tags = kwargs.get("tags", None)
-        self.curve = kwargs.get("curve", None)
-
-
-class KeyItem(Model, ExposeKeyAttributesMixin):
-    """The key item containing key metadata.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param kid: Key identifier.
-    :type kid: str
-    :param attributes: The key management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.KeyAttributes
-    :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :ivar managed: True if the key's lifetime is managed by key vault. If this
-     is a key backing a certificate, then managed will be true.
-    :vartype managed: bool
-    """
-
-    _validation = {"managed": {"readonly": True}}
-
-    _attribute_map = {
-        "kid": {"key": "kid", "type": "str"},
-        "_attributes": {"key": "attributes", "type": "KeyAttributes"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "managed": {"key": "managed", "type": "bool"},
-    }
-
-    def __init__(self, **kwargs):
-        super(KeyItem, self).__init__(**kwargs)
-        self.kid = kwargs.get("kid", None)
-        self._attributes = kwargs.get("attributes", None)
-        self.tags = kwargs.get("tags", None)
-        self.managed = None
-
-
-class DeletedKeyItem(KeyItem, ExposeKeyAttributesMixin):
-    """The deleted key item containing the deleted key metadata and information
-    about deletion.
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-    :param kid: Key identifier.
-    :type kid: str
-    :param attributes: The key management attributes.
-    :type attributes: ~azure.keyvault.v7_0.models.KeyAttributes
-    :param tags: Application specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :ivar managed: True if the key's lifetime is managed by key vault. If this
-     is a key backing a certificate, then managed will be true.
-    :vartype managed: bool
-    :param recovery_id: The url of the recovery object, used to identify and
-     recover the deleted key.
-    :type recovery_id: str
-    :ivar scheduled_purge_date: The time when the key is scheduled to be
-     purged, in UTC
-    :vartype scheduled_purge_date: datetime
-    :ivar deleted_date: The time when the key was deleted, in UTC
-    :vartype deleted_date: datetime
-    """
-
-    _validation = {
-        "managed": {"readonly": True},
-        "scheduled_purge_date": {"readonly": True},
-        "deleted_date": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "kid": {"key": "kid", "type": "str"},
-        "_attributes": {"key": "attributes", "type": "KeyAttributes"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "managed": {"key": "managed", "type": "bool"},
-        "recovery_id": {"key": "recoveryId", "type": "str"},
-        "scheduled_purge_date": {"key": "scheduledPurgeDate", "type": "unix-time"},
-        "deleted_date": {"key": "deletedDate", "type": "unix-time"},
-    }
-
-    def __init__(self, **kwargs):
-        super(DeletedKeyItem, self).__init__(**kwargs)
-        self.recovery_id = kwargs.get("recovery_id", None)
-        self.scheduled_purge_date = None
-        self.deleted_date = None
-
-
-class DeletedKeyItemPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`DeletedKeyItem <azure.keyvault.v7_0.models.DeletedKeyItem>` object
-    """
-
-    _attribute_map = {
-        "next_link": {"key": "nextLink", "type": "str"},
-        "current_page": {"key": "value", "type": "[DeletedKeyItem]"},
-    }
-
-    def __init__(self, *args, **kwargs):
-        super(DeletedKeyItemPaged, self).__init__(*args, **kwargs)
-
-
-class KeyItemPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`KeyItem <azure.keyvault.v7_0.models.KeyItem>` object
-    """
-
-    _attribute_map = {
-        "next_link": {"key": "nextLink", "type": "str"},
-        "current_page": {"key": "value", "type": "[KeyItem]"},
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(KeyItemPaged, self).__init__(*args, **kwargs)
+    # @property
+    # def key_material(self):
+    #     return self._key_material
