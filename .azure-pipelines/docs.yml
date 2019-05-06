@@ -21,11 +21,12 @@ jobs:
         inputs:
           scriptPath: 'scripts/dev_setup.py'
 
-      - script: |
+      - powershell: |
           cd $(Build.SourcesDirectory)/doc/
           pip install -r requirements.txt
           ./make.bat html
           xcopy $(Build.SourcesDirectory)/doc/_build/html/ $(Build.ArtifactStagingDirectory)/sphinx/ /E /H /K
+          Copy-Item -Path $(Build.SourcesDirectory)/doc/_build/html/* -Destination $(Build.ArtifactStagingDirectory)/sphinx/ -Recurse -Force
         displayName: 'Generate Sphinx Docs'
 
       - task: PublishBuildArtifacts@1
