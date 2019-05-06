@@ -41,7 +41,7 @@ class BlobServicesOperations(object):
 
     def set_service_properties(
             self, resource_group_name, account_name, parameters, custom_headers=None, raw=False, **operation_config):
-        """Sets the properties of a storage account���s Blob service, including
+        """Sets the properties of a storage account’s Blob service, including
         properties for Storage Analytics and CORS (Cross-Origin Resource
         Sharing) rules. .
 
