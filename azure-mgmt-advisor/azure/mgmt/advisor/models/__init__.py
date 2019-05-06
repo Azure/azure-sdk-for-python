@@ -15,6 +15,7 @@ try:
     from .config_data_properties_py3 import ConfigDataProperties
     from .config_data_py3 import ConfigData
     from .arm_error_response_body_py3 import ARMErrorResponseBody
+    from .arm_error_response_py3 import ARMErrorResponse
     from .short_description_py3 import ShortDescription
     from .resource_recommendation_base_py3 import ResourceRecommendationBase
     from .resource_py3 import Resource
@@ -27,6 +28,7 @@ except (SyntaxError, ImportError):
     from .config_data_properties import ConfigDataProperties
     from .config_data import ConfigData
     from .arm_error_response_body import ARMErrorResponseBody
+    from .arm_error_response import ARMErrorResponse
     from .short_description import ShortDescription
     from .resource_recommendation_base import ResourceRecommendationBase
     from .resource import Resource
@@ -50,6 +52,7 @@ __all__ = [
     'ConfigDataProperties',
     'ConfigData',
     'ARMErrorResponseBody',
+    'ARMErrorResponse',
     'ShortDescription',
     'ResourceRecommendationBase',
     'Resource',
