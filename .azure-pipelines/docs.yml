@@ -22,7 +22,7 @@ jobs:
           scriptPath: 'scripts/dev_setup.py'
 
       - script: |
-          cd $(Agent.BuildDirectory)/doc/
+          cd $(Build.SourcesDirectory)/doc/
           pip install -r requirements.txt
           ./make.bat html
           xcopy ./_build/html/ $(Build.ArtifactStagingDirectory) /O /X /E /H /K
