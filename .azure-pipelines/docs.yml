@@ -25,7 +25,7 @@ jobs:
           cd $(Build.SourcesDirectory)/doc/
           pip install -r requirements.txt
           ./make.bat html
-          xcopy ./_build/html/ $(Build.ArtifactStagingDirectory) /O /X /E /H /K
+          xcopy $(Build.SourcesDirectory)/doc/_build/html/ $(Build.ArtifactStagingDirectory)/sphinx/ /E /H /K
         displayName: 'Generate Sphinx Docs'
 
       - task: PublishBuildArtifacts@1
@@ -33,4 +33,3 @@ jobs:
         displayName: 'Publish Artifacts'
         inputs:
           artifactName: docfolder
-
