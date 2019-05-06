@@ -19,9 +19,9 @@ class BlueprintStatus(BlueprintResourceStatusBase):
     sending a request.
 
     :ivar time_created: Creation time of this blueprint definition.
-    :vartype time_created: str
+    :vartype time_created: datetime
     :ivar last_modified: Last modified time of this blueprint definition.
-    :vartype last_modified: str
+    :vartype last_modified: datetime
     """
 
     _validation = {
@@ -30,8 +30,8 @@ class BlueprintStatus(BlueprintResourceStatusBase):
     }
 
     _attribute_map = {
-        'time_created': {'key': 'timeCreated', 'type': 'str'},
-        'last_modified': {'key': 'lastModified', 'type': 'str'},
+        'time_created': {'key': 'timeCreated', 'type': 'iso-8601'},
+        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
     }
 
     def __init__(self, **kwargs):
