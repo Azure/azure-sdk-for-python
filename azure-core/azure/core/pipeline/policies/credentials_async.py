@@ -23,15 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import asyncio
-from collections.abc import AsyncIterator
-import functools
-import logging
-from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
-
-import requests
-from requests.models import CONTENT_CHUNK_SIZE
-
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 
 

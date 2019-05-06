@@ -43,8 +43,6 @@ from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any,
 # If one day we reach the point where "requests" can be skip totally,
 # might provide our own implementation
 from requests.structures import CaseInsensitiveDict
-from azure.core.exceptions import HttpResponseError # pylint: disable=unused-import
-
 from azure.core.pipeline import ABC, AbstractContextManager
 
 HTTPResponseType = TypeVar("HTTPResponseType")

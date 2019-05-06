@@ -26,9 +26,9 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Any, List, Union, Callable, AsyncIterator, Optional, Generic, TypeVar
+from typing import Any, List, Union, Generic, TypeVar
 
-from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext, Pipeline
+from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")

@@ -27,17 +27,13 @@
 This module is the requests implementation of Pipeline ABC
 """
 from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
-import contextlib
 import logging
 import time
 import email
-import re
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
-import warnings
 
 from azure.core.exceptions import (
     AzureError,
-    ServiceRequestError,
     ServiceResponseError,
     HttpResponseError
 )

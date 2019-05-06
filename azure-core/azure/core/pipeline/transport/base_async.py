@@ -27,9 +27,7 @@
 import asyncio
 import abc
 
-from typing import Any, List, Union, Callable, AsyncIterator, Optional, Generic, TypeVar
-from azure.core.pipeline import PipelineRequest, PipelineResponse, Pipeline
-from azure.core.pipeline.policies import SansIOHTTPPolicy
+from typing import AsyncIterator, Generic, TypeVar
 from .base import _HttpResponseBase
 
 try:

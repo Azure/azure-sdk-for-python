@@ -23,11 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import asyncio
-from collections.abc import AsyncIterator
-import functools
-import logging
-from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
 from azure.core.exceptions import TooManyRedirectsError
 
 from . import AsyncHTTPPolicy

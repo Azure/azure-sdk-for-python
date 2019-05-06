@@ -23,15 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
-import json
 import logging
-import os.path
-try:
-    from urlparse import urlparse
-except ImportError:
-    from urllib.parse import urlparse
-import xml.etree.ElementTree as ET
 from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional, # pylint: disable=unused-import
                     Tuple, Callable, Iterator)
 from azure.core.pipeline import AbstractContextManager, PipelineRequest, PipelineResponse, PipelineContext

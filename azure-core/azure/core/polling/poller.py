@@ -34,7 +34,6 @@ from typing import Any, Callable, Union, List, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     import requests
-    from .pipeline import HttpResponse  # pylint: disable=unused-import
     from msrest.serialization import Model # pylint: disable=unused-import
 
 class PollingMethod(object):

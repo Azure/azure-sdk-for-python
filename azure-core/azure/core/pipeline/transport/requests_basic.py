@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
 import threading
+import logging
 import requests
 import urllib3
 from urllib3.util.retry import Retry
@@ -32,8 +33,7 @@ from urllib3.util.retry import Retry
 from azure.core.configuration import Configuration
 from azure.core.exceptions import (
     ServiceRequestError,
-    ServiceResponseError,
-    raise_with_traceback
+    ServiceResponseError
 )
 
 from .base import (
@@ -41,6 +41,8 @@ from .base import (
     HttpResponse,
     _HttpResponseBase
 )
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class _RequestsTransportResponseBase(_HttpResponseBase):

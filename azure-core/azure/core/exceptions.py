@@ -27,7 +27,7 @@
 import logging
 import sys
 
-from typing import Callable, Any, Optional, TYPE_CHECKING
+from typing import Callable, Any
 
 _LOGGER = logging.getLogger(__name__)
 

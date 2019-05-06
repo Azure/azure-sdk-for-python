@@ -23,8 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
-import asyncio
+from typing import Any, AsyncIterator as AsyncIteratorType
 from collections.abc import AsyncIterator
 import functools
 import logging
@@ -32,11 +31,9 @@ import urllib3
 import trio
 import requests
 
-from requests.models import CONTENT_CHUNK_SIZE
 from azure.core.exceptions import (
     ServiceRequestError,
-    ServiceResponseError,
-    raise_with_traceback
+    ServiceResponseError
 )
 from .base import HttpRequest
 from .base_async import (

@@ -27,14 +27,10 @@
 This module is the requests implementation of Pipeline ABC
 """
 from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
-import contextlib
 import logging
-import threading
-import warnings
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 from azure.core.exceptions import AzureError
 
-from .base import HTTPPolicy
 from .base_async import AsyncHTTPPolicy
 from .retry import RetryPolicy
 

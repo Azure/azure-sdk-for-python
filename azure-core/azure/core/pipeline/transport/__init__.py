@@ -36,7 +36,7 @@ __all__ = [
 ]
 
 try:
-    from .base_async import AsyncHttpTransport, AsyncHttpResponse
+    from .base_async import AsyncHttpResponse
     from .requests_asyncio import AsyncioRequestsTransport, AsyncioRequestsTransportResponse
     __all__.extend([
         'AsyncHttpTransport',

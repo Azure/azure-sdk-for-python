@@ -23,22 +23,19 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Callable, AsyncIterator, Optional
+from typing import Any, AsyncIterator
 
 import logging
 import aiohttp
 
 from azure.core.exceptions import (
     ServiceRequestError,
-    ServiceResponseError,
-    raise_with_traceback
+    ServiceResponseError
 )
 from .base import HttpRequest
 from .base_async import (
     AsyncHttpTransport,
-    AsyncHttpResponse,
-    _ResponseStopIteration,
-    _iterate_response_content)
+    AsyncHttpResponse)
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -131,7 +128,7 @@ class AioHttpTransport(AsyncHttpTransport):
         return response
 
 
-class AioHttpStreamDownloadGenerator(AsyncIterator):
+class AioHttpStreamDownloadGenerator:
 
     def __init__(self, response: aiohttp.ClientResponse, block_size: int) -> None:
         self.response = response

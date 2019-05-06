@@ -77,7 +77,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         """Is executed after the request comes back from the policy.
         """
 
-    def on_exception(self, request, **kwargs):
+    def on_exception(self, request, **kwargs):  #pylint: disable=unused-argument
         # type: (PipelineRequest[HTTPRequestType], Any) -> bool
         """Is executed if an exception comes back from the following
         policy.

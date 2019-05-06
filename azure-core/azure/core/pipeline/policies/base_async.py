@@ -26,12 +26,12 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Generic, TypeVar, Union, Callable, AsyncIterator, Optional
+from typing import Generic, TypeVar
 
-from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline import PipelineRequest
 
 try:
-    from contextlib import AbstractAsyncContextManager  # type: ignore
+    from contextlib import AbstractAsyncContextManager  # type: ignore #pylint: disable=unused-import
 except ImportError: # Python <= 3.7
     class AbstractAsyncContextManager(object):  # type: ignore
         async def __aenter__(self):
