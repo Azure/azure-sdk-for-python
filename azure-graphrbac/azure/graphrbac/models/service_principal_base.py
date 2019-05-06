@@ -18,7 +18,7 @@ class ServicePrincipalBase(Model):
 
     :param account_enabled: whether or not the service principal account is
      enabled
-    :type account_enabled: str
+    :type account_enabled: bool
     :param app_role_assignment_required: Specifies whether an
      AppRoleAssignment to a user or group is required before Azure AD will
      issue a user or access token to the application.
@@ -38,7 +38,7 @@ class ServicePrincipalBase(Model):
     """
 
     _attribute_map = {
-        'account_enabled': {'key': 'accountEnabled', 'type': 'str'},
+        'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},
         'app_role_assignment_required': {'key': 'appRoleAssignmentRequired', 'type': 'bool'},
         'key_credentials': {'key': 'keyCredentials', 'type': '[KeyCredential]'},
         'password_credentials': {'key': 'passwordCredentials', 'type': '[PasswordCredential]'},
