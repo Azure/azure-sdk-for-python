@@ -55,9 +55,15 @@ def test_sans_io_exception():
         def send(self, request, **config):
             raise ValueError("Broken")
 
+        def open(self):
+            self.session = requests.Session()
+
+        def close(self):
+            self.session.close()
+
         def __exit__(self, exc_type, exc_value, traceback):
             """Raise any exception triggered within the runtime context."""
-            return None
+            return self.close()
 
     pipeline = Pipeline(BrokenSender(), [SansIOHTTPPolicy()])
 

@@ -62,6 +62,16 @@ class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPRe
         """
         pass
 
+    @abc.abstractmethod
+    def open(self):
+        """Assign new session if one does not already exist."""
+        pass
+
+    @abc.abstractmethod
+    def close(self):
+        """Close the session if it is not externally owned."""
+        pass
+
     def sleep(self, duration):
         time.sleep(duration)
 

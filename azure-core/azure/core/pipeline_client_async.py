@@ -210,5 +210,8 @@ class AsyncPipelineClient(object):
         await self._pipeline.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details):
-        await self._pipeline.__aexit__(*exc_details)
+    async def __aexit__(self, *args):
+        await self._pipeline.__aexit__(*args)
+
+    async def close(self):
+        await self.__aexit__()

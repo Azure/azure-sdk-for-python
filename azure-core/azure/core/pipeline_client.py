@@ -62,6 +62,13 @@ class PipelineClient(object):
                 transport = RequestsTransport(config)
             self._pipeline = self._build_pipeline(config, transport)
 
+    def __enter__(self):
+        self._pipeline.__enter__()
+        return self
+
+    def __exit__(self, *exc_details):
+        self._pipeline.__exit__(*exc_details)
+
     def _build_pipeline(self, config, transport):
         policies = [
             config.headers_policy,
@@ -109,6 +116,9 @@ class PipelineClient(object):
             request.set_streamed_data_body(stream_content)
 
         return request
+
+    def close(self):
+        self.__exit__()
 
     def format_url(self, url, **kwargs):
         # type: (str, Any) -> str
@@ -209,10 +219,3 @@ class PipelineClient(object):
         """
         request = self._request('MERGE', url, params, headers, content, form_content, None)
         return request
-
-    def __enter__(self):
-        self._pipeline.__enter__()
-        return self
-
-    def __exit__(self, *exc_details):
-        self._pipeline.__exit__(*exc_details)

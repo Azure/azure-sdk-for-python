@@ -49,13 +49,6 @@ class Configuration(object):
         # User Agent configuration
         self.user_agent_policy = None
 
-        # HTTP Transport
-        self.transport = transport
-
-    def get_transport(self, **kwargs):
-        if self.transport:
-            return self.transport(configuration=self, **kwargs)
-
 
 class ConnectionConfiguration(object):
     """HTTP transport connection configuration settings."""
@@ -65,4 +58,3 @@ class ConnectionConfiguration(object):
         self.verify = kwargs.pop('connection_verify', True)
         self.cert = kwargs.pop('connection_cert', None)
         self.data_block_size = kwargs.pop('connection_data_block_size', 4096)
-        self.keep_alive = kwargs.pop('connection_keep_alive', False)
