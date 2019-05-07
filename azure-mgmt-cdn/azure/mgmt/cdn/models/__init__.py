@@ -22,6 +22,7 @@ try:
     from .delivery_rule_action_py3 import DeliveryRuleAction
     from .delivery_rule_py3 import DeliveryRule
     from .endpoint_properties_update_parameters_delivery_policy_py3 import EndpointPropertiesUpdateParametersDeliveryPolicy
+    from .endpoint_properties_update_parameters_web_application_firewall_policy_link_py3 import EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink
     from .endpoint_update_parameters_py3 import EndpointUpdateParameters
     from .remote_address_match_condition_parameters_py3 import RemoteAddressMatchConditionParameters
     from .delivery_rule_remote_address_condition_py3 import DeliveryRuleRemoteAddressCondition
@@ -94,6 +95,7 @@ except (SyntaxError, ImportError):
     from .delivery_rule_action import DeliveryRuleAction
     from .delivery_rule import DeliveryRule
     from .endpoint_properties_update_parameters_delivery_policy import EndpointPropertiesUpdateParametersDeliveryPolicy
+    from .endpoint_properties_update_parameters_web_application_firewall_policy_link import EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink
     from .endpoint_update_parameters import EndpointUpdateParameters
     from .remote_address_match_condition_parameters import RemoteAddressMatchConditionParameters
     from .delivery_rule_remote_address_condition import DeliveryRuleRemoteAddressCondition
@@ -203,6 +205,7 @@ __all__ = [
     'DeliveryRuleAction',
     'DeliveryRule',
     'EndpointPropertiesUpdateParametersDeliveryPolicy',
+    'EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink',
     'EndpointUpdateParameters',
     'RemoteAddressMatchConditionParameters',
     'DeliveryRuleRemoteAddressCondition',
