@@ -87,7 +87,7 @@ class RecommendationMetadataOperations(object):
         if response.status_code == 200:
             deserialized = self._deserialize('MetadataEntity', response)
         if response.status_code == 404:
-            deserialized = self._deserialize('ARMErrorResponse', response)
+            deserialized = self._deserialize('ARMErrorResponseBody', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
