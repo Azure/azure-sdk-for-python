@@ -69,6 +69,10 @@ class EndpointUpdateParameters(Model):
      used for an endpoint.
     :type delivery_policy:
      ~azure.mgmt.cdn.models.EndpointPropertiesUpdateParametersDeliveryPolicy
+    :param web_application_firewall_policy_link: Defines the Web Application
+     Firewall policy for the endpoint (if applicable)
+    :type web_application_firewall_policy_link:
+     ~azure.mgmt.cdn.models.EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink
     """
 
     _attribute_map = {
@@ -84,6 +88,7 @@ class EndpointUpdateParameters(Model):
         'probe_path': {'key': 'properties.probePath', 'type': 'str'},
         'geo_filters': {'key': 'properties.geoFilters', 'type': '[GeoFilter]'},
         'delivery_policy': {'key': 'properties.deliveryPolicy', 'type': 'EndpointPropertiesUpdateParametersDeliveryPolicy'},
+        'web_application_firewall_policy_link': {'key': 'properties.webApplicationFirewallPolicyLink', 'type': 'EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink'},
     }
 
     def __init__(self, **kwargs):
@@ -100,3 +105,4 @@ class EndpointUpdateParameters(Model):
         self.probe_path = kwargs.get('probe_path', None)
         self.geo_filters = kwargs.get('geo_filters', None)
         self.delivery_policy = kwargs.get('delivery_policy', None)
+        self.web_application_firewall_policy_link = kwargs.get('web_application_firewall_policy_link', None)

@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 import uuid
@@ -24,6 +25,8 @@ from .operations.custom_domains_operations import CustomDomainsOperations
 from .operations.resource_usage_operations import ResourceUsageOperations
 from .operations.operations import Operations
 from .operations.edge_nodes_operations import EdgeNodesOperations
+from .operations.policies_operations import PoliciesOperations
+from .operations.managed_rule_sets_operations import ManagedRuleSetsOperations
 from . import models
 
 
@@ -37,16 +40,25 @@ class CdnManagementClientConfiguration(AzureConfiguration):
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param subscription_id1: Azure Subscription ID.
+    :type subscription_id1: str
+    :param api_version1: Version of the API to be used with the client
+     request. Current version is 2017-04-02.
+    :type api_version1: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, subscription_id1, api_version1, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if subscription_id1 is None:
+            raise ValueError("Parameter 'subscription_id1' must not be None.")
+        if api_version1 is None:
+            raise ValueError("Parameter 'api_version1' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -57,10 +69,12 @@ class CdnManagementClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
+        self.subscription_id1 = subscription_id1
+        self.api_version1 = api_version1
 
 
 class CdnManagementClient(SDKClient):
-    """Use these APIs to manage Azure CDN resources through the Azure Resource Manager. You must make sure that requests made to these resources are secure.
+    """Cdn Management Client
 
     :ivar config: Configuration for client.
     :vartype config: CdnManagementClientConfiguration
@@ -79,23 +93,32 @@ class CdnManagementClient(SDKClient):
     :vartype operations: azure.mgmt.cdn.operations.Operations
     :ivar edge_nodes: EdgeNodes operations
     :vartype edge_nodes: azure.mgmt.cdn.operations.EdgeNodesOperations
+    :ivar policies: Policies operations
+    :vartype policies: azure.mgmt.cdn.operations.PoliciesOperations
+    :ivar managed_rule_sets: ManagedRuleSets operations
+    :vartype managed_rule_sets: azure.mgmt.cdn.operations.ManagedRuleSetsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
     :param subscription_id: Azure Subscription ID.
     :type subscription_id: str
+    :param subscription_id1: Azure Subscription ID.
+    :type subscription_id1: str
+    :param api_version1: Version of the API to be used with the client
+     request. Current version is 2017-04-02.
+    :type api_version1: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, subscription_id1, api_version1, base_url=None):
 
-        self.config = CdnManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = CdnManagementClientConfiguration(credentials, subscription_id, subscription_id1, api_version1, base_url)
         super(CdnManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-04-15'
+        self.api_version = '2019-06-15'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -112,6 +135,10 @@ class CdnManagementClient(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.edge_nodes = EdgeNodesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.policies = PoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.managed_rule_sets = ManagedRuleSetsOperations(
             self._client, self.config, self._serialize, self._deserialize)
 
     def check_name_availability(
