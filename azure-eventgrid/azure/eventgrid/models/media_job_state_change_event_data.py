@@ -22,11 +22,13 @@ class MediaJobStateChangeEventData(Model):
     :ivar previous_state: The previous state of the Job. Possible values
      include: 'Canceled', 'Canceling', 'Error', 'Finished', 'Processing',
      'Queued', 'Scheduled'
-    :vartype previous_state: str or ~azure.eventgrid.models.JobState
+    :vartype previous_state: str or ~azure.eventgrid.models.MediaJobState
     :ivar state: The new state of the Job. Possible values include:
      'Canceled', 'Canceling', 'Error', 'Finished', 'Processing', 'Queued',
      'Scheduled'
-    :vartype state: str or ~azure.eventgrid.models.JobState
+    :vartype state: str or ~azure.eventgrid.models.MediaJobState
+    :param correlation_data: Gets the Job correlation data.
+    :type correlation_data: dict[str, str]
     """
 
     _validation = {
@@ -35,11 +37,13 @@ class MediaJobStateChangeEventData(Model):
     }
 
     _attribute_map = {
-        'previous_state': {'key': 'previousState', 'type': 'JobState'},
-        'state': {'key': 'state', 'type': 'JobState'},
+        'previous_state': {'key': 'previousState', 'type': 'MediaJobState'},
+        'state': {'key': 'state', 'type': 'MediaJobState'},
+        'correlation_data': {'key': 'correlationData', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
         super(MediaJobStateChangeEventData, self).__init__(**kwargs)
         self.previous_state = None
         self.state = None
+        self.correlation_data = kwargs.get('correlation_data', None)
