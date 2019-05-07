@@ -54,10 +54,15 @@ class AsyncPipelineClient(object):
             raise ValueError("Config is a required parameter")
         self._config = config
         self._base_url = base_url
-        self._transport = kwargs.get('transport', AioHttpTransport(config))
-        self._pipeline = kwargs.get('pipeline', self._build_pipeline(config))
+        if kwargs.get('pipeline'):
+            self._pipeline = kwargs['pipeline']
+        else:
+            transport = kwargs.get('transport')
+            if not transport:
+                transport = AioHttpTransport(config, **kwargs)
+            self._pipeline = self._build_pipeline(config, transport)
 
-    def _build_pipeline(self, config):
+    def _build_pipeline(self, config, transport):
         policies = [
             config.headers_policy,
             config.user_agent_policy,
@@ -66,11 +71,7 @@ class AsyncPipelineClient(object):
             config.retry_policy,
             config.logging_policy,
         ]
-
-        return AsyncPipeline(
-            self._transport,  # Send HTTP request using requests
-            policies
-        )
+        return AsyncPipeline(transport, policies)
 
     def _request(self, method, url, params, headers, content, form_content, stream_content):
         # type: (str, str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
