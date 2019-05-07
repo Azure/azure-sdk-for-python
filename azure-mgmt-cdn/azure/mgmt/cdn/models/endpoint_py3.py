@@ -85,10 +85,6 @@ class Endpoint(TrackedResource):
      used for an endpoint.
     :type delivery_policy:
      ~azure.mgmt.cdn.models.EndpointPropertiesUpdateParametersDeliveryPolicy
-    :param web_application_firewall_policy_link: Defines the Web Application
-     Firewall policy for the endpoint (if applicable)
-    :type web_application_firewall_policy_link:
-     ~azure.mgmt.cdn.models.EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink
     :ivar host_name: The host name of the endpoint structured as
      {endpointName}.{DNSZone}, e.g. contoso.azureedge.net
     :vartype host_name: str
@@ -132,14 +128,13 @@ class Endpoint(TrackedResource):
         'probe_path': {'key': 'properties.probePath', 'type': 'str'},
         'geo_filters': {'key': 'properties.geoFilters', 'type': '[GeoFilter]'},
         'delivery_policy': {'key': 'properties.deliveryPolicy', 'type': 'EndpointPropertiesUpdateParametersDeliveryPolicy'},
-        'web_application_firewall_policy_link': {'key': 'properties.webApplicationFirewallPolicyLink', 'type': 'EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
         'origins': {'key': 'properties.origins', 'type': '[DeepCreatedOrigin]'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, origins, tags=None, origin_host_header: str=None, origin_path: str=None, content_types_to_compress=None, is_compression_enabled: bool=None, is_http_allowed: bool=None, is_https_allowed: bool=None, query_string_caching_behavior=None, optimization_type=None, probe_path: str=None, geo_filters=None, delivery_policy=None, web_application_firewall_policy_link=None, **kwargs) -> None:
+    def __init__(self, *, location: str, origins, tags=None, origin_host_header: str=None, origin_path: str=None, content_types_to_compress=None, is_compression_enabled: bool=None, is_http_allowed: bool=None, is_https_allowed: bool=None, query_string_caching_behavior=None, optimization_type=None, probe_path: str=None, geo_filters=None, delivery_policy=None, **kwargs) -> None:
         super(Endpoint, self).__init__(location=location, tags=tags, **kwargs)
         self.origin_host_header = origin_host_header
         self.origin_path = origin_path
@@ -152,7 +147,6 @@ class Endpoint(TrackedResource):
         self.probe_path = probe_path
         self.geo_filters = geo_filters
         self.delivery_policy = delivery_policy
-        self.web_application_firewall_policy_link = web_application_firewall_policy_link
         self.host_name = None
         self.origins = origins
         self.resource_state = None
