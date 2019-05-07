@@ -82,3 +82,9 @@ class DatabasePrincipalType(str, Enum):
     app = "App"
     group = "Group"
     user = "User"
+
+
+class Reason(str, Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
