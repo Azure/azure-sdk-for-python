@@ -11,7 +11,7 @@ import time
 
 from azure import eventhub
 from azure.eventhub import EventData, Offset, EventHubError, EventHubClientAsync
-from uamqp import Message
+
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
@@ -310,13 +310,14 @@ async def test_non_epoch_receiver_after_epoch_receiver_async(connstr_senders):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_batch_with_app_prop_async(connstr_senders):
+    pytest.skip("Waiting on uAMQP release")
     connection_str, senders = connstr_senders
 
     def batched():
         for i in range(10):
             yield "Event Data {}".format(i)
         for i in range(10, 20):
-            yield Message(body=("Event Data {}".format(i)))
+            yield EventData("Event Data {}".format(i))
 
     client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
     receiver = client.add_async_receiver("$default", "0", prefetch=500, offset=Offset('@latest'))

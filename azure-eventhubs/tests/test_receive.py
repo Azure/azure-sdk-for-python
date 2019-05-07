@@ -11,7 +11,6 @@ import datetime
 
 from azure import eventhub
 from azure.eventhub import EventData, EventHubClient, Offset
-from uamqp import Message
 
 
 # def test_receive_without_events(connstr_senders):
@@ -264,13 +263,14 @@ def test_receive_batch(connstr_senders):
 
 @pytest.mark.liveTest
 def test_receive_batch_with_app_prop_sync(connstr_senders):
+    pytest.skip("Waiting on uAMQP release")
     connection_str, senders = connstr_senders
 
     def batched():
         for i in range(10):
             yield "Event Data {}".format(i)
         for i in range(10, 20):
-            yield Message(body=("Event Data {}".format(i)))
+            yield EventData("Event Data {}".format(i))
 
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     receiver = client.add_receiver("$default", "0", prefetch=500, offset=Offset('@latest'))

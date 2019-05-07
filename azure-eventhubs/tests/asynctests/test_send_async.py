@@ -12,7 +12,6 @@ import time
 import json
 
 from azure.eventhub import EventData, EventHubClientAsync
-from uamqp import Message
 
 
 @pytest.mark.liveTest
@@ -228,13 +227,14 @@ async def test_send_multiple_clients_async(connstr_receivers):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_batch_with_app_prop_async(connstr_receivers):
+    pytest.skip("Waiting on uAMQP release")
     connection_str, receivers = connstr_receivers
 
     def batched():
         for i in range(10):
             yield "Event number {}".format(i)
         for i in range(10, 20):
-            yield Message(body=("Event number {}".format(i)))
+            yield EventData("Event number {}".format(i))
 
     client = EventHubClientAsync.from_connection_string(connection_str, debug=False)
     sender = client.add_async_sender()
