@@ -12,22 +12,25 @@
 from msrest.serialization import Model
 
 
-class QueryFilter(Model):
-    """The filter expression to be used in the export.
+class ReportConfigFilter(Model):
+    """The filter expression to be used in the report.
 
     :param and_property: The logical "AND" expression. Must have at least 2
      items.
-    :type and_property: list[~azure.mgmt.costmanagement.models.QueryFilter]
+    :type and_property:
+     list[~azure.mgmt.costmanagement.models.ReportConfigFilter]
     :param or_property: The logical "OR" expression. Must have at least 2
      items.
-    :type or_property: list[~azure.mgmt.costmanagement.models.QueryFilter]
+    :type or_property:
+     list[~azure.mgmt.costmanagement.models.ReportConfigFilter]
     :param not_property: The logical "NOT" expression.
-    :type not_property: ~azure.mgmt.costmanagement.models.QueryFilter
+    :type not_property: ~azure.mgmt.costmanagement.models.ReportConfigFilter
     :param dimension: Has comparison expression for a dimension
     :type dimension:
-     ~azure.mgmt.costmanagement.models.QueryComparisonExpression
+     ~azure.mgmt.costmanagement.models.ReportConfigComparisonExpression
     :param tag: Has comparison expression for a tag
-    :type tag: ~azure.mgmt.costmanagement.models.QueryComparisonExpression
+    :type tag:
+     ~azure.mgmt.costmanagement.models.ReportConfigComparisonExpression
     """
 
     _validation = {
@@ -36,15 +39,15 @@ class QueryFilter(Model):
     }
 
     _attribute_map = {
-        'and_property': {'key': 'and', 'type': '[QueryFilter]'},
-        'or_property': {'key': 'or', 'type': '[QueryFilter]'},
-        'not_property': {'key': 'not', 'type': 'QueryFilter'},
-        'dimension': {'key': 'dimension', 'type': 'QueryComparisonExpression'},
-        'tag': {'key': 'tag', 'type': 'QueryComparisonExpression'},
+        'and_property': {'key': 'and', 'type': '[ReportConfigFilter]'},
+        'or_property': {'key': 'or', 'type': '[ReportConfigFilter]'},
+        'not_property': {'key': 'not', 'type': 'ReportConfigFilter'},
+        'dimension': {'key': 'dimension', 'type': 'ReportConfigComparisonExpression'},
+        'tag': {'key': 'tag', 'type': 'ReportConfigComparisonExpression'},
     }
 
     def __init__(self, **kwargs):
-        super(QueryFilter, self).__init__(**kwargs)
+        super(ReportConfigFilter, self).__init__(**kwargs)
         self.and_property = kwargs.get('and_property', None)
         self.or_property = kwargs.get('or_property', None)
         self.not_property = kwargs.get('not_property', None)

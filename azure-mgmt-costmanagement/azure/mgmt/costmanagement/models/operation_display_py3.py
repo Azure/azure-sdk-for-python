@@ -18,10 +18,10 @@ class OperationDisplay(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar provider: Service provider: Microsoft.CostManagement.
+    :ivar provider: Service provider: Microsoft.Consumption.
     :vartype provider: str
-    :ivar resource: Resource on which the operation is performed: Dimensions,
-     Query.
+    :ivar resource: Resource on which the operation is performed: UsageDetail,
+     etc.
     :vartype resource: str
     :ivar operation: Operation type: Read, write, delete, etc.
     :vartype operation: str

@@ -13,9 +13,8 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.dimensions_operations import DimensionsOperations
-from .operations.query_operations import QueryOperations
-from .operations.exports_operations import ExportsOperations
+from .operations.budgets_operations import BudgetsOperations
+from .operations.budget_operations import BudgetOperations
 from .operations.operations import Operations
 from . import models
 
@@ -28,18 +27,14 @@ class CostManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Azure Subscription ID.
-    :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -49,7 +44,6 @@ class CostManagementClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
-        self.subscription_id = subscription_id
 
 
 class CostManagementClient(SDKClient):
@@ -58,39 +52,33 @@ class CostManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: CostManagementClientConfiguration
 
-    :ivar dimensions: Dimensions operations
-    :vartype dimensions: azure.mgmt.costmanagement.operations.DimensionsOperations
-    :ivar query: Query operations
-    :vartype query: azure.mgmt.costmanagement.operations.QueryOperations
-    :ivar exports: Exports operations
-    :vartype exports: azure.mgmt.costmanagement.operations.ExportsOperations
+    :ivar budgets: Budgets operations
+    :vartype budgets: azure.mgmt.costmanagement.operations.BudgetsOperations
+    :ivar budget: Budget operations
+    :vartype budget: azure.mgmt.costmanagement.operations.BudgetOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.costmanagement.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Azure Subscription ID.
-    :type subscription_id: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, base_url=None):
 
-        self.config = CostManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = CostManagementClientConfiguration(credentials, base_url)
         super(CostManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-01-01'
+        self.api_version = '2019-05-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.dimensions = DimensionsOperations(
+        self.budgets = BudgetsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.query = QueryOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.exports = ExportsOperations(
+        self.budget = BudgetOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

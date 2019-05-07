@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class Operation(Model):
-    """A Cost management REST API operation.
+    """A Consumption REST API operation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -22,7 +22,7 @@ class Operations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-05-31. Constant value: "2019-01-01".
+    :ivar api_version: Version of the API to be used with the client request. The current version is 2019-05-01-preview. Constant value: "2019-05-01-preview".
     """
 
     models = models
@@ -32,13 +32,13 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-01-01"
+        self.api_version = "2019-05-01-preview"
 
         self.config = config
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available cost management REST API operations.
+        """Lists all of the available consumption REST API operations.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

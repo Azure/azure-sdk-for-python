@@ -9,24 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class QueryColumn(Model):
-    """QueryColumn.
-
-    :param name:
-    :type name: str
-    :param type:
-    :type type: str
+class BudgetModelPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`BudgetModel <azure.mgmt.costmanagement.models.BudgetModel>` object
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[BudgetModel]'}
     }
 
-    def __init__(self, **kwargs):
-        super(QueryColumn, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
+    def __init__(self, *args, **kwargs):
+
+        super(BudgetModelPaged, self).__init__(*args, **kwargs)
