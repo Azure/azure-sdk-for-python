@@ -160,7 +160,6 @@ jobs:
 
       - script: |
           coverage xml
-          coverage html
         displayName: 'Generate Coverage XML'
 
       - script: |
@@ -168,17 +167,11 @@ jobs:
         displayName: 'Publish Code Cov'
         condition: ne(variables['codecov-python-repository-token'], '')
 
-      - task: PythonScript@0
-        displayName: 'Inline CSS for Cobertura'
-        inputs:
-          scriptPath: 'scripts/devops_tasks/inline_css_for_cobertura.py'
-
       - task: PublishCodeCoverageResults@1
         displayName: 'Publish Code Coverage to DevOps'
         inputs:
           codeCoverageTool: Cobertura
           summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
-          reportDirectory: '$(Build.SourcesDirectory)/htmlcov'
 
   - job: Test_Alpha_Python
 
