@@ -79,7 +79,7 @@ class RunbookDraftOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'text/powershell'
+        header_parameters['Accept'] = 'text/powershell, */*'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -128,7 +128,7 @@ class RunbookDraftOperations(object):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'text/powershell'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
