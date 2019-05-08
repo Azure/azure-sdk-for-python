@@ -12,25 +12,30 @@
 from msrest.serialization import Model
 
 
-class ExportListResult(Model):
-    """Result of listing exports. It contains a list of available exports in the
-    scope provided.
+class CurrentSpend(Model):
+    """The current amount of cost which is being tracked for a budget.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The list of exports.
-    :vartype value: list[~azure.mgmt.costmanagement.models.Export]
+    :ivar amount: The total amount of cost which is being tracked by the
+     budget.
+    :vartype amount: decimal.Decimal
+    :ivar unit: The unit of measure for the budget amount.
+    :vartype unit: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        'amount': {'readonly': True},
+        'unit': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Export]'},
+        'amount': {'key': 'amount', 'type': 'decimal'},
+        'unit': {'key': 'unit', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ExportListResult, self).__init__(**kwargs)
-        self.value = None
+        super(CurrentSpend, self).__init__(**kwargs)
+        self.amount = None
+        self.unit = None

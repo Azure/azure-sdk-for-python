@@ -12,66 +12,27 @@
 from enum import Enum
 
 
-class TimeframeType(str, Enum):
+class CategoryType(str, Enum):
 
-    week_to_date = "WeekToDate"
-    month_to_date = "MonthToDate"
-    year_to_date = "YearToDate"
-    the_last_week = "TheLastWeek"
-    the_last_month = "TheLastMonth"
-    the_last_year = "TheLastYear"
-    custom = "Custom"
+    cost = "Cost"
+    usage = "Usage"
 
 
-class GranularityType(str, Enum):
+class TimeGrainType(str, Enum):
 
-    daily = "Daily"
-    hourly = "Hourly"
-
-
-class QueryColumnType(str, Enum):
-
-    tag = "Tag"
-    dimension = "Dimension"
-
-
-class SortDirection(str, Enum):
-
-    ascending = "Ascending"
-    descending = "Descending"
-
-
-class StatusType(str, Enum):
-
-    active = "Active"
-    inactive = "Inactive"
-
-
-class RecurrenceType(str, Enum):
-
-    daily = "Daily"
-    weekly = "Weekly"
     monthly = "Monthly"
+    quarterly = "Quarterly"
     annually = "Annually"
 
 
-class FormatType(str, Enum):
+class OperatorType(str, Enum):
 
-    csv = "Csv"
-
-
-class ExecutionType(str, Enum):
-
-    on_demand = "OnDemand"
-    scheduled = "Scheduled"
+    in_enum = "In"
+    contains = "Contains"
 
 
-class ExecutionStatus(str, Enum):
+class NotificationOperatorType(str, Enum):
 
-    queued = "Queued"
-    in_progress = "InProgress"
-    completed = "Completed"
-    failed = "Failed"
-    timeout = "Timeout"
-    new_data_not_available = "NewDataNotAvailable"
-    data_not_available = "DataNotAvailable"
+    equal_to = "EqualTo"
+    greater_than = "GreaterThan"
+    greater_than_or_equal_to = "GreaterThanOrEqualTo"

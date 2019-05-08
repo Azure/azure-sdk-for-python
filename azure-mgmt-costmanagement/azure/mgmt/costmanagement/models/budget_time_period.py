@@ -12,28 +12,28 @@
 from msrest.serialization import Model
 
 
-class QueryTimePeriod(Model):
-    """The start and end date for pulling data for the query.
+class BudgetTimePeriod(Model):
+    """The start and end date for a budget.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param from_property: Required. The start date to pull data from.
-    :type from_property: datetime
-    :param to: Required. The end date to pull data to.
-    :type to: datetime
+    :param start_date: Required. The start date for the budget.
+    :type start_date: datetime
+    :param end_date: The end date for the budget. If not provided, we default
+     this to 10 years from the start date.
+    :type end_date: datetime
     """
 
     _validation = {
-        'from_property': {'required': True},
-        'to': {'required': True},
+        'start_date': {'required': True},
     }
 
     _attribute_map = {
-        'from_property': {'key': 'from', 'type': 'iso-8601'},
-        'to': {'key': 'to', 'type': 'iso-8601'},
+        'start_date': {'key': 'startDate', 'type': 'iso-8601'},
+        'end_date': {'key': 'endDate', 'type': 'iso-8601'},
     }
 
     def __init__(self, **kwargs):
-        super(QueryTimePeriod, self).__init__(**kwargs)
-        self.from_property = kwargs.get('from_property', None)
-        self.to = kwargs.get('to', None)
+        super(BudgetTimePeriod, self).__init__(**kwargs)
+        self.start_date = kwargs.get('start_date', None)
+        self.end_date = kwargs.get('end_date', None)
