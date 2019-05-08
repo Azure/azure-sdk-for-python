@@ -24,7 +24,7 @@ class ReservationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Supported version. Constant value: "2018-06-01".
+    :ivar api_version: Supported version for this document is 2019-04-01. Constant value: "2019-04-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ReservationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-06-01"
+        self.api_version = "2019-04-01"
 
         self.config = config
 
@@ -92,7 +92,6 @@ class ReservationOperations(object):
 
         Split a `Reservation` into two `Reservation`s with specified quantity
         distribution.
-        .
 
         :param reservation_order_id: Order Id of the reservation
         :type reservation_order_id: str
@@ -478,7 +477,6 @@ class ReservationOperations(object):
         """Get `Reservation` revisions.
 
         List of all the revisions for the `Reservation`.
-        .
 
         :param reservation_id: Id of the Reservation Item
         :type reservation_id: str

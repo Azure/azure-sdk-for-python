@@ -16,7 +16,7 @@ class PublishSettingUpdateObject(Model):
     """Object model for updating an application's publish settings.
 
     :param sentiment_analysis: Setting sentiment analysis as true returns the
-     Sentiment of the input utterance along with the resopnse
+     Sentiment of the input utterance along with the response
     :type sentiment_analysis: bool
     :param speech: Setting speech as public enables speech priming in your app
     :type speech: bool

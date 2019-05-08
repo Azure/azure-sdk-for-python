@@ -3,6 +3,35 @@
 Release History
 ===============
 
+5.3.0 (2019-05-03)
+++++++++++++++++++
+
+**Features**
+
+- Model OrchestratorProfile has a new parameter is_preview
+- Model OrchestratorVersionProfile has a new parameter is_preview
+- Model ContainerServiceNetworkProfile has a new parameter load_balancer_sku
+- Model ManagedCluster has a new parameter identity
+- Model ManagedCluster has a new parameter max_agent_pools
+- Model ManagedCluster has a new parameter windows_profile
+
+
+5.2.0 (2019-04-30)
+++++++++++++++++++
+
+**Features**
+
+- OpenShift is now using a GA api version
+- Model OpenShiftManagedCluster has a new parameter cluster_version
+- Model NetworkProfile has a new parameter vnet_id
+
+5.1.0 (2019-04-08)
+++++++++++++++++++
+
+**Features**
+
+- Model OpenShiftManagedClusterAADIdentityProvider has a new parameter customer_admin_group_id
+
 5.0.0 (2019-03-19)
 ++++++++++++++++++
 

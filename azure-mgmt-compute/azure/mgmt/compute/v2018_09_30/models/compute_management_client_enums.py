@@ -19,6 +19,7 @@ class DiskStorageAccountTypes(str, Enum):
     standard_ssd_lrs = "StandardSSD_LRS"
     ultra_ssd_lrs = "UltraSSD_LRS"
 
+
 class OperatingSystemTypes(str, Enum):
 
     windows = "Windows"

@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
-from .operations.subscription_operations import SubscriptionOperations
+from .operations.subscription_operation_operations import SubscriptionOperationOperations
 from .operations.subscription_factory_operations import SubscriptionFactoryOperations
 from .operations.subscriptions_operations import SubscriptionsOperations
 from .operations.tenants_operations import TenantsOperations
@@ -48,7 +48,7 @@ class SubscriptionClientConfiguration(AzureConfiguration):
         self.credentials = credentials
 
 
-class SubscriptionClient(object):
+class SubscriptionClient(SDKClient):
     """The subscription client
 
     :ivar config: Configuration for client.
@@ -56,8 +56,8 @@ class SubscriptionClient(object):
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.subscription.operations.Operations
-    :ivar subscription_operations: SubscriptionOperations operations
-    :vartype subscription_operations: azure.mgmt.subscription.operations.SubscriptionOperations
+    :ivar subscription_operation: SubscriptionOperation operations
+    :vartype subscription_operation: azure.mgmt.subscription.operations.SubscriptionOperationOperations
     :ivar subscription_factory: SubscriptionFactory operations
     :vartype subscription_factory: azure.mgmt.subscription.operations.SubscriptionFactoryOperations
     :ivar subscriptions: Subscriptions operations
@@ -75,7 +75,7 @@ class SubscriptionClient(object):
             self, credentials, base_url=None):
 
         self.config = SubscriptionClientConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(SubscriptionClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -83,7 +83,7 @@ class SubscriptionClient(object):
 
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.subscription_operations = SubscriptionOperations(
+        self.subscription_operation = SubscriptionOperationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.subscription_factory = SubscriptionFactoryOperations(
             self._client, self.config, self._serialize, self._deserialize)

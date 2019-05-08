@@ -205,7 +205,7 @@ class CollectionOperations(object):
 
     def list_metric_definitions(
             self, resource_group_name, account_name, database_rid, collection_rid, custom_headers=None, raw=False, **operation_config):
-        """Retrieves metric defintions for the given collection.
+        """Retrieves metric definitions for the given collection.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
