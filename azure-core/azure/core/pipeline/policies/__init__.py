@@ -28,6 +28,7 @@ from .base import HTTPPolicy, SansIOHTTPPolicy
 from .credentials import CredentialsPolicy
 from .redirect import RedirectPolicy
 from .retry import RetryPolicy
+from .custom_hook import CustomHookPolicy
 from .universal import (
     HeadersPolicy,
     UserAgentPolicy,
@@ -46,7 +47,8 @@ __all__ = [
     'ContentDecodePolicy',
     'RetryPolicy',
     'RedirectPolicy',
-    'ProxyPolicy'
+    'ProxyPolicy',
+    'CustomHookPolicy'
 ]
 
 try:

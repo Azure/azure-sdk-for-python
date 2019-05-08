@@ -43,6 +43,9 @@ class Configuration(object):
         # Retry configuration
         self.retry_policy = None
 
+        # Custom hook configuration
+        self.custom_hook_policy = None
+
         # Logger configuration
         self.logging_policy = None
 
