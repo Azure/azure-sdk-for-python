@@ -23,13 +23,14 @@ class JitSchedulingPolicy(Model):
      ~azure.mgmt.resource.managedapplications.models.JitSchedulingType
     :param duration: Required. The required duration of the JIT request.
     :type duration: timedelta
-    :param start_time: The start time of the request.
+    :param start_time: Required. The start time of the request.
     :type start_time: datetime
     """
 
     _validation = {
         'type': {'required': True},
         'duration': {'required': True},
+        'start_time': {'required': True},
     }
 
     _attribute_map = {
@@ -38,7 +39,7 @@ class JitSchedulingPolicy(Model):
         'start_time': {'key': 'StartTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, type, duration, start_time=None, **kwargs) -> None:
+    def __init__(self, *, type, duration, start_time, **kwargs) -> None:
         super(JitSchedulingPolicy, self).__init__(**kwargs)
         self.type = type
         self.duration = duration

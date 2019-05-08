@@ -23,13 +23,14 @@ class JitSchedulingPolicy(Model):
      ~azure.mgmt.resource.managedapplications.models.JitSchedulingType
     :param duration: Required. The required duration of the JIT request.
     :type duration: timedelta
-    :param start_time: The start time of the request.
+    :param start_time: Required. The start time of the request.
     :type start_time: datetime
     """
 
     _validation = {
         'type': {'required': True},
         'duration': {'required': True},
+        'start_time': {'required': True},
     }
 
     _attribute_map = {
