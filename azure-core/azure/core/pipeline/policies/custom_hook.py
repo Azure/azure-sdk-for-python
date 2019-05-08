@@ -1,4 +1,4 @@
-from .base import HTTPPolicy, SansIOHTTPPolicy
+from .base import SansIOHTTPPolicy
 
 class CustomHookPolicy(SansIOHTTPPolicy):
     """A simple policy that enable the given callback
