@@ -1,0 +1,62 @@
+interactions:
+- request:
+    body: !!binary |
+      //5oAGUAbABsAG8AIABKVUSfAk7bctxyIAB3AG8AcgBsAGQA
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['36']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-blob-type: [BlockBlob]
+      x-ms-client-request-id: [4a9508e4-e473-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:00:45 GMT']
+      x-ms-version: ['2018-03-28']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer891416e0/blob891416e0
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [O7c5HRnUhbM5yD4T1wnm/w==]
+      Date: ['Fri, 09 Nov 2018 23:00:45 GMT']
+      ETag: ['"0x8D646972EDB47DF"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:00:45 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [639307e3-e01e-0049-1580-78fc4b000000]
+      x-ms-request-server-encrypted: ['true']
+      x-ms-version: ['2018-03-28']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [4aada64c-e473-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:00:46 GMT']
+      x-ms-range: [bytes=0-33554431]
+      x-ms-version: ['2018-03-28']
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainer891416e0/blob891416e0
+  response:
+    body:
+      string: !!binary |
+        //5oAGUAbABsAG8AIABKVUSfAk7bctxyIAB3AG8AcgBsAGQA
+    headers:
+      Accept-Ranges: [bytes]
+      Content-Length: ['36']
+      Content-Range: [bytes 0-35/36]
+      Content-Type: [application/octet-stream]
+      Date: ['Fri, 09 Nov 2018 23:00:45 GMT']
+      ETag: ['"0x8D646972EDB47DF"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:00:45 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Vary: [Origin]
+      x-ms-blob-content-md5: [O7c5HRnUhbM5yD4T1wnm/w==]
+      x-ms-blob-type: [BlockBlob]
+      x-ms-creation-time: ['Fri, 09 Nov 2018 23:00:45 GMT']
+      x-ms-lease-state: [available]
+      x-ms-lease-status: [unlocked]
+      x-ms-request-id: [639307ef-e01e-0049-1f80-78fc4b000000]
+      x-ms-server-encrypted: ['true']
+      x-ms-version: ['2018-03-28']
+    status: {code: 206, message: Partial Content}
+version: 1

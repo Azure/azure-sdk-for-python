@@ -1,0 +1,26 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [35e024c2-e475-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:14:30 GMT']
+      x-ms-version: ['2018-03-28']
+    method: HEAD
+    uri: https://storagename.file.core.windows.net/utshare8e471737/utdir8e471737/bytefile8e471737
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['65541']
+      Content-Type: [application/octet-stream]
+      Date: ['Fri, 09 Nov 2018 23:14:30 GMT']
+      ETag: ['"0x8D646991A0C987F"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:14:30 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [38782660-d01a-0041-1581-78e738000000]
+      x-ms-server-encrypted: ['true']
+      x-ms-type: [File]
+      x-ms-version: ['2018-03-28']
+    status: {code: 200, message: OK}
+version: 1

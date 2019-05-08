@@ -1,0 +1,262 @@
+interactions:
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <StorageServiceProperties><DeleteRetentionPolicy><Enabled>True</Enabled><Days>2</Days></DeleteRetentionPolicy></StorageServiceProperties>'
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['176']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [0d97dc72-e474-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:06:13 GMT']
+      x-ms-version: ['2018-03-28']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/?restype=service&comp=properties
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Fri, 09 Nov 2018 23:06:12 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [d86ac5b5-201e-0054-5c80-7825a1000000]
+      x-ms-version: ['2018-03-28']
+    status: {code: 202, message: Accepted}
+- request:
+    body: !!binary |
+      MtugPFlV3EczqXGGtpGvbMOdGmRFKGHy6iUmRCOoieP84gvVqqLwFhw7i+Hs1LR2VfPlIpMos7ZH
+      mA37aNlyQA7JkB1bSBgb3OU5geesdHyuyrezgM2edfMN1qihDk0H9AS3cVymutCfaCw1CBU/Gg+D
+      OZ5Wpuo3FcZvQeGzj751/TQbbGMS9ZA10kLU+ht4Kr/Q7XiMNpG4pUiPsfK+ZhqzSHU2yexLvB33
+      SJp5euiN1XvDDnTKriJSkh38qBGiuRF58TObCEwXScJKQq+XFC17jXlkgrChD0eQcdr1d2CeSJ5+
+      yh+7WwnkzBS1O6a4zAbnUhpp58weSHs/LHp9+g7Er+VeImWdVUJSqNWm1kvMAKSIlvZXHsD7pYrg
+      tAcZzyWqFtXiMjZdMnelzblkRBHALDNfu9J5JDX62nU1FoO4r5pCyc3E6YBrJZDNpw4/DnM+nMPT
+      Buz4M9PBVplss47fXmrT1xSVjdwjJ4VrHsahf+P0rGewjR0IOWrlIFarElNxFNOmrol30Qw0dbkJ
+      vByRTqB/UIhvuh/2NxdZks5Gl9uVPPPpcQSueG60EAm5YYKQGwqRwkTRbA7fTPVrxUT1QqrOqbZR
+      uR9BqlyUPIbt7wyRnsti6xTss6J2rRKfKtXCjIwbo7IOE2QOegUOlENnr3NSYy+7miiAKkxceZb8
+      rEtFH6laPjyK9r4ZIp+R7f3Hok4ORLeaQru72BCyPO9ZB431mONd+kcRhl5XQzAmPbcOaMwpBgSE
+      JQrt24IIp1dXlAPt2Lc99DEofVJGBMn5nAIcDbc8G+tAVTNG1Za7ZXpVub8eXH/fUY6PxlcpC3I8
+      Z2HKb3sbxc3MdhBvIeK1BzvPgLrc8EP1mB6ns5PqfdDJY1BPKfxoPtBw+bBBW/x0C35mTyT8dIyP
+      U7ubDUZ+7v7laSo9yErkXGoRJot0CkrN0/cOHU/eQ7U2mFH81PbNyOkcXE5Q7vJnyy8/lhDZCBUp
+      RRn383dptSNC0wlXdHgNVt1RCPthTM6TzGUzpT+QPoNUHnf0LGlw+xr9Myn1sTx+SDCM6hAx/ZaY
+      GP5/rcAdp1g9vHdeER0yO8w3sDrWKAkTuUeJHBgxyqwfpeV8I8UWb2Nt2iS+t2dWBFTUUNffOiB0
+      vGkCntw5olQ9RgpG0u4KYqUgBeu4O7MWD7t6ZrFFHePMkuMviyt7omC5UNzfh2OVi266ZOcM1qaG
+      iY4Wrl6EbTXWv9jhstTx27KQLFKd+WfT3XC2TWaPn7ZwaVgUvTeQux9jZxl7HMmLIGnYN0/ZEO+F
+      IW5Ata1F3pxYAmhNsu0lyjOJzwyRjwcbyacT9WgnpHjcSAyTrW1YsgizfkFroSnxxbuTTxpx5w==
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['1024']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-blob-type: [BlockBlob]
+      x-ms-client-request-id: [1f9351cc-e474-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:06:43 GMT']
+      x-ms-version: ['2018-03-28']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainerb0d1468/blobb0d1468
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [yUfWrGzMNEi0cc9Ey3CMSA==]
+      Date: ['Fri, 09 Nov 2018 23:06:42 GMT']
+      ETag: ['"0x8D6469803C6DDA9"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:06:43 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [d86af723-201e-0054-2b80-7825a1000000]
+      x-ms-request-server-encrypted: ['true']
+      x-ms-version: ['2018-03-28']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [1fa09d8c-e474-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:06:43 GMT']
+      x-ms-lease-action: [acquire]
+      x-ms-lease-duration: ['-1']
+      x-ms-version: ['2018-03-28']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainerb0d1468/blobb0d1468?comp=lease
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Fri, 09 Nov 2018 23:06:42 GMT']
+      ETag: ['"0x8D6469803C6DDA9"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:06:43 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-lease-id: [e450399a-9164-4df6-96f3-37ce1e9a7312]
+      x-ms-request-id: [d86af73f-201e-0054-4480-7825a1000000]
+      x-ms-version: ['2018-03-28']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [1fa74a6a-e474-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:06:43 GMT']
+      x-ms-version: ['2018-03-28']
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/utcontainerb0d1468/blobb0d1468
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There\
+        \ is currently a lease on the blob and no lease ID was specified in the request.\n\
+        RequestId:d86af749-201e-0054-4c80-7825a1000000\nTime:2018-11-09T23:06:43.3133218Z</Message></Error>"}
+    headers:
+      Content-Length: ['267']
+      Content-Type: [application/xml]
+      Date: ['Fri, 09 Nov 2018 23:06:42 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-error-code: [LeaseIdMissing]
+      x-ms-request-id: [d86af749-201e-0054-4c80-7825a1000000]
+      x-ms-version: ['2018-03-28']
+    status: {code: 412, message: There is currently a lease on the blob and no lease
+        ID was specified in the request.}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [1fad9050-e474-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:06:43 GMT']
+      x-ms-lease-id: [e450399a-9164-4df6-96f3-37ce1e9a7312]
+      x-ms-version: ['2018-03-28']
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/utcontainerb0d1468/blobb0d1468
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Fri, 09 Nov 2018 23:06:42 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-delete-type-permanent: ['false']
+      x-ms-request-id: [d86af74c-201e-0054-4e80-7825a1000000]
+      x-ms-version: ['2018-03-28']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [1fb3f6fc-e474-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:06:43 GMT']
+      x-ms-version: ['2018-03-28']
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainerb0d1468?restype=container&comp=list&include=deleted
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
+        \ ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"\
+        utcontainerb0d1468\"><Blobs><Blob><Name>blobb0d1468</Name><Deleted>true</Deleted><Properties><Creation-Time>Fri,\
+        \ 09 Nov 2018 23:06:43 GMT</Creation-Time><Last-Modified>Fri, 09 Nov 2018\
+        \ 23:06:43 GMT</Last-Modified><Etag>0x8D6469803C6DDA9</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding\
+        \ /><Content-Language /><Content-MD5>yUfWrGzMNEi0cc9Ey3CMSA==</Content-MD5><Cache-Control\
+        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus\
+        \ /><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri, 09 Nov 2018 23:06:43\
+        \ GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Blob></Blobs><NextMarker\
+        \ /></EnumerationResults>"}
+    headers:
+      Content-Type: [application/xml]
+      Date: ['Fri, 09 Nov 2018 23:06:42 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      Vary: [Origin]
+      x-ms-request-id: [d86af754-201e-0054-5680-7825a1000000]
+      x-ms-version: ['2018-03-28']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [1fbabed8-e474-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:06:43 GMT']
+      x-ms-version: ['2018-03-28']
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainerb0d1468?restype=container&comp=list
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
+        \ ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"\
+        utcontainerb0d1468\"><Blobs /><NextMarker /></EnumerationResults>"}
+    headers:
+      Content-Type: [application/xml]
+      Date: ['Fri, 09 Nov 2018 23:06:42 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      Vary: [Origin]
+      x-ms-request-id: [d86af762-201e-0054-6380-7825a1000000]
+      x-ms-version: ['2018-03-28']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [1fc11d6e-e474-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:06:43 GMT']
+      x-ms-version: ['2018-03-28']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainerb0d1468/blobb0d1468?comp=undelete
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Fri, 09 Nov 2018 23:06:43 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [d86af76e-201e-0054-6d80-7825a1000000]
+      x-ms-version: ['2018-03-28']
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [1fcc68a4-e474-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:06:43 GMT']
+      x-ms-version: ['2018-03-28']
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainerb0d1468?restype=container&comp=list&include=deleted
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
+        \ ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"\
+        utcontainerb0d1468\"><Blobs><Blob><Name>blobb0d1468</Name><Properties><Creation-Time>Fri,\
+        \ 09 Nov 2018 23:06:43 GMT</Creation-Time><Last-Modified>Fri, 09 Nov 2018\
+        \ 23:06:43 GMT</Last-Modified><Etag>0x8D6469803C6DDA9</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding\
+        \ /><Content-Language /><Content-MD5>yUfWrGzMNEi0cc9Ey3CMSA==</Content-MD5><Cache-Control\
+        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker\
+        \ /></EnumerationResults>"}
+    headers:
+      Content-Type: [application/xml]
+      Date: ['Fri, 09 Nov 2018 23:06:43 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      Vary: [Origin]
+      x-ms-request-id: [d86af784-201e-0054-7f80-7825a1000000]
+      x-ms-version: ['2018-03-28']
+    status: {code: 200, message: OK}
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <StorageServiceProperties><DeleteRetentionPolicy><Enabled>False</Enabled></DeleteRetentionPolicy></StorageServiceProperties>'
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['163']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [1fd2d590-e474-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:06:43 GMT']
+      x-ms-version: ['2018-03-28']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/?restype=service&comp=properties
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Fri, 09 Nov 2018 23:06:43 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [d86af792-201e-0054-0d80-7825a1000000]
+      x-ms-version: ['2018-03-28']
+    status: {code: 202, message: Accepted}
+version: 1

@@ -1,0 +1,22 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [26b6230c-e475-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:14:04 GMT']
+      x-ms-version: ['2018-03-28']
+    method: HEAD
+    uri: https://storagename.file.core.windows.net/utsharea6d51786/filea6d51786
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Fri, 09 Nov 2018 23:14:04 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-error-code: [ResourceNotFound]
+      x-ms-request-id: [5b619ec1-f01a-0030-1c81-789501000000]
+      x-ms-version: ['2018-03-28']
+    status: {code: 404, message: The specified resource does not exist.}
+version: 1

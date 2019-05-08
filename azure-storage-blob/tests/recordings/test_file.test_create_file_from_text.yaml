@@ -1,0 +1,80 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [201d812a-e475-11e8-9ac5-acde48001122]
+      x-ms-content-length: ['27']
+      x-ms-date: ['Fri, 09 Nov 2018 23:13:53 GMT']
+      x-ms-type: [file]
+      x-ms-version: ['2018-03-28']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utsharee270eb7/filee270eb7
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Fri, 09 Nov 2018 23:13:53 GMT']
+      ETag: ['"0x8D6469904636628"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:13:53 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [94a7c6c2-301a-000f-6281-7822dd000000]
+      x-ms-request-server-encrypted: ['true']
+      x-ms-version: ['2018-03-28']
+    status: {code: 201, message: Created}
+- request:
+    body: "hello \u554A\u9F44\u4E02\u72DB\u72DC world"
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['27']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [203799ca-e475-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:13:53 GMT']
+      x-ms-range: [bytes=0-26]
+      x-ms-version: ['2018-03-28']
+      x-ms-write: [update]
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utsharee270eb7/filee270eb7?comp=range
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [1dmqejQJFCXZC/Jqkmc1Lw==]
+      Date: ['Fri, 09 Nov 2018 23:13:53 GMT']
+      ETag: ['"0x8D64699046BA5A0"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:13:53 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [94a7c6c4-301a-000f-6381-7822dd000000]
+      x-ms-request-server-encrypted: ['true']
+      x-ms-version: ['2018-03-28']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [204016fe-e475-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:13:53 GMT']
+      x-ms-range: [bytes=0-33554431]
+      x-ms-version: ['2018-03-28']
+    method: GET
+    uri: https://storagename.file.core.windows.net/utsharee270eb7/filee270eb7
+  response:
+    body: {string: "hello \u554A\u9F44\u4E02\u72DB\u72DC world"}
+    headers:
+      Accept-Ranges: [bytes]
+      Content-Length: ['27']
+      Content-Range: [bytes 0-26/27]
+      Content-Type: [application/octet-stream]
+      Date: ['Fri, 09 Nov 2018 23:13:53 GMT']
+      ETag: ['"0x8D64699046BA5A0"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:13:53 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [94a7c6c5-301a-000f-6481-7822dd000000]
+      x-ms-server-encrypted: ['true']
+      x-ms-type: [File]
+      x-ms-version: ['2018-03-28']
+    status: {code: 206, message: Partial Content}
+version: 1

@@ -1,0 +1,36 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [770202f0-e474-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:09:09 GMT']
+      x-ms-range: [bytes=1-3]
+      x-ms-version: ['2018-03-28']
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainer70c4165d/byteblob70c4165d
+  response:
+    body:
+      string: !!binary |
+        ggln
+    headers:
+      Accept-Ranges: [bytes]
+      Content-Length: ['3']
+      Content-Range: [bytes 1-3/65541]
+      Content-Type: [application/octet-stream]
+      Date: ['Fri, 09 Nov 2018 23:09:09 GMT']
+      ETag: ['"0x8D646985B2B7454"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:09:09 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Vary: [Origin]
+      x-ms-blob-content-md5: [aDw6r6PDnuj5jJUVZCgSPg==]
+      x-ms-blob-type: [BlockBlob]
+      x-ms-creation-time: ['Fri, 09 Nov 2018 23:09:09 GMT']
+      x-ms-lease-state: [available]
+      x-ms-lease-status: [unlocked]
+      x-ms-request-id: [6396bd6c-e01e-0049-4b81-78fc4b000000]
+      x-ms-server-encrypted: ['true']
+      x-ms-version: ['2018-03-28']
+    status: {code: 206, message: Partial Content}
+version: 1

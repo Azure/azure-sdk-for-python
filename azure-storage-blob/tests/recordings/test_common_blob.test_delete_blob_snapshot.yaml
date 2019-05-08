@@ -1,0 +1,117 @@
+interactions:
+- request:
+    body: !!binary |
+      Vo7L1JezhB7aliYlEX5iGYW8VcSGQJVhAv1KxSJrHPiaI4DgBxuZ5Gck2/V5MjVPs4Cg0JjLGS4G
+      s3RAwm3Tq3vZrJwSxaArRUJTQ7LD49mhWRAMv+5ULDCOQLNFxBxsb2ByN9LVbL5r5Qj2lKLjcuIZ
+      ZehpHP0ls6qVcPjgMiE7sX1I7A5UGn2KX80SAdIyiKA8lewreyJNkNsiMXD67COKKSn1plA5F/2I
+      5ccRFbpRzvTlEWv2FwTusees8fVeNXdh5+27ecZRBWHfEAHiCF+Mv7Ni3QPLKrSs9HwgvmiP3gfg
+      Yz09ZAj8kVXqU/NkBr+pr5j54hRCeckMnV+xykOXWGMOj4OForePz9flMEpzB2eBWMemR999lAcZ
+      Ut6lfPzC1TmoxMpfue/SzdPgywc1JPfvjQIYLkxNkbb5HbjTne6P9cpsBndEQ5JqNp6mCgLryKvg
+      Tu0GF9hLIfBGnMBuqYuSPguRvQFb+eh9r07j083NGS5lO5APSHXEU/PSk7iJILDLBU/otB9hSAWv
+      rj6fm6+nhCWa7h30rH4azStodkQ3DvtAMqPh30ro1nY9PBnIrU68Y7YMMb7B3wP4Ud+PrDah4UIk
+      BZ01s6jX9g/aPG3lOpVPlHRP1JuMEQnybnYZVn+RduZP1flah9kKZvdZvtTkqV03cmrjp4VeeSu/
+      Lb/jYoq5wMR96XAGLW6CbTcRo1DF/b+e+ZJ41SemkmHdwzUdQHWt1+bulifWqLy+IZAkx+wNsC3T
+      tm7D3uGt+5BJXMgVMyeD7J5kInztR+7bV2H27+0LE+XFxrjNhw8sahMHZXPY6yPdVwEQTPo/jg5V
+      TD5tqJLCjKrscvAaNhZ4CQOPAWMNW4jpJkLL6Gsy/hgYDUk8KrDi770qL9P4RmEFrjbwyBko5JV4
+      EXAMeMBmKBm+SDZLXC5jnkx1ESUV/OY+sIvkFysG1X0ioW73o2iFYuyjBCGQPeG4VLYJxQcMLbv3
+      2Dv4QclWRWayRbFo8YJovwgGaIJ0v1Il/JGVUe2ULjvPKCBWhj0E2t/VVVyrO1vxg0upAfcJkuCe
+      i8idwPFmGene4Uk39eiQcfKG9YIdGBjoYJKZL0th56tYTCvEujY9ChVJQl2+B865OlrU44XOaOV5
+      pAm1SVfiN1Q7noWSs95RUbTfgZ/zKkl/IpUNE+ms6EcXzaXi7rC/jaI7rTn1EaBKlhg7C/qtfkF2
+      PmadHW3ZZldPtMaE0m45P2hVa/WOFcgub/Uof/hqEdgmWS7MQHBywV0tkJ4h2YCv7Ej+W0B2JLg0
+      LWw7J49TWkjKhHH467sh8smoQOA2/hscFY73gDhxjhzGvfl+MXkzWo/j4Mw0pPW8Vy+YVSPJsQ==
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['1024']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-blob-type: [BlockBlob]
+      x-ms-client-request-id: [9e3ecee4-e473-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:03:06 GMT']
+      x-ms-version: ['2018-03-28']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer71231134/blob71231134
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [mCuxLLhD+WubCRE+V5Ag+A==]
+      Date: ['Fri, 09 Nov 2018 23:03:05 GMT']
+      ETag: ['"0x8D646978283181C"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:03:06 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [05b8458d-d01e-002c-8080-784d16000000]
+      x-ms-request-server-encrypted: ['true']
+      x-ms-version: ['2018-03-28']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [9e5660f4-e473-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:03:06 GMT']
+      x-ms-version: ['2018-03-28']
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer71231134/blob71231134?comp=snapshot
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Fri, 09 Nov 2018 23:03:10 GMT']
+      ETag: ['"0x8D646978283181C"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:03:06 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [05b84d27-d01e-002c-0d80-784d16000000]
+      x-ms-snapshot: ['2018-11-09T23:03:11.1964685Z']
+      x-ms-version: ['2018-03-28']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [a13ffc4e-e473-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:03:11 GMT']
+      x-ms-version: ['2018-03-28']
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/utcontainer71231134/blob71231134?snapshot=2018-11-09T23%3A03%3A11.1964685Z
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Fri, 09 Nov 2018 23:03:10 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-delete-type-permanent: ['true']
+      x-ms-request-id: [05b84d49-d01e-002c-2a80-784d16000000]
+      x-ms-version: ['2018-03-28']
+    status: {code: 202, message: Accepted}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [a146c646-e473-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:03:11 GMT']
+      x-ms-version: ['2018-03-28']
+    method: GET
+    uri: https://storagename.blob.core.windows.net/utcontainer71231134?restype=container&comp=list&include=snapshots
+  response:
+    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
+        \ ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"\
+        utcontainer71231134\"><Blobs><Blob><Name>blob71231134</Name><Properties><Creation-Time>Fri,\
+        \ 09 Nov 2018 23:03:06 GMT</Creation-Time><Last-Modified>Fri, 09 Nov 2018\
+        \ 23:03:06 GMT</Last-Modified><Etag>0x8D646978283181C</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding\
+        \ /><Content-Language /><Content-MD5>mCuxLLhD+WubCRE+V5Ag+A==</Content-MD5><Cache-Control\
+        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker\
+        \ /></EnumerationResults>"}
+    headers:
+      Content-Type: [application/xml]
+      Date: ['Fri, 09 Nov 2018 23:03:10 GMT']
+      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      Vary: [Origin]
+      x-ms-request-id: [05b84d62-d01e-002c-3f80-784d16000000]
+      x-ms-version: ['2018-03-28']
+    status: {code: 200, message: OK}
+version: 1

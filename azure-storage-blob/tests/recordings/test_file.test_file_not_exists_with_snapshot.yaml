@@ -1,0 +1,114 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [247065d0-e475-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:14:00 GMT']
+      x-ms-version: ['2018-03-28']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare96641246?restype=share&comp=snapshot
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Fri, 09 Nov 2018 23:14:00 GMT']
+      ETag: ['"0x8D64699089BF33B"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:14:00 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [442a4c0f-201a-0010-6881-78f9cd000000]
+      x-ms-snapshot: ['2018-11-09T23:14:01.0000000Z']
+      x-ms-version: ['2018-03-28']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [249e5a1c-e475-11e8-9ac5-acde48001122]
+      x-ms-content-length: ['1024']
+      x-ms-date: ['Fri, 09 Nov 2018 23:14:01 GMT']
+      x-ms-type: [file]
+      x-ms-version: ['2018-03-28']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare96641246/file96641246
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Fri, 09 Nov 2018 23:14:00 GMT']
+      ETag: ['"0x8D6469908D2DCBC"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:14:01 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [442a4c12-201a-0010-6981-78f9cd000000]
+      x-ms-request-server-encrypted: ['true']
+      x-ms-version: ['2018-03-28']
+    status: {code: 201, message: Created}
+- request:
+    body: !!binary |
+      FZyBMMmJ7oWtIg2Z/s0HjIyJ0jFzp53vuomXAxTUTGCD4jiXQCRNf8gLBmacEJEqXiObvAGVJzwY
+      4nHpER55wSq9XOGzcxx2lm8cq44kQdSpoitPRBqUqayUyni5pWGQpym8yoywhVqJ2rfaTG6GCCzf
+      p6a23RaJXvFXYAVwb1DYOZCPeito/Vc6GQhA7b92995wAKXqhid1W1ADy+1zz1wywhJ6wu4AZ2IL
+      /RVa2kMyBvUpS4+yEGExIyVcHOxKGQTKfGtwZTQ/D8PXOURpTk06ZYJuXFN2/DkYXcySQFnTn93y
+      EoyxIPc58tckz015OOuQXtBEhfMVHW6PDmmUqfXMDz3W1FzdIXUtgKx7W49xtoRCOM+ggHxYodi7
+      LU44V+WqDo0IdT+HEXqFYCCR2S+IRR/5zpZ+ljcLJ76BJappaiRlqUsbWMgVOhfoNDBLhlSgZxjs
+      0XbfVCz0mV4Xx6jsYcXksZBZ3OQrN3VUHCBsPYKKejOc+LE+648ttr/E2lynAW2CP+6C/GnDniNh
+      wmS6l9+6dqa9xWJjIfN+/Gfp9WkpLXhXuabunTdkrunPaDWh1OZVjN1RSakKz5XfYIfqf1kM+4k5
+      tQDJyLrwhq+javnKlrqvy2q6KkA4FtVHlLh3avvyg3hdZl2B5jBPz4JYWQjBD3bsEEEylIoMXXWP
+      d9tKLyxhfHBliW4fJXpnVevAJFj09KGx+OD9+DcF5C2R5hP5C9FSoEphQ/PegFdsweLu2vaWd/Kt
+      3EPQqzGDTRxEBuBdEZDg+7f8rroYztj9avt356jvLwrOMavJOxK/FHXz1sbf6wjG8TUpQZ9x0da9
+      iUBcz9aAgWjBjtBN11EqcX5E2B7WMy9XOBpWw5mYYpTqOKr63N33VuMuQzoqX6MVP1+iJYPhG8Rh
+      y7qVMqFvoQJE6BH90OA1v44sa76veyBnI2Lf+jZKZSUggWdQQWkpvCzhZ9BC4CfMpPzltqbFDqfA
+      3x0/tLP2GrCnbUxrAGyDfTIiWURFv/Inmm7TU2aHcXhTe7GGsxLysbOgbBZAaaswLQqYoqOT5ph4
+      Ij2dtDnPk2OFaKULlcfBTmjdrfDtfJUoYMhGgAMnHTNBUefWPzNDNlIrWzowtg6SlB6gHmq3qSTh
+      SENqzGYcbWwleRRRuDWlbamEuf0RJpu3qtDeWb0L3QhDVpWYN5vdIbUzlX0oRKV2F9uQgc39q30f
+      SLcdBVdjjVmdalS6babaSrxUqht278le74I5N3jxhqFdlxXoqke9lNBmZ0O/dBgmbysjNB/iIuRT
+      TsePAyYFP/pTXDQ4sBzn9F3iWOWBLPD60O7L3QQJ5SFL1NoM2Q6phVbcA9b2ZGKEks2gIpRw3w==
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['1024']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [24a6fd34-e475-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:14:01 GMT']
+      x-ms-range: [bytes=0-1023]
+      x-ms-version: ['2018-03-28']
+      x-ms-write: [update]
+    method: PUT
+    uri: https://storagename.file.core.windows.net/utshare96641246/file96641246?comp=range
+  response:
+    body: {string: ''}
+    headers:
+      Content-MD5: [JdCESxswQrKhZOGy9GEXOg==]
+      Date: ['Fri, 09 Nov 2018 23:14:00 GMT']
+      ETag: ['"0x8D6469908DB1C38"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:14:01 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [442a4c13-201a-0010-6a81-78f9cd000000]
+      x-ms-request-server-encrypted: ['true']
+      x-ms-version: ['2018-03-28']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [24af687a-e475-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:14:01 GMT']
+      x-ms-version: ['2018-03-28']
+    method: HEAD
+    uri: https://storagename.file.core.windows.net/utshare96641246/file96641246?sharesnapshot=2018-11-09T23%3A14%3A01.0000000Z
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Fri, 09 Nov 2018 23:14:00 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-error-code: [ResourceNotFound]
+      x-ms-request-id: [442a4c14-201a-0010-6b81-78f9cd000000]
+      x-ms-version: ['2018-03-28']
+    status: {code: 404, message: The specified resource does not exist.}
+version: 1

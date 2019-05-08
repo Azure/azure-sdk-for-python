@@ -1,0 +1,24 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [49e2277c-e475-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:15:03 GMT']
+      x-ms-version: ['2018-03-28']
+    method: PUT
+    uri: https://storagename.file.core.windows.net/sharea5f30b66?restype=share
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Fri, 09 Nov 2018 23:15:02 GMT']
+      ETag: ['"0x8D646992E2747D4"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:15:03 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-request-id: [49c59bd4-001a-0007-3f82-7839ae000000]
+      x-ms-version: ['2018-03-28']
+    status: {code: 201, message: Created}
+version: 1

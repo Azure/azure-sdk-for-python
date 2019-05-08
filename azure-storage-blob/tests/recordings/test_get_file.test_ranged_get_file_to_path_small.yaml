@@ -1,0 +1,31 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [47fe8450-e475-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:15:00 GMT']
+      x-ms-range: [bytes=1-4]
+      x-ms-version: ['2018-03-28']
+    method: GET
+    uri: https://storagename.file.core.windows.net/utsharedd0c1381/utdirdd0c1381/bytefiledd0c1381
+  response:
+    body:
+      string: !!binary |
+        R/0OsA==
+    headers:
+      Accept-Ranges: [bytes]
+      Content-Length: ['4']
+      Content-Range: [bytes 1-4/65541]
+      Content-Type: [application/octet-stream]
+      Date: ['Fri, 09 Nov 2018 23:15:00 GMT']
+      ETag: ['"0x8D646992C2ACDFD"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:15:00 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [6443cc9c-801a-003f-5082-7878f7000000]
+      x-ms-server-encrypted: ['true']
+      x-ms-type: [File]
+      x-ms-version: ['2018-03-28']
+    status: {code: 206, message: Partial Content}
+version: 1

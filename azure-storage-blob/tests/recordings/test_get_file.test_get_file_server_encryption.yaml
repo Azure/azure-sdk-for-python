@@ -1,0 +1,50 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [36b4fd82-e475-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:14:31 GMT']
+      x-ms-range: [bytes=0-1024]
+      x-ms-range-get-content-md5: ['true']
+      x-ms-version: ['2018-03-28']
+    method: GET
+    uri: https://storagename.file.core.windows.net/utsharea628128b/utdira628128b/bytefilea628128b
+  response:
+    body:
+      string: !!binary |
+        MlXGICnRfn6zbyi9Z3eRQlkjubjISWKvcCI1FgbxO2TjIooKcwJWz/u4wx0jv98PoQ95y82SrT6F
+        eafoI5mqpSBdyXeSB7GxcUgAM4bwiAzQ52bLbx8XkqT9HNkwDIijrcyQ9l9fo5P2TPzM3Cpgi5dS
+        0ofgjiOiOQ57Y1iP7S4wKpWz4oLEnn9A4ty2J7UmnapiVO1BFoS8hdEL75cETH4emEqgv2s1sN71
+        bkDMoN6plHJT5HF1YarCCRJV5r5YNjn19+cWJTlGGyeo5HI7UD40yJtyYhYa8IrnwVDgXfjD3whR
+        P0DYB1cEwp7NTiFSkflxmfSDB6ba/ku6LjeP7t+DCwpkpK6G7ulWpjFfuwmr6M5wyrzrkCe/8wvK
+        4+RBpTcwnG6f72BK9EsMXwjyhC/dbe0O5dAyFALbfbqKDvVi6JcbGpO0t8tS/GXxu0Lpqitxx5yX
+        mSEQjTyd98oAN1nn7avs4nSycE0q7WFEn7sMuxrcQ68BKIW5evzzjZPafuw6fmfOwHp/sXKrirxe
+        03iilPWUFMIzTh+JOEGAp+Pl3p5jj3WaqpePNADrGsDDmR15gl82Xg2/xA0stod6f24czMLpMn7Q
+        DtQaz2KOYfI9wMqSyayM2TDVT5P8Zdba6teQhwxytKTuj3pQ5PUs64avRdVTnMV+ftPRumiprRjF
+        5xzi2cdNVKJiD1I1MgoaUJwqnkJwOTUljzJcFaXzzR1QZy+OKzTihcanmS9u0nhzQo7T9EabwLbK
+        v7zuOJw6HPPgx2gCndn8QJ1dcTDpAitidEQah+FAq5oGUAUNOwyDMHQdF5sNJcqwp6pjbxzDxDHA
+        FK0LYDlhro7nMQzznnd86WrQcEdJUGlzlAPCHZrQBZsFPBLA0YvuR3zpikdnYKLTe7dDUWWqNpKz
+        ZtKdYkCUjGKF0JBeIFCQFGfw6BTdwL8MDP0K106NfejqT7A6kLROLH9vxZ8UcdwZwNu2wxoawrDV
+        AqJMTPD+7SkRhlHmHQXFtIj2TUmrfzFZtNuGKNo5x9Xo76i/KZJsWBb1Ms+ZCOb2vL3R+xO20bSU
+        ch1qJzf7z8SajW/xc3kAA2dKHS6G7He1hssBf2ca/VXv7022S7ZJCn8TTz3tJW6b4ZZYTsRcnGgx
+        rfH+oiQf6G9TmSagU3Sp02zKyRs7rBcYvnFOdWKBQtpwYvO7nTF0qQl7Ric1/O07hq1gfC28lMHX
+        1t1rfiTeGI6DMkA1OxGCMGO+9aebS2UdFMY0Rp5e5P6NmVmHabpxzo732Py8+2I6Dq5T56dtwzM8
+        m67RLMZ/TD3LRO2T68AZ2sjjW/VCqBMXccUoU1fKHWIW7rn0y4a5YG9UBQWonjrHz3n6FHz2g/k=
+    headers:
+      Accept-Ranges: [bytes]
+      Content-Length: ['1025']
+      Content-MD5: [kBZLYvODBoJ7vTAhjGHjdA==]
+      Content-Range: [bytes 0-1024/65541]
+      Content-Type: [application/octet-stream]
+      Date: ['Fri, 09 Nov 2018 23:14:31 GMT']
+      ETag: ['"0x8D646991AE15C88"']
+      Last-Modified: ['Fri, 09 Nov 2018 23:14:31 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      x-ms-request-id: [23050c04-c01a-001a-0481-78e044000000]
+      x-ms-server-encrypted: ['true']
+      x-ms-type: [File]
+      x-ms-version: ['2018-03-28']
+    status: {code: 206, message: Partial Content}
+version: 1

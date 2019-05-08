@@ -1,0 +1,22 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Connection: [keep-alive]
+      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
+      x-ms-client-request-id: [2426a74c-e475-11e8-9ac5-acde48001122]
+      x-ms-date: ['Fri, 09 Nov 2018 23:14:00 GMT']
+      x-ms-version: ['2018-03-28']
+    method: HEAD
+    uri: https://storagename.file.core.windows.net/utsharebd5b0c5c/missingdir/filebd5b0c5c
+  response:
+    body: {string: ''}
+    headers:
+      Date: ['Fri, 09 Nov 2018 23:13:59 GMT']
+      Server: [Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0]
+      Transfer-Encoding: [chunked]
+      x-ms-error-code: [ParentNotFound]
+      x-ms-request-id: [9a9304fd-301a-0062-6381-7888f3000000]
+      x-ms-version: ['2018-03-28']
+    status: {code: 404, message: The specified parent path does not exist.}
+version: 1
