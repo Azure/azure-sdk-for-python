@@ -9,10 +9,11 @@ An example to show receiving events from an IoT Hub partition.
 from azure import eventhub
 from azure.eventhub import EventData, EventHubClient, Offset
 
+import os
 import logging
 logger = logging.getLogger('azure.eventhub')
 
-CONNSTR = os.environ['IOTHUB_CONNECTION_STR']
+iot_connection_str = os.environ['IOTHUB_CONNECTION_STR']
 
 client = EventHubClient.from_iothub_connection_string(iot_connection_str, debug=True)
 receiver = client.add_receiver("$default", "0", operation='/messages/events')
