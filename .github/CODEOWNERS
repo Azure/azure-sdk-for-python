@@ -9,7 +9,6 @@
 /azure-loganalytics/ @alexeldeib
 /azure-mgmt-batch/ @annatisch @matthchr
 /azure-mgmt-batchai/ @AlexanderYukhanov
-/azure-mgmt-cdn/ @tjprescott
 /azure-mgmt-consumption/ @sandeepnl
 /azure-mgmt-containerinstance/ @samkreter @xizhamsft
 /azure-mgmt-containerregistry/ @djyou 
