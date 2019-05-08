@@ -29,8 +29,7 @@ import logging
 import aiohttp
 
 from azure.core.exceptions import (
-    ServiceRequestError,
-    ServiceResponseError
+    ServiceRequestError
 )
 from .base import HttpRequest
 from .base_async import (

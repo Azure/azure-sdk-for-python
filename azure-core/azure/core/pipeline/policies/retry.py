@@ -35,7 +35,7 @@ from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Op
 from azure.core.exceptions import (
     AzureError,
     ServiceResponseError,
-    HttpResponseError
+    ServiceRequestError
 )
 
 from .base import HTTPPolicy, RequestHistory

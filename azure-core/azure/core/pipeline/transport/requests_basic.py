@@ -92,7 +92,7 @@ class StreamDownloadGenerator(object):
             _LOGGER.warning("Unable to stream download: %s", err)
             self.response.close()
             raise
-            
+
     next = __next__  # Python 2 compatibility.
 
 

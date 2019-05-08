@@ -28,7 +28,7 @@ __version__ = "0.0.1"
 
 from .pipeline_client import PipelineClient
 from .configuration import Configuration
-from .exceptions import HttpRequestError
+from .exceptions import HttpResponseError
 
 
 __all__ = [
