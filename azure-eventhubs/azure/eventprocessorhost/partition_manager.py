@@ -8,7 +8,8 @@ import asyncio
 from queue import Queue
 from collections import Counter
 
-from azure.eventhub import EventHubClientAsync
+from azure.eventhub.aio import EventHubClient
+
 from azure.eventprocessorhost.eh_partition_pump import EventHubPartitionPump
 from azure.eventprocessorhost.cancellation_token import CancellationToken
 
@@ -36,7 +37,7 @@ class PartitionManager:
         """
         if not self.partition_ids:
             try:
-                eh_client = EventHubClientAsync(
+                eh_client = EventHubClient(
                     self.host.eh_config.client_address,
                     debug=self.host.eph_options.debug_trace,
                     http_proxy=self.host.eph_options.http_proxy)

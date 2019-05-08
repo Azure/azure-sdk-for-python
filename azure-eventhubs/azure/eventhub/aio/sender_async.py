@@ -17,7 +17,7 @@ from azure.eventhub.common import _error_handler
 log = logging.getLogger(__name__)
 
 
-class AsyncSender(Sender):
+class Sender(object):
     """
     Implements the async API of a Sender.
 
@@ -38,7 +38,7 @@ class AsyncSender(Sender):
         Instantiate an EventHub event SenderAsync handler.
 
         :param client: The parent EventHubClientAsync.
-        :type client: ~azure.eventhub.async_ops.EventHubClientAsync
+        :type client: ~azure.eventhub.aio.EventHubClientAsync
         :param target: The URI of the EventHub to send to.
         :type target: str
         :param partition: The specific partition ID to send to. Default is `None`, in which case the service
@@ -328,3 +328,17 @@ class AsyncSender(Sender):
         except Exception as e:
             log.info("Unexpected error occurred (%r).", e)
             raise EventHubError("Send failed: {}".format(e))
+
+    def _on_outcome(self, outcome, condition):
+        """
+        Called when the outcome is received for a delivery.
+
+        :param outcome: The outcome of the message delivery - success or failure.
+        :type outcome: ~uamqp.constants.MessageSendResult
+        """
+        self._outcome = outcome
+        self._condition = condition
+
+    @staticmethod
+    def _error(outcome, condition):
+        return None if outcome == constants.MessageSendResult.Ok else EventHubError(outcome, condition)

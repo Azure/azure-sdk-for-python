@@ -13,6 +13,7 @@ import sys
 
 from azure import eventhub
 from azure.eventhub import EventData, EventHubClient
+from uamqp import Message
 
 
 @pytest.mark.liveTest
@@ -247,13 +248,12 @@ def test_send_multiple_clients(connstr_receivers):
 
 @pytest.mark.liveTest
 def test_send_batch_with_app_prop_sync(connstr_receivers):
-    pytest.skip("Waiting on uAMQP release")
     connection_str, receivers = connstr_receivers
     def batched():
         for i in range(10):
             yield "Event number {}".format(i)
         for i in range(10, 20):
-            yield EventData("Event number {}".format(i))
+            yield Message(body=("Event number {}".format(i)))
 
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     sender = client.add_sender()

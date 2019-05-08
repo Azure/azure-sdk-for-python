@@ -7,32 +7,26 @@ import logging
 import asyncio
 import time
 import datetime
-from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
 
 from uamqp import authentication, constants, types, errors
 from uamqp import (
     Message,
-    ConnectionAsync,
     AMQPClientAsync,
-    SendClientAsync,
-    ReceiveClientAsync)
+)
 
 from azure.eventhub.common import parse_sas_token
 from azure.eventhub import (
-    Sender,
-    Receiver,
-    EventHubClient,
-    EventData,
     EventHubError)
+from ..client_abstract import EventHubClientAbstract
 
-from .sender_async import AsyncSender
-from .receiver_async import AsyncReceiver
+from .sender_async import Sender
+from .receiver_async import Receiver
 
 
 log = logging.getLogger(__name__)
 
 
-class EventHubClientAsync(EventHubClient):
+class EventHubClient(EventHubClientAbstract):
     """
     The EventHubClient class defines a high level interface for asynchronously
     sending events to and receiving events from the Azure Event Hubs service.
@@ -219,7 +213,7 @@ class EventHubClientAsync(EventHubClient):
         :operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
-        :rtype: ~azure.eventhub.async_ops.receiver_async.ReceiverAsync
+        :rtype: ~azure.eventhub.aio.receiver_async.ReceiverAsync
 
         Example:
             .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
@@ -233,7 +227,7 @@ class EventHubClientAsync(EventHubClient):
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
-        handler = AsyncReceiver(
+        handler = Receiver(
             self, source_url, offset=offset, prefetch=prefetch,
             keep_alive=keep_alive, auto_reconnect=auto_reconnect, loop=loop)
         self.clients.append(handler)
@@ -259,7 +253,7 @@ class EventHubClientAsync(EventHubClient):
         :operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
-        :rtype: ~azure.eventhub.async_ops.receiver_async.ReceiverAsync
+        :rtype: ~azure.eventhub.aio.receiver_async.ReceiverAsync
 
         Example:
             .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
@@ -273,7 +267,7 @@ class EventHubClientAsync(EventHubClient):
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
-        handler = AsyncReceiver(
+        handler = Receiver(
             self, source_url, prefetch=prefetch, epoch=epoch,
             keep_alive=keep_alive, auto_reconnect=auto_reconnect, loop=loop)
         self.clients.append(handler)
@@ -303,7 +297,7 @@ class EventHubClientAsync(EventHubClient):
         :param auto_reconnect: Whether to automatically reconnect the sender if a retryable error occurs.
          Default value is `True`.
         :type auto_reconnect: bool
-        :rtype: ~azure.eventhub.async_ops.sender_async.SenderAsync
+        :rtype: ~azure.eventhub.aio.sender_async.SenderAsync
 
         Example:
             .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
@@ -318,7 +312,7 @@ class EventHubClientAsync(EventHubClient):
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if operation:
             target = target + operation
-        handler = AsyncSender(
+        handler = Sender(
             self, target, partition=partition, send_timeout=send_timeout, keep_alive=keep_alive,
             auto_reconnect=auto_reconnect, loop=loop)
         self.clients.append(handler)

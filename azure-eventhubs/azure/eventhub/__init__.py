@@ -10,10 +10,12 @@ from azure.eventhub.client import EventHubClient
 from azure.eventhub.sender import Sender
 from azure.eventhub.receiver import Receiver
 
-try:
-    from azure.eventhub.async_ops import (
-        EventHubClientAsync,
-        AsyncSender,
-        AsyncReceiver)
-except (ImportError, SyntaxError):
-    pass  # Python 3 async features not supported
+__all__ = [
+    "EventData",
+    "EventHubError",
+    "Offset",
+    "EventHubClient",
+    "Sender",
+    "Receiver",
+]
+

@@ -17,7 +17,7 @@ from azure.eventhub.common import _error_handler
 log = logging.getLogger(__name__)
 
 
-class AsyncReceiver(Receiver):
+class Receiver(object):
     """
     Implements the async API of a Receiver.
 
@@ -30,6 +30,8 @@ class AsyncReceiver(Receiver):
             :caption: Create a new instance of the Async Receiver.
 
     """
+    timeout = 0
+    _epoch = b'com.microsoft:epoch'
 
     def __init__(  # pylint: disable=super-init-not-called
             self, client, source, offset=None, prefetch=300, epoch=None,
@@ -38,7 +40,7 @@ class AsyncReceiver(Receiver):
         Instantiate an async receiver.
 
         :param client: The parent EventHubClientAsync.
-        :type client: ~azure.eventhub.async_ops.EventHubClientAsync
+        :type client: ~azure.eventhub.aio.EventHubClientAsync
         :param source: The source EventHub from which to receive events.
         :type source: ~uamqp.address.Source
         :param prefetch: The number of events to prefetch from the service
@@ -313,3 +315,4 @@ class AsyncReceiver(Receiver):
             error = EventHubError("Receive failed: {}".format(e))
             await self.close_async(exception=error)
             raise error
+
