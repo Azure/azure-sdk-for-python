@@ -35,6 +35,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 _LOGGER = logging.getLogger(__name__)
 
 
+#pylint: disable=too-few-public-methods
 class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseType]):
     """Sync implementation of the SansIO policy.
     """
@@ -57,6 +58,7 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseT
         return response
 
 
+#pylint: disable=too-few-public-methods
 class _TransportRunner(HTTPPolicy):
 
     def __init__(self, sender):

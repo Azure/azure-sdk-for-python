@@ -24,9 +24,11 @@
 #
 # --------------------------------------------------------------------------
 
+#pylint: disable=too-few-public-methods
 
 class Configuration:
 
+    #pylint: disable=too-many-instance-attributes
     def __init__(self, transport=None, **kwargs):
         # Communication configuration - applied per transport.
         self.connection = ConnectionConfiguration(**kwargs)
@@ -55,7 +57,7 @@ class Configuration:
     def get_transport(self, **kwargs):
         if self.transport:
             return self.transport(configuration=self, **kwargs)
-
+        return None
 
 class ConnectionConfiguration:
     """HTTP transport connection configuration settings."""

@@ -61,7 +61,8 @@ class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPRe
         """Send the request using this HTTP sender.
         """
 
-    def sleep(self, duration):
+    @staticmethod
+    def sleep(duration):
         time.sleep(duration)
 
 
@@ -200,7 +201,8 @@ class _HttpResponseBase(object):
         self.block_size = block_size or 4096  # Default to same as Requests
 
 
-    def body(self):
+    @staticmethod
+    def body():
         # type: () -> bytes
         """Return the whole body as bytes in memory.
         """

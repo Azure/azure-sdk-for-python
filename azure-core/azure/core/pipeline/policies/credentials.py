@@ -36,6 +36,7 @@ from .base import HTTPPolicy
 _LOGGER = logging.getLogger(__name__)
 
 
+#pylint: disable=too-few-public-methods
 class CredentialsPolicy(HTTPPolicy): #pylint: disable=abstract-method
     # TODO: This is deprecated: Need to remove
     pass

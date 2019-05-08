@@ -39,6 +39,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 _LOGGER = logging.getLogger(__name__)
 
 
+#pylint: disable=too-few-public-methods
 class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An HTTP policy ABC.
     """
@@ -77,6 +78,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         """Is executed after the request comes back from the policy.
         """
 
+    #pylint: disable=no-self-use
     def on_exception(self, request, **kwargs):  #pylint: disable=unused-argument
         # type: (PipelineRequest[HTTPRequestType], Any) -> bool
         """Is executed if an exception comes back from the following
@@ -100,6 +102,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         return False
 
 
+#pylint: disable=too-few-public-methods
 class RequestHistory(object):
     """A container for an attempted request and the applicable response.
 

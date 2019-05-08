@@ -26,6 +26,7 @@
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 
 
+#pylint: disable=too-few-public-methods
 class AsyncCredentialsPolicy(AsyncHTTPPolicy): # pylint: disable=abstract-method
     """Implementation of request-oauthlib except and retry logic.
     """

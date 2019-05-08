@@ -57,6 +57,7 @@ class RedirectPolicy(HTTPPolicy):
         self._remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
         redirect_status = set(kwargs.get('redirect_on_status_codes', []))
         self._redirect_on_status_codes = redirect_status.union(self.REDIRECT_STATUSES)
+        super().__init__(**kwargs)
 
     @classmethod
     def no_redirects(cls):
@@ -80,10 +81,8 @@ class RedirectPolicy(HTTPPolicy):
             if response.http_request.method in ['GET', 'HEAD', ]:
                 return response.http_response.headers.get('location')
             return False
-
-        elif response.http_response.status_code in self._redirect_on_status_codes:
+        if response.http_response.status_code in self._redirect_on_status_codes:
             return response.http_response.headers.get('location')
-
         return False
 
     def increment(self, settings, response, redirect_location):

@@ -34,7 +34,7 @@ import platform
 import xml.etree.ElementTree as ET
 import types
 import re
-from typing import cast
+from typing import cast, IO
 
 from azure.core import __version__  as azcore_version
 from azure.core.exceptions import (
@@ -68,7 +68,7 @@ class HeadersPolicy(SansIOHTTPPolicy):
         """Add a header to the configuration to be applied to all requests."""
         self._headers[key] = value
 
-    def on_request(self, request):
+    def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
         request.http_request.headers.update(self.headers)
         additional_headers = request.context.options.pop('headers', {})
@@ -112,7 +112,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
         """
         self._user_agent = "{} {}".format(self._user_agent, value)
 
-    def on_request(self, request):
+    def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
         options = request.context.options
@@ -136,7 +136,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
     def __init__(self, logging_enable=False):
         self.enable_http_logger = logging_enable
 
-    def on_request(self, request):
+    def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
         options = request.context.options
@@ -163,7 +163,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
-    def on_response(self, request, response):
+    def on_response(self, request, response, **kwargs):
         # type: (PipelineRequest, PipelineResponse, Any) -> None
         if response.context.pop("logging_enable", self.enable_http_logger):
             if not _LOGGER.isEnabledFor(logging.DEBUG):
@@ -286,7 +286,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
         return cls.deserialize_from_text(response, content_type)
 
-    def on_response(self, request, response):
+    def on_response(self, request, response, **kwargs):
         # type: (PipelineRequest, PipelineResponse, Any) -> None
         """Extract data from the body of a REST response object.
 

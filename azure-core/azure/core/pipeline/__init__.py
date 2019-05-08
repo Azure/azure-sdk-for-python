@@ -32,7 +32,7 @@ except AttributeError: # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})  # type: ignore
 
 try:
-    from contextlib import AbstractContextManager  # type: ignore
+    from contextlib import AbstractContextManager  # type: ignore #pylint: disable=unused-import
 except ImportError: # Python <= 3.5
     class AbstractContextManager(object):  # type: ignore
         def __enter__(self):
@@ -47,7 +47,7 @@ except ImportError: # Python <= 3.5
 
 class PipelineContext(dict):
 
-    def __init__(self, transport, **kwargs):
+    def __init__(self, transport, **kwargs): #pylint: disable=super-init-not-called
         self.transport = transport
         self.options = kwargs
         self._protected = ['transport', 'options']
@@ -74,6 +74,7 @@ class PipelineContext(dict):
         return super(PipelineContext, self).pop(*args)
 
 
+#pylint: disable=too-few-public-methods
 class PipelineRequest(object):
     """Represents a HTTP request in a Pipeline.
 
@@ -96,6 +97,7 @@ class PipelineRequest(object):
         self.context = context
 
 
+#pylint: disable=too-few-public-methods
 class PipelineResponse(object):
     """A pipeline response object.
 
@@ -123,7 +125,7 @@ __all__ = [
 ]
 
 try:
-    from .base_async import AsyncPipeline
+    from .base_async import AsyncPipeline #pylint: disable=unused-import
     __all__.append('AsyncPipeline')
 except (SyntaxError, ImportError):
     pass  # Asynchronous pipelines not supported.

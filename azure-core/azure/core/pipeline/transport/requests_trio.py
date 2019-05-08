@@ -86,6 +86,7 @@ class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse
         return TrioStreamDownloadGenerator(self.internal_response, self.block_size)
 
 
+#pylint: disable=too-many-ancestors
 class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
 
     async def __aenter__(self):

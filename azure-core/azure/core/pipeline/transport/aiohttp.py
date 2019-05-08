@@ -57,8 +57,8 @@ class AioHttpTransport(AsyncHttpTransport):
         await self.session.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
-        await self.session.__aexit__(*exc_details)
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.session.__aexit__(exc_type, exc_val, exc_tb)
         self.session = None
         self.config.connection.keep_alive = False
 
@@ -78,7 +78,8 @@ class AioHttpTransport(AsyncHttpTransport):
             return ssl_ctx
         return verify
 
-    def _get_request_data(self, request):
+    @staticmethod
+    def _get_request_data(request):
         if request.files:
             form_data = aiohttp.FormData()
             for form_file, data in request.files.items():

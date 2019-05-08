@@ -64,6 +64,7 @@ class RetryPolicy(HTTPPolicy):
     :param retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
     """
 
+    #pylint: disable=too-many-instance-attributes
     #: Maximum backoff time.
     BACKOFF_MAX = 120
 
@@ -81,6 +82,7 @@ class RetryPolicy(HTTPPolicy):
         self._retry_on_status_codes = set(status_codes + retry_codes)
         self._method_whitelist = frozenset(['HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'])
         self._respect_retry_after_header = True
+        super().__init__(**kwargs)
 
     @classmethod
     def no_retries(cls):
@@ -98,7 +100,8 @@ class RetryPolicy(HTTPPolicy):
             'history': []
         }
 
-    def get_backoff_time(self, settings):
+    @staticmethod
+    def get_backoff_time(settings):
         """ Formula for computing the current backoff
 
         :rtype: float
@@ -111,7 +114,8 @@ class RetryPolicy(HTTPPolicy):
         backoff_value = settings['backoff'] * (2 ** (consecutive_errors_len - 1))
         return min(settings['max_backoff'], backoff_value)
 
-    def parse_retry_after(self, retry_after):
+    @staticmethod
+    def parse_retry_after(retry_after):
         try:
             seconds = int(retry_after)
         except TypeError:
@@ -160,19 +164,22 @@ class RetryPolicy(HTTPPolicy):
                 return
         self._sleep_backoff(settings, transport)
 
-    def _is_connection_error(self, err):
+    @staticmethod
+    def _is_connection_error(err):
         """ Errors when we're fairly sure that the server did not receive the
         request, so it should be safe to retry.
         """
         return isinstance(err, ServiceRequestError)
 
-    def _is_read_error(self, err):
+    @staticmethod
+    def _is_read_error(err):
         """ Errors that occur after the request has been started, so we should
         assume that the server began processing it.
         """
         return isinstance(err, ServiceResponseError)
 
-    def _is_method_retryable(self, settings, request, response=None):
+    @staticmethod
+    def _is_method_retryable(settings, request, response=None):
         """ Checks if a given HTTP method should be retried upon, depending if
         it is included on the method whitelist.
         """
@@ -198,7 +205,8 @@ class RetryPolicy(HTTPPolicy):
             return False
         return settings['total'] and response.http_response.status_code in self._retry_on_status_codes
 
-    def is_exhausted(self, settings):
+    @staticmethod
+    def is_exhausted(settings):
         """Are we out of retries?"""
         retry_counts = (settings['total'], settings['connect'], settings['read'], settings['status'])
         retry_counts = list(filter(None, retry_counts))

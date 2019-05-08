@@ -49,6 +49,8 @@ __all__ = [
     'ProxyPolicy'
 ]
 
+#pylint: disable=unused-import
+
 try:
     from .base_async import AsyncHTTPPolicy
     from .credentials_async import AsyncCredentialsPolicy

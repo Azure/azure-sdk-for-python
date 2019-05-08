@@ -58,6 +58,7 @@ def _get_running_loop():
         return loop
 
 
+#pylint: disable=too-many-ancestors
 class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
 
     async def __aenter__(self):

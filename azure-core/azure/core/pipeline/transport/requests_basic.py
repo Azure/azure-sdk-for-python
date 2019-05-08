@@ -45,6 +45,9 @@ from .base import (
 _LOGGER = logging.getLogger(__name__)
 
 
+_LOGGER = logging.getLogger(__name__)
+
+
 class _RequestsTransportResponseBase(_HttpResponseBase):
 
     def __init__(self, request, requests_response, block_size=None):
@@ -101,6 +104,7 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
         return StreamDownloadGenerator(self.internal_response, self.block_size)
 
 
+#pylint: disable=too-many-ancestors
 class RequestsTransport(HttpTransport):
     """Implements a basic requests HTTP sender.
 

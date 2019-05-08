@@ -68,6 +68,7 @@ def map_error(status_code, response, error_map):
 class AzureError(Exception):
     """Base exception for all errors."""
 
+    #pylint: disable=too-many-instance-attributes
     def __init__(self, message, *args, **kwargs):
         self.inner_exception = kwargs.get('error')
         self.response = kwargs.get('response')
@@ -117,8 +118,8 @@ class HttpResponseError(AzureError):
                         self.error.error.code,
                         self.error.error.message)
             except AttributeError:
-                if self.error.message:
-                    message = self.error.message
+                if self.error.message: #pylint: disable=no-member
+                    message = self.error.message #pylint: disable=no-member
         except AttributeError:
             pass
         super(HttpResponseError, self).__init__(message=message, response=response, **kwargs)
