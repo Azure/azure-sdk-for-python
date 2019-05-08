@@ -11,6 +11,7 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -24,7 +25,7 @@ class PoolsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2017-08-15".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-05-01".
     """
 
     models = models
@@ -34,13 +35,15 @@ class PoolsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-08-15"
+        self.api_version = "2019-05-01"
 
         self.config = config
 
     def list(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all capacity pools in the NetApp Account.
+        """Describe all Capacity Pools.
+
+        List all capacity pools in the NetApp Account.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -54,8 +57,7 @@ class PoolsOperations(object):
         :return: An iterator like instance of CapacityPool
         :rtype:
          ~azure.mgmt.netapp.models.CapacityPoolPaged[~azure.mgmt.netapp.models.CapacityPool]
-        :raises:
-         :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -92,7 +94,9 @@ class PoolsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorException(self._deserialize, response)
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
             return response
 
@@ -109,7 +113,9 @@ class PoolsOperations(object):
 
     def get(
             self, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, **operation_config):
-        """Get a capacity pool.
+        """Describe a Capacity Pool.
+
+        Get details of the specified capacity pool.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -125,8 +131,7 @@ class PoolsOperations(object):
         :return: CapacityPool or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.netapp.models.CapacityPool or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -157,7 +162,9 @@ class PoolsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
@@ -207,7 +214,9 @@ class PoolsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201, 202]:
-            raise models.ErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
@@ -224,7 +233,9 @@ class PoolsOperations(object):
 
     def create_or_update(
             self, body, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or Update a capacity pool.
+        """Create or Update the specified capacity pool within the resource group.
+
+        Create or Update a capacity pool.
 
         :param body: Capacity pool object supplied in the body of the
          operation.
@@ -246,8 +257,7 @@ class PoolsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.netapp.models.CapacityPool]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.netapp.models.CapacityPool]]
-        :raises:
-         :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_or_update_initial(
             body=body,
@@ -279,7 +289,9 @@ class PoolsOperations(object):
 
     def update(
             self, body, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, **operation_config):
-        """Patch a capacity pool.
+        """Update a capacity pool.
+
+        Patch the specified capacity pool.
 
         :param body: Capacity pool object supplied in the body of the
          operation.
@@ -298,8 +310,7 @@ class PoolsOperations(object):
         :return: CapacityPool or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.netapp.models.CapacityPool or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -334,7 +345,9 @@ class PoolsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
@@ -379,7 +392,9 @@ class PoolsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202, 204]:
-            raise models.ErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -388,6 +403,8 @@ class PoolsOperations(object):
     def delete(
             self, resource_group_name, account_name, pool_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Delete a capacity pool.
+
+        Delete the specified capacity pool.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -404,8 +421,7 @@ class PoolsOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises:
-         :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
