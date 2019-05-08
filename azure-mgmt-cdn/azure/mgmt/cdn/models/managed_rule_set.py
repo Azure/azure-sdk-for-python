@@ -23,7 +23,7 @@ class ManagedRuleSet(Model):
      use.
     :type rule_set_version: str
     :param anomaly_score: Verizon only : If the rule set supports anomaly
-     detection mode, this descibes the threshold for blocking requests.
+     detection mode, this describes the threshold for blocking requests.
     :type anomaly_score: int
     :param rule_group_overrides: Defines the rule overrides to apply to the
      rule set.
