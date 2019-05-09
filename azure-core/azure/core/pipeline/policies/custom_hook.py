@@ -43,4 +43,4 @@ class CustomHookPolicy(SansIOHTTPPolicy):
         # type: (PipelineRequest, Any) -> None
         if self._cls:
             self._cls(response)
-            request.context.options.update('raw_response_hook', self._cls)
+            request.context.options.update({'raw_response_hook': self._cls})
