@@ -327,3 +327,17 @@ class Receiver(object):
             error = EventHubError("Receive failed: {}".format(e))
             self.close(exception=error)
             raise error
+
+    def __enter__(self):
+        self.open()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close(exc_val)
+
+    def __iter__(self):
+        self.messages_iter = self._handler.receive_messages_iter()
+        return self
+
+    def __next__(self):
+        return next(self.messages_iter)

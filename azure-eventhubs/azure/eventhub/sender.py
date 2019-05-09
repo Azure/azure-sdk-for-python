@@ -383,6 +383,13 @@ class Sender(object):
         self._outcome = outcome
         self._condition = condition
 
+    def __enter__(self):
+        self.open()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close(exc_val)
+
     @staticmethod
     def _error(outcome, condition):
         return None if outcome == constants.MessageSendResult.Ok else EventHubError(outcome, condition)

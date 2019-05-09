@@ -339,6 +339,13 @@ class Sender(object):
         self._outcome = outcome
         self._condition = condition
 
+    async def __aenter__(self):
+        await self.open_async()
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close_async(exc_val)
+
     @staticmethod
     def _error(outcome, condition):
         return None if outcome == constants.MessageSendResult.Ok else EventHubError(outcome, condition)

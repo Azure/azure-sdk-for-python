@@ -316,3 +316,16 @@ class Receiver(object):
             await self.close_async(exception=error)
             raise error
 
+    async def __aenter__(self):
+        await self.open_async()
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close_async(exc_val)
+
+    def __aiter__(self):
+        self.messages_iter = self._handler.receive_messages_iter_async()
+        return self
+
+    async def __anext__(self):
+        return await self.messages_iter.__anext__()
