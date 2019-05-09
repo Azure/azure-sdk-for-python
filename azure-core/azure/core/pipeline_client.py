@@ -120,14 +120,14 @@ class PipelineClient(object):
     def close(self):
         self.__exit__()
 
-    def format_url(self, url, **kwargs):
+    def format_url(self, url_template, **kwargs):
         # type: (str, Any) -> str
         """Format request URL with the client base URL, unless the
         supplied URL is already absolute.
 
         :param str url: The request URL to be formatted if necessary.
         """
-        url = url.format(**kwargs)
+        url = url_template.format(**kwargs)
         parsed = urlparse(url)
         if not parsed.scheme or not parsed.netloc:
             url = url.lstrip('/')
