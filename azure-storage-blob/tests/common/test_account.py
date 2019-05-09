@@ -19,12 +19,11 @@ from azure.storage.blob import (
 #     AccountPermissions,
 #     Services,
 # )
-# from azure.storage.common._constants import (
-#     DEV_ACCOUNT_NAME,
-#     DEV_ACCOUNT_KEY
-# )
-# from azure.storage.file import FileService
-# from azure.storage.queue import QueueService
+from azure.storage.blob.constants import (
+    DEV_ACCOUNT_NAME,
+    DEV_ACCOUNT_KEY
+)
+
 from tests.testcase import (
     StorageTestCase,
     TestMode,
@@ -86,25 +85,6 @@ class StorageAccountTest(StorageTestCase):
 
         # Assert
         self.validate_service(service, AppendBlobService)
-
-    def test_create_queue_service(self):
-        # Arrange
-
-        # Act
-        service = self.account.create_queue_service()
-
-        # Assert
-        self.validate_service(service, QueueService)
-
-    @not_for_emulator
-    def test_create_file_service(self):
-        # Arrange
-
-        # Act
-        service = self.account.create_file_service()
-
-        # Assert
-        self.validate_service(service, FileService)
 
     def test_create_service_no_key(self):
         # Arrange

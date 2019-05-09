@@ -4,15 +4,53 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from azure.core import Configuration
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline.transport import RequestsTransport, HttpRequest
+from azure.core.pipeline.policies import (
+    UserAgentPolicy,
+    HeadersPolicy,
+    RetryPolicy,
+    RedirectPolicy,
+    ContentDecodePolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy
+)
+
+from ._generated import AzureBlobStorage
 
 class BlobServiceClient(object):
 
-    def __init__(self, url, credentials=None, configuration=None):
-        pass
+    def __init__(self, url, credentials=None, configuration=None, **kwargs):
+        config = configuration or BlobServiceClient.create_configuration(**kwargs)
+        transport = kwargs.get('transport')
+        if not transport:
+            transport = RequestsTransport(config)
+        pipeline = self._create_pipeline(config, transport, credentials)
+        self._client = AzureBlobStorage(url, pipeline=pipeline)
 
     @staticmethod
     def create_configuration(**kwargs):
-        pass
+        config = Configuration(**kwargs)
+        config.headers_policy = HeadersPolicy(**kwargs)
+        config.user_agent_policy = UserAgentPolicy(**kwargs)
+        config.retry_policy = RetryPolicy(**kwargs)
+        config.redirect_policy = RedirectPolicy(**kwargs)
+        config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
+        config.proxy_policy = ProxyPolicy(**kwargs)
+        return config
+
+    def _create_pipeline(self, config, transport, credentials):
+        policies = [
+            config.user_agent_policy,
+            config.headers_policy,
+            credentials,
+            ContentDecodePolicy(),
+            config.redirect_policy,
+            config.retry_policy,
+            config.logging_policy,
+        ]
+        self._pipeline = Pipeline(transport, policies=policies)
 
     def make_url(self, protocol=None, sas_token=None):
         pass
@@ -31,7 +69,7 @@ class BlobServiceClient(object):
         """
         :returns ServiceStats.
         """
-        pass
+        return self._client.service.get_statistics(timeout=timeout)
 
     def get_service_properties(self, timeout=None):
         """

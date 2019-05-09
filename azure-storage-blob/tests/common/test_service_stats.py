@@ -4,16 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+import pytest
 
-from azure.storage.blob import (
-    BlobServiceClient,
-    ContainerClient,
-    BlobClient,
-)
+from azure.storage.blob import BlobServiceClient, SharedKeyCredentials
 #from azure.storage.common.retry import (
 #    LinearRetry
 #)
-#from azure.storage.queue import QueueService
+
 from tests.testcase import (
     StorageTestCase,
     record,
@@ -51,47 +48,29 @@ class ServiceStatsTest(StorageTestCase):
     @record
     def test_blob_service_stats(self):
         # Arrange
-        bs = self._create_storage_service(BlockBlobService, self.settings)
-
+        url = self._get_account_url()
+        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
+        bs = BlobServiceClient(url, credentials=credentials)
         # Act
-        stats = bs.get_blob_service_stats()
+        stats = bs.get_service_stats()
 
         # Assert
         self._assert_stats_default(stats)
 
     @record
     def test_blob_service_stats_when_unavailable(self):
+        pytest.fail("Waiting on Linear retry and custom response hook.")
         # Arrange
-        bs = self._create_storage_service(BlockBlobService, self.settings)
-        bs.response_callback = self.override_response_body_with_unavailable_status
-        bs.retry = LinearRetry(backoff=1).retry
+        url = self._get_account_url()
+        config = BlobServiceClient.create_configuration()
+        #config.response_callback = self.override_response_body_with_unavailable_status
+        #config.retry_policy = LinearRetry(backoff=1).retry
+
+        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
+        bs = BlobServiceClient(url, credentials=credentials, configuration=config)
 
         # Act
-        stats = bs.get_blob_service_stats()
-
-        # Assert
-        self._assert_stats_unavailable(stats)
-
-    @record
-    def test_queue_service_stats(self):
-        # Arrange
-        qs = self._create_storage_service(QueueService, self.settings)
-
-        # Act
-        stats = qs.get_queue_service_stats()
-
-        # Assert
-        self._assert_stats_default(stats)
-
-    @record
-    def test_queue_service_stats_when_unavailable(self):
-        # Arrange
-        qs = self._create_storage_service(QueueService, self.settings)
-        qs.response_callback = self.override_response_body_with_unavailable_status
-        qs.retry = LinearRetry(backoff=1).retry
-
-        # Act
-        stats = qs.get_queue_service_stats()
+        stats = bs.get_service_stats()
 
         # Assert
         self._assert_stats_unavailable(stats)

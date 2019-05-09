@@ -23,8 +23,6 @@ SERVICES = {
     BlobServiceClient: 'blob',
     ContainerClient: 'blob',
     BlobClient: 'blob',
-    #QueueService: 'queue',
-    #FileService: 'file'
 }
 
 _CONNECTION_ENDPOINTS = {

@@ -161,7 +161,7 @@ class StorageTestCase(unittest.TestCase):
         return self.settings.STORAGE_ACCOUNT_NAME, self.settings.STORAGE_ACCOUNT_KEY
 
     def _get_account_url(self):
-        return "{}://{}.core.windows.net".format(
+        return "{}://{}.blob.core.windows.net".format(
             self.settings.PROTOCOL,
             self.settings.STORAGE_ACCOUNT_NAME
         )

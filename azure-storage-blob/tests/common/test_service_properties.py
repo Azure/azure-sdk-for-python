@@ -136,34 +136,6 @@ class ServicePropertiesTest(StorageTestCase):
         self._assert_properties_default(props)
         self.assertEqual('2014-02-14', props.target_version)
 
-    @record
-    def test_queue_service_properties(self):
-        # Arrange
-
-        # Act
-        resp = self.qs.set_queue_service_properties(logging=Logging(), hour_metrics=Metrics(),
-                                                    minute_metrics=Metrics(), cors=list())
-
-        # Assert
-        self.assertIsNone(resp)
-        self._assert_properties_default(self.qs.get_queue_service_properties())
-
-    @not_for_emulator
-    @record
-    def test_file_service_properties(self):
-        # Arrange
-
-        # Act
-        resp = self.fs.set_file_service_properties(hour_metrics=Metrics(),
-                                                   minute_metrics=Metrics(), cors=list())
-
-        # Assert
-        self.assertIsNone(resp)
-        props = self.fs.get_file_service_properties()
-        self._assert_metrics_equal(props.hour_metrics, Metrics())
-        self._assert_metrics_equal(props.minute_metrics, Metrics())
-        self._assert_cors_equal(props.cors, list())
-
     # --Test cases per feature ---------------------------------------
     @record
     def test_set_default_service_version(self):
