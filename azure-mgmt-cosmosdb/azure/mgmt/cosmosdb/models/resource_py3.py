@@ -13,12 +13,10 @@ from msrest.serialization import Model
 
 
 class Resource(Model):
-    """A database account resource.
+    """The core properties of ARM resources.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: The unique resource identifier of the database account.
     :vartype id: str
@@ -26,8 +24,8 @@ class Resource(Model):
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: Required. The location of the resource group to which the
-     resource belongs.
+    :param location: The location of the resource group to which the resource
+     belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -37,7 +35,6 @@ class Resource(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -48,7 +45,7 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None

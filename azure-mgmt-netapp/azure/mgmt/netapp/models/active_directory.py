@@ -24,14 +24,14 @@ class ActiveDirectory(Model):
     :type password: str
     :param domain: Name of the Active Directory domain
     :type domain: str
-    :param d_ns: Comma separated list of DNS server IP addresses for the
-     Active Directory domain
-    :type d_ns: str
+    :param dns: Comma separated list of DNS server IP addresses for the Active
+     Directory domain
+    :type dns: str
     :param status: Status of the Active Directory
     :type status: str
-    :param s_mb_server_name: NetBIOS name of the SMB server. This name will be
+    :param smb_server_name: NetBIOS name of the SMB server. This name will be
      registered as a computer account in the AD and used to mount volumes
-    :type s_mb_server_name: str
+    :type smb_server_name: str
     :param organizational_unit: The Organizational Unit (OU) within the
      Windows Active Directory
     :type organizational_unit: str
@@ -42,9 +42,9 @@ class ActiveDirectory(Model):
         'username': {'key': 'username', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
         'domain': {'key': 'domain', 'type': 'str'},
-        'd_ns': {'key': 'dNS', 'type': 'str'},
+        'dns': {'key': 'dns', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
-        's_mb_server_name': {'key': 'sMBServerName', 'type': 'str'},
+        'smb_server_name': {'key': 'smbServerName', 'type': 'str'},
         'organizational_unit': {'key': 'organizationalUnit', 'type': 'str'},
     }
 
@@ -54,7 +54,7 @@ class ActiveDirectory(Model):
         self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
         self.domain = kwargs.get('domain', None)
-        self.d_ns = kwargs.get('d_ns', None)
+        self.dns = kwargs.get('dns', None)
         self.status = kwargs.get('status', None)
-        self.s_mb_server_name = kwargs.get('s_mb_server_name', None)
+        self.smb_server_name = kwargs.get('smb_server_name', None)
         self.organizational_unit = kwargs.get('organizational_unit', None)

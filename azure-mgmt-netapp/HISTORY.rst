@@ -3,6 +3,18 @@
 Release History
 ===============
 
+0.4.0 (2019-04-29)
+++++++++++++++++++
+
+**Features**
+
+- Model Volume has a new parameter baremetal_tenant_id
+- Model Volume has a new parameter snapshot_id
+
+**Breaking changes**
+
+- Model ActiveDirectory fixing d_ns to dns, and s_mb_server_name to smb_server_name
+
 0.3.0 (2019-03-25)
 ++++++++++++++++++
 
