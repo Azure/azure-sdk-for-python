@@ -19,7 +19,7 @@ DEPENDENCIES = [
     'readme_renderer',
     'azure-storage-blob<2.0',
     'azure-storage-file<2.0',
-    'azure-storage-common<1.4.1',
+    'azure-storage-common==1.4.2',
     'pyopenssl',
     'azure-mgmt-resource',
     'azure-mgmt-storage'
