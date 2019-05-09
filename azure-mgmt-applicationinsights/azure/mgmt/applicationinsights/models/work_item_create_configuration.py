@@ -23,14 +23,14 @@ class WorkItemCreateConfiguration(Model):
     :param validate_only: Boolean indicating validate only
     :type validate_only: bool
     :param work_item_properties: Custom work item properties
-    :type work_item_properties: str
+    :type work_item_properties: dict[str, str]
     """
 
     _attribute_map = {
         'connector_id': {'key': 'ConnectorId', 'type': 'str'},
         'connector_data_configuration': {'key': 'ConnectorDataConfiguration', 'type': 'str'},
         'validate_only': {'key': 'ValidateOnly', 'type': 'bool'},
-        'work_item_properties': {'key': 'WorkItemProperties', 'type': 'str'},
+        'work_item_properties': {'key': 'WorkItemProperties', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
