@@ -35,12 +35,18 @@ def teardown(request):
         host = config.host
         masterKey = config.masterKey
         connectionPolicy = config.connectionPolicy
-        client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, connectionPolicy)
         try:
-            client.DeleteDatabase("dbs/" + test_config._test_config.TEST_DATABASE_ID)
-        except errors.HTTPFailure as e:
-            if e.status_code != StatusCodes.NOT_FOUND:
-                raise e
+            client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, connectionPolicy)
+         # This is to soft-fail the teardown while cosmos tests are not running automatically
+        except Exception:
+            pass
+        else:
+            try:
+                client.DeleteDatabase("dbs/" + test_config._test_config.TEST_DATABASE_ID)
+            except errors.HTTPFailure as e:
+                if e.status_code != StatusCodes.NOT_FOUND:
+                    raise e
+        
         print("Clean up completed!")
     request.addfinalizer(delete_database)
     return None
