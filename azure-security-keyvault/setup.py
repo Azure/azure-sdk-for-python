@@ -81,5 +81,5 @@ setup(
     install_requires=[
         # "azure-core>=0.0.1"
     ],
-    extras_require={":python_version<'3.0'": ["azure-security-nspkg"]},
+    extras_require={":python_version<'3.0'": ["azure-security-nspkg>=0.0.1"]},
 )
