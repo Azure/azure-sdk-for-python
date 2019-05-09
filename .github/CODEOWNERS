@@ -28,8 +28,6 @@
 /azure-mgmt-servicefabric/ @QingChenmsft
 /azure-mgmt-sql/ @jaredmoo
 /azure-mgmt-web/ @yugangw-msft
-/azure-security-keyvault-certificates/ @chlowell
-/azure-security-keyvault-keys/ @chlowell
-/azure-security-keyvault-secrets/ @chlowell
+/azure-security-keyvault/ @chlowell @schaabs
 /azure-servicebus/ @annatisch
 /azure-servicefabric/ @samedder

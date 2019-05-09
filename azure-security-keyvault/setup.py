@@ -7,7 +7,19 @@
 # --------------------------------------------------------------------------
 # pylint:disable=missing-docstring
 
-from setuptools import setup
+import re
+import os.path
+from io import open
+from setuptools import find_packages, setup
+
+# Change the PACKAGE_NAME only to change folder and different name
+PACKAGE_NAME = "azure-security-keyvault"
+PACKAGE_PPRINT_NAME = "Key Vault"
+
+# a-b-c => a/b/c
+PACKAGE_FOLDER_PATH = PACKAGE_NAME.replace("-", "/")
+# a-b-c => a.b.c
+NAMESPACE_NAME = PACKAGE_NAME.replace("-", ".")
 
 # azure v0.x is not compatible with this package
 # azure v0.x used to have a __version__ attribute (newer versions don't)
@@ -24,11 +36,23 @@ try:
 except ImportError:
     pass
 
+# Version extraction inspired from 'requests'
+with open(os.path.join(PACKAGE_FOLDER_PATH, "version.py"), "r") as fd:
+    VERSION = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
+
+if not VERSION:
+    raise RuntimeError("Cannot find version information")
+
+with open("README.md", encoding="utf-8") as f:
+    README = f.read()
+with open("HISTORY.md", encoding="utf-8") as f:
+    HISTORY = f.read()
+
 setup(
-    name="azure-security-keyvault-nspkg",
-    version="0.0.1",
-    description="Microsoft Azure Key Vault Namespace Package [Internal]",
-    long_description="",
+    name=PACKAGE_NAME,
+    version=VERSION,
+    description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
+    long_description=README + "\n\n" + HISTORY,
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azurekeyvault@microsoft.com",
@@ -39,7 +63,6 @@ setup(
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
@@ -47,6 +70,16 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
-    packages=["azure.security.keyvault"],
-    install_requires=["azure-security-nspkg>=0.0.1"],
+    packages=find_packages(
+        exclude=[
+            "tests",
+            # Exclude packages that will be covered by PEP420 or nspkg
+            "azure",
+            "azure.security",
+        ]
+    ),
+    install_requires=[
+        # "azure-core>=0.0.1"
+    ],
+    extras_require={":python_version<'3.0'": ["azure-security-nspkg"]},
 )
