@@ -27,26 +27,30 @@ def update_pr(gh_token, repo_id, pr_number):
     repo = con.get_repo(repo_id)
     sdk_pr = repo.get_pull(pr_number)
     # "get_files" of Github only download the first 300 files. Might not be enough.
-    package_names = {f.filename.split('/')[0] for f in sdk_pr.get_files() if f.filename.startswith("azure")}
+    package_names = {('.', f.filename.split('/')[0]) for f in sdk_pr.get_files() if f.filename.startswith("azure")}
+    # Handle the SDK folder as well
+    package_names.update({('./sdk/', f.filename.split('/')[1]) for f in sdk_pr.get_files() if f.filename.startswith("sdk/azure")})
 
     # Get PR branch to push
     head_repo = sdk_pr.head.repo.full_name
     head_branch = sdk_pr.head.ref
     branched_index = "{}@{}".format(head_repo, head_branch)
+    _LOGGER.info("Checkout %s", branched_index)
 
     with tempfile.TemporaryDirectory() as temp_dir, \
-            manage_git_folder(gh_token, Path(temp_dir) / Path("sdk"), branched_index) as sdk_folder:
+            manage_git_folder(gh_token, Path(temp_dir) / Path("sdk"), branched_index) as sdk_repo_root:
 
-        sdk_repo = Repo(str(sdk_folder))
+        sdk_repo = Repo(str(sdk_repo_root))
         configure_user(gh_token, sdk_repo)
 
-        for package_name in package_names:
+        for base_folder, package_name in package_names:
             if package_name.endswith("nspkg"):
                 _LOGGER.info("Skip nspkg packages for update PR")
                 continue
 
             # Rebuild packaging
-            build_packaging_by_package_name(package_name, sdk_folder, build_conf=True)
+            _LOGGER.info("Try update package %s from folder %s", package_name, base_folder)
+            build_packaging_by_package_name(package_name, sdk_repo_root / Path(base_folder), build_conf=True)
             # Commit that
             do_commit(
                 sdk_repo,
