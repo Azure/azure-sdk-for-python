@@ -23,7 +23,7 @@ class SsisParameter(Model):
     :type description: str
     :param data_type: Parameter type.
     :type data_type: str
-    :param required: Whether parameter is reuqired.
+    :param required: Whether parameter is required.
     :type required: bool
     :param sensitive: Whether parameter is sensitive.
     :type sensitive: bool

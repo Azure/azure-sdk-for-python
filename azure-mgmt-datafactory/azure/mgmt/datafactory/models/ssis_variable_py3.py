@@ -23,7 +23,7 @@ class SsisVariable(Model):
     :type description: str
     :param data_type: Variable type.
     :type data_type: str
-    :param sensitive: Whether varaible is sensitive.
+    :param sensitive: Whether variable is sensitive.
     :type sensitive: bool
     :param value: Variable value.
     :type value: str
