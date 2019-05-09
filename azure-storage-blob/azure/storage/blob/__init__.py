@@ -19,4 +19,5 @@ __all__ = [
     'BlobClient',
     'BlobType',
     'Lease',
+    'SharedKeyCredentials',
 ]

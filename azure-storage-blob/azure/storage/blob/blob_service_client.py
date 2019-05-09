@@ -6,7 +6,7 @@
 
 from azure.core import Configuration
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport, HttpRequest
+from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     HeadersPolicy,
@@ -40,7 +40,7 @@ class BlobServiceClient(object):
         config.proxy_policy = ProxyPolicy(**kwargs)
         return config
 
-    def _create_pipeline(self, config, transport, credentials):
+    def _create_pipeline(self, config, transport, credentials):  # pylint: disable=no-self-use
         policies = [
             config.user_agent_policy,
             config.headers_policy,
@@ -50,12 +50,13 @@ class BlobServiceClient(object):
             config.retry_policy,
             config.logging_policy,
         ]
-        self._pipeline = Pipeline(transport, policies=policies)
+        return Pipeline(transport, policies=policies)
 
     def make_url(self, protocol=None, sas_token=None):
         pass
 
-    def generate_shared_access_signature(self, resource_types, permission, expiry,
+    def generate_shared_access_signature(
+            self, resource_types, permission, expiry,
             start=None, ip=None, protocol=None):
         pass
 
@@ -63,7 +64,6 @@ class BlobServiceClient(object):
         """
         :returns: A dict of account information (SKU and account type).
         """
-        pass
 
     def get_service_stats(self, timeout=None):
         """
@@ -75,25 +75,23 @@ class BlobServiceClient(object):
         """
         :returns: A dict of service properties.
         """
-        pass
 
-    def set_service_properties(self, logging=None, hour_metrics=None, minute_metrics=None,
+    def set_service_properties(
+            self, logging=None, hour_metrics=None, minute_metrics=None,
             cors=None, target_version=None, timeout=None, delete_retention_policy=None,
             static_website=None):
         """
         :returns: None
         """
-        pass
 
-    def list_container_properties(self, prefix=None, num_results=None, include_metadata=False,
+    def list_container_properties(
+            self, prefix=None, num_results=None, include_metadata=False,
             marker=None, timeout=None):
         """
         :returns: An iterable (auto-paging) of ContainerProperties.
         """
-        pass
 
     def get_container_client(self, container):
         """
         :returns: A ContainerClient.
         """
-        pass

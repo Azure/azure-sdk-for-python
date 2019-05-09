@@ -19,7 +19,8 @@ class ContainerClient(object):
     def make_url(self, protocol=None, sas_token=None):
         pass
 
-    def generate_shared_access_signature(self, resource_types, permission, expiry,
+    def generate_shared_access_signature(
+            self, resource_types, permission, expiry,
             start=None, ip=None, protocol=None):
         pass
 
@@ -27,60 +28,55 @@ class ContainerClient(object):
         """
         :returns: None
         """
-        pass
 
-    async def delete_container(self, lease=None, if_modified_since=None, if_unmodified_since=None,
+    async def delete_container(
+            self, lease=None, if_modified_since=None, if_unmodified_since=None,
             if_match=None, if_none_match=None, timeout=None):
         """
         :returns: None
         """
-        pass
 
-    async def acquire_lease(self, lease_duration=-1, proposed_lease_id=None, if_modified_since=None,
+    async def acquire_lease(
+            self, lease_duration=-1, proposed_lease_id=None, if_modified_since=None,
             if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None):
         """
         :returns: A Lease object, that can be run in a context manager.
         """
-        pass
 
-    async def break_lease(self, lease_break_period=None, if_modified_since=None, if_unmodified_since=None,
+    async def break_lease(
+            self, lease_break_period=None, if_modified_since=None, if_unmodified_since=None,
             if_match=None, if_none_match=None, timeout=None):
         """
         :returns: Approximate time remaining in the lease period, in seconds.
         """
-        pass
 
     async def get_account_infomation(self, timeout=None):
         """
         :returns: A dict of account information (SKU and account type).
         """
-        pass
 
     async def get_container_properties(self, lease=None, timeout=None):
         """
         :returns: ContainerProperties
         """
-        pass
 
     async def get_container_metadata(self, lease=None, timeout=None):
         """
         :returns: A dict of metadata.
         """
-        pass
 
     async def set_container_metadata(self, metadata=None, lease=None, if_modified_since=None, timeout=None):
         """
         :returns: Container-updated property dict (Etag and last modified).
         """
-        pass
 
     async def get_container_acl(self, lease=None, timeout=None):
         """
         :returns: Access policy information in a dict.
         """
-        pass
 
-    async def set_container_acl(self, signed_identifiers=None, public_access=None, lease=None,
+    async def set_container_acl(
+            self, signed_identifiers=None, public_access=None, lease=None,
             if_modified_since=None, if_unmodified_since=None, timeout=None):
         """
         :returns: Container-updated property dict (Etag and last modified).
@@ -90,16 +86,13 @@ class ContainerClient(object):
         """
         :returns: An iterable (auto-paging) response of BlobProperties.
         """
-        pass
 
     async def walk_blob_propertes(self, prefix=None, include=None, delimiter="/", timeout=None):
         """
         :returns: A generator that honors directory hierarchy.
         """
-        pass
 
     async def get_blob_client(self, blob, blob_type=BlobType.BlockBlob, snapshot=None):
         """
         :returns: A BlobClient.
         """
-        pass

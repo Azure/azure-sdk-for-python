@@ -17,7 +17,8 @@ class BlobServiceClient(object):
     def make_url(self, protocol=None, sas_token=None):
         pass
 
-    def generate_shared_access_signature(self, resource_types, permission, expiry,
+    def generate_shared_access_signature(
+            self, resource_types, permission, expiry,
             start=None, ip=None, protocol=None):
         pass
 
@@ -25,37 +26,33 @@ class BlobServiceClient(object):
         """
         :returns: A dict of account information (SKU and account type).
         """
-        pass
 
     async def get_service_stats(self, timeout=None):
         """
         :returns ServiceStats.
         """
-        pass
 
     async def get_service_properties(self, timeout=None):
         """
         :returns: A dict of service properties.
         """
-        pass
 
-    async def set_service_properties(self, logging=None, hour_metrics=None, minute_metrics=None,
+    async def set_service_properties(
+            self, logging=None, hour_metrics=None, minute_metrics=None,
             cors=None, target_version=None, timeout=None, delete_retention_policy=None,
             static_website=None):
         """
         :returns: None
         """
-        pass
 
-    async def list_container_properties(self, prefix=None, num_results=None, include_metadata=False,
+    async def list_container_properties(
+            self, prefix=None, num_results=None, include_metadata=False,
             marker=None, timeout=None):
         """
         :returns: An iterable (auto-paging) of ContainerProperties.
         """
-        pass
 
     async def get_container_client(self, container):
         """
         :returns: A ContainerClient.
         """
-        pass

@@ -16,14 +16,17 @@ class Lease(object):
     def __exit__(self, *args):
         self.release()
 
-    def renew(self, if_modified_since=None, if_unmodified_since=None, if_match=None,
+    def renew(
+            self, if_modified_since=None, if_unmodified_since=None, if_match=None,
             if_none_match=None, timeout=None):
         pass
 
-    def release(self, if_modified_since=None, if_unmodified_since=None, if_match=None,
+    def release(
+            self, if_modified_since=None, if_unmodified_since=None, if_match=None,
             if_none_match=None, timeout=None):
         pass
 
-    def change(self, proposed_lease_id, if_modified_since=None, if_unmodified_since=None,
+    def change(
+            self, proposed_lease_id, if_modified_since=None, if_unmodified_since=None,
             if_match=None, if_none_match=None, timeout=None):
         pass
