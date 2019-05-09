@@ -89,7 +89,7 @@ def configure_user(gh_token, repo):
        git config --global user.name "Your Name"
     """
     user = user_from_token(gh_token)
-    repo.git.config('user.email', user.email or 'aspysdk2@microsoft.com')
+    repo.git.config('user.email', user.email or 'adxpysdk@microsoft.com')
     repo.git.config('user.name', user.name or 'SwaggerToSDK Automation')
 
 def get_full_sdk_id(gh_token, sdk_git_id):
