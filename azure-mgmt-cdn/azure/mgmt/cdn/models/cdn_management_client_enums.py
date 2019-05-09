@@ -19,8 +19,8 @@ class SkuName(str, Enum):
     custom_verizon = "Custom_Verizon"
     standard_akamai = "Standard_Akamai"
     standard_china_cdn = "Standard_ChinaCdn"
-    premium_china_cdn = "Premium_ChinaCdn"
     standard_microsoft = "Standard_Microsoft"
+    premium_china_cdn = "Premium_ChinaCdn"
 
 
 class ProfileResourceState(str, Enum):
