@@ -57,7 +57,7 @@ class RedirectPolicy(HTTPPolicy):
         self._remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
         redirect_status = set(kwargs.get('redirect_on_status_codes', []))
         self._redirect_on_status_codes = redirect_status.union(self.REDIRECT_STATUSES)
-        super().__init__(**kwargs)
+        super(RedirectPolicy, self).__init__(**kwargs)
 
     @classmethod
     def no_redirects(cls):

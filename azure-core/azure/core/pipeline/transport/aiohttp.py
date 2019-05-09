@@ -23,7 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, AsyncIterator
+from typing import Any, AsyncIterator as AsyncIteratorType
+from collections.abc import AsyncIterator
 
 import logging
 import aiohttp
@@ -77,8 +78,7 @@ class AioHttpTransport(AsyncHttpTransport):
             return ssl_ctx
         return verify
 
-    @staticmethod
-    def _get_request_data(request):
+    def _get_request_data(self, request): #pylint: disable=no-self-use
         if request.files:
             form_data = aiohttp.FormData()
             for form_file, data in request.files.items():
@@ -128,7 +128,7 @@ class AioHttpTransport(AsyncHttpTransport):
         return response
 
 
-class AioHttpStreamDownloadGenerator:
+class AioHttpStreamDownloadGenerator(AsyncIterator):
 
     def __init__(self, response: aiohttp.ClientResponse, block_size: int) -> None:
         self.response = response
@@ -171,7 +171,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         """Load in memory the body, so it could be accessible from sync methods."""
         self._body = await self.internal_response.read()
 
-    def stream_download(self) -> AsyncIterator[bytes]:
+    def stream_download(self) -> AsyncIteratorType[bytes]:
         """Generator for streaming request body data.
         """
         return AioHttpStreamDownloadGenerator(self.internal_response, self.block_size)

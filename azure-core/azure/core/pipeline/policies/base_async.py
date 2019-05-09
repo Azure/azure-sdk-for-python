@@ -55,9 +55,7 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
     """
     def __init__(self) -> None:
         # next will be set once in the pipeline
-        # type: Optional[Union[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType], \
-        # AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]]]
-        self.next = None
+        self.next = None # type: Optional[Union[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType], AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]]] #pylint: disable=line-too-long
 
     @abc.abstractmethod
     async def send(self, request: PipelineRequest):

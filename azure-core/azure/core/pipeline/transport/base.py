@@ -61,8 +61,7 @@ class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPRe
         """Send the request using this HTTP sender.
         """
 
-    @staticmethod
-    def sleep(duration):
+    def sleep(self, duration): #pylint: disable=no-self-use
         time.sleep(duration)
 
 
@@ -97,8 +96,7 @@ class HttpRequest(object):
     def body(self, value):
         self.data = value
 
-    @staticmethod
-    def _format_data(data):
+    def _format_data(self, data): #pylint: disable=no-self-use
         # type: (Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]
         """Format field data according to whether it is a stream or
         a string for a form-data request.
