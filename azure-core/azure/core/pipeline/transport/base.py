@@ -99,6 +99,12 @@ class HttpRequest(object):
         return '<HttpRequest [%s]>' % (self.method)
 
     @property
+    def query(self):
+        """The query parameters of the request as a dict."""
+        query = urlparse(self.url).query
+        return {p[0]: p[-1] for p in [p.partition('=') for p in query.split('&')]}
+
+    @property
     def body(self):
         """Alias to data."""
         return self.data
