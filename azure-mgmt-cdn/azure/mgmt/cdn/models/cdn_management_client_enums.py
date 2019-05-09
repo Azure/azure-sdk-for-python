@@ -19,6 +19,7 @@ class SkuName(str, Enum):
     custom_verizon = "Custom_Verizon"
     standard_akamai = "Standard_Akamai"
     standard_china_cdn = "Standard_ChinaCdn"
+    standard_microsoft = "Standard_Microsoft"
 
 
 class ProfileResourceState(str, Enum):
@@ -97,6 +98,18 @@ class CustomHttpsProvisioningSubstate(str, Enum):
     certificate_deployed = "CertificateDeployed"
     deleting_certificate = "DeletingCertificate"
     certificate_deleted = "CertificateDeleted"
+
+
+class ProtocolType(str, Enum):
+
+    server_name_indication = "ServerNameIndication"
+    ip_based = "IPBased"
+
+
+class CertificateType(str, Enum):
+
+    shared = "Shared"
+    dedicated = "Dedicated"
 
 
 class ResourceType(str, Enum):

@@ -23,15 +23,18 @@ class StandardEncoderPreset(Preset):
     :param filters: One or more filtering operations that are applied to the
      input media before encoding.
     :type filters: ~azure.mgmt.media.models.Filters
-    :param codecs: The list of codecs to be used when encoding the input
-     video.
+    :param codecs: Required. The list of codecs to be used when encoding the
+     input video.
     :type codecs: list[~azure.mgmt.media.models.Codec]
-    :param formats: The list of outputs to be produced by the encoder.
+    :param formats: Required. The list of outputs to be produced by the
+     encoder.
     :type formats: list[~azure.mgmt.media.models.Format]
     """
 
     _validation = {
         'odatatype': {'required': True},
+        'codecs': {'required': True},
+        'formats': {'required': True},
     }
 
     _attribute_map = {
@@ -41,7 +44,7 @@ class StandardEncoderPreset(Preset):
         'formats': {'key': 'formats', 'type': '[Format]'},
     }
 
-    def __init__(self, *, filters=None, codecs=None, formats=None, **kwargs) -> None:
+    def __init__(self, *, codecs, formats, filters=None, **kwargs) -> None:
         super(StandardEncoderPreset, self).__init__(**kwargs)
         self.filters = filters
         self.codecs = codecs

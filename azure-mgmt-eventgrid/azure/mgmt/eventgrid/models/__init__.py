@@ -11,6 +11,11 @@
 
 try:
     from .input_schema_mapping_py3 import InputSchemaMapping
+    from .resource_py3 import Resource
+    from .json_field_py3 import JsonField
+    from .json_field_with_default_py3 import JsonFieldWithDefault
+    from .json_input_schema_mapping_py3 import JsonInputSchemaMapping
+    from .tracked_resource_py3 import TrackedResource
     from .domain_py3 import Domain
     from .domain_update_parameters_py3 import DomainUpdateParameters
     from .domain_shared_access_keys_py3 import DomainSharedAccessKeys
@@ -21,7 +26,6 @@ try:
     from .event_subscription_filter_py3 import EventSubscriptionFilter
     from .retry_policy_py3 import RetryPolicy
     from .dead_letter_destination_py3 import DeadLetterDestination
-    from .resource_py3 import Resource
     from .number_in_advanced_filter_py3 import NumberInAdvancedFilter
     from .storage_blob_dead_letter_destination_py3 import StorageBlobDeadLetterDestination
     from .number_not_in_advanced_filter_py3 import NumberNotInAdvancedFilter
@@ -39,15 +43,12 @@ try:
     from .event_hub_event_subscription_destination_py3 import EventHubEventSubscriptionDestination
     from .storage_queue_event_subscription_destination_py3 import StorageQueueEventSubscriptionDestination
     from .hybrid_connection_event_subscription_destination_py3 import HybridConnectionEventSubscriptionDestination
+    from .service_bus_queue_event_subscription_destination_py3 import ServiceBusQueueEventSubscriptionDestination
     from .event_subscription_py3 import EventSubscription
     from .event_subscription_update_parameters_py3 import EventSubscriptionUpdateParameters
     from .event_subscription_full_url_py3 import EventSubscriptionFullUrl
     from .operation_info_py3 import OperationInfo
     from .operation_py3 import Operation
-    from .json_field_py3 import JsonField
-    from .json_field_with_default_py3 import JsonFieldWithDefault
-    from .json_input_schema_mapping_py3 import JsonInputSchemaMapping
-    from .tracked_resource_py3 import TrackedResource
     from .topic_py3 import Topic
     from .topic_update_parameters_py3 import TopicUpdateParameters
     from .topic_shared_access_keys_py3 import TopicSharedAccessKeys
@@ -56,6 +57,11 @@ try:
     from .topic_type_info_py3 import TopicTypeInfo
 except (SyntaxError, ImportError):
     from .input_schema_mapping import InputSchemaMapping
+    from .resource import Resource
+    from .json_field import JsonField
+    from .json_field_with_default import JsonFieldWithDefault
+    from .json_input_schema_mapping import JsonInputSchemaMapping
+    from .tracked_resource import TrackedResource
     from .domain import Domain
     from .domain_update_parameters import DomainUpdateParameters
     from .domain_shared_access_keys import DomainSharedAccessKeys
@@ -66,7 +72,6 @@ except (SyntaxError, ImportError):
     from .event_subscription_filter import EventSubscriptionFilter
     from .retry_policy import RetryPolicy
     from .dead_letter_destination import DeadLetterDestination
-    from .resource import Resource
     from .number_in_advanced_filter import NumberInAdvancedFilter
     from .storage_blob_dead_letter_destination import StorageBlobDeadLetterDestination
     from .number_not_in_advanced_filter import NumberNotInAdvancedFilter
@@ -84,15 +89,12 @@ except (SyntaxError, ImportError):
     from .event_hub_event_subscription_destination import EventHubEventSubscriptionDestination
     from .storage_queue_event_subscription_destination import StorageQueueEventSubscriptionDestination
     from .hybrid_connection_event_subscription_destination import HybridConnectionEventSubscriptionDestination
+    from .service_bus_queue_event_subscription_destination import ServiceBusQueueEventSubscriptionDestination
     from .event_subscription import EventSubscription
     from .event_subscription_update_parameters import EventSubscriptionUpdateParameters
     from .event_subscription_full_url import EventSubscriptionFullUrl
     from .operation_info import OperationInfo
     from .operation import Operation
-    from .json_field import JsonField
-    from .json_field_with_default import JsonFieldWithDefault
-    from .json_input_schema_mapping import JsonInputSchemaMapping
-    from .tracked_resource import TrackedResource
     from .topic import Topic
     from .topic_update_parameters import TopicUpdateParameters
     from .topic_shared_access_keys import TopicSharedAccessKeys
@@ -109,6 +111,7 @@ from .topic_type_info_paged import TopicTypeInfoPaged
 from .event_grid_management_client_enums import (
     DomainProvisioningState,
     InputSchema,
+    DomainTopicProvisioningState,
     EventSubscriptionProvisioningState,
     EventDeliverySchema,
     TopicProvisioningState,
@@ -118,6 +121,11 @@ from .event_grid_management_client_enums import (
 
 __all__ = [
     'InputSchemaMapping',
+    'Resource',
+    'JsonField',
+    'JsonFieldWithDefault',
+    'JsonInputSchemaMapping',
+    'TrackedResource',
     'Domain',
     'DomainUpdateParameters',
     'DomainSharedAccessKeys',
@@ -128,7 +136,6 @@ __all__ = [
     'EventSubscriptionFilter',
     'RetryPolicy',
     'DeadLetterDestination',
-    'Resource',
     'NumberInAdvancedFilter',
     'StorageBlobDeadLetterDestination',
     'NumberNotInAdvancedFilter',
@@ -146,15 +153,12 @@ __all__ = [
     'EventHubEventSubscriptionDestination',
     'StorageQueueEventSubscriptionDestination',
     'HybridConnectionEventSubscriptionDestination',
+    'ServiceBusQueueEventSubscriptionDestination',
     'EventSubscription',
     'EventSubscriptionUpdateParameters',
     'EventSubscriptionFullUrl',
     'OperationInfo',
     'Operation',
-    'JsonField',
-    'JsonFieldWithDefault',
-    'JsonInputSchemaMapping',
-    'TrackedResource',
     'Topic',
     'TopicUpdateParameters',
     'TopicSharedAccessKeys',
@@ -170,6 +174,7 @@ __all__ = [
     'TopicTypeInfoPaged',
     'DomainProvisioningState',
     'InputSchema',
+    'DomainTopicProvisioningState',
     'EventSubscriptionProvisioningState',
     'EventDeliverySchema',
     'TopicProvisioningState',

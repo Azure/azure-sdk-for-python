@@ -38,6 +38,9 @@ class CognitiveServicesAccount(Model):
     :type endpoint: str
     :param internal_id: The internal identifier.
     :type internal_id: str
+    :param custom_sub_domain_name: Optional subdomain name used for
+     token-based authentication.
+    :type custom_sub_domain_name: str
     :param sku: The SKU of Cognitive Services account.
     :type sku: ~azure.mgmt.cognitiveservices.models.Sku
     :param tags: Gets or sets a list of key value pairs that describe the
@@ -66,6 +69,7 @@ class CognitiveServicesAccount(Model):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
         'internal_id': {'key': 'properties.internalId', 'type': 'str'},
+        'custom_sub_domain_name': {'key': 'properties.customSubDomainName', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
@@ -81,6 +85,7 @@ class CognitiveServicesAccount(Model):
         self.provisioning_state = None
         self.endpoint = kwargs.get('endpoint', None)
         self.internal_id = kwargs.get('internal_id', None)
+        self.custom_sub_domain_name = kwargs.get('custom_sub_domain_name', None)
         self.sku = kwargs.get('sku', None)
         self.tags = kwargs.get('tags', None)
         self.type = None

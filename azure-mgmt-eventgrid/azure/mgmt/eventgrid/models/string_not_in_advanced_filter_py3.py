@@ -13,16 +13,16 @@ from .advanced_filter_py3 import AdvancedFilter
 
 
 class StringNotInAdvancedFilter(AdvancedFilter):
-    """StringNotIn Filter.
+    """StringNotIn Advanced Filter.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key: The filter key. Represents an event property with upto two
-     levels of nesting.
+    :param key: The field/property in the event based on which you want to
+     filter.
     :type key: str
     :param operator_type: Required. Constant filled by server.
     :type operator_type: str
-    :param values: The set of filter values
+    :param values: The set of filter values.
     :type values: list[str]
     """
 

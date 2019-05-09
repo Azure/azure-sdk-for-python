@@ -10,10 +10,23 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .policy_event_py3 import PolicyEvent
-    from .policy_events_query_results_py3 import PolicyEventsQueryResults
+    from .policy_details_py3 import PolicyDetails
+    from .tracked_resource_modification_details_py3 import TrackedResourceModificationDetails
+    from .policy_tracked_resource_py3 import PolicyTrackedResource
     from .query_failure_error_py3 import QueryFailureError
     from .query_failure_py3 import QueryFailure, QueryFailureException
+    from .remediation_filters_py3 import RemediationFilters
+    from .remediation_deployment_summary_py3 import RemediationDeploymentSummary
+    from .remediation_py3 import Remediation
+    from .typed_error_info_py3 import TypedErrorInfo
+    from .error_definition_py3 import ErrorDefinition
+    from .remediation_deployment_py3 import RemediationDeployment
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .policy_event_py3 import PolicyEvent
+    from .policy_events_query_results_py3 import PolicyEventsQueryResults
+    from .expression_evaluation_details_py3 import ExpressionEvaluationDetails
+    from .if_not_exists_evaluation_details_py3 import IfNotExistsEvaluationDetails
+    from .policy_evaluation_details_py3 import PolicyEvaluationDetails
     from .policy_state_py3 import PolicyState
     from .policy_states_query_results_py3 import PolicyStatesQueryResults
     from .summary_results_py3 import SummaryResults
@@ -26,10 +39,23 @@ try:
     from .operations_list_results_py3 import OperationsListResults
     from .query_options_py3 import QueryOptions
 except (SyntaxError, ImportError):
-    from .policy_event import PolicyEvent
-    from .policy_events_query_results import PolicyEventsQueryResults
+    from .policy_details import PolicyDetails
+    from .tracked_resource_modification_details import TrackedResourceModificationDetails
+    from .policy_tracked_resource import PolicyTrackedResource
     from .query_failure_error import QueryFailureError
     from .query_failure import QueryFailure, QueryFailureException
+    from .remediation_filters import RemediationFilters
+    from .remediation_deployment_summary import RemediationDeploymentSummary
+    from .remediation import Remediation
+    from .typed_error_info import TypedErrorInfo
+    from .error_definition import ErrorDefinition
+    from .remediation_deployment import RemediationDeployment
+    from .error_response import ErrorResponse, ErrorResponseException
+    from .policy_event import PolicyEvent
+    from .policy_events_query_results import PolicyEventsQueryResults
+    from .expression_evaluation_details import ExpressionEvaluationDetails
+    from .if_not_exists_evaluation_details import IfNotExistsEvaluationDetails
+    from .policy_evaluation_details import PolicyEvaluationDetails
     from .policy_state import PolicyState
     from .policy_states_query_results import PolicyStatesQueryResults
     from .summary_results import SummaryResults
@@ -41,15 +67,31 @@ except (SyntaxError, ImportError):
     from .operation import Operation
     from .operations_list_results import OperationsListResults
     from .query_options import QueryOptions
+from .policy_tracked_resource_paged import PolicyTrackedResourcePaged
+from .remediation_deployment_paged import RemediationDeploymentPaged
+from .remediation_paged import RemediationPaged
 from .policy_insights_client_enums import (
     PolicyStatesResource,
 )
 
 __all__ = [
-    'PolicyEvent',
-    'PolicyEventsQueryResults',
+    'PolicyDetails',
+    'TrackedResourceModificationDetails',
+    'PolicyTrackedResource',
     'QueryFailureError',
     'QueryFailure', 'QueryFailureException',
+    'RemediationFilters',
+    'RemediationDeploymentSummary',
+    'Remediation',
+    'TypedErrorInfo',
+    'ErrorDefinition',
+    'RemediationDeployment',
+    'ErrorResponse', 'ErrorResponseException',
+    'PolicyEvent',
+    'PolicyEventsQueryResults',
+    'ExpressionEvaluationDetails',
+    'IfNotExistsEvaluationDetails',
+    'PolicyEvaluationDetails',
     'PolicyState',
     'PolicyStatesQueryResults',
     'SummaryResults',
@@ -61,5 +103,8 @@ __all__ = [
     'Operation',
     'OperationsListResults',
     'QueryOptions',
+    'PolicyTrackedResourcePaged',
+    'RemediationDeploymentPaged',
+    'RemediationPaged',
     'PolicyStatesResource',
 ]

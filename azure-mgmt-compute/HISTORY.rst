@@ -3,6 +3,90 @@
 Release History
 ===============
 
+5.0.0 (2019-04-26)
+++++++++++++++++++
+
+**Features**
+
+- Model ImageUpdate has a new parameter hyper_vgeneration
+- Model Image has a new parameter hyper_vgeneration
+
+- Model AvailabilitySet has a new parameter proximity_placement_group
+- Model VirtualMachine has a new parameter proximity_placement_group
+- Model VirtualMachineUpdate has a new parameter proximity_placement_group
+- Model VirtualMachineScaleSet has a new parameter proximity_placement_group
+- Model VirtualMachineScaleSet has a new parameter additional_capabilities
+- Model VirtualMachineScaleSetUpdate has a new parameter additional_capabilities
+- Model AvailabilitySetUpdate has a new parameter proximity_placement_group
+- Added operation group ProximityPlacementGroupsOperations
+- Model DataDisk has a new parameter to_be_detached
+
+- Model ResourceSkuLocationInfo has a new output zone_details
+
+**Breaking changes**
+
+- Model VirtualMachineScaleSetVMProfile no longer has parameter additional_capabilities
+- Latest version of disks/snapshot renamed the enum StorageAccountTypes to DiskStorageAccountTypes
+- images.create_or_update requires hyper_vgeneration parameter if disk is OS type
+
+4.6.2 (2019-04-22)
+++++++++++++++++++
+
+**Bugfix**
+
+- Revert "images" API version introduced in 4.6.0 from 2019-03-01 to 2018-10-01 for backward compatiblity #4891
+
+4.6.1 (2019-04-18)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Make enum declarations in Compute package consistent, for the sake of code inspection.
+
+4.6.0 (2019-04-12)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSet has a new parameter do_not_run_extensions_on_overprovisioned_vms
+- Model VirtualMachineScaleSetVM has a new parameter network_profile_configuration
+- Model VirtualMachineScaleSetVM has a new parameter protection_policy
+- Model VirtualMachineScaleSetVM has a new parameter model_definition_applied
+- Added operation VirtualMachineScaleSetsOperations.convert_to_single_placement_group
+- Operation VirtualMachineScaleSetVMsOperations.power_off has a new signature and can now skip_shutdown
+- Operation VirtualMachinesOperations.power_off has a new signature and can now skip_shutdown
+- Operation VirtualMachineScaleSetsOperations.power_off has a new signature and can now skip_shutdown
+
+4.5.1 (2019-03-29)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix regression in direct import from models
+
+4.5.0 (2019-03-28)
+++++++++++++++++++
+
+**New version of Managed Disks**
+
+-	Disks/Snapshots have a new optional property HyperVGeneration which may be set to V1 or V2.
+-	EncryptionSettings on a disk are now a collection instead of a single value. This allows multiple volumes on an encrypted disk.
+-	There is a new CreateOption (Upload) for disks. To upload disks customers
+
+  -	PUT a disk with CreateOption.Upload.
+  - Use GrantAccess API with AccessLevel.Write to a get a write SAS to the disk. This is a new access level and it can only be used when uploading to a new disk. Customers can then use storage API to upload the bits for the disk.
+  - There are new DiskStates (DiskState.ReadyToUpload and DiskState.ActiveUpload) that are associated with the upload process.
+
+4.4.0 (2018-01-04)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSetExtension has a new parameter provision_after_extensions
+- Operation VirtualMachineScaleSetVMsOperations.reimage has a new parameter temp_disk
+- Operation VirtualMachineScaleSetsOperations.reimage has a new parameter temp_disk
+- Added operation VirtualMachinesOperations.reimage
+
 4.3.1 (2018-10-15)
 ++++++++++++++++++
 

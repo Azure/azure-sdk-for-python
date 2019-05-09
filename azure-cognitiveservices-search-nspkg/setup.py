@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-
+import sys
 from setuptools import setup
 
 # azure v0.x is not compatible with this package
@@ -23,9 +23,16 @@ try:
 except ImportError:
     pass
 
+PACKAGES = []
+# Do an empty package on Python 3 and not python_requires, since not everybody is ready
+# https://github.com/Azure/azure-sdk-for-python/issues/3447
+# https://github.com/Azure/azure-sdk-for-python/issues/3481
+if sys.version_info[0] < 3:
+    PACKAGES = ['azure.cognitiveservices.search']
+
 setup(
     name='azure-cognitiveservices-search-nspkg',
-    version='3.0.0',
+    version='3.0.1',
     description='Microsoft Azure Cognitive Services Search Namespace Package [Internal]',
     long_description=open('README.rst', 'r').read(),
     license='MIT License',
@@ -37,13 +44,15 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
-    packages=[
-        'azure.cognitiveservices.search',
-    ],
-    python_requires='<3',
+    packages=PACKAGES,
     install_requires=[
         'azure-cognitiveservices-nspkg>=3.0.0',
     ]

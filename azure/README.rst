@@ -79,3 +79,6 @@ Compatibility
 =============
 
 For details on the breaking changes, see the PyPI page of each individual package.
+
+
+.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure%2FREADME.png

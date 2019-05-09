@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class CelebrityResults(Model):
-    """List of celebrities recognized in the image.
+    """Result of domain-specific classifications for the domain of celebrities.
 
-    :param celebrities:
+    :param celebrities: List of celebrities recognized in the image.
     :type celebrities:
      list[~azure.cognitiveservices.vision.computervision.models.CelebritiesModel]
     :param request_id: Id of the REST API request.

@@ -27,6 +27,7 @@ class TimeAggregationType(str, Enum):
     maximum = "Maximum"
     total = "Total"
     count = "Count"
+    last = "Last"
 
 
 class ComparisonOperationType(str, Enum):
@@ -173,6 +174,19 @@ class AlertSeverity(str, Enum):
     two = "2"
     three = "3"
     four = "4"
+
+
+class OnboardingStatus(str, Enum):
+
+    onboarded = "onboarded"
+    not_onboarded = "notOnboarded"
+    unknown = "unknown"
+
+
+class DataStatus(str, Enum):
+
+    present = "present"
+    not_present = "notPresent"
 
 
 class ResultType(str, Enum):

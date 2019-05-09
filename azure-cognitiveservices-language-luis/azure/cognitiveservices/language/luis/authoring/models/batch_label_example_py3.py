@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class BatchLabelExample(Model):
-    """Response when adding a batch of labeled examples.
+    """Response when adding a batch of labeled example utterances.
 
     :param value:
     :type value:

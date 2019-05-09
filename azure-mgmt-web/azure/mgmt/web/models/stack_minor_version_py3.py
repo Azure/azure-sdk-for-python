@@ -22,16 +22,21 @@ class StackMinorVersion(Model):
     :param is_default: <code>true</code> if this is the default minor version;
      otherwise, <code>false</code>.
     :type is_default: bool
+    :param is_remote_debugging_enabled: <code>true</code> if this supports
+     Remote Debugging, otherwise <code>false</code>.
+    :type is_remote_debugging_enabled: bool
     """
 
     _attribute_map = {
         'display_version': {'key': 'displayVersion', 'type': 'str'},
         'runtime_version': {'key': 'runtimeVersion', 'type': 'str'},
         'is_default': {'key': 'isDefault', 'type': 'bool'},
+        'is_remote_debugging_enabled': {'key': 'isRemoteDebuggingEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, display_version: str=None, runtime_version: str=None, is_default: bool=None, **kwargs) -> None:
+    def __init__(self, *, display_version: str=None, runtime_version: str=None, is_default: bool=None, is_remote_debugging_enabled: bool=None, **kwargs) -> None:
         super(StackMinorVersion, self).__init__(**kwargs)
         self.display_version = display_version
         self.runtime_version = runtime_version
         self.is_default = is_default
+        self.is_remote_debugging_enabled = is_remote_debugging_enabled

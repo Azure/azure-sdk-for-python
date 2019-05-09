@@ -8,6 +8,7 @@ import pkgutil
 import re
 import sys
 import types
+import glob
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -43,11 +44,24 @@ def parse_input(input_parameter):
         module_name = ".".join([module_name, split_package_name[1]])
     return package_name, module_name
 
-def get_versionned_modules(package_name, module_name, sdk_root=None):
+# given an input of a name, we need to return the appropriate relative diff between the sdk_root and the actual package directory
+def resolve_package_directory(package_name, sdk_root):
+    packages = [os.path.dirname(p) for p in (glob.glob('{}/setup.py'.format(package_name)) + glob.glob('sdk/*/{}/setup.py'.format(package_name)))]
+
+    if len(packages) > 1:
+        print('There should only be a single package matched in either repository structure. The following were found: {}'.format(packages))
+        sys.exit(1)
+
+    return os.path.relpath(packages[0], sdk_root)
+
+
+def get_versioned_modules(package_name, module_name, sdk_root=None):
     if not sdk_root:
         sdk_root = Path(__file__).parents[1]
 
-    azure.__path__.append(str((sdk_root / package_name / "azure").resolve()))
+    path_to_package = resolve_package_directory(package_name, sdk_root)
+    azure.__path__.append(str((sdk_root / path_to_package / "azure").resolve()))
+
     # Doesn't work with namespace package
     # sys.path.append(str((sdk_root / package_name).resolve()))
     module_to_generate = importlib.import_module(module_name)
@@ -84,10 +98,10 @@ def extract_api_version_from_code(function):
     except Exception:
         raise
 
-def build_operation_meta(versionned_modules):
+def build_operation_meta(versioned_modules):
     version_dict = {}
     mod_to_api_version = {}
-    for versionned_label, versionned_mod in versionned_modules:
+    for versionned_label, versionned_mod in versioned_modules:
         extracted_api_versions = set()
         client_doc = versionned_mod.__dict__[versionned_mod.__all__[0]].__doc__
         operations = list(re.finditer(r':ivar (?P<attr>[a-z_]+): \w+ operations\n\s+:vartype (?P=attr): .*.operations.(?P<clsname>\w+)\n', client_doc))
@@ -209,7 +223,9 @@ def build_operation_group(module_name, operation_name, versions):
     return result
 
 def find_client_file(package_name, module_name):
-    module_path = Path(package_name) / Path(module_name.replace(".", os.sep))
+    path_to_package = resolve_package_directory(package_name, Path(__file__).parents[1])
+    module_path = Path(path_to_package) / Path(module_name.replace(".", os.sep))
+
     return next(module_path.glob('*_client.py'))
 
 _CODE_PREFIX = """
@@ -223,8 +239,8 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
     package_name, module_name = parse_input(sys.argv[1])
-    versionned_modules = get_versionned_modules(package_name, module_name)
-    version_dict, mod_to_api_version = build_operation_meta(versionned_modules)
+    versioned_modules = get_versioned_modules(package_name, module_name)
+    version_dict, mod_to_api_version = build_operation_meta(versioned_modules)
     model_string = build_models_string(module_name, mod_to_api_version)
 
     operations_string = []

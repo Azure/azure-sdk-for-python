@@ -17,24 +17,27 @@ class OrchestratorProfile(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param orchestrator_type: Required. Orchestrator type.
+    :param orchestrator_type: Orchestrator type.
     :type orchestrator_type: str
     :param orchestrator_version: Required. Orchestrator version (major, minor,
      patch).
     :type orchestrator_version: str
+    :param is_preview: Whether Kubernetes version is currently in preview.
+    :type is_preview: bool
     """
 
     _validation = {
-        'orchestrator_type': {'required': True},
         'orchestrator_version': {'required': True},
     }
 
     _attribute_map = {
         'orchestrator_type': {'key': 'orchestratorType', 'type': 'str'},
         'orchestrator_version': {'key': 'orchestratorVersion', 'type': 'str'},
+        'is_preview': {'key': 'isPreview', 'type': 'bool'},
     }
 
-    def __init__(self, *, orchestrator_type: str, orchestrator_version: str, **kwargs) -> None:
+    def __init__(self, *, orchestrator_version: str, orchestrator_type: str=None, is_preview: bool=None, **kwargs) -> None:
         super(OrchestratorProfile, self).__init__(**kwargs)
         self.orchestrator_type = orchestrator_type
         self.orchestrator_version = orchestrator_version
+        self.is_preview = is_preview

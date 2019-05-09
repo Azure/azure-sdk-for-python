@@ -79,7 +79,7 @@ class ContentKeyPolicyPlayReadyPlayRight(Model):
         'digital_video_only_content_restriction': {'key': 'digitalVideoOnlyContentRestriction', 'type': 'bool'},
         'image_constraint_for_analog_component_video_restriction': {'key': 'imageConstraintForAnalogComponentVideoRestriction', 'type': 'bool'},
         'image_constraint_for_analog_computer_monitor_restriction': {'key': 'imageConstraintForAnalogComputerMonitorRestriction', 'type': 'bool'},
-        'allow_passing_video_content_to_unknown_output': {'key': 'allowPassingVideoContentToUnknownOutput', 'type': 'ContentKeyPolicyPlayReadyUnknownOutputPassingOption'},
+        'allow_passing_video_content_to_unknown_output': {'key': 'allowPassingVideoContentToUnknownOutput', 'type': 'str'},
         'uncompressed_digital_video_opl': {'key': 'uncompressedDigitalVideoOpl', 'type': 'int'},
         'compressed_digital_video_opl': {'key': 'compressedDigitalVideoOpl', 'type': 'int'},
         'analog_video_opl': {'key': 'analogVideoOpl', 'type': 'int'},

@@ -29,6 +29,16 @@ class InputSchema(str, Enum):
     cloud_event_v01_schema = "CloudEventV01Schema"
 
 
+class DomainTopicProvisioningState(str, Enum):
+
+    creating = "Creating"
+    updating = "Updating"
+    deleting = "Deleting"
+    succeeded = "Succeeded"
+    canceled = "Canceled"
+    failed = "Failed"
+
+
 class EventSubscriptionProvisioningState(str, Enum):
 
     creating = "Creating"

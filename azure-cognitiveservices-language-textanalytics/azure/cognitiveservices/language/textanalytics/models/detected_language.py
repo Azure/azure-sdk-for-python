@@ -31,8 +31,8 @@ class DetectedLanguage(Model):
         'score': {'key': 'score', 'type': 'float'},
     }
 
-    def __init__(self, name=None, iso6391_name=None, score=None):
-        super(DetectedLanguage, self).__init__()
-        self.name = name
-        self.iso6391_name = iso6391_name
-        self.score = score
+    def __init__(self, **kwargs):
+        super(DetectedLanguage, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.iso6391_name = kwargs.get('iso6391_name', None)
+        self.score = kwargs.get('score', None)

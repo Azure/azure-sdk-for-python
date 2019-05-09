@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.cognitiveservices.language.textanalytics import TextAnalyticsAPI
+from azure.cognitiveservices.language.textanalytics import TextAnalyticsClient
 from msrest.authentication import CognitiveServicesCredentials
 
 from azure_devtools.scenario_tests import ReplayableTest, AzureTestError
@@ -45,7 +45,7 @@ class TextAnalyticsTest(ReplayableTest):
         credentials = CognitiveServicesCredentials(
             self.settings.CS_SUBSCRIPTION_KEY
         )
-        text_analytics = TextAnalyticsAPI("westcentralus", credentials=credentials)
+        text_analytics = TextAnalyticsClient(endpoint="https://westcentralus.api.cognitive.microsoft.com", credentials=credentials)
         response = text_analytics.detect_language(
             documents=[{
                 'id': 1,
@@ -53,6 +53,6 @@ class TextAnalyticsTest(ReplayableTest):
             }]
         )
 
-        self.assertEquals(response.documents[0].detected_languages[0].name, "English")
+        self.assertEqual(response.documents[0].detected_languages[0].name, "English")
 
 
