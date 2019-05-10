@@ -22,9 +22,8 @@ class MgmtManagedServicesTest(AzureMgmtTestCase):
         assignmentid = '367257d7-b69a-4b76-9c18-6dd3e9ae33ce'
         api_version = '2018-06-01-preview'
         definitionid = '1cf1704a-f8a8-4082-a8be-457d3f68e812'
-
-        with open('./regdef.json') as data:
-            properties = json.load(data)
+        regdef_string='{"registrationDefinitionName":"Registration Test","description":"dpp","managedByTenantId":"bab3375b-6197-4a15-a44b-16c41faa91d7","authorizations":[{"principalId":"d6f6c88a-5b7a-455e-ba40-ce146d4d3671","roleDefinitionId":"acdd72a7-3385-48ef-bd42-f606fba81ae7"}]}'
+        properties = json.loads((regdef_string))
 
         #create definition
         defresponse = self.client.registration_definitions.create_or_update(
