@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.8.0 (2019-04-08)
+++++++++++++++++++
+
+**Features**
+
+- Model ServerUpdateParameters has a new parameter replication_role
+
 1.7.1 (2019-03-18)
 ++++++++++++++++++
 

@@ -26,8 +26,8 @@ class DatabaseAccountCreateUpdateParameters(Resource):
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: Required. The location of the resource group to which the
-     resource belongs.
+    :param location: The location of the resource group to which the resource
+     belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -41,7 +41,8 @@ class DatabaseAccountCreateUpdateParameters(Resource):
     :param locations: Required. An array that contains the georeplication
      locations enabled for the Cosmos DB account.
     :type locations: list[~azure.mgmt.cosmosdb.models.Location]
-    :ivar database_account_offer_type: Required.  Default value: "Standard" .
+    :ivar database_account_offer_type: Required. The offer type for the
+     database. Default value: "Standard" .
     :vartype database_account_offer_type: str
     :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
      the set of IP addresses or IP address ranges in CIDR form to be included
@@ -71,7 +72,6 @@ class DatabaseAccountCreateUpdateParameters(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'locations': {'required': True},
         'database_account_offer_type': {'required': True, 'constant': True},
     }

@@ -13,9 +13,9 @@ from msrest.serialization import Model
 
 
 class RegexModelUpdateObject(Model):
-    """Model object for updating a regex entity model.
+    """Model object for updating a regular expression entity model.
 
-    :param regex_pattern: The regex entity pattern.
+    :param regex_pattern: The regular expression entity pattern.
     :type regex_pattern: str
     :param name: The model name.
     :type name: str

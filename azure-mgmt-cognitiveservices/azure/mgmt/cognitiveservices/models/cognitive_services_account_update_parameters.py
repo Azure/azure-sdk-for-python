@@ -23,14 +23,19 @@ class CognitiveServicesAccountUpdateParameters(Model):
      resource. Each tag must have a key no greater than 128 characters and
      value no greater than 256 characters.
     :type tags: dict[str, str]
+    :param properties: Additional properties for Account. Only provided fields
+     will be updated.
+    :type properties: object
     """
 
     _attribute_map = {
         'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(CognitiveServicesAccountUpdateParameters, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
         self.tags = kwargs.get('tags', None)
+        self.properties = kwargs.get('properties', None)
