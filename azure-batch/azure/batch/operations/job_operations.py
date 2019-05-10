@@ -469,7 +469,7 @@ class JobOperations(object):
             self, job_id, job_update_parameter, job_update_options=None, custom_headers=None, raw=False, **operation_config):
         """Updates the properties of the specified job.
 
-        This fully replaces all the updateable properties of the job. For
+        This fully replaces all the updatable properties of the job. For
         example, if the job has constraints associated with it and if
         constraints is not specified with this request, then the Batch service
         will remove the existing constraints.

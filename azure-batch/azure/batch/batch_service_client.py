@@ -23,7 +23,6 @@ from .operations.job_schedule_operations import JobScheduleOperations
 from .operations.task_operations import TaskOperations
 from .operations.compute_node_operations import ComputeNodeOperations
 from . import models
-from .custom.patch import patch_client
 
 
 class BatchServiceClientConfiguration(AzureConfiguration):
@@ -117,6 +116,3 @@ class BatchServiceClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.compute_node = ComputeNodeOperations(
             self._client, self.config, self._serialize, self._deserialize)
-
-
-patch_client()
