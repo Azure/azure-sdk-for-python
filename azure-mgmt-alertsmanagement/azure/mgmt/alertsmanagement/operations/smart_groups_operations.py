@@ -22,7 +22,7 @@ class SmartGroupsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version. Constant value: "2018-05-05".
+    :ivar api_version: client API version. Possible values include: '2019-05-05-preview', '2018-05-05'. Constant value: "2019-05-05-preview".
     """
 
     models = models
@@ -32,7 +32,7 @@ class SmartGroupsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-05-05"
+        self.api_version = "2019-05-05-preview"
 
         self.config = config
 
@@ -42,54 +42,44 @@ class SmartGroupsOperations(object):
 
         List all the smartGroups within the specified subscription. .
 
-        :param target_resource: Filter by target resource( which is full ARM
-         ID) Default value is select all.
+        :param target_resource: filter by target resource
         :type target_resource: str
-        :param target_resource_group: Filter by target resource group name.
-         Default value is select all.
+        :param target_resource_group: filter by target resource group name
         :type target_resource_group: str
-        :param target_resource_type: Filter by target resource type. Default
-         value is select all.
+        :param target_resource_type: filter by target resource type
         :type target_resource_type: str
-        :param monitor_service: Filter by monitor service which is the source
-         of the alert instance. Default value is select all. Possible values
-         include: 'Application Insights', 'ActivityLog Administrative',
-         'ActivityLog Security', 'ActivityLog Recommendation', 'ActivityLog
-         Policy', 'ActivityLog Autoscale', 'Log Analytics', 'Nagios',
-         'Platform', 'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights',
-         'Zabbix'
+        :param monitor_service: filter by monitor service which is the source
+         of the alert object. Possible values include: 'Platform', 'Application
+         Insights', 'Log Analytics', 'Infrastructure Insights', 'ActivityLog
+         Administrative', 'ActivityLog Security', 'ActivityLog Recommendation',
+         'ActivityLog Policy', 'ActivityLog Autoscale', 'ServiceHealth',
+         'SmartDetector', 'Zabbix', 'SCOM', 'Nagios'
         :type monitor_service: str or
          ~azure.mgmt.alertsmanagement.models.MonitorService
-        :param monitor_condition: Filter by monitor condition which is the
-         state of the  monitor(alertRule) at monitor service. Default value is
-         to select all. Possible values include: 'Fired', 'Resolved'
+        :param monitor_condition: filter by monitor condition which is the
+         state of the alert at monitor service. Possible values include:
+         'Fired', 'Resolved'
         :type monitor_condition: str or
          ~azure.mgmt.alertsmanagement.models.MonitorCondition
-        :param severity: Filter by severity.  Defaut value is select all.
-         Possible values include: 'Sev0', 'Sev1', 'Sev2', 'Sev3', 'Sev4'
+        :param severity: filter by severity. Possible values include: 'Sev0',
+         'Sev1', 'Sev2', 'Sev3', 'Sev4'
         :type severity: str or ~azure.mgmt.alertsmanagement.models.Severity
-        :param smart_group_state: Filter by state of the smart group. Default
-         value is to select all. Possible values include: 'New',
-         'Acknowledged', 'Closed'
+        :param smart_group_state: filter by state. Possible values include:
+         'New', 'Acknowledged', 'Closed'
         :type smart_group_state: str or
          ~azure.mgmt.alertsmanagement.models.AlertState
-        :param time_range: Filter by time range by below listed values.
-         Default value is 1 day. Possible values include: '1h', '1d', '7d',
-         '30d'
+        :param time_range: filter by time range, default value is 1 day.
+         Possible values include: '1h', '1d', '7d', '30d'
         :type time_range: str or ~azure.mgmt.alertsmanagement.models.TimeRange
-        :param page_count: Determines number of alerts returned per page in
-         response. Permissible value is between 1 to 250. When the
-         "includeContent"  filter is selected, maximum value allowed is 25.
-         Default value is 25.
+        :param page_count: number of items per page, default value is '25'.
         :type page_count: int
-        :param sort_by: Sort the query results by input field  Default value
-         is sort by 'lastModifiedDateTime'. Possible values include:
-         'alertsCount', 'state', 'severity', 'startDateTime',
-         'lastModifiedDateTime'
+        :param sort_by: sort the query results by input field, default value
+         is 'lastModifiedDateTime'. Possible values include: 'alertsCount',
+         'state', 'severity', 'startDateTime', 'lastModifiedDateTime'
         :type sort_by: str or
          ~azure.mgmt.alertsmanagement.models.SmartGroupsSortByFields
-        :param sort_order: Sort the query results order in either ascending or
-         descending.  Default value is 'desc' for time fields and 'asc' for
+        :param sort_order: sort the query results order in either ascending or
+         descending, default value is 'desc' for time fields and 'asc' for
          others. Possible values include: 'asc', 'desc'
         :type sort_order: str
         :param dict custom_headers: headers that will be added to the request
@@ -171,7 +161,7 @@ class SmartGroupsOperations(object):
 
         Get details of smart group.
 
-        :param smart_group_id: Smart group unique id.
+        :param smart_group_id: Smart Group Id
         :type smart_group_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -235,10 +225,10 @@ class SmartGroupsOperations(object):
         """Change the state from unresolved to resolved and all the alerts within
         the smart group will also be resolved.
 
-        :param smart_group_id: Smart group unique id.
+        :param smart_group_id: Smart Group Id
         :type smart_group_id: str
-        :param new_state: New state of the alert. Possible values include:
-         'New', 'Acknowledged', 'Closed'
+        :param new_state: filter by state. Possible values include: 'New',
+         'Acknowledged', 'Closed'
         :type new_state: str or ~azure.mgmt.alertsmanagement.models.AlertState
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -302,7 +292,7 @@ class SmartGroupsOperations(object):
             self, smart_group_id, custom_headers=None, raw=False, **operation_config):
         """Get the history of the changes of smart group.
 
-        :param smart_group_id: Smart group unique id.
+        :param smart_group_id: Smart Group Id
         :type smart_group_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

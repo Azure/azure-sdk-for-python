@@ -24,6 +24,6 @@ class WebTestGeolocation(Model):
         'location': {'key': 'Id', 'type': 'str'},
     }
 
-    def __init__(self, location=None):
-        super(WebTestGeolocation, self).__init__()
-        self.location = location
+    def __init__(self, **kwargs):
+        super(WebTestGeolocation, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)

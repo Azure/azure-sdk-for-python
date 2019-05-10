@@ -42,11 +42,11 @@ class ApplicationInsightsComponentProactiveDetectionConfiguration(Model):
         'rule_definitions': {'key': 'RuleDefinitions', 'type': 'ApplicationInsightsComponentProactiveDetectionConfigurationRuleDefinitions'},
     }
 
-    def __init__(self, name=None, enabled=None, send_emails_to_subscription_owners=None, custom_emails=None, last_updated_time=None, rule_definitions=None):
-        super(ApplicationInsightsComponentProactiveDetectionConfiguration, self).__init__()
-        self.name = name
-        self.enabled = enabled
-        self.send_emails_to_subscription_owners = send_emails_to_subscription_owners
-        self.custom_emails = custom_emails
-        self.last_updated_time = last_updated_time
-        self.rule_definitions = rule_definitions
+    def __init__(self, **kwargs):
+        super(ApplicationInsightsComponentProactiveDetectionConfiguration, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.send_emails_to_subscription_owners = kwargs.get('send_emails_to_subscription_owners', None)
+        self.custom_emails = kwargs.get('custom_emails', None)
+        self.last_updated_time = kwargs.get('last_updated_time', None)
+        self.rule_definitions = kwargs.get('rule_definitions', None)
