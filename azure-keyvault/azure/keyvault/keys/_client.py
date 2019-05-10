@@ -53,7 +53,7 @@ class KeyClient:
         return config
 
     def __init__(self, vault_url, credentials, config=None, transport=None, **kwargs):
-        # type: (str, Any, Configuration, HttpTransport) -> None
+        # type: (str, Any, Configuration, HttpTransport, , Mapping[str, Any]) -> None
 
         if not credentials:
             raise ValueError('credentials')
@@ -200,7 +200,7 @@ class KeyClient:
 
         return DeletedKey._from_deleted_key_bundle(bundle)
 
-    def get_key(self, name, version, **kwargs) -> Key:
+    def get_key(self, name, version, **kwargs):
         # type: (str, str, Mapping[str, Any]) -> Key
 
         """Gets the public part of a stored key.
@@ -243,7 +243,7 @@ class KeyClient:
 
         return Key._from_key_bundle(bundle)
 
-    def get_deleted_key(self, name, **kwargs) -> DeletedKey:
+    def get_deleted_key(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> DeletedKey
 
         """Gets the public part of a deleted key.
@@ -373,7 +373,8 @@ class KeyClient:
         pages = KeyItemPaged(paging, DESERIALIZE.dependencies)
         return (KeyAttributes._from_key_item(item) for item in pages)
 
-    def purge_deleted_key(self, name, **kwargs) -> None:
+    def purge_deleted_key(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> None
         """Permanently deletes the specified key.
 
         The Purge Deleted Key operation is applicable for soft-delete enabled
@@ -512,7 +513,8 @@ class KeyClient:
 
         return Key._from_key_bundle(bundle)
 
-    def backup_key(self, name, **kwargs)-> bytes:
+    def backup_key(self, name, **kwargs):
+        # type: (str, Mapping[str, Any]) -> bytes
         """Requests that a backup of the specified key be downloaded to the
         client.
 
@@ -557,6 +559,8 @@ class KeyClient:
         return result.value
 
     def restore_key(self, backup, **kwargs):
+        # type: (bytes, Mapping[str, Any]) -> Key
+
         """Restores a backed up key to a vault.
 
         Imports a previously backed up key into Azure Key Vault, restoring the
