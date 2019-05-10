@@ -4,14 +4,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-<<<<<<< HEAD
 from azure.core.pipeline.policies import HTTPPolicy
 
-=======
-
-from msrest.serialization import Model
-from azure.core.pipeline.policies import HTTPPolicy
->>>>>>> changes for keyclient impl
 try:
     import urllib.parse as parse
 except ImportError:

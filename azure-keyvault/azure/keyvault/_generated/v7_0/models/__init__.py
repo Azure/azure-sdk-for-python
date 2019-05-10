@@ -29,7 +29,6 @@ from .key_bundle import KeyBundle
 from .key_create_parameters import KeyCreateParameters
 from .key_update_parameters import KeyUpdateParameters
 from .key_restore_parameters import KeyRestoreParameters
-from .key_vault_error import KeyVaultError, KeyVaultErrorException
 from .key_item_paged import KeyItemPaged
 from .key_item import KeyItem
 from .deleted_key_item import DeletedKeyItem
