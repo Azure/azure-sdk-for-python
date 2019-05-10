@@ -3,6 +3,8 @@ omitted_paths:
   - scripts/*
   - azure-mgmt-netapp/tests/*
   - "azure-mgmt*/*"
+  - "sdk/azure-mgmt*/*"
+  - "sdk/*/azure-mgmt*/*"
 language: python
 root_check_enabled: True
 required_readme_sections:
@@ -54,6 +56,14 @@ known_content_issues:
   - ['azure/README.rst', 'nspkg and common']
   - ['azure-common/README.rst', 'nspkg and common']
   - ['azure-nspkg/README.rst', 'nspkg and common']
+  - ['azure-cognitiveservices-knowledge-nspkg/README.rst', 'nspkg and common']
+  - ['azure-cognitiveservices-language-nspkg/README.rst', 'nspkg and common']
+  - ['azure-cognitiveservices-nspkg/README.rst', 'nspkg and common']
+  - ['azure-cognitiveservices-search-nspkg/README.rst', 'nspkg and common']
+  - ['azure-cognitiveservices-vision-nspkg/README.rst', 'nspkg and common']
+  - ['azure-mgmt-datalake-nspkg/README.rst', 'nspkg and common']
+  - ['azure-mgmt-nspkg/README.rst', 'nspkg and common']
+
 package_indexing_exclusion_list:
   - 'azure-sdk-tools'
   - 'azure-template'
