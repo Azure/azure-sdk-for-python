@@ -1,0 +1,5 @@
+recursive-include tests *.py *.yaml
+include *.rst
+include azure/__init__.py
+include azure/applicationinsights/__init__.py
+
