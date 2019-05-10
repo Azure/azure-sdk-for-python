@@ -1,0 +1,7 @@
+[packaging]
+package_name = "azure-mgmt-managedservices"
+package_pprint_name = "Managed Services Management"
+package_doc_id = "managed-services"
+is_stable = true
+is_arm = true
+need_msrestazure = true
