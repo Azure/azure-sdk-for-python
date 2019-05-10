@@ -53,7 +53,6 @@ from .compute_management_client_enums import (
     DiskState,
     SnapshotStorageAccountTypes,
     AccessLevel,
-    StorageAccountTypes,
 )
 
 __all__ = [
@@ -76,7 +75,6 @@ __all__ = [
     'DiskPaged',
     'SnapshotPaged',
     'DiskStorageAccountTypes',
-    'StorageAccountTypes',
     'OperatingSystemTypes',
     'HyperVGeneration',
     'DiskCreateOption',

@@ -4,7 +4,7 @@
 #  - rg must exist
 #  - vnet must exist
 
-TEST_RG='sdk-py-tests-rg'
+TEST_RG='sdk-net-tests-rg-eus2'
 TEST_ACC_1='sdk-py-tests-acc-1'
 TEST_ACC_2='sdk-py-tests-acc-2'
 TEST_POOL_1='sdk-py-tests-pool-1'
@@ -17,6 +17,6 @@ DEFAULT_SIZE=4398046511104
 GIGABYTE=1024 * 1024 * 1024
 SUBSID='subsid'
 SERVICE_LEVEL='Premium'
-LOCATION='westus2'
-VNET='sdk-py-tests-rg-vnet'
+LOCATION='eastus2'
+VNET='sdk-net-tests-rg-eus2-vnet'
 SERVICE_LEVEL='Premium'

@@ -11,6 +11,7 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
 
@@ -24,7 +25,7 @@ class SnapshotsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2017-08-15".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-05-01".
     """
 
     models = models
@@ -34,13 +35,15 @@ class SnapshotsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-08-15"
+        self.api_version = "2019-05-01"
 
         self.config = config
 
     def list(
             self, resource_group_name, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
-        """List snapshots.
+        """Describe all snapshots.
+
+        List all snapshots associated with the volume.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -58,8 +61,7 @@ class SnapshotsOperations(object):
         :return: An iterator like instance of Snapshot
         :rtype:
          ~azure.mgmt.netapp.models.SnapshotPaged[~azure.mgmt.netapp.models.Snapshot]
-        :raises:
-         :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -98,7 +100,9 @@ class SnapshotsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorException(self._deserialize, response)
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
             return response
 
@@ -115,7 +119,9 @@ class SnapshotsOperations(object):
 
     def get(
             self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, **operation_config):
-        """Get a snapshot.
+        """Describe a snapshot.
+
+        Get details of the specified snapshot.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -135,8 +141,7 @@ class SnapshotsOperations(object):
         :return: Snapshot or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.netapp.models.Snapshot or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -169,7 +174,9 @@ class SnapshotsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
@@ -221,7 +228,9 @@ class SnapshotsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201, 202]:
-            raise models.ErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
@@ -237,6 +246,8 @@ class SnapshotsOperations(object):
     def create(
             self, body, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create a snapshot.
+
+        Create the specified snapshot within the given volume.
 
         :param body: Snapshot object supplied in the body of the operation.
         :type body: ~azure.mgmt.netapp.models.Snapshot
@@ -261,8 +272,7 @@ class SnapshotsOperations(object):
          ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.netapp.models.Snapshot]
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.netapp.models.Snapshot]]
-        :raises:
-         :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._create_initial(
             body=body,
@@ -296,7 +306,9 @@ class SnapshotsOperations(object):
 
     def update(
             self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Patch a snapshot.
+        """Update a snapshot.
+
+        Patch a snapshot.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -318,8 +330,7 @@ class SnapshotsOperations(object):
         :return: Snapshot or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.netapp.models.Snapshot or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         body = models.SnapshotPatch(tags=tags)
 
@@ -358,7 +369,9 @@ class SnapshotsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
 
@@ -405,7 +418,9 @@ class SnapshotsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
-            raise models.ErrorException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -413,7 +428,9 @@ class SnapshotsOperations(object):
 
     def delete(
             self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Delete snapshot.
+        """Delete a snapshot.
+
+        Delete snapshot.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -434,8 +451,7 @@ class SnapshotsOperations(object):
          ClientRawResponse<None> if raw==True
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises:
-         :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,

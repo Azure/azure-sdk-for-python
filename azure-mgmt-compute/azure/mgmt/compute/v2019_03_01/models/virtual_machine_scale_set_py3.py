@@ -68,6 +68,17 @@ class VirtualMachineScaleSet(Resource):
     :param platform_fault_domain_count: Fault Domain count for each placement
      group.
     :type platform_fault_domain_count: int
+    :param proximity_placement_group: Specifies information about the
+     proximity placement group that the virtual machine scale set should be
+     assigned to. <br><br>Minimum api-version: 2018-04-01.
+    :type proximity_placement_group:
+     ~azure.mgmt.compute.v2019_03_01.models.SubResource
+    :param additional_capabilities: Specifies additional capabilities enabled
+     or disabled on the Virtual Machines in the Virtual Machine Scale Set. For
+     instance: whether the Virtual Machines have the capability to support
+     attaching managed data disks with UltraSSD_LRS storage account type.
+    :type additional_capabilities:
+     ~azure.mgmt.compute.v2019_03_01.models.AdditionalCapabilities
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -102,11 +113,13 @@ class VirtualMachineScaleSet(Resource):
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'zone_balance': {'key': 'properties.zoneBalance', 'type': 'bool'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
+        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
+        'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, location: str, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, do_not_run_extensions_on_overprovisioned_vms: bool=None, single_placement_group: bool=None, zone_balance: bool=None, platform_fault_domain_count: int=None, identity=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, do_not_run_extensions_on_overprovisioned_vms: bool=None, single_placement_group: bool=None, zone_balance: bool=None, platform_fault_domain_count: int=None, proximity_placement_group=None, additional_capabilities=None, identity=None, zones=None, **kwargs) -> None:
         super(VirtualMachineScaleSet, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.plan = plan
@@ -119,5 +132,7 @@ class VirtualMachineScaleSet(Resource):
         self.single_placement_group = single_placement_group
         self.zone_balance = zone_balance
         self.platform_fault_domain_count = platform_fault_domain_count
+        self.proximity_placement_group = proximity_placement_group
+        self.additional_capabilities = additional_capabilities
         self.identity = identity
         self.zones = zones

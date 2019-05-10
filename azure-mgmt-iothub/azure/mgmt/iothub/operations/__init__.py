@@ -13,10 +13,12 @@ from .operations import Operations
 from .iot_hub_resource_operations import IotHubResourceOperations
 from .resource_provider_common_operations import ResourceProviderCommonOperations
 from .certificates_operations import CertificatesOperations
+from .iot_hub_operations import IotHubOperations
 
 __all__ = [
     'Operations',
     'IotHubResourceOperations',
     'ResourceProviderCommonOperations',
     'CertificatesOperations',
+    'IotHubOperations',
 ]

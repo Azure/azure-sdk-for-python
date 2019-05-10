@@ -55,6 +55,9 @@ class DataDisk(Model):
     :param managed_disk: The managed disk parameters.
     :type managed_disk:
      ~azure.mgmt.compute.v2019_03_01.models.ManagedDiskParameters
+    :param to_be_detached: Specifies whether the datadisk is in process of
+     detachment from the VirtualMachine/VirtualMachineScaleset
+    :type to_be_detached: bool
     """
 
     _validation = {
@@ -72,9 +75,10 @@ class DataDisk(Model):
         'create_option': {'key': 'createOption', 'type': 'str'},
         'disk_size_gb': {'key': 'diskSizeGB', 'type': 'int'},
         'managed_disk': {'key': 'managedDisk', 'type': 'ManagedDiskParameters'},
+        'to_be_detached': {'key': 'toBeDetached', 'type': 'bool'},
     }
 
-    def __init__(self, *, lun: int, create_option, name: str=None, vhd=None, image=None, caching=None, write_accelerator_enabled: bool=None, disk_size_gb: int=None, managed_disk=None, **kwargs) -> None:
+    def __init__(self, *, lun: int, create_option, name: str=None, vhd=None, image=None, caching=None, write_accelerator_enabled: bool=None, disk_size_gb: int=None, managed_disk=None, to_be_detached: bool=None, **kwargs) -> None:
         super(DataDisk, self).__init__(**kwargs)
         self.lun = lun
         self.name = name
@@ -85,3 +89,4 @@ class DataDisk(Model):
         self.create_option = create_option
         self.disk_size_gb = disk_size_gb
         self.managed_disk = managed_disk
+        self.to_be_detached = to_be_detached

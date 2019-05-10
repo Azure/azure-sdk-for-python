@@ -17,7 +17,8 @@ class LabeledUtterance(Model):
 
     :param id: ID of Labeled Utterance.
     :type id: int
-    :param text: The utterance. E.g.: what's the weather like in seattle?
+    :param text: The utterance. For example, "What's the weather like in
+     seattle?"
     :type text: str
     :param tokenized_text: The utterance tokenized.
     :type tokenized_text: list[str]

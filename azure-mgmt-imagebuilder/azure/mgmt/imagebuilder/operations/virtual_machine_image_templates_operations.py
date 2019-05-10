@@ -177,7 +177,7 @@ class VirtualMachineImageTemplatesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'imageTemplateName': self._serialize.url("image_template_name", image_template_name, 'str', pattern=r'^[A-Za-z0-9-_]{1,64}$')
+            'imageTemplateName': self._serialize.url("image_template_name", image_template_name, 'str', pattern=r'^[A-Za-z0-9-_.]{1,64}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -281,7 +281,7 @@ class VirtualMachineImageTemplatesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'imageTemplateName': self._serialize.url("image_template_name", image_template_name, 'str', pattern=r'^[A-Za-z0-9-_]{1,64}$')
+            'imageTemplateName': self._serialize.url("image_template_name", image_template_name, 'str', pattern=r'^[A-Za-z0-9-_.]{1,64}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -400,7 +400,7 @@ class VirtualMachineImageTemplatesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'imageTemplateName': self._serialize.url("image_template_name", image_template_name, 'str', pattern=r'^[A-Za-z0-9-_]{1,64}$')
+            'imageTemplateName': self._serialize.url("image_template_name", image_template_name, 'str', pattern=r'^[A-Za-z0-9-_.]{1,64}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -445,7 +445,7 @@ class VirtualMachineImageTemplatesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'imageTemplateName': self._serialize.url("image_template_name", image_template_name, 'str', pattern=r'^[A-Za-z0-9-_]{1,64}$')
+            'imageTemplateName': self._serialize.url("image_template_name", image_template_name, 'str', pattern=r'^[A-Za-z0-9-_.]{1,64}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -523,7 +523,7 @@ class VirtualMachineImageTemplatesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'imageTemplateName': self._serialize.url("image_template_name", image_template_name, 'str', pattern=r'^[A-Za-z0-9-_]{1,64}$')
+            'imageTemplateName': self._serialize.url("image_template_name", image_template_name, 'str', pattern=r'^[A-Za-z0-9-_.]{1,64}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -620,7 +620,7 @@ class VirtualMachineImageTemplatesOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'imageTemplateName': self._serialize.url("image_template_name", image_template_name, 'str', pattern=r'^[A-Za-z0-9-_]{1,64}$')
+                    'imageTemplateName': self._serialize.url("image_template_name", image_template_name, 'str', pattern=r'^[A-Za-z0-9-_.]{1,64}$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -688,8 +688,8 @@ class VirtualMachineImageTemplatesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'imageTemplateName': self._serialize.url("image_template_name", image_template_name, 'str', pattern=r'^[A-Za-z0-9-_]{1,64}$'),
-            'runOutputName': self._serialize.url("run_output_name", run_output_name, 'str', pattern=r'^[A-Za-z0-9-_]{1,64}$')
+            'imageTemplateName': self._serialize.url("image_template_name", image_template_name, 'str', pattern=r'^[A-Za-z0-9-_.]{1,64}$'),
+            'runOutputName': self._serialize.url("run_output_name", run_output_name, 'str', pattern=r'^[A-Za-z0-9-_.]{1,64}$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

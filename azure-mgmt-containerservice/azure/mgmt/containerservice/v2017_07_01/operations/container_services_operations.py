@@ -459,8 +459,9 @@ class ContainerServicesOperations(object):
         """Gets a list of supported orchestrators in the specified subscription.
 
         Gets a list of supported orchestrators in the specified subscription.
-        The operation returns properties of each orchestrator including version
-        and available upgrades.
+        The operation returns properties of each orchestrator including
+        version, available upgrades and whether that version or upgrades are in
+        preview.
 
         :param location: The name of a supported Azure region.
         :type location: str
@@ -479,7 +480,7 @@ class ContainerServicesOperations(object):
          or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        api_version = "2017-09-30"
+        api_version = "2019-04-01"
 
         # Construct URL
         url = self.list_orchestrators.metadata['url']

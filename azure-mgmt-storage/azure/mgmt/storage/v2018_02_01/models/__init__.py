@@ -55,6 +55,8 @@ try:
     from .legal_hold_py3 import LegalHold
     from .list_container_item_py3 import ListContainerItem
     from .list_container_items_py3 import ListContainerItems
+    from .lease_container_request_py3 import LeaseContainerRequest
+    from .lease_container_response_py3 import LeaseContainerResponse
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .dimension import Dimension
@@ -101,6 +103,8 @@ except (SyntaxError, ImportError):
     from .legal_hold import LegalHold
     from .list_container_item import ListContainerItem
     from .list_container_items import ListContainerItems
+    from .lease_container_request import LeaseContainerRequest
+    from .lease_container_response import LeaseContainerResponse
 from .operation_paged import OperationPaged
 from .sku_paged import SkuPaged
 from .storage_account_paged import StorageAccountPaged
@@ -180,6 +184,8 @@ __all__ = [
     'LegalHold',
     'ListContainerItem',
     'ListContainerItems',
+    'LeaseContainerRequest',
+    'LeaseContainerResponse',
     'OperationPaged',
     'SkuPaged',
     'StorageAccountPaged',

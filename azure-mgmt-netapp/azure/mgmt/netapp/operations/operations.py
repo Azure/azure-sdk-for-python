@@ -11,6 +11,7 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -22,7 +23,7 @@ class Operations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2017-08-15".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-05-01".
     """
 
     models = models
@@ -32,13 +33,15 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-08-15"
+        self.api_version = "2019-05-01"
 
         self.config = config
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available Microsoft.NetApp Rest API operations.
+        """Describes the Resource Provider.
+
+        Lists all of the available Microsoft.NetApp Rest API operations.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -48,8 +51,7 @@ class Operations(object):
         :return: An iterator like instance of Operation
         :rtype:
          ~azure.mgmt.netapp.models.OperationPaged[~azure.mgmt.netapp.models.Operation]
-        :raises:
-         :class:`ErrorException<azure.mgmt.netapp.models.ErrorException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -80,7 +82,9 @@ class Operations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorException(self._deserialize, response)
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
             return response
 
