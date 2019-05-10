@@ -62,7 +62,7 @@ known_content_issues:
   - ['azure-cognitiveservices-search-nspkg/README.rst', 'nspkg and common']
   - ['azure-cognitiveservices-vision-nspkg/README.rst', 'nspkg and common']
   - ['azure-mgmt-datalake-nspkg/README.rst', 'nspkg and common']
-  - ['azure-mgmt-nspkg/README.rst',, 'nspkg and common']
+  - ['azure-mgmt-nspkg/README.rst', 'nspkg and common']
 
 package_indexing_exclusion_list:
   - 'azure-sdk-tools'
