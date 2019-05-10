@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class CheckAvailabilityResult(Resource):
-    """Description of a CheckAvailibility resource.
+    """Description of a CheckAvailability resource.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

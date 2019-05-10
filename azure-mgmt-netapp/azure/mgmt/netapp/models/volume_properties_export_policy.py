@@ -13,9 +13,11 @@ from msrest.serialization import Model
 
 
 class VolumePropertiesExportPolicy(Model):
-    """Export policy rule.
+    """exportPolicy.
 
-    :param rules:
+    Set of export policy rules.
+
+    :param rules: Export policy rule. Export policy rule
     :type rules: list[~azure.mgmt.netapp.models.ExportPolicyRule]
     """
 

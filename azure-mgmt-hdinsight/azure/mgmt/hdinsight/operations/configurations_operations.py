@@ -38,6 +38,67 @@ class ConfigurationsOperations(object):
 
         self.config = config
 
+    def list(
+            self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
+        """Gets all configuration information for an HDI cluster.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster.
+        :type cluster_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ClusterConfigurations or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.hdinsight.models.ClusterConfigurations or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.hdinsight.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.list.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ClusterConfigurations', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HDInsight/clusters/{clusterName}/configurations'}
+
 
     def _update_initial(
             self, resource_group_name, cluster_name, configuration_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -81,7 +142,9 @@ class ConfigurationsOperations(object):
 
     def update(
             self, resource_group_name, cluster_name, configuration_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Configures the configuration on the specified cluster.
+        """Configures the HTTP settings on the specified cluster. This API is
+        deprecated, please use UpdateGatewaySettings in cluster endpoint
+        instead.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -129,7 +192,9 @@ class ConfigurationsOperations(object):
 
     def get(
             self, resource_group_name, cluster_name, configuration_name, custom_headers=None, raw=False, **operation_config):
-        """The configuration object for the specified cluster.
+        """The configuration object for the specified cluster. This API is not
+        recommended and might be removed in the future. Please consider using
+        List configurations API instead.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

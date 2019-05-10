@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ClosedListEntityExtractor(Model):
-    """Closed List Entity Extractor.
+    """List Entity Extractor.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -25,15 +25,15 @@ class ClosedListEntityExtractor(Model):
     :type type_id: int
     :param readable_type: Required. Possible values include: 'Entity
      Extractor', 'Hierarchical Entity Extractor', 'Hierarchical Child Entity
-     Extractor', 'Composite Entity Extractor', 'Closed List Entity Extractor',
+     Extractor', 'Composite Entity Extractor', 'List Entity Extractor',
      'Prebuilt Entity Extractor', 'Intent Classifier', 'Pattern.Any Entity
-     Extractor', 'Regex Entity Extractor'
+     Extractor', 'Closed List Entity Extractor', 'Regex Entity Extractor'
     :type readable_type: str or
      ~azure.cognitiveservices.language.luis.authoring.models.enum
     :param roles:
     :type roles:
      list[~azure.cognitiveservices.language.luis.authoring.models.EntityRole]
-    :param sub_lists: List of sub-lists.
+    :param sub_lists: List of sublists.
     :type sub_lists:
      list[~azure.cognitiveservices.language.luis.authoring.models.SubClosedListResponse]
     """

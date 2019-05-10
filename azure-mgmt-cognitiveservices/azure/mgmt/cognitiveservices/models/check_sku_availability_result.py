@@ -15,18 +15,12 @@ from msrest.serialization import Model
 class CheckSkuAvailabilityResult(Model):
     """Check SKU availability result.
 
-    :param kind: The Kind of the resource. Possible values include:
-     'Bing.Autosuggest.v7', 'Bing.CustomSearch', 'Bing.Search.v7',
-     'Bing.Speech', 'Bing.SpellCheck.v7', 'ComputerVision', 'ContentModerator',
-     'CustomSpeech', 'CustomVision.Prediction', 'CustomVision.Training',
-     'Emotion', 'Face', 'LUIS', 'QnAMaker', 'SpeakerRecognition',
-     'SpeechTranslation', 'TextAnalytics', 'TextTranslation', 'WebLM'
-    :type kind: str or ~azure.mgmt.cognitiveservices.models.Kind
+    :param kind: The Kind of the resource.
+    :type kind: str
     :param type: The Type of the resource.
     :type type: str
-    :param sku_name: The SKU of Cognitive Services account. Possible values
-     include: 'F0', 'P0', 'P1', 'P2', 'S0', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6'
-    :type sku_name: str or ~azure.mgmt.cognitiveservices.models.SkuName
+    :param sku_name: The SKU of Cognitive Services account.
+    :type sku_name: str
     :param sku_available: Indicates the given SKU is available or not.
     :type sku_available: bool
     :param reason: Reason why the SKU is not available.

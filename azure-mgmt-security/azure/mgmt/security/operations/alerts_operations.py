@@ -23,7 +23,7 @@ class AlertsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version for the operation. Constant value: "2015-06-01-preview".
+    :ivar api_version: API version for the operation. Constant value: "2019-01-01".
     """
 
     models = models
@@ -33,7 +33,7 @@ class AlertsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2015-06-01-preview"
+        self.api_version = "2019-01-01"
 
         self.config = config
 
@@ -115,7 +115,7 @@ class AlertsOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, filter=None, select=None, expand=None, custom_headers=None, raw=False, **operation_config):
-        """List all the alerts alerts that are associated with the resource group.
+        """List all the alerts that are associated with the resource group.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
