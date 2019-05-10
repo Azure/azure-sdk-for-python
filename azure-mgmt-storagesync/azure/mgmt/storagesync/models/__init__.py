@@ -17,6 +17,7 @@ try:
     from .storage_sync_service_py3 import StorageSyncService
     from .sync_group_py3 import SyncGroup
     from .cloud_endpoint_py3 import CloudEndpoint
+    from .trigger_change_detection_parameters_py3 import TriggerChangeDetectionParameters
     from .recall_action_parameters_py3 import RecallActionParameters
     from .storage_sync_service_create_parameters_py3 import StorageSyncServiceCreateParameters
     from .sync_group_create_parameters_py3 import SyncGroupCreateParameters
@@ -56,6 +57,7 @@ except (SyntaxError, ImportError):
     from .storage_sync_service import StorageSyncService
     from .sync_group import SyncGroup
     from .cloud_endpoint import CloudEndpoint
+    from .trigger_change_detection_parameters import TriggerChangeDetectionParameters
     from .recall_action_parameters import RecallActionParameters
     from .storage_sync_service_create_parameters import StorageSyncServiceCreateParameters
     from .sync_group_create_parameters import SyncGroupCreateParameters
@@ -96,6 +98,7 @@ from .registered_server_paged import RegisteredServerPaged
 from .workflow_paged import WorkflowPaged
 from .storage_sync_management_client_enums import (
     Reason,
+    ChangeDetectionMode,
     NameAvailabilityReason,
 )
 
@@ -107,6 +110,7 @@ __all__ = [
     'StorageSyncService',
     'SyncGroup',
     'CloudEndpoint',
+    'TriggerChangeDetectionParameters',
     'RecallActionParameters',
     'StorageSyncServiceCreateParameters',
     'SyncGroupCreateParameters',
@@ -146,5 +150,6 @@ __all__ = [
     'RegisteredServerPaged',
     'WorkflowPaged',
     'Reason',
+    'ChangeDetectionMode',
     'NameAvailabilityReason',
 ]

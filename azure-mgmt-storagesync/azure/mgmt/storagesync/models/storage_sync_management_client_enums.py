@@ -21,6 +21,12 @@ class Reason(str, Enum):
     deleted = "Deleted"
 
 
+class ChangeDetectionMode(str, Enum):
+
+    default = "Default"
+    recursive = "Recursive"
+
+
 class NameAvailabilityReason(str, Enum):
 
     invalid = "Invalid"
