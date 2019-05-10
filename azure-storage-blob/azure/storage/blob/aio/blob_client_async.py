@@ -4,14 +4,29 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import (
+    Union, Optional,
+    TYPE_CHECKING
+)
+
 from ..common import BlobType
 
+if TYPE_CHECKING:
+    from azure.core import Configuration
+    from ..authentication import SharedKeyCredentials
+    from ..models import ContainerProperties, BlobProperties # pylint: disable=unused-import
 
-class BlobClient(object):  # pylint: disable=too-many-public-methods
+
+class BlobClient:  # pylint: disable=too-many-public-methods
 
     def __init__(
-            self, url, container=None, blob=None, snapshot=None, blob_type=BlobType.BlockBlob,
-            credentials=None, configuration=None):
+            self, url: str,
+            container: Optional[Union[str, ContainerProperties]] = None,
+            blob: Optional[Union[str, BlobProperties]] = None,
+            snapshot: Optional[str] = None,
+            blob_type: Union[str, BlobType] = BlobType.BlockBlob,
+            credentials: Optional[SharedKeyCredentials] = None,
+            configuration: Optional[Configuration] = None) -> None:
         pass
 
     @staticmethod
