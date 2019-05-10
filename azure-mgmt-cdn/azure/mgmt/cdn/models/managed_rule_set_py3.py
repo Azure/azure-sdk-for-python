@@ -34,6 +34,7 @@ class ManagedRuleSet(Model):
     _validation = {
         'rule_set_type': {'required': True},
         'rule_set_version': {'required': True},
+        'anomaly_score': {'maximum': 20, 'minimum': 0},
     }
 
     _attribute_map = {

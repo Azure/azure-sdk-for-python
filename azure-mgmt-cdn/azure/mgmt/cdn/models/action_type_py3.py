@@ -34,6 +34,7 @@ class ActionType(Model):
 
     _validation = {
         'action_type': {'required': True},
+        'custom_block_response_status_code': {'maximum': 599, 'minimum': 200},
         'custom_block_response_body': {'pattern': r'^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$'},
     }
 

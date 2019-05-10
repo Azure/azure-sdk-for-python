@@ -25,8 +25,8 @@ class PolicySettings(Model):
      represents the default redirect URL for the client.
     :type default_redirect_url: str
     :param default_custom_block_response_status_code: If the action type is
-     block, this field defines the default customer overridable response status
-     code.
+     block, this field defines the default customer overridable http response
+     status code.
     :type default_custom_block_response_status_code: int
     :param default_custom_block_response_body: If the action type is block,
      customer can override the response body. The body must be specified in
@@ -35,6 +35,7 @@ class PolicySettings(Model):
     """
 
     _validation = {
+        'default_custom_block_response_status_code': {'maximum': 599, 'minimum': 200},
         'default_custom_block_response_body': {'pattern': r'^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$'},
     }
 
