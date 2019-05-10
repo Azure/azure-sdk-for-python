@@ -50,6 +50,9 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
         self.status_code = requests_response.status_code
         self.headers = requests_response.headers
         self.reason = requests_response.reason
+        content_type = requests_response.headers.get('content-type')
+        if content_type:
+            self.content_type = content_type.split(";")
 
     def body(self):
         return self.internal_response.content

@@ -279,12 +279,8 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         """
         # Try to use content-type from headers if available
         content_type = None
-        if 'content-type' in response.headers:
-            try:
-                content_type_header = response.headers['content-type'].split(";")[0]
-            except AttributeError:
-                content_type_header = response.headers['content-type'][0]
-            content_type = content_type_header.strip().lower()
+        if response.content_type:
+            content_type = response.content_type[0].strip().lower()
 
         # Ouch, this server did not declare what it sent...
         # Let's guess it's JSON...

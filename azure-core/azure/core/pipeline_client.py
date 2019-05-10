@@ -80,7 +80,7 @@ class PipelineClient(object):
         ]
 
         return Pipeline(
-            transport,  # Send HTTP request using requests
+            transport,
             policies
         )
 
