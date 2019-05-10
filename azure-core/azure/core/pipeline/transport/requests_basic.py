@@ -116,9 +116,9 @@ class RequestsTransport(HttpTransport):
 
     _protocols = ['http://', 'https://']
 
-    def __init__(self, configuration=None, session=None, external_owner=False):
+    def __init__(self, configuration=None, session=None, session_owner=False):
         # type: (Optional[requests.Session]) -> None
-        self._external_owner = external_owner
+        self._session_owner = session_owner
         self.config = configuration or Configuration()
         self.session = session
 
@@ -149,7 +149,7 @@ class RequestsTransport(HttpTransport):
             self._init_session(self.session)
 
     def close(self):
-        if not self._external_owner:
+        if not self._session_owner:
             self.session.close()
             self.session = None
 
