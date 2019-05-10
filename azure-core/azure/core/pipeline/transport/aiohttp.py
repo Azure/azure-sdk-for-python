@@ -50,7 +50,7 @@ class AioHttpTransport(AsyncHttpTransport):
     """AioHttp HTTP sender implementation.
     """
 
-    def __init__(self, configuration=None, *, session=None, loop=None, session_owner=False):
+    def __init__(self, configuration=None, *, session=None, loop=None, session_owner=True):
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
@@ -69,7 +69,7 @@ class AioHttpTransport(AsyncHttpTransport):
         await self.session.__aenter__()
 
     async def close(self):
-        if not self._session_owner:
+        if self._session_owner:
             await self.session.close()
             self.session = None
 

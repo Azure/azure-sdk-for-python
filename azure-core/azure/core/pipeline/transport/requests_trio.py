@@ -52,6 +52,7 @@ _LOGGER = logging.getLogger(__name__)
 
 import trio
 
+
 class TrioStreamDownloadGenerator(AsyncIterator):
 
     def __init__(self, response: requests.Response, block_size: int) -> None:

@@ -36,6 +36,7 @@ from azure.core.pipeline.transport import (
     AioHttpTransport
 )
 
+import aiohttp
 import trio
 
 import pytest
@@ -87,6 +88,26 @@ async def test_basic_aiohttp():
 
     assert pipeline._transport.session is None
     assert response.http_response.status_code == 200
+
+@pytest.mark.asyncio
+async def test_basic_aiohttp_separate_session():
+
+    conf = Configuration()
+    session = aiohttp.ClientSession()
+    request = HttpRequest("GET", "https://bing.com")
+    policies = [
+        UserAgentPolicy("myusergant"),
+        AsyncRedirectPolicy()
+    ]
+    transport = AioHttpTransport(conf, session=session, session_owner=False)
+    async with AsyncPipeline(transport, policies=policies) as pipeline:
+        response = await pipeline.run(request)
+
+    assert transport.session
+    assert response.http_response.status_code == 200
+    await transport.close()
+    assert transport.session
+    await transport.session.close()
 
 @pytest.mark.asyncio
 async def test_basic_async_requests():
