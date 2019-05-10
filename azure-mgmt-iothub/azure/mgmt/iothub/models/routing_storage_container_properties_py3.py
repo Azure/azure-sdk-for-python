@@ -23,8 +23,8 @@ class RoutingStorageContainerProperties(Model):
     :param name: Required. The name that identifies this endpoint. The name
      can only include alphanumeric characters, periods, underscores, hyphens
      and has a maximum length of 64 characters. The following names are
-     reserved:  events, operationsMonitoringEvents, fileNotifications,
-     $default. Endpoint names must be unique across endpoint types.
+     reserved:  events, fileNotifications, $default. Endpoint names must be
+     unique across endpoint types.
     :type name: str
     :param subscription_id: The subscription identifier of the storage
      account.
@@ -48,8 +48,9 @@ class RoutingStorageContainerProperties(Model):
      524288000(500MB). Default value is 314572800(300MB).
     :type max_chunk_size_in_bytes: int
     :param encoding: Encoding that is used to serialize messages to blobs.
-     Supported values are 'avro' and 'avrodeflate'. Default value is 'avro'.
-    :type encoding: str
+     Supported values are 'avro', 'avrodeflate', and 'JSON'. Default value is
+     'avro'. Possible values include: 'Avro', 'AvroDeflate', 'JSON'
+    :type encoding: str or ~azure.mgmt.iothub.models.enum
     """
 
     _validation = {
@@ -72,7 +73,7 @@ class RoutingStorageContainerProperties(Model):
         'encoding': {'key': 'encoding', 'type': 'str'},
     }
 
-    def __init__(self, *, connection_string: str, name: str, container_name: str, subscription_id: str=None, resource_group: str=None, file_name_format: str=None, batch_frequency_in_seconds: int=None, max_chunk_size_in_bytes: int=None, encoding: str=None, **kwargs) -> None:
+    def __init__(self, *, connection_string: str, name: str, container_name: str, subscription_id: str=None, resource_group: str=None, file_name_format: str=None, batch_frequency_in_seconds: int=None, max_chunk_size_in_bytes: int=None, encoding=None, **kwargs) -> None:
         super(RoutingStorageContainerProperties, self).__init__(**kwargs)
         self.connection_string = connection_string
         self.name = name
