@@ -38,8 +38,10 @@ class WebApplicationFirewallPolicy(Resource):
      with this Web Application Firewall policy.
     :vartype frontend_endpoint_links:
      list[~azure.mgmt.frontdoor.models.FrontendEndpointLink]
-    :ivar provisioning_state: Provisioning state of the policy.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: Provisioning state of the policy. Possible
+     values include: 'Succeeded', 'Creating', 'Failed'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.frontdoor.models.ProvisioningState
     :ivar resource_state: Resource status of the policy. Possible values
      include: 'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled',
      'Deleting'

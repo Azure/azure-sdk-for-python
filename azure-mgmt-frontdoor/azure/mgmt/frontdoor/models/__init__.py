@@ -141,6 +141,7 @@ from .front_door_management_client_enums import (
     TransformType,
     ActionType,
     ManagedRuleEnabledState,
+    ProvisioningState,
     PolicyResourceState,
 )
 
@@ -228,5 +229,6 @@ __all__ = [
     'TransformType',
     'ActionType',
     'ManagedRuleEnabledState',
+    'ProvisioningState',
     'PolicyResourceState',
 ]

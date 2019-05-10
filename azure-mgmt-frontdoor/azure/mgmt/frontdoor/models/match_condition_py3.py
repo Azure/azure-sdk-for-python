@@ -17,17 +17,17 @@ class MatchCondition(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param match_variable: Required. Match variable to compare against.
+    :param match_variable: Required. Request variable to compare with.
      Possible values include: 'RemoteAddr', 'RequestMethod', 'QueryString',
      'PostArgs', 'RequestUri', 'RequestHeader', 'RequestBody', 'Cookies'
     :type match_variable: str or ~azure.mgmt.frontdoor.models.MatchVariable
-    :param selector: Selector can used to match against a specific key from
-     QueryString, PostArgs, RequestHeader or Cookies.
+    :param selector: Match against a specific key from the QueryString,
+     PostArgs, RequestHeader or Cookies variables. Default is null.
     :type selector: str
-    :param operator: Required. Describes operator to be matched. Possible
-     values include: 'Any', 'IPMatch', 'GeoMatch', 'Equal', 'Contains',
-     'LessThan', 'GreaterThan', 'LessThanOrEqual', 'GreaterThanOrEqual',
-     'BeginsWith', 'EndsWith', 'RegEx'
+    :param operator: Required. Comparison type to use for matching with the
+     variable value. Possible values include: 'Any', 'IPMatch', 'GeoMatch',
+     'Equal', 'Contains', 'LessThan', 'GreaterThan', 'LessThanOrEqual',
+     'GreaterThanOrEqual', 'BeginsWith', 'EndsWith', 'RegEx'
     :type operator: str or ~azure.mgmt.frontdoor.models.Operator
     :param negate_condition: Describes if the result of this condition should
      be negated.
