@@ -3,6 +3,18 @@
 Release History
 ===============
 
+0.8.0 (2019-05-10)
+++++++++++++++++++
+
+**Features**
+
+- Model RoutingProperties has a new parameter enrichments
+- Added operation group IotHubOperations
+
+**Breaking changes**
+
+- Model IotHubProperties no longer has parameter operations_monitoring_properties
+
 0.7.0 (2018-12-14)
 ++++++++++++++++++
 
