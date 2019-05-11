@@ -33,7 +33,7 @@ class Receiver(object):
     timeout = 0
     _epoch = b'com.microsoft:epoch'
 
-    def __init__(self, client, source, offset=None, prefetch=300, epoch=None, keep_alive=None, auto_reconnect=True):
+    def __init__(self, client, source, offset=None, prefetch=300, epoch=None):
         """
         Instantiate a receiver.
 
@@ -53,8 +53,9 @@ class Receiver(object):
         self.offset = offset
         self.prefetch = prefetch
         self.epoch = epoch
-        self.keep_alive = keep_alive
-        self.auto_reconnect = auto_reconnect
+        self.keep_alive = client.config.keep_alive_policy.keep_alive
+        self.auto_reconnect = client.config.auto_reconnect_policy.auto_reconnect
+        #  max_retries = client.config.retry_policy.max_retries
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.reconnect_backoff = 1
         self.properties = None
@@ -333,6 +334,7 @@ class Receiver(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        self.client.clients.remove(self)
         self.close(exc_val)
 
     def __iter__(self):

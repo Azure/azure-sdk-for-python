@@ -57,8 +57,8 @@ class Receiver(object):
         self.offset = offset
         self.prefetch = prefetch
         self.epoch = epoch
-        self.keep_alive = keep_alive
-        self.auto_reconnect = auto_reconnect
+        self.keep_alive = client.config.keep_alive_policy.keep_alive
+        self.auto_reconnect = client.config.auto_reconnect_policy.auto_reconnect
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.reconnect_backoff = 1
         self.redirected = None
@@ -74,7 +74,7 @@ class Receiver(object):
         self._handler = ReceiveClientAsync(
             source,
             auth=self.client.get_auth(),
-            debug=self.client.debug,
+            debug=self.client.config.network_trace_policy.network_trace_logging,
             prefetch=self.prefetch,
             link_properties=self.properties,
             timeout=self.timeout,
@@ -321,6 +321,7 @@ class Receiver(object):
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
+        self.client.clients.remove(self)
         await self.close_async(exc_val)
 
     def __aiter__(self):

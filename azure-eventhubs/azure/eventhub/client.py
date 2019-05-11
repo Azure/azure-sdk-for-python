@@ -111,6 +111,9 @@ class EventHubClient(EventHubClientAbstract):
         :param password: The shared access key.
         :type password: str
         """
+        http_proxy = self.config.http_proxy_policy.http_proxy
+        transport_type = self.config.transport_type
+        auth_timeout = self.config.auth_timeout
         if self.sas_token:
             token = self.sas_token() if callable(self.sas_token) else self.sas_token
             try:
@@ -120,16 +123,17 @@ class EventHubClient(EventHubClientAbstract):
             return authentication.SASTokenAuth(
                 self.auth_uri, self.auth_uri, token,
                 expires_at=expiry,
-                timeout=self.auth_timeout,
-                http_proxy=self.http_proxy)
+                timeout=auth_timeout,
+                http_proxy=http_proxy,
+                transport_type=transport_type)
 
         username = username or self._auth_config['username']
         password = password or self._auth_config['password']
         if "@sas.root" in username:
             return authentication.SASLPlain(
-                self.address.hostname, username, password, http_proxy=self.http_proxy)
+                self.address.hostname, username, password, http_proxy=http_proxy, transport_type=transport_type)
         return authentication.SASTokenAuth.from_shared_access_key(
-            self.auth_uri, username, password, timeout=self.auth_timeout, http_proxy=self.http_proxy)
+            self.auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy, transport_type=transport_type)
 
     def _close_clients(self):
         """
@@ -237,6 +241,7 @@ class EventHubClient(EventHubClientAbstract):
         alt_creds = {
             "username": self._auth_config.get("iot_username"),
             "password":self._auth_config.get("iot_password")}
+        # TODO: add proxy?
         try:
             mgmt_auth = self._create_auth(**alt_creds)
             mgmt_client = uamqp.AMQPClient(self.mgmt_target, auth=mgmt_auth, debug=self.debug)
@@ -261,8 +266,8 @@ class EventHubClient(EventHubClientAbstract):
             mgmt_client.close()
 
     def add_receiver(
-            self, consumer_group, partition, offset=None, prefetch=300,
-            operation=None, keep_alive=30, auto_reconnect=True):
+            self, consumer_group, partition, offset=None, epoch=None, prefetch=300,
+            operation=None):
         """
         Add a receiver to the client for a particular consumer group and partition.
 
@@ -292,52 +297,16 @@ class EventHubClient(EventHubClientAbstract):
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
         handler = Receiver(
-            self, source_url, offset=offset, prefetch=prefetch,
-            keep_alive=keep_alive, auto_reconnect=auto_reconnect)
+            self, source_url, offset=offset, epoch=epoch, prefetch=prefetch)
         self.clients.append(handler)
         return handler
 
     def add_epoch_receiver(
             self, consumer_group, partition, epoch, prefetch=300,
-            operation=None, keep_alive=30, auto_reconnect=True):
-        """
-        Add a receiver to the client with an epoch value. Only a single epoch receiver
-        can connect to a partition at any given time - additional epoch receivers must have
-        a higher epoch value or they will be rejected. If a 2nd epoch receiver has
-        connected, the first will be closed.
+            operation=None):
+        return self.add_receiver(consumer_group, partition, epoch=epoch, prefetch=prefetch, operation=operation)
 
-        :param consumer_group: The name of the consumer group.
-        :type consumer_group: str
-        :param partition: The ID of the partition.
-        :type partition: str
-        :param epoch: The epoch value for the receiver.
-        :type epoch: int
-        :param prefetch: The message prefetch count of the receiver. Default is 300.
-        :type prefetch: int
-        :operation: An optional operation to be appended to the hostname in the source URL.
-         The value must start with `/` character.
-        :type operation: str
-        :rtype: ~azure.eventhub.receiver.Receiver
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START create_eventhub_client_epoch_receiver]
-                :end-before: [END create_eventhub_client_epoch_receiver]
-                :language: python
-                :dedent: 4
-                :caption: Add a receiver to the client with an epoch value.
-
-        """
-        path = self.address.path + operation if operation else self.address.path
-        source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self.address.hostname, path, consumer_group, partition)
-        handler = Receiver(
-            self, source_url, prefetch=prefetch, epoch=epoch,
-            keep_alive=keep_alive, auto_reconnect=auto_reconnect)
-        self.clients.append(handler)
-        return handler
-
-    def add_sender(self, partition=None, operation=None, send_timeout=60, keep_alive=30, auto_reconnect=True):
+    def add_sender(self, partition=None, operation=None, send_timeout=60):
         """
         Add a sender to the client to send EventData object to an EventHub.
 
@@ -372,7 +341,6 @@ class EventHubClient(EventHubClientAbstract):
         if operation:
             target = target + operation
         handler = Sender(
-            self, target, partition=partition, send_timeout=send_timeout,
-            keep_alive=keep_alive, auto_reconnect=auto_reconnect)
+            self, target, partition=partition, send_timeout=send_timeout)
         self.clients.append(handler)
         return handler

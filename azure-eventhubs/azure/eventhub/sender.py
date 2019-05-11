@@ -30,7 +30,7 @@ class Sender(object):
 
     """
 
-    def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True):
+    def __init__(self, client, target, partition=None, send_timeout=60):
         """
         Instantiate an EventHub event Sender handler.
 
@@ -58,8 +58,9 @@ class Sender(object):
         self.timeout = send_timeout
         self.redirected = None
         self.error = None
-        self.keep_alive = keep_alive
-        self.auto_reconnect = auto_reconnect
+        self.keep_alive = client.config.keep_alive_policy.keep_alive
+        self.auto_reconnect = client.config.auto_reconnect_policy.auto_reconnect
+        # max_retries = client.config.retry_policy.max_retries
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.reconnect_backoff = 1
         self.name = "EHSender-{}".format(uuid.uuid4())
@@ -388,6 +389,7 @@ class Sender(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        self.client.clients.remove(self)
         self.close(exc_val)
 
     @staticmethod

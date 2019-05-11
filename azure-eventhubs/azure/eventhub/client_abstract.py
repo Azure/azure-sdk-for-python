@@ -10,6 +10,7 @@ import sys
 import uuid
 import time
 import functools
+from abc import abstractmethod
 try:
     from urlparse import urlparse
     from urllib import unquote_plus, urlencode, quote_plus
@@ -25,7 +26,7 @@ from azure.eventhub import __version__
 from azure.eventhub.sender import Sender
 from azure.eventhub.receiver import Receiver
 from azure.eventhub.common import EventHubError, parse_sas_token
-
+from azure.eventhub.configuration import Configuration
 
 log = logging.getLogger(__name__)
 
@@ -100,9 +101,13 @@ class EventHubClientAbstract(object):
 
     """
 
+    @staticmethod
+    def create_config(**kwargs):
+        config = Configuration(**kwargs)
+        return config
+
     def __init__(
-            self, address, username=None, password=None, debug=False,
-            http_proxy=None, auth_timeout=60, sas_token=None):
+            self, address, username=None, password=None, sas_token=None, configuration=None, **kwargs):
         """
         Constructs a new EventHubClient with the given address URL.
 
@@ -134,7 +139,9 @@ class EventHubClientAbstract(object):
         self.sas_token = sas_token
         self.address = urlparse(address)
         self.eh_name = self.address.path.lstrip('/')
-        self.http_proxy = http_proxy
+        # self.http_proxy = kwargs.get("http_proxy")
+        self.keep_alive = kwargs.get("keep_alive", 30)
+        self.auto_reconnect = kwargs.get("auto_reconnect", True)
         self.mgmt_target = "amqps://{}/{}".format(self.address.hostname, self.eh_name)
         url_username = unquote_plus(self.address.username) if self.address.username else None
         username = username or url_username
@@ -145,15 +152,18 @@ class EventHubClientAbstract(object):
         self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
         self._auth_config = {'username': username, 'password': password}
         self.get_auth = functools.partial(self._create_auth)
-        self.debug = debug
-        self.auth_timeout = auth_timeout
+        # self.debug = kwargs.get("debug", False)  # debug
+        #self.auth_timeout = auth_timeout
 
         self.clients = []
         self.stopped = False
+        self.config = self.create_config(**kwargs)
+        self.debug = self.config.network_trace_policy.network_trace_logging,
+
         log.info("%r: Created the Event Hub client", self.container_id)
 
     @classmethod
-    def from_sas_token(cls, address, sas_token, eventhub=None, **kwargs):
+    def from_sas_token(cls, address, sas_token, eventhub=None, configuration=None, **kwargs):
         """Create an EventHubClient from an existing auth token or token generator.
 
         :param address: The Event Hub address URL
@@ -185,10 +195,10 @@ class EventHubClientAbstract(object):
 
         """
         address = _build_uri(address, eventhub)
-        return cls(address, sas_token=sas_token, **kwargs)
+        return cls(address, sas_token=sas_token, configuration=configuration, **kwargs)
 
     @classmethod
-    def from_connection_string(cls, conn_str, eventhub=None, **kwargs):
+    def from_connection_string(cls, conn_str, eventhub=None, configuration=None, **kwargs):
         """Create an EventHubClient from a connection string.
 
         :param conn_str: The connection string.
@@ -219,10 +229,10 @@ class EventHubClientAbstract(object):
         address, policy, key, entity = _parse_conn_str(conn_str)
         entity = eventhub or entity
         address = _build_uri(address, entity)
-        return cls(address, username=policy, password=key, **kwargs)
+        return cls(address, username=policy, password=key, configuration=configuration, **kwargs)
 
     @classmethod
-    def from_iothub_connection_string(cls, conn_str, **kwargs):
+    def from_iothub_connection_string(cls, conn_str, configuration=None, **kwargs):
         """
         Create an EventHubClient from an IoTHub connection string.
 
@@ -252,7 +262,7 @@ class EventHubClientAbstract(object):
         hub_name = address.split('.')[0]
         username = "{}@sas.root.{}".format(policy, hub_name)
         password = _generate_sas_token(address, policy, key)
-        client = cls("amqps://" + address, username=username, password=password, **kwargs)
+        client = cls("amqps://" + address, username=username, password=password, configuration=configuration, **kwargs)
         client._auth_config = {  # pylint: disable=protected-access
             'iot_username': policy,
             'iot_password': key,
@@ -294,24 +304,24 @@ class EventHubClientAbstract(object):
     def _handle_redirect(self, redirects):
         pass
 
+    @abstractmethod
     def run(self):
         pass
 
+    @abstractmethod
     def stop(self):
         pass
 
+    @abstractmethod
     def get_eventhub_info(self):
         pass
 
+    @abstractmethod
     def add_receiver(
-            self, consumer_group, partition, offset=None, prefetch=300,
-            operation=None, keep_alive=30, auto_reconnect=True):
+            self, consumer_group, partition, epoch=None, offset=None, prefetch=300,
+            operation=None):
         pass
 
-    def add_epoch_receiver(
-            self, consumer_group, partition, epoch, prefetch=300,
-            operation=None, keep_alive=30, auto_reconnect=True):
-        pass
-
-    def add_sender(self, partition=None, operation=None, send_timeout=60, keep_alive=30, auto_reconnect=True):
+    @abstractmethod
+    def add_sender(self, partition=None, operation=None, send_timeout=60):
         pass

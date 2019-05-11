@@ -60,8 +60,8 @@ class Sender(object):
         self.client = client
         self.target = target
         self.partition = partition
-        self.keep_alive = keep_alive
-        self.auto_reconnect = auto_reconnect
+        self.keep_alive = client.config.keep_alive_policy.keep_alive
+        self.auto_reconnect = client.config.auto_reconnect_policy.auto_reconnect
         self.timeout = send_timeout
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.reconnect_backoff = 1
@@ -344,6 +344,7 @@ class Sender(object):
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
+        self.client.clients.remove(self)
         await self.close_async(exc_val)
 
     @staticmethod

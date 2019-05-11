@@ -51,6 +51,9 @@ class EventHubClient(EventHubClientAbstract):
         :param password: The shared access key.
         :type password: str
         """
+        http_proxy = self.config.http_proxy_policy.http_proxy
+        transport_type = self.config.transport_type
+        auth_timeout = self.config.auth_timeout
         if self.sas_token:
             token = self.sas_token() if callable(self.sas_token) else self.sas_token
             try:
@@ -60,16 +63,16 @@ class EventHubClient(EventHubClientAbstract):
             return authentication.SASTokenAsync(
                 self.auth_uri, self.auth_uri, token,
                 expires_at=expiry,
-                timeout=self.auth_timeout,
-                http_proxy=self.http_proxy)
+                timeout=auth_timeout,
+                http_proxy=http_proxy, transport_type=transport_type)
 
         username = username or self._auth_config['username']
         password = password or self._auth_config['password']
         if "@sas.root" in username:
             return authentication.SASLPlain(
-                self.address.hostname, username, password, http_proxy=self.http_proxy)
+                self.address.hostname, username, password, http_proxy=http_proxy, transport_type=transport_type)
         return authentication.SASTokenAsync.from_shared_access_key(
-            self.auth_uri, username, password, timeout=self.auth_timeout, http_proxy=self.http_proxy)
+            self.auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy, transport_type=transport_type)
 
     async def _close_clients_async(self):
         """
@@ -173,6 +176,7 @@ class EventHubClient(EventHubClientAbstract):
         alt_creds = {
             "username": self._auth_config.get("iot_username"),
             "password":self._auth_config.get("iot_password")}
+        # TODO: add proxy?
         try:
             mgmt_auth = self._create_auth(**alt_creds)
             mgmt_client = AMQPClientAsync(self.mgmt_target, auth=mgmt_auth, debug=self.debug)
@@ -197,8 +201,7 @@ class EventHubClient(EventHubClientAbstract):
             await mgmt_client.close_async()
 
     def add_async_receiver(
-            self, consumer_group, partition, offset=None, prefetch=300,
-            operation=None, keep_alive=30, auto_reconnect=True, loop=None):
+            self, consumer_group, partition, offset=None, epoch=None, prefetch=300, operation=None, loop=None):
         """
         Add an async receiver to the client for a particular consumer group and partition.
 
@@ -228,14 +231,12 @@ class EventHubClient(EventHubClientAbstract):
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
         handler = Receiver(
-            self, source_url, offset=offset, prefetch=prefetch,
-            keep_alive=keep_alive, auto_reconnect=auto_reconnect, loop=loop)
+            self, source_url, offset=offset, epoch=epoch, prefetch=prefetch, loop=loop)
         self.clients.append(handler)
         return handler
 
     def add_async_epoch_receiver(
-            self, consumer_group, partition, epoch, prefetch=300,
-            operation=None, keep_alive=30, auto_reconnect=True, loop=None):
+            self, consumer_group, partition, epoch, prefetch=300, operation=None, loop=None):
         """
         Add an async receiver to the client with an epoch value. Only a single epoch receiver
         can connect to a partition at any given time - additional epoch receivers must have
@@ -268,14 +269,12 @@ class EventHubClient(EventHubClientAbstract):
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
         handler = Receiver(
-            self, source_url, prefetch=prefetch, epoch=epoch,
-            keep_alive=keep_alive, auto_reconnect=auto_reconnect, loop=loop)
+            self, source_url, prefetch=prefetch, epoch=epoch, loop=loop)
         self.clients.append(handler)
         return handler
 
     def add_async_sender(
-            self, partition=None, operation=None, send_timeout=60,
-            keep_alive=30, auto_reconnect=True, loop=None):
+            self, partition=None, operation=None, send_timeout=60, loop=None):
         """
         Add an async sender to the client to send ~azure.eventhub.common.EventData object
         to an EventHub.
@@ -313,7 +312,6 @@ class EventHubClient(EventHubClientAbstract):
         if operation:
             target = target + operation
         handler = Sender(
-            self, target, partition=partition, send_timeout=send_timeout, keep_alive=keep_alive,
-            auto_reconnect=auto_reconnect, loop=loop)
+            self, target, partition=partition, send_timeout=send_timeout, loop=loop)
         self.clients.append(handler)
         return handler
