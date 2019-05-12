@@ -28,18 +28,10 @@ class SecurityAssessment(Resource):
     :type resource_details: ~azure.mgmt.security.models.ResourceDetails
     :ivar display_name: User friendly display name of the assessment
     :vartype display_name: str
-    :ivar status: Status of the. Possible values include: 'Passed', 'Failed',
-     'NotApplicable'
-    :vartype status: str or ~azure.mgmt.security.models.Severity
-    :ivar status_reason_code: Programmatic code for the reason the assessment
-     result status
-    :vartype status_reason_code: str
-    :ivar status_reason_description: Human readable description for the reason
-     the assessment result status
-    :vartype status_reason_description: str
+    :param status:
+    :type status: ~azure.mgmt.security.models.AssessmentStatus
     :ivar additional_data: Additional data regarding the assessment
-    :vartype additional_data:
-     list[~azure.mgmt.security.models.AssessmentAdditionalData]
+    :vartype additional_data: dict[str, str]
     """
 
     _validation = {
@@ -47,9 +39,6 @@ class SecurityAssessment(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'display_name': {'readonly': True},
-        'status': {'readonly': True},
-        'status_reason_code': {'readonly': True},
-        'status_reason_description': {'readonly': True},
         'additional_data': {'readonly': True},
     }
 
@@ -59,17 +48,13 @@ class SecurityAssessment(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'resource_details': {'key': 'properties.resourceDetails', 'type': 'ResourceDetails'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'status_reason_code': {'key': 'properties.statusReasonCode', 'type': 'str'},
-        'status_reason_description': {'key': 'properties.statusReasonDescription', 'type': 'str'},
-        'additional_data': {'key': 'properties.additionalData', 'type': '[AssessmentAdditionalData]'},
+        'status': {'key': 'properties.status', 'type': 'AssessmentStatus'},
+        'additional_data': {'key': 'properties.additionalData', 'type': '{str}'},
     }
 
     def __init__(self, **kwargs):
         super(SecurityAssessment, self).__init__(**kwargs)
         self.resource_details = kwargs.get('resource_details', None)
         self.display_name = None
-        self.status = None
-        self.status_reason_code = None
-        self.status_reason_description = None
+        self.status = kwargs.get('status', None)
         self.additional_data = None
