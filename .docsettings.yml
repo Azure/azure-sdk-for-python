@@ -52,17 +52,17 @@ known_content_issues:
   - ['azure-cognitiveservices-anomalydetector/README.rst', '#4554']
 
   # nspckg and common.
-  - ['azure-cognitiveservices-nspkg/README.rst', 'nspkg and common']
-  - ['azure/README.rst', 'nspkg and common']
-  - ['azure-common/README.rst', 'nspkg and common']
-  - ['azure-nspkg/README.rst', 'nspkg and common']
-  - ['azure-cognitiveservices-knowledge-nspkg/README.rst', 'nspkg and common']
-  - ['azure-cognitiveservices-language-nspkg/README.rst', 'nspkg and common']
-  - ['azure-cognitiveservices-nspkg/README.rst', 'nspkg and common']
-  - ['azure-cognitiveservices-search-nspkg/README.rst', 'nspkg and common']
-  - ['azure-cognitiveservices-vision-nspkg/README.rst', 'nspkg and common']
-  - ['azure-mgmt-datalake-nspkg/README.rst', 'nspkg and common']
-  - ['azure-mgmt-nspkg/README.rst', 'nspkg and common']
+  - ['sdk/cognitiveservices/azure-cognitiveservices-nspkg/README.rst', 'nspkg and common']
+  - ['sdk/core/azure/README.rst', 'nspkg and common']
+  - ['sdk/core/azure-common/README.rst', 'nspkg and common']
+  - ['sdk/core/azure-nspkg/README.rst', 'nspkg and common']
+  - ['sdk/cognitiveservices/azure-cognitiveservices-knowledge-nspkg/README.rst', 'nspkg and common']
+  - ['sdk/cognitiveservices/azure-cognitiveservices-language-nspkg/README.rst', 'nspkg and common']
+  - ['sdk/cognitiveservices/azure-cognitiveservices-nspkg/README.rst', 'nspkg and common']
+  - ['sdk/cognitiveservices/azure-cognitiveservices-search-nspkg/README.rst', 'nspkg and common']
+  - ['sdk/cognitiveservices/azure-cognitiveservices-vision-nspkg/README.rst', 'nspkg and common']
+  - ['sdk/core/azure-mgmt-datalake-nspkg/README.rst', 'nspkg and common']
+  - ['sdk/core/azure-mgmt-nspkg/README.rst', 'nspkg and common']
 
 package_indexing_exclusion_list:
   - 'azure-sdk-tools'
