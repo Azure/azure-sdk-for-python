@@ -95,6 +95,7 @@ try:
     from .managed_rule_set_list_py3 import ManagedRuleSetList
     from .cdn_endpoint_py3 import CdnEndpoint
     from .cdn_web_application_firewall_policy_py3 import CdnWebApplicationFirewallPolicy
+    from .cdn_web_application_firewall_policy_patch_parameters_py3 import CdnWebApplicationFirewallPolicyPatchParameters
     from .managed_rule_definition_py3 import ManagedRuleDefinition
     from .managed_rule_group_definition_py3 import ManagedRuleGroupDefinition
     from .managed_rule_set_definition_py3 import ManagedRuleSetDefinition
@@ -184,6 +185,7 @@ except (SyntaxError, ImportError):
     from .managed_rule_set_list import ManagedRuleSetList
     from .cdn_endpoint import CdnEndpoint
     from .cdn_web_application_firewall_policy import CdnWebApplicationFirewallPolicy
+    from .cdn_web_application_firewall_policy_patch_parameters import CdnWebApplicationFirewallPolicyPatchParameters
     from .managed_rule_definition import ManagedRuleDefinition
     from .managed_rule_group_definition import ManagedRuleGroupDefinition
     from .managed_rule_set_definition import ManagedRuleSetDefinition
@@ -320,6 +322,7 @@ __all__ = [
     'ManagedRuleSetList',
     'CdnEndpoint',
     'CdnWebApplicationFirewallPolicy',
+    'CdnWebApplicationFirewallPolicyPatchParameters',
     'ManagedRuleDefinition',
     'ManagedRuleGroupDefinition',
     'ManagedRuleSetDefinition',

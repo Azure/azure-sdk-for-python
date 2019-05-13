@@ -277,6 +277,112 @@ class PoliciesOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/CdnWebApplicationFirewallPolicies/{policyName}'}
 
 
+    def _update_initial(
+            self, resource_group_name, policy_name, tags=None, custom_headers=None, raw=False, **operation_config):
+        cdn_web_application_firewall_policy_patch_parameters = models.CdnWebApplicationFirewallPolicyPatchParameters(tags=tags)
+
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
+            'policyName': self._serialize.url("policy_name", policy_name, 'str', max_length=128),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(cdn_web_application_firewall_policy_patch_parameters, 'CdnWebApplicationFirewallPolicyPatchParameters')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('CdnWebApplicationFirewallPolicy', response)
+        if response.status_code == 202:
+            deserialized = self._deserialize('CdnWebApplicationFirewallPolicy', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update(
+            self, resource_group_name, policy_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Update an existing CdnWebApplicationFirewallPolicy with the specified
+        policy name uner the specified subcription and resource group.
+
+        :param resource_group_name: Name of the Resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param policy_name: The name of the CdnWebApplicationFirewallPolicy.
+        :type policy_name: str
+        :param tags: CdnWebApplicationFirewallPolicy tags
+        :type tags: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         CdnWebApplicationFirewallPolicy or
+         ClientRawResponse<CdnWebApplicationFirewallPolicy> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cdn.models.CdnWebApplicationFirewallPolicy]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cdn.models.CdnWebApplicationFirewallPolicy]]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.cdn.models.ErrorResponseException>`
+        """
+        raw_result = self._update_initial(
+            resource_group_name=resource_group_name,
+            policy_name=policy_name,
+            tags=tags,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('CdnWebApplicationFirewallPolicy', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/CdnWebApplicationFirewallPolicies/{policyName}'}
+
+
     def _delete_initial(
             self, resource_group_name, policy_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
@@ -305,7 +411,7 @@ class PoliciesOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202, 204]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
