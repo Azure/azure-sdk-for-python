@@ -24,7 +24,7 @@ class MachineLearningComputeOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of Azure Machine Learning resource provider API. Constant value: "2018-03-01-preview".
+    :ivar api_version: Version of Azure Machine Learning resource provider API. Constant value: "2018-11-19".
     """
 
     models = models
@@ -34,7 +34,7 @@ class MachineLearningComputeOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01-preview"
+        self.api_version = "2018-11-19"
 
         self.config = config
 
@@ -301,8 +301,117 @@ class MachineLearningComputeOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}'}
 
 
+    def _update_initial(
+            self, resource_group_name, workspace_name, compute_name, scale_settings=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.ClusterUpdateParameters(scale_settings=scale_settings)
+
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'workspaceName': self._serialize.url("workspace_name", workspace_name, 'str'),
+            'computeName': self._serialize.url("compute_name", compute_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'ClusterUpdateParameters')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [201]:
+            raise models.MachineLearningServiceErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('ComputeResource', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def update(
+            self, resource_group_name, workspace_name, compute_name, scale_settings=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Updates properties of a compute. This call will overwrite a compute if
+        it exists. This is a nonrecoverable operation.
+
+        :param resource_group_name: Name of the resource group in which
+         workspace is located.
+        :type resource_group_name: str
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
+        :param compute_name: Name of the Azure Machine Learning compute.
+        :type compute_name: str
+        :param scale_settings: Scale settings. Desired scale settings for the
+         amlCompute.
+        :type scale_settings:
+         ~azure.mgmt.machinelearningservices.models.ScaleSettings
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns ComputeResource or
+         ClientRawResponse<ComputeResource> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.machinelearningservices.models.ComputeResource]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.machinelearningservices.models.ComputeResource]]
+        :raises:
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
+        """
+        raw_result = self._update_initial(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            compute_name=compute_name,
+            scale_settings=scale_settings,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('ComputeResource', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}'}
+
+
     def _delete_initial(
-            self, resource_group_name, workspace_name, compute_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, workspace_name, compute_name, underlying_resource_action, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -316,6 +425,7 @@ class MachineLearningComputeOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['underlyingResourceAction'] = self._serialize.query("underlying_resource_action", underlying_resource_action, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -343,7 +453,7 @@ class MachineLearningComputeOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, workspace_name, compute_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, workspace_name, compute_name, underlying_resource_action, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes specified Machine Learning compute.
 
         :param resource_group_name: Name of the resource group in which
@@ -353,6 +463,11 @@ class MachineLearningComputeOperations(object):
         :type workspace_name: str
         :param compute_name: Name of the Azure Machine Learning compute.
         :type compute_name: str
+        :param underlying_resource_action: Delete the underlying compute if
+         'Delete', or detach the underlying compute from workspace if 'Detach'.
+         Possible values include: 'Delete', 'Detach'
+        :type underlying_resource_action: str or
+         ~azure.mgmt.machinelearningservices.models.UnderlyingResourceAction
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -369,6 +484,7 @@ class MachineLearningComputeOperations(object):
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             compute_name=compute_name,
+            underlying_resource_action=underlying_resource_action,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -392,11 +508,32 @@ class MachineLearningComputeOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}'}
 
-
-    def _system_update_initial(
+    def list_nodes(
             self, resource_group_name, workspace_name, compute_name, custom_headers=None, raw=False, **operation_config):
+        """Get the details (e.g IP address, port etc) of all the compute nodes in
+        the compute.
+
+        :param resource_group_name: Name of the resource group in which
+         workspace is located.
+        :type resource_group_name: str
+        :param workspace_name: Name of Azure Machine Learning workspace.
+        :type workspace_name: str
+        :param compute_name: Name of the Azure Machine Learning compute.
+        :type compute_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ComputeNodesInformation or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.mgmt.machinelearningservices.models.ComputeNodesInformation or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
+        """
         # Construct URL
-        url = self.system_update.metadata['url']
+        url = self.list_nodes.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -411,6 +548,7 @@ class MachineLearningComputeOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -422,67 +560,20 @@ class MachineLearningComputeOperations(object):
         request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             raise models.MachineLearningServiceErrorException(self._deserialize, response)
 
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ComputeNodesInformation', response)
+
         if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            header_dict = {
-                'Azure-AsyncOperation': 'str',
-                'Location': 'str',
-            }
-            client_raw_response.add_headers(header_dict)
+            client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
-    def system_update(
-            self, resource_group_name, workspace_name, compute_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """System Update On Machine Learning compute.
-
-        :param resource_group_name: Name of the resource group in which
-         workspace is located.
-        :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
-        :type workspace_name: str
-        :param compute_name: Name of the Azure Machine Learning compute.
-        :type compute_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns None or
-         ClientRawResponse<None> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
-        :raises:
-         :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
-        """
-        raw_result = self._system_update_initial(
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            compute_name=compute_name,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            if raw:
-                client_raw_response = ClientRawResponse(None, response)
-                client_raw_response.add_headers({
-                    'Azure-AsyncOperation': 'str',
-                    'Location': 'str',
-                })
-                return client_raw_response
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    system_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}'}
+        return deserialized
+    list_nodes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}/listNodes'}
 
     def list_keys(
             self, resource_group_name, workspace_name, compute_name, custom_headers=None, raw=False, **operation_config):

@@ -15,10 +15,13 @@ from msrest.serialization import Model
 class AKSProperties(Model):
     """AKS properties.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param cluster_fqdn: Cluster full qualified domain name
     :type cluster_fqdn: str
-    :param system_services: System services
-    :type system_services:
+    :ivar system_services: System services
+    :vartype system_services:
      list[~azure.mgmt.machinelearningservices.models.SystemService]
     :param agent_count: Number of agents
     :type agent_count: int
@@ -27,9 +30,13 @@ class AKSProperties(Model):
     :param ssl_configuration: SSL configuration
     :type ssl_configuration:
      ~azure.mgmt.machinelearningservices.models.SslConfiguration
+    :param aks_networking_configuration: AKS networking configuration for vnet
+    :type aks_networking_configuration:
+     ~azure.mgmt.machinelearningservices.models.AksNetworkingConfiguration
     """
 
     _validation = {
+        'system_services': {'readonly': True},
         'agent_count': {'minimum': 1},
     }
 
@@ -39,12 +46,14 @@ class AKSProperties(Model):
         'agent_count': {'key': 'agentCount', 'type': 'int'},
         'agent_vm_size': {'key': 'agentVMSize', 'type': 'str'},
         'ssl_configuration': {'key': 'sslConfiguration', 'type': 'SslConfiguration'},
+        'aks_networking_configuration': {'key': 'aksNetworkingConfiguration', 'type': 'AksNetworkingConfiguration'},
     }
 
     def __init__(self, **kwargs):
         super(AKSProperties, self).__init__(**kwargs)
         self.cluster_fqdn = kwargs.get('cluster_fqdn', None)
-        self.system_services = kwargs.get('system_services', None)
+        self.system_services = None
         self.agent_count = kwargs.get('agent_count', None)
         self.agent_vm_size = kwargs.get('agent_vm_size', None)
         self.ssl_configuration = kwargs.get('ssl_configuration', None)
+        self.aks_networking_configuration = kwargs.get('aks_networking_configuration', None)

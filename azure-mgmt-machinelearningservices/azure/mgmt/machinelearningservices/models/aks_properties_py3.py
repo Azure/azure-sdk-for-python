@@ -15,10 +15,13 @@ from msrest.serialization import Model
 class AKSProperties(Model):
     """AKS properties.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param cluster_fqdn: Cluster full qualified domain name
     :type cluster_fqdn: str
-    :param system_services: System services
-    :type system_services:
+    :ivar system_services: System services
+    :vartype system_services:
      list[~azure.mgmt.machinelearningservices.models.SystemService]
     :param agent_count: Number of agents
     :type agent_count: int
@@ -27,9 +30,13 @@ class AKSProperties(Model):
     :param ssl_configuration: SSL configuration
     :type ssl_configuration:
      ~azure.mgmt.machinelearningservices.models.SslConfiguration
+    :param aks_networking_configuration: AKS networking configuration for vnet
+    :type aks_networking_configuration:
+     ~azure.mgmt.machinelearningservices.models.AksNetworkingConfiguration
     """
 
     _validation = {
+        'system_services': {'readonly': True},
         'agent_count': {'minimum': 1},
     }
 
@@ -39,12 +46,14 @@ class AKSProperties(Model):
         'agent_count': {'key': 'agentCount', 'type': 'int'},
         'agent_vm_size': {'key': 'agentVMSize', 'type': 'str'},
         'ssl_configuration': {'key': 'sslConfiguration', 'type': 'SslConfiguration'},
+        'aks_networking_configuration': {'key': 'aksNetworkingConfiguration', 'type': 'AksNetworkingConfiguration'},
     }
 
-    def __init__(self, *, cluster_fqdn: str=None, system_services=None, agent_count: int=None, agent_vm_size: str=None, ssl_configuration=None, **kwargs) -> None:
+    def __init__(self, *, cluster_fqdn: str=None, agent_count: int=None, agent_vm_size: str=None, ssl_configuration=None, aks_networking_configuration=None, **kwargs) -> None:
         super(AKSProperties, self).__init__(**kwargs)
         self.cluster_fqdn = cluster_fqdn
-        self.system_services = system_services
+        self.system_services = None
         self.agent_count = agent_count
         self.agent_vm_size = agent_vm_size
         self.ssl_configuration = ssl_configuration
+        self.aks_networking_configuration = aks_networking_configuration

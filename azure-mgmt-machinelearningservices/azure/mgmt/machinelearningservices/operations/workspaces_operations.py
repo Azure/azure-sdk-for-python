@@ -22,7 +22,7 @@ class WorkspacesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of Azure Machine Learning resource provider API. Constant value: "2018-03-01-preview".
+    :ivar api_version: Version of Azure Machine Learning resource provider API. Constant value: "2018-11-19".
     """
 
     models = models
@@ -32,7 +32,7 @@ class WorkspacesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01-preview"
+        self.api_version = "2018-11-19"
 
         self.config = config
 
