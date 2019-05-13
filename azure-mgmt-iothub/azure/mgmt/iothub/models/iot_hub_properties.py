@@ -26,14 +26,14 @@ class IotHubProperties(Model):
     :type ip_filter_rules: list[~azure.mgmt.iothub.models.IpFilterRule]
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
-    :ivar state: Thehub state state.
+    :ivar state: The hub state.
     :vartype state: str
     :ivar host_name: The name of the host.
     :vartype host_name: str
     :param event_hub_endpoints: The Event Hub-compatible endpoint properties.
-     The possible keys to this dictionary are events and
-     operationsMonitoringEvents. Both of these keys have to be present in the
-     dictionary while making create or update calls for the IoT hub.
+     The only possible keys to this dictionary is events. This key has to be
+     present in the dictionary while making create or update calls for the IoT
+     hub.
     :type event_hub_endpoints: dict[str,
      ~azure.mgmt.iothub.models.EventHubProperties]
     :param routing:
@@ -57,9 +57,6 @@ class IotHubProperties(Model):
     :type cloud_to_device: ~azure.mgmt.iothub.models.CloudToDeviceProperties
     :param comments: IoT hub comments.
     :type comments: str
-    :param operations_monitoring_properties:
-    :type operations_monitoring_properties:
-     ~azure.mgmt.iothub.models.OperationsMonitoringProperties
     :param device_streams: The device streams properties of iothub.
     :type device_streams:
      ~azure.mgmt.iothub.models.IotHubPropertiesDeviceStreams
@@ -87,7 +84,6 @@ class IotHubProperties(Model):
         'enable_file_upload_notifications': {'key': 'enableFileUploadNotifications', 'type': 'bool'},
         'cloud_to_device': {'key': 'cloudToDevice', 'type': 'CloudToDeviceProperties'},
         'comments': {'key': 'comments', 'type': 'str'},
-        'operations_monitoring_properties': {'key': 'operationsMonitoringProperties', 'type': 'OperationsMonitoringProperties'},
         'device_streams': {'key': 'deviceStreams', 'type': 'IotHubPropertiesDeviceStreams'},
         'features': {'key': 'features', 'type': 'str'},
     }
@@ -106,6 +102,5 @@ class IotHubProperties(Model):
         self.enable_file_upload_notifications = kwargs.get('enable_file_upload_notifications', None)
         self.cloud_to_device = kwargs.get('cloud_to_device', None)
         self.comments = kwargs.get('comments', None)
-        self.operations_monitoring_properties = kwargs.get('operations_monitoring_properties', None)
         self.device_streams = kwargs.get('device_streams', None)
         self.features = kwargs.get('features', None)

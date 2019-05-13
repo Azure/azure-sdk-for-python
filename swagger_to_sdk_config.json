@@ -6,7 +6,7 @@
       "use": "@microsoft.azure/autorest.python@~3.0.56",
       "python": "",
       "python-mode": "update",
-      "sdkrel:python-sdks-folder": ".",
+      "sdkrel:python-sdks-folder": "./sdk/.",
       "multiapi": ""
     },
     "repotag": "azure-sdk-for-python",
