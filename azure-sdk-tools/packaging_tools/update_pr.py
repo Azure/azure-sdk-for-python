@@ -2,6 +2,7 @@ import argparse
 import logging
 import os
 from pathlib import Path
+import re
 import tempfile
 
 from azure_devtools.ci_tools.git_tools import (
@@ -19,6 +20,7 @@ from . import build_packaging_by_package_name
 
 
 _LOGGER = logging.getLogger(__name__)
+_SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
 
 
 def update_pr(gh_token, repo_id, pr_number):
@@ -29,7 +31,8 @@ def update_pr(gh_token, repo_id, pr_number):
     # "get_files" of Github only download the first 300 files. Might not be enough.
     package_names = {('.', f.filename.split('/')[0]) for f in sdk_pr.get_files() if f.filename.startswith("azure")}
     # Handle the SDK folder as well
-    package_names.update({('./sdk/', f.filename.split('/')[1]) for f in sdk_pr.get_files() if f.filename.startswith("sdk/azure")})
+    matches = {_SDK_FOLDER_RE.search(f.filename) for f in sdk_pr.get_files()}
+    package_names.update({match.groups() for match in matches if match is not None})
 
     # Get PR branch to push
     head_repo = sdk_pr.head.repo.full_name
