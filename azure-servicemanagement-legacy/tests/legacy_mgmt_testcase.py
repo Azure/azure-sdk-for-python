@@ -16,6 +16,9 @@
 #--------------------------------------------------------------------------
 import os.path
 from requests import Session
+
+from azure.storage.blob import SharedKeyCredentials
+
 from testutils.common_recordingtestcase import (
     RecordingTestCase,
     TestMode,
@@ -81,14 +84,12 @@ class LegacyMgmtTestCase(RecordingTestCase):
         self._set_service_options(service, self.settings)
         return service
 
-    def _create_storage_service(self, service_class, settings, account_name=None, account_key=None):
+    def _create_storage_service(self, service_class, settings, **kwargs):
         account_name = account_name or settings.STORAGE_ACCOUNT_NAME
         account_key = account_key or settings.STORAGE_ACCOUNT_KEY
-        session = Session()
         service = service_class(
-            account_name,
-            account_key,
-            request_session=session,
+            "https://{}.blob.core.windows.net".format(account_name),
+            credentials=SharedKeyCredentials(account_name, account_key)
         )
         self._set_service_options(service, settings)
         return service

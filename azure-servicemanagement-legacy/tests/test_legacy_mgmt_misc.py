@@ -40,8 +40,8 @@ from azure.servicemanagement import (
     parse_response_for_async_op,
     get_certificate_from_publish_settings,
 )
-from azure.storage.blob import PageBlobService, BlockBlobService
-from azure.storage.blob.models import PublicAccess
+from azure.storage.blob import BlobServiceClient
+from azure.storage.blob.common import PublicAccess
 from testutils.common_recordingtestcase import (
     TestMode,
     record,
@@ -86,8 +86,8 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
         self.sms = self.create_service_management(ServiceManagementService)
 
-        self.bc = self._create_storage_service(PageBlobService, self.settings)
-        self.bbc = self._create_storage_service(BlockBlobService, self.settings)
+        
+        self.bsc = self._create_storage_service(BlobServiceClient, self.settings)
 
         self.hosted_service_name = self.get_resource_name('utsvc')
         self.container_name = self.get_resource_name('utctnr')
@@ -166,7 +166,8 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
                     pass
 
             try:
-                self.bc.delete_container(self.container_name)
+                container = self.bsc.get_container_client(self.container_name)
+                container.delete_container()
             except:
                 pass
 
@@ -284,14 +285,18 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
     def _create_container_and_block_blob(self, container_name, blob_name,
                                          blob_data):
-        self.bc.create_container(container_name, None, 'container', False)
-        self.bbc.create_blob_from_bytes(
-            container_name, blob_name, blob_data)
+        new_container = self.bsc.get_container_client(container_name)
+        new_container.create_container(public_access='container')
+        block_blob = new_container.get_blob_client(blob_name)
+        block_blob.upload(blob_data)
 
     def _create_container_and_page_blob(self, container_name, blob_name,
                                         content_length):
-        self.bc.create_container(container_name, None, 'container', False)
-        self.bc.create_blob_from_bytes(container_name, blob_name, b'')
+        new_container = self.bsc.get_container_client(container_name)
+        new_container.create_container(public_access='container')
+        page_blob = new_container.get_blob_client(blob_name, blob_type='pageblob')
+        page_blob.upload(b'')
+        return page_blob
 
     def _upload_file_to_block_blob(self, file_path, blob_name):
         data = open(file_path, 'rb').read()
@@ -301,16 +306,14 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
             self.container_name, blob_name, data)
         return url
 
-    def _upload_chunks(self, file_path, blob_name, chunk_size):
+    def _upload_chunks(self, blob_client, file_path, chunk_size):
         index = 0
         with open(file_path, 'rb') as f:
             while True:
                 data = f.read(chunk_size)
                 if data:
                     length = len(data)
-                    self.bc.update_page(
-                        self.container_name, blob_name, data,
-                        index, index + length - 1)
+                    blob_client.update_page(data, index, index + length - 1)
                     index += length
                 else:
                     break
@@ -319,9 +322,9 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         url = self._make_blob_url(self.settings.STORAGE_ACCOUNT_NAME,
                                   self.container_name, blob_name)
         content_length = os.path.getsize(file_path)
-        self._create_container_and_page_blob(
+        page_blob = self._create_container_and_page_blob(
             self.container_name, blob_name, content_length)
-        self._upload_chunks(file_path, blob_name, 262144)
+        self._upload_chunks(page_blob, file_path, 262144)
         return url
 
     def _upload_default_package_to_storage_blob(self, blob_name):
@@ -379,7 +382,9 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
     def _blob_exists(self, container_name, blob_name):
         try:
-            props = self.bc.get_blob_properties(container_name, blob_name)
+            container = self.bsc.get_container_client(container_name)
+            blob = container.get_blob_client(blob_name)
+            props = blob.get_blob_properties()
             return props is not None
         except:
             return False
@@ -564,11 +569,12 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
 
     def _copy_linux_os_vhd_to_container(self):
         blob_name = 'imagecopy.vhd'
-        self.bc.create_container(self.container_name,
-                                 public_access=PublicAccess.Blob)
-        resp = self.bc.copy_blob(self.container_name, blob_name,
-                                 self.settings.LINUX_OS_VHD)
-        return self.bc.make_blob_url(self.container_name, blob_name)
+        container = self.bsc.get_container_client(self.container_name)
+        container.create_container(public_access=PublicAccess.Blob)
+        blob = container.get_blob_client(blob_name)
+        resp = blob.copy_from_source(self.settings.LINUX_OS_VHD)
+        copied_blob = container.get_blob_client(resp)
+        return copied_blob.make_url()
 
     #--Test cases for http passthroughs --------------------------------------
     @record

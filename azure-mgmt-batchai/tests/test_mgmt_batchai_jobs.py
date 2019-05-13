@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=line-too-long
 import re
-from azure.storage.blob import BlockBlobService
+from azure.storage.blob import ContainerClient, BlobClient, SharedKeyCredentials
 from azure.storage.file import FileService
 from devtools_testutils import AzureMgmtTestCase, StorageAccountPreparer
 from devtools_testutils import ResourceGroupPreparer
@@ -304,13 +304,15 @@ class JobTestCase(AzureMgmtTestCase):
     def test_job_level_mounting(self, resource_group, location, cluster, storage_account, storage_account_key):
         """Tests if it's possible to mount external file systems for a job."""
         job_name = 'job'
+        storage_creds = SharedKeyCredentials(storage_account.name, storage_account_key)
+        storage_url = "https:{}.blob.core.windows.net"
 
         # Create file share and container to mount on the job level
         if storage_account.name != Helpers.FAKE_STORAGE.name:
             files = FileService(storage_account.name, storage_account_key)
             files.create_share('jobshare', fail_on_exist=False)
-            blobs = BlockBlobService(storage_account.name, storage_account_key)
-            blobs.create_container('jobcontainer', fail_on_exist=False)
+            container = ContainerClient(storage_url, container="jobcontainer", credentials=storage_creds)
+            container.create_container()
 
         job = self.client.jobs.create(
             resource_group.name,
@@ -398,10 +400,13 @@ class JobTestCase(AzureMgmtTestCase):
             self.assertTrue(
                 files.exists('jobshare', job.job_output_directory_path_segment +
                              '/' + Helpers.OUTPUT_DIRECTORIES_FOLDER_NAME, 'job_afs.txt'))
-            blobs = BlockBlobService(storage_account.name, storage_account_key)
-            self.assertTrue(
-                blobs.exists('jobcontainer', job.job_output_directory_path_segment +
-                             '/' + Helpers.OUTPUT_DIRECTORIES_FOLDER_NAME + '/job_bfs.txt'))
+            blobs = BlobClient(
+                storage_url,
+                container="jobcontainer",
+                blob=job.job_output_directory_path_segment + '/' + \
+                    Helpers.OUTPUT_DIRECTORIES_FOLDER_NAME + '/job_bfs.txt',
+                credentials=storage_creds)
+            self.assertTrue(blobs.get_blob_properties())
         # After the job is done the filesystems should be unmounted automatically, check this by submitting a new job.
         checker = self.client.jobs.create(
             resource_group.name,
