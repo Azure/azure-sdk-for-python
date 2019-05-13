@@ -23,8 +23,8 @@ class RoutingEventHubProperties(Model):
     :param name: Required. The name that identifies this endpoint. The name
      can only include alphanumeric characters, periods, underscores, hyphens
      and has a maximum length of 64 characters. The following names are
-     reserved:  events, operationsMonitoringEvents, fileNotifications,
-     $default. Endpoint names must be unique across endpoint types.
+     reserved:  events, fileNotifications, $default. Endpoint names must be
+     unique across endpoint types.
     :type name: str
     :param subscription_id: The subscription identifier of the event hub
      endpoint.
