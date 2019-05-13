@@ -44,7 +44,7 @@ class RateLimitRule(CustomRule):
         'match_conditions': {'required': True},
         'action': {'required': True},
         'rate_limit_threshold': {'required': True},
-        'rate_limit_duration_in_minutes': {'required': True, 'maximum': 60, 'minimum': 1},
+        'rate_limit_duration_in_minutes': {'required': True, 'maximum': 60, 'minimum': 0},
     }
 
     _attribute_map = {
