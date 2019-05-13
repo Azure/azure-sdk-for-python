@@ -337,12 +337,12 @@ class MachineLearningComputeOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201]:
+        if response.status_code not in [200]:
             raise models.MachineLearningServiceErrorException(self._deserialize, response)
 
         deserialized = None
 
-        if response.status_code == 201:
+        if response.status_code == 200:
             deserialized = self._deserialize('ComputeResource', response)
 
         if raw:
