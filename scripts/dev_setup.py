@@ -34,7 +34,16 @@ parser.add_argument('--packageList', '-p',
     help='Comma separated list of targeted packages. Used to limit the number of packages that dependencies will be installed for.')
 args = parser.parse_args()
 
+# get complete set of packages (relative path from root)
 packages = [os.path.dirname(p) for p in (glob.glob('azure*/setup.py') + glob.glob('sdk/*/azure*/setup.py'))]
+
+# common/tooling packages
+azure_common_pkg = next([pkg_path for pkg_path in packages where os.path.basename(pkg_path) == 'azure-common'])
+azure_sdk_tools_pkg = next([pkg_path for pkg_path in packages where os.path.basename(pkg_path) == 'azure-sdk-tools'])
+
+# meta pkgs
+azure_pkg = next([pkg_path for pkg_path in packages where os.path.basename(pkg_path) == 'azure'])
+azure_mgmt_pkg = next([pkg_path for pkg_path in packages where os.path.basename(pkg_path) == 'azure-mgmt'])
 
 # keep targeted packages separate. python2 needs the nspkgs to work properly.
 if not args.packageList:
@@ -47,18 +56,18 @@ nspkg_packages = [p for p in packages if 'nspkg' in p]
 nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
 
 # Manually push meta-packages at the end, in reverse dependency order
-meta_packages = ['azure-mgmt', 'azure']
+meta_packages = [azure_mgmt_pkg, azure_pkg]
 
 content_packages = [p for p in packages if p not in nspkg_packages+meta_packages and p in targeted_packages]
 
 # Put azure-common in front
-if 'azure-common' in content_packages:
-    content_packages.remove('azure-common')
-content_packages.insert(0, 'azure-common')
+if azure_common_pkg in content_packages:
+    content_packages.remove(azure_common_pkg)
+content_packages.insert(0, azure_common_pkg)
 
-if 'azure-sdk-tools' in content_packages:
-    content_packages.remove('azure-sdk-tools')
-content_packages.insert(1, 'azure-sdk-tools')
+if azure_sdk_tools_pkg in content_packages:
+    content_packages.remove(azure_sdk_tools_pkg)
+content_packages.insert(1, azure_sdk_tools_pkg)
 
 print('Running dev setup...')
 print('Root directory \'{}\'\n'.format(root_dir))
