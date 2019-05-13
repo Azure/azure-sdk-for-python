@@ -1,4 +1,4 @@
--e ../azure-servicebus
+-e ../../servicebus/azure-servicebus
 pytest>=3.4.1
 pytest-asyncio>=0.8.0; python_version > '3.4'
 docutils>=0.14
