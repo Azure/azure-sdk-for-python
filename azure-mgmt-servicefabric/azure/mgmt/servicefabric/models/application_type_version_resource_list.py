@@ -16,15 +16,27 @@ class ApplicationTypeVersionResourceList(Model):
     """The list of application type version resources for the specified
     application type name resource.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param value:
     :type value:
      list[~azure.mgmt.servicefabric.models.ApplicationTypeVersionResource]
+    :ivar next_link: URL to get the next set of application type version list
+     results if there are any.
+    :vartype next_link: str
     """
+
+    _validation = {
+        'next_link': {'readonly': True},
+    }
 
     _attribute_map = {
         'value': {'key': 'value', 'type': '[ApplicationTypeVersionResource]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ApplicationTypeVersionResourceList, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
+        self.next_link = None

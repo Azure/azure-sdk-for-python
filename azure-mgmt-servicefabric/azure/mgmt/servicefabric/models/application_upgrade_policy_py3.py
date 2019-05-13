@@ -21,7 +21,7 @@ class ApplicationUpgradePolicy(Model):
      the upgrade domain will proceed regardless of availability loss issues.
      The timeout is reset at the start of each upgrade domain. Valid values are
      between 0 and 42949672925 inclusive. (unsigned 32-bit integer).
-    :type upgrade_replica_set_check_timeout: long
+    :type upgrade_replica_set_check_timeout: str
     :param force_restart: If true, then processes are forcefully restarted
      during upgrade even when the code version has not changed (the upgrade
      only changes configuration or data).
@@ -29,7 +29,7 @@ class ApplicationUpgradePolicy(Model):
     :param rolling_upgrade_monitoring_policy: The policy used for monitoring
      the application upgrade
     :type rolling_upgrade_monitoring_policy:
-     ~azure.mgmt.servicefabric.models.RollingUpgradeMonitoringPolicy
+     ~azure.mgmt.servicefabric.models.ArmRollingUpgradeMonitoringPolicy
     :param application_health_policy: Defines a health policy used to evaluate
      the health of an application or one of its children entities.
     :type application_health_policy:
@@ -37,13 +37,13 @@ class ApplicationUpgradePolicy(Model):
     """
 
     _attribute_map = {
-        'upgrade_replica_set_check_timeout': {'key': 'upgradeReplicaSetCheckTimeout', 'type': 'long'},
+        'upgrade_replica_set_check_timeout': {'key': 'upgradeReplicaSetCheckTimeout', 'type': 'str'},
         'force_restart': {'key': 'forceRestart', 'type': 'bool'},
-        'rolling_upgrade_monitoring_policy': {'key': 'rollingUpgradeMonitoringPolicy', 'type': 'RollingUpgradeMonitoringPolicy'},
+        'rolling_upgrade_monitoring_policy': {'key': 'rollingUpgradeMonitoringPolicy', 'type': 'ArmRollingUpgradeMonitoringPolicy'},
         'application_health_policy': {'key': 'applicationHealthPolicy', 'type': 'ArmApplicationHealthPolicy'},
     }
 
-    def __init__(self, *, upgrade_replica_set_check_timeout: int=None, force_restart: bool=None, rolling_upgrade_monitoring_policy=None, application_health_policy=None, **kwargs) -> None:
+    def __init__(self, *, upgrade_replica_set_check_timeout: str=None, force_restart: bool=None, rolling_upgrade_monitoring_policy=None, application_health_policy=None, **kwargs) -> None:
         super(ApplicationUpgradePolicy, self).__init__(**kwargs)
         self.upgrade_replica_set_check_timeout = upgrade_replica_set_check_timeout
         self.force_restart = force_restart

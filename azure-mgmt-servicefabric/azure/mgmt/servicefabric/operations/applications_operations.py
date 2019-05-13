@@ -252,7 +252,7 @@ class ApplicationsOperations(object):
         deserialized = None
 
         if response.status_code == 202:
-            deserialized = self._deserialize('ApplicationResourceUpdate', response)
+            deserialized = self._deserialize('ApplicationResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -280,13 +280,12 @@ class ApplicationsOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns
-         ApplicationResourceUpdate or
-         ClientRawResponse<ApplicationResourceUpdate> if raw==True
+        :return: An instance of LROPoller that returns ApplicationResource or
+         ClientRawResponse<ApplicationResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.servicefabric.models.ApplicationResourceUpdate]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.servicefabric.models.ApplicationResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.servicefabric.models.ApplicationResourceUpdate]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.servicefabric.models.ApplicationResource]]
         :raises:
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
@@ -301,7 +300,7 @@ class ApplicationsOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('ApplicationResourceUpdate', response)
+            deserialized = self._deserialize('ApplicationResource', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)

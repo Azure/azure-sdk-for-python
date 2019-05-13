@@ -31,6 +31,8 @@ class Cluster(Resource):
     :type location: str
     :param tags: Azure resource tags.
     :type tags: dict[str, str]
+    :ivar etag: Azure resource etag.
+    :vartype etag: str
     :param add_on_features: The list of add-on features to enable in the
      cluster.
     :type add_on_features: list[str]
@@ -106,6 +108,9 @@ class Cluster(Resource):
      for storing Service Fabric diagnostic logs.
     :type diagnostics_storage_account_config:
      ~azure.mgmt.servicefabric.models.DiagnosticsStorageAccountConfig
+    :param event_store_service_enabled: Indicates if the event store service
+     is enabled.
+    :type event_store_service_enabled: bool
     :param fabric_settings: The list of custom fabric settings to configure
      the cluster.
     :type fabric_settings:
@@ -163,6 +168,7 @@ class Cluster(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'etag': {'readonly': True},
         'available_cluster_versions': {'readonly': True},
         'cluster_endpoint': {'readonly': True},
         'cluster_id': {'readonly': True},
@@ -178,6 +184,7 @@ class Cluster(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'add_on_features': {'key': 'properties.addOnFeatures', 'type': '[str]'},
         'available_cluster_versions': {'key': 'properties.availableClusterVersions', 'type': '[ClusterVersionDetails]'},
         'azure_active_directory': {'key': 'properties.azureActiveDirectory', 'type': 'AzureActiveDirectory'},
@@ -190,6 +197,7 @@ class Cluster(Resource):
         'cluster_id': {'key': 'properties.clusterId', 'type': 'str'},
         'cluster_state': {'key': 'properties.clusterState', 'type': 'str'},
         'diagnostics_storage_account_config': {'key': 'properties.diagnosticsStorageAccountConfig', 'type': 'DiagnosticsStorageAccountConfig'},
+        'event_store_service_enabled': {'key': 'properties.eventStoreServiceEnabled', 'type': 'bool'},
         'fabric_settings': {'key': 'properties.fabricSettings', 'type': '[SettingsSectionDescription]'},
         'management_endpoint': {'key': 'properties.managementEndpoint', 'type': 'str'},
         'node_types': {'key': 'properties.nodeTypes', 'type': '[NodeTypeDescription]'},
@@ -202,7 +210,7 @@ class Cluster(Resource):
         'vm_image': {'key': 'properties.vmImage', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, management_endpoint: str, node_types, tags=None, add_on_features=None, azure_active_directory=None, certificate=None, certificate_common_names=None, client_certificate_common_names=None, client_certificate_thumbprints=None, cluster_code_version: str=None, diagnostics_storage_account_config=None, fabric_settings=None, reliability_level=None, reverse_proxy_certificate=None, reverse_proxy_certificate_common_names=None, upgrade_description=None, upgrade_mode=None, vm_image: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, management_endpoint: str, node_types, tags=None, add_on_features=None, azure_active_directory=None, certificate=None, certificate_common_names=None, client_certificate_common_names=None, client_certificate_thumbprints=None, cluster_code_version: str=None, diagnostics_storage_account_config=None, event_store_service_enabled: bool=None, fabric_settings=None, reliability_level=None, reverse_proxy_certificate=None, reverse_proxy_certificate_common_names=None, upgrade_description=None, upgrade_mode=None, vm_image: str=None, **kwargs) -> None:
         super(Cluster, self).__init__(location=location, tags=tags, **kwargs)
         self.add_on_features = add_on_features
         self.available_cluster_versions = None
@@ -216,6 +224,7 @@ class Cluster(Resource):
         self.cluster_id = None
         self.cluster_state = None
         self.diagnostics_storage_account_config = diagnostics_storage_account_config
+        self.event_store_service_enabled = event_store_service_enabled
         self.fabric_settings = fabric_settings
         self.management_endpoint = management_endpoint
         self.node_types = node_types

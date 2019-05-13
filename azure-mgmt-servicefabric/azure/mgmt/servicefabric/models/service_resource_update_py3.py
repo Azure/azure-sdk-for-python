@@ -26,6 +26,10 @@ class ServiceResourceUpdate(ProxyResource):
     :vartype type: str
     :param location: Azure resource location.
     :type location: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
+    :ivar etag: Azure resource etag.
+    :vartype etag: str
     :param placement_constraints: The placement constraints as a string.
      Placement constraints are boolean expressions on node properties and allow
      for restricting a service to particular nodes based on the service
@@ -53,6 +57,7 @@ class ServiceResourceUpdate(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -60,6 +65,8 @@ class ServiceResourceUpdate(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'placement_constraints': {'key': 'properties.placementConstraints', 'type': 'str'},
         'correlation_scheme': {'key': 'properties.correlationScheme', 'type': '[ServiceCorrelationDescription]'},
         'service_load_metrics': {'key': 'properties.serviceLoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
@@ -67,8 +74,8 @@ class ServiceResourceUpdate(ProxyResource):
         'default_move_cost': {'key': 'properties.defaultMoveCost', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, placement_constraints: str=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, **kwargs) -> None:
-        super(ServiceResourceUpdate, self).__init__(location=location, **kwargs)
+    def __init__(self, *, location: str=None, tags=None, placement_constraints: str=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, **kwargs) -> None:
+        super(ServiceResourceUpdate, self).__init__(location=location, tags=tags, **kwargs)
         self.placement_constraints = placement_constraints
         self.correlation_scheme = correlation_scheme
         self.service_load_metrics = service_load_metrics

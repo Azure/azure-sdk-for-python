@@ -45,11 +45,11 @@ class ServiceLoadMetricDescription(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'weight': {'key': 'Weight', 'type': 'str'},
-        'primary_default_load': {'key': 'PrimaryDefaultLoad', 'type': 'int'},
-        'secondary_default_load': {'key': 'SecondaryDefaultLoad', 'type': 'int'},
-        'default_load': {'key': 'DefaultLoad', 'type': 'int'},
+        'name': {'key': 'name', 'type': 'str'},
+        'weight': {'key': 'weight', 'type': 'str'},
+        'primary_default_load': {'key': 'primaryDefaultLoad', 'type': 'int'},
+        'secondary_default_load': {'key': 'secondaryDefaultLoad', 'type': 'int'},
+        'default_load': {'key': 'defaultLoad', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):

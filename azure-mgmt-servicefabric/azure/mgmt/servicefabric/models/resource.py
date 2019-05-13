@@ -30,6 +30,8 @@ class Resource(Model):
     :type location: str
     :param tags: Azure resource tags.
     :type tags: dict[str, str]
+    :ivar etag: Azure resource etag.
+    :vartype etag: str
     """
 
     _validation = {
@@ -37,6 +39,7 @@ class Resource(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -45,6 +48,7 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'etag': {'key': 'etag', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -54,3 +58,4 @@ class Resource(Model):
         self.type = None
         self.location = kwargs.get('location', None)
         self.tags = kwargs.get('tags', None)
+        self.etag = None

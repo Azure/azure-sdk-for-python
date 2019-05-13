@@ -26,12 +26,17 @@ class ProxyResource(Model):
     :vartype type: str
     :param location: Azure resource location.
     :type location: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
+    :ivar etag: Azure resource etag.
+    :vartype etag: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -39,11 +44,15 @@ class ProxyResource(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
         super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.location = location
+        self.tags = tags
+        self.etag = None

@@ -114,9 +114,7 @@ class ApplicationTypeVersionsOperations(object):
 
 
     def _create_initial(
-            self, resource_group_name, cluster_name, application_type_name, version, app_package_url, location=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.ApplicationTypeVersionResource(location=location, app_package_url=app_package_url)
-
+            self, resource_group_name, cluster_name, application_type_name, version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -165,7 +163,7 @@ class ApplicationTypeVersionsOperations(object):
         return deserialized
 
     def create(
-            self, resource_group_name, cluster_name, application_type_name, version, app_package_url, location=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, application_type_name, version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates a Service Fabric application type version resource.
 
         Create or update a Service Fabric application type version resource
@@ -180,10 +178,9 @@ class ApplicationTypeVersionsOperations(object):
         :type application_type_name: str
         :param version: The application type version.
         :type version: str
-        :param app_package_url: The URL to the application package
-        :type app_package_url: str
-        :param location: Azure resource location.
-        :type location: str
+        :param parameters: The application type version resource.
+        :type parameters:
+         ~azure.mgmt.servicefabric.models.ApplicationTypeVersionResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -204,8 +201,7 @@ class ApplicationTypeVersionsOperations(object):
             cluster_name=cluster_name,
             application_type_name=application_type_name,
             version=version,
-            app_package_url=app_package_url,
-            location=location,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

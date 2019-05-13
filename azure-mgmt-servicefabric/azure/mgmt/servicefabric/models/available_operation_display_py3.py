@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class AvailableOperationDisplay(Model):
-    """Operation supported by Service Fabric resource provider.
+    """Operation supported by the Service Fabric resource provider.
 
     :param provider: The name of the provider.
     :type provider: str

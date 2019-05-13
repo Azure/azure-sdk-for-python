@@ -43,6 +43,9 @@ class ClusterUpdateParameters(Model):
      clusters use [ClusterVersion API](./ClusterVersion.md). To get the list of
      available version for existing clusters use **availableClusterVersions**.
     :type cluster_code_version: str
+    :param event_store_service_enabled: Indicates if the event store service
+     is enabled.
+    :type event_store_service_enabled: bool
     :param fabric_settings: The list of custom fabric settings to configure
      the cluster. This will overwrite the existing list.
     :type fabric_settings:
@@ -90,6 +93,7 @@ class ClusterUpdateParameters(Model):
         'client_certificate_common_names': {'key': 'properties.clientCertificateCommonNames', 'type': '[ClientCertificateCommonName]'},
         'client_certificate_thumbprints': {'key': 'properties.clientCertificateThumbprints', 'type': '[ClientCertificateThumbprint]'},
         'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
+        'event_store_service_enabled': {'key': 'properties.eventStoreServiceEnabled', 'type': 'bool'},
         'fabric_settings': {'key': 'properties.fabricSettings', 'type': '[SettingsSectionDescription]'},
         'node_types': {'key': 'properties.nodeTypes', 'type': '[NodeTypeDescription]'},
         'reliability_level': {'key': 'properties.reliabilityLevel', 'type': 'str'},
@@ -99,7 +103,7 @@ class ClusterUpdateParameters(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, add_on_features=None, certificate=None, certificate_common_names=None, client_certificate_common_names=None, client_certificate_thumbprints=None, cluster_code_version: str=None, fabric_settings=None, node_types=None, reliability_level=None, reverse_proxy_certificate=None, upgrade_description=None, upgrade_mode=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, add_on_features=None, certificate=None, certificate_common_names=None, client_certificate_common_names=None, client_certificate_thumbprints=None, cluster_code_version: str=None, event_store_service_enabled: bool=None, fabric_settings=None, node_types=None, reliability_level=None, reverse_proxy_certificate=None, upgrade_description=None, upgrade_mode=None, tags=None, **kwargs) -> None:
         super(ClusterUpdateParameters, self).__init__(**kwargs)
         self.add_on_features = add_on_features
         self.certificate = certificate
@@ -107,6 +111,7 @@ class ClusterUpdateParameters(Model):
         self.client_certificate_common_names = client_certificate_common_names
         self.client_certificate_thumbprints = client_certificate_thumbprints
         self.cluster_code_version = cluster_code_version
+        self.event_store_service_enabled = event_store_service_enabled
         self.fabric_settings = fabric_settings
         self.node_types = node_types
         self.reliability_level = reliability_level

@@ -26,6 +26,10 @@ class ApplicationResource(ProxyResource):
     :vartype type: str
     :param location: Azure resource location.
     :type location: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
+    :ivar etag: Azure resource etag.
+    :vartype etag: str
     :param type_version: The version of the application type as defined in the
      application manifest.
     :type type_version: str
@@ -67,6 +71,7 @@ class ApplicationResource(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'minimum_nodes': {'minimum': 0},
         'maximum_nodes': {'minimum': 0},
         'provisioning_state': {'readonly': True},
@@ -77,6 +82,8 @@ class ApplicationResource(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'type_version': {'key': 'properties.typeVersion', 'type': 'str'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'ApplicationUpgradePolicy'},

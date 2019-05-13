@@ -42,7 +42,8 @@ try:
     from .application_metric_description_py3 import ApplicationMetricDescription
     from .application_resource_py3 import ApplicationResource
     from .application_resource_list_py3 import ApplicationResourceList
-    from .rolling_upgrade_monitoring_policy_py3 import RollingUpgradeMonitoringPolicy
+    from .arm_rolling_upgrade_monitoring_policy_py3 import ArmRollingUpgradeMonitoringPolicy
+    from .arm_service_type_health_policy_py3 import ArmServiceTypeHealthPolicy
     from .arm_application_health_policy_py3 import ArmApplicationHealthPolicy
     from .application_upgrade_policy_py3 import ApplicationUpgradePolicy
     from .application_resource_update_py3 import ApplicationResourceUpdate
@@ -101,7 +102,8 @@ except (SyntaxError, ImportError):
     from .application_metric_description import ApplicationMetricDescription
     from .application_resource import ApplicationResource
     from .application_resource_list import ApplicationResourceList
-    from .rolling_upgrade_monitoring_policy import RollingUpgradeMonitoringPolicy
+    from .arm_rolling_upgrade_monitoring_policy import ArmRollingUpgradeMonitoringPolicy
+    from .arm_service_type_health_policy import ArmServiceTypeHealthPolicy
     from .arm_application_health_policy import ArmApplicationHealthPolicy
     from .application_upgrade_policy import ApplicationUpgradePolicy
     from .application_resource_update import ApplicationResourceUpdate
@@ -130,6 +132,7 @@ except (SyntaxError, ImportError):
 from .operation_result_paged import OperationResultPaged
 from .service_fabric_management_client_enums import (
     ProvisioningState,
+    ArmUpgradeFailureAction,
     ServiceCorrelationScheme,
     MoveCost,
     PartitionScheme,
@@ -172,7 +175,8 @@ __all__ = [
     'ApplicationMetricDescription',
     'ApplicationResource',
     'ApplicationResourceList',
-    'RollingUpgradeMonitoringPolicy',
+    'ArmRollingUpgradeMonitoringPolicy',
+    'ArmServiceTypeHealthPolicy',
     'ArmApplicationHealthPolicy',
     'ApplicationUpgradePolicy',
     'ApplicationResourceUpdate',
@@ -200,6 +204,7 @@ __all__ = [
     'UniformInt64RangePartitionSchemeDescription',
     'OperationResultPaged',
     'ProvisioningState',
+    'ArmUpgradeFailureAction',
     'ServiceCorrelationScheme',
     'MoveCost',
     'PartitionScheme',

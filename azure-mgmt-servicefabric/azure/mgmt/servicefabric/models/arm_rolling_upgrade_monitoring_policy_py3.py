@@ -12,9 +12,13 @@
 from msrest.serialization import Model
 
 
-class RollingUpgradeMonitoringPolicy(Model):
+class ArmRollingUpgradeMonitoringPolicy(Model):
     """The policy used for monitoring the application upgrade.
 
+    :param failure_action: The activation Mode of the service package.
+     Possible values include: 'Rollback', 'Manual'
+    :type failure_action: str or
+     ~azure.mgmt.servicefabric.models.ArmUpgradeFailureAction
     :param health_check_wait_duration: The amount of time to wait after
      completing an upgrade domain before applying health policies. It is first
      interpreted as a string representing an ISO 8601 duration. If that fails,
@@ -46,6 +50,7 @@ class RollingUpgradeMonitoringPolicy(Model):
     """
 
     _attribute_map = {
+        'failure_action': {'key': 'failureAction', 'type': 'str'},
         'health_check_wait_duration': {'key': 'healthCheckWaitDuration', 'type': 'str'},
         'health_check_stable_duration': {'key': 'healthCheckStableDuration', 'type': 'str'},
         'health_check_retry_timeout': {'key': 'healthCheckRetryTimeout', 'type': 'str'},
@@ -53,10 +58,11 @@ class RollingUpgradeMonitoringPolicy(Model):
         'upgrade_domain_timeout': {'key': 'upgradeDomainTimeout', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(RollingUpgradeMonitoringPolicy, self).__init__(**kwargs)
-        self.health_check_wait_duration = kwargs.get('health_check_wait_duration', None)
-        self.health_check_stable_duration = kwargs.get('health_check_stable_duration', None)
-        self.health_check_retry_timeout = kwargs.get('health_check_retry_timeout', None)
-        self.upgrade_timeout = kwargs.get('upgrade_timeout', None)
-        self.upgrade_domain_timeout = kwargs.get('upgrade_domain_timeout', None)
+    def __init__(self, *, failure_action=None, health_check_wait_duration: str=None, health_check_stable_duration: str=None, health_check_retry_timeout: str=None, upgrade_timeout: str=None, upgrade_domain_timeout: str=None, **kwargs) -> None:
+        super(ArmRollingUpgradeMonitoringPolicy, self).__init__(**kwargs)
+        self.failure_action = failure_action
+        self.health_check_wait_duration = health_check_wait_duration
+        self.health_check_stable_duration = health_check_stable_duration
+        self.health_check_retry_timeout = health_check_retry_timeout
+        self.upgrade_timeout = upgrade_timeout
+        self.upgrade_domain_timeout = upgrade_domain_timeout

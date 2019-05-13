@@ -36,18 +36,18 @@ class ArmApplicationHealthPolicy(Model):
     :param default_service_type_health_policy: The health policy used by
      default to evaluate the health of a service type.
     :type default_service_type_health_policy:
-     ~azure.mgmt.servicefabric.models.ServiceTypeHealthPolicy
+     ~azure.mgmt.servicefabric.models.ArmServiceTypeHealthPolicy
     :param service_type_health_policy_map: The map with service type health
      policy per service type name. The map is empty by default.
     :type service_type_health_policy_map: dict[str,
-     ~azure.mgmt.servicefabric.models.ServiceTypeHealthPolicy]
+     ~azure.mgmt.servicefabric.models.ArmServiceTypeHealthPolicy]
     """
 
     _attribute_map = {
-        'consider_warning_as_error': {'key': 'ConsiderWarningAsError', 'type': 'bool'},
-        'max_percent_unhealthy_deployed_applications': {'key': 'MaxPercentUnhealthyDeployedApplications', 'type': 'int'},
-        'default_service_type_health_policy': {'key': 'DefaultServiceTypeHealthPolicy', 'type': 'ServiceTypeHealthPolicy'},
-        'service_type_health_policy_map': {'key': 'ServiceTypeHealthPolicyMap', 'type': '{ServiceTypeHealthPolicy}'},
+        'consider_warning_as_error': {'key': 'considerWarningAsError', 'type': 'bool'},
+        'max_percent_unhealthy_deployed_applications': {'key': 'maxPercentUnhealthyDeployedApplications', 'type': 'int'},
+        'default_service_type_health_policy': {'key': 'defaultServiceTypeHealthPolicy', 'type': 'ArmServiceTypeHealthPolicy'},
+        'service_type_health_policy_map': {'key': 'serviceTypeHealthPolicyMap', 'type': '{ArmServiceTypeHealthPolicy}'},
     }
 
     def __init__(self, **kwargs):

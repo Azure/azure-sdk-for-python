@@ -29,6 +29,10 @@ class ApplicationTypeVersionResource(ProxyResource):
     :vartype type: str
     :param location: Azure resource location.
     :type location: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
+    :ivar etag: Azure resource etag.
+    :vartype etag: str
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response
     :vartype provisioning_state: str
@@ -43,6 +47,7 @@ class ApplicationTypeVersionResource(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'app_package_url': {'required': True},
         'default_parameter_list': {'readonly': True},
@@ -53,13 +58,15 @@ class ApplicationTypeVersionResource(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'app_package_url': {'key': 'properties.appPackageUrl', 'type': 'str'},
         'default_parameter_list': {'key': 'properties.defaultParameterList', 'type': '{str}'},
     }
 
-    def __init__(self, *, app_package_url: str, location: str=None, **kwargs) -> None:
-        super(ApplicationTypeVersionResource, self).__init__(location=location, **kwargs)
+    def __init__(self, *, app_package_url: str, location: str=None, tags=None, **kwargs) -> None:
+        super(ApplicationTypeVersionResource, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.app_package_url = app_package_url
         self.default_parameter_list = None

@@ -26,6 +26,10 @@ class ApplicationResourceUpdate(ProxyResource):
     :vartype type: str
     :param location: Azure resource location.
     :type location: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
+    :ivar etag: Azure resource etag.
+    :vartype etag: str
     :param type_version: The version of the application type as defined in the
      application manifest.
     :type type_version: str
@@ -61,6 +65,7 @@ class ApplicationResourceUpdate(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'etag': {'readonly': True},
         'minimum_nodes': {'minimum': 0},
         'maximum_nodes': {'minimum': 0},
     }
@@ -70,6 +75,8 @@ class ApplicationResourceUpdate(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'type_version': {'key': 'properties.typeVersion', 'type': 'str'},
         'parameters': {'key': 'properties.parameters', 'type': '{str}'},
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'ApplicationUpgradePolicy'},
@@ -79,8 +86,8 @@ class ApplicationResourceUpdate(ProxyResource):
         'metrics': {'key': 'properties.metrics', 'type': '[ApplicationMetricDescription]'},
     }
 
-    def __init__(self, *, location: str=None, type_version: str=None, parameters=None, upgrade_policy=None, minimum_nodes: int=None, maximum_nodes: int=0, remove_application_capacity: bool=None, metrics=None, **kwargs) -> None:
-        super(ApplicationResourceUpdate, self).__init__(location=location, **kwargs)
+    def __init__(self, *, location: str=None, tags=None, type_version: str=None, parameters=None, upgrade_policy=None, minimum_nodes: int=None, maximum_nodes: int=0, remove_application_capacity: bool=None, metrics=None, **kwargs) -> None:
+        super(ApplicationResourceUpdate, self).__init__(location=location, tags=tags, **kwargs)
         self.type_version = type_version
         self.parameters = parameters
         self.upgrade_policy = upgrade_policy

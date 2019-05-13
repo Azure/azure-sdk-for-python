@@ -20,6 +20,12 @@ class ProvisioningState(str, Enum):
     canceled = "Canceled"
 
 
+class ArmUpgradeFailureAction(str, Enum):
+
+    rollback = "Rollback"  #: Indicates that a rollback of the upgrade will be performed by Service Fabric if the upgrade fails.
+    manual = "Manual"  #: Indicates that a manual repair will need to be performed by the administrator if the upgrade fails. Service Fabric will not proceed to the next upgrade domain automatically.
+
+
 class ServiceCorrelationScheme(str, Enum):
 
     invalid = "Invalid"  #: An invalid correlation scheme. Cannot be used. The value is zero.

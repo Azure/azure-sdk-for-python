@@ -34,8 +34,8 @@ class ServiceCorrelationDescription(Model):
     }
 
     _attribute_map = {
-        'scheme': {'key': 'Scheme', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
+        'scheme': {'key': 'scheme', 'type': 'str'},
+        'service_name': {'key': 'serviceName', 'type': 'str'},
     }
 
     def __init__(self, *, scheme, service_name: str, **kwargs) -> None:

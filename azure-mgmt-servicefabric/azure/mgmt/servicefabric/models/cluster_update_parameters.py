@@ -43,6 +43,9 @@ class ClusterUpdateParameters(Model):
      clusters use [ClusterVersion API](./ClusterVersion.md). To get the list of
      available version for existing clusters use **availableClusterVersions**.
     :type cluster_code_version: str
+    :param event_store_service_enabled: Indicates if the event store service
+     is enabled.
+    :type event_store_service_enabled: bool
     :param fabric_settings: The list of custom fabric settings to configure
      the cluster. This will overwrite the existing list.
     :type fabric_settings:
@@ -90,6 +93,7 @@ class ClusterUpdateParameters(Model):
         'client_certificate_common_names': {'key': 'properties.clientCertificateCommonNames', 'type': '[ClientCertificateCommonName]'},
         'client_certificate_thumbprints': {'key': 'properties.clientCertificateThumbprints', 'type': '[ClientCertificateThumbprint]'},
         'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
+        'event_store_service_enabled': {'key': 'properties.eventStoreServiceEnabled', 'type': 'bool'},
         'fabric_settings': {'key': 'properties.fabricSettings', 'type': '[SettingsSectionDescription]'},
         'node_types': {'key': 'properties.nodeTypes', 'type': '[NodeTypeDescription]'},
         'reliability_level': {'key': 'properties.reliabilityLevel', 'type': 'str'},
@@ -107,6 +111,7 @@ class ClusterUpdateParameters(Model):
         self.client_certificate_common_names = kwargs.get('client_certificate_common_names', None)
         self.client_certificate_thumbprints = kwargs.get('client_certificate_thumbprints', None)
         self.cluster_code_version = kwargs.get('cluster_code_version', None)
+        self.event_store_service_enabled = kwargs.get('event_store_service_enabled', None)
         self.fabric_settings = kwargs.get('fabric_settings', None)
         self.node_types = kwargs.get('node_types', None)
         self.reliability_level = kwargs.get('reliability_level', None)
