@@ -22,7 +22,7 @@ class BaseImageTriggerUpdateParameters(Model):
     :type base_image_trigger_type: str or
      ~azure.mgmt.containerregistry.v2018_09_01.models.BaseImageTriggerType
     :param status: The current status of trigger. Possible values include:
-     'Disabled', 'Enabled'
+     'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
      ~azure.mgmt.containerregistry.v2018_09_01.models.TriggerStatus
     :param name: Required. The name of the trigger.
@@ -42,5 +42,5 @@ class BaseImageTriggerUpdateParameters(Model):
     def __init__(self, **kwargs):
         super(BaseImageTriggerUpdateParameters, self).__init__(**kwargs)
         self.base_image_trigger_type = kwargs.get('base_image_trigger_type', None)
-        self.status = kwargs.get('status', None)
+        self.status = kwargs.get('status', "Enabled")
         self.name = kwargs.get('name', None)

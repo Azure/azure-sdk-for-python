@@ -26,7 +26,7 @@ class SourceTrigger(Model):
     :type source_trigger_events: list[str or
      ~azure.mgmt.containerregistry.v2018_09_01.models.SourceTriggerEvent]
     :param status: The current status of trigger. Possible values include:
-     'Disabled', 'Enabled'
+     'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
      ~azure.mgmt.containerregistry.v2018_09_01.models.TriggerStatus
     :param name: Required. The name of the trigger.
@@ -50,5 +50,5 @@ class SourceTrigger(Model):
         super(SourceTrigger, self).__init__(**kwargs)
         self.source_repository = kwargs.get('source_repository', None)
         self.source_trigger_events = kwargs.get('source_trigger_events', None)
-        self.status = kwargs.get('status', None)
+        self.status = kwargs.get('status', "Enabled")
         self.name = kwargs.get('name', None)
