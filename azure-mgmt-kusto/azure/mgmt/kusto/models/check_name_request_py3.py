@@ -12,34 +12,31 @@
 from msrest.serialization import Model
 
 
-class DatabaseCheckNameRequest(Model):
+class CheckNameRequest(Model):
     """The result returned from a database check name availability request.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Database name.
+    :param name: Required. Resource name.
     :type name: str
-    :ivar type: Required. The type of resource,
-     Microsoft.Kusto/clusters/databases. Default value:
-     "Microsoft.Kusto/clusters/databases" .
-    :vartype type: str
+    :param type: Required. The type of resource, for instance
+     Microsoft.Kusto/clusters/databases. Possible values include:
+     'Microsoft.Kusto/clusters/databases',
+     'Microsoft.Kusto/clusters/attachedDatabaseConfigurations'
+    :type type: str or ~azure.mgmt.kusto.models.Type
     """
 
     _validation = {
         'name': {'required': True},
-        'type': {'required': True, 'constant': True},
+        'type': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'Type'},
     }
 
-    type = "Microsoft.Kusto/clusters/databases"
-
-    def __init__(self, **kwargs):
-        super(DatabaseCheckNameRequest, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+    def __init__(self, *, name: str, type, **kwargs) -> None:
+        super(CheckNameRequest, self).__init__(**kwargs)
+        self.name = name
+        self.type = type

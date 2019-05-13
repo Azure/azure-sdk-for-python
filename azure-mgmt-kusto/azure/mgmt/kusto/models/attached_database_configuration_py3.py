@@ -9,14 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
-class Database(ProxyResource):
-    """Class representing a Kusto database.
+class AttachedDatabaseConfiguration(ProxyResource):
+    """Class representing an attached database configuration.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ReadWriteDatabase, ReadOnlyAttachedDatabase
+    sub-classes are: AllAttachedDatabaseConfiguration,
+    SpecificAttachedDatabaseConfiguration
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -53,11 +54,11 @@ class Database(ProxyResource):
     }
 
     _subtype_map = {
-        'kind': {'ReadWrite': 'ReadWriteDatabase', 'ReadOnlyAttached': 'ReadOnlyAttachedDatabase'}
+        'kind': {'All': 'AllAttachedDatabaseConfiguration', 'Specific': 'SpecificAttachedDatabaseConfiguration'}
     }
 
-    def __init__(self, **kwargs):
-        super(Database, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
+    def __init__(self, *, location: str=None, **kwargs) -> None:
+        super(AttachedDatabaseConfiguration, self).__init__(**kwargs)
+        self.location = location
         self.kind = None
-        self.kind = 'Database'
+        self.kind = 'AttachedDatabaseConfiguration'

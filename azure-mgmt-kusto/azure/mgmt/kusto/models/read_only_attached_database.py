@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .database import Database
 
 
-class Database(ProxyResource):
-    """Class representing a Kusto database.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ReadWriteDatabase, ReadOnlyAttachedDatabase
+class ReadOnlyAttachedDatabase(Database):
+    """Class representing a read only attached database.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,6 +32,19 @@ class Database(ProxyResource):
     :type location: str
     :param kind: Required. Constant filled by server.
     :type kind: str
+    :ivar provisioning_state: The provisioned state of the resource. Possible
+     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
+     'Moving'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.kusto.models.ProvisioningState
+    :ivar soft_delete_period: The time the data should be kept before it stops
+     being accessible to queries in TimeSpan.
+    :vartype soft_delete_period: timedelta
+    :param hot_cache_period: The time the data should be kept in cache for
+     fast queries in TimeSpan.
+    :type hot_cache_period: timedelta
+    :param statistics: The statistics of the database.
+    :type statistics: ~azure.mgmt.kusto.models.DatabaseStatistics
     """
 
     _validation = {
@@ -42,6 +52,8 @@ class Database(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'kind': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'soft_delete_period': {'readonly': True},
     }
 
     _attribute_map = {
@@ -50,14 +62,16 @@ class Database(ProxyResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'kind': {'ReadWrite': 'ReadWriteDatabase', 'ReadOnlyAttached': 'ReadOnlyAttachedDatabase'}
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'soft_delete_period': {'key': 'properties.softDeletePeriod', 'type': 'duration'},
+        'hot_cache_period': {'key': 'properties.hotCachePeriod', 'type': 'duration'},
+        'statistics': {'key': 'properties.statistics', 'type': 'DatabaseStatistics'},
     }
 
     def __init__(self, **kwargs):
-        super(Database, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.kind = None
-        self.kind = 'Database'
+        super(ReadOnlyAttachedDatabase, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.soft_delete_period = None
+        self.hot_cache_period = kwargs.get('hot_cache_period', None)
+        self.statistics = kwargs.get('statistics', None)
+        self.kind = 'ReadOnlyAttached'

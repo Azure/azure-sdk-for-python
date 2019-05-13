@@ -32,17 +32,22 @@ class ProvisioningState(str, Enum):
     deleting = "Deleting"
     succeeded = "Succeeded"
     failed = "Failed"
+    moving = "Moving"
 
 
 class AzureSkuName(str, Enum):
 
-    d13_v2 = "D13_v2"
-    d14_v2 = "D14_v2"
-    l8 = "L8"
-    l16 = "L16"
-    d11_v2 = "D11_v2"
-    d12_v2 = "D12_v2"
-    l4 = "L4"
+    standard_ds13_v21_tb_ps = "Standard_DS13_v2+1TB_PS"
+    standard_ds13_v22_tb_ps = "Standard_DS13_v2+2TB_PS"
+    standard_ds14_v23_tb_ps = "Standard_DS14_v2+3TB_PS"
+    standard_ds14_v24_tb_ps = "Standard_DS14_v2+4TB_PS"
+    standard_d13_v2 = "Standard_D13_v2"
+    standard_d14_v2 = "Standard_D14_v2"
+    standard_l8s = "Standard_L8s"
+    standard_l16s = "Standard_L16s"
+    standard_d11_v2 = "Standard_D11_v2"
+    standard_d12_v2 = "Standard_D12_v2"
+    standard_l4s = "Standard_L4s"
 
 
 class AzureScaleType(str, Enum):
@@ -82,6 +87,18 @@ class DatabasePrincipalType(str, Enum):
     app = "App"
     group = "Group"
     user = "User"
+
+
+class Kind(str, Enum):
+
+    all = "All"
+    specific = "Specific"
+
+
+class Type(str, Enum):
+
+    microsoft_kustoclustersdatabases = "Microsoft.Kusto/clusters/databases"
+    microsoft_kustoclustersattached_database_configurations = "Microsoft.Kusto/clusters/attachedDatabaseConfigurations"
 
 
 class Reason(str, Enum):

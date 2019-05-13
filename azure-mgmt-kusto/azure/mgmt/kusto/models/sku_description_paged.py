@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class AzureSkuPaged(Paged):
+class SkuDescriptionPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`AzureSku <azure.mgmt.kusto.models.AzureSku>` object
+    A paging container for iterating over a list of :class:`SkuDescription <azure.mgmt.kusto.models.SkuDescription>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[AzureSku]'}
+        'current_page': {'key': 'value', 'type': '[SkuDescription]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(AzureSkuPaged, self).__init__(*args, **kwargs)
+        super(SkuDescriptionPaged, self).__init__(*args, **kwargs)

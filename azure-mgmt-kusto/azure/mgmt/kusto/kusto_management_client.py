@@ -15,6 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.clusters_operations import ClustersOperations
 from .operations.databases_operations import DatabasesOperations
+from .operations.attached_database_configurations_operations import AttachedDatabaseConfigurationsOperations
 from .operations.data_connections_operations import DataConnectionsOperations
 from .operations.operations import Operations
 from . import models
@@ -64,6 +65,8 @@ class KustoManagementClient(SDKClient):
     :vartype clusters: azure.mgmt.kusto.operations.ClustersOperations
     :ivar databases: Databases operations
     :vartype databases: azure.mgmt.kusto.operations.DatabasesOperations
+    :ivar attached_database_configurations: AttachedDatabaseConfigurations operations
+    :vartype attached_database_configurations: azure.mgmt.kusto.operations.AttachedDatabaseConfigurationsOperations
     :ivar data_connections: DataConnections operations
     :vartype data_connections: azure.mgmt.kusto.operations.DataConnectionsOperations
     :ivar operations: Operations operations
@@ -93,6 +96,8 @@ class KustoManagementClient(SDKClient):
         self.clusters = ClustersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.databases = DatabasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.attached_database_configurations = AttachedDatabaseConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.data_connections = DataConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

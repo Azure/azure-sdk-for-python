@@ -9,14 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .attached_database_configuration_py3 import AttachedDatabaseConfiguration
 
 
-class Database(ProxyResource):
-    """Class representing a Kusto database.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ReadWriteDatabase, ReadOnlyAttachedDatabase
+class AllAttachedDatabaseConfiguration(AttachedDatabaseConfiguration):
+    """Class representing an attached database configuration for a all attached
+    database kind.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -35,6 +33,11 @@ class Database(ProxyResource):
     :type location: str
     :param kind: Required. Constant filled by server.
     :type kind: str
+    :ivar database_names: The list of current databases that are attached.
+    :vartype database_names: list[str]
+    :param cluster_resource_id: Required. The resource id of the cluster where
+     the databases you would like to attach reside.
+    :type cluster_resource_id: str
     """
 
     _validation = {
@@ -42,6 +45,8 @@ class Database(ProxyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'kind': {'required': True},
+        'database_names': {'readonly': True},
+        'cluster_resource_id': {'required': True},
     }
 
     _attribute_map = {
@@ -50,14 +55,12 @@ class Database(ProxyResource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
+        'database_names': {'key': 'properties.databaseNames', 'type': '[str]'},
+        'cluster_resource_id': {'key': 'properties.clusterResourceId', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'kind': {'ReadWrite': 'ReadWriteDatabase', 'ReadOnlyAttached': 'ReadOnlyAttachedDatabase'}
-    }
-
-    def __init__(self, **kwargs):
-        super(Database, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.kind = None
-        self.kind = 'Database'
+    def __init__(self, *, cluster_resource_id: str, location: str=None, **kwargs) -> None:
+        super(AllAttachedDatabaseConfiguration, self).__init__(location=location, **kwargs)
+        self.database_names = None
+        self.cluster_resource_id = cluster_resource_id
+        self.kind = 'All'

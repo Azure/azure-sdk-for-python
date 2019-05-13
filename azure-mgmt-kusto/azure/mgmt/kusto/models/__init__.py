@@ -11,25 +11,34 @@
 
 try:
     from .trusted_external_tenant_py3 import TrustedExternalTenant
+    from .intelligent_autoscale_py3 import IntelligentAutoscale
     from .azure_sku_py3 import AzureSku
     from .azure_capacity_py3 import AzureCapacity
     from .azure_resource_sku_py3 import AzureResourceSku
+    from .sku_location_info_item_py3 import SkuLocationInfoItem
+    from .sku_description_py3 import SkuDescription
     from .database_statistics_py3 import DatabaseStatistics
     from .cluster_py3 import Cluster
     from .cluster_update_py3 import ClusterUpdate
+    from .attached_database_configuration_py3 import AttachedDatabaseConfiguration
+    from .all_attached_database_configuration_py3 import AllAttachedDatabaseConfiguration
+    from .specific_attached_database_configuration_py3 import SpecificAttachedDatabaseConfiguration
     from .database_py3 import Database
-    from .database_update_py3 import DatabaseUpdate
+    from .read_write_database_py3 import ReadWriteDatabase
+    from .read_only_attached_database_py3 import ReadOnlyAttachedDatabase
     from .database_principal_py3 import DatabasePrincipal
     from .database_principal_list_result_py3 import DatabasePrincipalListResult
+    from .follower_database_result_py3 import FollowerDatabaseResult
     from .data_connection_py3 import DataConnection
     from .data_connection_validation_result_py3 import DataConnectionValidationResult
     from .database_principal_list_request_py3 import DatabasePrincipalListRequest
+    from .follower_database_request_py3 import FollowerDatabaseRequest
     from .data_connection_validation_py3 import DataConnectionValidation
     from .event_hub_data_connection_py3 import EventHubDataConnection
     from .event_grid_data_connection_py3 import EventGridDataConnection
     from .data_connection_validation_list_result_py3 import DataConnectionValidationListResult
     from .cluster_check_name_request_py3 import ClusterCheckNameRequest
-    from .database_check_name_request_py3 import DatabaseCheckNameRequest
+    from .check_name_request_py3 import CheckNameRequest
     from .data_connection_check_name_request_py3 import DataConnectionCheckNameRequest
     from .check_name_result_py3 import CheckNameResult
     from .operation_display_py3 import OperationDisplay
@@ -40,25 +49,34 @@ try:
     from .proxy_resource_py3 import ProxyResource
 except (SyntaxError, ImportError):
     from .trusted_external_tenant import TrustedExternalTenant
+    from .intelligent_autoscale import IntelligentAutoscale
     from .azure_sku import AzureSku
     from .azure_capacity import AzureCapacity
     from .azure_resource_sku import AzureResourceSku
+    from .sku_location_info_item import SkuLocationInfoItem
+    from .sku_description import SkuDescription
     from .database_statistics import DatabaseStatistics
     from .cluster import Cluster
     from .cluster_update import ClusterUpdate
+    from .attached_database_configuration import AttachedDatabaseConfiguration
+    from .all_attached_database_configuration import AllAttachedDatabaseConfiguration
+    from .specific_attached_database_configuration import SpecificAttachedDatabaseConfiguration
     from .database import Database
-    from .database_update import DatabaseUpdate
+    from .read_write_database import ReadWriteDatabase
+    from .read_only_attached_database import ReadOnlyAttachedDatabase
     from .database_principal import DatabasePrincipal
     from .database_principal_list_result import DatabasePrincipalListResult
+    from .follower_database_result import FollowerDatabaseResult
     from .data_connection import DataConnection
     from .data_connection_validation_result import DataConnectionValidationResult
     from .database_principal_list_request import DatabasePrincipalListRequest
+    from .follower_database_request import FollowerDatabaseRequest
     from .data_connection_validation import DataConnectionValidation
     from .event_hub_data_connection import EventHubDataConnection
     from .event_grid_data_connection import EventGridDataConnection
     from .data_connection_validation_list_result import DataConnectionValidationListResult
     from .cluster_check_name_request import ClusterCheckNameRequest
-    from .database_check_name_request import DatabaseCheckNameRequest
+    from .check_name_request import CheckNameRequest
     from .data_connection_check_name_request import DataConnectionCheckNameRequest
     from .check_name_result import CheckNameResult
     from .operation_display import OperationDisplay
@@ -67,8 +85,9 @@ except (SyntaxError, ImportError):
     from .azure_entity_resource import AzureEntityResource
     from .resource import Resource
     from .proxy_resource import ProxyResource
+from .follower_database_result_paged import FollowerDatabaseResultPaged
 from .cluster_paged import ClusterPaged
-from .azure_sku_paged import AzureSkuPaged
+from .sku_description_paged import SkuDescriptionPaged
 from .azure_resource_sku_paged import AzureResourceSkuPaged
 from .database_paged import DatabasePaged
 from .database_principal_paged import DatabasePrincipalPaged
@@ -82,30 +101,41 @@ from .kusto_management_client_enums import (
     DataFormat,
     DatabasePrincipalRole,
     DatabasePrincipalType,
+    Kind,
+    Type,
     Reason,
 )
 
 __all__ = [
     'TrustedExternalTenant',
+    'IntelligentAutoscale',
     'AzureSku',
     'AzureCapacity',
     'AzureResourceSku',
+    'SkuLocationInfoItem',
+    'SkuDescription',
     'DatabaseStatistics',
     'Cluster',
     'ClusterUpdate',
+    'AttachedDatabaseConfiguration',
+    'AllAttachedDatabaseConfiguration',
+    'SpecificAttachedDatabaseConfiguration',
     'Database',
-    'DatabaseUpdate',
+    'ReadWriteDatabase',
+    'ReadOnlyAttachedDatabase',
     'DatabasePrincipal',
     'DatabasePrincipalListResult',
+    'FollowerDatabaseResult',
     'DataConnection',
     'DataConnectionValidationResult',
     'DatabasePrincipalListRequest',
+    'FollowerDatabaseRequest',
     'DataConnectionValidation',
     'EventHubDataConnection',
     'EventGridDataConnection',
     'DataConnectionValidationListResult',
     'ClusterCheckNameRequest',
-    'DatabaseCheckNameRequest',
+    'CheckNameRequest',
     'DataConnectionCheckNameRequest',
     'CheckNameResult',
     'OperationDisplay',
@@ -114,8 +144,9 @@ __all__ = [
     'AzureEntityResource',
     'Resource',
     'ProxyResource',
+    'FollowerDatabaseResultPaged',
     'ClusterPaged',
-    'AzureSkuPaged',
+    'SkuDescriptionPaged',
     'AzureResourceSkuPaged',
     'DatabasePaged',
     'DatabasePrincipalPaged',
@@ -128,5 +159,7 @@ __all__ = [
     'DataFormat',
     'DatabasePrincipalRole',
     'DatabasePrincipalType',
+    'Kind',
+    'Type',
     'Reason',
 ]

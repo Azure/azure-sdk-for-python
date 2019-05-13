@@ -9,14 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class DatabaseUpdate(Resource):
-    """Class representing an update to a Kusto database.
+class AttachedDatabaseConfiguration(ProxyResource):
+    """Class representing an attached database configuration.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AllAttachedDatabaseConfiguration,
+    SpecificAttachedDatabaseConfiguration
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
@@ -28,25 +34,15 @@ class DatabaseUpdate(Resource):
     :vartype type: str
     :param location: Resource location.
     :type location: str
-    :ivar provisioning_state: The provisioned state of the resource. Possible
-     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.kusto.models.ProvisioningState
-    :param soft_delete_period: The time the data should be kept before it
-     stops being accessible to queries in TimeSpan.
-    :type soft_delete_period: timedelta
-    :param hot_cache_period: The time the data that should be kept in cache
-     for fast queries in TimeSpan.
-    :type hot_cache_period: timedelta
-    :param statistics: The statistics of the database.
-    :type statistics: ~azure.mgmt.kusto.models.DatabaseStatistics
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -54,16 +50,15 @@ class DatabaseUpdate(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'soft_delete_period': {'key': 'properties.softDeletePeriod', 'type': 'duration'},
-        'hot_cache_period': {'key': 'properties.hotCachePeriod', 'type': 'duration'},
-        'statistics': {'key': 'properties.statistics', 'type': 'DatabaseStatistics'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'All': 'AllAttachedDatabaseConfiguration', 'Specific': 'SpecificAttachedDatabaseConfiguration'}
     }
 
     def __init__(self, **kwargs):
-        super(DatabaseUpdate, self).__init__(**kwargs)
+        super(AttachedDatabaseConfiguration, self).__init__(**kwargs)
         self.location = kwargs.get('location', None)
-        self.provisioning_state = None
-        self.soft_delete_period = kwargs.get('soft_delete_period', None)
-        self.hot_cache_period = kwargs.get('hot_cache_period', None)
-        self.statistics = kwargs.get('statistics', None)
+        self.kind = None
+        self.kind = 'AttachedDatabaseConfiguration'
