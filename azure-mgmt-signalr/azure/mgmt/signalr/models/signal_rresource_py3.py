@@ -39,12 +39,13 @@ class SignalRResource(TrackedResource):
      &lt;hostNamePrefix&gt;.service.signalr.net.
     :type host_name_prefix: str
     :param features: List of SignalR featureFlags. e.g. ServiceMode.
-     When updating featureFlags, if certain featureFlag is not included in
-     parameters, SignalR service will remain it unchanged.
-     And when you GET a SignalR resource, the response will include only those
-     featureFlags explicitly set by you. For other featureFlags,
-     SignalR service will use its globally default value. Note that, default
-     value doesn't mean "false". It varies in terms of different FeatureFlags.
+     FeatureFlags that are not included in the parameters for the update
+     operation will not be modified.
+     And the response will only include featureFlags that are explicitly set.
+     When a featureFlag is not explicitly set, SignalR service will use its
+     globally default value.
+     But keep in mind, the default value doesn't mean "false". It varies in
+     terms of different FeatureFlags.
     :type features: list[~azure.mgmt.signalr.models.SignalRFeature]
     :ivar provisioning_state: Provisioning state of the resource. Possible
      values include: 'Unknown', 'Succeeded', 'Failed', 'Canceled', 'Running',
