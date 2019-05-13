@@ -68,3 +68,29 @@ class SequenceNumberAction(str, Enum):
 
     Update = 'update'
     """Sets the sequence number to the value included with the request."""
+
+
+class PublicAccess(str, Enum):
+    """
+    Specifies whether data in the container may be accessed publicly and the level of access.
+    """
+
+    OFF = 'off'
+    """
+    Specifies that there is no public read access for both the container and blobs within the container.
+    Clients cannot enumerate the containers within the storage account as well as the blobs within the container.
+    """
+
+    Blob = 'blob'
+    """
+    Specifies public read access for blobs. Blob data within this container can be read
+    via anonymous request, but container data is not available. Clients cannot enumerate
+    blobs within the container via anonymous request.
+    """
+
+    Container = 'container'
+    """
+    Specifies full public read access for container and blob data. Clients can enumerate
+    blobs within the container via anonymous request, but cannot enumerate containers
+    within the storage account.
+    """

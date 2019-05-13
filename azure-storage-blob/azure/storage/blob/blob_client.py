@@ -9,14 +9,15 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+from azure.core import Configuration
+
 from .common import BlobType
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.core import Configuration
     from .lease import Lease
     from .common import PremiumPageBlobTier, StandardBlobTier, SequenceNumberAction
-    from .authentication import SharedKeyCredentials
+    from azure.core.pipeline.policies import HTTPPolicy
     from .models import (  # pylint: disable=unused-import
         ContainerProperties,
         BlobProperties,
@@ -35,8 +36,9 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             blob=None,  # type: Optional[Union[str, BlobProperties]]
             snapshot=None,  # type: Optional[str]
             blob_type=BlobType.BlockBlob,  # type : Union[str, BlobType]
-            credentials=None,  # type: Optional[SharedKeyCredentials]
-            configuration=None  # type: Optional[Configuration]
+            credentials=None,  # type: Optional[HTTPPolicy]
+            configuration=None,  # type: Optional[Configuration]
+            **kwargs  # type: Any
         ):
         # type: (...) -> None
         pass
@@ -62,7 +64,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         """
 
     def generate_shared_access_signature(
-            self, permission=None,  # type: Optional[BlobPermissions]
+            self, permission=None,  # type: Optional[Union[BlobPermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
             start=None,  # type: Optional[Union[datetime, str]]
             policy_id=None,  # type: Optional[str]
@@ -210,87 +212,148 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         """
 
     def download_blob(
-            self, offset=None, length=None, validate_content=False, lease=None,
-            if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None,
-            timeout=None):
+            self, offset=None,  # type: Any
+            length=None,  # type: Optional[int]
+            validate_content=False,  # type: bool
+            lease=None,  # type: Union[Lease, str]
+            if_modified_since=None,  # type: Optional[datetime]
+            if_unmodified_since=None,  # type: Optional[datetime]
+            if_match=None,  # type: Optional[str]
+            if_none_match=None,  # type: Optional[str]
+            timeout=None  # type: Optional[int]
+        ):
+        # type: (...) -> Iterable[bytes]
         """
+        TODO: Fix type hints
         :returns: A iterable data generator (stream)
         """
 
     def delete_blob(
-            self, lease=None, delete_snapshots=None, if_modified_since=None, if_unmodified_since=None,
-            if_match=None, if_none_match=None, timeout=None):
+            self, lease=None,  # type: Optional[Union[str, Lease]]
+            delete_snapshots=None,  # type: Optional[str]
+            if_modified_since=None,  # type: Optional[datetime]
+            if_unmodified_since=None,  # type: Optional[datetime]
+            if_match=None,  # type: Optional[str]
+            if_none_match=None,  # type: Optional[str]
+            timeout=None  # type: Optional[int]
+        ):
+        # type: (...) -> None
         """
         :returns: None
         """
 
     def undelete_blob(self, timeout=None):
+        # type: (Optional[int]) -> None
         """
         :returns: None
         """
 
     def get_blob_properties(
-            self, lease=None, if_modified_since=None, if_unmodified_since=None,
-            if_match=None, if_none_match=None, timeout=None):
+            self, lease=None,  # type: Optional[Union[Lease, str]]
+            if_modified_since=None,  # type: Optional[datetime]
+            if_unmodified_since=None,  # type: Optional[datetime]
+            if_match=None,  # type: Optional[str]
+            if_none_match=None,  # type: Optional[str]
+            timeout=None  # type: Optional[int]
+        ):
+        # type: (...) -> BlobProperties
         """
         :returns: BlobProperties
         """
 
     def set_blob_properties(
-            self, content_settings=None, lease=None, if_modified_since=None,
-            if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None):
+            self, content_settings=None,  # type: Optional[ContentSettings]
+            lease=None,  # type: Optional[Union[Lease, str]]
+            if_modified_since=None,  # type: Optional[datetime]
+            if_unmodified_since=None,  # type: Optional[datetime]
+            if_match=None,  # type: Optional[str]
+            if_none_match=None,  # type: Optional[str]
+            timeout=None  # type: Optional[int]
+        ):
+        # type: (...) -> None
         """
         :returns: Blob-updated property dict (Etag and last modified)
         """
 
     def get_blob_metadata(
-            self, lease=None, if_modified_since=None, if_unmodified_since=None,
-            if_match=None, if_none_match=None, timeout=None):
+            self, lease=None,  # type: Optional[Union[Lease, str]]
+            if_modified_since=None,  # type: Optional[datetime]
+            if_unmodified_since=None,  # type: Optional[datetime]
+            if_match=None,  # type: Optional[str]
+            if_none_match=None,  # type: Optional[str]
+            timeout=None  # type: Optional[int]
+        ):
+        # type: (...) -> Dict[str, str]
         """
         :returns: A dict of metadata
         """
 
     def set_blob_metadata(
-            self, metadata=None, lease=None, if_modified_since=None, if_unmodified_since=None,
-            if_match=None, if_none_match=None, timeout=None):
+            self, metadata=None,  # type: Optional[Dict[str, str]]
+            lease=None,  # type: Optional[Union[Lease, str]]
+            if_modified_since=None,  # type: Optional[datetime]
+            if_unmodified_since=None,  # type: Optional[datetime]
+            if_match=None,  # type: Optional[str]
+            if_none_match=None,  # type: Optional[str]
+            timeout=None  # type: Optional[int]
+        ):
+        # type: (...) -> Dict[str, Union[str, datetime]]
         """
         :returns: Blob-updated property dict (Etag and last modified)
         """
 
     def create_blob(
-            self, content_length=None, content_settings=None, sequence_number=None,
-            metadata=None, lease_id=None, if_modified_since=None, if_unmodified_since=None,
-            if_match=None, if_none_match=None, timeout=None, premium_page_blob_tier=None):
+            self, content_length=None,  # type: Optional[int]
+            content_settings=None,  # type: Optional[ContentSettings]
+            sequence_number=None,  # type: Optional[int]
+            metadata=None, # type: Optional[Dict[str, str]]
+            lease=None,  # type: Optional[Union[Lease, str]]
+            if_modified_since=None,  # type: Optional[datetime]
+            if_unmodified_since=None,  # type: Optional[datetime]
+            if_match=None,  # type: Optional[str]
+            if_none_match=None,  # type: Optional[str]
+            timeout=None,  # type: Optional[int]
+            premium_page_blob_tier=None  # type: Optional[Union[str, PremiumPageBlobTier]]
+        ):
+        # type: (...) -> Dict[str, Union[str, datetime]]
         """
         :returns: Blob-updated property dict (Etag and last modified).
         """
 
     def create_snapshot(
-            self, metadata=None, if_modified_since=None, if_unmodified_since=None,
-            if_match=None, if_none_match=None, lease=None, timeout=None):
+            self, metadata=None,  # type: Optional[Dict[str, str]]
+            if_modified_since=None,  # type: Optional[datetime]
+            if_unmodified_since=None,  # type: Optional[datetime]
+            if_match=None,  # type: Optional[str]
+            if_none_match=None,  # type: Optional[str]
+            lease=None,  # type: Optional[Union[Lease, str]]
+            timeout=None  # type: Optional[int]
+        ):
         """
+        TODO: Fix type hints - SnapshotProperties
         :returns: SnapshotProperties
         """
 
     def copy_blob_from_source(
-            self, copy_source,
-            metadata=None,
-            source_if_modified_since=None,
-            source_if_unmodified_since=None,
-            source_if_match=None,
-            source_if_none_match=None,
-            destination_if_modified_since=None,
-            destination_if_unmodified_since=None,
-            destination_if_match=None,
-            destination_if_none_match=None,
-            destination_lease=None,
-            source_lease=None,
-            timeout=None,
+            self, copy_source,  # type: Any
+            metadata=None,  # type: Optional[Dict[str, str]]
+            source_if_modified_since=None,  # type: Optional[datetime]
+            source_if_unmodified_since=None,  # type: Optional[datetime]
+            source_if_match=None,  # type: Optional[str]
+            source_if_none_match=None,  # type: Optional[str]
+            destination_if_modified_since=None,  # type: Optional[datetime]
+            destination_if_unmodified_since=None,  # type: Optional[datetime]
+            destination_if_match=None,  # type: Optional[str]
+            destination_if_none_match=None,  # type: Optional[str]
+            destination_lease=None,  # type: Optional[Union[Lease, str]]
+            source_lease=None,  # type: Optional[Union[Lease, str]]
+            timeout=None,  # type: Optional[int]
             premium_page_blob_tier=None,
-            requires_sync=None
+            requires_sync=None  # type: Optional[bool]
         ):
         # type: (...) -> Any
         """
+        TODO: Fix type hints
         :returns: A pollable object to check copy operation status (and abort).
         """
 

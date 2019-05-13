@@ -260,6 +260,242 @@ class PageRange(object):
         self.is_cleared = is_cleared
 
 
+class ResourceTypes(object):
+    """
+    Specifies the resource types that are accessible with the account SAS.
+
+    :ivar ResourceTypes ResourceTypes.CONTAINER:
+        Access to container-level APIs (e.g., Create/Delete Container,
+        Create/Delete Queue, Create/Delete Share,
+        List Blobs/Files and Directories)
+    :ivar ResourceTypes ResourceTypes.OBJECT:
+        Access to object-level APIs for blobs, queue messages, and
+        files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
+    :ivar ResourceTypes ResourceTypes.SERVICE:
+        Access to service-level APIs (e.g., Get/Set Service Properties,
+        Get Service Stats, List Containers/Queues/Shares)
+    """
+
+    SERVICE = None  # type: ResourceTypes
+    CONTAINER = None  # type: ResourceTypes
+    OBJECT = None  # type: ResourceTypes
+
+    def __init__(self, service=False, container=False, object=False, _str=None):  # pylint: disable=redefined-builtin
+        """
+        :param bool service:
+            Access to service-level APIs (e.g., Get/Set Service Properties,
+            Get Service Stats, List Containers/Queues/Shares)
+        :param bool container:
+            Access to container-level APIs (e.g., Create/Delete Container,
+            Create/Delete Queue, Create/Delete Share,
+            List Blobs/Files and Directories)
+        :param bool object:
+            Access to object-level APIs for blobs, queue messages, and
+            files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
+        :param str _str:
+            A string representing the resource types.
+        """
+        if not _str:
+            _str = ''
+        self.service = service or ('s' in _str)
+        self.container = container or ('c' in _str)
+        self.object = object or ('o' in _str)
+
+    def __or__(self, other):
+        return ResourceTypes(_str=str(self) + str(other))
+
+    def __add__(self, other):
+        return ResourceTypes(_str=str(self) + str(other))
+
+    def __str__(self):
+        return (('s' if self.service else '') +
+                ('c' if self.container else '') +
+                ('o' if self.object else ''))
+
+
+ResourceTypes.SERVICE = ResourceTypes(service=True)
+ResourceTypes.CONTAINER = ResourceTypes(container=True)
+ResourceTypes.OBJECT = ResourceTypes(object=True)
+
+
+class AccountPermissions(object):
+    """
+    :class:`~ResourceTypes` class to be used with generate_shared_access_signature
+    method and for the AccessPolicies used with set_*_acl. There are two types of
+    SAS which may be used to grant resource access. One is to grant access to a
+    specific resource (resource-specific). Another is to grant access to the
+    entire service for a specific account and allow certain operations based on
+    perms found here.
+
+    :ivar AccountPermissions AccountPermissions.ADD:
+        Valid for the following Object resource types only: queue messages and append blobs.
+    :ivar AccountPermissions AccountPermissions.CREATE:
+        Valid for the following Object resource types only: blobs and files. Users
+        can create new blobs or files, but may not overwrite existing blobs or files.
+    :ivar AccountPermissions AccountPermissions.DELETE:
+        Valid for Container and Object resource types, except for queue messages.
+    :ivar AccountPermissions AccountPermissions.LIST:
+        Valid for Service and Container resource types only.
+    :ivar AccountPermissions AccountPermissions.PROCESS:
+        Valid for the following Object resource type only: queue messages.
+    :ivar AccountPermissions AccountPermissions.READ:
+        Valid for all signed resources types (Service, Container, and Object).
+        Permits read permissions to the specified resource type.
+    :ivar AccountPermissions AccountPermissions.UPDATE:
+        Valid for the following Object resource types only: queue messages.
+    :ivar AccountPermissions AccountPermissions.WRITE:
+        Valid for all signed resources types (Service, Container, and Object).
+        Permits write permissions to the specified resource type.
+    """
+
+    READ = None  # type: AccountPermissions
+    WRITE = None  # type: AccountPermissions
+    DELETE = None  # type: AccountPermissions
+    LIST = None  # type: AccountPermissions
+    ADD = None  # type: AccountPermissions
+    CREATE = None  # type: AccountPermissions
+    UPDATE = None  # type: AccountPermissions
+    PROCESS = None  # type: AccountPermissions
+
+    def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
+                 add=False, create=False, update=False, process=False, _str=None):
+        """
+        :param bool read:
+            Valid for all signed resources types (Service, Container, and Object).
+            Permits read permissions to the specified resource type.
+        :param bool write:
+            Valid for all signed resources types (Service, Container, and Object).
+            Permits write permissions to the specified resource type.
+        :param bool delete:
+            Valid for Container and Object resource types, except for queue messages.
+        :param bool list:
+            Valid for Service and Container resource types only.
+        :param bool add:
+            Valid for the following Object resource types only: queue messages, and append blobs.
+        :param bool create:
+            Valid for the following Object resource types only: blobs and files.
+            Users can create new blobs or files, but may not overwrite existing
+            blobs or files.
+        :param bool update:
+            Valid for the following Object resource types only: queue messages.
+        :param bool process:
+            Valid for the following Object resource type only: queue messages.
+        :param str _str:
+            A string representing the permissions.
+        """
+        if not _str:
+            _str = ''
+        self.read = read or ('r' in _str)
+        self.write = write or ('w' in _str)
+        self.delete = delete or ('d' in _str)
+        self.list = list or ('l' in _str)
+        self.add = add or ('a' in _str)
+        self.create = create or ('c' in _str)
+        self.update = update or ('u' in _str)
+        self.process = process or ('p' in _str)
+
+    def __or__(self, other):
+        return AccountPermissions(_str=str(self) + str(other))
+
+    def __add__(self, other):
+        return AccountPermissions(_str=str(self) + str(other))
+
+    def __str__(self):
+        return (('r' if self.read else '') +
+                ('w' if self.write else '') +
+                ('d' if self.delete else '') +
+                ('l' if self.list else '') +
+                ('a' if self.add else '') +
+                ('c' if self.create else '') +
+                ('u' if self.update else '') +
+                ('p' if self.process else ''))
+
+
+AccountPermissions.READ = AccountPermissions(read=True)
+AccountPermissions.WRITE = AccountPermissions(write=True)
+AccountPermissions.DELETE = AccountPermissions(delete=True)
+AccountPermissions.LIST = AccountPermissions(list=True)
+AccountPermissions.ADD = AccountPermissions(add=True)
+AccountPermissions.CREATE = AccountPermissions(create=True)
+AccountPermissions.UPDATE = AccountPermissions(update=True)
+AccountPermissions.PROCESS = AccountPermissions(process=True)
+
+
+class ContainerPermissions(object):
+    """
+    ContainerPermissions class to be used with
+    :func:`~azure.storage.blob.container_client.ContainerClient.generate_shared_access_signature` API and
+    for the AccessPolicies used with
+    :func:`~azure.storage.blob.container_client.ContainerClient.set_container_acl`.
+
+    :ivar ContainerPermissions ContainerPermissions.DELETE:
+        Delete any blob in the container. Note: You cannot grant permissions to
+        delete a container with a container SAS. Use an account SAS instead.
+    :ivar ContainerPermissions ContainerPermissions.LIST:
+        List blobs in the container.
+    :ivar ContainerPermissions ContainerPermissions.READ:
+        Read the content, properties, metadata or block list of any blob in the
+        container. Use any blob in the container as the source of a copy operation.
+    :ivar ContainerPermissions ContainerPermissions.WRITE:
+        For any blob in the container, create or write content, properties,
+        metadata, or block list. Snapshot or lease the blob. Resize the blob
+        (page blob only). Use the blob as the destination of a copy operation
+        within the same account. Note: You cannot grant permissions to read or
+        write container properties or metadata, nor to lease a container, with
+        a container SAS. Use an account SAS instead.
+    """
+
+    DELETE = None  # type: ContainerPermissions
+    LIST = None  # type: ContainerPermissions
+    READ = None  # type: ContainerPermissions
+    WRITE = None  # type: ContainerPermissions
+
+    def __init__(self, read=False, write=False, delete=False, list=False, _str=None):  # pylint: disable=redefined-builtin
+        """
+        :param bool read:
+            Read the content, properties, metadata or block list of any blob in the
+            container. Use any blob in the container as the source of a copy operation.
+        :param bool write:
+            For any blob in the container, create or write content, properties,
+            metadata, or block list. Snapshot or lease the blob. Resize the blob
+            (page blob only). Use the blob as the destination of a copy operation
+            within the same account. Note: You cannot grant permissions to read or
+            write container properties or metadata, nor to lease a container, with
+            a container SAS. Use an account SAS instead.
+        :param bool delete:
+            Delete any blob in the container. Note: You cannot grant permissions to
+            delete a container with a container SAS. Use an account SAS instead.
+        :param bool list:
+            List blobs in the container.
+        :param str _str:
+            A string representing the permissions.
+        """
+        if not _str:
+            _str = ''
+        self.read = read or ('r' in _str)
+        self.write = write or ('w' in _str)
+        self.delete = delete or ('d' in _str)
+        self.list = list or ('l' in _str)
+
+    def __or__(self, other):
+        return ContainerPermissions(_str=str(self) + str(other))
+
+    def __add__(self, other):
+        return ContainerPermissions(_str=str(self) + str(other))
+
+    def __str__(self):
+        return (('r' if self.read else '') +
+                ('w' if self.write else '') +
+                ('d' if self.delete else '') +
+                ('l' if self.list else ''))
+
+
+ContainerPermissions.DELETE = ContainerPermissions(delete=True)
+ContainerPermissions.LIST = ContainerPermissions(list=True)
+ContainerPermissions.READ = ContainerPermissions(read=True)
+ContainerPermissions.WRITE = ContainerPermissions(write=True)
+
+
 class BlobPermissions(object):
     """
     BlobPermissions class to be used with
