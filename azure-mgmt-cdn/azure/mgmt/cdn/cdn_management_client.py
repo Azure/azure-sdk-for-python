@@ -42,14 +42,11 @@ class CdnManagementClientConfiguration(AzureConfiguration):
     :type subscription_id: str
     :param subscription_id1: Azure Subscription ID.
     :type subscription_id1: str
-    :param api_version1: Version of the API to be used with the client
-     request. Current version is 2017-04-02.
-    :type api_version1: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, subscription_id1, api_version1, base_url=None):
+            self, credentials, subscription_id, subscription_id1, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -57,8 +54,6 @@ class CdnManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if subscription_id1 is None:
             raise ValueError("Parameter 'subscription_id1' must not be None.")
-        if api_version1 is None:
-            raise ValueError("Parameter 'api_version1' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -70,7 +65,6 @@ class CdnManagementClientConfiguration(AzureConfiguration):
         self.credentials = credentials
         self.subscription_id = subscription_id
         self.subscription_id1 = subscription_id1
-        self.api_version1 = api_version1
 
 
 class CdnManagementClient(SDKClient):
@@ -105,20 +99,16 @@ class CdnManagementClient(SDKClient):
     :type subscription_id: str
     :param subscription_id1: Azure Subscription ID.
     :type subscription_id1: str
-    :param api_version1: Version of the API to be used with the client
-     request. Current version is 2017-04-02.
-    :type api_version1: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, subscription_id1, api_version1, base_url=None):
+            self, credentials, subscription_id, subscription_id1, base_url=None):
 
-        self.config = CdnManagementClientConfiguration(credentials, subscription_id, subscription_id1, api_version1, base_url)
+        self.config = CdnManagementClientConfiguration(credentials, subscription_id, subscription_id1, base_url)
         super(CdnManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-06-15'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -161,12 +151,14 @@ class CdnManagementClient(SDKClient):
         """
         check_name_availability_input = models.CheckNameAvailabilityInput(name=name)
 
+        api_version = "2019-06-15"
+
         # Construct URL
         url = self.check_name_availability.metadata['url']
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -221,6 +213,8 @@ class CdnManagementClient(SDKClient):
         """
         check_name_availability_input = models.CheckNameAvailabilityInput(name=name)
 
+        api_version = "2019-06-15"
+
         # Construct URL
         url = self.check_name_availability_with_subscription.metadata['url']
         path_format_arguments = {
@@ -230,7 +224,7 @@ class CdnManagementClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -288,6 +282,8 @@ class CdnManagementClient(SDKClient):
         """
         validate_probe_input = models.ValidateProbeInput(probe_url=probe_url)
 
+        api_version = "2019-06-15"
+
         # Construct URL
         url = self.validate_probe.metadata['url']
         path_format_arguments = {
@@ -297,7 +293,7 @@ class CdnManagementClient(SDKClient):
 
         # Construct parameters
         query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
 
         # Construct headers
         header_parameters = {}
