@@ -34,6 +34,9 @@ try:
 except ImportError:
     settings = None
 
+from azure.storage.blob import SharedKeyCredentials
+
+
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 
 

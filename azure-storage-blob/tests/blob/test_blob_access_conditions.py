@@ -20,6 +20,7 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
+    SharedKeyCredentials
 )
 from tests.testcase import (
     StorageTestCase,
@@ -36,14 +37,20 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
     def setUp(self):
         super(StorageBlobAccessConditionsTest, self).setUp()
 
-        self.bs = self._create_storage_service(BlockBlobService, self.settings)
-        self.pbs = self._create_storage_service(PageBlobService, self.settings)
-        self.abs = self._create_storage_service(AppendBlobService, self.settings)
-        self.container_name = self.get_resource_name('utcontainer')
+        url = self._get_account_url()
+        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
 
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
-        self.abs.MAX_BLOCK_SIZE = 4 * 1024
+        self.config = BlobServiceClient.create_configuration()
+        self.config.connection.data_block_size = 4 * 1024
+
+        self.bsc = BlobServiceClient(url, credentials=credentials, configuration=self.config)
+
+        #self.bs = self._create_storage_service(BlockBlobService, self.settings)
+        #self.pbs = self._create_storage_service(PageBlobService, self.settings)
+        #self.abs = self._create_storage_service(AppendBlobService, self.settings)
+        self.container_name = self.get_resource_name('utcontainer')
 
     def tearDown(self):
         if not self.is_playback():
@@ -56,12 +63,14 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
     # --Helpers-----------------------------------------------------------------
     def _create_container(self, container_name):
-        self.bs.create_container(container_name, None, None, True)
+        container = self.bsc.get_container_client(container_name)
+        container.create_container()
 
     def _create_container_and_block_blob(self, container_name, blob_name,
                                          blob_data):
         self._create_container(container_name)
-        resp = self.bs.create_blob_from_bytes(container_name, blob_name, blob_data)
+        blob = self.bsc.get_blob_client(container_name, blob_name)
+        resp = blob.upload_blob(blob_data)
         self.assertIsNotNone(resp.etag)
 
     def _create_container_and_page_blob(self, container_name, blob_name,
@@ -1007,8 +1016,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.container_name, 'blob1', b'hello world')
 
         # Act
-        resp = self.bs.delete_blob(self.container_name, 'blob1',
-                                   if_modified_since=test_datetime)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
+        resp = blob.delete_blob(if_modified_since=test_datetime)
 
         # Assert
         self.assertIsNone(resp)
@@ -1022,9 +1031,9 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.container_name, 'blob1', b'hello world')
 
         # Act
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(AzureHttpError):
-            self.bs.delete_blob(self.container_name, 'blob1',
-                                if_modified_since=test_datetime)
+            blob.delete_blob(if_modified_since=test_datetime)
 
         # Assert
 
@@ -1037,8 +1046,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.container_name, 'blob1', b'hello world')
 
         # Act
-        resp = self.bs.delete_blob(self.container_name, 'blob1',
-                                   if_unmodified_since=test_datetime)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
+        resp = blob.delete_blob(if_unmodified_since=test_datetime)
 
         # Assert
         self.assertIsNone(resp)
@@ -1052,9 +1061,9 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.container_name, 'blob1', b'hello world')
 
         # Act
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(AzureHttpError):
-            self.bs.delete_blob(self.container_name, 'blob1',
-                                if_unmodified_since=test_datetime)
+            blob.delete_blob(if_unmodified_since=test_datetime)
 
         # Assert
 
@@ -1066,7 +1075,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = self.bs.get_blob_properties(self.container_name, 'blob1').properties.etag
 
         # Act
-        resp = self.bs.delete_blob(self.container_name, 'blob1', if_match=etag)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
+        resp = blob.delete_blob(if_match=etag)
 
         # Assert
         self.assertIsNone(resp)
@@ -1078,9 +1088,9 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.container_name, 'blob1', b'hello world')
 
         # Act
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(AzureHttpError):
-            self.bs.delete_blob(self.container_name, 'blob1',
-                                if_match='0x111111111111111')
+            blob.delete_blob(if_match='0x111111111111111')
 
         # Assert
 
@@ -1091,8 +1101,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.container_name, 'blob1', b'hello world')
 
         # Act
-        resp = self.bs.delete_blob(self.container_name, 'blob1',
-                                   if_none_match='0x111111111111111')
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
+        resp = blob.delete_blob(if_none_match='0x111111111111111')
 
         # Assert
         self.assertIsNone(resp)
@@ -1105,8 +1115,9 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = self.bs.get_blob_properties(self.container_name, 'blob1').properties.etag
 
         # Act
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(AzureHttpError):
-            self.bs.delete_blob(self.container_name, 'blob1', if_none_match=etag)
+            blob.delete_blob(if_none_match=etag)
 
         # Assert
 

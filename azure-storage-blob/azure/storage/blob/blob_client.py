@@ -12,6 +12,15 @@ from typing import (  # pylint: disable=unused-import
 from azure.core import Configuration
 
 from .common import BlobType
+from ._utils import (
+    create_client,
+    create_configuration,
+    create_pipeline,
+    basic_error_map,
+    get_access_conditions,
+    get_modification_conditions
+)
+# from .generated.models import
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -35,18 +44,25 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             container=None,  # type: Optional[Union[str, ContainerProperties]]
             blob=None,  # type: Optional[Union[str, BlobProperties]]
             snapshot=None,  # type: Optional[str]
-            blob_type=BlobType.BlockBlob,  # type : Union[str, BlobType]
+            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             credentials=None,  # type: Optional[HTTPPolicy]
             configuration=None,  # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        pass
+        # TODO Parse and build URL
+        self.name = blob
+        self.container = container
+        self.blob_type = blob_type
+        self.snapshot = snapshot
+
+        self._pipeline = create_pipeline(credentials, configuration, **kwargs)
+        self._client = create_client(url, self._pipeline)
 
     @staticmethod
     def create_configuration(**kwargs):
         # type: (**Any) -> Configuration
-        pass
+        return create_configuration(**kwargs)
 
     def make_url(self, protocol=None, sas_token=None):
         # type: (Optional[str], Optional[str]) -> str
@@ -153,8 +169,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         """
         Creates a new blob from a data source with automatic chunking.
 
-        By default, uploads as a BlockBlob, unless alternative blob_type is specified.
-
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
@@ -235,12 +249,68 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None  # type: Optional[int]
+            timeout=None,  # type: Optional[int]
+            **kwargs,
         ):
         # type: (...) -> None
         """
-        :returns: None
+        Marks the specified blob or snapshot for deletion.
+        The blob is later deleted during garbage collection.
+
+        Note that in order to delete a blob, you must delete all of its
+        snapshots. You can delete both at the same time with the Delete
+        Blob operation.
+
+        If a delete retention policy is enabled for the service, then this operation soft deletes the blob or snapshot
+        and retains the blob or snapshot for specified number of days.
+        After specified number of days, blob's data is removed from the service during garbage collection.
+        Soft deleted blob or snapshot is accessible through List Blobs API specifying include=Include.Deleted option.
+        Soft-deleted blob or snapshot can be restored using Undelete API.
+
+        :param ~azure.storage.blob.lease.Lease lease:
+            Required if the blob has an active lease. Value can be a Lease object
+            or the lease ID as a string.
+        :param str delete_snapshots:
+            Required if the blob has associated snapshots. Values include:
+             - "only": Deletes only the blobs snapshots.
+             - "include": Deletes the blob along with all snapshots.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
         """
+        error_map = basic_error_map()
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        self._client.blob.delete(
+            timeout=timeout,
+            delete_snapshots=delete_snapshots,
+            lease_access_conditions=access_conditions,
+            modified_access_conditions=mod_conditions,
+            error_map=error_map,
+            **kwargs)
+
 
     def undelete_blob(self, timeout=None):
         # type: (Optional[int]) -> None

@@ -7,8 +7,9 @@
 
 class Lease(object):
 
-    def __init__(self):
-        pass
+    def __init__(self, lease_id):
+        # type: (str) -> None
+        self.id = lease_id
 
     def __enter__(self):
         return self
