@@ -42,8 +42,10 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):
      this Web Application Firewall policy.
     :vartype cdn_endpoint_links: list[~azure.mgmt.cdn.models.CdnEndpoint]
     :ivar provisioning_state: Provisioning state of the
-     WebApplicationFirewallPolicy.
-    :vartype provisioning_state: str
+     WebApplicationFirewallPolicy. Possible values include: 'Creating',
+     'Succeeded', 'Failed'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.cdn.models.ProvisioningState
     :ivar resource_state: Resource status of the policy. Possible values
      include: 'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled',
      'Deleting'

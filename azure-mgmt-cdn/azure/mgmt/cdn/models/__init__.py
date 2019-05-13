@@ -233,6 +233,7 @@ from .cdn_management_client_enums import (
     Operator,
     Action,
     ManagedRuleEnabledState,
+    ProvisioningState,
     PolicyResourceState,
 )
 
@@ -369,5 +370,6 @@ __all__ = [
     'Operator',
     'Action',
     'ManagedRuleEnabledState',
+    'ProvisioningState',
     'PolicyResourceState',
 ]
