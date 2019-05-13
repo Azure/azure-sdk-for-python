@@ -69,21 +69,16 @@ class AutomationClientConfiguration(AzureConfiguration):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param count_type1: The type of counts to retrieve. Possible values
-     include: 'status', 'nodeconfiguration'
-    :type count_type1: str or ~azure.mgmt.automation.models.CountType
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, count_type1, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if count_type1 is None:
-            raise ValueError("Parameter 'count_type1' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -94,7 +89,6 @@ class AutomationClientConfiguration(AzureConfiguration):
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.count_type1 = count_type1
 
 
 class AutomationClient(SDKClient):
@@ -193,16 +187,13 @@ class AutomationClient(SDKClient):
      identify Microsoft Azure subscription. The subscription ID forms part of
      the URI for every service call.
     :type subscription_id: str
-    :param count_type1: The type of counts to retrieve. Possible values
-     include: 'status', 'nodeconfiguration'
-    :type count_type1: str or ~azure.mgmt.automation.models.CountType
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, count_type1, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
-        self.config = AutomationClientConfiguration(credentials, subscription_id, count_type1, base_url)
+        self.config = AutomationClientConfiguration(credentials, subscription_id, base_url)
         super(AutomationClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
