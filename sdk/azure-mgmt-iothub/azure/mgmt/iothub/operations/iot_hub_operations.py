@@ -73,7 +73,7 @@ class IotHubOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202]:
             raise models.ErrorDetailsException(self._deserialize, response)
 
         if raw:
