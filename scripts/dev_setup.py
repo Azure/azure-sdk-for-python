@@ -38,12 +38,12 @@ args = parser.parse_args()
 packages = [os.path.dirname(p) for p in (glob.glob('azure*/setup.py') + glob.glob('sdk/*/azure*/setup.py'))]
 
 # common/tooling packages
-azure_common_pkg = next([pkg_path for pkg_path in packages where os.path.basename(pkg_path) == 'azure-common'])
-azure_sdk_tools_pkg = next([pkg_path for pkg_path in packages where os.path.basename(pkg_path) == 'azure-sdk-tools'])
+azure_common_pkg = next((pkg_path for pkg_path in packages if os.path.basename(pkg_path) == 'azure-common'))
+azure_sdk_tools_pkg = next((pkg_path for pkg_path in packages if os.path.basename(pkg_path) == 'azure-sdk-tools'))
 
 # meta pkgs
-azure_pkg = next([pkg_path for pkg_path in packages where os.path.basename(pkg_path) == 'azure'])
-azure_mgmt_pkg = next([pkg_path for pkg_path in packages where os.path.basename(pkg_path) == 'azure-mgmt'])
+azure_pkg = next((pkg_path for pkg_path in packages if os.path.basename(pkg_path) == 'azure'))
+azure_mgmt_pkg = next((pkg_path for pkg_path in packages if os.path.basename(pkg_path) == 'azure-mgmt'))
 
 # keep targeted packages separate. python2 needs the nspkgs to work properly.
 if not args.packageList:
