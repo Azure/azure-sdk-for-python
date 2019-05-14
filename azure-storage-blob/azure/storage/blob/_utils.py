@@ -37,6 +37,10 @@ if TYPE_CHECKING:
     from .lease import Lease
 
 
+def return_response_headers(response, deserialized, response_headers):
+    return response_headers
+
+
 def create_client(url, pipeline):
     # type: (str, Pipeline) -> AzureBlobStorage
     return AzureBlobStorage(url, pipeline=pipeline)
@@ -79,6 +83,14 @@ def basic_error_map():
     return {
         404: ResourceNotFoundError
     }
+
+def add_metadata_headers(metadata):
+    # type: (Dict[str, str]) -> Dict[str, str]
+    headers = {}
+    if metadata:
+        for key, value in metadata.items():
+            headers['x-ms-meta-{}'.format(key)] = value
+    return headers
 
 
 def get_access_conditions(lease):

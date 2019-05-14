@@ -8,9 +8,14 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING
 )
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 from azure.core import Configuration
 
+from .constants import MAX_SINGLE_PUT_SIZE, MAX_BLOCK_SIZE, MIN_LARGE_BLOCK_UPLOAD_THRESHOLD
 from .common import BlobType
 from ._utils import (
     create_client,
@@ -18,9 +23,11 @@ from ._utils import (
     create_pipeline,
     basic_error_map,
     get_access_conditions,
-    get_modification_conditions
+    get_modification_conditions,
+    return_response_headers,
+    add_metadata_headers
 )
-# from .generated.models import
+from ._generated.models import BlobHTTPHeaders
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -50,14 +57,37 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        # TODO Parse and build URL
-        self.name = blob
-        self.container = container
+        parsed_url = urlparse(url)
+        if not parsed_url.path and not (container and blob):
+            raise ValueError("Please specify a container and blob name.")
+        path_container = ""
+        path_blob = ""
+        if parsed_url.path:
+            path_container, _, path_blob = parsed_url.partition('/')
+
+        try:
+            self.container = container.name
+        except AttributeError:
+            self.container = container or path_container
+        try:
+            self.name = blob.name
+        except AttributeError:
+            self.name = blob or path_blob
+
+        self.scheme = parsed_url.scheme
+        self.account = parsed_url.hostname.split(".blob.core.")[0]
+        self.url = "{}://{}/{}/{}".format(
+            self.scheme,
+            parsed_url.hostname,
+            self.container,
+            self.name
+        )
         self.blob_type = blob_type
         self.snapshot = snapshot
+        self.key_encryption_key = None
 
         self._pipeline = create_pipeline(credentials, configuration, **kwargs)
-        self._client = create_client(url, self._pipeline)
+        self._client = create_client(self.url, self._pipeline)
 
     @staticmethod
     def create_configuration(**kwargs):
@@ -164,11 +194,15 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
             maxsize_condition=None,  # type: Optional[int]
             max_connections=1,  # type: int
+            **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
         Creates a new blob from a data source with automatic chunking.
 
+        :param int length:
+            Number of bytes to read from the stream. This is optional, but
+            should be supplied for optimal performance.
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
@@ -224,6 +258,53 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: dict[str, Any]
         """
+        # TODO: Upload other blob types
+        if self.blob_type != BlobType.BlockBlob:
+            raise NotImplementedError("Other blob types not yet implemented.")
+        # TODO Support encryption
+        if self.key_encryption_key:
+            raise NotImplementedError("Encrypted blobs not yet implmented.")
+    
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+        blob_headers = None
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        if content_settings:
+            blob_headers = BlobHTTPHeaders(
+                blob_cache_control=content_settings.cache_control,
+                blob_content_type=content_settings.content_type,
+                blob_content_md5=bytearray(content_settings.content_md5),
+                blob_content_encoding=content_settings.content_encoding,
+                blob_content_language=content_settings.content_language,
+                blob_content_disposition=content_settings.content_disposition
+            )
+
+        adjusted_count = length
+        if (self.key_encryption_key is not None) and (adjusted_count is not None):
+            adjusted_count += (16 - (length % 16))
+        if validate_content:
+            # TODO: Validate content
+            # computed_md5 = _get_content_md5(request.body)
+            # request.headers['Content-MD5'] = _to_str(computed_md5)
+            raise NotImplementedError("Content validation not yet supported.")
+
+        # Do single put if the size is smaller than MAX_SINGLE_PUT_SIZE
+        if adjusted_count is not None and (adjusted_count < MAX_SINGLE_PUT_SIZE):
+            return self._client.block_blob.upload(
+                data,
+                content_length=adjusted_count,
+                timeout=timeout,
+                blob_http_headers=blob_headers,
+                lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
+                headers=headers,
+                cls=return_response_headers,
+                **kwargs)
+        else:
+            # TODO Port over multi-threaded upload chunking
+            raise NotImplementedError("Chunked uploads not yet supported")
 
     def download_blob(
             self, offset=None,  # type: Any
@@ -267,9 +348,10 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         Soft deleted blob or snapshot is accessible through List Blobs API specifying include=Include.Deleted option.
         Soft-deleted blob or snapshot can be restored using Undelete API.
 
-        :param ~azure.storage.blob.lease.Lease lease:
+        :param lease:
             Required if the blob has an active lease. Value can be a Lease object
             or the lease ID as a string.
+        :type lease: ~azure.storage.blob.lease.Lease or str
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -317,6 +399,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         """
         :returns: None
         """
+        self._client.blob.undelete(timeout=timeout)
 
     def get_blob_properties(
             self, lease=None,  # type: Optional[Union[Lease, str]]
@@ -342,8 +425,59 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         ):
         # type: (...) -> None
         """
+        Sets system properties on the blob. If one property is set for the
+        content_settings, all properties will be overriden.
+
+        :param ~azure.storage.blob.models.ContentSettings content_settings:
+            ContentSettings object used to set blob properties.
+        :param lease:
+            Required if the blob has an active lease. Value can be a Lease object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.blob.lease.Lease or str
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC. 
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
+        :rtype: Dict[str, Any]
         """
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        blob_headers = BlobHTTPHeaders(
+            blob_cache_control=content_settings.cache_control,
+            blob_content_type=content_settings.content_type,
+            blob_content_md5=bytearray(content_settings.content_md5),
+            blob_content_encoding=content_settings.content_encoding,
+            blob_content_language=content_settings.content_language,
+            blob_content_disposition=content_settings.content_disposition
+        )
+        return self._client.blob.set_http_headers(
+            timeout=timeout,
+            blob_http_headers=blob_headers,
+            lease_access_conditions=access_conditions,
+            modified_access_conditions=mod_conditions,
+            cls=return_response_headers
+        )
 
     def get_blob_metadata(
             self, lease=None,  # type: Optional[Union[Lease, str]]

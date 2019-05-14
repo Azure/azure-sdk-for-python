@@ -86,16 +86,16 @@ class SharedKeyCredentials(SansIOHTTPPolicy):
         super(SharedKeyCredentials, self).__init__()
 
     def _get_headers(self, request, headers_to_sign):
-        headers = dict((name.lower(), value) for name, value in request.headers.items() if value)
+        headers = dict((name.lower(), value) for name, value in request.http_request.headers.items() if value)
         if 'content-length' in headers and headers['content-length'] == '0':
             del headers['content-length']
         return '\n'.join(headers.get(x, '') for x in headers_to_sign) + '\n'
 
     def _get_verb(self, request):
-        return request.method + '\n'
+        return request.http_request.method + '\n'
 
     def _get_canonicalized_resource(self, request):
-        uri_path = request.url.split('?')[0]
+        uri_path = request.http_request.url.split('?')[0]
 
         # for emulator, use the DEV_ACCOUNT_NAME instead of DEV_ACCOUNT_SECONDARY_NAME
         # as this is how the emulator works
@@ -108,7 +108,7 @@ class SharedKeyCredentials(SansIOHTTPPolicy):
     def _get_canonicalized_headers(self, request):
         string_to_sign = ''
         x_ms_headers = []
-        for name, value in request.headers.items():
+        for name, value in request.http_request.headers.items():
             if name.startswith('x-ms-'):
                 x_ms_headers.append((name.lower(), value))
         x_ms_headers.sort()
@@ -118,7 +118,7 @@ class SharedKeyCredentials(SansIOHTTPPolicy):
         return string_to_sign
 
     def _get_canonicalized_resource_query(self, request):
-        sorted_queries = [(name, value) for name, value in request.query.items()]
+        sorted_queries = [(name, value) for name, value in request.http_request.query.items()]
         sorted_queries.sort()
 
         string_to_sign = ''
@@ -132,7 +132,7 @@ class SharedKeyCredentials(SansIOHTTPPolicy):
         try:
             signature = _sign_string(self.account_key, string_to_sign)
             auth_string = 'SharedKey ' + self.account_name + ':' + signature
-            request.headers['Authorization'] = auth_string
+            request.http_request.headers['Authorization'] = auth_string
         except Exception as ex:
             # Wrap any error that occurred as signing error
             # Doing so will clarify/locate the source of problem

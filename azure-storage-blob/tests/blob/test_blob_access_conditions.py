@@ -10,6 +10,7 @@ import os
 import unittest
 
 from azure.common import AzureHttpError
+from azure.core.exceptions import HttpResponseError
 # from azure.storage.blob import (  # TODO
 #     Blob,
 #     BlobBlock,
@@ -70,8 +71,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                                          blob_data):
         self._create_container(container_name)
         blob = self.bsc.get_blob_client(container_name, blob_name)
-        resp = blob.upload_blob(blob_data)
-        self.assertIsNotNone(resp.etag)
+        resp = blob.upload_blob(blob_data, length=len(blob_data))
+        self.assertIsNotNone(resp.get('ETag'))
 
     def _create_container_and_page_blob(self, container_name, blob_name,
                                         content_length):
@@ -287,7 +288,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             if_modified_since=test_datetime)
 
         # Assert
-        self.assertIsNotNone(resp.etag)
+        self.assertIsNotNone(resp.get('ETag'))
 
     @record
     def test_put_blob_with_if_modified_fail(self):
@@ -321,7 +322,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertIsNotNone(resp.etag)
+        self.assertIsNotNone(resp.get('ETag'))
 
     @record
     def test_put_blob_with_if_unmodified_fail(self):
@@ -354,7 +355,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             if_match=etag)
 
         # Assert
-        self.assertIsNotNone(resp.etag)
+        self.assertIsNotNone(resp.get('ETag'))
 
     @record
     def test_put_blob_with_if_match_fail(self):
@@ -384,7 +385,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             if_none_match='0x111111111111111')
 
         # Assert
-        self.assertIsNotNone(resp.etag)
+        self.assertIsNotNone(resp.get('ETag'))
 
     @record
     def test_put_blob_with_if_none_match_fail(self):
@@ -1032,7 +1033,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(AzureHttpError):
+        with self.assertRaises(HttpResponseError):
             blob.delete_blob(if_modified_since=test_datetime)
 
         # Assert
@@ -1062,7 +1063,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(AzureHttpError):
+        with self.assertRaises(HttpResponseError):
             blob.delete_blob(if_unmodified_since=test_datetime)
 
         # Assert
@@ -1089,7 +1090,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(AzureHttpError):
+        with self.assertRaises(HttpResponseError):
             blob.delete_blob(if_match='0x111111111111111')
 
         # Assert
@@ -1112,11 +1113,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Arrange
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world')
-        etag = self.bs.get_blob_properties(self.container_name, 'blob1').properties.etag
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
+        etag = blob.get_blob_properties(self.container_name, 'blob1').etag
 
         # Act
-        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(AzureHttpError):
+        with self.assertRaises(HttpResponseError):
             blob.delete_blob(if_none_match=etag)
 
         # Assert
@@ -1977,7 +1978,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Arrange
         blob_name = self.get_resource_name("blob")
         resp = self._create_container_and_append_blob(self.container_name, blob_name)
-        test_etag = resp.etag
+        test_etag = resp.get('ETag')
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
@@ -2019,7 +2020,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Arrange
         blob_name = self.get_resource_name("blob")
         resp = self._create_container_and_append_blob(self.container_name, blob_name)
-        test_etag = resp.etag
+        test_etag = resp.get('ETag')
 
         # Act
         with self.assertRaises(AzureHttpError):

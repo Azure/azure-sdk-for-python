@@ -5,6 +5,11 @@
 # --------------------------------------------------------------------------
 
 
+# Block blob uploads
+MAX_SINGLE_PUT_SIZE = 64 * 1024 * 1024
+MAX_BLOCK_SIZE = 4 * 1024 * 1024
+MIN_LARGE_BLOCK_UPLOAD_THRESHOLD = 4 * 1024 * 1024 + 1
+
 # Default credentials for Development Storage Service
 DEV_ACCOUNT_NAME = 'devstoreaccount1'
 DEV_ACCOUNT_SECONDARY_NAME = 'devstoreaccount1-secondary'
