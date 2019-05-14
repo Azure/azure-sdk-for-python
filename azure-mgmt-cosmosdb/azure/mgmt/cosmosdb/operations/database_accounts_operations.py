@@ -3865,7 +3865,7 @@ class DatabaseAccountsOperations(object):
 
 
     def _update_table_throughput_initial(
-            self, resource_group_name, account_name, database_name, resource, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, table_name, resource, custom_headers=None, raw=False, **operation_config):
         update_throughput_parameters = models.ThroughputUpdateParameters(resource=resource)
 
         # Construct URL
@@ -3874,7 +3874,7 @@ class DatabaseAccountsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseName': self._serialize.url("database_name", database_name, 'str')
+            'tableName': self._serialize.url("table_name", table_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -3917,15 +3917,15 @@ class DatabaseAccountsOperations(object):
         return deserialized
 
     def update_table_throughput(
-            self, resource_group_name, account_name, database_name, resource, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, table_name, resource, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update an Azure Cosmos DB Table throughput.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name.
         :type account_name: str
-        :param database_name: Cosmos DB database name.
-        :type database_name: str
+        :param table_name: Cosmos DB table name.
+        :type table_name: str
         :param resource: The standard JSON format of a resource throughput
         :type resource: ~azure.mgmt.cosmosdb.models.ThroughputResource
         :param dict custom_headers: headers that will be added to the request
@@ -3944,7 +3944,7 @@ class DatabaseAccountsOperations(object):
         raw_result = self._update_table_throughput_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
-            database_name=database_name,
+            table_name=table_name,
             resource=resource,
             custom_headers=custom_headers,
             raw=True,
@@ -5662,7 +5662,7 @@ class DatabaseAccountsOperations(object):
     delete_gremlin_graph.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseName}/graphs/{graphName}'}
 
     def get_gremlin_graph_throughput(
-            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, database_name, graph_name, custom_headers=None, raw=False, **operation_config):
         """Gets the Gremlin graph throughput under an existing Azure Cosmos DB
         database account with the provided name.
 
@@ -5672,6 +5672,8 @@ class DatabaseAccountsOperations(object):
         :type account_name: str
         :param database_name: Cosmos DB database name.
         :type database_name: str
+        :param graph_name: Cosmos DB graph name.
+        :type graph_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -5688,7 +5690,8 @@ class DatabaseAccountsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseName': self._serialize.url("database_name", database_name, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'graphName': self._serialize.url("graph_name", graph_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -5729,7 +5732,7 @@ class DatabaseAccountsOperations(object):
 
 
     def _update_gremlin_graph_throughput_initial(
-            self, resource_group_name, account_name, database_name, resource, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, database_name, graph_name, resource, custom_headers=None, raw=False, **operation_config):
         update_throughput_parameters = models.ThroughputUpdateParameters(resource=resource)
 
         # Construct URL
@@ -5738,7 +5741,8 @@ class DatabaseAccountsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
-            'databaseName': self._serialize.url("database_name", database_name, 'str')
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'graphName': self._serialize.url("graph_name", graph_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -5781,7 +5785,7 @@ class DatabaseAccountsOperations(object):
         return deserialized
 
     def update_gremlin_graph_throughput(
-            self, resource_group_name, account_name, database_name, resource, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, account_name, database_name, graph_name, resource, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update an Azure Cosmos DB Gremlin graph throughput.
 
         :param resource_group_name: Name of an Azure resource group.
@@ -5790,6 +5794,8 @@ class DatabaseAccountsOperations(object):
         :type account_name: str
         :param database_name: Cosmos DB database name.
         :type database_name: str
+        :param graph_name: Cosmos DB graph name.
+        :type graph_name: str
         :param resource: The standard JSON format of a resource throughput
         :type resource: ~azure.mgmt.cosmosdb.models.ThroughputResource
         :param dict custom_headers: headers that will be added to the request
@@ -5809,6 +5815,7 @@ class DatabaseAccountsOperations(object):
             resource_group_name=resource_group_name,
             account_name=account_name,
             database_name=database_name,
+            graph_name=graph_name,
             resource=resource,
             custom_headers=custom_headers,
             raw=True,
