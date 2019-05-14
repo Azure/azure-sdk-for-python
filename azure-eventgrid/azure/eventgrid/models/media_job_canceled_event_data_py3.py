@@ -9,12 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .media_job_state_change_event_data_py3 import MediaJobStateChangeEventData
 
 
-class MediaJobStateChangeEventData(Model):
-    """Schema of the Data property of an EventGridEvent for a
-    Microsoft.Media.JobStateChange event.
+class MediaJobCanceledEventData(MediaJobStateChangeEventData):
+    """Job canceled event data.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -29,6 +28,8 @@ class MediaJobStateChangeEventData(Model):
     :vartype state: str or ~azure.eventgrid.models.MediaJobState
     :param correlation_data: Gets the Job correlation data.
     :type correlation_data: dict[str, str]
+    :param outputs: Gets the Job outputs.
+    :type outputs: list[~azure.eventgrid.models.MediaJobOutput]
     """
 
     _validation = {
@@ -40,10 +41,9 @@ class MediaJobStateChangeEventData(Model):
         'previous_state': {'key': 'previousState', 'type': 'MediaJobState'},
         'state': {'key': 'state', 'type': 'MediaJobState'},
         'correlation_data': {'key': 'correlationData', 'type': '{str}'},
+        'outputs': {'key': 'outputs', 'type': '[MediaJobOutput]'},
     }
 
-    def __init__(self, **kwargs):
-        super(MediaJobStateChangeEventData, self).__init__(**kwargs)
-        self.previous_state = None
-        self.state = None
-        self.correlation_data = kwargs.get('correlation_data', None)
+    def __init__(self, *, correlation_data=None, outputs=None, **kwargs) -> None:
+        super(MediaJobCanceledEventData, self).__init__(correlation_data=correlation_data, **kwargs)
+        self.outputs = outputs

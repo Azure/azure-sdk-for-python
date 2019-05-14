@@ -31,7 +31,7 @@ class StorageBlobCreatedEventData(Model):
     :type content_type: str
     :param content_length: The size of the blob in bytes. This is the same as
      what would be returned in the Content-Length header from the blob.
-    :type content_length: int
+    :type content_length: long
     :param blob_type: The type of blob.
     :type blob_type: str
     :param url: The path to the blob.
@@ -53,7 +53,7 @@ class StorageBlobCreatedEventData(Model):
         'request_id': {'key': 'requestId', 'type': 'str'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
         'content_type': {'key': 'contentType', 'type': 'str'},
-        'content_length': {'key': 'contentLength', 'type': 'int'},
+        'content_length': {'key': 'contentLength', 'type': 'long'},
         'blob_type': {'key': 'blobType', 'type': 'str'},
         'url': {'key': 'url', 'type': 'str'},
         'sequencer': {'key': 'sequencer', 'type': 'str'},

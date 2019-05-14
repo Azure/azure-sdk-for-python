@@ -3,6 +3,11 @@
 Release History
 ===============
 
+1.3.0 (2019-05-15)
+++++++++++++++++++
+
+- Event Schemas for new event types from IotHub, Media Services, Container Registry, Maps, and AppConfiguration services.
+
 1.2.0 (2018-08-28)
 ++++++++++++++++++
 
