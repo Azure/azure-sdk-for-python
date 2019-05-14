@@ -84,6 +84,7 @@ def basic_error_map():
         404: ResourceNotFoundError
     }
 
+
 def add_metadata_headers(metadata):
     # type: (Dict[str, str]) -> Dict[str, str]
     headers = {}

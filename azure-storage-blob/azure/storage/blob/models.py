@@ -35,6 +35,16 @@ class ContainerProperties(object):
         self.has_legal_hold = None
         self.metadata = None
 
+class SnapshotProperties(object):
+
+    def __init__(self, **kwargs):
+        self.name = None
+        self.container = None
+        self.snapshot = kwargs.get('x-ms-snapshot')
+        self.blob_type = None
+        self.last_modified = kwargs.get('Last-Modified')
+        self.etag = kwargs.get('ETag')
+
 
 class BlobProperties(object):
     """
@@ -90,8 +100,8 @@ class BlobProperties(object):
     def __init__(self, **kwargs):
         self.name = kwargs.get('name')
         self.container = None
-        self.snapshot = kwargs.get('snapshot')
-        self.blob_type = BlobType(kwargs['x-ms-blob-type'])
+        self.snapshot = kwargs.get('x-ms-snapshot')
+        self.blob_type = BlobType(kwargs['x-ms-blob-type']) if kwargs.get('x-ms-blob-type') else None
         self.metadata = kwargs.get('metadata')
         self.last_modified = kwargs.get('Last-Modified')
         self.etag = kwargs.get('ETag')

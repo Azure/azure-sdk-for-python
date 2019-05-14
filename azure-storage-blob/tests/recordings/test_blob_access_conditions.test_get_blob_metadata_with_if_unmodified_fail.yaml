@@ -55,7 +55,7 @@ interactions:
       x-ms-client-request-id: [f9f40318-e472-11e8-9ac5-acde48001122]
       x-ms-date: ['Fri, 09 Nov 2018 22:58:30 GMT']
       x-ms-version: ['2018-03-28']
-    method: GET
+    method: HEAD
     uri: https://storagename.blob.core.windows.net/utcontainer6be21e1b/blob1?comp=metadata
   response:
     body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The\

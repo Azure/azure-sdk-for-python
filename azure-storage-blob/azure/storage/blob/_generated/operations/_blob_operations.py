@@ -150,11 +150,13 @@ class BlobOperations(object):
         return deserialized
     download.metadata = {'url': '/{containerName}/{blob}'}
 
-    def get_properties(self, snapshot=None, timeout=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
+    def get_properties(self, comp=None, snapshot=None, timeout=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Get Properties operation returns all user-defined metadata,
         standard HTTP properties, and system properties for the blob. It does
         not return the content of the blob.
 
+        :param comp: Possible values include: 'metadata'
+        :type comp: str
         :param snapshot: The snapshot parameter is an opaque DateTime value
          that, when present, specifies the blob snapshot to retrieve. For more
          information on working with blob snapshots, see <a
@@ -210,6 +212,8 @@ class BlobOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if comp is not None:
+            query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
         if snapshot is not None:
             query_parameters['snapshot'] = self._serialize.query("snapshot", snapshot, 'str')
         if timeout is not None:

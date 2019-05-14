@@ -17,6 +17,8 @@ from azure.core import Configuration
 
 from .constants import MAX_SINGLE_PUT_SIZE, MAX_BLOCK_SIZE, MIN_LARGE_BLOCK_UPLOAD_THRESHOLD
 from .common import BlobType
+from .lease import Lease
+from .models import SnapshotProperties
 from ._utils import (
     create_client,
     create_configuration,
@@ -28,13 +30,13 @@ from ._utils import (
     add_metadata_headers,
 )
 from ._deserialize import (
-    deserialize_blob_properties
+    deserialize_blob_properties,
+    deserialize_metadata
 )
 from ._generated.models import BlobHTTPHeaders
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from .lease import Lease
     from .common import PremiumPageBlobTier, StandardBlobTier, SequenceNumberAction
     from azure.core.pipeline.policies import HTTPPolicy
     from .models import (  # pylint: disable=unused-import
@@ -396,7 +398,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             error_map=error_map,
             **kwargs)
 
-
     def undelete_blob(self, timeout=None):
         # type: (Optional[int]) -> None
         """
@@ -428,7 +429,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             **kwargs)
         blob_props.name = self.name
         blob_props.container = self.container
-        blob_props.snapshot = self.snapshot
         return blob_props
 
     def set_blob_properties(
@@ -502,12 +502,23 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None  # type: Optional[int]
+            timeout=None,  # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> Dict[str, str]
         """
         :returns: A dict of metadata
         """
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        return self._client.blob.get_properties(
+            comp='metadata',
+            timeout=timeout,
+            lease_access_conditions=access_conditions,
+            modified_access_conditions=mod_conditions,
+            cls=deserialize_metadata,
+            **kwargs)
 
     def set_blob_metadata(
             self, metadata=None,  # type: Optional[Dict[str, str]]
@@ -516,12 +527,26 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None  # type: Optional[int]
+            timeout=None,  # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
         :returns: Blob-updated property dict (Etag and last modified)
         """
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        return self._client.blob.set_metadata(
+            timeout=timeout,
+            lease_access_conditions=access_conditions,
+            modified_access_conditions=mod_conditions,
+            cls=return_response_headers,
+            headers=headers,
+            **kwargs
+        )
 
     def create_blob(
             self, content_length=None,  # type: Optional[int]
@@ -548,12 +573,30 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
             lease=None,  # type: Optional[Union[Lease, str]]
-            timeout=None  # type: Optional[int]
+            timeout=None,  # type: Optional[int]
+            **kwargs
         ):
+        # type: (...) -> SnapshotProperties
         """
-        TODO: Fix type hints - SnapshotProperties
         :returns: SnapshotProperties
         """
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        properties = self._client.blob.create_snapshot(
+            timeout=timeout,
+            lease_access_conditions=access_conditions,
+            modified_access_conditions=mod_conditions,
+            cls=return_response_headers,
+            headers=headers,
+            **kwargs)
+        snapshot = SnapshotProperties(**properties)
+        snapshot.name = self.name
+        snapshot.container = self.container
+        snapshot.blob_type = self.blob_type
+        return snapshot
 
     def copy_blob_from_source(
             self, copy_source,  # type: Any
@@ -585,12 +628,23 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None  # type: Optional[int]
+            timeout=None,  # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> Lease
         """
         :returns: A Lease object.
         """
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        response = self._client.blob.acquire_lease(
+            timeout=timeout,
+            duration=lease_duration,
+            proposed_lease_id=proposed_lease_id,
+            modified_access_conditions=mod_conditions,
+            cls=return_response_headers,
+            **kwargs)
+        return Lease(self._client.blob, **response)
 
     def break_lease(
             self, lease_break_period=None,  # type: Optional[int]
@@ -598,12 +652,22 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None  # type: Optional[int]
+            timeout=None,  # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> int
         """
         :returns: Approximate time remaining in the lease period, in seconds.
         """
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        response = self._client.blob.break_lease(
+            timeout=timeout,
+            break_period=lease_break_period,
+            modified_access_conditions=mod_conditions,
+            cls=return_response_headers,
+            **kwargs)
+        return response.get('x-ms-lease-time')
 
     def set_standard_blob_tier(self, standard_blob_tier, timeout=None):
         # type: (Union[str, StandardBlobTier], Optional[int]) -> None
