@@ -104,4 +104,4 @@ class UsagesByVMFamilyOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/usagesByVMFamily'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/resourceUsagesByVMFamily'}
