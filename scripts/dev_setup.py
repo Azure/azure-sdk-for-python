@@ -47,7 +47,7 @@ else:
     targeted_packages = [os.path.relpath(x.strip()) for x in args.packageList.split(',')]
 
 # Extract nspkg and sort nspkg by number of "-"
-nspkg_packages = [p for p in packages if 'nspkg' in p]
+nspkg_packages = [p for p in packages.keys() if 'nspkg' in p]
 nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
 
 # Manually push meta-packages at the end, in reverse dependency order
