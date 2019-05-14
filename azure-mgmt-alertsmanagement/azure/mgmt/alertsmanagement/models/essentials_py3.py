@@ -51,7 +51,7 @@ class Essentials(Model):
      Administrative', 'ActivityLog Security', 'ActivityLog Recommendation',
      'ActivityLog Policy', 'ActivityLog Autoscale', 'Log Analytics', 'Nagios',
      'Platform', 'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights',
-     'Zabbix'
+     'Zabbix', 'Resource Health'
     :vartype monitor_service: str or
      ~azure.mgmt.alertsmanagement.models.MonitorService
     :ivar alert_rule: Rule(monitor) which fired alert instance. Depending on

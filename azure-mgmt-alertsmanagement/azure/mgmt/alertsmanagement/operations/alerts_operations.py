@@ -57,7 +57,8 @@ class AlertsOperations(object):
          'Application Insights', 'ActivityLog Administrative', 'ActivityLog
          Security', 'ActivityLog Recommendation', 'ActivityLog Policy',
          'ActivityLog Autoscale', 'Log Analytics', 'Nagios', 'Platform',
-         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix'
+         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix',
+         'Resource Health'
         :type monitor_service: str or
          ~azure.mgmt.alertsmanagement.models.MonitorService
         :param monitor_condition: Filter by monitor condition which is either
@@ -214,7 +215,14 @@ class AlertsOperations(object):
             self, alert_id, custom_headers=None, raw=False, **operation_config):
         """Get a specific alert.
 
-        Get information related to a specific alert.
+        Get information related to a specific alert. If scope is a deleted
+        resource then please use scope as parent resource of the delete
+        resource. For example if my alert id is
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/virtualMachines/vm1/providers/Microsoft.AlertsManagement/alerts/{alertId}'
+        and 'vm1' is deleted then if you want to get alert by id then use
+        parent resource of scope. So in this example get alert by id call will
+        look like this:
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.AlertsManagement/alerts/{alertId}'.
 
         :param alert_id: Unique ID of an alert instance.
         :type alert_id: str
@@ -272,7 +280,14 @@ class AlertsOperations(object):
 
     def change_state(
             self, alert_id, new_state, custom_headers=None, raw=False, **operation_config):
-        """Change the state of an alert.
+        """Change the state of an alert. If scope is a deleted resource then
+        please use scope as parent resource of the delete resource. For example
+        if my alert id is
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/virtualMachines/vm1/providers/Microsoft.AlertsManagement/alerts/{alertId}'
+        and 'vm1' is deleted then if you want to change state of this
+        particular alert then use parent resource of scope. So in this example
+        change state call will look like this:
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.AlertsManagement/alerts/{alertId}'.
 
         :param alert_id: Unique ID of an alert instance.
         :type alert_id: str
@@ -335,8 +350,15 @@ class AlertsOperations(object):
     def get_history(
             self, alert_id, custom_headers=None, raw=False, **operation_config):
         """Get the history of an alert, which captures any monitor condition
-        changes (Fired/Resolved) and alert state changes
-        (New/Acknowledged/Closed).
+        changes (Fired/Resolved), alert state changes (New/Acknowledged/Closed)
+        and applied action rules for that particular alert. If scope is a
+        deleted resource then please use scope as parent resource of the delete
+        resource. For example if my alert id is
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/virtualMachines/vm1/providers/Microsoft.AlertsManagement/alerts/{alertId}'
+        and 'vm1' is deleted then if you want to get history of this particular
+        alert then use parent resource of scope. So in this example get history
+        call will look like this:
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.AlertsManagement/alerts/{alertId}/history'.
 
         :param alert_id: Unique ID of an alert instance.
         :type alert_id: str
@@ -421,7 +443,8 @@ class AlertsOperations(object):
          'Application Insights', 'ActivityLog Administrative', 'ActivityLog
          Security', 'ActivityLog Recommendation', 'ActivityLog Policy',
          'ActivityLog Autoscale', 'Log Analytics', 'Nagios', 'Platform',
-         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix'
+         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix',
+         'Resource Health'
         :type monitor_service: str or
          ~azure.mgmt.alertsmanagement.models.MonitorService
         :param monitor_condition: Filter by monitor condition which is either

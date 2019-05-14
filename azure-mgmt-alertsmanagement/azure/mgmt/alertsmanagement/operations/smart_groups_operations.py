@@ -56,7 +56,8 @@ class SmartGroupsOperations(object):
          'Application Insights', 'ActivityLog Administrative', 'ActivityLog
          Security', 'ActivityLog Recommendation', 'ActivityLog Policy',
          'ActivityLog Autoscale', 'Log Analytics', 'Nagios', 'Platform',
-         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix'
+         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix',
+         'Resource Health'
         :type monitor_service: str or
          ~azure.mgmt.alertsmanagement.models.MonitorService
         :param monitor_condition: Filter by monitor condition which is either
