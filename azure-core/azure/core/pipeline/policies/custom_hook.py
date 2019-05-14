@@ -33,14 +33,14 @@ class CustomHookPolicy(SansIOHTTPPolicy):
     with the response.
     """
     def __init__(self, **kwargs):
-        self._cls = None
+        self._callback = None
     
     def on_request(self, request):
         # type: (PipelineRequest) -> None
-        self._cls = request.context.options.pop('raw_response_hook', {})
+        self._callback = request.context.options.pop('raw_response_hook', {})
 
     def on_response(self, request, response):
         # type: (PipelineRequest, PipelineResponse) -> None
-        if self._cls:
-            self._cls(response)
-            request.context.options.update({'raw_response_hook': self._cls})
+        if self._callback:
+            self._callback(response)
+            request.context.options.update({'raw_response_hook': self._callback})
