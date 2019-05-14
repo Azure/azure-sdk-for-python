@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_usage_py3 import ResourceUsage
+from .dummy_object_py3 import DummyObject
 
 
-class UsageByVMFamily(ResourceUsage):
+class UsageByVMFamily(DummyObject):
     """Describes Batch AI Resource Usage by VM Family, broken down by Workspace
     and Cluster usage.
 
@@ -27,8 +27,7 @@ class UsageByVMFamily(ResourceUsage):
     :ivar limit: The maximum permitted usage of the resource.
     :vartype limit: long
     :ivar name: The name of the type of usage.
-    :vartype name:
-     ~azure.mgmt.machinelearningservices.models.ResourceUsageName
+    :vartype name: ~azure.mgmt.machinelearningservices.models.UsageName
     :ivar resource_group_name: The name of the resource group this resource
      type belongs to
     :vartype resource_group_name: str
@@ -54,7 +53,7 @@ class UsageByVMFamily(ResourceUsage):
         'unit': {'key': 'unit', 'type': 'str'},
         'current_value': {'key': 'currentValue', 'type': 'long'},
         'limit': {'key': 'limit', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'ResourceUsageName'},
+        'name': {'key': 'name', 'type': 'UsageName'},
         'resource_group_name': {'key': 'properties.resourceGroupName', 'type': 'str'},
         'resource_type': {'key': 'properties.resourceType', 'type': 'str'},
         'usage_breakdown': {'key': 'properties.usageBreakdown', 'type': '[UsageByVMFamily]'},

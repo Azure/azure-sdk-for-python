@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class ResourceUsage(Model):
+class DummyObject(Model):
     """Describes AML Resource Usage.
 
     Variables are only populated by the server, and will be ignored when
@@ -26,8 +26,7 @@ class ResourceUsage(Model):
     :ivar limit: The maximum permitted usage of the resource.
     :vartype limit: long
     :ivar name: The name of the type of usage.
-    :vartype name:
-     ~azure.mgmt.machinelearningservices.models.ResourceUsageName
+    :vartype name: ~azure.mgmt.machinelearningservices.models.UsageName
     """
 
     _validation = {
@@ -41,11 +40,11 @@ class ResourceUsage(Model):
         'unit': {'key': 'unit', 'type': 'str'},
         'current_value': {'key': 'currentValue', 'type': 'long'},
         'limit': {'key': 'limit', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'ResourceUsageName'},
+        'name': {'key': 'name', 'type': 'UsageName'},
     }
 
     def __init__(self, **kwargs):
-        super(ResourceUsage, self).__init__(**kwargs)
+        super(DummyObject, self).__init__(**kwargs)
         self.unit = None
         self.current_value = None
         self.limit = None
