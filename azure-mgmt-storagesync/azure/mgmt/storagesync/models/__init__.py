@@ -45,6 +45,7 @@ try:
     from .backup_request_py3 import BackupRequest
     from .post_backup_response_py3 import PostBackupResponse
     from .storage_sync_service_update_parameters_py3 import StorageSyncServiceUpdateParameters
+    from .operation_status_py3 import OperationStatus
     from .tracked_resource_py3 import TrackedResource
     from .azure_entity_resource_py3 import AzureEntityResource
     from .resource_py3 import Resource
@@ -85,6 +86,7 @@ except (SyntaxError, ImportError):
     from .backup_request import BackupRequest
     from .post_backup_response import PostBackupResponse
     from .storage_sync_service_update_parameters import StorageSyncServiceUpdateParameters
+    from .operation_status import OperationStatus
     from .tracked_resource import TrackedResource
     from .azure_entity_resource import AzureEntityResource
     from .resource import Resource
@@ -138,6 +140,7 @@ __all__ = [
     'BackupRequest',
     'PostBackupResponse',
     'StorageSyncServiceUpdateParameters',
+    'OperationStatus',
     'TrackedResource',
     'AzureEntityResource',
     'Resource',
