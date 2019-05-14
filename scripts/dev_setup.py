@@ -84,7 +84,7 @@ for package_name in content_packages:
     # and waste of cycles as all the dependencies will be installed regardless.
     if os.path.isfile('{}/{}/dev_requirements.txt'.format(packages[package_name], package_name)):
         pip_command('install -r dev_requirements.txt', os.path.join(packages[package_name], package_name))
-    pip_command('install --ignore-requires-python -e .', os.path.join(packages[package_name], package_name))
+    pip_command('install --ignore-requires-python -e {}'.format(os.path.join(packages[package_name], package_name)))
 
 # On Python 3, uninstall azure-nspkg if he got installed
 if sys.version_info >= (3, ):
