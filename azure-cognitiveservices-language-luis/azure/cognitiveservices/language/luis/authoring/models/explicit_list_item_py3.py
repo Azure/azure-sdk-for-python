@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ExplicitListItem(Model):
-    """Explicit list item.
+    """Explicit (exception) list item.
 
     :param id: The explicit list item ID.
     :type id: long

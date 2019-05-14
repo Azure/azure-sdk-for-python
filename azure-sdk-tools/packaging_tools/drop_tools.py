@@ -1,6 +1,7 @@
 """This file is specific to Azure SDK for Python and should be split somewhere else."""
 import logging
 from pathlib import Path
+import re
 import subprocess
 import tempfile
 
@@ -12,7 +13,7 @@ from azure_devtools.ci_tools.github_tools import (
 )
 
 _LOGGER = logging.getLogger(__name__)
-
+_SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
 
 _STORAGE_ACCOUNT = "http://azuresdkinfrajobstore1.blob.core.windows.net/azure/azure-sdk-for-python/pullrequests/{prnumber}/dist/{file}"
 
@@ -51,17 +52,21 @@ def build_package_from_pr_number(gh_token, sdk_id, pr_number, output_folder, *, 
     repo = con.get_repo(sdk_id)
     sdk_pr = repo.get_pull(pr_number)
     # "get_files" of Github only download the first 300 files. Might not be enough.
-    package_names = {f.filename.split('/')[0] for f in sdk_pr.get_files() if f.filename.startswith("azure")}
+    package_names = {('.', f.filename.split('/')[0]) for f in sdk_pr.get_files() if f.filename.startswith("azure")}
+    # Handle the SDK folder as well
+    matches = {_SDK_FOLDER_RE.search(f.filename) for f in sdk_pr.get_files()}
+    package_names.update({match.groups() for match in matches if match is not None})
+
     absolute_output_folder = Path(output_folder).resolve()
 
     with tempfile.TemporaryDirectory() as temp_dir, \
-            manage_git_folder(gh_token, Path(temp_dir) / Path("sdk"), sdk_id, pr_number=pr_number) as sdk_folder:
+            manage_git_folder(gh_token, Path(temp_dir) / Path("sdk"), sdk_id, pr_number=pr_number) as sdk_repo_root:
 
-        for package_name in package_names:
+        for _, package_name in package_names:
             _LOGGER.debug("Build {}".format(package_name))
             execute_simple_command(
                 ["python", "./build_package.py", "--dest", str(absolute_output_folder), package_name],
-                cwd=sdk_folder
+                cwd=sdk_repo_root
             )
             _LOGGER.debug("Build finished: {}".format(package_name))
 

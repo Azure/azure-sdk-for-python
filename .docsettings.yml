@@ -3,6 +3,8 @@ omitted_paths:
   - scripts/*
   - azure-mgmt-netapp/tests/*
   - "azure-mgmt*/*"
+  - "sdk/azure-mgmt*/*"
+  - "sdk/*/azure-mgmt*/*"
 language: python
 root_check_enabled: True
 required_readme_sections:
@@ -19,6 +21,7 @@ known_content_issues:
   - ['azure-servicebus/README.rst', '#4554']
   - ['azure-applicationinsights/README.rst', '#4554']
   - ['azure-batch/README.rst', '#4554']
+  - ['sdk/cognitiveservices/azure-cognitiveservices-formrecognizer/README.rst', '#4554']
   - ['azure-cognitiveservices-knowledge-nspkg/README.rst', '#4554']
   - ['azure-cognitiveservices-knowledge-qnamaker/README.rst', '#4554']
   - ['azure-cognitiveservices-language-luis/README.rst', '#4554']
@@ -48,8 +51,19 @@ known_content_issues:
   - ['azure-servicemanagement-legacy/README.rst', '#4554']
   - ['azure-cognitiveservices-anomalydetector/README.rst', '#4554']
 
-  # nspckg and common. 
+  # nspckg and common.
   - ['azure-cognitiveservices-nspkg/README.rst', 'nspkg and common']
   - ['azure/README.rst', 'nspkg and common']
   - ['azure-common/README.rst', 'nspkg and common']
   - ['azure-nspkg/README.rst', 'nspkg and common']
+  - ['azure-cognitiveservices-knowledge-nspkg/README.rst', 'nspkg and common']
+  - ['azure-cognitiveservices-language-nspkg/README.rst', 'nspkg and common']
+  - ['azure-cognitiveservices-nspkg/README.rst', 'nspkg and common']
+  - ['azure-cognitiveservices-search-nspkg/README.rst', 'nspkg and common']
+  - ['azure-cognitiveservices-vision-nspkg/README.rst', 'nspkg and common']
+  - ['azure-mgmt-datalake-nspkg/README.rst', 'nspkg and common']
+  - ['azure-mgmt-nspkg/README.rst', 'nspkg and common']
+
+package_indexing_exclusion_list:
+  - 'azure-sdk-tools'
+  - 'azure-template'

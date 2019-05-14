@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.5.1 (2019-04-26)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fixing incorrect RestAPI descriptio
+
 0.5.0 (2019-04-15)
 ++++++++++++++++++
 
