@@ -9,7 +9,7 @@ pr:
     - master
   paths:
     include:
-    - sdk/appconfiguration/
+    - azure-applicationinsights
 
 variables:
   build_targeting_string: azure-applicationinsights
