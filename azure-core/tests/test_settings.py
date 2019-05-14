@@ -23,6 +23,7 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import logging
 import os
 
 import pytest
@@ -122,3 +123,45 @@ class TestPrioritizedSetting(object):
         assert s.bar() == 10
         s.bar = 20
         assert s.bar() == 20
+
+
+class TestConverters(object):
+    @pytest.mark.parametrize("value", ["Yes", "YES", "yes", "1", "ON", "on"])
+    def test_convert_bool(self, value):
+        assert m.convert_bool(value)
+
+    @pytest.mark.parametrize("value", ["No", "NO", "no", "0", "OFF", "off"])
+    def test_convert_bool_false(self, value):
+        assert not m.convert_bool(value)
+
+    @pytest.mark.parametrize("value", [True, False])
+    def test_convert_bool_identity(self, value):
+        assert m.convert_bool(value) == value
+
+    def test_convert_bool_bad(self):
+        with pytest.raises(ValueError):
+            m.convert_bool("junk")
+
+    @pytest.mark.parametrize("value", ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"])
+    def test_convert_logging_good(self, value):
+        assert m.convert_logging(value) == getattr(logging, value)
+
+        # check lowercase works too
+        assert m.convert_logging(value.lower()) == getattr(logging, value)
+
+    @pytest.mark.parametrize("value", ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"])
+    def test_convert_logging_identity(self, value):
+        level = getattr(logging, value)
+        assert m.convert_logging(level) == level
+
+    def test_convert_logging_bad(self):
+        with pytest.raises(ValueError):
+            m.convert_logging("junk")
+
+
+class TestStandardSettings(object):
+    @pytest.mark.parametrize(
+        "name", ["log_level", "proxy_settings", "telemetry_enabled", "tracing_enabled"]
+    )
+    def test_setting_exists(self, name):
+        assert hasattr(m.settings, name)

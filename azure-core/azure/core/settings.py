@@ -30,6 +30,7 @@
 
 import logging
 import os
+from typing import Any
 
 
 __all__ = ("settings",)
@@ -37,6 +38,60 @@ __all__ = ("settings",)
 
 class _Unset(object):
     pass
+
+
+def convert_bool(value):
+    # type: (str) -> bool
+    """Convert a string to a Python logging level
+
+    :param value: the value to convert
+    :type value: string
+    :returns: int
+    :raises ValueError: Ii conversion to bool fails
+    
+    """
+    if value in (True, False):
+        return value
+
+    val = value.lower()
+    if val in ["yes", "1", "on"]:
+        return True
+    if val in ["no", "0", "off"]:
+        return False
+    raise ValueError("Cannot convert {} to boolean value".format(value))
+
+
+_levels = {
+    "CRITICAL": logging.CRITICAL,
+    "ERROR": logging.ERROR,
+    "WARNING": logging.WARNING,
+    "INFO": logging.INFO,
+    "DEBUG": logging.DEBUG,
+}
+
+
+def convert_logging(value):
+    # type: (str) -> int
+    """Convert a string to a Python logging level
+
+    :param value: the value to convert
+    :type value: string
+    :returns: int
+    :raises ValueError: Ii conversion to log level fails
+
+    """
+    if value in set(_levels.values()):
+        return value
+
+    val = value.upper()
+    level = _levels.get(val)
+    if not level:
+        raise ValueError(
+            "Cannot convert {} to log level, valid values are: {}".format(
+                value, ", ".join(_levels)
+            )
+        )
+    return level
 
 
 class PrioritizedSetting(object):
@@ -52,7 +107,7 @@ class PrioritizedSetting(object):
 
     If a value cannot be determined, a RuntimeError is raised.
 
-    The ``env_var`` argument specifies the name of an environmen to check for
+    The ``env_var`` argument specifies the name of an environment to check for
     setting values, e.g. ``"AZURE_LOG_LEVEL"``.
 
     The optional ``system_hook`` can be used to specify a function that will
@@ -62,7 +117,7 @@ class PrioritizedSetting(object):
     the setting that is returned if no other methods provide a value.
 
     A ``convert`` agument may be provided to convert values before they are
-    returned. For instance to concert log levels in environement variables
+    returned. For instance to concert log levels in environment variables
     to ``logging`` module values.
 
     """
@@ -79,9 +134,11 @@ class PrioritizedSetting(object):
         self._user_value = _Unset
 
     def __repr__(self):
+        # type () -> str
         return "PrioritizedSetting(%r)" % self._name
 
     def __call__(self, value=None):
+        # type: (Any) -> Any
         """Return the setting value according to the standard precedence.
 
         :param time: value
@@ -120,6 +177,7 @@ class PrioritizedSetting(object):
         self.set_value(value)
 
     def set_value(self, value):
+        # (Any) -> None
         """Specify a value for this setting programmatically.
 
         A value set this way takes precedence over all other methods except
@@ -149,7 +207,7 @@ class Settings(object):
     A system setting value can be obtained from registries or other OS configuration
     for settings that support that method.
 
-    An environment variable value is obtained from ``os.nviron``
+    An environment variable value is obtained from ``os.environ``
 
     User-set values many be specified by assigning to the attribute:
 
@@ -174,6 +232,10 @@ class Settings(object):
     :type log_level: PrioritizedSetting
     :cvar proxy_settings: proxy settings to use across all Axure client SDKs (AZURE_PROXY_SETTINGS)
     :type proxy_settings: PrioritizedSetting
+    :cvar telemetry_enabled: Whether telemtry should run across Azure SDKs (AZURE_TELEMETRY_ENABLED)
+    :type telemetry_enabled: PrioritizedSetting
+    :cvar tracing_enabled: Whether tracing shoudl be enabled across Azure SDKs (AZURE_TRACING_ENABLED)
+    :type tracing_enabled: PrioritizedSetting
 
     :Example:
 
@@ -189,11 +251,22 @@ class Settings(object):
     """
 
     log_level = PrioritizedSetting(
-        "log_level", env_var="AZURE_LOG_LEVEL", convert=int, default=logging.INFO
+        "log_level",
+        env_var="AZURE_LOG_LEVEL",
+        convert=convert_logging,
+        default=logging.INFO,
     )
 
     proxy_settings = PrioritizedSetting(
         "proxy_settings", env_var="AZURE_PROXY_SETTINGS"
+    )
+
+    telemetry_enabled = PrioritizedSetting(
+        "telemetry_enabled", env_var="AZURE_TELEMETRY_ENABLED", convert=convert_bool
+    )
+
+    tracing_enabled = PrioritizedSetting(
+        "tracing_enbled", env_var="AZURE_TRACING_ENABLED", convert=convert_bool
     )
 
 
