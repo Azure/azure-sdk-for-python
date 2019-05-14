@@ -18,7 +18,7 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..'))
 
 def pip_command(command, additional_dir='.', error_ok=False):
     try:
-        print('Executing: ' + command)
+        print('Executing: {} from {}'.format(command, additional_dir))
         check_call([sys.executable, '-m', 'pip'] + command.split(), cwd=os.path.join(root_dir, additional_dir))
         print()
     except CalledProcessError as err:
@@ -47,7 +47,7 @@ else:
     targeted_packages = [os.path.relpath(x.strip()) for x in args.packageList.split(',')]
 
 # Extract nspkg and sort nspkg by number of "-"
-nspkg_packages = [p for p in packages if 'nspkg' in p]
+nspkg_packages = [p for p in packages.keys() if 'nspkg' in p]
 nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
 
 # Manually push meta-packages at the end, in reverse dependency order
@@ -80,6 +80,7 @@ if sys.version_info < (3, ):
 
 # install packages
 for package_name in content_packages:
+    print("Installing {}".format(package_name))
     # if we are running dev_setup with no arguments. going after dev_requirements will be a pointless exercise
     # and waste of cycles as all the dependencies will be installed regardless.
     if os.path.isfile('{}/{}/dev_requirements.txt'.format(packages[package_name], package_name)):
