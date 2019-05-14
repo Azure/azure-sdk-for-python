@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class ErrorDetails(Model):
+class ErrorBase(Model):
     """The details of the error.
 
     Variables are only populated by the server, and will be ignored when
@@ -22,28 +22,25 @@ class ErrorDetails(Model):
     :vartype code: str
     :ivar message: A human readable error message.
     :vartype message: str
-    :param target: Indicates which property in the request is responsible for
+    :ivar target: Indicates which property in the request is responsible for
      the error.
-    :type target: str
-    :param details: error details.
-    :type details: list[~azure.mgmt.costmanagement.models.ErrorBase]
+    :vartype target: str
     """
 
     _validation = {
         'code': {'readonly': True},
         'message': {'readonly': True},
+        'target': {'readonly': True},
     }
 
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorBase]'},
     }
 
     def __init__(self, **kwargs):
-        super(ErrorDetails, self).__init__(**kwargs)
+        super(ErrorBase, self).__init__(**kwargs)
         self.code = None
         self.message = None
-        self.target = kwargs.get('target', None)
-        self.details = kwargs.get('details', None)
+        self.target = None
