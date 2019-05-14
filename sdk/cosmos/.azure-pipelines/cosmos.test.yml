@@ -1,3 +1,13 @@
+trigger: none
+
+pr:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - sdk/cosmos
+
 jobs:
   - job: 'Emulator'
 
@@ -38,7 +48,7 @@ jobs:
           inlineScript: |
             $env:ACCOUNT_HOST="$(CosmosDBEmulator.Endpoint)"
             cmd /c 'pytest --junitxml=sdk/cosmos/azure-cosmos/Test-junit.xml --verbose sdk/cosmos/azure-cosmos/test -k "not globaldb"'
-     
+
         condition: succeededOrFailed()
 
       - task: PublishTestResults@2
