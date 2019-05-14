@@ -9,16 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from msrest.serialization import Model
 
 
-class ManagedResource(Resource):
-    """An azure managed resource object.
+class ProxyResource(Model):
+    """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Azure resource Id
     :vartype id: str
@@ -26,28 +24,22 @@ class ManagedResource(Resource):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param location: Required. Resource location
-    :type location: str
-    :param tags: Resource tags
-    :type tags: dict[str, str]
     """
 
     _validation = {
         'id': {'readonly': True},
         'type': {'readonly': True},
         'name': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
-        super(ManagedResource, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
+    def __init__(self, **kwargs) -> None:
+        super(ProxyResource, self).__init__(**kwargs)
+        self.id = None
+        self.type = None
+        self.name = None

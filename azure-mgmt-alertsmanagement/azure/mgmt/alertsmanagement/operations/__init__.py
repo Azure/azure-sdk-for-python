@@ -12,11 +12,9 @@
 from .operations import Operations
 from .alerts_operations import AlertsOperations
 from .smart_groups_operations import SmartGroupsOperations
-from .action_rules_operations import ActionRulesOperations
 
 __all__ = [
     'Operations',
     'AlertsOperations',
     'SmartGroupsOperations',
-    'ActionRulesOperations',
 ]

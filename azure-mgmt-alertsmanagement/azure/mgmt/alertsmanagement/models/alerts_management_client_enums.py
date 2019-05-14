@@ -43,20 +43,20 @@ class MonitorCondition(str, Enum):
 
 class MonitorService(str, Enum):
 
-    platform = "Platform"
     application_insights = "Application Insights"
-    log_analytics = "Log Analytics"
-    infrastructure_insights = "Infrastructure Insights"
     activity_log_administrative = "ActivityLog Administrative"
     activity_log_security = "ActivityLog Security"
     activity_log_recommendation = "ActivityLog Recommendation"
     activity_log_policy = "ActivityLog Policy"
     activity_log_autoscale = "ActivityLog Autoscale"
+    log_analytics = "Log Analytics"
+    nagios = "Nagios"
+    platform = "Platform"
+    scom = "SCOM"
     service_health = "ServiceHealth"
     smart_detector = "SmartDetector"
+    vm_insights = "VM Insights"
     zabbix = "Zabbix"
-    scom = "SCOM"
-    nagios = "Nagios"
 
 
 class AlertModificationEvent(str, Enum):
@@ -81,41 +81,6 @@ class State(str, Enum):
     closed = "Closed"
 
 
-class ScopeType(str, Enum):
-
-    resource_group = "ResourceGroup"
-    resource = "Resource"
-
-
-class Operator(str, Enum):
-
-    equals = "Equals"
-    not_equals = "NotEquals"
-    contains = "Contains"
-    does_not_contain = "DoesNotContain"
-
-
-class SuppressionType(str, Enum):
-
-    always = "Always"
-    once = "Once"
-    daily = "Daily"
-    weekly = "Weekly"
-    monthly = "Monthly"
-
-
-class ActionRuleStatus(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
-class ApiVersion(str, Enum):
-
-    two_zero_one_nine_zero_five_zero_five_preview = "2019-05-05-preview"
-    two_zero_one_eight_zero_five_zero_five = "2018-05-05"
-
-
 class TimeRange(str, Enum):
 
     oneh = "1h"
@@ -136,6 +101,16 @@ class AlertsSortByFields(str, Enum):
     target_resource_type = "targetResourceType"
     start_date_time = "startDateTime"
     last_modified_date_time = "lastModifiedDateTime"
+
+
+class AlertsSummaryGroupByFields(str, Enum):
+
+    severity = "severity"
+    alert_state = "alertState"
+    monitor_condition = "monitorCondition"
+    monitor_service = "monitorService"
+    signal_type = "signalType"
+    alert_rule = "alertRule"
 
 
 class SmartGroupsSortByFields(str, Enum):
