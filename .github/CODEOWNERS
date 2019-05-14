@@ -28,5 +28,5 @@
 /azure-mgmt-sql/ @jaredmoo
 /azure-mgmt-web/ @yugangw-msft
 /azure-security-keyvault/ @chlowell @schaabs
-/azure-servicebus/ @annatisch
+/sdk/servicebus/azure-servicebus/ @annatisch
 /azure-servicefabric/ @samedder
