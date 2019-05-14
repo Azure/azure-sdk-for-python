@@ -48,7 +48,11 @@ class StorageCommonBlobTest(StorageTestCase):
     def setUp(self):
         super(StorageCommonBlobTest, self).setUp()
 
-        self.bs = self._create_storage_service(BlockBlobService, self.settings)
+        url = self._get_account_url()
+        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
+        self.bsc = BlobServiceClient(url, credentials=credentials)
+
+        #self.bs = self._create_storage_service(BlockBlobService, self.settings)
         self.container_name = self.get_resource_name('utcontainer')
 
         if not self.is_playback():
@@ -686,23 +690,26 @@ class StorageCommonBlobTest(StorageTestCase):
             self._enable_soft_delete()
             blob_name = self._create_block_blob()
 
+            container = self.bsc.get_container_client(self.container_name)
+            blob = container.get_blob_client(blob_name)
+
             # Soft delete the blob
-            self.bs.delete_blob(self.container_name, blob_name)
-            blob_list = list(self.bs.list_blobs(self.container_name, include=Include(deleted=True)))
+            blob.delete_blob()
+            blob_list = list(container.list_blob_properties(include=Include(deleted=True)))
 
             # Assert
             self.assertEqual(len(blob_list), 1)
             self._assert_blob_is_soft_deleted(blob_list[0])
 
             # list_blobs should not list soft deleted blobs if Include(deleted=True) is not specified
-            blob_list = list(self.bs.list_blobs(self.container_name))
+            blob_list = list(container.list_blob_properties())
 
             # Assert
             self.assertEqual(len(blob_list), 0)
 
             # Restore blob with undelete
-            self.bs.undelete_blob(self.container_name, blob_name)
-            blob_list = list(self.bs.list_blobs(self.container_name, include=Include(deleted=True)))
+            blob.undelete_blob()
+            blob_list = list(container.list_blobs(include=Include(deleted=True)))
 
             # Assert
             self.assertEqual(len(blob_list), 1)

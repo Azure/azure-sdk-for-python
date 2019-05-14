@@ -25,7 +25,10 @@ from ._utils import (
     get_access_conditions,
     get_modification_conditions,
     return_response_headers,
-    add_metadata_headers
+    add_metadata_headers,
+)
+from ._deserialize import (
+    deserialize_blob_properties
 )
 from ._generated.models import BlobHTTPHeaders
 
@@ -275,7 +278,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             blob_headers = BlobHTTPHeaders(
                 blob_cache_control=content_settings.cache_control,
                 blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5),
+                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
                 blob_content_encoding=content_settings.content_encoding,
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
@@ -407,12 +410,26 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None  # type: Optional[int]
+            timeout=None,  # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> BlobProperties
         """
         :returns: BlobProperties
         """
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        blob_props = self._client.blob.get_properties(
+            timeout=timeout,
+            lease_access_conditions=access_conditions,
+            modified_access_conditions=mod_conditions,
+            cls=deserialize_blob_properties,
+            **kwargs)
+        blob_props.name = self.name
+        blob_props.container = self.container
+        blob_props.snapshot = self.snapshot
+        return blob_props
 
     def set_blob_properties(
             self, content_settings=None,  # type: Optional[ContentSettings]
@@ -466,7 +483,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         blob_headers = BlobHTTPHeaders(
             blob_cache_control=content_settings.cache_control,
             blob_content_type=content_settings.content_type,
-            blob_content_md5=bytearray(content_settings.content_md5),
+            blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
             blob_content_encoding=content_settings.content_encoding,
             blob_content_language=content_settings.content_language,
             blob_content_disposition=content_settings.content_disposition

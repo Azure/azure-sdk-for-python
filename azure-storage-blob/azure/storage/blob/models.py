@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 
-from .common import BlockState
+from .common import BlockState, BlobType
 
 
 class ContainerProperties(object):
@@ -87,28 +87,29 @@ class BlobProperties(object):
         Indicates when the blob was created, in UTC.
     """
 
-    def __init__(self):
-        self.name = None
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name')
         self.container = None
-        self.snapshot = None
-        self.blob_type = None
-        self.metadata = None
-        self.last_modified = None
-        self.etag = None
-        self.content_length = None
-        self.content_range = None
-        self.append_blob_committed_block_count = None
-        self.page_blob_sequence_number = None
-        self.server_encrypted = None
-        self.copy = CopyProperties()
-        self.content_settings = ContentSettings()
-        self.lease = LeaseProperties()
-        self.blob_tier = None
-        self.blob_tier_change_time = None
-        self.blob_tier_inferred = False
+        self.snapshot = kwargs.get('snapshot')
+        self.blob_type = BlobType(kwargs['x-ms-blob-type'])
+        self.metadata = kwargs.get('metadata')
+        self.last_modified = kwargs.get('Last-Modified')
+        self.etag = kwargs.get('ETag')
+        self.content_length = kwargs.get('Content-Length')
+        self.content_range = kwargs.get('Accept-Ranges')
+        self.append_blob_committed_block_count = kwargs.get('x-ms-blob-committed-block-count')
+        self.page_blob_sequence_number = kwargs.get('x-ms-blob-sequence-number')
+        self.server_encrypted = kwargs.get('x-ms-server-encrypted')
+        self.copy = CopyProperties(**kwargs)
+        self.content_settings = ContentSettings(**kwargs)
+        self.lease = LeaseProperties(**kwargs)
+        self.blob_tier = kwargs.get('x-ms-access-tier')
+        self.blob_tier_change_time = kwargs.get('x-ms-access-tier-change-time')
+        self.blob_tier_inferred = kwargs.get('x-ms-access-tier-inferred')
         self.deleted_time = None
         self.remaining_retention_days = None
-        self.creation_time = None
+        self.creation_time = kwargs.get('x-ms-creation-time')
+        self.archive_status = kwargs.get('x-ms-archive-status')
 
 
 class LeaseProperties(object):
@@ -125,10 +126,10 @@ class LeaseProperties(object):
         When a blob is leased, specifies whether the lease is of infinite or fixed duration.
     """
 
-    def __init__(self):
-        self.status = None
-        self.state = None
-        self.duration = None
+    def __init__(self, **kwargs):
+        self.status = kwargs.get('x-ms-lease-status')
+        self.state = kwargs.get('x-ms-lease-state')
+        self.duration = kwargs.get('x-ms-lease-duration')
 
 
 class ContentSettings(object):
@@ -161,13 +162,14 @@ class ContentSettings(object):
     def __init__(
             self, content_type=None, content_encoding=None,
             content_language=None, content_disposition=None,
-            cache_control=None, content_md5=None):
-        self.content_type = content_type
-        self.content_encoding = content_encoding
-        self.content_language = content_language
-        self.content_disposition = content_disposition
-        self.cache_control = cache_control
-        self.content_md5 = content_md5
+            cache_control=None, content_md5=None, **kwargs):
+
+        self.content_type = content_type or kwargs.get('Content-Type')
+        self.content_encoding = content_encoding or kwargs.get('Content-Encoding')
+        self.content_language = content_language or kwargs.get('Content-Language')
+        self.content_md5 = content_md5 or kwargs.get('Content-MD5')
+        self.content_disposition = content_disposition or kwargs.get('Content-Disposition')
+        self.cache_control = cache_control or kwargs.get('Cache-Control')
 
 
 class CopyProperties(object):
@@ -210,13 +212,15 @@ class CopyProperties(object):
         or non-fatal copy operation failure.
     """
 
-    def __init__(self):
-        self.id = None
-        self.source = None
-        self.status = None
-        self.progress = None
-        self.completion_time = None
-        self.status_description = None
+    def __init__(self, **kwargs):
+        self.id = kwargs.get('x-ms-copy-id')
+        self.source = kwargs.get('x-ms-copy-status')
+        self.status = kwargs.get('x-ms-copy-source')
+        self.progress = kwargs.get('x-ms-copy-progress')
+        self.completion_time = kwargs.get('x-ms-copy-completion_time')
+        self.status_description = kwargs.get('x-ms-copy-status-description')
+        self.incremental_copy = kwargs.get('x-ms-incremental-copy')
+        self.destination_snapshot = kwargs.get('x-ms-copy-destination-snapshot')
 
 
 class BlobBlock(object):

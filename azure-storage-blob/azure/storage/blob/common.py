@@ -9,9 +9,9 @@ from enum import Enum
 
 class BlobType(str, Enum):
 
-    BlockBlob = "blockblob"
-    PageBlob = "pageblob"
-    AppendBlob = "appendblob"
+    BlockBlob = "BlockBlob"
+    PageBlob = "PageBlob"
+    AppendBlob = "AppendBlob"
 
 
 class BlockState(str, Enum):
