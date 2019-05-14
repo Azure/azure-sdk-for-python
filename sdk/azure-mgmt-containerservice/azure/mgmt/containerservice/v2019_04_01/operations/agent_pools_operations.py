@@ -48,7 +48,7 @@ class AgentPoolsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -121,7 +121,7 @@ class AgentPoolsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
         :param agent_pool_name: The name of the agent pool.
         :type agent_pool_name: str
@@ -241,7 +241,7 @@ class AgentPoolsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
         :param agent_pool_name: The name of the agent pool.
         :type agent_pool_name: str
@@ -337,7 +337,7 @@ class AgentPoolsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
         :param agent_pool_name: The name of the agent pool.
         :type agent_pool_name: str

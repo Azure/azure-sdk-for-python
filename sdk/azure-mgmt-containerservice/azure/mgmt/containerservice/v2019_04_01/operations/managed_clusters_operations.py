@@ -186,7 +186,7 @@ class ManagedClustersOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -252,7 +252,7 @@ class ManagedClustersOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
         :param role_name: The name of the role for managed cluster
          accessProfile resource.
@@ -322,7 +322,7 @@ class ManagedClustersOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -388,7 +388,7 @@ class ManagedClustersOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -454,7 +454,7 @@ class ManagedClustersOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -571,7 +571,7 @@ class ManagedClustersOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
         :param parameters: Parameters supplied to the Create or Update a
          Managed Cluster operation.
@@ -677,7 +677,7 @@ class ManagedClustersOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
         :param tags: Resource tags.
         :type tags: dict[str, str]
@@ -767,7 +767,7 @@ class ManagedClustersOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -854,7 +854,7 @@ class ManagedClustersOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
         :param client_id: The ID for the service principal.
         :type client_id: str
@@ -946,7 +946,7 @@ class ManagedClustersOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param resource_name: The name of the resource.
+        :param resource_name: The name of the managed cluster resource.
         :type resource_name: str
         :param parameters: Parameters supplied to the Reset AAD Profile
          operation for a Managed Cluster.
