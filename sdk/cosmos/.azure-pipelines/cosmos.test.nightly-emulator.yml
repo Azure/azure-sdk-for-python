@@ -29,8 +29,8 @@ jobs:
       - task: azure-cosmosdb.emulator-internal-preview.run-cosmosdbemulatorcontainer.CosmosDbEmulator@2
         displayName: "Run Azure Cosmos DB Preview Emulator Container"
         inputs:
-          username: '$(cosmosdb.azurecr.io.Username)'
-          password: '$(cosmosdb.azurecr.io.Password)'
+          username: '$(cosmos-cosmosdb-azurecr-io-username)'
+          password: '$(cosmos-cosmosdb-azurecr-io-password)'
           defaultPartitionCount: 25
 
       - task: PowerShell@1
@@ -40,7 +40,7 @@ jobs:
           inlineScript: |
             $env:ACCOUNT_HOST="$(CosmosDBEmulator.Endpoint)"
             cmd /c 'pytest --junitxml=sdk/cosmos/azure-cosmos/Test-junit-nightly.xml --verbose sdk/cosmos/azure-cosmos/test -k "not globaldb"'
-     
+
         condition: succeededOrFailed()
 
       - task: PublishTestResults@2
