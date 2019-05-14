@@ -9,12 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_usage import ResourceUsage
+from msrest.serialization import Model
 
 
-class UsageByVMFamily(ResourceUsage):
-    """Describes Batch AI Resource Usage by VM Family, broken down by Workspace
-    and Cluster usage.
+class ResourceUsage(Model):
+    """Describes AML Resource Usage.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -29,15 +28,6 @@ class UsageByVMFamily(ResourceUsage):
     :ivar name: The name of the type of usage.
     :vartype name:
      ~azure.mgmt.machinelearningservices.models.ResourceUsageName
-    :ivar resource_group_name: The name of the resource group this resource
-     type belongs to
-    :vartype resource_group_name: str
-    :ivar resource_type: The type of the resource, whether its VM family,
-     workspace name, or cluster
-    :vartype resource_type: str
-    :ivar usage_breakdown: The breakdown of usage by Workspace or Cluster
-    :vartype usage_breakdown:
-     list[~azure.mgmt.machinelearningservices.models.UsageByVMFamily]
     """
 
     _validation = {
@@ -45,9 +35,6 @@ class UsageByVMFamily(ResourceUsage):
         'current_value': {'readonly': True},
         'limit': {'readonly': True},
         'name': {'readonly': True},
-        'resource_group_name': {'readonly': True},
-        'resource_type': {'readonly': True},
-        'usage_breakdown': {'readonly': True},
     }
 
     _attribute_map = {
@@ -55,13 +42,11 @@ class UsageByVMFamily(ResourceUsage):
         'current_value': {'key': 'currentValue', 'type': 'long'},
         'limit': {'key': 'limit', 'type': 'long'},
         'name': {'key': 'name', 'type': 'ResourceUsageName'},
-        'resource_group_name': {'key': 'properties.resourceGroupName', 'type': 'str'},
-        'resource_type': {'key': 'properties.resourceType', 'type': 'str'},
-        'usage_breakdown': {'key': 'properties.usageBreakdown', 'type': '[UsageByVMFamily]'},
     }
 
-    def __init__(self, **kwargs):
-        super(UsageByVMFamily, self).__init__(**kwargs)
-        self.resource_group_name = None
-        self.resource_type = None
-        self.usage_breakdown = None
+    def __init__(self, **kwargs) -> None:
+        super(ResourceUsage, self).__init__(**kwargs)
+        self.unit = None
+        self.current_value = None
+        self.limit = None
+        self.name = None
