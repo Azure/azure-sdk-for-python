@@ -15,10 +15,6 @@ from .proxy_resource_py3 import ProxyResource
 class AttachedDatabaseConfiguration(ProxyResource):
     """Class representing an attached database configuration.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AllAttachedDatabaseConfiguration,
-    SpecificAttachedDatabaseConfiguration
-
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
@@ -34,15 +30,25 @@ class AttachedDatabaseConfiguration(ProxyResource):
     :vartype type: str
     :param location: Resource location.
     :type location: str
-    :param kind: Required. Constant filled by server.
-    :type kind: str
+    :param database_name: Required. The name of the database which you would
+     like to attach, use * if you want to follow all current and future
+     databases.
+    :type database_name: str
+    :param cluster_resource_id: Required. The resource id of the cluster where
+     the databases you would like to attach reside.
+    :type cluster_resource_id: str
+    :ivar attached_database_names: The list of databases from the
+     clusterResourceId which are currently attached to the cluster.
+    :vartype attached_database_names: list[str]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'required': True},
+        'database_name': {'required': True},
+        'cluster_resource_id': {'required': True},
+        'attached_database_names': {'readonly': True},
     }
 
     _attribute_map = {
@@ -50,15 +56,14 @@ class AttachedDatabaseConfiguration(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
+        'database_name': {'key': 'properties.databaseName', 'type': 'str'},
+        'cluster_resource_id': {'key': 'properties.clusterResourceId', 'type': 'str'},
+        'attached_database_names': {'key': 'properties.AttachedDatabaseNames', 'type': '[str]'},
     }
 
-    _subtype_map = {
-        'kind': {'All': 'AllAttachedDatabaseConfiguration', 'Specific': 'SpecificAttachedDatabaseConfiguration'}
-    }
-
-    def __init__(self, *, location: str=None, **kwargs) -> None:
+    def __init__(self, *, database_name: str, cluster_resource_id: str, location: str=None, **kwargs) -> None:
         super(AttachedDatabaseConfiguration, self).__init__(**kwargs)
         self.location = location
-        self.kind = None
-        self.kind = 'AttachedDatabaseConfiguration'
+        self.database_name = database_name
+        self.cluster_resource_id = cluster_resource_id
+        self.attached_database_names = None

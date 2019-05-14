@@ -21,8 +21,6 @@ try:
     from .cluster_py3 import Cluster
     from .cluster_update_py3 import ClusterUpdate
     from .attached_database_configuration_py3 import AttachedDatabaseConfiguration
-    from .all_attached_database_configuration_py3 import AllAttachedDatabaseConfiguration
-    from .specific_attached_database_configuration_py3 import SpecificAttachedDatabaseConfiguration
     from .database_py3 import Database
     from .read_write_database_py3 import ReadWriteDatabase
     from .read_only_attached_database_py3 import ReadOnlyAttachedDatabase
@@ -59,8 +57,6 @@ except (SyntaxError, ImportError):
     from .cluster import Cluster
     from .cluster_update import ClusterUpdate
     from .attached_database_configuration import AttachedDatabaseConfiguration
-    from .all_attached_database_configuration import AllAttachedDatabaseConfiguration
-    from .specific_attached_database_configuration import SpecificAttachedDatabaseConfiguration
     from .database import Database
     from .read_write_database import ReadWriteDatabase
     from .read_only_attached_database import ReadOnlyAttachedDatabase
@@ -101,7 +97,6 @@ from .kusto_management_client_enums import (
     DataFormat,
     DatabasePrincipalRole,
     DatabasePrincipalType,
-    Kind,
     Type,
     Reason,
 )
@@ -118,8 +113,6 @@ __all__ = [
     'Cluster',
     'ClusterUpdate',
     'AttachedDatabaseConfiguration',
-    'AllAttachedDatabaseConfiguration',
-    'SpecificAttachedDatabaseConfiguration',
     'Database',
     'ReadWriteDatabase',
     'ReadOnlyAttachedDatabase',
@@ -159,7 +152,6 @@ __all__ = [
     'DataFormat',
     'DatabasePrincipalRole',
     'DatabasePrincipalType',
-    'Kind',
     'Type',
     'Reason',
 ]

@@ -89,12 +89,6 @@ class DatabasePrincipalType(str, Enum):
     user = "User"
 
 
-class Kind(str, Enum):
-
-    all = "All"
-    specific = "Specific"
-
-
 class Type(str, Enum):
 
     microsoft_kustoclustersdatabases = "Microsoft.Kusto/clusters/databases"

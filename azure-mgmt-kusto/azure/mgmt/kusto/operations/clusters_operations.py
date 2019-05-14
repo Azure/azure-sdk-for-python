@@ -623,7 +623,7 @@ class ClustersOperations(object):
     list_follower_databases.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/listFollowerDatabases'}
 
     def detach_follower_databases(
-            self, resource_group_name, cluster_name, follower_databases_to_remove, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, cluster_name, cluster_resource_id, database_name, custom_headers=None, raw=False, **operation_config):
         """Detaches all followers of a database owned by this cluster.
 
         :param resource_group_name: The name of the resource group containing
@@ -631,10 +631,12 @@ class ClustersOperations(object):
         :type resource_group_name: str
         :param cluster_name: The name of the Kusto cluster.
         :type cluster_name: str
-        :param follower_databases_to_remove: List of follower databases to
-         remove.
-        :type follower_databases_to_remove:
-         ~azure.mgmt.kusto.models.FollowerDatabaseRequest
+        :param cluster_resource_id: Resource id of the cluster that follows a
+         database owned by this cluster.
+        :type cluster_resource_id: str
+        :param database_name: The database name owned by this cluster that was
+         followed. * in case following all databases.
+        :type database_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -645,6 +647,8 @@ class ClustersOperations(object):
          ~azure.mgmt.kusto.models.FollowerDatabaseResultPaged[~azure.mgmt.kusto.models.FollowerDatabaseResult]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        follower_databases_to_remove = models.FollowerDatabaseRequest(cluster_resource_id=cluster_resource_id, database_name=database_name)
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:

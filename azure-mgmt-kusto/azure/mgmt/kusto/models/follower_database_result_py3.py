@@ -15,25 +15,20 @@ from msrest.serialization import Model
 class FollowerDatabaseResult(Model):
     """A class representing database principal entity.
 
-    :param kind: Kind of the attached database. Possible values include:
-     'All', 'Specific'
-    :type kind: str or ~azure.mgmt.kusto.models.Kind
     :param cluster_resource_id: List of resource ids of clusters that are
      following the database owned by this cluster.
     :type cluster_resource_id: list[str]
     :param database_name: The database name owned by this cluster that was
-     followed. Empty in case following all databases.
+     followed. * in case following all databases.
     :type database_name: str
     """
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
         'cluster_resource_id': {'key': 'clusterResourceId', 'type': '[str]'},
         'database_name': {'key': 'databaseName', 'type': 'str'},
     }
 
-    def __init__(self, *, kind=None, cluster_resource_id=None, database_name: str=None, **kwargs) -> None:
+    def __init__(self, *, cluster_resource_id=None, database_name: str=None, **kwargs) -> None:
         super(FollowerDatabaseResult, self).__init__(**kwargs)
-        self.kind = kind
         self.cluster_resource_id = cluster_resource_id
         self.database_name = database_name
