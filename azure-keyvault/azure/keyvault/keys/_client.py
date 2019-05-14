@@ -23,11 +23,9 @@ from .._generated import DESERIALIZE, SERIALIZE
 from ._models import (
     Key,
     DeletedKey,
-    KeyAttributes,
+    KeyBase,
 )
 from .._generated.v7_0.models import (
-    BackupKeyResult,
-    DeletedKeyBundle,
     DeletedKeyItem,
     DeletedKeyItemPaged,
     KeyCreateParameters,
@@ -53,7 +51,7 @@ class KeyClient:
         return config
 
     def __init__(self, vault_url, credentials, config=None, transport=None, **kwargs):
-        # type: (str, Any, Configuration, HttpTransport, , Mapping[str, Any]) -> None
+        # type: (str, Any, Configuration, HttpTransport, Mapping[str, Any]) -> None
 
         if not credentials:
             raise ValueError('credentials')
@@ -279,10 +277,10 @@ class KeyClient:
 
         bundle = DESERIALIZE('DeletedKeyBundle', response)
 
-        return DeletedKey._from_deleted_key_bundle(bundle)      # Ques: Deleted key requires key, but DeletedkeyItem deosn't return?
+        return DeletedKey._from_deleted_key_bundle(bundle)
 
     def list_deleted_keys(self, **kwargs):
-        # type: (str, Mapping[str, Any]) -> Generator[DeletedKey]
+        # type: (Mapping[str, Any]) -> Generator[DeletedKey]
 
         """Lists the deleted keys in the specified vault.
 
@@ -314,7 +312,7 @@ class KeyClient:
         return (DeletedKey._from_deleted_key_item(item) for item in pages)
 
     def list_keys(self, **kwargs):
-        # type: (str, Mapping[str, Any]) -> Generator[Key]
+        # type: ( Mapping[str, Any]) -> Generator[KeyBase]
 
         """List keys in the specified vault.
 
@@ -342,10 +340,10 @@ class KeyClient:
         max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = KeyItemPaged(paging, DESERIALIZE.dependencies)
-        return (KeyAttributes._from_key_item(item) for item in pages)
+        return (KeyBase._from_key_item(item) for item in pages)
 
     def list_key_versions(self, name, **kwargs):
-        # type: (str, str, Mapping[str, Any]) -> Generator[KeyAttributes]
+        # type: (str, Mapping[str, Any]) -> Generator[KeyBase]
 
         """Retrieves a list of individual key versions with the same key name.
 
@@ -371,7 +369,7 @@ class KeyClient:
         max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = KeyItemPaged(paging, DESERIALIZE.dependencies)
-        return (KeyAttributes._from_key_item(item) for item in pages)
+        return (KeyBase._from_key_item(item) for item in pages)
 
     def purge_deleted_key(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> None
@@ -409,7 +407,7 @@ class KeyClient:
         return
 
     def recover_deleted_key(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> DeletedKey
+        # type: (str, Mapping[str, Any]) -> Key
         """Recovers the deleted key to its latest version.
 
         The Recover Deleted Key operation is applicable for deleted keys in

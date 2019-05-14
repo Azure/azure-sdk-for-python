@@ -102,6 +102,7 @@ class KeyVaultKeyTest(KeyvaultTestCase):
         # delete the new key
         deleted_key = client.delete_key(key_name)
         self.assertIsNotNone(deleted_key)
+        self.assertEqual(created_key.key_material, deleted_key.key_material)
         self.assertEqual(deleted_key.id, created_key.id)
         self.assertTrue(deleted_key.recovery_id and deleted_key.deleted_date and deleted_key.scheduled_purge_date,
                         'Missing required deleted key attributes.')

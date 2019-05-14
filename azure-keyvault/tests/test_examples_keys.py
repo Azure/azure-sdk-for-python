@@ -42,9 +42,9 @@ def create_key_client():
     tenant_id = ''
     vault_url = ''
 
-    # [START create_secret_client
+    # [START create_key_client]
     from azure.common.credentials import ServicePrincipalCredentials
-    from azure.keyvault.secrets._client import SecretClient
+    from azure.keyvault.keys._client import KeyClient
 
     credentials = ServicePrincipalCredentials(
         client_id=client_id,
@@ -54,7 +54,7 @@ def create_key_client():
     )
 
     # Create a new key client using Azure credentials
-    key_client = Key_Client(vault_url=vault_url, credentials=credentials)
+    key_client = KeyClient(vault_url=vault_url, credentials=credentials)
     # [END create_key_client]
     return key_client
 
@@ -142,6 +142,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
 
             print(deleted_key.name)
             print(deleted_key.deleted_date)
+            print(deleted_key.key_material)
             print(deleted_key.recovery_id)
             print(deleted_key.scheduled_purge_date)
 
@@ -189,9 +190,9 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             deleted_keys = key_client.list_deleted_keys()
 
             for key in deleted_keys:
-                # the list doesn't include key_material
                 print(key.id)
                 print(key.name)
+                print(key.key_material)     # the list operation returns None for key_material
 
             # [END list_deleted_keys]
         except ClientRequestError:

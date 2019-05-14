@@ -11,11 +11,11 @@ from .._generated.v7_0 import models
 from .._internal import _parse_vault_id
 
 
-class KeyAttributes(object):
+class KeyBase(object):
     """A key's id and attributes."""
 
     def __init__(self, attributes, vault_id, **kwargs):
-        # type: (models.KeyAttributes, str, Mapping[str, Any]) -> None
+        # type: (models.KeyBase, str, Mapping[str, Any]) -> None
         self._attributes = attributes
         self._id = vault_id     # we don't want to call this kid, right?
         self._vault_id = _parse_vault_id(vault_id)
@@ -24,7 +24,7 @@ class KeyAttributes(object):
 
     @classmethod
     def _from_key_bundle(cls, key_bundle):
-        # type: (models.KeyBundle) -> KeyAttributes
+        # type: (models.KeyBundle) -> KeyBase
         """Construct a key from an autorest-generated KeyBundle"""
         return cls(
             key_bundle.attributes,
@@ -35,7 +35,7 @@ class KeyAttributes(object):
 
     @classmethod
     def _from_key_item(cls, key_item):
-        # type: (models.KeyItem) -> KeyAttributes
+        # type: (models.KeyItem) -> KeyBase
         """Construct a Key from an autorest-generated KeyItem"""
         return cls(
             key_item.attributes,
@@ -110,7 +110,7 @@ class KeyAttributes(object):
     @property
     def recovery_level(self):
         # type: () -> str
-        """Reflects the deletion recovery level currently in effect for keys in the current vault
+        """The vault's deletion recovery level for keys
         :rtype: str"""
         return self._attributes.recovery_level
 
@@ -122,8 +122,8 @@ class KeyAttributes(object):
         return self._tags
 
 
-class Key(KeyAttributes):
-    """A key consisting of all KeyAttributes and key_material information.
+class Key(KeyBase):
+    """A key consisting of all KeyBase and key_material information.
     """
 
     def __init__(self, attributes, key, **kwargs):
@@ -132,7 +132,7 @@ class Key(KeyAttributes):
 
     @classmethod
     def _from_key_bundle(cls, key_bundle):
-        # type: (models.KeyBundle) -> key
+        # type: (models.KeyBundle) -> Key
         """Construct a key from an autorest-generated KeyBundle"""
         return cls(
             key_bundle.attributes,
@@ -147,18 +147,18 @@ class Key(KeyAttributes):
         return self._key_material
 
 
-class DeletedKey(KeyAttributes):
+class DeletedKey(KeyBase):
     """A Deleted key consisting of its id, attributes, and tags, as
     well as when it will be purged, if soft-delete is enabled for the vault.
     """
 
-    def __init__(self, attributes, vault_id, deleted_date=None, recovery_id=None, scheduled_purge_date=None, **kwargs):
-        # type: (models.KeyAttributes, str, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
+    def __init__(self, attributes, vault_id, key_material=None, deleted_date=None, recovery_id=None, scheduled_purge_date=None, **kwargs):
+        # type: (models.KeyBase, str, Dict[str, str], Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
         super(DeletedKey, self).__init__(attributes, vault_id, **kwargs)
+        self._key_material = key_material
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
         self._scheduled_purge_date = scheduled_purge_date
-        # self._key_material = key # we don't expose the key i.e jsonWebKey just like we don't expose the value on deleted secret? why?
 
     @classmethod
     def _from_deleted_key_bundle(cls, deleted_key_bundle):
@@ -167,16 +167,12 @@ class DeletedKey(KeyAttributes):
         return cls(
             deleted_key_bundle.attributes,
             deleted_key_bundle.key.kid,
+            deleted_key_bundle.key,
             deleted_key_bundle.deleted_date,
             deleted_key_bundle.recovery_id,
             deleted_key_bundle.scheduled_purge_date,
             managed=deleted_key_bundle.managed,
             tags=deleted_key_bundle.tags,
-            # deleted_key_bundle.key, 
-            # TODO: deleted key item doesn't have the jsonWebKey.
-            # Option 1 - Is it fine if DeletedKey does not have the jsonWebKey property OR
-            # Option 2- Should we just have the other deletedKey properties such as deleted_date, recovery_id, scheduled_purge_date as None initialy on KeyATtributes class and
-            # have the "new" DeletedKey class to have the jsonWebKey + KeyAttributes properties
         )
 
     @classmethod
@@ -214,6 +210,7 @@ class DeletedKey(KeyAttributes):
         :rtype: datetime"""
         return self._scheduled_purge_date
 
-    # @property
-    # def key_material(self):
-    #     return self._key_material
+    @property
+    def key_material(self):
+        # type: () -> Dict[str, str]
+        return self._key_material
