@@ -20,7 +20,7 @@ class SignalRFeature(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar flag: Required. Name of the feature. Required. Default value:
+    :ivar flag: Required. Kind of feature. Required. Default value:
      "ServiceMode" .
     :vartype flag: str
     :param value: Required. Value of the feature flag. See Azure SignalR
