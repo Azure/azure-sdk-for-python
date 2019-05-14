@@ -16,7 +16,6 @@ try:
     from .workspace_update_parameters_py3 import WorkspaceUpdateParameters
     from .usage_name_py3 import UsageName
     from .usage_py3 import Usage
-    from .dummy_object_py3 import DummyObject
     from .usage_by_vm_family_py3 import UsageByVMFamily
     from .virtual_machine_size_py3 import VirtualMachineSize
     from .virtual_machine_size_list_result_py3 import VirtualMachineSizeListResult
@@ -67,7 +66,6 @@ except (SyntaxError, ImportError):
     from .workspace_update_parameters import WorkspaceUpdateParameters
     from .usage_name import UsageName
     from .usage import Usage
-    from .dummy_object import DummyObject
     from .usage_by_vm_family import UsageByVMFamily
     from .virtual_machine_size import VirtualMachineSize
     from .virtual_machine_size_list_result import VirtualMachineSizeListResult
@@ -133,7 +131,6 @@ __all__ = [
     'WorkspaceUpdateParameters',
     'UsageName',
     'Usage',
-    'DummyObject',
     'UsageByVMFamily',
     'VirtualMachineSize',
     'VirtualMachineSizeListResult',

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dummy_object_py3 import DummyObject
+from .usage_py3 import Usage
 
 
-class UsageByVMFamily(DummyObject):
+class UsageByVMFamily(Usage):
     """Describes Batch AI Resource Usage by VM Family, broken down by Workspace
     and Cluster usage.
 
