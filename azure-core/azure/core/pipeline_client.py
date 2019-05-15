@@ -54,10 +54,22 @@ class PipelineClient(object):
             raise ValueError("Config is a required parameter")
         self._config = config
         self._base_url = base_url
-        self._transport = kwargs.get('transport', RequestsTransport(config))
-        self._pipeline = kwargs.get('pipeline', self._build_pipeline(config))
+        if kwargs.get('pipeline'):
+            self._pipeline = kwargs['pipeline']
+        else:
+            transport = kwargs.get('transport')
+            if not transport:
+                transport = RequestsTransport(config)
+            self._pipeline = self._build_pipeline(config, transport)
 
-    def _build_pipeline(self, config):
+    def __enter__(self):
+        self._pipeline.__enter__()
+        return self
+
+    def __exit__(self, *exc_details):
+        self._pipeline.__exit__(*exc_details)
+
+    def _build_pipeline(self, config, transport):
         policies = [
             config.headers_policy,
             config.user_agent_policy,
@@ -69,7 +81,7 @@ class PipelineClient(object):
         ]
 
         return Pipeline(
-            self._transport,  # Send HTTP request using requests
+            transport,
             policies
         )
 
@@ -106,14 +118,17 @@ class PipelineClient(object):
 
         return request
 
-    def format_url(self, url, **kwargs):
+    def close(self):
+        self.__exit__()
+
+    def format_url(self, url_template, **kwargs):
         # type: (str, Any) -> str
         """Format request URL with the client base URL, unless the
         supplied URL is already absolute.
 
         :param str url: The request URL to be formatted if necessary.
         """
-        url = url.format(**kwargs)
+        url = url_template.format(**kwargs)
         parsed = urlparse(url)
         if not parsed.scheme or not parsed.netloc:
             url = url.lstrip('/')
@@ -205,10 +220,3 @@ class PipelineClient(object):
         """
         request = self._request('MERGE', url, params, headers, content, form_content, None)
         return request
-
-    def __enter__(self):
-        self._pipeline.__enter__()
-        return self
-
-    def __exit__(self, *exc_details):
-        self._pipeline.__exit__(*exc_details)

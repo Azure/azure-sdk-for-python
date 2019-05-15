@@ -37,14 +37,20 @@ except ImportError:
 import xml.etree.ElementTree as ET
 import sys
 
+import requests
 import pytest
 
+from azure.core import Configuration
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies.base import SansIOHTTPPolicy
+from azure.core.pipeline.policies import (
+    SansIOHTTPPolicy,
+    UserAgentPolicy,
+    RedirectPolicy
+)
 from azure.core.pipeline.transport import (
     HttpRequest,
-    HttpTransport
-    # ClientRawResponse, TODO: not yet copied from msrest
+    HttpTransport,
+    RequestsTransport,
 )
 
 from azure.core.configuration import Configuration
@@ -55,9 +61,15 @@ def test_sans_io_exception():
         def send(self, request, **config):
             raise ValueError("Broken")
 
+        def open(self):
+            self.session = requests.Session()
+
+        def close(self):
+            self.session.close()
+
         def __exit__(self, exc_type, exc_value, traceback):
             """Raise any exception triggered within the runtime context."""
-            return None
+            return self.close()
 
     pipeline = Pipeline(BrokenSender(), [SansIOHTTPPolicy()])
 
@@ -73,6 +85,41 @@ def test_sans_io_exception():
     pipeline = Pipeline(BrokenSender(), [SwapExec()])
     with pytest.raises(NotImplementedError):
         pipeline.run(req)
+
+class TestRequestsTransport(unittest.TestCase):
+
+    def test_basic_requests(self):
+
+        conf = Configuration()
+        request = HttpRequest("GET", "https://bing.com")
+        policies = [
+            UserAgentPolicy("myusergant"),
+            RedirectPolicy()
+        ]
+        with Pipeline(RequestsTransport(conf), policies=policies) as pipeline:
+            response = pipeline.run(request)
+
+        assert pipeline._transport.session is None
+        assert response.http_response.status_code == 200
+
+    def test_basic_requests_separate_session(self):
+
+        conf = Configuration()
+        session = requests.Session()
+        request = HttpRequest("GET", "https://bing.com")
+        policies = [
+            UserAgentPolicy("myusergant"),
+            RedirectPolicy()
+        ]
+        transport = RequestsTransport(conf, session=session, session_owner=False)
+        with Pipeline(transport, policies=policies) as pipeline:
+            response = pipeline.run(request)
+
+        assert transport.session
+        assert response.http_response.status_code == 200
+        transport.close()
+        assert transport.session
+        transport.session.close()
 
 
 class TestClientRequest(unittest.TestCase):
