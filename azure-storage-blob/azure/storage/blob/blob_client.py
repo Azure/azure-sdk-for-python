@@ -9,13 +9,20 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 try:
-    from urllib.parse import urlparse
+    from urllib.parse import urlparse, quote, unquote
 except ImportError:
     from urlparse import urlparse
+    from urllib2 import quote, unquote
 
 from azure.core import Configuration
 
-from .constants import MAX_SINGLE_PUT_SIZE, MAX_BLOCK_SIZE, MIN_LARGE_BLOCK_UPLOAD_THRESHOLD
+from .constants import (
+    MAX_SINGLE_PUT_SIZE,
+    MAX_BLOCK_SIZE,
+    MIN_LARGE_BLOCK_UPLOAD_THRESHOLD,
+    MAX_SINGLE_GET_SIZE,
+    MAX_CHUNK_GET_SIZE
+)
 from .common import BlobType
 from .lease import Lease
 from .models import SnapshotProperties
@@ -28,12 +35,14 @@ from ._utils import (
     get_modification_conditions,
     return_response_headers,
     add_metadata_headers,
+    process_storage_error,
 )
 from ._deserialize import (
     deserialize_blob_properties,
+    deserialize_blob_stream,
     deserialize_metadata
 )
-from ._generated.models import BlobHTTPHeaders
+from ._generated.models import BlobHTTPHeaders, StorageErrorException
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -63,28 +72,35 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         ):
         # type: (...) -> None
         parsed_url = urlparse(url)
+
         if not parsed_url.path and not (container and blob):
             raise ValueError("Please specify a container and blob name.")
         path_container = ""
         path_blob = ""
+        path_snapshot = None
         if parsed_url.path:
             path_container, _, path_blob = parsed_url.partition('/')
+        if parsed_url.query:
+            query = parsed_url.query.lower().split('&')
+            q_snapshot = [q for q in query if q.startswith('snapshot=')]
+            if q_snapshot:
+                path_snapshot = q_snapshot[0].split('=')[1]
 
         try:
             self.container = container.name
         except AttributeError:
-            self.container = container or path_container
+            self.container = container or unquote(path_container)
         try:
             self.snapshot = snapshot.snapshot
         except AttributeError:
-            self.snapshot = snapshot
+            self.snapshot = snapshot or path_snapshot
         try:
             self.name = blob.name
             self.blob_type = blob.blob_type
-            if not self.snapshot:
+            if not snapshot:
                 self.snapshot = blob.snapshot
         except AttributeError:
-            self.name = blob or path_blob
+            self.name = blob or unquote(path_blob)
             self.blob_type = blob_type
 
         self.scheme = parsed_url.scheme
@@ -92,8 +108,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         self.url = "{}://{}/{}/{}".format(
             self.scheme,
             parsed_url.hostname,
-            self.container,
-            self.name
+            quote(self.container),
+            self.name.replace(' ', '%20')  # TODO: Confirm why recordings don't urlencode chars
         )
         self.key_encryption_key = None
         self._pipeline = create_pipeline(credentials, configuration, **kwargs)
@@ -118,6 +134,20 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :return: blob access URL.
         :rtype: str
         """
+        parsed_url = urlparse(self.url)
+        new_scheme = protocol or parsed_url.scheme
+        query = []
+        if self.snapshot:
+            query.append("snapshot={}".format(self.snapshot))
+        if sas_token:
+            query.append(sas_token)
+        new_url = "{}://{}{}".format(
+            new_scheme,
+            parsed_url.netloc,
+            parsed_url.path)
+        if query:
+            new_url += "?{}".format('&'.join(query))
+        return new_url
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[BlobPermissions, str]]
@@ -188,6 +218,17 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
+
+    def get_account_information(self, timeout=None):
+        # type: (Optional[int]) -> Dict[str, str]
+        """
+        :returns: A dict of account information (SKU and account type).
+        """
+        response = self._client.service.get_account_info(cls=return_response_headers)
+        return {
+            'SKU': response.get('x-ms-sku-name'),
+            'AccountType': response.get('x-ms-account-kind')
+        }
 
     def upload_blob(
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
@@ -317,7 +358,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             raise NotImplementedError("Chunked uploads not yet supported")
 
     def download_blob(
-            self, offset=None,  # type: Any
+            self, offset=None,  # type: Optional[int]
             length=None,  # type: Optional[int]
             validate_content=False,  # type: bool
             lease=None,  # type: Union[Lease, str]
@@ -325,13 +366,50 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None  # type: Optional[int]
+            timeout=None,  # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> Iterable[bytes]
         """
-        TODO: Fix type hints
+        TODO: Full download chunking needed.
         :returns: A iterable data generator (stream)
         """
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        if validate_content:
+            # TODO: Validate content
+            # computed_md5 = _get_content_md5(request.body)
+            # request.headers['Content-MD5'] = _to_str(computed_md5)
+            raise NotImplementedError("Content validation not yet supported.")
+
+        # The service only provides transactional MD5s for chunks under 4MB.
+        # If validate_content is on, get only MAX_CHUNK_GET_SIZE for the first
+        # chunk so a transactional MD5 can be retrieved.
+        first_get_size = MAX_SINGLE_GET_SIZE if not validate_content else MAX_CHUNK_GET_SIZE
+
+        initial_request_start = offset if offset is not None else 0
+
+        if length is not None and length - offset < first_get_size:
+            initial_request_end = length
+        else:
+            initial_request_end = initial_request_start + first_get_size - 1
+        range_header = 'bytes={0}-{1}'.format(initial_request_start, initial_request_end)
+        try:
+            stream = self._client.blob.download(
+                timeout=timeout,
+                snapshot=self.snapshot,
+                range=range_header,
+                lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
+                error_map=basic_error_map(),
+                cls=deserialize_blob_stream,
+                **kwargs)
+            stream.properties.name = self.name
+            stream.properties.container = self.container
+            return stream
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def delete_blob(
             self, lease=None,  # type: Optional[Union[str, Lease]]
@@ -426,14 +504,17 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
-        blob_props = self._client.blob.get_properties(
-            timeout=timeout,
-            snapshot=self.snapshot,
-            lease_access_conditions=access_conditions,
-            modified_access_conditions=mod_conditions,
-            cls=deserialize_blob_properties,
-            error_map=basic_error_map(),
-            **kwargs)
+        try:
+            blob_props = self._client.blob.get_properties(
+                timeout=timeout,
+                snapshot=self.snapshot,
+                lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
+                cls=deserialize_blob_properties,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
         blob_props.name = self.name
         blob_props.container = self.container
         return blob_props
@@ -500,7 +581,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             blob_http_headers=blob_headers,
             lease_access_conditions=access_conditions,
             modified_access_conditions=mod_conditions,
-            cls=return_response_headers
+            cls=return_response_headers,
+            error_map=basic_error_map()
         )
 
     def get_blob_metadata(
@@ -519,14 +601,17 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
-        return self._client.blob.get_properties(
-            comp='metadata',
-            snapshot=self.snapshot,
-            timeout=timeout,
-            lease_access_conditions=access_conditions,
-            modified_access_conditions=mod_conditions,
-            cls=deserialize_metadata,
-            **kwargs)
+        try:
+            return self._client.blob.get_properties(
+                comp='metadata',
+                snapshot=self.snapshot,
+                timeout=timeout,
+                lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
+                cls=deserialize_metadata,
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def set_blob_metadata(
             self, metadata=None,  # type: Optional[Dict[str, str]]

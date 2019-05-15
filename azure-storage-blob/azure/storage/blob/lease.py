@@ -45,7 +45,7 @@ class Lease(object):
         # type: (...) -> None
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
-        response = self._client.aquire_lease(
+        response = self._client.renew_lease(
             lease_id=self.id,
             timeout=timeout,
             modified_access_conditions=mod_conditions,
@@ -66,7 +66,7 @@ class Lease(object):
         # type: (...) -> None
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
-        response = self._client.aquire_lease(
+        response = self._client.release_lease(
             lease_id=self.id,
             timeout=timeout,
             modified_access_conditions=mod_conditions,
@@ -88,7 +88,7 @@ class Lease(object):
         # type: (...) -> None
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
-        response = self._client.aquire_lease(
+        response = self._client.change_lease(
             lease_id=self.id,
             proposed_lease_id=proposed_lease_id,
             timeout=timeout,

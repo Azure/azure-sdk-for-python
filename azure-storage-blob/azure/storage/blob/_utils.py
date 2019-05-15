@@ -85,6 +85,14 @@ def basic_error_map():
     }
 
 
+def process_storage_error(error):
+    error_code = error.response.headers.get('x-ms-error-code')
+    if error_code:
+        error.error_code = error_code
+        error.message += "\nErrorCode: {}".format(error_code)
+    raise error
+
+
 def add_metadata_headers(metadata):
     # type: (Dict[str, str]) -> Dict[str, str]
     headers = {}

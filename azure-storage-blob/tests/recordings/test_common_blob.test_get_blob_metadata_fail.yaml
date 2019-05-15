@@ -50,7 +50,7 @@ interactions:
       x-ms-client-request-id: [a456bc60-e473-11e8-9ac5-acde48001122]
       x-ms-date: ['Fri, 09 Nov 2018 23:03:16 GMT']
       x-ms-version: ['2018-03-28']
-    method: GET
+    method: HEAD
     uri: https://storagename.blob.core.windows.net/utcontainer93bf11cd/blob93bf11cd?snapshot=1&comp=metadata
   response:
     body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidQueryParameterValue</Code><Message>Value\

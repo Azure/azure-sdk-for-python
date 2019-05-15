@@ -5,7 +5,151 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 
+from ._generated.models import Logging as GeneratedLogging
+from ._generated.models import Metrics as GeneratedMetrics
+from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
+from ._generated.models import StaticWebsite as GeneratedStaticWebsite
+from ._generated.models import CorsRule as GeneratedCorsRule
+from ._generated.models import StorageServiceProperties
 from .common import BlockState, BlobType
+
+
+class Logging(GeneratedLogging):
+    """Azure Analytics Logging settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param version: Required. The version of Storage Analytics to configure.
+    :type version: str
+    :param delete: Required. Indicates whether all delete requests should be
+     logged.
+    :type delete: bool
+    :param read: Required. Indicates whether all read requests should be
+     logged.
+    :type read: bool
+    :param write: Required. Indicates whether all write requests should be
+     logged.
+    :type write: bool
+    :param retention_policy: Required.
+    :type retention_policy: ~blob.models.RetentionPolicy
+    """
+
+    def __init__(self, **kwargs):
+        self.version = kwargs.get('version', u'1.0')
+        self.delete = kwargs.get('delete', False)
+        self.read = kwargs.get('read', False)
+        self.write = kwargs.get('write', False)
+        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+
+
+class Metrics(GeneratedMetrics):
+    """a summary of request statistics grouped by API in hour or minute aggregates
+    for blobs.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param version: The version of Storage Analytics to configure.
+    :type version: str
+    :param enabled: Required. Indicates whether metrics are enabled for the
+     Blob service.
+    :type enabled: bool
+    :param include_ap_is: Indicates whether metrics should generate summary
+     statistics for called API operations.
+    :type include_ap_is: bool
+    :param retention_policy:
+    :type retention_policy: ~blob.models.RetentionPolicy
+    """
+
+    def __init__(self, **kwargs):
+        self.version = kwargs.get('version', u'1.0')
+        self.enabled = kwargs.get('enabled', False)
+        self.include_apis = kwargs.get('include_apis')
+        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+
+
+class RetentionPolicy(GeneratedRetentionPolicy):
+    """the retention policy which determines how long the associated data should
+    persist.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param enabled: Required. Indicates whether a retention policy is enabled
+     for the storage service
+    :type enabled: bool
+    :param days: Indicates the number of days that metrics or logging or
+     soft-deleted data should be retained. All data older than this value will
+     be deleted
+    :type days: int
+    """
+
+    def __init__(self, enabled=False, days=None):
+        self.enabled = enabled
+        self.days = days
+        if self.enabled and (self.days is None):
+            raise ValueError("If policy is enabled, 'days' must be specified.")
+
+
+class StaticWebsite(GeneratedStaticWebsite):
+    """The properties that enable an account to host a static website.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param enabled: Required. Indicates whether this account is hosting a
+     static website
+    :type enabled: bool
+    :param index_document: The default name of the index page under each
+     directory
+    :type index_document: str
+    :param error_document404_path: The absolute path of the custom 404 page
+    :type error_document404_path: str
+    """
+
+    def __init__(self, **kwargs):
+        self.enabled = kwargs.get('enabled', False)
+        self.index_document = kwargs.get('index_document')
+        self.error_document404_path = kwargs.get('error_document404_path')
+
+
+class CorsRule(GeneratedCorsRule):
+    """CORS is an HTTP feature that enables a web application running under one
+    domain to access resources in another domain. Web browsers implement a
+    security restriction known as same-origin policy that prevents a web page
+    from calling APIs in a different domain; CORS provides a secure way to
+    allow one domain (the origin domain) to call APIs in another domain.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param allowed_origins: 
+        A list of origin domains that will be allowed via CORS, or "*" to allow 
+        all domains. The list of must contain at least one entry. Limited to 64 
+        origin domains. Each allowed origin can have up to 256 characters.
+    :type allowed_origins: list(str)
+    :param allowed_methods:
+        A list of HTTP methods that are allowed to be executed by the origin. 
+        The list of must contain at least one entry. For Azure Storage, 
+        permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
+    :type allowed_methods: list(str)
+    :param int max_age_in_seconds:
+        The number of seconds that the client/browser should cache a 
+        preflight response.
+    :param exposed_headers:
+        Defaults to an empty list. A list of response headers to expose to CORS 
+        clients. Limited to 64 defined headers and two prefixed headers. Each 
+        header can be up to 256 characters.
+    :type exposed_headers: list(str)
+    :param allowed_headers:
+        Defaults to an empty list. A list of headers allowed to be part of 
+        the cross-origin request. Limited to 64 defined headers and 2 prefixed 
+        headers. Each header can be up to 256 characters.
+    :type allowed_headers: list(str)
+    """
+
+    def __init__(self, allowed_origins, allowed_methods, **kwargs):
+        self.allowed_origins = ','.join(allowed_origins)
+        self.allowed_methods = ','.join(allowed_methods)
+        self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
+        self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
+        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
 
 
 class ContainerProperties(object):

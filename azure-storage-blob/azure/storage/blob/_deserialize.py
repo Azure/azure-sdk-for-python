@@ -19,3 +19,8 @@ def deserialize_blob_properties(response, obj, headers):
         **headers
     )
     return blob_properties
+
+def deserialize_blob_stream(response, obj, headers):
+    blob_properties = deserialize_blob_properties(response, obj, headers)
+    obj.properties = blob_properties
+    return obj

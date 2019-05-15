@@ -34,7 +34,7 @@ interactions:
       x-ms-client-request-id: [9be6a69e-e473-11e8-9ac5-acde48001122]
       x-ms-date: ['Fri, 09 Nov 2018 23:03:02 GMT']
       x-ms-version: ['2018-03-28']
-    method: GET
+    method: HEAD
     uri: https://storagename.blob.core.windows.net/utcontainerccd51321/blobccd51321?comp=metadata
   response:
     body: {string: ''}

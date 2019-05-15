@@ -11,15 +11,20 @@ from typing import (  # pylint: disable=unused-import
 
 from .container_client import ContainerClient
 from .blob_client import BlobClient
-from .models import ContainerProperties
+from .models import (
+    ContainerProperties,
+    StorageServiceProperties,
+)
+from ._generated.models import StorageErrorException
 from .common import BlobType
 from ._utils import (
     create_client,
     create_pipeline,
     create_configuration,
-    get_access_conditions
+    get_access_conditions,
+    process_storage_error,
+    basic_error_map
 )
-
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -30,7 +35,12 @@ if TYPE_CHECKING:
         AccountPermissions,
         ResourceTypes,
         BlobProperties,
-        SnapshotProperties
+        SnapshotProperties,
+        Logging,
+        Metrics,
+        RetentionPolicy,
+        StaticWebsite,
+        CorsRule
     )
 
 
@@ -78,8 +88,8 @@ class BlobServiceClient(object):
         :returns: A dict of account information (SKU and account type).
         """
 
-    def get_service_stats(self, timeout=None):
-        # type: (Optional[int]) -> Dict[str, Any]
+    def get_service_stats(self, timeout=None, **kwargs):
+        # type: (Optional[int], **Any) -> Dict[str, Any]
         """
         Retrieves statistics related to replication for the Blob service. It is
         only available when read-access geo-redundant replication is enabled for
@@ -103,30 +113,55 @@ class BlobServiceClient(object):
         :return: The blob service stats.
         :rtype: Dict[str, Any]
         """
-        response = self._client.service.get_statistics(timeout=timeout)  # type: Dict[str, Any]
+        response = self._client.service.get_statistics(timeout=timeout, **kwargs)  # type: Dict[str, Any]
         return response.__dict__
 
-    def get_service_properties(self, timeout=None):
+    def get_service_properties(self, timeout=None, **kwargs):
         # type(Optional[int]) -> Dict[str, Any]
         """
         :returns: A dict of service properties.
         """
+        try:
+            return self._client.service.get_properties(
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def set_service_properties(
-            self, logging=None,  # type: Any
-            hour_metrics=None,  # type: Any
-            minute_metrics=None,  # type: Any
-            cors=None,  # type: List[Any]
+            self, logging=None,  # type: Optional[Union[Logging, Dict[str, Any]]]
+            hour_metrics=None,  # type: Optional[Union[Metrics, Dict[str, Any]]]
+            minute_metrics=None,  # type: Optional[Union[Metrics, Dict[str, Any]]]
+            cors=None,  # type: Optional[List[Union[CorsRule, Dict[str, Any]]]]
             target_version=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
-            delete_retention_policy=None,  # type: Any
-            static_website=None  # type: Any
+            delete_retention_policy=None,  # type: Optional[Union[RetentionPolicy, Dict[str, Any]]]
+            static_website=None,  # type: Optional[Union[StaticWebsite, Dict[str, Any]]]
+            **kwargs
         ):
         # type: (...) -> None
         """
-        TODO: Fix type hints
         :returns: None
         """
+        props = StorageServiceProperties(
+            logging=logging,
+            hour_metrics=hour_metrics,
+            minute_metrics=minute_metrics,
+            cors=cors,
+            default_service_version=target_version,
+            delete_retention_policy=delete_retention_policy,
+            static_website=static_website
+        )
+        try:
+            return self._client.service.set_properties(
+                props,
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
 
     def get_container_properties(self, lease=None, timeout=None, **kwargs):
         # type: (Optional[Union[Lease, str]], Optional[int], **Any) -> ContainerProperties

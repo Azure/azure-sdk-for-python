@@ -7,23 +7,24 @@
 # --------------------------------------------------------------------------
 import unittest
 
+from msrest.exceptions import ValidationError  # TODO This should be an azure-core error.
 from azure.common import AzureHttpError
+from azure.core.exceptions import HttpResponseError
 
 from azure.storage.blob import (
+    SharedKeyCredentials,
     BlobServiceClient,
     ContainerClient,
     BlobClient,
 )
-# from azure.storage.common import (  # TODO
-#     Logging,
-#     Metrics,
-#     CorsRule,
-#     RetentionPolicy,
-#     DeleteRetentionPolicy,
-#     StaticWebsite,
-# )
-# from azure.storage.file import FileService
-# from azure.storage.queue import QueueService
+from azure.storage.blob.models import (
+    Logging,
+    Metrics,
+    CorsRule,
+    RetentionPolicy,
+    StaticWebsite,
+)
+
 from tests.testcase import (
     StorageTestCase,
     record,
@@ -38,12 +39,10 @@ class ServicePropertiesTest(StorageTestCase):
     def setUp(self):
         super(ServicePropertiesTest, self).setUp()
 
-        self.bs = self._create_storage_service(BlockBlobService, self.settings)
-        self.qs = self._create_storage_service(QueueService, self.settings)
-
-        # file service is not supported on the emulator
-        if not self.settings.IS_EMULATED:
-            self.fs = self._create_storage_service(FileService, self.settings)
+        url = self._get_account_url()
+        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
+        self.bsc = BlobServiceClient(url, credentials=credentials)
+        #self.bs = self._create_storage_service(BlockBlobService, self.settings)
 
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
@@ -80,7 +79,7 @@ class ServicePropertiesTest(StorageTestCase):
 
         self.assertEqual(prop1.enabled, prop2.enabled)
         self.assertEqual(prop1.index_document, prop2.index_document)
-        self.assertEqual(prop1.error_document_404_path, prop2.error_document_404_path)
+        self.assertEqual(prop1.error_document404_path, prop2.error_document404_path)
 
     def _assert_delete_retention_policy_not_equal(self, policy1, policy2):
         if policy1 is None or policy2 is None:
@@ -127,14 +126,19 @@ class ServicePropertiesTest(StorageTestCase):
         # Arrange
 
         # Act
-        resp = self.bs.set_blob_service_properties(logging=Logging(), hour_metrics=Metrics(),
-                                                   minute_metrics=Metrics(), cors=list(), target_version='2014-02-14')
+        resp = self.bsc.set_service_properties(
+            logging=Logging(),
+            hour_metrics=Metrics(),
+            minute_metrics=Metrics(),
+            cors=list(),
+            target_version='2014-02-14'
+        )
 
         # Assert
         self.assertIsNone(resp)
-        props = self.bs.get_blob_service_properties()
+        props = self.bsc.get_service_properties()
         self._assert_properties_default(props)
-        self.assertEqual('2014-02-14', props.target_version)
+        self.assertEqual('2014-02-14', props.default_service_version)
 
     # --Test cases per feature ---------------------------------------
     @record
@@ -142,85 +146,87 @@ class ServicePropertiesTest(StorageTestCase):
         # Arrange
 
         # Act
-        self.bs.set_blob_service_properties(target_version='2014-02-14')
+        self.bsc.set_service_properties(target_version='2014-02-14')
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
-        self.assertEqual(received_props.target_version, '2014-02-14')
+        received_props = self.bsc.get_service_properties()
+        self.assertEqual(received_props.default_service_version, '2014-02-14')
 
     @record
     def test_set_delete_retention_policy(self):
         # Arrange
-        delete_retention_policy = DeleteRetentionPolicy(enabled=True, days=2)
+        delete_retention_policy = RetentionPolicy(enabled=True, days=2)
 
         # Act
-        self.bs.set_blob_service_properties(delete_retention_policy=delete_retention_policy)
+        self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_delete_retention_policy_equal(received_props.delete_retention_policy, delete_retention_policy)
 
     @record
     def test_set_delete_retention_policy_edge_cases(self):
         # Should work with minimum settings
-        delete_retention_policy = DeleteRetentionPolicy(enabled=True, days=1)
-        self.bs.set_blob_service_properties(delete_retention_policy=delete_retention_policy)
+        delete_retention_policy = RetentionPolicy(enabled=True, days=1)
+        self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_delete_retention_policy_equal(received_props.delete_retention_policy, delete_retention_policy)
 
         # Should work with maximum settings
-        delete_retention_policy = DeleteRetentionPolicy(enabled=True, days=365)
-        self.bs.set_blob_service_properties(delete_retention_policy=delete_retention_policy)
+        delete_retention_policy = RetentionPolicy(enabled=True, days=365)
+        self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_delete_retention_policy_equal(received_props.delete_retention_policy, delete_retention_policy)
 
         # Should not work with 0 days
-        delete_retention_policy = DeleteRetentionPolicy(enabled=True, days=0)
+        delete_retention_policy = RetentionPolicy(enabled=True, days=0)
 
-        with self.assertRaises(AzureHttpError):
-            self.bs.set_blob_service_properties(delete_retention_policy=delete_retention_policy)
+        with self.assertRaises(ValidationError):
+            self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_delete_retention_policy_not_equal(received_props.delete_retention_policy, delete_retention_policy)
 
         # Should not work with 366 days
-        delete_retention_policy = DeleteRetentionPolicy(enabled=True, days=366)
+        delete_retention_policy = RetentionPolicy(enabled=True, days=366)
 
-        with self.assertRaises(AzureHttpError):
-            self.bs.set_blob_service_properties(delete_retention_policy=delete_retention_policy)
+        with self.assertRaises(HttpResponseError):
+            self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_delete_retention_policy_not_equal(received_props.delete_retention_policy, delete_retention_policy)
 
     @record
     def test_set_disabled_delete_retention_policy(self):
         # Arrange
-        delete_retention_policy = DeleteRetentionPolicy(enabled=False)
+        delete_retention_policy = RetentionPolicy(enabled=False)
 
         # Act
-        self.bs.set_blob_service_properties(delete_retention_policy=delete_retention_policy)
+        self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_delete_retention_policy_equal(received_props.delete_retention_policy, delete_retention_policy)
 
     @record
     def test_set_static_website_properties(self):
         # Arrange
-        static_website = StaticWebsite(enabled=True, index_document="index.html",
-                                       error_document_404_path="errors/error/404error.html")
+        static_website = StaticWebsite(
+            enabled=True,
+            index_document="index.html",
+            error_document404_path="errors/error/404error.html")
 
         # Act
-        self.bs.set_blob_service_properties(static_website=static_website)
+        self.bsc.set_service_properties(static_website=static_website)
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_static_website_equal(received_props.static_website, static_website)
 
     @record
@@ -229,43 +235,43 @@ class ServicePropertiesTest(StorageTestCase):
         static_website = StaticWebsite(enabled=True)
 
         # Act
-        self.bs.set_blob_service_properties(static_website=static_website)
+        self.bsc.set_service_properties(static_website=static_website)
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_static_website_equal(received_props.static_website, static_website)
 
         # Case2: Arrange index document missing
-        static_website = StaticWebsite(enabled=True, error_document_404_path="errors/error/404error.html")
+        static_website = StaticWebsite(enabled=True, error_document404_path="errors/error/404error.html")
 
         # Act
-        self.bs.set_blob_service_properties(static_website=static_website)
+        self.bsc.set_service_properties(static_website=static_website)
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_static_website_equal(received_props.static_website, static_website)
 
         # Case3: Arrange error document missing
         static_website = StaticWebsite(enabled=True, index_document="index.html")
 
         # Act
-        self.bs.set_blob_service_properties(static_website=static_website)
+        self.bsc.set_service_properties(static_website=static_website)
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_static_website_equal(received_props.static_website, static_website)
 
     @record
     def test_disabled_static_website_properties(self):
         # Arrange
         static_website = StaticWebsite(enabled=False, index_document="index.html",
-                                       error_document_404_path="errors/error/404error.html")
+                                       error_document404_path="errors/error/404error.html")
 
         # Act
-        self.bs.set_blob_service_properties(static_website=static_website)
+        self.bsc.set_service_properties(static_website=static_website)
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_static_website_equal(received_props.static_website, StaticWebsite(enabled=False))
 
     @record
@@ -278,27 +284,31 @@ class ServicePropertiesTest(StorageTestCase):
         max_age_in_seconds = 500
         exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
         allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
-        cors_rule2 = CorsRule(allowed_origins, allowed_methods, max_age_in_seconds,
-                              exposed_headers, allowed_headers)
+        cors_rule2 = CorsRule(
+            allowed_origins,
+            allowed_methods,
+            max_age_in_seconds=max_age_in_seconds,
+            exposed_headers=exposed_headers,
+            allowed_headers=allowed_headers)
 
         cors = [cors_rule1, cors_rule2]
 
         # Act to set cors
-        self.bs.set_blob_service_properties(cors=cors)
+        self.bsc.set_service_properties(cors=cors)
 
         # Assert cors is updated
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_cors_equal(received_props.cors, cors)
 
         # Arrange to set static website properties
         static_website = StaticWebsite(enabled=True, index_document="index.html",
-                                       error_document_404_path="errors/error/404error.html")
+                                       error_document404_path="errors/error/404error.html")
 
         # Act to set static website
-        self.bs.set_blob_service_properties(static_website=static_website)
+        self.bsc.set_service_properties(static_website=static_website)
 
         # Assert static website was updated was cors was unchanged
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_static_website_equal(received_props.static_website, static_website)
         self._assert_cors_equal(received_props.cors, cors)
 
@@ -308,10 +318,10 @@ class ServicePropertiesTest(StorageTestCase):
         logging = Logging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        self.bs.set_blob_service_properties(logging=logging)
+        self.bsc.set_service_properties(logging=logging)
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_logging_equal(received_props.logging, logging)
 
     @record
@@ -320,10 +330,10 @@ class ServicePropertiesTest(StorageTestCase):
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        self.bs.set_blob_service_properties(hour_metrics=hour_metrics)
+        self.bsc.set_service_properties(hour_metrics=hour_metrics)
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
 
     @record
@@ -333,10 +343,10 @@ class ServicePropertiesTest(StorageTestCase):
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        self.bs.set_blob_service_properties(minute_metrics=minute_metrics)
+        self.bsc.set_service_properties(minute_metrics=minute_metrics)
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
 
     @record
@@ -349,16 +359,20 @@ class ServicePropertiesTest(StorageTestCase):
         max_age_in_seconds = 500
         exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
         allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
-        cors_rule2 = CorsRule(allowed_origins, allowed_methods, max_age_in_seconds,
-                              exposed_headers, allowed_headers)
+        cors_rule2 = CorsRule(
+            allowed_origins,
+            allowed_methods,
+            max_age_in_seconds=max_age_in_seconds,
+            exposed_headers=exposed_headers,
+            allowed_headers=allowed_headers)
 
         cors = [cors_rule1, cors_rule2]
 
         # Act
-        self.bs.set_blob_service_properties(cors=cors)
+        self.bsc.set_service_properties(cors=cors)
 
         # Assert
-        received_props = self.bs.get_blob_service_properties()
+        received_props = self.bsc.get_service_properties()
         self._assert_cors_equal(received_props.cors, cors)
 
     # --Test cases for errors ---------------------------------------
@@ -377,9 +391,8 @@ class ServicePropertiesTest(StorageTestCase):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
-        self.assertRaises(AzureHttpError,
-                          self.bs.set_blob_service_properties,
-                          None, None, None, cors)
+        self.assertRaises(HttpResponseError,
+                          self.bsc.set_service_properties, None, None, None, cors)
 
     @record
     def test_retention_too_long(self):
@@ -388,8 +401,8 @@ class ServicePropertiesTest(StorageTestCase):
                                  retention_policy=RetentionPolicy(enabled=True, days=366))
 
         # Assert
-        self.assertRaises(AzureHttpError,
-                          self.bs.set_blob_service_properties,
+        self.assertRaises(HttpResponseError,
+                          self.bsc.set_service_properties,
                           None, None, minute_metrics)
 
 
