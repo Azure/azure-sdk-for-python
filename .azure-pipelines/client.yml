@@ -150,5 +150,5 @@ jobs:
 
     steps:
       - template: templates/steps/archetype-sdk-client.yml
-        parameters: 
+        parameters:
           coverageParam: '--disablecov'
