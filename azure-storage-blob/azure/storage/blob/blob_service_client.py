@@ -29,7 +29,8 @@ if TYPE_CHECKING:
     from .models import (
         AccountPermissions,
         ResourceTypes,
-        BlobProperties
+        BlobProperties,
+        SnapshotProperties
     )
 
 
@@ -157,11 +158,16 @@ class BlobServiceClient(object):
         """
         return ContainerClient(self.url, container=container, _pipeline=self._pipeline)
 
-    def get_blob_client(self, container, blob, blob_type=BlobType.BlockBlob):
-        # type: (Union[ContainerProperties, str], Union[BlobProperties, str], Union[BlobType, str]) -> BlobClient
+    def get_blob_client(
+            self, container,  # type: Union[ContainerProperties, str]
+            blob,  # type: Union[BlobProperties, str]
+            blob_type=BlobType.BlockBlob,  # type: Union[BlobType, str]
+            snapshot=None  # type: Optional[Union[SnapshotProperties, str]]
+        ):
+        # type: (...) -> BlobClient
         """
         :returns: A BlobClient.
         """
         return BlobClient(
             self.url, container=container, blob=blob,
-            blob_type=blob_type, _pipeline=self._pipeline)
+            blob_type=blob_type, snapshot=snapshot, _pipeline=self._pipeline)

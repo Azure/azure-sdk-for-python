@@ -14,6 +14,7 @@ from azure.common import (
     AzureMissingResourceHttpError,
     AzureException,
 )
+from azure.core.exceptions import ResourceNotFoundError
 from azure.storage.common import (
     AccessPolicy,
     ResourceTypes,
@@ -22,12 +23,14 @@ from azure.storage.common import (
     TokenCredential,
 )
 from azure.storage.blob import (
-    #Blob,  # TODO
+    SharedKeyCredentials,
     BlobServiceClient,
     ContainerClient,
-    BlobClient,
-    # BlobPermissions,
-    # ContentSettings,
+    BlobClient
+)
+from azure.storage.blob.models import (
+    BlobPermissions,
+    ContentSettings,
     # DeleteSnapshot,
     # Include,
     # ContainerPermissions,
@@ -52,27 +55,31 @@ class StorageCommonBlobTest(StorageTestCase):
         credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
         self.bsc = BlobServiceClient(url, credentials=credentials)
 
-        #self.bs = self._create_storage_service(BlockBlobService, self.settings)
         self.container_name = self.get_resource_name('utcontainer')
 
         if not self.is_playback():
-            self.bs.create_container(self.container_name)
+            container = self.bsc.get_container_client(self.container_name)
+            container.create_container()
 
         self.byte_data = self.get_random_bytes(1024)
 
-        self.bs2 = self._create_remote_storage_service(BlockBlobService, self.settings)
+        remote_url = self._get_remote_account_url()
+        remote_credentials = SharedKeyCredentials(*self._get_remote_shared_key_credentials())
+        self.bsc2 = BlobServiceClient(remote_url, credentials=remote_credentials)
         self.remote_container_name = None
 
     def tearDown(self):
         if not self.is_playback():
             try:
-                self.bs.delete_container(self.container_name)
+                container = self.bsc.get_container_client(self.container_name)
+                container.delete_container()
             except:
                 pass
 
             if self.remote_container_name:
                 try:
-                    self.bs2.delete_container(self.remote_container_name)
+                    container = self.bsc2.get_container_client(self.remote_container_name)
+                    container.delete_container()
                 except:
                     pass
 
@@ -87,7 +94,8 @@ class StorageCommonBlobTest(StorageTestCase):
 
     def _create_block_blob(self):
         blob_name = self._get_blob_reference()
-        self.bs.create_blob_from_bytes(self.container_name, blob_name, self.byte_data)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(self.byte_data, length=len(self.byte_data))
         return blob_name
 
     def _create_remote_container(self):
@@ -104,18 +112,19 @@ class StorageCommonBlobTest(StorageTestCase):
 
     def _wait_for_async_copy(self, container_name, blob_name):
         count = 0
-        blob = self.bs.get_blob_properties(container_name, blob_name)
-        while blob.properties.copy.status != 'success':
+        blob = self.bsc.get_blob_client(container_name, blob_name)
+        props = blob.get_blob_properties()
+        while props.copy.status != 'success':
             count = count + 1
             if count > 10:
                 self.fail('Timed out waiting for async copy to complete.')
             self.sleep(6)
-            blob = self.bs.get_blob_properties(container_name, blob_name)
-        self.assertEqual(blob.properties.copy.status, 'success')
+            props = blob.get_blob_properties()
+        self.assertEqual(props.copy.status, 'success')
 
     def _enable_soft_delete(self):
         delete_retention_policy = DeleteRetentionPolicy(enabled=True, days=2)
-        self.bs.set_blob_service_properties(delete_retention_policy=delete_retention_policy)
+        self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # wait until the policy has gone into effect
         if not self.is_playback():
@@ -123,17 +132,17 @@ class StorageCommonBlobTest(StorageTestCase):
 
     def _disable_soft_delete(self):
         delete_retention_policy = DeleteRetentionPolicy(enabled=False)
-        self.bs.set_blob_service_properties(delete_retention_policy=delete_retention_policy)
+        self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
     def _assert_blob_is_soft_deleted(self, blob):
         self.assertTrue(blob.deleted)
-        self.assertIsNotNone(blob.properties.deleted_time)
-        self.assertIsNotNone(blob.properties.remaining_retention_days)
+        self.assertIsNotNone(blob.deleted_time)
+        self.assertIsNotNone(blob.remaining_retention_days)
 
     def _assert_blob_not_soft_deleted(self, blob):
         self.assertFalse(blob.deleted)
-        self.assertIsNone(blob.properties.deleted_time)
-        self.assertIsNone(blob.properties.remaining_retention_days)
+        self.assertIsNone(blob.deleted_time)
+        self.assertIsNone(blob.remaining_retention_days)
 
     #-- Common test cases for blobs ----------------------------------------------
     @record
@@ -142,7 +151,8 @@ class StorageCommonBlobTest(StorageTestCase):
         blob_name = self._create_block_blob()
 
         # Act
-        exists = self.bs.exists(self.container_name, blob_name)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        exists = blob.get_blob_properties()
 
         # Assert
         self.assertTrue(exists)
@@ -153,19 +163,20 @@ class StorageCommonBlobTest(StorageTestCase):
         blob_name = self._get_blob_reference()
 
         # Act
-        exists = self.bs.exists(self.container_name, blob_name)
-
-        # Assert
-        self.assertFalse(exists)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        with self.assertRaises(ResourceNotFoundError):
+            blob.get_blob_properties()
 
     @record
     def test_blob_snapshot_exists(self):
         # Arrange
         blob_name = self._create_block_blob()
-        snapshot = self.bs.snapshot_blob(self.container_name, blob_name)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        snapshot = blob.create_snapshot()
 
         # Act
-        exists = self.bs.exists(self.container_name, blob_name, snapshot.snapshot)
+        blob = self.bsc.get_blob_client(self.container_name, snapshot)
+        exists = blob.get_blob_properties()
 
         # Assert
         self.assertTrue(exists)
@@ -176,10 +187,9 @@ class StorageCommonBlobTest(StorageTestCase):
         blob_name = self._create_block_blob()
 
         # Act
-        exists = self.bs.exists(self.container_name, blob_name, "1988-08-18T07:52:31.6690068Z")
-
-        # Assert
-        self.assertFalse(exists)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot="1988-08-18T07:52:31.6690068Z")
+        with self.assertRaises(ResourceNotFoundError):
+            blob.get_blob_properties()
 
     @record
     def test_blob_container_not_exists(self):
@@ -188,17 +198,17 @@ class StorageCommonBlobTest(StorageTestCase):
         blob_name = self._get_blob_reference()
 
         # Act
-        exists = self.bs.exists(self._get_container_reference(), blob_name)
-
-        # Assert
-        self.assertFalse(exists)
+        blob = self.bsc.get_blob_client(self._get_container_reference(), blob_name)
+        with self.assertRaises(ResourceNotFoundError):
+            blob.get_blob_properties()
 
     @record
     def test_make_blob_url(self):
         # Arrange
 
         # Act
-        res = self.bs.make_blob_url('vhds', 'my.vhd')
+        blob = self.bsc.get_blob_client("vhds", "my.vhd")
+        res = blob.make_url()
 
         # Assert
         self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
@@ -209,7 +219,8 @@ class StorageCommonBlobTest(StorageTestCase):
         # Arrange
 
         # Act
-        res = self.bs.make_blob_url('vhds', 'my.vhd', protocol='http')
+        blob = self.bsc.get_blob_client("vhds", "my.vhd")
+        res = blob.make_url(protocol='http')
 
         # Assert
         self.assertEqual(res, 'http://' + self.settings.STORAGE_ACCOUNT_NAME
@@ -220,7 +231,8 @@ class StorageCommonBlobTest(StorageTestCase):
         # Arrange
 
         # Act
-        res = self.bs.make_blob_url('vhds', 'my.vhd', sas_token='sas')
+        blob = self.bsc.get_blob_client("vhds", "my.vhd")
+        res = blob.make_url(sas_token='sas')
 
         # Assert
         self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
@@ -231,8 +243,8 @@ class StorageCommonBlobTest(StorageTestCase):
         # Arrange
 
         # Act
-        res = self.bs.make_blob_url('vhds', 'my.vhd',
-                                    snapshot='2016-11-09T14:11:07.6175300Z')
+        blob = self.bsc.get_blob_client("vhds", "my.vhd", snapshot='2016-11-09T14:11:07.6175300Z')
+        res = blob.make_url()
 
         # Assert
         self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
@@ -359,7 +371,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_get_blob_with_snapshot(self):
         # Arrange
         blob_name = self._create_block_blob()
-        snapshot = self.bs.snapshot_blob(self.container_name, blob_name)
+        snapshot = self.bs.create_snapshot(self.container_name, blob_name)
 
         # Act
         blob = self.bs.get_blob_to_bytes(self.container_name, blob_name, snapshot.snapshot)
@@ -372,7 +384,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_get_blob_with_snapshot_previous(self):
         # Arrange
         blob_name = self._create_block_blob()
-        snapshot = self.bs.snapshot_blob(self.container_name, blob_name)
+        snapshot = self.bs.create_snapshot(self.container_name, blob_name)
         self.bs.create_blob_from_bytes (self.container_name, blob_name,
                          b'hello world again', )
 
@@ -560,7 +572,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_get_blob_properties_with_snapshot(self):
         # Arrange
         blob_name = self._create_block_blob()
-        res = self.bs.snapshot_blob(self.container_name, blob_name)
+        res = self.bs.create_snapshot(self.container_name, blob_name)
         blobs = list(self.bs.list_blobs(self.container_name, include='snapshots'))
         self.assertEqual(len(blobs), 2)
 
@@ -643,7 +655,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_delete_blob_snapshot(self):
         # Arrange
         blob_name = self._create_block_blob()
-        res = self.bs.snapshot_blob(self.container_name, blob_name)
+        res = self.bs.create_snapshot(self.container_name, blob_name)
 
         # Act
         self.bs.delete_blob(self.container_name, blob_name, snapshot=res.snapshot)
@@ -658,7 +670,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_delete_blob_snapshots(self):
         # Arrange
         blob_name = self._create_block_blob()
-        self.bs.snapshot_blob(self.container_name, blob_name)
+        self.bs.create_snapshot(self.container_name, blob_name)
 
         # Act
         self.bs.delete_blob(self.container_name, blob_name,
@@ -673,7 +685,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_delete_blob_with_snapshots(self):
         # Arrange
         blob_name = self._create_block_blob()
-        self.bs.snapshot_blob(self.container_name, blob_name)
+        self.bs.create_snapshot(self.container_name, blob_name)
 
         # Act
         self.bs.delete_blob(self.container_name, blob_name,
@@ -724,8 +736,8 @@ class StorageCommonBlobTest(StorageTestCase):
             # Arrange
             self._enable_soft_delete()
             blob_name = self._create_block_blob()
-            blob_snapshot_1 = self.bs.snapshot_blob(self.container_name, blob_name)
-            blob_snapshot_2 = self.bs.snapshot_blob(self.container_name, blob_name)
+            blob_snapshot_1 = self.bs.create_snapshot(self.container_name, blob_name)
+            blob_snapshot_2 = self.bs.create_snapshot(self.container_name, blob_name)
 
             # Soft delete blob_snapshot_1
             self.bs.delete_blob(self.container_name, blob_name, snapshot=blob_snapshot_1.snapshot)
@@ -762,8 +774,8 @@ class StorageCommonBlobTest(StorageTestCase):
             # Arrange
             self._enable_soft_delete()
             blob_name = self._create_block_blob()
-            blob_snapshot_1 = self.bs.snapshot_blob(self.container_name, blob_name)
-            blob_snapshot_2 = self.bs.snapshot_blob(self.container_name, blob_name)
+            blob_snapshot_1 = self.bs.create_snapshot(self.container_name, blob_name)
+            blob_snapshot_2 = self.bs.create_snapshot(self.container_name, blob_name)
 
             # Soft delete all snapshots
             self.bs.delete_blob(self.container_name, blob_name, delete_snapshots=DeleteSnapshot.Only)
@@ -803,8 +815,8 @@ class StorageCommonBlobTest(StorageTestCase):
             # Arrange
             self._enable_soft_delete()
             blob_name = self._create_block_blob()
-            blob_snapshot_1 = self.bs.snapshot_blob(self.container_name, blob_name)
-            blob_snapshot_2 = self.bs.snapshot_blob(self.container_name, blob_name)
+            blob_snapshot_1 = self.bs.create_snapshot(self.container_name, blob_name)
+            blob_snapshot_2 = self.bs.create_snapshot(self.container_name, blob_name)
 
             # Soft delete blob and all snapshots
             self.bs.delete_blob(self.container_name, blob_name, delete_snapshots=DeleteSnapshot.Include)
@@ -992,7 +1004,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob_name = self._create_block_blob()
 
         # Act
-        resp = self.bs.snapshot_blob(self.container_name, blob_name)
+        resp = self.bs.create_snapshot(self.container_name, blob_name)
 
         # Assert
         self.assertIsNotNone(resp)

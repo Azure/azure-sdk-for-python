@@ -75,9 +75,17 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         except AttributeError:
             self.container = container or path_container
         try:
+            self.snapshot = snapshot.snapshot
+        except AttributeError:
+            self.snapshot = snapshot
+        try:
             self.name = blob.name
+            self.blob_type = blob.blob_type
+            if not self.snapshot:
+                self.snapshot = blob.snapshot
         except AttributeError:
             self.name = blob or path_blob
+            self.blob_type = blob_type
 
         self.scheme = parsed_url.scheme
         self.account = parsed_url.hostname.split(".blob.core.")[0]
@@ -87,10 +95,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             self.container,
             self.name
         )
-        self.blob_type = blob_type
-        self.snapshot = snapshot
         self.key_encryption_key = None
-
         self._pipeline = create_pipeline(credentials, configuration, **kwargs)
         self._client = create_client(self.url, self._pipeline)
 
@@ -386,16 +391,16 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        error_map = basic_error_map()
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
         self._client.blob.delete(
             timeout=timeout,
+            snapshot=self.snapshot,
             delete_snapshots=delete_snapshots,
             lease_access_conditions=access_conditions,
             modified_access_conditions=mod_conditions,
-            error_map=error_map,
+            error_map=basic_error_map(),
             **kwargs)
 
     def undelete_blob(self, timeout=None):
@@ -423,9 +428,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_modified_since, if_unmodified_since, if_match, if_none_match)
         blob_props = self._client.blob.get_properties(
             timeout=timeout,
+            snapshot=self.snapshot,
             lease_access_conditions=access_conditions,
             modified_access_conditions=mod_conditions,
             cls=deserialize_blob_properties,
+            error_map=basic_error_map(),
             **kwargs)
         blob_props.name = self.name
         blob_props.container = self.container
@@ -514,6 +521,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_modified_since, if_unmodified_since, if_match, if_none_match)
         return self._client.blob.get_properties(
             comp='metadata',
+            snapshot=self.snapshot,
             timeout=timeout,
             lease_access_conditions=access_conditions,
             modified_access_conditions=mod_conditions,
