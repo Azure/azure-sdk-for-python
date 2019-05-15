@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.8.2 (2019-05-15)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix manual_failover operation type
+
 0.8.1 (2019-05-13)
 ++++++++++++++++++
 
