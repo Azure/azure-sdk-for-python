@@ -24,8 +24,6 @@ class DiagnosticSettingsCategoryResource(ProxyOnlyResource):
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :ivar location: Azure resource location
-    :vartype location: str
     :param category_type: The type of the diagnostic settings category.
      Possible values include: 'Logs'
     :type category_type: str or ~microsoft.aadiam.models.CategoryType
@@ -35,14 +33,12 @@ class DiagnosticSettingsCategoryResource(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'category_type': {'key': 'properties.categoryType', 'type': 'CategoryType'},
     }
 

@@ -24,8 +24,6 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :ivar location: Azure resource location
-    :vartype location: str
     :param storage_account_id: The resource ID of the storage account to which
      you would like to send Diagnostic Logs.
     :type storage_account_id: str
@@ -51,14 +49,12 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
         'service_bus_rule_id': {'key': 'properties.serviceBusRuleId', 'type': 'str'},
         'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
