@@ -1,6 +1,8 @@
 Microsoft Azure SDK for Python
 ==============================
 
+Something stupid
+
 This is the Microsoft Azure Advisor Client Library.
 
 Azure Resource Manager (ARM) is the next generation of management APIs that
