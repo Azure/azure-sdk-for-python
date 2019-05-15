@@ -15,4 +15,4 @@ variables:
   build_targeting_string: azure-servicebus
 
 jobs:
-- template: ../eng/pipelines/templates/jobs/archetype-sdk-client.yml
+- template: ../../eng/pipelines/templates/jobs/archetype-sdk-client.yml
