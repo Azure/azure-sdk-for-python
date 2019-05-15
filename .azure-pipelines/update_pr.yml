@@ -10,8 +10,8 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- script: pip3 install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=azure-sdk-tools&egg=azure-sdk-tools"
+  displayName: 'Install Azure SDK tools'
 
 - script: |
     echo Add other tasks to build, test, and deploy your project.
