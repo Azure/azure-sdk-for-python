@@ -37,6 +37,7 @@ try:
     from .department_list_result_py3 import DepartmentListResult
     from .enrollment_account_list_result_py3 import EnrollmentAccountListResult
     from .billing_profile_list_result_py3 import BillingProfileListResult
+    from .billing_profile_creation_parameters_py3 import BillingProfileCreationParameters
     from .invoice_section_list_result_py3 import InvoiceSectionListResult
     from .operation_status_py3 import OperationStatus
     from .download_url_py3 import DownloadUrl
@@ -99,6 +100,7 @@ except (SyntaxError, ImportError):
     from .department_list_result import DepartmentListResult
     from .enrollment_account_list_result import EnrollmentAccountListResult
     from .billing_profile_list_result import BillingProfileListResult
+    from .billing_profile_creation_parameters import BillingProfileCreationParameters
     from .invoice_section_list_result import InvoiceSectionListResult
     from .operation_status import OperationStatus
     from .download_url import DownloadUrl
@@ -182,6 +184,7 @@ __all__ = [
     'DepartmentListResult',
     'EnrollmentAccountListResult',
     'BillingProfileListResult',
+    'BillingProfileCreationParameters',
     'InvoiceSectionListResult',
     'OperationStatus',
     'DownloadUrl',
