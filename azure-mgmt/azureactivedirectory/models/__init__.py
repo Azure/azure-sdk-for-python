@@ -12,7 +12,6 @@
 try:
     from .proxy_only_resource_py3 import ProxyOnlyResource
     from .retention_policy_py3 import RetentionPolicy
-    from .metric_settings_py3 import MetricSettings
     from .log_settings_py3 import LogSettings
     from .diagnostic_settings_resource_py3 import DiagnosticSettingsResource
     from .diagnostic_settings_resource_collection_py3 import DiagnosticSettingsResourceCollection
@@ -26,7 +25,6 @@ try:
 except (SyntaxError, ImportError):
     from .proxy_only_resource import ProxyOnlyResource
     from .retention_policy import RetentionPolicy
-    from .metric_settings import MetricSettings
     from .log_settings import LogSettings
     from .diagnostic_settings_resource import DiagnosticSettingsResource
     from .diagnostic_settings_resource_collection import DiagnosticSettingsResourceCollection
@@ -38,13 +36,13 @@ except (SyntaxError, ImportError):
     from .diagnostic_settings_category_resource import DiagnosticSettingsCategoryResource
     from .diagnostic_settings_category_resource_collection import DiagnosticSettingsCategoryResourceCollection
 from .azureactivedirectory_client_enums import (
+    Category,
     CategoryType,
 )
 
 __all__ = [
     'ProxyOnlyResource',
     'RetentionPolicy',
-    'MetricSettings',
     'LogSettings',
     'DiagnosticSettingsResource',
     'DiagnosticSettingsResourceCollection',
@@ -55,5 +53,6 @@ __all__ = [
     'OperationsDiscoveryCollection',
     'DiagnosticSettingsCategoryResource',
     'DiagnosticSettingsCategoryResourceCollection',
+    'Category',
     'CategoryType',
 ]

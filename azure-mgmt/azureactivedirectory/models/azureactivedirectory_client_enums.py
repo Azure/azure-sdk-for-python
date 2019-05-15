@@ -12,7 +12,12 @@
 from enum import Enum
 
 
+class Category(str, Enum):
+
+    audit_logs = "AuditLogs"
+    sign_in_logs = "SignInLogs"
+
+
 class CategoryType(str, Enum):
 
-    metrics = "Metrics"
     logs = "Logs"

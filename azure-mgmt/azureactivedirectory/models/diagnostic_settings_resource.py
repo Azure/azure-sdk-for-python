@@ -26,12 +26,6 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
     :vartype type: str
     :ivar location: Azure resource location
     :vartype location: str
-    :ivar kind: Azure resource kind
-    :vartype kind: str
-    :ivar tags: Azure resource tags
-    :vartype tags: str
-    :ivar identity: Azure resource identity
-    :vartype identity: str
     :param storage_account_id: The resource ID of the storage account to which
      you would like to send Diagnostic Logs.
     :type storage_account_id: str
@@ -49,13 +43,8 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
     :param event_hub_name: The name of the event hub. If none is specified,
      the default event hub will be selected.
     :type event_hub_name: str
-    :param metrics: The list of metric settings.
-    :type metrics: list[~microsoft.aadiam.models.MetricSettings]
     :param logs: The list of logs settings.
     :type logs: list[~microsoft.aadiam.models.LogSettings]
-    :param log_analytics_destination_type: The type of log analytics
-     destination.
-    :type log_analytics_destination_type: str
     """
 
     _validation = {
@@ -63,9 +52,6 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'readonly': True},
-        'kind': {'readonly': True},
-        'tags': {'readonly': True},
-        'identity': {'readonly': True},
     }
 
     _attribute_map = {
@@ -73,17 +59,12 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'str'},
         'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
         'service_bus_rule_id': {'key': 'properties.serviceBusRuleId', 'type': 'str'},
         'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
         'event_hub_authorization_rule_id': {'key': 'properties.eventHubAuthorizationRuleId', 'type': 'str'},
         'event_hub_name': {'key': 'properties.eventHubName', 'type': 'str'},
-        'metrics': {'key': 'properties.metrics', 'type': '[MetricSettings]'},
         'logs': {'key': 'properties.logs', 'type': '[LogSettings]'},
-        'log_analytics_destination_type': {'key': 'properties.logAnalyticsDestinationType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -93,6 +74,4 @@ class DiagnosticSettingsResource(ProxyOnlyResource):
         self.workspace_id = kwargs.get('workspace_id', None)
         self.event_hub_authorization_rule_id = kwargs.get('event_hub_authorization_rule_id', None)
         self.event_hub_name = kwargs.get('event_hub_name', None)
-        self.metrics = kwargs.get('metrics', None)
         self.logs = kwargs.get('logs', None)
-        self.log_analytics_destination_type = kwargs.get('log_analytics_destination_type', None)

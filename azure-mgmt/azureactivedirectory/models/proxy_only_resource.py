@@ -26,12 +26,6 @@ class ProxyOnlyResource(Model):
     :vartype type: str
     :ivar location: Azure resource location
     :vartype location: str
-    :ivar kind: Azure resource kind
-    :vartype kind: str
-    :ivar tags: Azure resource tags
-    :vartype tags: str
-    :ivar identity: Azure resource identity
-    :vartype identity: str
     """
 
     _validation = {
@@ -39,9 +33,6 @@ class ProxyOnlyResource(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'readonly': True},
-        'kind': {'readonly': True},
-        'tags': {'readonly': True},
-        'identity': {'readonly': True},
     }
 
     _attribute_map = {
@@ -49,9 +40,6 @@ class ProxyOnlyResource(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -60,6 +48,3 @@ class ProxyOnlyResource(Model):
         self.name = None
         self.type = None
         self.location = None
-        self.kind = None
-        self.tags = None
-        self.identity = None

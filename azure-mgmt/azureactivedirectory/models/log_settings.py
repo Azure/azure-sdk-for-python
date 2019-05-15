@@ -21,8 +21,8 @@ class LogSettings(Model):
     :param category: Name of a Diagnostic Log category for a resource type
      this setting is applied to. To obtain the list of Diagnostic Log
      categories for a resource, first perform a GET diagnostic settings
-     operation.
-    :type category: str
+     operation. Possible values include: 'AuditLogs', 'SignInLogs'
+    :type category: str or ~microsoft.aadiam.models.Category
     :param enabled: Required. A value indicating whether this log is enabled.
     :type enabled: bool
     :param retention_policy: The retention policy for this log.
@@ -34,7 +34,7 @@ class LogSettings(Model):
     }
 
     _attribute_map = {
-        'category': {'key': 'category', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'Category'},
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
     }
