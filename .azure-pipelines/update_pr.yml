@@ -10,7 +10,12 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: pip3 install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=azure-sdk-tools&egg=azure-sdk-tools"
+- task: UsePythonVersion@0
+  displayName: 'Use Python 3.7'
+  inputs:
+    versionSpec: 3.7
+
+- script: python3 -m pip install -e "git+https://github.com/Azure/azure-sdk-for-python#subdirectory=azure-sdk-tools&egg=azure-sdk-tools"
   displayName: 'Install Azure SDK tools'
 
 - script: |
