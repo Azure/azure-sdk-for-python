@@ -28,10 +28,11 @@ def update_pr(gh_token, repo_id, pr_number):
     con = Github(gh_token)
     repo = con.get_repo(repo_id)
     sdk_pr = repo.get_pull(pr_number)
+    files = [one_file.filename for one_file in sdk_pr.get_files() if one_file.status not in ['removed']]
     # "get_files" of Github only download the first 300 files. Might not be enough.
-    package_names = {('.', f.filename.split('/')[0]) for f in sdk_pr.get_files() if f.filename.startswith("azure")}
+    package_names = {('.', f.split('/')[0]) for f in files if f.startswith("azure")}
     # Handle the SDK folder as well
-    matches = {_SDK_FOLDER_RE.search(f.filename) for f in sdk_pr.get_files()}
+    matches = {_SDK_FOLDER_RE.search(f) for f in files}
     package_names.update({match.groups() for match in matches if match is not None})
 
     # Get PR branch to push
