@@ -9,6 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .compliance_results_operations import ComplianceResultsOperations
 from .pricings_operations import PricingsOperations
 from .alerts_operations import AlertsOperations
 from .settings_operations import SettingsOperations
@@ -31,6 +32,7 @@ from .regulatory_compliance_controls_operations import RegulatoryComplianceContr
 from .regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
 
 __all__ = [
+    'ComplianceResultsOperations',
     'PricingsOperations',
     'AlertsOperations',
     'SettingsOperations',
