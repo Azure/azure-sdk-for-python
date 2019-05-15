@@ -23,44 +23,24 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+"""
+This module is the requests implementation of Pipeline ABC
+"""
+from .base import SansIOHTTPPolicy
 
-from .base import HTTPPolicy, SansIOHTTPPolicy
-from .credentials import CredentialsPolicy
-from .redirect import RedirectPolicy
-from .retry import RetryPolicy
-from .custom_hook import CustomHookPolicy
-from .universal import (
-    HeadersPolicy,
-    UserAgentPolicy,
-    NetworkTraceLoggingPolicy,
-    ContentDecodePolicy,
-    ProxyPolicy
-)
+class CustomHookPolicy(SansIOHTTPPolicy):
+    """A simple policy that enable the given callback
+    with the response.
+    """
+    def __init__(self, **kwargs):
+        self._callback = None
+    
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
+        self._callback = request.context.options.pop('raw_response_hook', None)
 
-__all__ = [
-    'HTTPPolicy',
-    'SansIOHTTPPolicy',
-    'CredentialsPolicy',
-    'HeadersPolicy',
-    'UserAgentPolicy',
-    'NetworkTraceLoggingPolicy',
-    'ContentDecodePolicy',
-    'RetryPolicy',
-    'RedirectPolicy',
-    'ProxyPolicy',
-    'CustomHookPolicy'
-]
-
-try:
-    from .base_async import AsyncHTTPPolicy
-    from .credentials_async import AsyncCredentialsPolicy
-    from .redirect_async import AsyncRedirectPolicy
-    from .retry_async import AsyncRetryPolicy
-    __all__.extend([
-        'AsyncHTTPPolicy',
-        'AsyncCredentialsPolicy',
-        'AsyncRedirectPolicy',
-        'AsyncRetryPolicy'
-    ])
-except (ImportError, SyntaxError):
-    pass  # Async not supported
+    def on_response(self, request, response):
+        # type: (PipelineRequest, PipelineResponse) -> None
+        if self._callback:
+            self._callback(response)
+            request.context.options.update({'raw_response_hook': self._callback})
