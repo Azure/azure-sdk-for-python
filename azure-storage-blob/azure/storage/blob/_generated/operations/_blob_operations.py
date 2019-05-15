@@ -142,7 +142,75 @@ class BlobOperations(object):
             raise models.StorageErrorException(response, self._deserialize)
 
         header_dict = {}
-        deserialized = response.stream_download()
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = response.stream_download()
+            header_dict = {
+                'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-meta': self._deserialize('{str}', response.headers.get('x-ms-meta')),
+                'Content-Length': self._deserialize('long', response.headers.get('Content-Length')),
+                'Content-Type': self._deserialize('str', response.headers.get('Content-Type')),
+                'Content-Range': self._deserialize('str', response.headers.get('Content-Range')),
+                'ETag': self._deserialize('str', response.headers.get('ETag')),
+                'Content-MD5': self._deserialize('bytearray', response.headers.get('Content-MD5')),
+                'Content-Encoding': self._deserialize('str', response.headers.get('Content-Encoding')),
+                'Cache-Control': self._deserialize('str', response.headers.get('Cache-Control')),
+                'Content-Disposition': self._deserialize('str', response.headers.get('Content-Disposition')),
+                'Content-Language': self._deserialize('str', response.headers.get('Content-Language')),
+                'x-ms-blob-sequence-number': self._deserialize('long', response.headers.get('x-ms-blob-sequence-number')),
+                'x-ms-blob-type': self._deserialize(models.BlobType, response.headers.get('x-ms-blob-type')),
+                'x-ms-copy-completion-time': self._deserialize('rfc-1123', response.headers.get('x-ms-copy-completion-time')),
+                'x-ms-copy-status-description': self._deserialize('str', response.headers.get('x-ms-copy-status-description')),
+                'x-ms-copy-id': self._deserialize('str', response.headers.get('x-ms-copy-id')),
+                'x-ms-copy-progress': self._deserialize('str', response.headers.get('x-ms-copy-progress')),
+                'x-ms-copy-source': self._deserialize('str', response.headers.get('x-ms-copy-source')),
+                'x-ms-copy-status': self._deserialize(models.CopyStatusType, response.headers.get('x-ms-copy-status')),
+                'x-ms-lease-duration': self._deserialize(models.LeaseDurationType, response.headers.get('x-ms-lease-duration')),
+                'x-ms-lease-state': self._deserialize(models.LeaseStateType, response.headers.get('x-ms-lease-state')),
+                'x-ms-lease-status': self._deserialize(models.LeaseStatusType, response.headers.get('x-ms-lease-status')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Accept-Ranges': self._deserialize('str', response.headers.get('Accept-Ranges')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-blob-committed-block-count': self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count')),
+                'x-ms-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-server-encrypted')),
+                'x-ms-blob-content-md5': self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5')),
+                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
+            }
+        if response.status_code == 206:
+            deserialized = response.stream_download()
+            header_dict = {
+                'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-meta': self._deserialize('{str}', response.headers.get('x-ms-meta')),
+                'Content-Length': self._deserialize('long', response.headers.get('Content-Length')),
+                'Content-Type': self._deserialize('str', response.headers.get('Content-Type')),
+                'Content-Range': self._deserialize('str', response.headers.get('Content-Range')),
+                'ETag': self._deserialize('str', response.headers.get('ETag')),
+                'Content-MD5': self._deserialize('bytearray', response.headers.get('Content-MD5')),
+                'Content-Encoding': self._deserialize('str', response.headers.get('Content-Encoding')),
+                'Cache-Control': self._deserialize('str', response.headers.get('Cache-Control')),
+                'Content-Disposition': self._deserialize('str', response.headers.get('Content-Disposition')),
+                'Content-Language': self._deserialize('str', response.headers.get('Content-Language')),
+                'x-ms-blob-sequence-number': self._deserialize('long', response.headers.get('x-ms-blob-sequence-number')),
+                'x-ms-blob-type': self._deserialize(models.BlobType, response.headers.get('x-ms-blob-type')),
+                'x-ms-copy-completion-time': self._deserialize('rfc-1123', response.headers.get('x-ms-copy-completion-time')),
+                'x-ms-copy-status-description': self._deserialize('str', response.headers.get('x-ms-copy-status-description')),
+                'x-ms-copy-id': self._deserialize('str', response.headers.get('x-ms-copy-id')),
+                'x-ms-copy-progress': self._deserialize('str', response.headers.get('x-ms-copy-progress')),
+                'x-ms-copy-source': self._deserialize('str', response.headers.get('x-ms-copy-source')),
+                'x-ms-copy-status': self._deserialize(models.CopyStatusType, response.headers.get('x-ms-copy-status')),
+                'x-ms-lease-duration': self._deserialize(models.LeaseDurationType, response.headers.get('x-ms-lease-duration')),
+                'x-ms-lease-state': self._deserialize(models.LeaseStateType, response.headers.get('x-ms-lease-state')),
+                'x-ms-lease-status': self._deserialize(models.LeaseStatusType, response.headers.get('x-ms-lease-status')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Accept-Ranges': self._deserialize('str', response.headers.get('Accept-Ranges')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-blob-committed-block-count': self._deserialize('int', response.headers.get('x-ms-blob-committed-block-count')),
+                'x-ms-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-server-encrypted')),
+                'x-ms-blob-content-md5': self._deserialize('bytearray', response.headers.get('x-ms-blob-content-md5')),
+                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
+            }
 
         if cls:
             return cls(response, deserialized, header_dict)

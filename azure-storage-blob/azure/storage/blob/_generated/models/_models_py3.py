@@ -931,9 +931,9 @@ class Metrics(Model):
     :param enabled: Required. Indicates whether metrics are enabled for the
      Blob service.
     :type enabled: bool
-    :param include_ap_is: Indicates whether metrics should generate summary
+    :param include_apis: Indicates whether metrics should generate summary
      statistics for called API operations.
-    :type include_ap_is: bool
+    :type include_apis: bool
     :param retention_policy:
     :type retention_policy: ~blob.models.RetentionPolicy
     """
@@ -945,17 +945,17 @@ class Metrics(Model):
     _attribute_map = {
         'version': {'key': 'Version', 'type': 'str', 'xml': {'name': 'Version'}},
         'enabled': {'key': 'Enabled', 'type': 'bool', 'xml': {'name': 'Enabled'}},
-        'include_ap_is': {'key': 'IncludeAPIs', 'type': 'bool', 'xml': {'name': 'IncludeAPIs'}},
+        'include_apis': {'key': 'IncludeAPIs', 'type': 'bool', 'xml': {'name': 'IncludeAPIs'}},
         'retention_policy': {'key': 'RetentionPolicy', 'type': 'RetentionPolicy', 'xml': {'name': 'RetentionPolicy'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, enabled: bool, version: str=None, include_ap_is: bool=None, retention_policy=None, **kwargs) -> None:
+    def __init__(self, *, enabled: bool, version: str=None, include_apis: bool=None, retention_policy=None, **kwargs) -> None:
         super(Metrics, self).__init__(**kwargs)
         self.version = version
         self.enabled = enabled
-        self.include_ap_is = include_ap_is
+        self.include_apis = include_apis
         self.retention_policy = retention_policy
 
 
