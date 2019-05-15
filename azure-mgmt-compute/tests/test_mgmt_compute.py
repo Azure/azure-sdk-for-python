@@ -543,6 +543,12 @@ class MgmtComputeTest(AzureMgmtTestCase):
             ]
         }
 
+    def test_resources_skus(self):
+        skus_iterator = self.compute_client.resource_skus.list()
+        for res in skus_iterator:
+            assert res is not None
+            break
+
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

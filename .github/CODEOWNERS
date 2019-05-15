@@ -5,11 +5,10 @@
 /azure-applicationinsights/ @alexeldeib
 /azure-batch/ @annatisch @matthchr
 /azure-cognitiveservices-vision-customvision/ @areddish
-/azure-keyvault/ @schaabs
+/sdk/keyvault/azure-keyvault/ @schaabs
 /azure-loganalytics/ @alexeldeib
 /azure-mgmt-batch/ @annatisch @matthchr
 /azure-mgmt-batchai/ @AlexanderYukhanov
-/azure-mgmt-cdn/ @tjprescott
 /azure-mgmt-consumption/ @sandeepnl
 /azure-mgmt-containerinstance/ @samkreter @xizhamsft
 /azure-mgmt-containerregistry/ @djyou 
@@ -28,5 +27,6 @@
 /azure-mgmt-servicefabric/ @QingChenmsft
 /azure-mgmt-sql/ @jaredmoo
 /azure-mgmt-web/ @yugangw-msft
+/sdk/keyvault/azure-security-keyvault/ @chlowell @schaabs
 /azure-servicebus/ @annatisch
 /azure-servicefabric/ @samedder

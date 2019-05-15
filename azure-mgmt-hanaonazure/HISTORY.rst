@@ -3,6 +3,20 @@
 Release History
 ===============
 
+0.5.1 (2019-04-26)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fixing incorrect RestAPI descriptio
+
+0.5.0 (2019-04-15)
+++++++++++++++++++
+
+**Features**
+
+- Added operation enable_monitoring
+
 0.4.0 (2019-02-21)
 ++++++++++++++++++
 
