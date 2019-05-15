@@ -44,11 +44,16 @@ class Volume(Model):
      Minimum size is 100 GiB. Upper limit is 100TiB. Default value:
      107374182400 .
     :type usage_threshold: long
-    :param export_policy: Export policy rule
+    :param export_policy: exportPolicy. Set of export policy rules
     :type export_policy:
      ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
+    :param snapshot_id: Snapshot ID. UUID v4 used to identify the Snapshot
+    :type snapshot_id: str
+    :ivar baremetal_tenant_id: Baremetal Tenant ID. Unique Baremetal Tenant
+     Identifier.
+    :vartype baremetal_tenant_id: str
     :param subnet_id: The Azure Resource URI for a delegated subnet. Must have
      the delegation Microsoft.NetApp/volumes
     :type subnet_id: str
@@ -64,6 +69,8 @@ class Volume(Model):
         'service_level': {'required': True},
         'usage_threshold': {'maximum': 109951162777600, 'minimum': 107374182400},
         'provisioning_state': {'readonly': True},
+        'snapshot_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
+        'baremetal_tenant_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
     }
 
     _attribute_map = {
@@ -78,10 +85,12 @@ class Volume(Model):
         'usage_threshold': {'key': 'properties.usageThreshold', 'type': 'long'},
         'export_policy': {'key': 'properties.exportPolicy', 'type': 'VolumePropertiesExportPolicy'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'snapshot_id': {'key': 'properties.snapshotId', 'type': 'str'},
+        'baremetal_tenant_id': {'key': 'properties.baremetalTenantId', 'type': 'str'},
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, creation_token: str, tags=None, service_level="Premium", usage_threshold: int=107374182400, export_policy=None, subnet_id: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str, creation_token: str, tags=None, service_level="Premium", usage_threshold: int=107374182400, export_policy=None, snapshot_id: str=None, subnet_id: str=None, **kwargs) -> None:
         super(Volume, self).__init__(**kwargs)
         self.location = location
         self.id = None
@@ -94,4 +103,6 @@ class Volume(Model):
         self.usage_threshold = usage_threshold
         self.export_policy = export_policy
         self.provisioning_state = None
+        self.snapshot_id = snapshot_id
+        self.baremetal_tenant_id = None
         self.subnet_id = subnet_id

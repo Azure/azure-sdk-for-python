@@ -27,12 +27,12 @@ try:
     from .routing_endpoints_py3 import RoutingEndpoints
     from .route_properties_py3 import RouteProperties
     from .fallback_route_properties_py3 import FallbackRouteProperties
+    from .enrichment_properties_py3 import EnrichmentProperties
     from .routing_properties_py3 import RoutingProperties
     from .storage_endpoint_properties_py3 import StorageEndpointProperties
     from .messaging_endpoint_properties_py3 import MessagingEndpointProperties
     from .feedback_properties_py3 import FeedbackProperties
     from .cloud_to_device_properties_py3 import CloudToDeviceProperties
-    from .operations_monitoring_properties_py3 import OperationsMonitoringProperties
     from .iot_hub_properties_device_streams_py3 import IotHubPropertiesDeviceStreams
     from .iot_hub_properties_py3 import IotHubProperties
     from .iot_hub_sku_info_py3 import IotHubSkuInfo
@@ -68,6 +68,7 @@ try:
     from .test_route_result_py3 import TestRouteResult
     from .export_devices_request_py3 import ExportDevicesRequest
     from .import_devices_request_py3 import ImportDevicesRequest
+    from .failover_input_py3 import FailoverInput
 except (SyntaxError, ImportError):
     from .certificate_verification_description import CertificateVerificationDescription
     from .certificate_properties import CertificateProperties
@@ -86,12 +87,12 @@ except (SyntaxError, ImportError):
     from .routing_endpoints import RoutingEndpoints
     from .route_properties import RouteProperties
     from .fallback_route_properties import FallbackRouteProperties
+    from .enrichment_properties import EnrichmentProperties
     from .routing_properties import RoutingProperties
     from .storage_endpoint_properties import StorageEndpointProperties
     from .messaging_endpoint_properties import MessagingEndpointProperties
     from .feedback_properties import FeedbackProperties
     from .cloud_to_device_properties import CloudToDeviceProperties
-    from .operations_monitoring_properties import OperationsMonitoringProperties
     from .iot_hub_properties_device_streams import IotHubPropertiesDeviceStreams
     from .iot_hub_properties import IotHubProperties
     from .iot_hub_sku_info import IotHubSkuInfo
@@ -127,6 +128,7 @@ except (SyntaxError, ImportError):
     from .test_route_result import TestRouteResult
     from .export_devices_request import ExportDevicesRequest
     from .import_devices_request import ImportDevicesRequest
+    from .failover_input import FailoverInput
 from .operation_paged import OperationPaged
 from .iot_hub_description_paged import IotHubDescriptionPaged
 from .iot_hub_sku_description_paged import IotHubSkuDescriptionPaged
@@ -139,7 +141,6 @@ from .iot_hub_client_enums import (
     AccessRights,
     IpFilterActionType,
     RoutingSource,
-    OperationMonitoringLevel,
     Capabilities,
     IotHubSku,
     IotHubSkuTier,
@@ -170,12 +171,12 @@ __all__ = [
     'RoutingEndpoints',
     'RouteProperties',
     'FallbackRouteProperties',
+    'EnrichmentProperties',
     'RoutingProperties',
     'StorageEndpointProperties',
     'MessagingEndpointProperties',
     'FeedbackProperties',
     'CloudToDeviceProperties',
-    'OperationsMonitoringProperties',
     'IotHubPropertiesDeviceStreams',
     'IotHubProperties',
     'IotHubSkuInfo',
@@ -211,6 +212,7 @@ __all__ = [
     'TestRouteResult',
     'ExportDevicesRequest',
     'ImportDevicesRequest',
+    'FailoverInput',
     'OperationPaged',
     'IotHubDescriptionPaged',
     'IotHubSkuDescriptionPaged',
@@ -222,7 +224,6 @@ __all__ = [
     'AccessRights',
     'IpFilterActionType',
     'RoutingSource',
-    'OperationMonitoringLevel',
     'Capabilities',
     'IotHubSku',
     'IotHubSkuTier',

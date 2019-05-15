@@ -19,12 +19,13 @@ def create_account(client, rg, acc_name, location=LOCATION, tags=None, active_di
 
     return account
 
-def wait_for_no_account(client, rg, acc_name):
+def wait_for_no_account(client, rg, acc_name, live=False):
     # a workaround for the async nature of certain ARM processes
     co=0
     while co<5:
         co += 1
-        time.sleep(2)
+        if live:
+            time.sleep(2)
         try:
             account = client.accounts.get(rg, acc_name)
         except:
@@ -32,9 +33,9 @@ def wait_for_no_account(client, rg, acc_name):
             # and is actually what we are waiting for
             break
 
-def delete_account(client, rg, acc_name):
+def delete_account(client, rg, acc_name, live=False):
     client.accounts.delete(rg, acc_name).wait()
-    wait_for_no_account(client, rg, acc_name)
+    wait_for_no_account(client, rg, acc_name, live)
 
 
 class NetAppAccountTestCase(AzureMgmtTestCase):
