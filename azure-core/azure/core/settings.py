@@ -30,7 +30,7 @@
 
 import logging
 import os
-from typing import Any
+from typing import Any, Union
 
 
 __all__ = ("settings",)
@@ -41,13 +41,19 @@ class _Unset(object):
 
 
 def convert_bool(value):
-    # type: (str) -> bool
-    """Convert a string to a Python logging level
+    # type: (Union[str, bool]) -> bool
+    """Convert a string to True or False
+
+    If a boolean is passed in, it is returned as-is. Otherwise the function
+    maps the following strings, ignoring case:
+
+    * "yes", "1", "on" -> True
+    " "no", "0", "off" -> False
 
     :param value: the value to convert
     :type value: string
     :returns: int
-    :raises ValueError: Ii conversion to bool fails
+    :raises ValueError: If conversion to bool fails
     
     """
     if value in (True, False):
@@ -71,13 +77,22 @@ _levels = {
 
 
 def convert_logging(value):
-    # type: (str) -> int
+    # type: (Union[str, int]) -> int
     """Convert a string to a Python logging level
+
+    If a log level is passed in, it is returned as-is. Otherwise the function
+    understands the following strings, ignoring case:
+
+    * "critical"
+    * "error"
+    * "warning"
+    * "info"
+    * "debug"
 
     :param value: the value to convert
     :type value: string
     :returns: int
-    :raises ValueError: Ii conversion to log level fails
+    :raises ValueError: If conversion to log level fails
 
     """
     if value in set(_levels.values()):
@@ -190,6 +205,10 @@ class PrioritizedSetting(object):
         """
         self._user_value = value
 
+    @property
+    def env_var(self):
+        return self._env_var
+
 
 class Settings(object):
     """Settings for globally used Azure configuration values.
@@ -257,8 +276,12 @@ class Settings(object):
         default=logging.INFO,
     )
 
-    proxy_settings = PrioritizedSetting(
-        "proxy_settings", env_var="AZURE_PROXY_SETTINGS"
+    http_proxy_settings = PrioritizedSetting(
+        "http_proxy_settings", env_var="AZURE_HTTP_PROXY_SETTINGS"
+    )
+
+    https_proxy_settings = PrioritizedSetting(
+        "https_proxy_settings", env_var="AZURE_HTTPS_PROXY_SETTINGS"
     )
 
     telemetry_enabled = PrioritizedSetting(

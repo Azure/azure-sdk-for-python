@@ -33,6 +33,10 @@ import azure.core.settings as m
 
 
 class TestPrioritizedSetting(object):
+    def test_env_var_property(self):
+        ps = m.PrioritizedSetting("foo", env_var="AZURE_FOO")
+        assert ps.env_var == "AZURE_FOO"
+
     def test_everything_unset_raises(self):
         ps = m.PrioritizedSetting("foo")
         with pytest.raises(RuntimeError):
@@ -159,9 +163,23 @@ class TestConverters(object):
             m.convert_logging("junk")
 
 
+_standard_settings = [
+    "log_level",
+    "http_proxy_settings",
+    "https_proxy_settings",
+    "telemetry_enabled",
+    "tracing_enabled",
+]
+
+
 class TestStandardSettings(object):
-    @pytest.mark.parametrize(
-        "name", ["log_level", "proxy_settings", "telemetry_enabled", "tracing_enabled"]
-    )
+    @pytest.mark.parametrize("name", _standard_settings)
     def test_setting_exists(self, name):
         assert hasattr(m.settings, name)
+
+    # XXX: This test will need to become more sophisticated if the assumption
+    # settings.foo -> AZURE_FOO for env vars ever becomes invalidated.
+    @pytest.mark.parametrize("name", _standard_settings)
+    def test_setting_env_var(self, name):
+        ps = getattr(m.settings, name)
+        assert ps.env_var == "AZURE_" + name.upper()
