@@ -15,9 +15,9 @@ class KeyBase(object):
     """A key's id and attributes."""
 
     def __init__(self, attributes, vault_id, **kwargs):
-        # type: (models.KeyBase, str, Mapping[str, Any]) -> None
+        # type: (models.KeyAttributes, str, Mapping[str, Any]) -> None
         self._attributes = attributes
-        self._id = vault_id     # we don't want to call this kid, right?
+        self._id = vault_id
         self._vault_id = _parse_vault_id(vault_id)
         self._managed = kwargs.get("managed", None)
         self._tags = kwargs.get("tags", None)
@@ -126,9 +126,10 @@ class Key(KeyBase):
     """A key consisting of all KeyBase and key_material information.
     """
 
-    def __init__(self, attributes, key, **kwargs):
-        super(Key, self).__init__(attributes, key.kid, **kwargs)
-        self._key_material = key
+    def __init__(self, attributes, vault_id, key_material, **kwargs):
+        # type: (models.KeyAttributes, models.JsonWebKey, Mapping[str, Any]) -> None
+        super(Key, self).__init__(attributes, vault_id, **kwargs)
+        self._key_material = key_material
 
     @classmethod
     def _from_key_bundle(cls, key_bundle):
@@ -136,6 +137,7 @@ class Key(KeyBase):
         """Construct a key from an autorest-generated KeyBundle"""
         return cls(
             key_bundle.attributes,
+            key_bundle.key.kid,
             key_bundle.key,
             managed=key_bundle.managed,
             tags=key_bundle.tags,
@@ -143,19 +145,18 @@ class Key(KeyBase):
 
     @property
     def key_material(self):
-        # type: () -> Dict[str, str]
+        # type: () -> models.JsonWebKey
         return self._key_material
 
 
-class DeletedKey(KeyBase):
+class DeletedKey(Key):
     """A Deleted key consisting of its id, attributes, and tags, as
     well as when it will be purged, if soft-delete is enabled for the vault.
     """
 
     def __init__(self, attributes, vault_id, key_material=None, deleted_date=None, recovery_id=None, scheduled_purge_date=None, **kwargs):
-        # type: (models.KeyBase, str, Dict[str, str], Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
-        super(DeletedKey, self).__init__(attributes, vault_id, **kwargs)
-        self._key_material = key_material
+        # type: (models.JsonWebKey, str, models.JsonWebKey, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
+        super(DeletedKey, self).__init__(attributes, vault_id, key_material, **kwargs)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
         self._scheduled_purge_date = scheduled_purge_date
@@ -209,8 +210,3 @@ class DeletedKey(KeyBase):
         """The time when the key is scheduled to be purged, in UTC
         :rtype: datetime"""
         return self._scheduled_purge_date
-
-    @property
-    def key_material(self):
-        # type: () -> Dict[str, str]
-        return self._key_material
