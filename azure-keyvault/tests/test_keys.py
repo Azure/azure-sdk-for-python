@@ -1,5 +1,10 @@
-from devtools_testutils import ResourceGroupPreparer
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 
+from devtools_testutils import ResourceGroupPreparer
 from azure.keyvault.keys import KeyClient
 from devtools_testutils import ResourceGroupPreparer
 from keyvault_preparer import KeyVaultPreparer

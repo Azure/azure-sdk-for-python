@@ -23,7 +23,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 09 May 2019 23:55:07 GMT
+      - Wed, 15 May 2019 18:37:31 GMT
       expires:
       - '-1'
       pragma:
@@ -37,7 +37,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - addr=131.107.174.102;act_addr_fam=InterNetwork;
+      - addr=131.107.160.87;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 09 May 2019 23:55:07 GMT
+      - Wed, 15 May 2019 18:37:31 GMT
       expires:
       - '-1'
       pragma:
@@ -85,7 +85,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - addr=131.107.174.102;act_addr_fam=InterNetwork;
+      - addr=131.107.160.87;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:
@@ -119,7 +119,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 09 May 2019 23:55:07 GMT
+      - Wed, 15 May 2019 18:37:31 GMT
       expires:
       - '-1'
       pragma:
@@ -133,7 +133,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-keyvault-network-info:
-      - addr=131.107.174.102;act_addr_fam=InterNetwork;
+      - addr=131.107.160.87;act_addr_fam=InterNetwork;
       x-ms-keyvault-region:
       - westus
       x-ms-keyvault-service-version:

@@ -84,7 +84,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
 
             print(key.id)
             print(key.version)
-            print(key.key_material)
+            print(key.key_material.kty)
             print(key.enabled)
             print(key.expires)
 
@@ -106,7 +106,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             print(key.id)
             print(key.name)
             print(key.version)
-            print(key.key_material)
+            print(key.key_material.kty)
             print(key.vault_url)
             # [END get_key]
         except ClientRequestError:
@@ -128,7 +128,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             print(updated_key.updated)
             print(updated_key.expires)
             print(updated_key.tags)
-            print(key.key_material)
+            print(key.key_material.kty)
 
             # [END update_key]
         except ClientRequestError:
@@ -141,10 +141,11 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             deleted_key = key_client.delete_key('key-name')
 
             print(deleted_key.name)
+            # when vault has soft-delete enabled, deleted_key exposes the purge date, recover id
+            # and deleted date of the key
             print(deleted_key.deleted_date)
-            print(deleted_key.key_material)
             print(deleted_key.recovery_id)
-            print(deleted_key.scheduled_purge_date)
+            print(deleted_key.scheduled_purge_date) 
 
             # [END delete_key]
         except ClientRequestError:
@@ -163,7 +164,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             for key in keys:
                 print(key.id)
                 print(key.name)
-                print(key.key_material)
+                print(key.key_material.kty)
 
             # [END list_keys]
         except ClientRequestError:
@@ -177,7 +178,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             for key in key_versions:
                 print(key.id)
                 print(key.version)
-                print(key.key_material)
+                print(key.key_material.kty)
 
             # [END list_key_versions]
         except ClientRequestError:
@@ -192,14 +193,13 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             for key in deleted_keys:
                 print(key.id)
                 print(key.name)
-                print(key.key_material)     # the list operation returns None for key_material
 
             # [END list_deleted_keys]
         except ClientRequestError:
             pass
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @KeyVaultPreparer()
     def test_example_keys_backup_restore(self, vault_client, **kwargs):
         key_client = vault_client.keys
         created_key = key_client.create_key('keyrec', 'RSA')
@@ -217,22 +217,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             pass
 
         try:
-            deleted_key = key_client.delete_key(key_name)
-            if self.is_live:
-                # wait a second to ensure the key has been deleted
-                time.sleep(20)
-
-            # [START get_deleted_key]
-            # gets a deleted key (requires soft-delete enabled for the vault)
-            deleted_key = key_client.get_deleted_key('keyrec')
-            print(deleted_key.name)
-
-            # [END get_deleted_key]
-        except ClientRequestError:
-            pass
-
-        try:
-            key_client.purge_deleted_key('keyrec')
+            key_client.delete_key('keyrec')
             if self.is_live:
                 # wait a second to ensure the key has been deleted
                 time.sleep(20)
@@ -253,12 +238,22 @@ class TestExamplesKeyVault(KeyvaultTestCase):
         key_client = vault_client.keys
         created_key = key_client.create_key('key-name', 'RSA')
         if self.is_live:
-            # wait a second to ensure the key has been deleted
+            # wait a second to ensure the key has been created
             time.sleep(20)
         key_client.delete_key(created_key.name)
         if self.is_live:
             # wait a second to ensure the key has been deleted
             time.sleep(30)
+
+        try:
+            # [START get_deleted_key]
+            # gets a deleted key (requires soft-delete enabled for the vault)
+            deleted_key = key_client.get_deleted_key('key-name')
+            print(deleted_key.name)
+
+            # [END get_deleted_key]
+        except ClientRequestError:
+            pass
 
         try:
             # [START recover_deleted_key]
