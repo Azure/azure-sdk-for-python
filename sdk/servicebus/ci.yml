@@ -9,10 +9,10 @@ pr:
     - master
   paths:
     include:
-    - sdk/azure-servicebus/
+    - sdk/servicebus/
 
 variables:
-  build_targeting_string: azure-servucebys
+  build_targeting_string: azure-servicebus
 
 jobs:
 - template: ../eng/pipelines/templates/jobs/archetype-sdk-client.yml
