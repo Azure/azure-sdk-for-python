@@ -4,13 +4,40 @@
 # license information.
 # --------------------------------------------------------------------------
 from .exceptions import AuthenticationError
-from .credentials import ClientSecretCredential, TokenCredentialChain
+from .credentials import (
+    CertificateCredential,
+    ClientSecretCredential,
+    EnvironmentCredential,
+    ManagedIdentityCredential,
+    TokenCredentialChain,
+)
 
-__all__ = ["AuthenticationError", "ClientSecretCredential", "TokenCredentialChain"]
+__all__ = [
+    "AuthenticationError",
+    "CertificateCredential",
+    "ClientSecretCredential",
+    "EnvironmentCredential",
+    "ManagedIdentityCredential",
+    "TokenCredentialChain",
+]
 
 try:
-    from .aio import AsyncClientSecretCredential, AsyncTokenCredentialChain
+    from .aio import (
+        AsyncCertificateCredential,
+        AsyncClientSecretCredential,
+        AsyncEnvironmentCredential,
+        AsyncManagedIdentityCredential,
+        AsyncTokenCredentialChain,
+    )
 
-    __all__.extend(["AsyncClientSecretCredential", "AsyncTokenCredentialChain"])
+    __all__.extend(
+        [
+            "AsyncCertificateCredential",
+            "AsyncClientSecretCredential",
+            "AsyncEnvironmentCredential",
+            "AsyncManagedIdentityCredential",
+            "AsyncTokenCredentialChain",
+        ]
+    )
 except SyntaxError:
     pass
