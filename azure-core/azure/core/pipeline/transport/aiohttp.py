@@ -70,7 +70,7 @@ class AioHttpTransport(AsyncHttpTransport):
             await self.session.__aenter__()
 
     async def close(self):
-        if self._session_owner:
+        if self._session_owner and self.session:
             await self.session.close()
             self._session_owner = False
             self.session = None
