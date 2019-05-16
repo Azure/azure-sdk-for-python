@@ -38,8 +38,8 @@ def test_threading_basic_requests():
     main_thread_session = sender.session
 
     def thread_body(local_sender):
-        # Should be the same session
-        assert local_sender.session is not main_thread_session
+        # Should be the same session - we are no longer managing a session per thread.
+        assert local_sender.session is main_thread_session
 
         return True
 

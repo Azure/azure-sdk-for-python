@@ -89,6 +89,16 @@ class AsyncHttpTransport(AbstractAsyncContextManager, abc.ABC, Generic[HTTPReque
         """
         pass
 
+    @abc.abstractmethod
+    async def open(self):
+        """Assign new session if one does not already exist."""
+        pass
+
+    @abc.abstractmethod
+    async def close(self):
+        """Close the session if it is not externally owned."""
+        pass
+
     async def sleep(self, duration):
         await asyncio.sleep(duration)
 

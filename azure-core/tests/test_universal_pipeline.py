@@ -122,8 +122,9 @@ def test_raw_deserializer():
             def __init__(self, body, content_type):
                 super(MockResponse, self).__init__(None, None)
                 self._body = body
+                self.content_type = None
                 if content_type:
-                    self.headers['content-type'] = content_type
+                    self.content_type = [content_type]
 
             def body(self):
                 return self._body

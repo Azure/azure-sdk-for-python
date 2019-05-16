@@ -1,0 +1,16 @@
+continuation
+preTriggerInclude
+postTriggerInclude
+maxItemCount
+indexingDirective
+consistencyLevel
+sessionToken
+enableScanInQuery
+resourceTokenExpirySeconds
+offerType
+offerThroughput
+partitionKey
+enableCrossPartitionQuery
+enableScriptLogging
+offerEnableRUPerMinuteThroughput
+disableRUPerMinuteUsage

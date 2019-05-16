@@ -62,6 +62,16 @@ class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPRe
         """
         pass
 
+    @abc.abstractmethod
+    def open(self):
+        """Assign new session if one does not already exist."""
+        pass
+
+    @abc.abstractmethod
+    def close(self):
+        """Close the session if it is not externally owned."""
+        pass
+
     def sleep(self, duration):
         time.sleep(duration)
 
@@ -87,6 +97,12 @@ class HttpRequest(object):
 
     def __repr__(self):
         return '<HttpRequest [%s]>' % (self.method)
+
+    @property
+    def query(self):
+        """The query parameters of the request as a dict."""
+        query = urlparse(self.url).query
+        return {p[0]: p[-1] for p in [p.partition('=') for p in query.split('&')]}
 
     @property
     def body(self):
@@ -198,6 +214,7 @@ class _HttpResponseBase(object):
         self.status_code = None  # type: Optional[int]
         self.headers = {}  # type: Dict[str, str]
         self.reason = None  # type: Optional[str]
+        self.content_type = None  # type: Optional[str]
         self.block_size = block_size or 4096  # Default to same as Requests
 
 
