@@ -66,10 +66,8 @@ class AioHttpTransport(AsyncHttpTransport):
     async def open(self):
         if not self.session and self._session_owner:
             self.session = aiohttp.ClientSession(loop=self._loop)
-        try:
+        if self.session is not None:
             await self.session.__aenter__()
-        except AttributeError:
-            raise ValueError('Session is already closed')
 
     async def close(self):
         if self._session_owner:

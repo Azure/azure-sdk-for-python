@@ -107,14 +107,14 @@ class AsyncPipelineClient(object):
 
         return request
 
-    def format_url(self, url, **kwargs):
+    def format_url(self, url_template, **kwargs):
         # type: (str, Any) -> str
         """Format request URL with the client base URL, unless the
         supplied URL is already absolute.
 
-        :param str url: The request URL to be formatted if necessary.
+        :param str url_template: The request URL to be formatted if necessary.
         """
-        url = url.format(**kwargs)
+        url = url_template.format(**kwargs)
         parsed = urlparse(url)
         if not parsed.scheme or not parsed.netloc:
             url = url.lstrip('/')
@@ -212,7 +212,7 @@ class AsyncPipelineClient(object):
         return self
 
     async def __aexit__(self, *args):
-        await self._pipeline.__aexit__(*args)
+        await self.close()
 
     async def close(self):
-        await self.__aexit__()
+        await self._pipeline.__aexit__()

@@ -126,7 +126,7 @@ class PipelineClient(object):
         """Format request URL with the client base URL, unless the
         supplied URL is already absolute.
 
-        :param str url: The request URL to be formatted if necessary.
+        :param str url_template: The request URL to be formatted if necessary.
         """
         url = url_template.format(**kwargs)
         parsed = urlparse(url)
