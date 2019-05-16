@@ -19,18 +19,32 @@ jobs:
       vmImage: $(OSVmImage)
 
     steps:
+      - powershell: |
+            Invoke-WebRequest -Uri "https://github.com/Azure/azure-sdk-tools/releases/download/sdk-tools_14793/sdk-tools.zip" `
+            -OutFile "sdk-tools.zip" | Wait-Process; Expand-Archive -Path "sdk-tools.zip" -DestinationPath "./sdk-tools/"
+        workingDirectory: '$(Build.BinariesDirectory)'
+        displayName: 'Download Tools Archive From Github Release and Extract it'
+
       - task: UsePythonVersion@0
         displayName: 'Use Python $(PythonVersion)'
         inputs:
           versionSpec: $(PythonVersion)
 
-      - script: |
-          python -m pip install --upgrade pip
-          python scripts/dev_setup.py --packageList $(ServicePackage)
-        displayName: 'Set up Environment'
+      - task: PythonScript@0
+        displayName: 'Run VerifyAgentOS script'
+        inputs:
+          scriptPath: '$(Build.BinariesDirectory)/sdk-tools/scripts/python/verify_agent_os.py'
+          arguments: $(OSName)
 
-      - script: 'pytest $(ServicePackage) --junitxml="junit/test-results.xml"'
-        displayName: 'Run test suite'
+      - script: |
+          pip install pathlib twine beautifulsoup4
+        displayName: 'Prep Environment'
+
+      - task: PythonScript@0
+        displayName: 'Setup and Run Tests'
+        inputs:
+          scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+          arguments: '"$(BuildTargetingString)" --junitxml="junit/test-results.xml" --disablecov'
         env:
           # Service Bus Variables
           SERVICE_BUS_HOSTNAME: $(python-sb-livetest-service-bus-hostname)
