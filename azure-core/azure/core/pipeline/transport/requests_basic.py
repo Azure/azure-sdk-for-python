@@ -50,6 +50,9 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
         self.status_code = requests_response.status_code
         self.headers = requests_response.headers
         self.reason = requests_response.reason
+        content_type = requests_response.headers.get('content-type')
+        if content_type:
+            self.content_type = content_type.split(";")
 
     def body(self):
         return self.internal_response.content
@@ -113,19 +116,18 @@ class RequestsTransport(HttpTransport):
 
     _protocols = ['http://', 'https://']
 
-    def __init__(self, configuration=None, session=None):
+    def __init__(self, configuration=None, session=None, session_owner=True):
         # type: (Optional[requests.Session]) -> None
-        self._session_mapping = threading.local()
+        self._session_owner = session_owner
         self.config = configuration or Configuration()
-        self.session = session or requests.Session()
+        self.session = session
 
     def __enter__(self):
         # type: () -> RequestsTransport
-        self.config.connection.keep_alive = True
+        self.open()
         return self
 
-    def __exit__(self, *exc_details):  # pylint: disable=arguments-differ
-        self.config.connection.keep_alive = False
+    def __exit__(self, *args):  # pylint: disable=arguments-differ
         self.close()
 
     def _init_session(self, session):
@@ -141,22 +143,16 @@ class RequestsTransport(HttpTransport):
         for p in self._protocols:
             session.mount(p, adapter)
 
-    @property  # type: ignore
-    def session(self):
-        try:
-            return self._session_mapping.session
-        except AttributeError:
-            self._session_mapping.session = requests.Session()
-            self._init_session(self._session_mapping.session)
-            return self._session_mapping.session
-
-    @session.setter
-    def session(self, value):
-        self._init_session(value)
-        self._session_mapping.session = value
+    def open(self):
+        if not self.session and self._session_owner:
+            self.session = requests.Session()
+            self._init_session(self.session)
 
     def close(self):
-        self.session.close()
+        if self._session_owner:
+            self.session.close()
+            self._session_owner = False
+            self.session = None
 
     def send(self, request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
@@ -168,6 +164,7 @@ class RequestsTransport(HttpTransport):
 
         :param HttpRequest request: The request object to be sent.
         """
+        self.open()
         response = None
         error = None
         if self.config.proxy_policy and 'proxies' not in kwargs:
@@ -197,9 +194,6 @@ class RequestsTransport(HttpTransport):
                 error = ServiceRequestError(err, error=err)
         except requests.RequestException as err:
             error = ServiceRequestError(err, error=err)
-        finally:
-            if not self.config.connection.keep_alive and (not response or not kwargs['stream']):
-                self.session.close()
 
         if error:
             raise error

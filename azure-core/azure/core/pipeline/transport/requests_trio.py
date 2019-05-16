@@ -52,6 +52,7 @@ _LOGGER = logging.getLogger(__name__)
 
 import trio
 
+
 class TrioStreamDownloadGenerator(AsyncIterator):
 
     def __init__(self, response: requests.Response, block_size: int) -> None:
@@ -105,6 +106,7 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
         """Send the request using this HTTP sender.
         """
+        self.open()
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None
         error = None
@@ -137,9 +139,7 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
                 error = ServiceRequestError(err, error=err)
         except requests.RequestException as err:
             error = ServiceRequestError(err, error=err)
-        finally:
-            if not self.config.connection.keep_alive and (not response or not kwargs['stream']):
-                self.session.close()
+
         if error:
             raise error
 
