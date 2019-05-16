@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 
+from azure.core.paging import Paged
+
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
@@ -178,6 +180,63 @@ class ContainerProperties(object):
         self.has_immutability_policy = None
         self.has_legal_hold = None
         self.metadata = None
+
+    @classmethod
+    def _from_generated_container(cls, generated):
+        lease = LeaseProperties()
+        lease.status = generated.properties.lease_status.value
+        lease.state = generated.properties.lease_state.value
+        lease.duration = generated.properties.lease_duration.value
+        props = cls()
+        props.name = generated.name
+        props.last_modified = generated.properties.last_modified
+        props.etag = generated.properties.etag
+        props.lease = lease
+        props.public_access = generated.properties.public_access
+        props.has_immutability_policy = generated.properties.has_immutability_policy
+        props.has_legal_hold = generated.properties.has_legal_hold
+        props.metadata = generated.metadata
+
+class ContainerPropertiesPaged(Paged):
+
+    def __init__(self, command, prefix=prefix, results_per_page=results_per_page, **kwargs):
+        super(ContainerPropertiesPaged, self).__init__(command, None, **kwargs)
+        self.service_endpoint = None
+        self.prefix = prefix
+        self.current_marker = None
+        self.results_per_page = results_per_page
+        self.next_marker = ""
+
+    def _advance_page(self):
+        # type: () -> List[Model]
+        """Force moving the cursor to the next azure call.
+
+        This method is for advanced usage, iterator protocol is prefered.
+
+        :raises: StopIteration if no further page
+        :return: The current page list
+        :rtype: list
+        """
+        if self.next_marker is None:
+            raise StopIteration("End of paging")
+        self._current_page_iter_index = 0
+        self._response = self._get_next(
+            prefix=self.prefix,
+            marker=self.next_marker,
+            maxresults=self.results_per_page)
+
+        self.service_endpoint = self._response.service_endpoint
+        self.prefix = self._response.prefix
+        self.current_marker = self._response.marker
+        self.results_per_page = self._response.max_results
+        self.current_page = self._response.container_items
+        self.next_marker = self._response.next_marker
+        return self.current_page
+
+    def __next__(self):
+        item = super(ContainerPropertiesPaged, self).__next__()
+        return ContainerProperties._from_generated_container(item)
+
 
 class SnapshotProperties(object):
 

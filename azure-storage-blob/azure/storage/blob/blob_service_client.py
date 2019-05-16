@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import functools
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List,
     TYPE_CHECKING
@@ -54,10 +55,17 @@ class BlobServiceClient(object):
         ):
         # type: (...) -> None
         # TODO: Parse URL
+        # TODO: Alternative constructors
         self.url = url
         self.account = None
         self._pipeline = create_pipeline(configuration, credentials, **kwargs)
         self._client = create_client(url, self._pipeline)
+
+    @classmethod
+    def from_connection_string(cls, conn_str, credentials=None, configuration=None, **kwargs):
+        """
+        Create BlobServiceClient from a Connection String.
+        """
 
     @staticmethod
     def create_configuration(**kwargs):
@@ -185,10 +193,19 @@ class BlobServiceClient(object):
         """
         :returns: An iterable (auto-paging) of ContainerProperties.
         """
+        include = 'metadata' if include_metadata else None
+        command = functools.partial(
+            self._client.service.list_containers_segment,
+            include=include,
+            timeout=timeout,
+            **kwargs)
+        return ContainerPropertiesPaged(command, prefix=prefix, results_per_page=results_per_page)
 
     def get_container_client(self, container):
         # type: (Union[ContainerProperties, str]) -> ContainerClient
         """
+        Get a client to interact with the specified container.
+
         :returns: A ContainerClient.
         """
         return ContainerClient(self.url, container=container, _pipeline=self._pipeline)
@@ -201,6 +218,8 @@ class BlobServiceClient(object):
         ):
         # type: (...) -> BlobClient
         """
+        Get a client to interact with the specified blob.
+
         :returns: A BlobClient.
         """
         return BlobClient(

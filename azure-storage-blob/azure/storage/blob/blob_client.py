@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from base64 import b64encode
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING
@@ -36,6 +37,7 @@ from ._utils import (
     return_response_headers,
     add_metadata_headers,
     process_storage_error,
+    encode_base64
 )
 from ._deserialize import (
     deserialize_blob_properties,
@@ -315,7 +317,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         # TODO Support encryption
         if self.key_encryption_key:
             raise NotImplementedError("Encrypted blobs not yet implmented.")
-    
+        if not length:
+            try:
+                length = len(data)
+            except AttributeError:
+                raise ValueError("Please specifiy content length.")
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         blob_headers = None
@@ -772,15 +778,35 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
     def stage_block(
             self, block_id,  # type: str
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            length=None,  # type: Optional[int]
             validate_content=False,  # type: Optional[bool]
             lease=None,  # type: Optional[Union[Lease, str]]
-            timeout=None  # type: Optional[int]
+            timeout=None,  # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> None
         """
         :raises: InvalidOperation when blob client type is not BlockBlob.
         :returns: None
         """
+        if validate_content:
+            # TODO validate content
+            raise NotImplementedError()
+        block_id = encode_base64(str(block_id))
+        access_conditions = get_access_conditions(lease)
+        if not length:
+            try:
+                length = len(data)
+            except AttributeError:
+                raise ValueError("Please specify content length.")
+        self._client.block_blob.stage_block(
+            block_id,
+            length,
+            data,
+            transactional_content_md5=None,
+            timeout=timeout,
+            lease_access_conditions=access_conditions,
+            **kwargs)
 
     def stage_block_from_url(
             self, block_id,  # type: str

@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from azure.common import (AzureConflictHttpError, AzureException,
                           AzureHttpError, AzureMissingResourceHttpError)
 from azure.storage.blob import (
+    SharedKeyCredentials,
     BlobServiceClient,
     ContainerClient,
     BlobClient,
@@ -29,7 +30,9 @@ class StorageContainerTest(StorageTestCase):
 
     def setUp(self):
         super(StorageContainerTest, self).setUp()
-
+        url = self._get_account_url()
+        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
+        self.bsc = BlobServiceClient(url, credentials=credentials)
         self.bs = self._create_storage_service(BlockBlobService, self.settings)
         self.test_containers = []
 
@@ -205,15 +208,15 @@ class StorageContainerTest(StorageTestCase):
         container_name = self._create_container()
 
         # Act
-        containers = list(self.bs.list_containers())
+        containers = list(self.bsc.list_container_properties())
 
         # Assert
         self.assertIsNotNone(containers)
         self.assertGreaterEqual(len(containers), 1)
         self.assertIsNotNone(containers[0])
         self.assertNamedItemInContainer(containers, container_name)
-        self.assertIsNotNone(containers[0].properties.has_immutability_policy)
-        self.assertIsNotNone(containers[0].properties.has_legal_hold)
+        self.assertIsNotNone(containers[0].has_immutability_policy)
+        self.assertIsNotNone(containers[0].has_legal_hold)
 
     @record
     def test_list_containers_with_prefix(self):
