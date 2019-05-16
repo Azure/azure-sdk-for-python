@@ -2,6 +2,8 @@ import importlib
 import inspect
 import json
 import logging
+import glob
+import os
 import pkgutil
 from pathlib import Path
 import subprocess
@@ -114,8 +116,19 @@ def create_report_from_func(function_attr):
         })
     return func_content
 
+# given an input of a name, we need to return the appropriate relative diff between the sdk_root and the actual package directory
+def resolve_package_directory(package_name):
+    packages = [os.path.dirname(p) for p in (glob.glob('{}/setup.py'.format(package_name)) + glob.glob('sdk/*/{}/setup.py'.format(package_name)))]
+
+    if len(packages) > 1:
+        print('There should only be a single package matched in either repository structure. The following were found: {}'.format(packages))
+        sys.exit(1)
+
+    return packages[0]
+
 def main(input_parameter: str, version: Optional[str] = None, no_venv: bool = False, pypi: bool = False, last_pypi: bool = False):
     package_name, module_name = parse_input(input_parameter)
+    path_to_package = resolve_package_directory(package_name)
 
     if (version or pypi or last_pypi) and not no_venv:
         if version:
@@ -157,7 +170,7 @@ def main(input_parameter: str, version: Optional[str] = None, no_venv: bool = Fa
         report = create_report(module_name)
         version = version or "latest"
 
-        output_filename = Path(package_name) / Path("code_reports") / Path(version)
+        output_filename = Path(path_to_package) / Path("code_reports") / Path(version)
 
         module_for_path = get_sub_module_part(package_name, module_name)
         if module_for_path:

@@ -13,6 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.operations import Operations
 from .operations.deployments_operations import DeploymentsOperations
 from .operations.providers_operations import ProvidersOperations
 from .operations.resources_operations import ResourcesOperations
@@ -60,6 +61,8 @@ class ResourceManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: ResourceManagementClientConfiguration
 
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.resource.resources.v2018_05_01.operations.Operations
     :ivar deployments: Deployments operations
     :vartype deployments: azure.mgmt.resource.resources.v2018_05_01.operations.DeploymentsOperations
     :ivar providers: Providers operations
@@ -92,6 +95,8 @@ class ResourceManagementClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.operations = Operations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.providers = ProvidersOperations(

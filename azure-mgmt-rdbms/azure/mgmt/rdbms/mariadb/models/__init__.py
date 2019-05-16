@@ -17,6 +17,7 @@ try:
     from .server_properties_for_default_create_py3 import ServerPropertiesForDefaultCreate
     from .server_properties_for_restore_py3 import ServerPropertiesForRestore
     from .server_properties_for_geo_restore_py3 import ServerPropertiesForGeoRestore
+    from .server_properties_for_replica_py3 import ServerPropertiesForReplica
     from .sku_py3 import Sku
     from .server_py3 import Server
     from .server_for_create_py3 import ServerForCreate
@@ -42,6 +43,7 @@ except (SyntaxError, ImportError):
     from .server_properties_for_default_create import ServerPropertiesForDefaultCreate
     from .server_properties_for_restore import ServerPropertiesForRestore
     from .server_properties_for_geo_restore import ServerPropertiesForGeoRestore
+    from .server_properties_for_replica import ServerPropertiesForReplica
     from .sku import Sku
     from .server import Server
     from .server_for_create import ServerForCreate
@@ -85,6 +87,7 @@ __all__ = [
     'ServerPropertiesForDefaultCreate',
     'ServerPropertiesForRestore',
     'ServerPropertiesForGeoRestore',
+    'ServerPropertiesForReplica',
     'Sku',
     'Server',
     'ServerForCreate',

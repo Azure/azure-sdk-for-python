@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class CompositeEntityModel(Model):
-    """A composite entity.
+    """A composite entity extractor.
 
     :param children: Child entities.
     :type children: list[str]

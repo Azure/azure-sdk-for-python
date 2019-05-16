@@ -30,6 +30,12 @@ class RoleAssignment(Model):
     :type role_definition_id: str
     :param principal_id: The principal ID.
     :type principal_id: str
+    :param principal_type: The principal type of the assigned principal ID.
+     Possible values include: 'User', 'Group', 'ServicePrincipal', 'Unknown',
+     'DirectoryRoleTemplate', 'ForeignGroup', 'Application', 'MSI',
+     'DirectoryObjectOrGroup', 'Everyone'
+    :type principal_type: str or
+     ~azure.mgmt.authorization.v2018_09_01_preview.models.PrincipalType
     :param can_delegate: The Delegation flag for the roleassignment
     :type can_delegate: bool
     """
@@ -47,6 +53,7 @@ class RoleAssignment(Model):
         'scope': {'key': 'properties.scope', 'type': 'str'},
         'role_definition_id': {'key': 'properties.roleDefinitionId', 'type': 'str'},
         'principal_id': {'key': 'properties.principalId', 'type': 'str'},
+        'principal_type': {'key': 'properties.principalType', 'type': 'str'},
         'can_delegate': {'key': 'properties.canDelegate', 'type': 'bool'},
     }
 
@@ -58,4 +65,5 @@ class RoleAssignment(Model):
         self.scope = kwargs.get('scope', None)
         self.role_definition_id = kwargs.get('role_definition_id', None)
         self.principal_id = kwargs.get('principal_id', None)
+        self.principal_type = kwargs.get('principal_type', None)
         self.can_delegate = kwargs.get('can_delegate', None)

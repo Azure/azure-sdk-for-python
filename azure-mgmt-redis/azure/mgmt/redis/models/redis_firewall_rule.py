@@ -19,15 +19,17 @@ class RedisFirewallRule(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param start_ip: lowest IP address included in the range
+    :param start_ip: Required. lowest IP address included in the range
     :type start_ip: str
-    :param end_ip: highest IP address included in the range
+    :param end_ip: Required. highest IP address included in the range
     :type end_ip: str
     """
 
@@ -47,7 +49,7 @@ class RedisFirewallRule(ProxyResource):
         'end_ip': {'key': 'properties.endIP', 'type': 'str'},
     }
 
-    def __init__(self, start_ip, end_ip):
-        super(RedisFirewallRule, self).__init__()
-        self.start_ip = start_ip
-        self.end_ip = end_ip
+    def __init__(self, **kwargs):
+        super(RedisFirewallRule, self).__init__(**kwargs)
+        self.start_ip = kwargs.get('start_ip', None)
+        self.end_ip = kwargs.get('end_ip', None)

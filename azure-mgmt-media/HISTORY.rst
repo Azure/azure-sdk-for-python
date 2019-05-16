@@ -3,6 +3,44 @@
 Release History
 ===============
 
+1.1.1 (2018-03-26)
+++++++++++++++++++
+
+**Features**
+
+- Model StreamingLocator has a new parameter filters
+
+**Bugfixes**
+
+- Parameter start of model JpgImage is now required
+- Parameter filename_pattern of model Mp4Format is now required
+- Parameter start of model Image is now required
+- Parameter input_label of model AudioOverlay is now required
+- Parameter input_label of model Overlay is now required
+- Parameter filename_pattern of model PngFormat is now required
+- Parameter bitrate of model H264Layer is now required
+- Parameter start of model PngImage is now required
+- Parameter bitrate of model VideoLayer is now required
+- Parameter formats of model StandardEncoderPreset is now required
+- Parameter codecs of model StandardEncoderPreset is now required
+- Parameter filename_pattern of model MultiBitrateFormat is now required
+- Parameter filename_pattern of model TransportStreamFormat is now required
+- Parameter filename_pattern of model Format is now required
+- Parameter filename_pattern of model ImageFormat is now required
+- Parameter filename_pattern of model JpgFormat is now required
+- Parameter input_label of model VideoOverlay is now required
+- Parameter labels of model OutputFile is now required
+
+1.1.0 (2018-01-02)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Operation JobsOperations.list has the correct list of optional parameters
+- Operation TransformsOperations.list has the correct list of optional parameters
+- Operation TransformsOperations.list has the correct list of optional parameters
+- Operation JobsOperations.list has the correct list of optional parameters
+
 1.0.1 (2018-10-16)
 ++++++++++++++++++
 

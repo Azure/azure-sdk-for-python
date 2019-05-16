@@ -32,7 +32,7 @@ class KeyCredential(Model):
      'Symmetric'.
     :type type: str
     :param custom_key_identifier: Custom Key Identifier
-    :type custom_key_identifier: bytearray
+    :type custom_key_identifier: str
     """
 
     _attribute_map = {
@@ -43,7 +43,7 @@ class KeyCredential(Model):
         'key_id': {'key': 'keyId', 'type': 'str'},
         'usage': {'key': 'usage', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'custom_key_identifier': {'key': 'customKeyIdentifier', 'type': 'bytearray'},
+        'custom_key_identifier': {'key': 'customKeyIdentifier', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

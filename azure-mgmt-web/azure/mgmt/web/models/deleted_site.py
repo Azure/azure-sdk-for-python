@@ -40,6 +40,8 @@ class DeletedSite(ProxyOnlyResource):
     :vartype slot: str
     :ivar deleted_site_kind: Kind of site that was deleted
     :vartype deleted_site_kind: str
+    :ivar geo_region_name: Geo Region of the deleted site
+    :vartype geo_region_name: str
     """
 
     _validation = {
@@ -53,6 +55,7 @@ class DeletedSite(ProxyOnlyResource):
         'deleted_site_name': {'readonly': True},
         'slot': {'readonly': True},
         'deleted_site_kind': {'readonly': True},
+        'geo_region_name': {'readonly': True},
     }
 
     _attribute_map = {
@@ -67,6 +70,7 @@ class DeletedSite(ProxyOnlyResource):
         'deleted_site_name': {'key': 'properties.deletedSiteName', 'type': 'str'},
         'slot': {'key': 'properties.slot', 'type': 'str'},
         'deleted_site_kind': {'key': 'properties.kind', 'type': 'str'},
+        'geo_region_name': {'key': 'properties.geoRegionName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -78,3 +82,4 @@ class DeletedSite(ProxyOnlyResource):
         self.deleted_site_name = None
         self.slot = None
         self.deleted_site_kind = None
+        self.geo_region_name = None

@@ -13,7 +13,7 @@ from .clusters_operations import ClustersOperations
 from .applications_operations import ApplicationsOperations
 from .locations_operations import LocationsOperations
 from .configurations_operations import ConfigurationsOperations
-from .extension_operations import ExtensionOperations
+from .extensions_operations import ExtensionsOperations
 from .script_actions_operations import ScriptActionsOperations
 from .script_execution_history_operations import ScriptExecutionHistoryOperations
 from .operations import Operations
@@ -23,7 +23,7 @@ __all__ = [
     'ApplicationsOperations',
     'LocationsOperations',
     'ConfigurationsOperations',
-    'ExtensionOperations',
+    'ExtensionsOperations',
     'ScriptActionsOperations',
     'ScriptExecutionHistoryOperations',
     'Operations',

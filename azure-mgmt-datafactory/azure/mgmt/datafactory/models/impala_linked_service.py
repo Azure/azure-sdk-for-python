@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class ImpalaLinkedService(LinkedService):
     """Impala server linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,16 +31,17 @@ class ImpalaLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param host: The IP address or host name of the Impala server. (i.e.
-     192.168.222.160)
+    :param host: Required. The IP address or host name of the Impala server.
+     (i.e. 192.168.222.160)
     :type host: object
     :param port: The TCP port that the Impala server uses to listen for client
      connections. The default value is 21050.
     :type port: object
-    :param authentication_type: The authentication type to use. Possible
-     values include: 'Anonymous', 'SASLUsername', 'UsernameAndPassword'
+    :param authentication_type: Required. The authentication type to use.
+     Possible values include: 'Anonymous', 'SASLUsername',
+     'UsernameAndPassword'
     :type authentication_type: str or
      ~azure.mgmt.datafactory.models.ImpalaAuthenticationType
     :param username: The user name used to access the Impala server. The
@@ -98,17 +101,17 @@ class ImpalaLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, host, authentication_type, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, port=None, username=None, password=None, enable_ssl=None, trusted_cert_path=None, use_system_trust_store=None, allow_host_name_cn_mismatch=None, allow_self_signed_server_cert=None, encrypted_credential=None):
-        super(ImpalaLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.host = host
-        self.port = port
-        self.authentication_type = authentication_type
-        self.username = username
-        self.password = password
-        self.enable_ssl = enable_ssl
-        self.trusted_cert_path = trusted_cert_path
-        self.use_system_trust_store = use_system_trust_store
-        self.allow_host_name_cn_mismatch = allow_host_name_cn_mismatch
-        self.allow_self_signed_server_cert = allow_self_signed_server_cert
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(ImpalaLinkedService, self).__init__(**kwargs)
+        self.host = kwargs.get('host', None)
+        self.port = kwargs.get('port', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.enable_ssl = kwargs.get('enable_ssl', None)
+        self.trusted_cert_path = kwargs.get('trusted_cert_path', None)
+        self.use_system_trust_store = kwargs.get('use_system_trust_store', None)
+        self.allow_host_name_cn_mismatch = kwargs.get('allow_host_name_cn_mismatch', None)
+        self.allow_self_signed_server_cert = kwargs.get('allow_self_signed_server_cert', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Impala'

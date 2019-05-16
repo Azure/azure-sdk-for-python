@@ -17,9 +17,14 @@ class StreamingPolicyFairPlayConfiguration(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param custom_license_acquisition_url_template: The template for a
-     customer service to deliver keys to end users.  Not needed when using
-     Azure Media Services for issuing keys.
+    :param custom_license_acquisition_url_template: Template for the URL of
+     the custom service delivering licenses to end user players.  Not required
+     when using Azure Media Services for issuing licenses.  The template
+     supports replaceable tokens that the service will update at runtime with
+     the value specific to the request.  The currently supported token values
+     are {AlternativeMediaId}, which is replaced with the value of
+     StreamingLocatorId.AlternativeMediaId, and {ContentKeyId}, which is
+     replaced with the value of identifier of the key being requested.
     :type custom_license_acquisition_url_template: str
     :param allow_persistent_license: Required. All license to be persistent or
      not

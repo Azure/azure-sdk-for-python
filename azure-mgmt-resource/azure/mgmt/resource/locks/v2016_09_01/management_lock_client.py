@@ -13,6 +13,7 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.authorization_operations import AuthorizationOperations
 from .operations.management_locks_operations import ManagementLocksOperations
 from . import models
 
@@ -55,6 +56,8 @@ class ManagementLockClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: ManagementLockClientConfiguration
 
+    :ivar authorization_operations: AuthorizationOperations operations
+    :vartype authorization_operations: azure.mgmt.resource.locks.v2016_09_01.operations.AuthorizationOperations
     :ivar management_locks: ManagementLocks operations
     :vartype management_locks: azure.mgmt.resource.locks.v2016_09_01.operations.ManagementLocksOperations
 
@@ -77,5 +80,7 @@ class ManagementLockClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.authorization_operations = AuthorizationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.management_locks = ManagementLocksOperations(
             self._client, self.config, self._serialize, self._deserialize)

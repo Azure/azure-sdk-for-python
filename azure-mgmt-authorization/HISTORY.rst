@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.51.1 (2018-11-27)
++++++++++++++++++++
+
+**Bugfixes**
+
+- Missing principal_type in role assignment class  #3802
+
 0.51.0 (2018-11-12)
 +++++++++++++++++++
 

@@ -28,6 +28,8 @@ class ProductionOrStagingEndpointInfo(EndpointInfo):
     :type assigned_endpoint_key: str
     :param endpoint_region: The endpoint's region.
     :type endpoint_region: str
+    :param failed_regions: Regions where publishing failed.
+    :type failed_regions: str
     :param published_date_time: Timestamp when was last published.
     :type published_date_time: str
     """
@@ -39,6 +41,7 @@ class ProductionOrStagingEndpointInfo(EndpointInfo):
         'region': {'key': 'region', 'type': 'str'},
         'assigned_endpoint_key': {'key': 'assignedEndpointKey', 'type': 'str'},
         'endpoint_region': {'key': 'endpointRegion', 'type': 'str'},
+        'failed_regions': {'key': 'failedRegions', 'type': 'str'},
         'published_date_time': {'key': 'publishedDateTime', 'type': 'str'},
     }
 

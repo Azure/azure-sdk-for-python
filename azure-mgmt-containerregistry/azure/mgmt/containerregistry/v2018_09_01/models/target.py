@@ -30,6 +30,10 @@ class Target(Model):
     :type url: str
     :param tag: The tag name.
     :type tag: str
+    :param name: The name of the artifact.
+    :type name: str
+    :param version: The version of the artifact.
+    :type version: str
     """
 
     _attribute_map = {
@@ -40,6 +44,8 @@ class Target(Model):
         'repository': {'key': 'repository', 'type': 'str'},
         'url': {'key': 'url', 'type': 'str'},
         'tag': {'key': 'tag', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -51,3 +57,5 @@ class Target(Model):
         self.repository = kwargs.get('repository', None)
         self.url = kwargs.get('url', None)
         self.tag = kwargs.get('tag', None)
+        self.name = kwargs.get('name', None)
+        self.version = kwargs.get('version', None)
