@@ -80,7 +80,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         path_blob = ""
         path_snapshot = None
         if parsed_url.path:
-            path_container, _, path_blob = parsed_url.partition('/')
+            path_container, _, path_blob = parsed_url.path.partition('/')
         if parsed_url.query:
             query = parsed_url.query.lower().split('&')
             q_snapshot = [q for q in query if q.startswith('snapshot=')]
@@ -110,7 +110,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             self.scheme,
             parsed_url.hostname,
             quote(self.container),
-            self.name.replace(' ', '%20')  # TODO: Confirm why recordings don't urlencode chars
+            self.name.replace(' ', '%20').replace('?', '%3F')  # TODO: Confirm why recordings don't urlencode chars
         )
         self.key_encryption_key = None
         self._pipeline = create_pipeline(credentials, configuration, **kwargs)

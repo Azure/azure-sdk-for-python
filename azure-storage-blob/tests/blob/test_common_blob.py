@@ -19,7 +19,6 @@ from azure.storage.common import (
     AccessPolicy,
     ResourceTypes,
     AccountPermissions,
-    DeleteRetentionPolicy,
     TokenCredential,
 )
 from azure.storage.blob import (
@@ -32,6 +31,7 @@ from azure.storage.blob.models import (
     BlobPermissions,
     ContentSettings,
     BlobProperties,
+    RetentionPolicy,
     # Include,
     # ContainerPermissions,
 )
@@ -123,7 +123,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(props.copy.status, 'success')
 
     def _enable_soft_delete(self):
-        delete_retention_policy = DeleteRetentionPolicy(enabled=True, days=2)
+        delete_retention_policy = RetentionPolicy(enabled=True, days=2)
         self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # wait until the policy has gone into effect
@@ -131,7 +131,7 @@ class StorageCommonBlobTest(StorageTestCase):
             time.sleep(30)
 
     def _disable_soft_delete(self):
-        delete_retention_policy = DeleteRetentionPolicy(enabled=False)
+        delete_retention_policy = RetentionPolicy(enabled=False)
         self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
     def _assert_blob_is_soft_deleted(self, blob):
@@ -302,7 +302,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(blob_data, len(blob_data))
+        blob.upload_blob(blob_data)
 
         # Assert
         data = blob.download_blob()
@@ -727,7 +727,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
             # Soft delete the blob
             blob.delete_blob()
-            blob_list = list(container.list_blob_properties(include=Include(deleted=True)))
+            blob_list = list(container.list_blob_properties(include='deleted'))
 
             # Assert
             self.assertEqual(len(blob_list), 1)
@@ -741,7 +741,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
             # Restore blob with undelete
             blob.undelete_blob()
-            blob_list = list(container.list_blobs(include=Include(deleted=True)))
+            blob_list = list(container.list_blob_properties(include='deleted'))
 
             # Assert
             self.assertEqual(len(blob_list), 1)
@@ -756,30 +756,34 @@ class StorageCommonBlobTest(StorageTestCase):
             # Arrange
             self._enable_soft_delete()
             blob_name = self._create_block_blob()
-            blob_snapshot_1 = self.bs.create_snapshot(self.container_name, blob_name)
-            blob_snapshot_2 = self.bs.create_snapshot(self.container_name, blob_name)
+            blob = self.bsc.get_blob_client(self.container_name, blob_name)
+            blob_snapshot_1 = blob.create_snapshot()
+            blob_snapshot_2 = blob.create_snapshot()
 
             # Soft delete blob_snapshot_1
-            self.bs.delete_blob(self.container_name, blob_name, snapshot=blob_snapshot_1.snapshot)
-            blob_list = list(self.bs.list_blobs(self.container_name, include=Include(deleted=True, snapshots=True)))
+            snapshot_1 = self.bsc.get_blob_client(self.container_name, blob_snapshot_1)
+            snapshot_1.delete_blob()
+
+            container = self.bsc.get_container_client(self.container_name)
+            blob_list = list(container.list_blob_properties(include=["snapshots", "deleted"]))
 
             # Assert
             self.assertEqual(len(blob_list), 3)
-            for blob in blob_list:
-                if blob.snapshot == blob_snapshot_1.snapshot:
-                    self._assert_blob_is_soft_deleted(blob)
+            for listedblob in blob_list:
+                if listedblob.snapshot == blob_snapshot_1.snapshot:
+                    self._assert_blob_is_soft_deleted(listedblob)
                 else:
-                    self._assert_blob_not_soft_deleted(blob)
+                    self._assert_blob_not_soft_deleted(listedblob)
 
             # list_blobs should not list soft deleted blob snapshots if Include(deleted=True) is not specified
-            blob_list = list(self.bs.list_blobs(self.container_name, include=Include(snapshots=True)))
+            blob_list = list(container.list_blob_properties(include='snapshots'))
 
             # Assert
             self.assertEqual(len(blob_list), 2)
 
             # Restore snapshot with undelete
-            self.bs.undelete_blob(self.container_name, blob_name)
-            blob_list = list(self.bs.list_blobs(self.container_name, include=Include(deleted=True, snapshots=True)))
+            blob.undelete_blob()
+            blob_list = list(container.list_blob_properties(include=["snapshots", "deleted"]))
 
             # Assert
             self.assertEqual(len(blob_list), 3)
@@ -794,32 +798,34 @@ class StorageCommonBlobTest(StorageTestCase):
             # Arrange
             self._enable_soft_delete()
             blob_name = self._create_block_blob()
-            blob_snapshot_1 = self.bs.create_snapshot(self.container_name, blob_name)
-            blob_snapshot_2 = self.bs.create_snapshot(self.container_name, blob_name)
+            blob = self.bsc.get_blob_client(self.container_name, blob_name)
+            blob_snapshot_1 = blob.create_snapshot()
+            blob_snapshot_2 = blob.create_snapshot()
 
             # Soft delete all snapshots
-            self.bs.delete_blob(self.container_name, blob_name, delete_snapshots=DeleteSnapshot.Only)
-            blob_list = list(self.bs.list_blobs(self.container_name, include=Include(deleted=True, snapshots=True)))
+            blob.delete_blob(delete_snapshots='only')
+            container = self.bsc.get_container_client(self.container_name)
+            blob_list = list(container.list_blob_properties(include=["snapshots", "deleted"]))
 
             # Assert
             self.assertEqual(len(blob_list), 3)
-            for blob in blob_list:
-                if blob.snapshot == blob_snapshot_1.snapshot:
-                    self._assert_blob_is_soft_deleted(blob)
-                elif blob.snapshot == blob_snapshot_2.snapshot:
-                    self._assert_blob_is_soft_deleted(blob)
+            for listedblob in blob_list:
+                if listedblob.snapshot == blob_snapshot_1.snapshot:
+                    self._assert_blob_is_soft_deleted(listedblob)
+                elif listedblob.snapshot == blob_snapshot_2.snapshot:
+                    self._assert_blob_is_soft_deleted(listedblob)
                 else:
-                    self._assert_blob_not_soft_deleted(blob)
+                    self._assert_blob_not_soft_deleted(listedblob)
 
             # list_blobs should not list soft deleted blob snapshots if Include(deleted=True) is not specified
-            blob_list = list(self.bs.list_blobs(self.container_name, include=Include(snapshots=True)))
+            blob_list = list(container.list_blob_properties(include="snapshots"))
 
             # Assert
             self.assertEqual(len(blob_list), 1)
 
             # Restore snapshots with undelete
-            self.bs.undelete_blob(self.container_name, blob_name)
-            blob_list = list(self.bs.list_blobs(self.container_name, include=Include(deleted=True, snapshots=True)))
+            blob.undelete_blob()
+            blob_list = list(container.list_blob_properties(include=["snapshots", "deleted"]))
 
             # Assert
             self.assertEqual(len(blob_list), 3)
@@ -835,27 +841,29 @@ class StorageCommonBlobTest(StorageTestCase):
             # Arrange
             self._enable_soft_delete()
             blob_name = self._create_block_blob()
-            blob_snapshot_1 = self.bs.create_snapshot(self.container_name, blob_name)
-            blob_snapshot_2 = self.bs.create_snapshot(self.container_name, blob_name)
+            blob = self.bsc.get_blob_client(self.container_name, blob_name)
+            blob_snapshot_1 = blob.create_snapshot()
+            blob_snapshot_2 = blob.create_snapshot()
 
             # Soft delete blob and all snapshots
-            self.bs.delete_blob(self.container_name, blob_name, delete_snapshots=DeleteSnapshot.Include)
-            blob_list = list(self.bs.list_blobs(self.container_name, include=Include(deleted=True, snapshots=True)))
+            blob.delete_blob(delete_snapshots="include")
+            container = self.bsc.get_container_client(self.container_name)
+            blob_list = list(container.list_blob_properties(include=["snapshots", "deleted"]))
 
             # Assert
             self.assertEqual(len(blob_list), 3)
-            for blob in blob_list:
-                self._assert_blob_is_soft_deleted(blob)
+            for listedblob in blob_list:
+                self._assert_blob_is_soft_deleted(listedblob)
 
             # list_blobs should not list soft deleted blob snapshots if Include(deleted=True) is not specified
-            blob_list = list(self.bs.list_blobs(self.container_name, include=Include(snapshots=True)))
+            blob_list = list(container.list_blob_properties(include=["snapshots"]))
 
             # Assert
             self.assertEqual(len(blob_list), 0)
 
             # Restore blob and snapshots with undelete
-            self.bs.undelete_blob(self.container_name, blob_name)
-            blob_list = list(self.bs.list_blobs(self.container_name, include=Include(deleted=True, snapshots=True)))
+            blob.undelete_blob()
+            blob_list = list(container.list_blob_properties(include=["snapshots", "deleted"]))
 
             # Assert
             self.assertEqual(len(blob_list), 3)
@@ -871,29 +879,31 @@ class StorageCommonBlobTest(StorageTestCase):
             # Arrange
             self._enable_soft_delete()
             blob_name = self._create_block_blob()
-            lease_id = self.bs.acquire_blob_lease(self.container_name, blob_name)
+            blob = self.bsc.get_blob_client(self.container_name, blob_name)
+            lease = blob.acquire_lease()
 
             # Soft delete the blob without lease_id should fail
-            with self.assertRaises(AzureHttpError):
-                self.bs.delete_blob(self.container_name, blob_name)
+            with self.assertRaises(HttpResponseError):
+                blob.delete_blob()
 
             # Soft delete the blob
-            self.bs.delete_blob(self.container_name, blob_name, lease_id=lease_id)
-            blob_list = list(self.bs.list_blobs(self.container_name, include=Include(deleted=True)))
+            blob.delete_blob(lease=lease)
+            container = self.bsc.get_container_client(self.container_name)
+            blob_list = list(container.list_blob_properties(include="deleted"))
 
             # Assert
             self.assertEqual(len(blob_list), 1)
             self._assert_blob_is_soft_deleted(blob_list[0])
 
             # list_blobs should not list soft deleted blobs if Include(deleted=True) is not specified
-            blob_list = list(self.bs.list_blobs(self.container_name))
+            blob_list = list(container.list_blob_properties())
 
             # Assert
             self.assertEqual(len(blob_list), 0)
 
             # Restore blob with undelete, this also gets rid of the lease
-            self.bs.undelete_blob(self.container_name, blob_name)
-            blob_list = list(self.bs.list_blobs(self.container_name, include=Include(deleted=True)))
+            blob.undelete_blob()
+            blob_list = list(container.list_blob_properties(include="deleted"))
 
             # Assert
             self.assertEqual(len(blob_list), 1)

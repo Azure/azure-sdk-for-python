@@ -63,7 +63,7 @@ class ContainerClient(object):
             raise ValueError("Please specify a container name.")
         path_container = ""
         if parsed_url.path:
-            path_container = parsed_url.partition('/')[0]
+            path_container = parsed_url.path.partition('/')[0]
         try:
             self.name = container.name
         except AttributeError:
@@ -277,5 +277,5 @@ class ContainerClient(object):
         :returns: A BlobClient.
         """
         return BlobClient(
-            self.url, blob=blob, blob_type=blob_type,
+            self.url, container=self.name, blob=blob, blob_type=blob_type,
             snapshot=snapshot, _pipeline=self._pipeline)

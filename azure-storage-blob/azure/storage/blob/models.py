@@ -17,6 +17,14 @@ from ._generated.models import BlobProperties as GenBlobProps
 from .common import BlockState, BlobType
 
 
+def _get_enum_value(value):
+    if value is None or value in ["None", ""]:
+        return None
+    try:
+        return value.value
+    except AttributeError:
+        return value
+
 class Logging(GeneratedLogging):
     """Azure Analytics Logging settings.
 
@@ -328,7 +336,7 @@ class BlobProperties(object):
     def _from_generated(cls, generated):
         blob = BlobProperties()
         blob.name = generated.name
-        blob.blob_type = BlobType(generated.properties.blob_type.value)
+        blob.blob_type = BlobType(_get_enum_value(generated.properties.blob_type))
         blob.etag = generated.properties.etag
         blob.deleted = generated.deleted
         blob.snapshot = generated.snapshot
@@ -379,7 +387,7 @@ class BlobPropertiesPaged(Paged):
         self._current_page_iter_index = 0
         self._response = self._get_next(
             prefix=self.prefix,
-            marker=self.next_marker,
+            marker=self.next_marker or None,
             maxresults=self.results_per_page)
 
         self.service_endpoint = self._response.service_endpoint
@@ -421,12 +429,9 @@ class LeaseProperties(object):
     @classmethod
     def _from_generated(cls, generated):
         lease = cls()
-        if generated.properties.lease_status:
-            lease.status = generated.properties.lease_status.value
-        if generated.properties.lease_state:
-            lease.state = generated.properties.lease_state.value
-        if generated.properties.lease_duration:
-            lease.duration = generated.properties.lease_duration.value
+        lease.status = _get_enum_value(generated.properties.lease_status)
+        lease.state = _get_enum_value(generated.properties.lease_state)
+        lease.duration = _get_enum_value(generated.properties.lease_duration)
         return lease
 
 
@@ -535,8 +540,7 @@ class CopyProperties(object):
     def _from_generated(cls, generated):
         copy = cls()
         copy.id = generated.properties.copy_id
-        if generated.properties.copy_status:
-            copy.status = generated.properties.copy_status.value
+        copy.status = _get_enum_value(generated.properties.copy_status)
         copy.source = generated.properties.copy_source
         copy.progress = generated.properties.copy_progress
         copy.completion_time = generated.properties.copy_completion_time
