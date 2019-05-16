@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class DynamicsLinkedService(LinkedService):
     """Dynamics linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,11 +25,18 @@ class DynamicsLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Constant filled by server.
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param deployment_type: The deployment type of the Dynamics instance.
-     'Online' for Dynamics Online and 'OnPremisesWithIfd' for Dynamics
-     on-premises with Ifd. Type: string (or Expression with resultType string).
+    :param deployment_type: Required. The deployment type of the Dynamics
+     instance. 'Online' for Dynamics Online and 'OnPremisesWithIfd' for
+     Dynamics on-premises with Ifd. Type: string (or Expression with resultType
+     string).
     :type deployment_type: object
     :param host_name: The host name of the on-premises Dynamics server. The
      property is required for on-prem and not allowed for online. Type: string
@@ -37,17 +46,21 @@ class DynamicsLinkedService(LinkedService):
      required for on-prem and not allowed for online. Default is 443. Type:
      integer (or Expression with resultType integer), minimum: 0.
     :type port: object
+    :param service_uri: The URL to the Microsoft Dynamics server. The property
+     is required for on-line and not allowed for on-prem. Type: string (or
+     Expression with resultType string).
+    :type service_uri: object
     :param organization_name: The organization name of the Dynamics instance.
      The property is required for on-prem and required for online when there
      are more than one Dynamics instances associated with the user. Type:
      string (or Expression with resultType string).
     :type organization_name: object
-    :param authentication_type: The authentication type to connect to Dynamics
-     server. 'Office365' for online scenario, 'Ifd' for on-premises with Ifd
-     scenario. Type: string (or Expression with resultType string).
+    :param authentication_type: Required. The authentication type to connect
+     to Dynamics server. 'Office365' for online scenario, 'Ifd' for on-premises
+     with Ifd scenario. Type: string (or Expression with resultType string).
     :type authentication_type: object
-    :param username: User name to access the Dynamics instance. Type: string
-     (or Expression with resultType string).
+    :param username: Required. User name to access the Dynamics instance.
+     Type: string (or Expression with resultType string).
     :type username: object
     :param password: Password to access the Dynamics instance.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
@@ -68,10 +81,13 @@ class DynamicsLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'deployment_type': {'key': 'typeProperties.deploymentType', 'type': 'object'},
         'host_name': {'key': 'typeProperties.hostName', 'type': 'object'},
         'port': {'key': 'typeProperties.port', 'type': 'object'},
+        'service_uri': {'key': 'typeProperties.serviceUri', 'type': 'object'},
         'organization_name': {'key': 'typeProperties.organizationName', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'object'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
@@ -79,14 +95,15 @@ class DynamicsLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, deployment_type, authentication_type, username, additional_properties=None, connect_via=None, description=None, host_name=None, port=None, organization_name=None, password=None, encrypted_credential=None):
-        super(DynamicsLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
-        self.deployment_type = deployment_type
-        self.host_name = host_name
-        self.port = port
-        self.organization_name = organization_name
-        self.authentication_type = authentication_type
-        self.username = username
-        self.password = password
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(DynamicsLinkedService, self).__init__(**kwargs)
+        self.deployment_type = kwargs.get('deployment_type', None)
+        self.host_name = kwargs.get('host_name', None)
+        self.port = kwargs.get('port', None)
+        self.service_uri = kwargs.get('service_uri', None)
+        self.organization_name = kwargs.get('organization_name', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Dynamics'

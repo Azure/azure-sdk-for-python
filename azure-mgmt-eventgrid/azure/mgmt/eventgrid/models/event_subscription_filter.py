@@ -25,14 +25,16 @@ class EventSubscriptionFilter(Model):
      Wildcard characters are not supported in this path.
     :type subject_ends_with: str
     :param included_event_types: A list of applicable event types that need to
-     be part of the event subscription.
-     If it is desired to subscribe to all event types, the string "all" needs
-     to be specified as an element in this list.
+     be part of the event subscription. If it is desired to subscribe to all
+     default event types, set the IncludedEventTypes to null.
     :type included_event_types: list[str]
     :param is_subject_case_sensitive: Specifies if the SubjectBeginsWith and
      SubjectEndsWith properties of the filter
      should be compared in a case sensitive manner. Default value: False .
     :type is_subject_case_sensitive: bool
+    :param advanced_filters: An array of advanced filters that are used for
+     filtering event subscriptions.
+    :type advanced_filters: list[~azure.mgmt.eventgrid.models.AdvancedFilter]
     """
 
     _attribute_map = {
@@ -40,11 +42,13 @@ class EventSubscriptionFilter(Model):
         'subject_ends_with': {'key': 'subjectEndsWith', 'type': 'str'},
         'included_event_types': {'key': 'includedEventTypes', 'type': '[str]'},
         'is_subject_case_sensitive': {'key': 'isSubjectCaseSensitive', 'type': 'bool'},
+        'advanced_filters': {'key': 'advancedFilters', 'type': '[AdvancedFilter]'},
     }
 
-    def __init__(self, subject_begins_with=None, subject_ends_with=None, included_event_types=None, is_subject_case_sensitive=False):
-        super(EventSubscriptionFilter, self).__init__()
-        self.subject_begins_with = subject_begins_with
-        self.subject_ends_with = subject_ends_with
-        self.included_event_types = included_event_types
-        self.is_subject_case_sensitive = is_subject_case_sensitive
+    def __init__(self, **kwargs):
+        super(EventSubscriptionFilter, self).__init__(**kwargs)
+        self.subject_begins_with = kwargs.get('subject_begins_with', None)
+        self.subject_ends_with = kwargs.get('subject_ends_with', None)
+        self.included_event_types = kwargs.get('included_event_types', None)
+        self.is_subject_case_sensitive = kwargs.get('is_subject_case_sensitive', False)
+        self.advanced_filters = kwargs.get('advanced_filters', None)

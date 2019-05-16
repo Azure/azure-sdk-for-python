@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class ImageCaption(Model):
     """An image caption, i.e. a brief description of what the image depicts.
 
-    :param text: The text of the caption
+    :param text: The text of the caption.
     :type text: str
-    :param confidence: The level of confidence the service has in the caption
+    :param confidence: The level of confidence the service has in the caption.
     :type confidence: float
     """
 
@@ -26,7 +26,7 @@ class ImageCaption(Model):
         'confidence': {'key': 'confidence', 'type': 'float'},
     }
 
-    def __init__(self, text=None, confidence=None):
-        super(ImageCaption, self).__init__()
-        self.text = text
-        self.confidence = confidence
+    def __init__(self, **kwargs):
+        super(ImageCaption, self).__init__(**kwargs)
+        self.text = kwargs.get('text', None)
+        self.confidence = kwargs.get('confidence', None)

@@ -15,11 +15,13 @@ from .virtual_machine_image_resource import VirtualMachineImageResource
 class VirtualMachineImage(VirtualMachineImageResource):
     """Describes a Virtual Machine Image.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Resource Id
     :type id: str
-    :param name: The name of the resource.
+    :param name: Required. The name of the resource.
     :type name: str
-    :param location: The supported Azure location of the resource.
+    :param location: Required. The supported Azure location of the resource.
     :type location: str
     :param tags: Specifies the tags that are assigned to the virtual machine.
      For more information about using tags, see [Using tags to organize your
@@ -51,8 +53,8 @@ class VirtualMachineImage(VirtualMachineImageResource):
         'data_disk_images': {'key': 'properties.dataDiskImages', 'type': '[DataDiskImage]'},
     }
 
-    def __init__(self, name, location, id=None, tags=None, plan=None, os_disk_image=None, data_disk_images=None):
-        super(VirtualMachineImage, self).__init__(id=id, name=name, location=location, tags=tags)
-        self.plan = plan
-        self.os_disk_image = os_disk_image
-        self.data_disk_images = data_disk_images
+    def __init__(self, **kwargs):
+        super(VirtualMachineImage, self).__init__(**kwargs)
+        self.plan = kwargs.get('plan', None)
+        self.os_disk_image = kwargs.get('os_disk_image', None)
+        self.data_disk_images = kwargs.get('data_disk_images', None)

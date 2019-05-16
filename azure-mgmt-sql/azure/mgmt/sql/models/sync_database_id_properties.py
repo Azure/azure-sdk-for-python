@@ -30,6 +30,6 @@ class SyncDatabaseIdProperties(Model):
         'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(SyncDatabaseIdProperties, self).__init__()
+    def __init__(self, **kwargs):
+        super(SyncDatabaseIdProperties, self).__init__(**kwargs)
         self.id = None

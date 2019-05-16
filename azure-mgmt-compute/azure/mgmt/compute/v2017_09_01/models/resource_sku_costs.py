@@ -38,8 +38,8 @@ class ResourceSkuCosts(Model):
         'extended_unit': {'key': 'extendedUnit', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ResourceSkuCosts, self).__init__()
+    def __init__(self, **kwargs):
+        super(ResourceSkuCosts, self).__init__(**kwargs)
         self.meter_id = None
         self.quantity = None
         self.extended_unit = None

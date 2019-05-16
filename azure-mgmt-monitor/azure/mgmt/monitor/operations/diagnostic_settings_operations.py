@@ -21,9 +21,11 @@ class DiagnosticSettingsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2017-05-01-preview".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -54,7 +56,7 @@ class DiagnosticSettingsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/{name}'
+        url = self.get.metadata['url']
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
             'name': self._serialize.url("name", name, 'str')
@@ -67,7 +69,7 @@ class DiagnosticSettingsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -76,8 +78,8 @@ class DiagnosticSettingsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -92,6 +94,7 @@ class DiagnosticSettingsOperations(object):
             return client_raw_response
 
         return deserialized
+    get.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/{name}'}
 
     def create_or_update(
             self, resource_uri, parameters, name, custom_headers=None, raw=False, **operation_config):
@@ -116,7 +119,7 @@ class DiagnosticSettingsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/{name}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
             'name': self._serialize.url("name", name, 'str')
@@ -129,6 +132,7 @@ class DiagnosticSettingsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -141,9 +145,8 @@ class DiagnosticSettingsOperations(object):
         body_content = self._serialize.body(parameters, 'DiagnosticSettingsResource')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -158,6 +161,7 @@ class DiagnosticSettingsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/{name}'}
 
     def delete(
             self, resource_uri, name, custom_headers=None, raw=False, **operation_config):
@@ -178,7 +182,7 @@ class DiagnosticSettingsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/{name}'
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True),
             'name': self._serialize.url("name", name, 'str')
@@ -191,7 +195,6 @@ class DiagnosticSettingsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -200,8 +203,8 @@ class DiagnosticSettingsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -209,6 +212,7 @@ class DiagnosticSettingsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettings/{name}'}
 
     def list(
             self, resource_uri, custom_headers=None, raw=False, **operation_config):
@@ -230,7 +234,7 @@ class DiagnosticSettingsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.monitor.models.ErrorResponseException>`
         """
         # Construct URL
-        url = '/{resourceUri}/providers/microsoft.insights/diagnosticSettings'
+        url = self.list.metadata['url']
         path_format_arguments = {
             'resourceUri': self._serialize.url("resource_uri", resource_uri, 'str', skip_quote=True)
         }
@@ -242,7 +246,7 @@ class DiagnosticSettingsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -251,8 +255,8 @@ class DiagnosticSettingsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -267,3 +271,4 @@ class DiagnosticSettingsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/{resourceUri}/providers/microsoft.insights/diagnosticSettings'}

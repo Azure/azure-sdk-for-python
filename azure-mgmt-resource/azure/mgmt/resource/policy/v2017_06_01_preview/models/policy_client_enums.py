@@ -12,14 +12,14 @@
 from enum import Enum
 
 
-class PolicyType(Enum):
+class PolicyType(str, Enum):
 
     not_specified = "NotSpecified"
     built_in = "BuiltIn"
     custom = "Custom"
 
 
-class PolicyMode(Enum):
+class PolicyMode(str, Enum):
 
     not_specified = "NotSpecified"
     indexed = "Indexed"

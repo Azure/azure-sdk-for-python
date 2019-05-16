@@ -30,6 +30,6 @@ class SsoUri(Model):
         'sso_uri_value': {'key': 'ssoUriValue', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(SsoUri, self).__init__()
+    def __init__(self, **kwargs):
+        super(SsoUri, self).__init__(**kwargs)
         self.sso_uri_value = None

@@ -21,7 +21,7 @@ class PagedNodeInfoList(Model):
      obtain next set of results. The continuation token is included in the
      response of the API when the results from the system do not fit in a
      single response. When this value is passed to the next API call, the API
-     returns next set of results. If there are no further results then the
+     returns next set of results. If there are no further results, then the
      continuation token is not included in the response.
     :type continuation_token: str
     :param items: List of node information.
@@ -33,7 +33,7 @@ class PagedNodeInfoList(Model):
         'items': {'key': 'Items', 'type': '[NodeInfo]'},
     }
 
-    def __init__(self, continuation_token=None, items=None):
-        super(PagedNodeInfoList, self).__init__()
-        self.continuation_token = continuation_token
-        self.items = items
+    def __init__(self, **kwargs):
+        super(PagedNodeInfoList, self).__init__(**kwargs)
+        self.continuation_token = kwargs.get('continuation_token', None)
+        self.items = kwargs.get('items', None)

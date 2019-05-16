@@ -19,10 +19,10 @@ class AdultInfo(Model):
     :param is_adult_content: A value indicating if the image contains
      adult-oriented content.
     :type is_adult_content: bool
-    :param is_racy_content: A value indicating if the image is race.
+    :param is_racy_content: A value indicating if the image is racy.
     :type is_racy_content: bool
-    :param adult_score: Score from 0 to 1 that indicates how much of adult
-     content is within the image.
+    :param adult_score: Score from 0 to 1 that indicates how much the content
+     is considered adult-oriented within the image.
     :type adult_score: float
     :param racy_score: Score from 0 to 1 that indicates how suggestive is the
      image.
@@ -36,9 +36,9 @@ class AdultInfo(Model):
         'racy_score': {'key': 'racyScore', 'type': 'float'},
     }
 
-    def __init__(self, is_adult_content=None, is_racy_content=None, adult_score=None, racy_score=None):
-        super(AdultInfo, self).__init__()
-        self.is_adult_content = is_adult_content
-        self.is_racy_content = is_racy_content
-        self.adult_score = adult_score
-        self.racy_score = racy_score
+    def __init__(self, **kwargs):
+        super(AdultInfo, self).__init__(**kwargs)
+        self.is_adult_content = kwargs.get('is_adult_content', None)
+        self.is_racy_content = kwargs.get('is_racy_content', None)
+        self.adult_score = kwargs.get('adult_score', None)
+        self.racy_score = kwargs.get('racy_score', None)

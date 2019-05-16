@@ -50,8 +50,8 @@ class MessageCountDetails(Model):
         'transfer_dead_letter_message_count': {'key': 'transferDeadLetterMessageCount', 'type': 'long'},
     }
 
-    def __init__(self):
-        super(MessageCountDetails, self).__init__()
+    def __init__(self, **kwargs):
+        super(MessageCountDetails, self).__init__(**kwargs)
         self.active_message_count = None
         self.dead_letter_message_count = None
         self.scheduled_message_count = None

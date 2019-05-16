@@ -15,17 +15,19 @@ from .rule_condition import RuleCondition
 class LocationThresholdRuleCondition(RuleCondition):
     """A rule condition based on a certain number of locations failing.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param data_source: the resource from which the rule collects its data.
      For this type dataSource will always be of type RuleMetricDataSource.
     :type data_source: ~azure.mgmt.monitor.models.RuleDataSource
-    :param odatatype: Constant filled by server.
+    :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param window_size: the period of time (in ISO 8601 duration format) that
      is used to monitor alert activity based on the threshold. If specified
      then it must be between 5 minutes and 1 day.
     :type window_size: timedelta
-    :param failed_location_count: the number of locations that must fail to
-     activate the alert.
+    :param failed_location_count: Required. the number of locations that must
+     fail to activate the alert.
     :type failed_location_count: int
     """
 
@@ -41,8 +43,8 @@ class LocationThresholdRuleCondition(RuleCondition):
         'failed_location_count': {'key': 'failedLocationCount', 'type': 'int'},
     }
 
-    def __init__(self, failed_location_count, data_source=None, window_size=None):
-        super(LocationThresholdRuleCondition, self).__init__(data_source=data_source)
-        self.window_size = window_size
-        self.failed_location_count = failed_location_count
+    def __init__(self, **kwargs):
+        super(LocationThresholdRuleCondition, self).__init__(**kwargs)
+        self.window_size = kwargs.get('window_size', None)
+        self.failed_location_count = kwargs.get('failed_location_count', None)
         self.odatatype = 'Microsoft.Azure.Management.Insights.Models.LocationThresholdRuleCondition'

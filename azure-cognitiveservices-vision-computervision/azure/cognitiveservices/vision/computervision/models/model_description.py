@@ -15,9 +15,9 @@ from msrest.serialization import Model
 class ModelDescription(Model):
     """An object describing supported model by name and categories.
 
-    :param name:
+    :param name: The name of the model.
     :type name: str
-    :param categories:
+    :param categories: Categories of the model.
     :type categories: list[str]
     """
 
@@ -26,7 +26,7 @@ class ModelDescription(Model):
         'categories': {'key': 'categories', 'type': '[str]'},
     }
 
-    def __init__(self, name=None, categories=None):
-        super(ModelDescription, self).__init__()
-        self.name = name
-        self.categories = categories
+    def __init__(self, **kwargs):
+        super(ModelDescription, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.categories = kwargs.get('categories', None)

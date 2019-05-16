@@ -22,15 +22,17 @@ class TagPerformance(Model):
     :vartype id: str
     :ivar name:
     :vartype name: str
-    :ivar precision: Gets the precision
+    :ivar precision: Gets the precision.
     :vartype precision: float
     :ivar precision_std_deviation: Gets the standard deviation for the
-     precision
+     precision.
     :vartype precision_std_deviation: float
-    :ivar recall: Gets the recall
+    :ivar recall: Gets the recall.
     :vartype recall: float
-    :ivar recall_std_deviation: Gets the standard deviation for the recall
+    :ivar recall_std_deviation: Gets the standard deviation for the recall.
     :vartype recall_std_deviation: float
+    :ivar average_precision: Gets the average precision when applicable.
+    :vartype average_precision: float
     """
 
     _validation = {
@@ -40,22 +42,25 @@ class TagPerformance(Model):
         'precision_std_deviation': {'readonly': True},
         'recall': {'readonly': True},
         'recall_std_deviation': {'readonly': True},
+        'average_precision': {'readonly': True},
     }
 
     _attribute_map = {
-        'id': {'key': 'Id', 'type': 'str'},
-        'name': {'key': 'Name', 'type': 'str'},
-        'precision': {'key': 'Precision', 'type': 'float'},
-        'precision_std_deviation': {'key': 'PrecisionStdDeviation', 'type': 'float'},
-        'recall': {'key': 'Recall', 'type': 'float'},
-        'recall_std_deviation': {'key': 'RecallStdDeviation', 'type': 'float'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'precision': {'key': 'precision', 'type': 'float'},
+        'precision_std_deviation': {'key': 'precisionStdDeviation', 'type': 'float'},
+        'recall': {'key': 'recall', 'type': 'float'},
+        'recall_std_deviation': {'key': 'recallStdDeviation', 'type': 'float'},
+        'average_precision': {'key': 'averagePrecision', 'type': 'float'},
     }
 
-    def __init__(self):
-        super(TagPerformance, self).__init__()
+    def __init__(self, **kwargs):
+        super(TagPerformance, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.precision = None
         self.precision_std_deviation = None
         self.recall = None
         self.recall_std_deviation = None
+        self.average_precision = None

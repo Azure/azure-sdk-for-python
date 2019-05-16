@@ -24,6 +24,6 @@ class WinRMConfiguration(Model):
         'listeners': {'key': 'listeners', 'type': '[WinRMListener]'},
     }
 
-    def __init__(self, listeners=None):
-        super(WinRMConfiguration, self).__init__()
-        self.listeners = listeners
+    def __init__(self, **kwargs):
+        super(WinRMConfiguration, self).__init__(**kwargs)
+        self.listeners = kwargs.get('listeners', None)

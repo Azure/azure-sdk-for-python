@@ -9,12 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
-from .backup_long_term_retention_vaults_operations import BackupLongTermRetentionVaultsOperations
-from .restore_points_operations import RestorePointsOperations
 from .recoverable_databases_operations import RecoverableDatabasesOperations
 from .restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
-from .capabilities_operations import CapabilitiesOperations
+from .servers_operations import ServersOperations
 from .server_connection_policies_operations import ServerConnectionPoliciesOperations
 from .database_threat_detection_policies_operations import DatabaseThreatDetectionPoliciesOperations
 from .data_masking_policies_operations import DataMaskingPoliciesOperations
@@ -23,39 +20,80 @@ from .firewall_rules_operations import FirewallRulesOperations
 from .geo_backup_policies_operations import GeoBackupPoliciesOperations
 from .databases_operations import DatabasesOperations
 from .elastic_pools_operations import ElasticPoolsOperations
+from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from .replication_links_operations import ReplicationLinksOperations
 from .server_azure_ad_administrators_operations import ServerAzureADAdministratorsOperations
 from .server_communication_links_operations import ServerCommunicationLinksOperations
 from .service_objectives_operations import ServiceObjectivesOperations
-from .servers_operations import ServersOperations
 from .elastic_pool_activities_operations import ElasticPoolActivitiesOperations
 from .elastic_pool_database_activities_operations import ElasticPoolDatabaseActivitiesOperations
-from .recommended_elastic_pools_operations import RecommendedElasticPoolsOperations
 from .service_tier_advisors_operations import ServiceTierAdvisorsOperations
 from .transparent_data_encryptions_operations import TransparentDataEncryptionsOperations
 from .transparent_data_encryption_activities_operations import TransparentDataEncryptionActivitiesOperations
 from .server_usages_operations import ServerUsagesOperations
 from .database_usages_operations import DatabaseUsagesOperations
-from .database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
+from .database_automatic_tuning_operations import DatabaseAutomaticTuningOperations
 from .encryption_protectors_operations import EncryptionProtectorsOperations
 from .failover_groups_operations import FailoverGroupsOperations
+from .managed_instances_operations import ManagedInstancesOperations
 from .operations import Operations
 from .server_keys_operations import ServerKeysOperations
 from .sync_agents_operations import SyncAgentsOperations
 from .sync_groups_operations import SyncGroupsOperations
 from .sync_members_operations import SyncMembersOperations
 from .subscription_usages_operations import SubscriptionUsagesOperations
+from .virtual_clusters_operations import VirtualClustersOperations
 from .virtual_network_rules_operations import VirtualNetworkRulesOperations
-from .database_operations import DatabaseOperations
+from .extended_database_blob_auditing_policies_operations import ExtendedDatabaseBlobAuditingPoliciesOperations
+from .extended_server_blob_auditing_policies_operations import ExtendedServerBlobAuditingPoliciesOperations
+from .server_blob_auditing_policies_operations import ServerBlobAuditingPoliciesOperations
+from .database_blob_auditing_policies_operations import DatabaseBlobAuditingPoliciesOperations
+from .database_vulnerability_assessment_rule_baselines_operations import DatabaseVulnerabilityAssessmentRuleBaselinesOperations
+from .database_vulnerability_assessments_operations import DatabaseVulnerabilityAssessmentsOperations
+from .job_agents_operations import JobAgentsOperations
+from .job_credentials_operations import JobCredentialsOperations
+from .job_executions_operations import JobExecutionsOperations
+from .jobs_operations import JobsOperations
+from .job_step_executions_operations import JobStepExecutionsOperations
+from .job_steps_operations import JobStepsOperations
+from .job_target_executions_operations import JobTargetExecutionsOperations
+from .job_target_groups_operations import JobTargetGroupsOperations
+from .job_versions_operations import JobVersionsOperations
+from .long_term_retention_backups_operations import LongTermRetentionBackupsOperations
+from .backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
+from .managed_backup_short_term_retention_policies_operations import ManagedBackupShortTermRetentionPoliciesOperations
+from .managed_databases_operations import ManagedDatabasesOperations
+from .managed_restorable_dropped_database_backup_short_term_retention_policies_operations import ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
+from .server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
+from .server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
+from .restorable_dropped_managed_databases_operations import RestorableDroppedManagedDatabasesOperations
+from .restore_points_operations import RestorePointsOperations
+from .managed_database_security_alert_policies_operations import ManagedDatabaseSecurityAlertPoliciesOperations
+from .managed_server_security_alert_policies_operations import ManagedServerSecurityAlertPoliciesOperations
+from .sensitivity_labels_operations import SensitivityLabelsOperations
+from .database_operations import DatabaseOperations
+from .elastic_pool_operations import ElasticPoolOperations
+from .capabilities_operations import CapabilitiesOperations
+from .database_vulnerability_assessment_scans_operations import DatabaseVulnerabilityAssessmentScansOperations
+from .managed_database_vulnerability_assessment_rule_baselines_operations import ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations
+from .managed_database_vulnerability_assessment_scans_operations import ManagedDatabaseVulnerabilityAssessmentScansOperations
+from .managed_database_vulnerability_assessments_operations import ManagedDatabaseVulnerabilityAssessmentsOperations
+from .instance_failover_groups_operations import InstanceFailoverGroupsOperations
+from .backup_short_term_retention_policies_operations import BackupShortTermRetentionPoliciesOperations
+from .tde_certificates_operations import TdeCertificatesOperations
+from .managed_instance_tde_certificates_operations import ManagedInstanceTdeCertificatesOperations
+from .managed_instance_keys_operations import ManagedInstanceKeysOperations
+from .managed_instance_encryption_protectors_operations import ManagedInstanceEncryptionProtectorsOperations
+from .recoverable_managed_databases_operations import RecoverableManagedDatabasesOperations
+from .managed_instance_vulnerability_assessments_operations import ManagedInstanceVulnerabilityAssessmentsOperations
+from .server_vulnerability_assessments_operations import ServerVulnerabilityAssessmentsOperations
+from .managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
 
 __all__ = [
-    'BackupLongTermRetentionPoliciesOperations',
-    'BackupLongTermRetentionVaultsOperations',
-    'RestorePointsOperations',
     'RecoverableDatabasesOperations',
     'RestorableDroppedDatabasesOperations',
-    'CapabilitiesOperations',
+    'ServersOperations',
     'ServerConnectionPoliciesOperations',
     'DatabaseThreatDetectionPoliciesOperations',
     'DataMaskingPoliciesOperations',
@@ -64,29 +102,73 @@ __all__ = [
     'GeoBackupPoliciesOperations',
     'DatabasesOperations',
     'ElasticPoolsOperations',
+    'RecommendedElasticPoolsOperations',
     'ReplicationLinksOperations',
     'ServerAzureADAdministratorsOperations',
     'ServerCommunicationLinksOperations',
     'ServiceObjectivesOperations',
-    'ServersOperations',
     'ElasticPoolActivitiesOperations',
     'ElasticPoolDatabaseActivitiesOperations',
-    'RecommendedElasticPoolsOperations',
     'ServiceTierAdvisorsOperations',
     'TransparentDataEncryptionsOperations',
     'TransparentDataEncryptionActivitiesOperations',
     'ServerUsagesOperations',
     'DatabaseUsagesOperations',
-    'DatabaseBlobAuditingPoliciesOperations',
+    'DatabaseAutomaticTuningOperations',
     'EncryptionProtectorsOperations',
     'FailoverGroupsOperations',
+    'ManagedInstancesOperations',
     'Operations',
     'ServerKeysOperations',
     'SyncAgentsOperations',
     'SyncGroupsOperations',
     'SyncMembersOperations',
     'SubscriptionUsagesOperations',
+    'VirtualClustersOperations',
     'VirtualNetworkRulesOperations',
-    'DatabaseOperations',
+    'ExtendedDatabaseBlobAuditingPoliciesOperations',
+    'ExtendedServerBlobAuditingPoliciesOperations',
+    'ServerBlobAuditingPoliciesOperations',
+    'DatabaseBlobAuditingPoliciesOperations',
+    'DatabaseVulnerabilityAssessmentRuleBaselinesOperations',
+    'DatabaseVulnerabilityAssessmentsOperations',
+    'JobAgentsOperations',
+    'JobCredentialsOperations',
+    'JobExecutionsOperations',
+    'JobsOperations',
+    'JobStepExecutionsOperations',
+    'JobStepsOperations',
+    'JobTargetExecutionsOperations',
+    'JobTargetGroupsOperations',
+    'JobVersionsOperations',
+    'LongTermRetentionBackupsOperations',
+    'BackupLongTermRetentionPoliciesOperations',
+    'ManagedBackupShortTermRetentionPoliciesOperations',
+    'ManagedDatabasesOperations',
+    'ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations',
+    'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
+    'ServerSecurityAlertPoliciesOperations',
+    'RestorableDroppedManagedDatabasesOperations',
+    'RestorePointsOperations',
+    'ManagedDatabaseSecurityAlertPoliciesOperations',
+    'ManagedServerSecurityAlertPoliciesOperations',
+    'SensitivityLabelsOperations',
+    'DatabaseOperations',
+    'ElasticPoolOperations',
+    'CapabilitiesOperations',
+    'DatabaseVulnerabilityAssessmentScansOperations',
+    'ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations',
+    'ManagedDatabaseVulnerabilityAssessmentScansOperations',
+    'ManagedDatabaseVulnerabilityAssessmentsOperations',
+    'InstanceFailoverGroupsOperations',
+    'BackupShortTermRetentionPoliciesOperations',
+    'TdeCertificatesOperations',
+    'ManagedInstanceTdeCertificatesOperations',
+    'ManagedInstanceKeysOperations',
+    'ManagedInstanceEncryptionProtectorsOperations',
+    'RecoverableManagedDatabasesOperations',
+    'ManagedInstanceVulnerabilityAssessmentsOperations',
+    'ServerVulnerabilityAssessmentsOperations',
+    'ManagedDatabaseSensitivityLabelsOperations',
 ]

@@ -13,20 +13,33 @@ from msrest.serialization import Model
 
 
 class Word(Model):
-    """Word.
+    """Json object representing a recognized word.
 
-    :param bounding_box:
+    All required parameters must be populated in order to send to Azure.
+
+    :param bounding_box: Required. Bounding box of a recognized word.
     :type bounding_box: list[int]
-    :param text:
+    :param text: Required. The text content of the word.
     :type text: str
+    :param confidence: Qualitative confidence measure. Possible values
+     include: 'High', 'Low'
+    :type confidence: str or
+     ~azure.cognitiveservices.vision.computervision.models.TextRecognitionResultConfidenceClass
     """
+
+    _validation = {
+        'bounding_box': {'required': True},
+        'text': {'required': True},
+    }
 
     _attribute_map = {
         'bounding_box': {'key': 'boundingBox', 'type': '[int]'},
         'text': {'key': 'text', 'type': 'str'},
+        'confidence': {'key': 'confidence', 'type': 'TextRecognitionResultConfidenceClass'},
     }
 
-    def __init__(self, bounding_box=None, text=None):
-        super(Word, self).__init__()
-        self.bounding_box = bounding_box
-        self.text = text
+    def __init__(self, **kwargs):
+        super(Word, self).__init__(**kwargs)
+        self.bounding_box = kwargs.get('bounding_box', None)
+        self.text = kwargs.get('text', None)
+        self.confidence = kwargs.get('confidence', None)

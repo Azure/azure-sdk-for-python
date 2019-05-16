@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class PivotSuggestions(Model):
     """PivotSuggestions.
 
-    :param pivot:
+    All required parameters must be populated in order to send to Azure.
+
+    :param pivot: Required.
     :type pivot: str
-    :param suggestions:
+    :param suggestions: Required.
     :type suggestions:
      list[~azure.cognitiveservices.search.videosearch.models.Query]
     """
@@ -32,7 +34,7 @@ class PivotSuggestions(Model):
         'suggestions': {'key': 'suggestions', 'type': '[Query]'},
     }
 
-    def __init__(self, pivot, suggestions):
-        super(PivotSuggestions, self).__init__()
-        self.pivot = pivot
-        self.suggestions = suggestions
+    def __init__(self, **kwargs):
+        super(PivotSuggestions, self).__init__(**kwargs)
+        self.pivot = kwargs.get('pivot', None)
+        self.suggestions = kwargs.get('suggestions', None)

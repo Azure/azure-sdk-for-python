@@ -13,7 +13,9 @@ from .linked_service import LinkedService
 
 
 class ConcurLinkedService(LinkedService):
-    """Concur Serivce linked service.
+    """Concur Service linked service.
+
+    All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
@@ -23,11 +25,19 @@ class ConcurLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Constant filled by server.
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param client_id: Application client_id supplied by Concur App Management.
+    :param client_id: Required. Application client_id supplied by Concur App
+     Management.
     :type client_id: object
-    :param username: The user name that you use to access Concur Service.
+    :param username: Required. The user name that you use to access Concur
+     Service.
     :type username: object
     :param password: The password corresponding to the user name that you
      provided in the username field.
@@ -58,6 +68,8 @@ class ConcurLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'client_id': {'key': 'typeProperties.clientId', 'type': 'object'},
         'username': {'key': 'typeProperties.username', 'type': 'object'},
@@ -68,13 +80,13 @@ class ConcurLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, client_id, username, additional_properties=None, connect_via=None, description=None, password=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None):
-        super(ConcurLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
-        self.client_id = client_id
-        self.username = username
-        self.password = password
-        self.use_encrypted_endpoints = use_encrypted_endpoints
-        self.use_host_verification = use_host_verification
-        self.use_peer_verification = use_peer_verification
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(ConcurLinkedService, self).__init__(**kwargs)
+        self.client_id = kwargs.get('client_id', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.use_encrypted_endpoints = kwargs.get('use_encrypted_endpoints', None)
+        self.use_host_verification = kwargs.get('use_host_verification', None)
+        self.use_peer_verification = kwargs.get('use_peer_verification', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Concur'

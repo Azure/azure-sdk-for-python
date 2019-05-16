@@ -15,18 +15,29 @@ from msrest.serialization import Model
 class ImageUrlCreateEntry(Model):
     """ImageUrlCreateEntry.
 
-    :param url:
+    All required parameters must be populated in order to send to Azure.
+
+    :param url: Required. Url of the image.
     :type url: str
     :param tag_ids:
     :type tag_ids: list[str]
+    :param regions:
+    :type regions:
+     list[~azure.cognitiveservices.vision.customvision.training.models.Region]
     """
 
-    _attribute_map = {
-        'url': {'key': 'Url', 'type': 'str'},
-        'tag_ids': {'key': 'TagIds', 'type': '[str]'},
+    _validation = {
+        'url': {'required': True},
     }
 
-    def __init__(self, url=None, tag_ids=None):
-        super(ImageUrlCreateEntry, self).__init__()
-        self.url = url
-        self.tag_ids = tag_ids
+    _attribute_map = {
+        'url': {'key': 'url', 'type': 'str'},
+        'tag_ids': {'key': 'tagIds', 'type': '[str]'},
+        'regions': {'key': 'regions', 'type': '[Region]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ImageUrlCreateEntry, self).__init__(**kwargs)
+        self.url = kwargs.get('url', None)
+        self.tag_ids = kwargs.get('tag_ids', None)
+        self.regions = kwargs.get('regions', None)

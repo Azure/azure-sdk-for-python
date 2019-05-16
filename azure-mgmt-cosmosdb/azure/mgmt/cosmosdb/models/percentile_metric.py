@@ -54,11 +54,11 @@ class PercentileMetric(Model):
         'metric_values': {'key': 'metricValues', 'type': '[PercentileMetricValue]'},
     }
 
-    def __init__(self, unit=None):
-        super(PercentileMetric, self).__init__()
+    def __init__(self, **kwargs):
+        super(PercentileMetric, self).__init__(**kwargs)
         self.start_time = None
         self.end_time = None
         self.time_grain = None
-        self.unit = unit
+        self.unit = kwargs.get('unit', None)
         self.name = None
         self.metric_values = None

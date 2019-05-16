@@ -21,7 +21,9 @@ class NormalizedRectangle(StructuredValue):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -43,13 +45,13 @@ class NormalizedRectangle(StructuredValue):
     :vartype alternate_name: str
     :ivar bing_id: An ID that uniquely identifies this item.
     :vartype bing_id: str
-    :param left: The left coordinate.
+    :param left: Required. The left coordinate.
     :type left: float
-    :param top: The top coordinate
+    :param top: Required. The top coordinate
     :type top: float
-    :param right: The right coordinate
+    :param right: Required. The right coordinate
     :type right: float
-    :param bottom: The bottom coordinate
+    :param bottom: Required. The bottom coordinate
     :type bottom: float
     """
 
@@ -87,10 +89,10 @@ class NormalizedRectangle(StructuredValue):
         'bottom': {'key': 'bottom', 'type': 'float'},
     }
 
-    def __init__(self, left, top, right, bottom):
-        super(NormalizedRectangle, self).__init__()
-        self.left = left
-        self.top = top
-        self.right = right
-        self.bottom = bottom
+    def __init__(self, **kwargs):
+        super(NormalizedRectangle, self).__init__(**kwargs)
+        self.left = kwargs.get('left', None)
+        self.top = kwargs.get('top', None)
+        self.right = kwargs.get('right', None)
+        self.bottom = kwargs.get('bottom', None)
         self._type = 'NormalizedRectangle'

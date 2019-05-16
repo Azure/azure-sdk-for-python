@@ -30,8 +30,8 @@ class MetricDefinition(Model):
     :ivar unit: The unit of the metric. Possible values include: 'Count',
      'Bytes', 'Seconds', 'Percent', 'CountPerSecond', 'BytesPerSecond'
     :vartype unit: str or ~azure.mgmt.sql.models.UnitDefinitionType
-    :ivar metric_availabilities: The list of database metric availabities for
-     the metric.
+    :ivar metric_availabilities: The list of database metric availabilities
+     for the metric.
     :vartype metric_availabilities:
      list[~azure.mgmt.sql.models.MetricAvailability]
     """
@@ -52,8 +52,8 @@ class MetricDefinition(Model):
         'metric_availabilities': {'key': 'metricAvailabilities', 'type': '[MetricAvailability]'},
     }
 
-    def __init__(self):
-        super(MetricDefinition, self).__init__()
+    def __init__(self, **kwargs):
+        super(MetricDefinition, self).__init__(**kwargs)
         self.name = None
         self.primary_aggregation_type = None
         self.resource_uri = None

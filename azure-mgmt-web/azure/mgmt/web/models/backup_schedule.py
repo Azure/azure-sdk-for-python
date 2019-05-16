@@ -19,21 +19,23 @@ class BackupSchedule(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param frequency_interval: How often the backup should be executed (e.g.
-     for weekly backup, this should be set to 7 and FrequencyUnit should be set
-     to Day). Default value: 7 .
+    All required parameters must be populated in order to send to Azure.
+
+    :param frequency_interval: Required. How often the backup should be
+     executed (e.g. for weekly backup, this should be set to 7 and
+     FrequencyUnit should be set to Day). Default value: 7 .
     :type frequency_interval: int
-    :param frequency_unit: The unit of time for how often the backup should be
-     executed (e.g. for weekly backup, this should be set to Day and
+    :param frequency_unit: Required. The unit of time for how often the backup
+     should be executed (e.g. for weekly backup, this should be set to Day and
      FrequencyInterval should be set to 7). Possible values include: 'Day',
      'Hour'. Default value: "Day" .
     :type frequency_unit: str or ~azure.mgmt.web.models.FrequencyUnit
-    :param keep_at_least_one_backup: True if the retention policy should
-     always keep at least one backup in the storage account, regardless how old
-     it is; false otherwise. Default value: True .
+    :param keep_at_least_one_backup: Required. True if the retention policy
+     should always keep at least one backup in the storage account, regardless
+     how old it is; false otherwise. Default value: True .
     :type keep_at_least_one_backup: bool
-    :param retention_period_in_days: After how many days backups should be
-     deleted. Default value: 30 .
+    :param retention_period_in_days: Required. After how many days backups
+     should be deleted. Default value: 30 .
     :type retention_period_in_days: int
     :param start_time: When the schedule should start working.
     :type start_time: datetime
@@ -58,11 +60,11 @@ class BackupSchedule(Model):
         'last_execution_time': {'key': 'lastExecutionTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, frequency_interval=7, frequency_unit="Day", keep_at_least_one_backup=True, retention_period_in_days=30, start_time=None):
-        super(BackupSchedule, self).__init__()
-        self.frequency_interval = frequency_interval
-        self.frequency_unit = frequency_unit
-        self.keep_at_least_one_backup = keep_at_least_one_backup
-        self.retention_period_in_days = retention_period_in_days
-        self.start_time = start_time
+    def __init__(self, **kwargs):
+        super(BackupSchedule, self).__init__(**kwargs)
+        self.frequency_interval = kwargs.get('frequency_interval', 7)
+        self.frequency_unit = kwargs.get('frequency_unit', "Day")
+        self.keep_at_least_one_backup = kwargs.get('keep_at_least_one_backup', True)
+        self.retention_period_in_days = kwargs.get('retention_period_in_days', 30)
+        self.start_time = kwargs.get('start_time', None)
         self.last_execution_time = None

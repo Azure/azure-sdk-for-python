@@ -14,16 +14,14 @@ from msrest.exceptions import HttpOperationError
 
 
 class ComputerVisionError(Model):
-    """ComputerVisionError.
+    """Details about the API request error.
 
-    :param code: The error code. Possible values include: 'InvalidImageUrl',
-     'InvalidImageFormat', 'InvalidImageSize', 'NotSupportedVisualFeature',
-     'NotSupportedImage', 'InvalidDetails', 'NotSupportedLanguage',
-     'BadArgument', 'FailedToProcess', 'Timeout', 'InternalServerError',
-     'Unspecified', 'StorageException'
-    :type code: str or
-     ~azure.cognitiveservices.vision.computervision.models.ComputerVisionErrorCodes
-    :param message: A message explaining the error reported by the service.
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. The error code.
+    :type code: object
+    :param message: Required. A message explaining the error reported by the
+     service.
     :type message: str
     :param request_id: A unique request identifier.
     :type request_id: str
@@ -35,16 +33,16 @@ class ComputerVisionError(Model):
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'ComputerVisionErrorCodes'},
+        'code': {'key': 'code', 'type': 'object'},
         'message': {'key': 'message', 'type': 'str'},
         'request_id': {'key': 'requestId', 'type': 'str'},
     }
 
-    def __init__(self, code, message, request_id=None):
-        super(ComputerVisionError, self).__init__()
-        self.code = code
-        self.message = message
-        self.request_id = request_id
+    def __init__(self, **kwargs):
+        super(ComputerVisionError, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.request_id = kwargs.get('request_id', None)
 
 
 class ComputerVisionErrorException(HttpOperationError):

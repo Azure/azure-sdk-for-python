@@ -33,7 +33,7 @@ class SshPublicKey(Model):
         'key_data': {'key': 'keyData', 'type': 'str'},
     }
 
-    def __init__(self, path=None, key_data=None):
-        super(SshPublicKey, self).__init__()
-        self.path = path
-        self.key_data = key_data
+    def __init__(self, **kwargs):
+        super(SshPublicKey, self).__init__(**kwargs)
+        self.path = kwargs.get('path', None)
+        self.key_data = kwargs.get('key_data', None)

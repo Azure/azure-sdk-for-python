@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class SapBWLinkedService(LinkedService):
     """SAP Business Warehouse Linked Service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,18 +25,24 @@ class SapBWLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Constant filled by server.
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param server: Host name of the SAP BW instance. Type: string (or
-     Expression with resultType string).
+    :param server: Required. Host name of the SAP BW instance. Type: string
+     (or Expression with resultType string).
     :type server: object
-    :param system_number: System number of the BW system. (Usually a two-digit
-     decimal number represented as a string.) Type: string (or Expression with
-     resultType string).
-    :type system_number: object
-    :param client_id: Client ID of the client on the BW system. (Usually a
-     three-digit decimal number represented as a string) Type: string (or
+    :param system_number: Required. System number of the BW system. (Usually a
+     two-digit decimal number represented as a string.) Type: string (or
      Expression with resultType string).
+    :type system_number: object
+    :param client_id: Required. Client ID of the client on the BW system.
+     (Usually a three-digit decimal number represented as a string) Type:
+     string (or Expression with resultType string).
     :type client_id: object
     :param user_name: Username to access the SAP BW server. Type: string (or
      Expression with resultType string).
@@ -58,6 +66,8 @@ class SapBWLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'server': {'key': 'typeProperties.server', 'type': 'object'},
         'system_number': {'key': 'typeProperties.systemNumber', 'type': 'object'},
@@ -67,12 +77,12 @@ class SapBWLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, server, system_number, client_id, additional_properties=None, connect_via=None, description=None, user_name=None, password=None, encrypted_credential=None):
-        super(SapBWLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
-        self.server = server
-        self.system_number = system_number
-        self.client_id = client_id
-        self.user_name = user_name
-        self.password = password
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(SapBWLinkedService, self).__init__(**kwargs)
+        self.server = kwargs.get('server', None)
+        self.system_number = kwargs.get('system_number', None)
+        self.client_id = kwargs.get('client_id', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'SapBW'

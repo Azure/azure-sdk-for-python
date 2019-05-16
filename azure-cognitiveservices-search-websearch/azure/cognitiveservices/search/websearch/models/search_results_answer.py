@@ -23,7 +23,9 @@ class SearchResultsAnswer(Answer):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -67,8 +69,8 @@ class SearchResultsAnswer(Answer):
         '_type': {'Web/WebAnswer': 'WebWebAnswer', 'Images': 'Images', 'News': 'News', 'RelatedSearches/RelatedSearchAnswer': 'RelatedSearchesRelatedSearchAnswer', 'SpellSuggestions': 'SpellSuggestions', 'TimeZone': 'TimeZone', 'Videos': 'Videos', 'Places': 'Places'}
     }
 
-    def __init__(self):
-        super(SearchResultsAnswer, self).__init__()
+    def __init__(self, **kwargs):
+        super(SearchResultsAnswer, self).__init__(**kwargs)
         self.query_context = None
         self.total_estimated_matches = None
         self.is_family_friendly = None

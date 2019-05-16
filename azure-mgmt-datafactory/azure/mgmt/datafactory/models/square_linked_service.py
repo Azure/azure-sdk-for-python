@@ -13,7 +13,9 @@ from .linked_service import LinkedService
 
 
 class SquareLinkedService(LinkedService):
-    """Square Serivce linked service.
+    """Square Service linked service.
+
+    All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
@@ -23,17 +25,25 @@ class SquareLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Constant filled by server.
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param host: The URL of the Square instance. (i.e. mystore.mysquare.com)
+    :param host: Required. The URL of the Square instance. (i.e.
+     mystore.mysquare.com)
     :type host: object
-    :param client_id: The client ID associated with your Square application.
+    :param client_id: Required. The client ID associated with your Square
+     application.
     :type client_id: object
     :param client_secret: The client secret associated with your Square
      application.
     :type client_secret: ~azure.mgmt.datafactory.models.SecretBase
-    :param redirect_uri: The redirect URL assigned in the Square application
-     dashboard. (i.e. http://localhost:2500)
+    :param redirect_uri: Required. The redirect URL assigned in the Square
+     application dashboard. (i.e. http://localhost:2500)
     :type redirect_uri: object
     :param use_encrypted_endpoints: Specifies whether the data source
      endpoints are encrypted using HTTPS. The default value is true.
@@ -62,6 +72,8 @@ class SquareLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'host': {'key': 'typeProperties.host', 'type': 'object'},
         'client_id': {'key': 'typeProperties.clientId', 'type': 'object'},
@@ -73,14 +85,14 @@ class SquareLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, host, client_id, redirect_uri, additional_properties=None, connect_via=None, description=None, client_secret=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None):
-        super(SquareLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
-        self.host = host
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.redirect_uri = redirect_uri
-        self.use_encrypted_endpoints = use_encrypted_endpoints
-        self.use_host_verification = use_host_verification
-        self.use_peer_verification = use_peer_verification
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(SquareLinkedService, self).__init__(**kwargs)
+        self.host = kwargs.get('host', None)
+        self.client_id = kwargs.get('client_id', None)
+        self.client_secret = kwargs.get('client_secret', None)
+        self.redirect_uri = kwargs.get('redirect_uri', None)
+        self.use_encrypted_endpoints = kwargs.get('use_encrypted_endpoints', None)
+        self.use_host_verification = kwargs.get('use_host_verification', None)
+        self.use_peer_verification = kwargs.get('use_peer_verification', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Square'

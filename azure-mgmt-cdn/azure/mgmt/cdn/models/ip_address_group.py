@@ -29,8 +29,8 @@ class IpAddressGroup(Model):
         'ipv6_addresses': {'key': 'ipv6Addresses', 'type': '[CidrIpAddress]'},
     }
 
-    def __init__(self, delivery_region=None, ipv4_addresses=None, ipv6_addresses=None):
-        super(IpAddressGroup, self).__init__()
-        self.delivery_region = delivery_region
-        self.ipv4_addresses = ipv4_addresses
-        self.ipv6_addresses = ipv6_addresses
+    def __init__(self, **kwargs):
+        super(IpAddressGroup, self).__init__(**kwargs)
+        self.delivery_region = kwargs.get('delivery_region', None)
+        self.ipv4_addresses = kwargs.get('ipv4_addresses', None)
+        self.ipv6_addresses = kwargs.get('ipv6_addresses', None)

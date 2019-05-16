@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class EntityQueryScenario(Enum):
+class EntityQueryScenario(str, Enum):
 
     dominant_entity = "DominantEntity"
     dominant_entity_with_disambiguation = "DominantEntityWithDisambiguation"
@@ -21,14 +21,14 @@ class EntityQueryScenario(Enum):
     list_with_pivot = "ListWithPivot"
 
 
-class EntityScenario(Enum):
+class EntityScenario(str, Enum):
 
     dominant_entity = "DominantEntity"
     disambiguation_item = "DisambiguationItem"
     list_item = "ListItem"
 
 
-class EntityType(Enum):
+class EntityType(str, Enum):
 
     generic = "Generic"
     person = "Person"
@@ -81,7 +81,7 @@ class EntityType(Enum):
     car = "Car"
 
 
-class ErrorCode(Enum):
+class ErrorCode(str, Enum):
 
     none = "None"
     server_error = "ServerError"
@@ -91,7 +91,7 @@ class ErrorCode(Enum):
     insufficient_authorization = "InsufficientAuthorization"
 
 
-class ErrorSubCode(Enum):
+class ErrorSubCode(str, Enum):
 
     unexpected_error = "UnexpectedError"
     resource_error = "ResourceError"
@@ -106,19 +106,19 @@ class ErrorSubCode(Enum):
     authorization_expired = "AuthorizationExpired"
 
 
-class AnswerType(Enum):
+class AnswerType(str, Enum):
 
     entities = "Entities"
     places = "Places"
 
 
-class ResponseFormat(Enum):
+class ResponseFormat(str, Enum):
 
     json = "Json"
     json_ld = "JsonLd"
 
 
-class SafeSearch(Enum):
+class SafeSearch(str, Enum):
 
     off = "Off"
     moderate = "Moderate"

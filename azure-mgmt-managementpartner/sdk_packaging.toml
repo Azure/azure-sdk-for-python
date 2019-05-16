@@ -1,8 +1,8 @@
 [packaging]
 package_name = "azure-mgmt-managementpartner"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "MyService Management"
-package_doc_id = ""
 is_stable = false
 is_arm = true
 need_msrestazure = true
+package_pprint_name = "ManagementPartner Management"
+package_doc_id = ""

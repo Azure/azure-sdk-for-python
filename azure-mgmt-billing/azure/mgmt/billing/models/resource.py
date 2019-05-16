@@ -39,6 +39,7 @@ class Resource(Model):
     }
 
     def __init__(self):
+        super(Resource, self).__init__()
         self.id = None
         self.name = None
         self.type = None

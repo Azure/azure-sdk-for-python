@@ -29,9 +29,10 @@ class VaultCertificate(Model):
      on the Virtual Machine to which the certificate should be added. The
      specified certificate store is implicitly in the LocalMachine account.
      <br><br>For Linux VMs, the certificate file is placed under the
-     /var/lib/waagent directory, with the file name <UppercaseThumbprint>.crt
-     for the X509 certificate file and <UppercaseThumbpring>.prv for private
-     key. Both of these files are .pem formatted.
+     /var/lib/waagent directory, with the file name
+     &lt;UppercaseThumbprint&gt;.crt for the X509 certificate file and
+     &lt;UppercaseThumbprint&gt;.prv for private key. Both of these files are
+     .pem formatted.
     :type certificate_store: str
     """
 
@@ -40,7 +41,7 @@ class VaultCertificate(Model):
         'certificate_store': {'key': 'certificateStore', 'type': 'str'},
     }
 
-    def __init__(self, certificate_url=None, certificate_store=None):
-        super(VaultCertificate, self).__init__()
-        self.certificate_url = certificate_url
-        self.certificate_store = certificate_store
+    def __init__(self, **kwargs):
+        super(VaultCertificate, self).__init__(**kwargs)
+        self.certificate_url = kwargs.get('certificate_url', None)
+        self.certificate_store = kwargs.get('certificate_store', None)

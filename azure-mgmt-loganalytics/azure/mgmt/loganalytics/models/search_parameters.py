@@ -15,12 +15,13 @@ from msrest.serialization import Model
 class SearchParameters(Model):
     """Parameters specifying the search query and range.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param top: The number to get from the top.
     :type top: long
     :param highlight: The highlight that looks for all occurences of a string.
-    :type highlight: :class:`SearchHighlight
-     <azure.mgmt.loganalytics.models.SearchHighlight>`
-    :param query: The query to search.
+    :type highlight: ~azure.mgmt.loganalytics.models.SearchHighlight
+    :param query: Required. The query to search.
     :type query: str
     :param start: The start date filter, so the only query results returned
      are after this date.
@@ -42,9 +43,10 @@ class SearchParameters(Model):
         'end': {'key': 'end', 'type': 'iso-8601'},
     }
 
-    def __init__(self, query, top=None, highlight=None, start=None, end=None):
-        self.top = top
-        self.highlight = highlight
-        self.query = query
-        self.start = start
-        self.end = end
+    def __init__(self, **kwargs):
+        super(SearchParameters, self).__init__(**kwargs)
+        self.top = kwargs.get('top', None)
+        self.highlight = kwargs.get('highlight', None)
+        self.query = kwargs.get('query', None)
+        self.start = kwargs.get('start', None)
+        self.end = kwargs.get('end', None)

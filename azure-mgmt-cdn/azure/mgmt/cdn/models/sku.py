@@ -18,7 +18,7 @@ class Sku(Model):
 
     :param name: Name of the pricing tier. Possible values include:
      'Standard_Verizon', 'Premium_Verizon', 'Custom_Verizon',
-     'Standard_Akamai', 'Standard_ChinaCdn'
+     'Standard_Akamai', 'Standard_ChinaCdn', 'Standard_Microsoft'
     :type name: str or ~azure.mgmt.cdn.models.SkuName
     """
 
@@ -26,6 +26,6 @@ class Sku(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
-        super(Sku, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(Sku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

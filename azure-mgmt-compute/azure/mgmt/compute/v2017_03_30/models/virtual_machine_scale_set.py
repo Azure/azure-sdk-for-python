@@ -18,13 +18,15 @@ class VirtualMachineScaleSet(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Resource location
+    :param location: Required. Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -90,15 +92,15 @@ class VirtualMachineScaleSet(Resource):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, location, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision=None, single_placement_group=None, identity=None, zones=None):
-        super(VirtualMachineScaleSet, self).__init__(location=location, tags=tags)
-        self.sku = sku
-        self.plan = plan
-        self.upgrade_policy = upgrade_policy
-        self.virtual_machine_profile = virtual_machine_profile
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSet, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
+        self.plan = kwargs.get('plan', None)
+        self.upgrade_policy = kwargs.get('upgrade_policy', None)
+        self.virtual_machine_profile = kwargs.get('virtual_machine_profile', None)
         self.provisioning_state = None
-        self.overprovision = overprovision
+        self.overprovision = kwargs.get('overprovision', None)
         self.unique_id = None
-        self.single_placement_group = single_placement_group
-        self.identity = identity
-        self.zones = zones
+        self.single_placement_group = kwargs.get('single_placement_group', None)
+        self.identity = kwargs.get('identity', None)
+        self.zones = kwargs.get('zones', None)

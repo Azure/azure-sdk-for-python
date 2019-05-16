@@ -9,15 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.backup_vault_configs_operations import BackupVaultConfigsOperations
-from .operations.backup_storage_configs_operations import BackupStorageConfigsOperations
 from .operations.vault_certificates_operations import VaultCertificatesOperations
 from .operations.registered_identities_operations import RegisteredIdentitiesOperations
 from .operations.replication_usages_operations import ReplicationUsagesOperations
+from .operations.recovery_services_operations import RecoveryServicesOperations
 from .operations.vaults_operations import VaultsOperations
 from .operations.operations import Operations
 from .operations.vault_extended_info_operations import VaultExtendedInfoOperations
@@ -45,36 +44,32 @@ class RecoveryServicesClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not isinstance(subscription_id, str):
-            raise TypeError("Parameter 'subscription_id' must be str.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
         super(RecoveryServicesClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('recoveryservicesclient/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-recoveryservices/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
 
 
-class RecoveryServicesClient(object):
+class RecoveryServicesClient(SDKClient):
     """Recovery Services Client
 
     :ivar config: Configuration for client.
     :vartype config: RecoveryServicesClientConfiguration
 
-    :ivar backup_vault_configs: BackupVaultConfigs operations
-    :vartype backup_vault_configs: azure.mgmt.recoveryservices.operations.BackupVaultConfigsOperations
-    :ivar backup_storage_configs: BackupStorageConfigs operations
-    :vartype backup_storage_configs: azure.mgmt.recoveryservices.operations.BackupStorageConfigsOperations
     :ivar vault_certificates: VaultCertificates operations
     :vartype vault_certificates: azure.mgmt.recoveryservices.operations.VaultCertificatesOperations
     :ivar registered_identities: RegisteredIdentities operations
     :vartype registered_identities: azure.mgmt.recoveryservices.operations.RegisteredIdentitiesOperations
     :ivar replication_usages: ReplicationUsages operations
     :vartype replication_usages: azure.mgmt.recoveryservices.operations.ReplicationUsagesOperations
+    :ivar recovery_services: RecoveryServices operations
+    :vartype recovery_services: azure.mgmt.recoveryservices.operations.RecoveryServicesOperations
     :ivar vaults: Vaults operations
     :vartype vaults: azure.mgmt.recoveryservices.operations.VaultsOperations
     :ivar operations: Operations operations
@@ -96,21 +91,20 @@ class RecoveryServicesClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = RecoveryServicesClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(RecoveryServicesClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2016-06-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.backup_vault_configs = BackupVaultConfigsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.backup_storage_configs = BackupStorageConfigsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.vault_certificates = VaultCertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.registered_identities = RegisteredIdentitiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.replication_usages = ReplicationUsagesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.recovery_services = RecoveryServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.vaults = VaultsOperations(
             self._client, self.config, self._serialize, self._deserialize)

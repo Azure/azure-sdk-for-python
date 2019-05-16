@@ -16,9 +16,10 @@ class OSProfile(Model):
     """Specifies the operating system settings for the virtual machine.
 
     :param computer_name: Specifies the host OS name of the virtual machine.
-     <br><br> **Max-length (Windows):** 15 characters <br><br> **Max-length
-     (Linux):** 64 characters. <br><br> For naming conventions and restrictions
-     see [Azure infrastructure services implementation
+     <br><br> This name cannot be updated after the VM is created. <br><br>
+     **Max-length (Windows):** 15 characters <br><br> **Max-length (Linux):**
+     64 characters. <br><br> For naming conventions and restrictions see [Azure
+     infrastructure services implementation
      guidelines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-linux-infrastructure-subscription-accounts-guidelines?toc=%2fazure%2fvirtual-machines%2flinux%2ftoc.json#1-naming-conventions).
     :type computer_name: str
     :param admin_username: Specifies the name of the administrator account.
@@ -88,12 +89,12 @@ class OSProfile(Model):
         'secrets': {'key': 'secrets', 'type': '[VaultSecretGroup]'},
     }
 
-    def __init__(self, computer_name=None, admin_username=None, admin_password=None, custom_data=None, windows_configuration=None, linux_configuration=None, secrets=None):
-        super(OSProfile, self).__init__()
-        self.computer_name = computer_name
-        self.admin_username = admin_username
-        self.admin_password = admin_password
-        self.custom_data = custom_data
-        self.windows_configuration = windows_configuration
-        self.linux_configuration = linux_configuration
-        self.secrets = secrets
+    def __init__(self, **kwargs):
+        super(OSProfile, self).__init__(**kwargs)
+        self.computer_name = kwargs.get('computer_name', None)
+        self.admin_username = kwargs.get('admin_username', None)
+        self.admin_password = kwargs.get('admin_password', None)
+        self.custom_data = kwargs.get('custom_data', None)
+        self.windows_configuration = kwargs.get('windows_configuration', None)
+        self.linux_configuration = kwargs.get('linux_configuration', None)
+        self.secrets = kwargs.get('secrets', None)

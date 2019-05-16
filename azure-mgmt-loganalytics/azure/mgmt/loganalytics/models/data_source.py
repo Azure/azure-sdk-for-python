@@ -18,6 +18,8 @@ class DataSource(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -25,20 +27,19 @@ class DataSource(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags
-    :type tags: dict
-    :param properties: The data source properties in raw json format, each
-     kind of data source have it's own schema.
+    :type tags: dict[str, str]
+    :param properties: Required. The data source properties in raw json
+     format, each kind of data source have it's own schema.
     :type properties: object
     :param e_tag: The ETag of the data source.
     :type e_tag: str
-    :param kind: Possible values include: 'AzureActivityLog',
+    :param kind: Required. Possible values include: 'AzureActivityLog',
      'ChangeTrackingPath', 'ChangeTrackingDefaultPath',
      'ChangeTrackingDefaultRegistry', 'ChangeTrackingCustomRegistry',
      'CustomLog', 'CustomLogCollection', 'GenericDataSource', 'IISLogs',
      'LinuxPerformanceObject', 'LinuxPerformanceCollection', 'LinuxSyslog',
      'LinuxSyslogCollection', 'WindowsEvent', 'WindowsPerformanceCounter'
-    :type kind: str or :class:`DataSourceKind
-     <azure.mgmt.loganalytics.models.DataSourceKind>`
+    :type kind: str or ~azure.mgmt.loganalytics.models.DataSourceKind
     """
 
     _validation = {
@@ -59,8 +60,8 @@ class DataSource(ProxyResource):
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, properties, kind, tags=None, e_tag=None):
-        super(DataSource, self).__init__(tags=tags)
-        self.properties = properties
-        self.e_tag = e_tag
-        self.kind = kind
+    def __init__(self, **kwargs):
+        super(DataSource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+        self.e_tag = kwargs.get('e_tag', None)
+        self.kind = kwargs.get('kind', None)

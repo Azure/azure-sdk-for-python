@@ -15,11 +15,12 @@ from msrest.serialization import Model
 class IntegrationAccountAgreementFilter(Model):
     """The integration account agreement filter for odata query.
 
-    :param agreement_type: The agreement type of integration account
+    All required parameters must be populated in order to send to Azure.
+
+    :param agreement_type: Required. The agreement type of integration account
      agreement. Possible values include: 'NotSpecified', 'AS2', 'X12',
      'Edifact'
-    :type agreement_type: str or :class:`AgreementType
-     <azure.mgmt.logic.models.AgreementType>`
+    :type agreement_type: str or ~azure.mgmt.logic.models.AgreementType
     """
 
     _validation = {
@@ -30,5 +31,6 @@ class IntegrationAccountAgreementFilter(Model):
         'agreement_type': {'key': 'agreementType', 'type': 'AgreementType'},
     }
 
-    def __init__(self, agreement_type):
-        self.agreement_type = agreement_type
+    def __init__(self, **kwargs):
+        super(IntegrationAccountAgreementFilter, self).__init__(**kwargs)
+        self.agreement_type = kwargs.get('agreement_type', None)

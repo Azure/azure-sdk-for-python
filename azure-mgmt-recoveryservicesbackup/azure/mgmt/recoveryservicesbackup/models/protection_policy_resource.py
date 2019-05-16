@@ -29,12 +29,12 @@ class ProtectionPolicyResource(Resource):
     :param location: Resource location.
     :type location: str
     :param tags: Resource tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param e_tag: Optional ETag.
     :type e_tag: str
     :param properties: ProtectionPolicyResource properties
-    :type properties: :class:`ProtectionPolicy
-     <azure.mgmt.recoveryservicesbackup.models.ProtectionPolicy>`
+    :type properties:
+     ~azure.mgmt.recoveryservicesbackup.models.ProtectionPolicy
     """
 
     _validation = {
@@ -53,6 +53,6 @@ class ProtectionPolicyResource(Resource):
         'properties': {'key': 'properties', 'type': 'ProtectionPolicy'},
     }
 
-    def __init__(self, location=None, tags=None, e_tag=None, properties=None):
-        super(ProtectionPolicyResource, self).__init__(location=location, tags=tags, e_tag=e_tag)
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(ProtectionPolicyResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

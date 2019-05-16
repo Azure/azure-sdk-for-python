@@ -27,7 +27,7 @@ class AutoHealRules(Model):
         'actions': {'key': 'actions', 'type': 'AutoHealActions'},
     }
 
-    def __init__(self, triggers=None, actions=None):
-        super(AutoHealRules, self).__init__()
-        self.triggers = triggers
-        self.actions = actions
+    def __init__(self, **kwargs):
+        super(AutoHealRules, self).__init__(**kwargs)
+        self.triggers = kwargs.get('triggers', None)
+        self.actions = kwargs.get('actions', None)

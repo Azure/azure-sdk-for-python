@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class VirtualMachineScaleSetVMInstanceRequiredIDs(Model):
     """Specifies a list of virtual machine instance IDs from the VM scale set.
 
-    :param instance_ids: The virtual machine scale set instance ids.
+    All required parameters must be populated in order to send to Azure.
+
+    :param instance_ids: Required. The virtual machine scale set instance ids.
     :type instance_ids: list[str]
     """
 
@@ -27,6 +29,6 @@ class VirtualMachineScaleSetVMInstanceRequiredIDs(Model):
         'instance_ids': {'key': 'instanceIds', 'type': '[str]'},
     }
 
-    def __init__(self, instance_ids):
-        super(VirtualMachineScaleSetVMInstanceRequiredIDs, self).__init__()
-        self.instance_ids = instance_ids
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetVMInstanceRequiredIDs, self).__init__(**kwargs)
+        self.instance_ids = kwargs.get('instance_ids', None)

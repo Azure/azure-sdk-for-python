@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -57,7 +57,7 @@ class DataLakeAnalyticsAccountManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class DataLakeAnalyticsAccountManagementClient(object):
+class DataLakeAnalyticsAccountManagementClient(SDKClient):
     """Creates an Azure Data Lake Analytics account management client.
 
     :ivar config: Configuration for client.
@@ -92,7 +92,7 @@ class DataLakeAnalyticsAccountManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = DataLakeAnalyticsAccountManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(DataLakeAnalyticsAccountManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2016-11-01'

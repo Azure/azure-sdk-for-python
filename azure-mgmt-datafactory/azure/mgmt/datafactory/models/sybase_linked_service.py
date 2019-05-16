@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class SybaseLinkedService(LinkedService):
     """Linked service for Sybase data source.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,13 +25,19 @@ class SybaseLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Constant filled by server.
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param server: Server name for connection. Type: string (or Expression
-     with resultType string).
+    :param server: Required. Server name for connection. Type: string (or
+     Expression with resultType string).
     :type server: object
-    :param database: Database name for connection. Type: string (or Expression
-     with resultType string).
+    :param database: Required. Database name for connection. Type: string (or
+     Expression with resultType string).
     :type database: object
     :param schema: Schema name for connection. Type: string (or Expression
      with resultType string).
@@ -59,6 +67,8 @@ class SybaseLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'server': {'key': 'typeProperties.server', 'type': 'object'},
         'database': {'key': 'typeProperties.database', 'type': 'object'},
@@ -69,13 +79,13 @@ class SybaseLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, server, database, additional_properties=None, connect_via=None, description=None, schema=None, authentication_type=None, username=None, password=None, encrypted_credential=None):
-        super(SybaseLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
-        self.server = server
-        self.database = database
-        self.schema = schema
-        self.authentication_type = authentication_type
-        self.username = username
-        self.password = password
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(SybaseLinkedService, self).__init__(**kwargs)
+        self.server = kwargs.get('server', None)
+        self.database = kwargs.get('database', None)
+        self.schema = kwargs.get('schema', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Sybase'

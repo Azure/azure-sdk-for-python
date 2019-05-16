@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .prediction_endpoint import PredictionEndpoint
+from .custom_vision_prediction_client import CustomVisionPredictionClient
 from .version import VERSION
 
-__all__ = ['PredictionEndpoint']
+__all__ = ['CustomVisionPredictionClient']
 
 __version__ = VERSION
 

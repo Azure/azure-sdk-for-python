@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class MetricValue(Model):
     """Represents a metric value.
 
-    :param time_stamp: the timestamp for the metric value in ISO 8601 format.
+    All required parameters must be populated in order to send to Azure.
+
+    :param time_stamp: Required. the timestamp for the metric value in ISO
+     8601 format.
     :type time_stamp: datetime
     :param average: the average value in the time range.
     :type average: float
@@ -43,10 +46,11 @@ class MetricValue(Model):
         'count': {'key': 'count', 'type': 'long'},
     }
 
-    def __init__(self, time_stamp, average=None, minimum=None, maximum=None, total=None, count=None):
-        self.time_stamp = time_stamp
-        self.average = average
-        self.minimum = minimum
-        self.maximum = maximum
-        self.total = total
-        self.count = count
+    def __init__(self, **kwargs):
+        super(MetricValue, self).__init__(**kwargs)
+        self.time_stamp = kwargs.get('time_stamp', None)
+        self.average = kwargs.get('average', None)
+        self.minimum = kwargs.get('minimum', None)
+        self.maximum = kwargs.get('maximum', None)
+        self.total = kwargs.get('total', None)
+        self.count = kwargs.get('count', None)

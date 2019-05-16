@@ -15,9 +15,12 @@ from msrest.serialization import Model
 class JobPreparation(Model):
     """Specifies the settings for job preparation.
 
-    :param command_line: The command line to execute. If containerSettings is
-     specified on the job, this commandLine will be executed in the same
-     container as job. Otherwise it will be executed on the node.
+    All required parameters must be populated in order to send to Azure.
+
+    :param command_line: Required. The command line to execute. If
+     containerSettings is specified on the job, this commandLine will be
+     executed in the same container as job. Otherwise it will be executed on
+     the node.
     :type command_line: str
     """
 
@@ -29,5 +32,6 @@ class JobPreparation(Model):
         'command_line': {'key': 'commandLine', 'type': 'str'},
     }
 
-    def __init__(self, command_line):
-        self.command_line = command_line
+    def __init__(self, **kwargs):
+        super(JobPreparation, self).__init__(**kwargs)
+        self.command_line = kwargs.get('command_line', None)

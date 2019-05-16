@@ -44,10 +44,10 @@ class FunctionSecrets(ProxyOnlyResource):
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'key': {'key': 'properties.key', 'type': 'str'},
-        'trigger_url': {'key': 'properties.triggerUrl', 'type': 'str'},
+        'trigger_url': {'key': 'properties.trigger_url', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, key=None, trigger_url=None):
-        super(FunctionSecrets, self).__init__(kind=kind)
-        self.key = key
-        self.trigger_url = trigger_url
+    def __init__(self, **kwargs):
+        super(FunctionSecrets, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
+        self.trigger_url = kwargs.get('trigger_url', None)

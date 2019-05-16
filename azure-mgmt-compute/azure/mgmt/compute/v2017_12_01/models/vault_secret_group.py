@@ -29,7 +29,7 @@ class VaultSecretGroup(Model):
         'vault_certificates': {'key': 'vaultCertificates', 'type': '[VaultCertificate]'},
     }
 
-    def __init__(self, source_vault=None, vault_certificates=None):
-        super(VaultSecretGroup, self).__init__()
-        self.source_vault = source_vault
-        self.vault_certificates = vault_certificates
+    def __init__(self, **kwargs):
+        super(VaultSecretGroup, self).__init__(**kwargs)
+        self.source_vault = kwargs.get('source_vault', None)
+        self.vault_certificates = kwargs.get('vault_certificates', None)

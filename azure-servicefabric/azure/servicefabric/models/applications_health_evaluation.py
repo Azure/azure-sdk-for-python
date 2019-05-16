@@ -17,6 +17,8 @@ class ApplicationsHealthEvaluation(HealthEvaluation):
     evaluations for each unhealthy application that impacted current aggregated
     health state.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param aggregated_health_state: The health state of a Service Fabric
      entity such as Cluster, Node, Application, Service, Partition, Replica
      etc. Possible values include: 'Invalid', 'Ok', 'Warning', 'Error',
@@ -26,7 +28,7 @@ class ApplicationsHealthEvaluation(HealthEvaluation):
     :param description: Description of the health evaluation, which represents
      a summary of the evaluation process.
     :type description: str
-    :param kind: Constant filled by server.
+    :param kind: Required. Constant filled by server.
     :type kind: str
     :param max_percent_unhealthy_applications: Maximum allowed percentage of
      unhealthy applications from the ClusterHealthPolicy.
@@ -53,9 +55,9 @@ class ApplicationsHealthEvaluation(HealthEvaluation):
         'unhealthy_evaluations': {'key': 'UnhealthyEvaluations', 'type': '[HealthEvaluationWrapper]'},
     }
 
-    def __init__(self, aggregated_health_state=None, description=None, max_percent_unhealthy_applications=None, total_count=None, unhealthy_evaluations=None):
-        super(ApplicationsHealthEvaluation, self).__init__(aggregated_health_state=aggregated_health_state, description=description)
-        self.max_percent_unhealthy_applications = max_percent_unhealthy_applications
-        self.total_count = total_count
-        self.unhealthy_evaluations = unhealthy_evaluations
+    def __init__(self, **kwargs):
+        super(ApplicationsHealthEvaluation, self).__init__(**kwargs)
+        self.max_percent_unhealthy_applications = kwargs.get('max_percent_unhealthy_applications', None)
+        self.total_count = kwargs.get('total_count', None)
+        self.unhealthy_evaluations = kwargs.get('unhealthy_evaluations', None)
         self.kind = 'Applications'

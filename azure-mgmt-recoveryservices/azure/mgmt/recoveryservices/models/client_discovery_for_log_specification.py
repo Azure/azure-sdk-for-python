@@ -29,7 +29,8 @@ class ClientDiscoveryForLogSpecification(Model):
         'blob_duration': {'key': 'blobDuration', 'type': 'str'},
     }
 
-    def __init__(self, name=None, display_name=None, blob_duration=None):
-        self.name = name
-        self.display_name = display_name
-        self.blob_duration = blob_duration
+    def __init__(self, **kwargs):
+        super(ClientDiscoveryForLogSpecification, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.blob_duration = kwargs.get('blob_duration', None)

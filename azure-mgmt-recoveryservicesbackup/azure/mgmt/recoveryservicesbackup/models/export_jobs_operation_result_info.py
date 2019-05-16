@@ -15,7 +15,9 @@ from .operation_result_info_base import OperationResultInfoBase
 class ExportJobsOperationResultInfo(OperationResultInfoBase):
     """This class is used to send blob details after exporting jobs.
 
-    :param object_type: Polymorphic Discriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param blob_url: URL of the blob into which the serialized string of list
      of jobs is exported.
@@ -34,8 +36,8 @@ class ExportJobsOperationResultInfo(OperationResultInfoBase):
         'blob_sas_key': {'key': 'blobSasKey', 'type': 'str'},
     }
 
-    def __init__(self, blob_url=None, blob_sas_key=None):
-        super(ExportJobsOperationResultInfo, self).__init__()
-        self.blob_url = blob_url
-        self.blob_sas_key = blob_sas_key
+    def __init__(self, **kwargs):
+        super(ExportJobsOperationResultInfo, self).__init__(**kwargs)
+        self.blob_url = kwargs.get('blob_url', None)
+        self.blob_sas_key = kwargs.get('blob_sas_key', None)
         self.object_type = 'ExportJobsOperationResultInfo'

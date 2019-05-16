@@ -21,8 +21,7 @@ class VaultProperties(Model):
     :ivar provisioning_state: Provisioning State.
     :vartype provisioning_state: str
     :param upgrade_details:
-    :type upgrade_details: :class:`UpgradeDetails
-     <azure.mgmt.recoveryservices.models.UpgradeDetails>`
+    :type upgrade_details: ~azure.mgmt.recoveryservices.models.UpgradeDetails
     """
 
     _validation = {
@@ -34,6 +33,7 @@ class VaultProperties(Model):
         'upgrade_details': {'key': 'upgradeDetails', 'type': 'UpgradeDetails'},
     }
 
-    def __init__(self, upgrade_details=None):
+    def __init__(self, **kwargs):
+        super(VaultProperties, self).__init__(**kwargs)
         self.provisioning_state = None
-        self.upgrade_details = upgrade_details
+        self.upgrade_details = kwargs.get('upgrade_details', None)

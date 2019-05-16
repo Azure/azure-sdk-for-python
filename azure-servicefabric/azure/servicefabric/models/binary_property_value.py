@@ -15,10 +15,12 @@ from .property_value import PropertyValue
 class BinaryPropertyValue(PropertyValue):
     """Describes a Service Fabric property value of type Binary.
 
-    :param kind: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param kind: Required. Constant filled by server.
     :type kind: str
-    :param data: Array of bytes to be sent as an integer array. Each element
-     of array is a number between 0 and 255.
+    :param data: Required. Array of bytes to be sent as an integer array. Each
+     element of array is a number between 0 and 255.
     :type data: list[int]
     """
 
@@ -32,7 +34,7 @@ class BinaryPropertyValue(PropertyValue):
         'data': {'key': 'Data', 'type': '[int]'},
     }
 
-    def __init__(self, data):
-        super(BinaryPropertyValue, self).__init__()
-        self.data = data
+    def __init__(self, **kwargs):
+        super(BinaryPropertyValue, self).__init__(**kwargs)
+        self.data = kwargs.get('data', None)
         self.kind = 'Binary'

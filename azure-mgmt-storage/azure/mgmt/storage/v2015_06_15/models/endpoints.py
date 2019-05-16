@@ -33,9 +33,9 @@ class Endpoints(Model):
         'file': {'key': 'file', 'type': 'str'},
     }
 
-    def __init__(self, blob=None, queue=None, table=None, file=None):
-        super(Endpoints, self).__init__()
-        self.blob = blob
-        self.queue = queue
-        self.table = table
-        self.file = file
+    def __init__(self, **kwargs):
+        super(Endpoints, self).__init__(**kwargs)
+        self.blob = kwargs.get('blob', None)
+        self.queue = kwargs.get('queue', None)
+        self.table = kwargs.get('table', None)
+        self.file = kwargs.get('file', None)

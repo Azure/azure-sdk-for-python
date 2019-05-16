@@ -1,18 +1,85 @@
 interactions:
 - request:
+    body: grant_type=client_credentials&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&response_type=client_credentials
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '116'
+      Content-Type:
+      - application/x-www-form-urlencoded;charset=UTF-8
+      User-Agent:
+      - python-requests/2.21.0
+    method: POST
+    uri: https://login.windows-ppe.net/3c662abc-ebe5-4a69-bf64-4674b3313ef8/oauth2/token
+  response:
+    body:
+      string: '{"token_type":"Bearer","expires_in":"3600","ext_expires_in":"3600","expires_on":"1556229258","not_before":"1556225358","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Il9qRE5NaUprakNHaU5TSEsyOS1kN3ZKczVuUSIsImtpZCI6Il9qRE5NaUprakNHaU5TSEsyOS1kN3ZKczVuUSJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLXBwZS5uZXQvM2M2NjJhYmMtZWJlNS00YTY5LWJmNjQtNDY3NGIzMzEzZWY4LyIsImlhdCI6MTU1NjIyNTM1OCwibmJmIjoxNTU2MjI1MzU4LCJleHAiOjE1NTYyMjkyNTgsImFpbyI6IjQyTmdZT2hTUzlsMys2a056NVFiVFozcWQ2KytBZ0E9IiwiYXBwaWQiOiI0YzBhMDVlNC00MDY0LTQ3ZmUtODc1Zi02YTk3MmY5MzJiNDQiLCJhcHBpZGFjciI6IjEiLCJpZHAiOiJodHRwczovL3N0cy53aW5kb3dzLXBwZS5uZXQvM2M2NjJhYmMtZWJlNS00YTY5LWJmNjQtNDY3NGIzMzEzZWY4LyIsIm9pZCI6IjI2M2JjYThhLTcyOTEtNGRlMy05ODFkLTQ1NWE1MjIzZjYxYyIsInN1YiI6IjI2M2JjYThhLTcyOTEtNGRlMy05ODFkLTQ1NWE1MjIzZjYxYyIsInRpZCI6IjNjNjYyYWJjLWViZTUtNGE2OS1iZjY0LTQ2NzRiMzMxM2VmOCIsInV0aSI6InI1TzRKdFlfSGttRzFlTjY5UDREQUEiLCJ2ZXIiOiIxLjAifQ.ma11OtVgJK_txB96nogkjZBd1LJ1nPNX55x-Xhavd5GCKRtXMcBIajfZnR_2xR2zqSNvGR3HlVOrdBT9IjOqeuNuPKTN9oEDRpPnUz8ZnKxzY86mkLH90XV2tshswzHededU2hXFIQ_imhZiiHJTfB-q9m93FL2zB5Bz-PVIIVt6OboUI9A5OsxMkzxMVjcgu-oYaFA65ow-G1lO8-FMA_XiBZid6yP0UBjHXdKnXGbpwh8pG0BHCznJCUOewQyzNlDgh3r4lDOZk8WGVLKEcJHtRn3NS5mGUbJghH6Wfkn1R3rdNS1TfdNIMKQX4hQUOqfQ97jenLUg6yYEOtBJVw"}'
+    headers:
+      cache-control:
+      - no-cache, no-store
+      content-length:
+      - '1365'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 25 Apr 2019 20:54:17 GMT
+      expires:
+      - '-1'
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      pragma:
+      - no-cache
+      set-cookie:
+      - fpc=AvUvPOWdx9hBt4r8itcB50bYQwh6AQAAAHkVVNQOAAAA; expires=Sat, 25-May-2019
+        20:54:18 GMT; path=/; secure; HttpOnly
+      - stsservicecookie=estsppe; path=/; secure; HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
     body: null
     headers:
-      Accept: [application/json]
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.4 (Windows-10-10.0.14393-SP0) requests/2.18.4 msrest/0.4.14
-          msrest_azure/0.4.13 azurereservationapi/2017-11-01 Azure-SDK-For-Python]
-      accept-language: [en-US]
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.17763-SP0) msrest/0.6.6 msrest_azure/0.4.34
+        azure-mgmt-reservations/0.3.2 Azure-SDK-For-Python
+      accept-language:
+      - en-US
     method: GET
-    uri: https://management.azure.com/providers/Microsoft.Capacity/operations?api-version=2017-11-01
+    uri: https://api-dogfood.resources.windows-int.net/providers/Microsoft.Capacity/operations?api-version=2019-04-01
   response:
-    body: {string: '{"value":[{"name":"Microsoft.Capacity/reservationorders/read","display":{"provider":"Microsoft
+    body:
+      string: '{"value":[{"name":"Microsoft.Capacity/appliedreservations/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Get Reservations","description":"Read
+        All Reservations"}},{"name":"Microsoft.Capacity/calculateprice/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Calculate Reservation Price","description":"Calculate
+        any Reservation Price"}},{"name":"Microsoft.Capacity/catalogs/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Read Reservation Catalog","description":"Read
+        catalog of Reservation"}},{"name":"Microsoft.Capacity/checkoffers/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Check Subscription Offers","description":"Check
+        any Subscription Offers"}},{"name":"Microsoft.Capacity/checkscopes/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Check Subscription","description":"Check
+        any Subscription"}},{"name":"Microsoft.Capacity/operations/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Read Operation","description":"Read
+        any Operation"}},{"name":"Microsoft.Capacity/reservationorders/availablescopes/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Find Available Scope","description":"Find
+        any Available Scope"}},{"name":"Microsoft.Capacity/validatereservationorder/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Validate Reservation","description":"Validate
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/read","display":{"provider":"Microsoft
         Capacity","resource":"Reservations","operation":"Get Reservations","description":"Read
         All Reservations"}},{"name":"Microsoft.Capacity/reservationorders/write","display":{"provider":"Microsoft
         Capacity","resource":"Reservations","operation":"Create Reservations","description":"Create
@@ -30,18 +97,54 @@ interactions:
         Capacity","resource":"Reservations","operation":"Delete Reservations","description":"Delete
         any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/reservations/revisions/read","display":{"provider":"Microsoft
         Capacity","resource":"Reservations","operation":"Get Reservations","description":"Read
-        All Reservations"}}]}'}
+        All Reservations"}},{"name":"Microsoft.Capacity/register/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Registers the Capacity Resource
+        Provider.","description":"Registers the Capacity resource provider and enables
+        the creation of Capacity resources."}},{"name":"Microsoft.Capacity/commercialreservationorders/read","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Get Reservation Orders created
+        in any Tenant","description":"Get Reservation Orders created in any Tenant"}},{"name":"Microsoft.Capacity/tenants/register/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Register Tenant","description":"Register
+        any Tenant"}},{"name":"Microsoft.Capacity/reservationorders/return/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Return Reservation","description":"Return
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/swap/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Swap Reservation","description":"Swap
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/split/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Split Reservation","description":"Split
+        any Reservation"}},{"name":"Microsoft.Capacity/unregister/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Unregister Tenant","description":"Unregister
+        any Tenant"}},{"name":"Microsoft.Capacity/reservationorders/merge/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Merge Reservation","description":"Merge
+        any Reservation"}},{"name":"Microsoft.Capacity/reservationorders/calculaterefund/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Compute price for refund","description":"Computes
+        the refund amount and price of new purchase and returns policy Errors."}},{"name":"Microsoft.Capacity/calculateexchange/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Compute price for exchange","description":"Computes
+        the exchange amount and price of new purchase and returns policy Errors."}},{"name":"Microsoft.Capacity/exchange/action","display":{"provider":"Microsoft
+        Capacity","resource":"Reservations","operation":"Exchange Reservation","description":"Exchange
+        any Reservation"}}]}'
     headers:
-      cache-control: [no-cache]
-      content-length: ['1848']
-      content-type: [application/json; charset=utf-8]
-      date: ['Fri, 03 Nov 2017 21:25:08 GMT']
-      expires: ['-1']
-      pragma: [no-cache]
-      server: [Microsoft-IIS/8.5]
-      strict-transport-security: [max-age=31536000; includeSubDomains]
-      transfer-encoding: [chunked]
-      vary: ['Accept-Encoding,Accept-Encoding']
-      x-content-type-options: [nosniff]
-    status: {code: 200, message: OK}
+      cache-control:
+      - no-cache
+      content-length:
+      - '5896'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 25 Apr 2019 20:54:19 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/8.5
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding,Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
 version: 1

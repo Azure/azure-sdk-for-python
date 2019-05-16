@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class Capability(Model):
     """Cosmos DB capability object.
 
-    :param name: Name of the Cosmos DB capability
+    :param name: Name of the Cosmos DB capability. For example, "name":
+     "EnableCassandra". Current values also include "EnableTable" and
+     "EnableGremlin".
     :type name: str
     """
 
@@ -23,6 +25,6 @@ class Capability(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, name=None):
-        super(Capability, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(Capability, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

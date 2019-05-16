@@ -15,10 +15,11 @@ from msrest.serialization import Model
 class Sku(Model):
     """The Sku description for a namespace.
 
-    :param name: Name of the notification hub sku. Possible values include:
-     'Free', 'Basic', 'Standard'
-    :type name: str or :class:`SkuName
-     <azure.mgmt.notificationhubs.models.SkuName>`
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Name of the notification hub sku. Possible values
+     include: 'Free', 'Basic', 'Standard'
+    :type name: str or ~azure.mgmt.notificationhubs.models.SkuName
     :param tier: The tier of particular sku
     :type tier: str
     :param size: The Sku size
@@ -41,9 +42,10 @@ class Sku(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, name, tier=None, size=None, family=None, capacity=None):
-        self.name = name
-        self.tier = tier
-        self.size = size
-        self.family = family
-        self.capacity = capacity
+    def __init__(self, **kwargs):
+        super(Sku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+        self.size = kwargs.get('size', None)
+        self.family = kwargs.get('family', None)
+        self.capacity = kwargs.get('capacity', None)

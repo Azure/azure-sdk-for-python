@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class VolumeMount(Model):
     """The properties of the volume mount.
 
-    :param name: The name of the volume mount.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name of the volume mount.
     :type name: str
-    :param mount_path: The path within the container where the volume should
-     be mounted. Must not contain colon (:).
+    :param mount_path: Required. The path within the container where the
+     volume should be mounted. Must not contain colon (:).
     :type mount_path: str
     :param read_only: The flag indicating whether the volume mount is
      read-only.
@@ -36,8 +38,8 @@ class VolumeMount(Model):
         'read_only': {'key': 'readOnly', 'type': 'bool'},
     }
 
-    def __init__(self, name, mount_path, read_only=None):
-        super(VolumeMount, self).__init__()
-        self.name = name
-        self.mount_path = mount_path
-        self.read_only = read_only
+    def __init__(self, **kwargs):
+        super(VolumeMount, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.mount_path = kwargs.get('mount_path', None)
+        self.read_only = kwargs.get('read_only', None)

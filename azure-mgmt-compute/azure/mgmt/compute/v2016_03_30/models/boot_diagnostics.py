@@ -14,9 +14,8 @@ from msrest.serialization import Model
 
 class BootDiagnostics(Model):
     """Boot Diagnostics is a debugging feature which allows you to view Console
-    Output and Screenshot to diagnose VM status. <br><br> For Linux Virtual
-    Machines, you can easily view the output of your console log. <br><br> For
-    both Windows and Linux virtual machines, Azure also enables you to see a
+    Output and Screenshot to diagnose VM status. <br><br> You can easily view
+    the output of your console log. <br><br> Azure also enables you to see a
     screenshot of the VM from the hypervisor.
 
     :param enabled: Whether boot diagnostics should be enabled on the Virtual
@@ -32,7 +31,7 @@ class BootDiagnostics(Model):
         'storage_uri': {'key': 'storageUri', 'type': 'str'},
     }
 
-    def __init__(self, enabled=None, storage_uri=None):
-        super(BootDiagnostics, self).__init__()
-        self.enabled = enabled
-        self.storage_uri = storage_uri
+    def __init__(self, **kwargs):
+        super(BootDiagnostics, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
+        self.storage_uri = kwargs.get('storage_uri', None)

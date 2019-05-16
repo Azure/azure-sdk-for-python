@@ -30,7 +30,7 @@ class PartitionUsage(Usage):
     :vartype limit: int
     :ivar current_value: Current value for this metric
     :vartype current_value: int
-    :ivar partition_id: The parition id (GUID identifier) of the usages.
+    :ivar partition_id: The partition id (GUID identifier) of the usages.
     :vartype partition_id: str
     :ivar partition_key_range_id: The partition key range id (integer
      identifier) of the usages.
@@ -56,7 +56,7 @@ class PartitionUsage(Usage):
         'partition_key_range_id': {'key': 'partitionKeyRangeId', 'type': 'str'},
     }
 
-    def __init__(self, unit=None):
-        super(PartitionUsage, self).__init__(unit=unit)
+    def __init__(self, **kwargs):
+        super(PartitionUsage, self).__init__(**kwargs)
         self.partition_id = None
         self.partition_key_range_id = None

@@ -53,8 +53,8 @@ class TransparentDataEncryptionActivity(ProxyResource):
         'percent_complete': {'key': 'properties.percentComplete', 'type': 'float'},
     }
 
-    def __init__(self):
-        super(TransparentDataEncryptionActivity, self).__init__()
+    def __init__(self, **kwargs):
+        super(TransparentDataEncryptionActivity, self).__init__(**kwargs)
         self.location = None
         self.status = None
         self.percent_complete = None

@@ -18,7 +18,9 @@ class TrendingTopics(Answer):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param _type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param _type: Required. Constant filled by server.
     :type _type: str
     :ivar id: A String identifier.
     :vartype id: str
@@ -27,7 +29,7 @@ class TrendingTopics(Answer):
     :ivar follow_up_queries:
     :vartype follow_up_queries:
      list[~azure.cognitiveservices.search.newssearch.models.Query]
-    :param value: A list of trending news topics on Bing
+    :param value: Required. A list of trending news topics on Bing
     :type value:
      list[~azure.cognitiveservices.search.newssearch.models.NewsTopic]
     """
@@ -48,7 +50,7 @@ class TrendingTopics(Answer):
         'value': {'key': 'value', 'type': '[NewsTopic]'},
     }
 
-    def __init__(self, value):
-        super(TrendingTopics, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(TrendingTopics, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
         self._type = 'TrendingTopics'

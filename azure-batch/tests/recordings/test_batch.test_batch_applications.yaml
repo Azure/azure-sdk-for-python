@@ -5,22 +5,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
+          azure-batch/6.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Thu, 09 Nov 2017 00:59:44 GMT']
+      ocp-date: ['Mon, 04 Mar 2019 18:10:26 GMT']
     method: GET
-    uri: https://batchf06f0dd7.japanwest.batch.azure.com/applications?api-version=2017-09-01.6.0
+    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/applications?api-version=2018-12-01.8.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.japanwest.batch.azure.com/$metadata#listapplicationsummariesresponses\"\
-        ,\"value\":[\r\n    {\r\n      \"id\":\"application_id\",\"versions\":[\r\n\
-        \        \"v1.0\"\r\n      ]\r\n    }\r\n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/$metadata#listapplicationsummariesresponses\",\"value\":[\r\n
+        \   {\r\n      \"id\":\"application_id\",\"versions\":[\r\n        \"v1.0\"\r\n
+        \     ]\r\n    }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Thu, 09 Nov 2017 00:59:44 GMT']
-      request-id: [b39d37c0-82e8-465a-aec1-309524099fc8]
+      date: ['Mon, 04 Mar 2019 18:10:26 GMT']
+      request-id: [907edec8-4a74-4fb0-a664-6d0bb6d1f172]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -32,21 +31,20 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
+          azure-batch/6.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Thu, 09 Nov 2017 00:59:45 GMT']
+      ocp-date: ['Mon, 04 Mar 2019 18:10:26 GMT']
     method: GET
-    uri: https://batchf06f0dd7.japanwest.batch.azure.com/applications/application_id?api-version=2017-09-01.6.0
+    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/applications/application_id?api-version=2018-12-01.8.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.japanwest.batch.azure.com/$metadata#getapplicationsummaryresponse/@Element\"\
-        ,\"id\":\"application_id\",\"versions\":[\r\n    \"v1.0\"\r\n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/$metadata#getapplicationsummaryresponse/@Element\",\"id\":\"application_id\",\"versions\":[\r\n
+        \   \"v1.0\"\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Thu, 09 Nov 2017 00:59:46 GMT']
-      request-id: [5e5086c5-dd74-4474-b1d2-30002f86be7f]
+      date: ['Mon, 04 Mar 2019 18:10:27 GMT']
+      request-id: [10f87ce8-0db2-49c7-b190-f5944231f6ef]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -62,22 +60,22 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['174']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
+          azure-batch/6.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Thu, 09 Nov 2017 00:59:46 GMT']
+      ocp-date: ['Mon, 04 Mar 2019 18:10:27 GMT']
     method: POST
-    uri: https://batchf06f0dd7.japanwest.batch.azure.com/jobs/batchf06f0dd7/tasks?api-version=2017-09-01.6.0
+    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks?api-version=2018-12-01.8.0
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batchf06f0dd7.japanwest.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package']
+      dataserviceid: ['https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package']
       dataserviceversion: ['3.0']
-      date: ['Thu, 09 Nov 2017 00:59:47 GMT']
-      etag: ['0x8D5270D2C3221B1']
-      last-modified: ['Thu, 09 Nov 2017 00:59:47 GMT']
-      location: ['https://batchf06f0dd7.japanwest.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package']
-      request-id: [2859cc84-a2a7-48f9-9f05-ec66bc003e92]
+      date: ['Mon, 04 Mar 2019 18:10:27 GMT']
+      etag: ['0x8D6A0CCAE1A3D4D']
+      last-modified: ['Mon, 04 Mar 2019 18:10:27 GMT']
+      location: ['https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package']
+      request-id: [f192a9c8-5c87-45a1-92e6-f4c14f455e13]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -89,33 +87,26 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
+          azure-batch/6.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Thu, 09 Nov 2017 00:59:47 GMT']
+      ocp-date: ['Mon, 04 Mar 2019 18:10:27 GMT']
     method: GET
-    uri: https://batchf06f0dd7.japanwest.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package?api-version=2017-09-01.6.0
+    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package?api-version=2018-12-01.8.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.japanwest.batch.azure.com/$metadata#tasks/@Element\"\
-        ,\"id\":\"python_task_with_app_package\",\"url\":\"https://batchf06f0dd7.japanwest.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package\"\
-        ,\"eTag\":\"0x8D5270D2C3221B1\",\"creationTime\":\"2017-11-09T00:59:47.2334257Z\"\
-        ,\"lastModified\":\"2017-11-09T00:59:47.2334257Z\",\"state\":\"active\",\"\
-        stateTransitionTime\":\"2017-11-09T00:59:47.2334257Z\",\"commandLine\":\"\
-        cmd /c \\\"echo hello world\\\"\",\"applicationPackageReferences\":[\r\n \
-        \   {\r\n      \"applicationId\":\"application_id\",\"version\":\"v1.0\"\r\
-        \n    }\r\n  ],\"userIdentity\":{\r\n    \"autoUser\":{\r\n      \"elevationLevel\"\
-        :\"nonadmin\"\r\n    }\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\"\
-        :\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P10675199DT2H48M5.4775807S\"\
-        ,\"maxTaskRetryCount\":0\r\n  },\"executionInfo\":{\r\n    \"retryCount\"\
-        :0,\"requeueCount\":0\r\n  }\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"python_task_with_app_package\",\"url\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package\",\"eTag\":\"0x8D6A0CCAE1A3D4D\",\"creationTime\":\"2019-03-04T18:10:27.4231629Z\",\"lastModified\":\"2019-03-04T18:10:27.4231629Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-03-04T18:10:27.4231629Z\",\"commandLine\":\"cmd
+        /c \\\"echo hello world\\\"\",\"applicationPackageReferences\":[\r\n    {\r\n
+        \     \"applicationId\":\"application_id\",\"version\":\"v1.0\"\r\n    }\r\n
+        \ ],\"userIdentity\":{\r\n    \"autoUser\":{\r\n      \"elevationLevel\":\"nonadmin\"\r\n
+        \   }\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P7D\",\"maxTaskRetryCount\":0\r\n
+        \ },\"executionInfo\":{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Thu, 09 Nov 2017 00:59:48 GMT']
-      etag: ['0x8D5270D2C3221B1']
-      last-modified: ['Thu, 09 Nov 2017 00:59:47 GMT']
-      request-id: [77598d80-7e9a-484d-8ff2-a3fafd7a187a]
+      date: ['Mon, 04 Mar 2019 18:10:27 GMT']
+      etag: ['0x8D6A0CCAE1A3D4D']
+      last-modified: ['Mon, 04 Mar 2019 18:10:27 GMT']
+      request-id: [c2761538-2bae-4040-91df-bf2d6f92a391]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]

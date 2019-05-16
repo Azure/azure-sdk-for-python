@@ -18,10 +18,12 @@ class CheckNameAvailabilityRequest(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param name: The name whose availability is to be checked.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. The name whose availability is to be checked.
     :type name: str
-    :ivar type: The type of resource that is used as the scope of the
-     availability check. Default value: "Microsoft.Sql/servers" .
+    :ivar type: Required. The type of resource that is used as the scope of
+     the availability check. Default value: "Microsoft.Sql/servers" .
     :vartype type: str
     """
 
@@ -37,6 +39,6 @@ class CheckNameAvailabilityRequest(Model):
 
     type = "Microsoft.Sql/servers"
 
-    def __init__(self, name):
-        super(CheckNameAvailabilityRequest, self).__init__()
-        self.name = name
+    def __init__(self, **kwargs):
+        super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)

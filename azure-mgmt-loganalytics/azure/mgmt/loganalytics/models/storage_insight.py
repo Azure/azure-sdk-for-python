@@ -18,6 +18,8 @@ class StorageInsight(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource ID.
     :vartype id: str
     :ivar name: Resource name.
@@ -25,19 +27,17 @@ class StorageInsight(ProxyResource):
     :ivar type: Resource type.
     :vartype type: str
     :param tags: Resource tags
-    :type tags: dict
+    :type tags: dict[str, str]
     :param containers: The names of the blob containers that the workspace
      should read
-    :type containers: list of str
+    :type containers: list[str]
     :param tables: The names of the Azure tables that the workspace should
      read
-    :type tables: list of str
-    :param storage_account: The storage account connection details
-    :type storage_account: :class:`StorageAccount
-     <azure.mgmt.loganalytics.models.StorageAccount>`
+    :type tables: list[str]
+    :param storage_account: Required. The storage account connection details
+    :type storage_account: ~azure.mgmt.loganalytics.models.StorageAccount
     :ivar status: The status of the storage insight
-    :vartype status: :class:`StorageInsightStatus
-     <azure.mgmt.loganalytics.models.StorageInsightStatus>`
+    :vartype status: ~azure.mgmt.loganalytics.models.StorageInsightStatus
     :param e_tag: The ETag of the storage insight.
     :type e_tag: str
     """
@@ -62,10 +62,10 @@ class StorageInsight(ProxyResource):
         'e_tag': {'key': 'eTag', 'type': 'str'},
     }
 
-    def __init__(self, storage_account, tags=None, containers=None, tables=None, e_tag=None):
-        super(StorageInsight, self).__init__(tags=tags)
-        self.containers = containers
-        self.tables = tables
-        self.storage_account = storage_account
+    def __init__(self, **kwargs):
+        super(StorageInsight, self).__init__(**kwargs)
+        self.containers = kwargs.get('containers', None)
+        self.tables = kwargs.get('tables', None)
+        self.storage_account = kwargs.get('storage_account', None)
         self.status = None
-        self.e_tag = e_tag
+        self.e_tag = kwargs.get('e_tag', None)

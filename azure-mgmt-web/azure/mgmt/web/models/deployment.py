@@ -13,7 +13,7 @@ from .proxy_only_resource import ProxyOnlyResource
 
 
 class Deployment(ProxyOnlyResource):
-    """User crendentials used for publishing activity.
+    """User credentials used for publishing activity.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,8 +26,6 @@ class Deployment(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param deployment_id: Identifier for deployment.
-    :type deployment_id: str
     :param status: Deployment status.
     :type status: int
     :param message: Details about deployment status.
@@ -60,27 +58,25 @@ class Deployment(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'deployment_id': {'key': 'properties.id', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'int'},
         'message': {'key': 'properties.message', 'type': 'str'},
         'author': {'key': 'properties.author', 'type': 'str'},
         'deployer': {'key': 'properties.deployer', 'type': 'str'},
-        'author_email': {'key': 'properties.authorEmail', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
+        'author_email': {'key': 'properties.author_email', 'type': 'str'},
+        'start_time': {'key': 'properties.start_time', 'type': 'iso-8601'},
+        'end_time': {'key': 'properties.end_time', 'type': 'iso-8601'},
         'active': {'key': 'properties.active', 'type': 'bool'},
         'details': {'key': 'properties.details', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, deployment_id=None, status=None, message=None, author=None, deployer=None, author_email=None, start_time=None, end_time=None, active=None, details=None):
-        super(Deployment, self).__init__(kind=kind)
-        self.deployment_id = deployment_id
-        self.status = status
-        self.message = message
-        self.author = author
-        self.deployer = deployer
-        self.author_email = author_email
-        self.start_time = start_time
-        self.end_time = end_time
-        self.active = active
-        self.details = details
+    def __init__(self, **kwargs):
+        super(Deployment, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.message = kwargs.get('message', None)
+        self.author = kwargs.get('author', None)
+        self.deployer = kwargs.get('deployer', None)
+        self.author_email = kwargs.get('author_email', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
+        self.active = kwargs.get('active', None)
+        self.details = kwargs.get('details', None)

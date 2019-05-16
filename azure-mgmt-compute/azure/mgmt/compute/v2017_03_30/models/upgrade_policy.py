@@ -38,8 +38,8 @@ class UpgradePolicy(Model):
         'automatic_os_upgrade': {'key': 'automaticOSUpgrade', 'type': 'bool'},
     }
 
-    def __init__(self, mode=None, rolling_upgrade_policy=None, automatic_os_upgrade=None):
-        super(UpgradePolicy, self).__init__()
-        self.mode = mode
-        self.rolling_upgrade_policy = rolling_upgrade_policy
-        self.automatic_os_upgrade = automatic_os_upgrade
+    def __init__(self, **kwargs):
+        super(UpgradePolicy, self).__init__(**kwargs)
+        self.mode = kwargs.get('mode', None)
+        self.rolling_upgrade_policy = kwargs.get('rolling_upgrade_policy', None)
+        self.automatic_os_upgrade = kwargs.get('automatic_os_upgrade', None)

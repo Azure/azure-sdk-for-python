@@ -56,11 +56,11 @@ class VirtualMachineScaleSetVMProfile(Model):
         'license_type': {'key': 'licenseType', 'type': 'str'},
     }
 
-    def __init__(self, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type=None):
-        super(VirtualMachineScaleSetVMProfile, self).__init__()
-        self.os_profile = os_profile
-        self.storage_profile = storage_profile
-        self.network_profile = network_profile
-        self.diagnostics_profile = diagnostics_profile
-        self.extension_profile = extension_profile
-        self.license_type = license_type
+    def __init__(self, **kwargs):
+        super(VirtualMachineScaleSetVMProfile, self).__init__(**kwargs)
+        self.os_profile = kwargs.get('os_profile', None)
+        self.storage_profile = kwargs.get('storage_profile', None)
+        self.network_profile = kwargs.get('network_profile', None)
+        self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
+        self.extension_profile = kwargs.get('extension_profile', None)
+        self.license_type = kwargs.get('license_type', None)

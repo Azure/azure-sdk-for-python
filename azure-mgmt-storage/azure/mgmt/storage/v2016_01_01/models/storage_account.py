@@ -132,8 +132,8 @@ class StorageAccount(Resource):
         'access_tier': {'key': 'properties.accessTier', 'type': 'AccessTier'},
     }
 
-    def __init__(self, location=None, tags=None):
-        super(StorageAccount, self).__init__(location=location, tags=tags)
+    def __init__(self, **kwargs):
+        super(StorageAccount, self).__init__(**kwargs)
         self.sku = None
         self.kind = None
         self.provisioning_state = None

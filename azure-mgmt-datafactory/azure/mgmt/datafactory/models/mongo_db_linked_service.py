@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class MongoDbLinkedService(LinkedService):
     """Linked service for MongoDb data source.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,17 +25,23 @@ class MongoDbLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Constant filled by server.
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param server: The IP address or server name of the MongoDB server. Type:
-     string (or Expression with resultType string).
+    :param server: Required. The IP address or server name of the MongoDB
+     server. Type: string (or Expression with resultType string).
     :type server: object
     :param authentication_type: The authentication type to be used to connect
      to the MongoDB database. Possible values include: 'Basic', 'Anonymous'
     :type authentication_type: str or
      ~azure.mgmt.datafactory.models.MongoDbAuthenticationType
-    :param database_name: The name of the MongoDB database that you want to
-     access. Type: string (or Expression with resultType string).
+    :param database_name: Required. The name of the MongoDB database that you
+     want to access. Type: string (or Expression with resultType string).
     :type database_name: object
     :param username: Username for authentication. Type: string (or Expression
      with resultType string).
@@ -47,6 +55,14 @@ class MongoDbLinkedService(LinkedService):
      for client connections. The default value is 27017. Type: integer (or
      Expression with resultType integer), minimum: 0.
     :type port: object
+    :param enable_ssl: Specifies whether the connections to the server are
+     encrypted using SSL. The default value is false. Type: boolean (or
+     Expression with resultType boolean).
+    :type enable_ssl: object
+    :param allow_self_signed_server_cert: Specifies whether to allow
+     self-signed certificates from the server. The default value is false.
+     Type: boolean (or Expression with resultType boolean).
+    :type allow_self_signed_server_cert: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -63,6 +79,8 @@ class MongoDbLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'server': {'key': 'typeProperties.server', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
@@ -71,17 +89,21 @@ class MongoDbLinkedService(LinkedService):
         'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
         'auth_source': {'key': 'typeProperties.authSource', 'type': 'object'},
         'port': {'key': 'typeProperties.port', 'type': 'object'},
+        'enable_ssl': {'key': 'typeProperties.enableSsl', 'type': 'object'},
+        'allow_self_signed_server_cert': {'key': 'typeProperties.allowSelfSignedServerCert', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, server, database_name, additional_properties=None, connect_via=None, description=None, authentication_type=None, username=None, password=None, auth_source=None, port=None, encrypted_credential=None):
-        super(MongoDbLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
-        self.server = server
-        self.authentication_type = authentication_type
-        self.database_name = database_name
-        self.username = username
-        self.password = password
-        self.auth_source = auth_source
-        self.port = port
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(MongoDbLinkedService, self).__init__(**kwargs)
+        self.server = kwargs.get('server', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.database_name = kwargs.get('database_name', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.auth_source = kwargs.get('auth_source', None)
+        self.port = kwargs.get('port', None)
+        self.enable_ssl = kwargs.get('enable_ssl', None)
+        self.allow_self_signed_server_cert = kwargs.get('allow_self_signed_server_cert', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'MongoDb'

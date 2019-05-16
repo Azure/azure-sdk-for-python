@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-import uuid
 
 from .. import models
 
@@ -22,9 +22,11 @@ class NotificationHubsOperations(object):
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
-    :param deserializer: An objec model deserializer.
+    :param deserializer: An object model deserializer.
     :ivar api_version: Client Api Version. Constant value: "2017-04-01".
     """
+
+    models = models
 
     def __init__(self, client, config, serializer, deserializer):
 
@@ -35,7 +37,7 @@ class NotificationHubsOperations(object):
 
         self.config = config
 
-    def check_availability(
+    def check_notification_hub_availability(
             self, resource_group_name, namespace_name, parameters, custom_headers=None, raw=False, **operation_config):
         """Checks the availability of the given notificationHub in a namespace.
 
@@ -44,21 +46,20 @@ class NotificationHubsOperations(object):
         :param namespace_name: The namespace name.
         :type namespace_name: str
         :param parameters: The notificationHub name.
-        :type parameters: :class:`CheckAvailabilityParameters
-         <azure.mgmt.notificationhubs.models.CheckAvailabilityParameters>`
+        :type parameters:
+         ~azure.mgmt.notificationhubs.models.CheckAvailabilityParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`CheckAvailabilityResult
-         <azure.mgmt.notificationhubs.models.CheckAvailabilityResult>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: CheckAvailabilityResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.notificationhubs.models.CheckAvailabilityResult or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/checkNotificationHubAvailability'
+        url = self.check_notification_hub_availability.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
@@ -72,6 +73,7 @@ class NotificationHubsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -84,9 +86,8 @@ class NotificationHubsOperations(object):
         body_content = self._serialize.body(parameters, 'CheckAvailabilityParameters')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -103,6 +104,7 @@ class NotificationHubsOperations(object):
             return client_raw_response
 
         return deserialized
+    check_notification_hub_availability.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/checkNotificationHubAvailability'}
 
     def create_or_update(
             self, resource_group_name, namespace_name, notification_hub_name, parameters, custom_headers=None, raw=False, **operation_config):
@@ -116,21 +118,20 @@ class NotificationHubsOperations(object):
         :type notification_hub_name: str
         :param parameters: Parameters supplied to the create/update a
          NotificationHub Resource.
-        :type parameters: :class:`NotificationHubCreateOrUpdateParameters
-         <azure.mgmt.notificationhubs.models.NotificationHubCreateOrUpdateParameters>`
+        :type parameters:
+         ~azure.mgmt.notificationhubs.models.NotificationHubCreateOrUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NotificationHubResource
-         <azure.mgmt.notificationhubs.models.NotificationHubResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: NotificationHubResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.notificationhubs.models.NotificationHubResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}'
+        url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
@@ -145,6 +146,7 @@ class NotificationHubsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -157,9 +159,8 @@ class NotificationHubsOperations(object):
         body_content = self._serialize.body(parameters, 'NotificationHubCreateOrUpdateParameters')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
             exp = CloudError(response)
@@ -178,10 +179,11 @@ class NotificationHubsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}'}
 
-    def delete(
-            self, resource_group_name, namespace_name, notification_hub_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes a notification hub associated with a namespace.
+    def patch(
+            self, resource_group_name, namespace_name, notification_hub_name, parameters=None, custom_headers=None, raw=False, **operation_config):
+        """Patch a NotificationHub in a namespace.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -189,18 +191,22 @@ class NotificationHubsOperations(object):
         :type namespace_name: str
         :param notification_hub_name: The notification hub name.
         :type notification_hub_name: str
+        :param parameters: Parameters supplied to patch a NotificationHub
+         Resource.
+        :type parameters:
+         ~azure.mgmt.notificationhubs.models.NotificationHubPatchParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: NotificationHubResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.notificationhubs.models.NotificationHubResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}'
+        url = self.patch.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
@@ -215,6 +221,7 @@ class NotificationHubsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -223,67 +230,15 @@ class NotificationHubsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-
-    def get(
-            self, resource_group_name, namespace_name, notification_hub_name, custom_headers=None, raw=False, **operation_config):
-        """Lists the notification hubs associated with a namespace.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param namespace_name: The namespace name.
-        :type namespace_name: str
-        :param notification_hub_name: The notification hub name.
-        :type notification_hub_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NotificationHubResource
-         <azure.mgmt.notificationhubs.models.NotificationHubResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}'
-        path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
-            'notificationHubName': self._serialize.url("notification_hub_name", notification_hub_name, 'str'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+        # Construct body
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'NotificationHubPatchParameters')
+        else:
+            body_content = None
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -300,9 +255,205 @@ class NotificationHubsOperations(object):
             return client_raw_response
 
         return deserialized
+    patch.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}'}
+
+    def delete(
+            self, resource_group_name, namespace_name, notification_hub_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes a notification hub associated with a namespace.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name.
+        :type namespace_name: str
+        :param notification_hub_name: The notification hub name.
+        :type notification_hub_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.delete.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
+            'notificationHubName': self._serialize.url("notification_hub_name", notification_hub_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}'}
+
+    def get(
+            self, resource_group_name, namespace_name, notification_hub_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the notification hubs associated with a namespace.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name.
+        :type namespace_name: str
+        :param notification_hub_name: The notification hub name.
+        :type notification_hub_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: NotificationHubResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.notificationhubs.models.NotificationHubResource or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
+            'notificationHubName': self._serialize.url("notification_hub_name", notification_hub_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('NotificationHubResource', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}'}
+
+    def debug_send(
+            self, resource_group_name, namespace_name, notification_hub_name, parameters=None, custom_headers=None, raw=False, **operation_config):
+        """test send a push notification.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param namespace_name: The namespace name.
+        :type namespace_name: str
+        :param notification_hub_name: The notification hub name.
+        :type notification_hub_name: str
+        :param parameters: Debug send parameters
+        :type parameters: object
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DebugSendResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.notificationhubs.models.DebugSendResponse or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.debug_send.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
+            'notificationHubName': self._serialize.url("notification_hub_name", notification_hub_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        if parameters is not None:
+            body_content = self._serialize.body(parameters, 'object')
+        else:
+            body_content = None
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('DebugSendResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    debug_send.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/debugsend'}
 
     def create_or_update_authorization_rule(
-            self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, properties, custom_headers=None, raw=False, **operation_config):
         """Creates/Updates an authorization rule for a NotificationHub.
 
         :param resource_group_name: The name of the resource group.
@@ -313,23 +464,25 @@ class NotificationHubsOperations(object):
         :type notification_hub_name: str
         :param authorization_rule_name: Authorization Rule Name.
         :type authorization_rule_name: str
-        :param parameters: The shared access authorization rule.
-        :type parameters:
-         :class:`SharedAccessAuthorizationRuleCreateOrUpdateParameters
-         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleCreateOrUpdateParameters>`
+        :param properties: Properties of the Namespace AuthorizationRules.
+        :type properties:
+         ~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SharedAccessAuthorizationRuleResource
-         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SharedAccessAuthorizationRuleResource or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+        parameters = models.SharedAccessAuthorizationRuleCreateOrUpdateParameters(properties=properties)
+
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}'
+        url = self.create_or_update_authorization_rule.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
@@ -345,6 +498,7 @@ class NotificationHubsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -357,9 +511,8 @@ class NotificationHubsOperations(object):
         body_content = self._serialize.body(parameters, 'SharedAccessAuthorizationRuleCreateOrUpdateParameters')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -376,6 +529,7 @@ class NotificationHubsOperations(object):
             return client_raw_response
 
         return deserialized
+    create_or_update_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}'}
 
     def delete_authorization_rule(
             self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
@@ -394,13 +548,12 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: None
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}'
+        url = self.delete_authorization_rule.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
@@ -416,7 +569,6 @@ class NotificationHubsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -425,10 +577,10 @@ class NotificationHubsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [204, 200]:
+        if response.status_code not in [200, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -436,6 +588,7 @@ class NotificationHubsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+    delete_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}'}
 
     def get_authorization_rule(
             self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
@@ -454,14 +607,15 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SharedAccessAuthorizationRuleResource
-         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: SharedAccessAuthorizationRuleResource or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource
+         or ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}'
+        url = self.get_authorization_rule.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
@@ -477,7 +631,7 @@ class NotificationHubsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -486,8 +640,8 @@ class NotificationHubsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -504,6 +658,7 @@ class NotificationHubsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_authorization_rule.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}'}
 
     def list(
             self, resource_group_name, namespace_name, custom_headers=None, raw=False, **operation_config):
@@ -518,15 +673,16 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`NotificationHubResourcePaged
-         <azure.mgmt.notificationhubs.models.NotificationHubResourcePaged>`
+        :return: An iterator like instance of NotificationHubResource
+        :rtype:
+         ~azure.mgmt.notificationhubs.models.NotificationHubResourcePaged[~azure.mgmt.notificationhubs.models.NotificationHubResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs'
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
@@ -544,7 +700,7 @@ class NotificationHubsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -553,9 +709,8 @@ class NotificationHubsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -573,6 +728,7 @@ class NotificationHubsOperations(object):
             return client_raw_response
 
         return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs'}
 
     def list_authorization_rules(
             self, resource_group_name, namespace_name, notification_hub_name, custom_headers=None, raw=False, **operation_config):
@@ -589,15 +745,17 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`SharedAccessAuthorizationRuleResourcePaged
-         <azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResourcePaged>`
+        :return: An iterator like instance of
+         SharedAccessAuthorizationRuleResource
+        :rtype:
+         ~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResourcePaged[~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleResource]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules'
+                url = self.list_authorization_rules.metadata['url']
                 path_format_arguments = {
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
                     'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
@@ -616,7 +774,7 @@ class NotificationHubsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -625,9 +783,8 @@ class NotificationHubsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -645,6 +802,7 @@ class NotificationHubsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_authorization_rules.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules'}
 
     def list_keys(
             self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, custom_headers=None, raw=False, **operation_config):
@@ -665,14 +823,13 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourceListKeys
-         <azure.mgmt.notificationhubs.models.ResourceListKeys>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ResourceListKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.notificationhubs.models.ResourceListKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}/listKeys'
+        url = self.list_keys.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
@@ -688,7 +845,7 @@ class NotificationHubsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -697,8 +854,8 @@ class NotificationHubsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -715,6 +872,7 @@ class NotificationHubsOperations(object):
             return client_raw_response
 
         return deserialized
+    list_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}/listKeys'}
 
     def regenerate_keys(
             self, resource_group_name, namespace_name, notification_hub_name, authorization_rule_name, policy_key=None, custom_headers=None, raw=False, **operation_config):
@@ -739,16 +897,15 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`ResourceListKeys
-         <azure.mgmt.notificationhubs.models.ResourceListKeys>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: ResourceListKeys or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.notificationhubs.models.ResourceListKeys or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.PolicykeyResource(policy_key=policy_key)
 
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}/regenerateKeys'
+        url = self.regenerate_keys.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
@@ -764,6 +921,7 @@ class NotificationHubsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -776,9 +934,8 @@ class NotificationHubsOperations(object):
         body_content = self._serialize.body(parameters, 'PolicykeyResource')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -795,6 +952,7 @@ class NotificationHubsOperations(object):
             return client_raw_response
 
         return deserialized
+    regenerate_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/AuthorizationRules/{authorizationRuleName}/regenerateKeys'}
 
     def get_pns_credentials(
             self, resource_group_name, namespace_name, notification_hub_name, custom_headers=None, raw=False, **operation_config):
@@ -811,14 +969,13 @@ class NotificationHubsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :rtype: :class:`PnsCredentialsResource
-         <azure.mgmt.notificationhubs.models.PnsCredentialsResource>`
-        :rtype: :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-         if raw=true
+        :return: PnsCredentialsResource or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.notificationhubs.models.PnsCredentialsResource or
+         ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/pnsCredentials'
+        url = self.get_pns_credentials.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'namespaceName': self._serialize.url("namespace_name", namespace_name, 'str'),
@@ -833,7 +990,7 @@ class NotificationHubsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -842,8 +999,8 @@ class NotificationHubsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -860,3 +1017,4 @@ class NotificationHubsOperations(object):
             return client_raw_response
 
         return deserialized
+    get_pns_credentials.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NotificationHubs/namespaces/{namespaceName}/notificationHubs/{notificationHubName}/pnsCredentials'}

@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class ImageTagsModule(Model):
     """Defines the characteristics of content found in an image.
 
-    :param value: A list of tags that describe the characteristics of the
-     content found in the image. For example, if the image is of a musical
-     artist, the list might include Female, Dress, and Music to indicate the
-     person is female music artist that's wearing a dress.
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. A list of tags that describe the characteristics
+     of the content found in the image. For example, if the image is of a
+     musical artist, the list might include Female, Dress, and Music to
+     indicate the person is female music artist that's wearing a dress.
     :type value:
      list[~azure.cognitiveservices.search.imagesearch.models.InsightsTag]
     """
@@ -31,6 +33,6 @@ class ImageTagsModule(Model):
         'value': {'key': 'value', 'type': '[InsightsTag]'},
     }
 
-    def __init__(self, value):
-        super(ImageTagsModule, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(ImageTagsModule, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)

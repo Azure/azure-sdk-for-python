@@ -12,13 +12,13 @@
 from enum import Enum
 
 
-class VideoQueryScenario(Enum):
+class VideoQueryScenario(str, Enum):
 
     list = "List"
     single_dominant_video = "SingleDominantVideo"
 
 
-class ErrorCode(Enum):
+class ErrorCode(str, Enum):
 
     none = "None"
     server_error = "ServerError"
@@ -28,7 +28,7 @@ class ErrorCode(Enum):
     insufficient_authorization = "InsufficientAuthorization"
 
 
-class ErrorSubCode(Enum):
+class ErrorSubCode(str, Enum):
 
     unexpected_error = "UnexpectedError"
     resource_error = "ResourceError"
@@ -43,14 +43,14 @@ class ErrorSubCode(Enum):
     authorization_expired = "AuthorizationExpired"
 
 
-class Freshness(Enum):
+class Freshness(str, Enum):
 
     day = "Day"
     week = "Week"
     month = "Month"
 
 
-class VideoLength(Enum):
+class VideoLength(str, Enum):
 
     all = "All"
     short = "Short"
@@ -58,14 +58,14 @@ class VideoLength(Enum):
     long_enum = "Long"
 
 
-class VideoPricing(Enum):
+class VideoPricing(str, Enum):
 
     all = "All"
     free = "Free"
     paid = "Paid"
 
 
-class VideoResolution(Enum):
+class VideoResolution(str, Enum):
 
     all = "All"
     sd480p = "SD480p"
@@ -73,20 +73,20 @@ class VideoResolution(Enum):
     hd1080p = "HD1080p"
 
 
-class SafeSearch(Enum):
+class SafeSearch(str, Enum):
 
     off = "Off"
     moderate = "Moderate"
     strict = "Strict"
 
 
-class TextFormat(Enum):
+class TextFormat(str, Enum):
 
     raw = "Raw"
     html = "Html"
 
 
-class VideoInsightModule(Enum):
+class VideoInsightModule(str, Enum):
 
     all = "All"
     related_videos = "RelatedVideos"

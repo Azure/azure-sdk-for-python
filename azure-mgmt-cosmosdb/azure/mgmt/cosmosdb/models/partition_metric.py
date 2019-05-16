@@ -34,7 +34,7 @@ class PartitionMetric(Metric):
     :ivar metric_values: The metric values for the specified time window and
      timestep.
     :vartype metric_values: list[~azure.mgmt.cosmosdb.models.MetricValue]
-    :ivar partition_id: The parition id (GUID identifier) of the metric
+    :ivar partition_id: The partition id (GUID identifier) of the metric
      values.
     :vartype partition_id: str
     :ivar partition_key_range_id: The partition key range id (integer
@@ -63,7 +63,7 @@ class PartitionMetric(Metric):
         'partition_key_range_id': {'key': 'partitionKeyRangeId', 'type': 'str'},
     }
 
-    def __init__(self, unit=None):
-        super(PartitionMetric, self).__init__(unit=unit)
+    def __init__(self, **kwargs):
+        super(PartitionMetric, self).__init__(**kwargs)
         self.partition_id = None
         self.partition_key_range_id = None

@@ -12,59 +12,55 @@
 from enum import Enum
 
 
-class SkuName(Enum):
-
-    f0 = "F0"
-    p0 = "P0"
-    p1 = "P1"
-    p2 = "P2"
-    s0 = "S0"
-    s1 = "S1"
-    s2 = "S2"
-    s3 = "S3"
-    s4 = "S4"
-    s5 = "S5"
-    s6 = "S6"
-
-
-class SkuTier(Enum):
+class SkuTier(str, Enum):
 
     free = "Free"
     standard = "Standard"
     premium = "Premium"
 
 
-class Kind(Enum):
-
-    academic = "Academic"
-    bing_autosuggest = "Bing.Autosuggest"
-    bing_search = "Bing.Search"
-    bing_speech = "Bing.Speech"
-    bing_spell_check = "Bing.SpellCheck"
-    computer_vision = "ComputerVision"
-    content_moderator = "ContentModerator"
-    custom_speech = "CustomSpeech"
-    emotion = "Emotion"
-    face = "Face"
-    luis = "LUIS"
-    recommendations = "Recommendations"
-    speaker_recognition = "SpeakerRecognition"
-    speech = "Speech"
-    speech_translation = "SpeechTranslation"
-    text_analytics = "TextAnalytics"
-    text_translation = "TextTranslation"
-    web_lm = "WebLM"
-
-
-class ProvisioningState(Enum):
+class ProvisioningState(str, Enum):
 
     creating = "Creating"
     resolving_dns = "ResolvingDNS"
+    moving = "Moving"
+    deleting = "Deleting"
     succeeded = "Succeeded"
     failed = "Failed"
 
 
-class KeyName(Enum):
+class KeyName(str, Enum):
 
     key1 = "Key1"
     key2 = "Key2"
+
+
+class UnitType(str, Enum):
+
+    count = "Count"
+    bytes = "Bytes"
+    seconds = "Seconds"
+    percent = "Percent"
+    count_per_second = "CountPerSecond"
+    bytes_per_second = "BytesPerSecond"
+    milliseconds = "Milliseconds"
+
+
+class QuotaUsageStatus(str, Enum):
+
+    included = "Included"
+    blocked = "Blocked"
+    in_overage = "InOverage"
+    unknown = "Unknown"
+
+
+class ResourceSkuRestrictionsType(str, Enum):
+
+    location = "Location"
+    zone = "Zone"
+
+
+class ResourceSkuRestrictionsReasonCode(str, Enum):
+
+    quota_id = "QuotaId"
+    not_available_for_subscription = "NotAvailableForSubscription"

@@ -15,7 +15,10 @@ from msrest.serialization import Model
 class WebActivityAuthentication(Model):
     """Web activity authentication properties.
 
-    :param type: Web activity authentication (Basic/ClientCertificate)
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Web activity authentication
+     (Basic/ClientCertificate/MSI)
     :type type: str
     :param pfx: Base64-encoded contents of a PFX file.
     :type pfx: ~azure.mgmt.datafactory.models.SecureString
@@ -24,6 +27,9 @@ class WebActivityAuthentication(Model):
     :type username: str
     :param password: Password for the PFX file or basic authentication.
     :type password: ~azure.mgmt.datafactory.models.SecureString
+    :param resource: Resource for which Azure Auth token will be requested
+     when using MSI Authentication.
+    :type resource: str
     """
 
     _validation = {
@@ -35,11 +41,13 @@ class WebActivityAuthentication(Model):
         'pfx': {'key': 'pfx', 'type': 'SecureString'},
         'username': {'key': 'username', 'type': 'str'},
         'password': {'key': 'password', 'type': 'SecureString'},
+        'resource': {'key': 'resource', 'type': 'str'},
     }
 
-    def __init__(self, type, pfx=None, username=None, password=None):
-        super(WebActivityAuthentication, self).__init__()
-        self.type = type
-        self.pfx = pfx
-        self.username = username
-        self.password = password
+    def __init__(self, **kwargs):
+        super(WebActivityAuthentication, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.pfx = kwargs.get('pfx', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.resource = kwargs.get('resource', None)

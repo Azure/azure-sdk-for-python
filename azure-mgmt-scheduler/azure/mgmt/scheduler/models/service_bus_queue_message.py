@@ -16,24 +16,23 @@ class ServiceBusQueueMessage(ServiceBusMessage):
     """ServiceBusQueueMessage.
 
     :param authentication: Gets or sets the Service Bus authentication.
-    :type authentication: :class:`ServiceBusAuthentication
-     <azure.mgmt.scheduler.models.ServiceBusAuthentication>`
+    :type authentication:
+     ~azure.mgmt.scheduler.models.ServiceBusAuthentication
     :param brokered_message_properties: Gets or sets the brokered message
      properties.
     :type brokered_message_properties:
-     :class:`ServiceBusBrokeredMessageProperties
-     <azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties>`
+     ~azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties
     :param custom_message_properties: Gets or sets the custom message
      properties.
-    :type custom_message_properties: dict
+    :type custom_message_properties: dict[str, str]
     :param message: Gets or sets the message.
     :type message: str
     :param namespace: Gets or sets the namespace.
     :type namespace: str
     :param transport_type: Gets or sets the transport type. Possible values
      include: 'NotSpecified', 'NetMessaging', 'AMQP'
-    :type transport_type: str or :class:`ServiceBusTransportType
-     <azure.mgmt.scheduler.models.ServiceBusTransportType>`
+    :type transport_type: str or
+     ~azure.mgmt.scheduler.models.ServiceBusTransportType
     :param queue_name: Gets or sets the queue name.
     :type queue_name: str
     """
@@ -48,6 +47,6 @@ class ServiceBusQueueMessage(ServiceBusMessage):
         'queue_name': {'key': 'queueName', 'type': 'str'},
     }
 
-    def __init__(self, authentication=None, brokered_message_properties=None, custom_message_properties=None, message=None, namespace=None, transport_type=None, queue_name=None):
-        super(ServiceBusQueueMessage, self).__init__(authentication=authentication, brokered_message_properties=brokered_message_properties, custom_message_properties=custom_message_properties, message=message, namespace=namespace, transport_type=transport_type)
-        self.queue_name = queue_name
+    def __init__(self, **kwargs):
+        super(ServiceBusQueueMessage, self).__init__(**kwargs)
+        self.queue_name = kwargs.get('queue_name', None)

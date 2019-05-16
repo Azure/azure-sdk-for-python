@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class GreenplumLinkedService(LinkedService):
     """Greenplum Database linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,10 +25,20 @@ class GreenplumLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Constant filled by server.
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param connection_string: An ODBC connection string.
-    :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
+    :param connection_string: An ODBC connection string. Type: string,
+     SecureString or AzureKeyVaultSecretReference.
+    :type connection_string: object
+    :param pwd: The Azure key vault secret reference of password in connection
+     string.
+    :type pwd: ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -41,13 +53,17 @@ class GreenplumLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
-        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
+        'pwd': {'key': 'typeProperties.pwd', 'type': 'AzureKeyVaultSecretReference'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, connect_via=None, description=None, connection_string=None, encrypted_credential=None):
-        super(GreenplumLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
-        self.connection_string = connection_string
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(GreenplumLinkedService, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.pwd = kwargs.get('pwd', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Greenplum'

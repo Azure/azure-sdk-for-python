@@ -30,7 +30,7 @@ class TopLevelDomainAgreementOption(Model):
         'for_transfer': {'key': 'forTransfer', 'type': 'bool'},
     }
 
-    def __init__(self, include_privacy=None, for_transfer=None):
-        super(TopLevelDomainAgreementOption, self).__init__()
-        self.include_privacy = include_privacy
-        self.for_transfer = for_transfer
+    def __init__(self, **kwargs):
+        super(TopLevelDomainAgreementOption, self).__init__(**kwargs)
+        self.include_privacy = kwargs.get('include_privacy', None)
+        self.for_transfer = kwargs.get('for_transfer', None)

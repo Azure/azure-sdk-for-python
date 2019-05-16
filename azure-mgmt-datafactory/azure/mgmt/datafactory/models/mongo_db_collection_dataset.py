@@ -15,6 +15,8 @@ from .dataset import Dataset
 class MongoDbCollectionDataset(Dataset):
     """The MongoDB database dataset.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,16 +25,26 @@ class MongoDbCollectionDataset(Dataset):
     :param structure: Columns that define the structure of the dataset. Type:
      array (or Expression with resultType array), itemType: DatasetDataElement.
     :type structure: object
-    :param linked_service_name: Linked service reference.
+    :param schema: Columns that define the physical type schema of the
+     dataset. Type: array (or Expression with resultType array), itemType:
+     DatasetSchemaDataElement.
+    :type schema: object
+    :param linked_service_name: Required. Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
-    :param type: Constant filled by server.
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param folder: The folder that this Dataset is in. If not specified,
+     Dataset will appear at the root level.
+    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param collection_name: The table name of the MongoDB database. Type:
-     string (or Expression with resultType string).
+    :param collection_name: Required. The table name of the MongoDB database.
+     Type: string (or Expression with resultType string).
     :type collection_name: object
     """
 
@@ -46,13 +58,16 @@ class MongoDbCollectionDataset(Dataset):
         'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'structure': {'key': 'structure', 'type': 'object'},
+        'schema': {'key': 'schema', 'type': 'object'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'collection_name': {'key': 'typeProperties.collectionName', 'type': 'object'},
     }
 
-    def __init__(self, linked_service_name, collection_name, additional_properties=None, description=None, structure=None, parameters=None):
-        super(MongoDbCollectionDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters)
-        self.collection_name = collection_name
+    def __init__(self, **kwargs):
+        super(MongoDbCollectionDataset, self).__init__(**kwargs)
+        self.collection_name = kwargs.get('collection_name', None)
         self.type = 'MongoDbCollection'

@@ -30,6 +30,8 @@ class EventType(Resource):
     :type description: str
     :param schema_url: Url of the schema for this event type.
     :type schema_url: str
+    :param is_in_default_set: IsInDefaultSet flag of the event type.
+    :type is_in_default_set: bool
     """
 
     _validation = {
@@ -45,10 +47,12 @@ class EventType(Resource):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'schema_url': {'key': 'properties.schemaUrl', 'type': 'str'},
+        'is_in_default_set': {'key': 'properties.isInDefaultSet', 'type': 'bool'},
     }
 
-    def __init__(self, display_name=None, description=None, schema_url=None):
-        super(EventType, self).__init__()
-        self.display_name = display_name
-        self.description = description
-        self.schema_url = schema_url
+    def __init__(self, **kwargs):
+        super(EventType, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.description = kwargs.get('description', None)
+        self.schema_url = kwargs.get('schema_url', None)
+        self.is_in_default_set = kwargs.get('is_in_default_set', None)

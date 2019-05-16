@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class PostgreSqlLinkedService(LinkedService):
     """Linked service for PostgreSQL data source.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,22 +25,20 @@ class PostgreSqlLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Constant filled by server.
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param server: Server name for connection. Type: string (or Expression
-     with resultType string).
-    :type server: object
-    :param database: Database name for connection. Type: string (or Expression
-     with resultType string).
-    :type database: object
-    :param schema: Schema name for connection. Type: string (or Expression
-     with resultType string).
-    :type schema: object
-    :param username: Username for authentication. Type: string (or Expression
-     with resultType string).
-    :type username: object
-    :param password: Password for authentication.
-    :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param connection_string: Required. The connection string.
+    :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
+    :param password: The Azure key vault secret reference of password in
+     connection string.
+    :type password:
+     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -47,29 +47,24 @@ class PostgreSqlLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'server': {'required': True},
-        'database': {'required': True},
+        'connection_string': {'required': True},
     }
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
-        'server': {'key': 'typeProperties.server', 'type': 'object'},
-        'database': {'key': 'typeProperties.database', 'type': 'object'},
-        'schema': {'key': 'typeProperties.schema', 'type': 'object'},
-        'username': {'key': 'typeProperties.username', 'type': 'object'},
-        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'SecretBase'},
+        'password': {'key': 'typeProperties.password', 'type': 'AzureKeyVaultSecretReference'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, server, database, additional_properties=None, connect_via=None, description=None, schema=None, username=None, password=None, encrypted_credential=None):
-        super(PostgreSqlLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
-        self.server = server
-        self.database = database
-        self.schema = schema
-        self.username = username
-        self.password = password
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(PostgreSqlLinkedService, self).__init__(**kwargs)
+        self.connection_string = kwargs.get('connection_string', None)
+        self.password = kwargs.get('password', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'PostgreSql'

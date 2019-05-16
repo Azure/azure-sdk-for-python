@@ -30,6 +30,6 @@ class AccessUri(Model):
         'access_sas': {'key': 'properties.output.accessSAS', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(AccessUri, self).__init__()
+    def __init__(self, **kwargs):
+        super(AccessUri, self).__init__(**kwargs)
         self.access_sas = None

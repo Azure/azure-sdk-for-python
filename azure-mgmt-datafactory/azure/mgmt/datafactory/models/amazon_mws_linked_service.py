@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class AmazonMWSLinkedService(LinkedService):
     """Amazon Marketplace Web Service linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,20 +25,26 @@ class AmazonMWSLinkedService(LinkedService):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param description: Linked service description.
     :type description: str
-    :param type: Constant filled by server.
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param endpoint: The endpoint of the Amazon MWS server, (i.e.
+    :param endpoint: Required. The endpoint of the Amazon MWS server, (i.e.
      mws.amazonservices.com)
     :type endpoint: object
-    :param marketplace_id: The Amazon Marketplace ID you want to retrieve data
-     from. To retrive data from multiple Marketplace IDs, seperate them with a
-     comma (,). (i.e. A2EUQ1WTGCTBG2)
+    :param marketplace_id: Required. The Amazon Marketplace ID you want to
+     retrieve data from. To retrieve data from multiple Marketplace IDs,
+     separate them with a comma (,). (i.e. A2EUQ1WTGCTBG2)
     :type marketplace_id: object
-    :param seller_id: The Amazon seller ID.
+    :param seller_id: Required. The Amazon seller ID.
     :type seller_id: object
     :param mws_auth_token: The Amazon MWS authentication token.
     :type mws_auth_token: ~azure.mgmt.datafactory.models.SecretBase
-    :param access_key_id: The access key id used to access data.
+    :param access_key_id: Required. The access key id used to access data.
     :type access_key_id: object
     :param secret_key: The secret key used to access data.
     :type secret_key: ~azure.mgmt.datafactory.models.SecretBase
@@ -68,6 +76,8 @@ class AmazonMWSLinkedService(LinkedService):
         'additional_properties': {'key': '', 'type': '{object}'},
         'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
         'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'endpoint': {'key': 'typeProperties.endpoint', 'type': 'object'},
         'marketplace_id': {'key': 'typeProperties.marketplaceID', 'type': 'object'},
@@ -81,16 +91,16 @@ class AmazonMWSLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, endpoint, marketplace_id, seller_id, access_key_id, additional_properties=None, connect_via=None, description=None, mws_auth_token=None, secret_key=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None):
-        super(AmazonMWSLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description)
-        self.endpoint = endpoint
-        self.marketplace_id = marketplace_id
-        self.seller_id = seller_id
-        self.mws_auth_token = mws_auth_token
-        self.access_key_id = access_key_id
-        self.secret_key = secret_key
-        self.use_encrypted_endpoints = use_encrypted_endpoints
-        self.use_host_verification = use_host_verification
-        self.use_peer_verification = use_peer_verification
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(AmazonMWSLinkedService, self).__init__(**kwargs)
+        self.endpoint = kwargs.get('endpoint', None)
+        self.marketplace_id = kwargs.get('marketplace_id', None)
+        self.seller_id = kwargs.get('seller_id', None)
+        self.mws_auth_token = kwargs.get('mws_auth_token', None)
+        self.access_key_id = kwargs.get('access_key_id', None)
+        self.secret_key = kwargs.get('secret_key', None)
+        self.use_encrypted_endpoints = kwargs.get('use_encrypted_endpoints', None)
+        self.use_host_verification = kwargs.get('use_host_verification', None)
+        self.use_peer_verification = kwargs.get('use_peer_verification', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'AmazonMWS'

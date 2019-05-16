@@ -27,7 +27,7 @@ class SessionResource(Resource):
     :ivar location: Resource Manager Resource Location.
     :vartype location: str
     :param tags: Resource Manager Resource Tags.
-    :type tags: dict
+    :type tags: dict[str, str]
     :param etag:
     :type etag: str
     :param user_name: The username connecting to the session.
@@ -58,8 +58,8 @@ class SessionResource(Resource):
         'updated': {'key': 'properties.updated', 'type': 'iso-8601'},
     }
 
-    def __init__(self, tags=None, etag=None, user_name=None, created=None, updated=None):
-        super(SessionResource, self).__init__(tags=tags, etag=etag)
-        self.user_name = user_name
-        self.created = created
-        self.updated = updated
+    def __init__(self, **kwargs):
+        super(SessionResource, self).__init__(**kwargs)
+        self.user_name = kwargs.get('user_name', None)
+        self.created = kwargs.get('created', None)
+        self.updated = kwargs.get('updated', None)

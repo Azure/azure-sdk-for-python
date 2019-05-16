@@ -19,8 +19,7 @@ class SearchSort(Model):
     :type name: str
     :param order: The sort order of the search. Possible values include:
      'asc', 'desc'
-    :type order: str or :class:`SearchSortEnum
-     <azure.mgmt.loganalytics.models.SearchSortEnum>`
+    :type order: str or ~azure.mgmt.loganalytics.models.SearchSortEnum
     """
 
     _attribute_map = {
@@ -28,6 +27,7 @@ class SearchSort(Model):
         'order': {'key': 'order', 'type': 'str'},
     }
 
-    def __init__(self, name=None, order=None):
-        self.name = name
-        self.order = order
+    def __init__(self, **kwargs):
+        super(SearchSort, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.order = kwargs.get('order', None)

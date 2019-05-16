@@ -18,28 +18,37 @@ class SavedSearch(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The id of the saved search.
     :vartype id: str
-    :param etag: The etag of the saved search.
-    :type etag: str
-    :param category: The category of the saved search. This helps the user to
-     find a saved search faster.
+    :ivar name: The name of the saved search.
+    :vartype name: str
+    :ivar type: The type of the saved search.
+    :vartype type: str
+    :param e_tag: The etag of the saved search.
+    :type e_tag: str
+    :param category: Required. The category of the saved search. This helps
+     the user to find a saved search faster.
     :type category: str
-    :param display_name: Saved search display name.
+    :param display_name: Required. Saved search display name.
     :type display_name: str
-    :param query: The query expression for the saved search. Please see
+    :param query: Required. The query expression for the saved search. Please
+     see
      https://docs.microsoft.com/en-us/azure/log-analytics/log-analytics-search-reference
      for reference.
     :type query: str
-    :param version: The version number of the query lanuage. Only verion 1 is
-     allowed here.
+    :param version: Required. The version number of the query lanuage. Only
+     verion 1 is allowed here.
     :type version: long
     :param tags: The tags attached to the saved search.
-    :type tags: list of :class:`Tag <azure.mgmt.loganalytics.models.Tag>`
+    :type tags: list[~azure.mgmt.loganalytics.models.Tag]
     """
 
     _validation = {
         'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'category': {'required': True},
         'display_name': {'required': True},
         'query': {'required': True},
@@ -48,19 +57,24 @@ class SavedSearch(Model):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'category': {'key': 'properties.Category', 'type': 'str'},
-        'display_name': {'key': 'properties.DisplayName', 'type': 'str'},
-        'query': {'key': 'properties.Query', 'type': 'str'},
-        'version': {'key': 'properties.Version', 'type': 'long'},
-        'tags': {'key': 'properties.Tags', 'type': '[Tag]'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'e_tag': {'key': 'eTag', 'type': 'str'},
+        'category': {'key': 'properties.category', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'query': {'key': 'properties.query', 'type': 'str'},
+        'version': {'key': 'properties.version', 'type': 'long'},
+        'tags': {'key': 'properties.tags', 'type': '[Tag]'},
     }
 
-    def __init__(self, category, display_name, query, version, etag=None, tags=None):
+    def __init__(self, **kwargs):
+        super(SavedSearch, self).__init__(**kwargs)
         self.id = None
-        self.etag = etag
-        self.category = category
-        self.display_name = display_name
-        self.query = query
-        self.version = version
-        self.tags = tags
+        self.name = None
+        self.type = None
+        self.e_tag = kwargs.get('e_tag', None)
+        self.category = kwargs.get('category', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.query = kwargs.get('query', None)
+        self.version = kwargs.get('version', None)
+        self.tags = kwargs.get('tags', None)

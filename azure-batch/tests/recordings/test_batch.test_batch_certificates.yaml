@@ -9,20 +9,20 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['2272']
       Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
+          azure-batch/6.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:43:15 GMT']
+      ocp-date: ['Mon, 04 Mar 2019 18:16:27 GMT']
     method: POST
-    uri: https://batchf0370dc6.japanwest.batch.azure.com/certificates?api-version=2017-09-01.6.0
+    uri: https://batchf0370dc6.westcentralus.batch.azure.com/certificates?api-version=2018-12-01.8.0
   response:
     body: {string: ''}
     headers:
-      dataserviceid: ['https://batchf0370dc6.japanwest.batch.azure.com/certificates(ThumbprintAlgorithm=sha1,Thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)']
+      dataserviceid: ['https://batchf0370dc6.westcentralus.batch.azure.com/certificates(ThumbprintAlgorithm=sha1,Thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)']
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:43:15 GMT']
-      location: ['https://batchf0370dc6.japanwest.batch.azure.com/certificates(ThumbprintAlgorithm=sha1,Thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)']
-      request-id: [11ff1532-b547-450a-b30c-66a89f3c0ba6]
+      date: ['Mon, 04 Mar 2019 18:16:27 GMT']
+      location: ['https://batchf0370dc6.westcentralus.batch.azure.com/certificates(ThumbprintAlgorithm=sha1,Thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)']
+      request-id: [96ea641d-1937-4328-97f4-a7256faaedc7]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -34,25 +34,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
+          azure-batch/6.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:43:15 GMT']
+      ocp-date: ['Mon, 04 Mar 2019 18:16:27 GMT']
     method: GET
-    uri: https://batchf0370dc6.japanwest.batch.azure.com/certificates?api-version=2017-09-01.6.0
+    uri: https://batchf0370dc6.westcentralus.batch.azure.com/certificates?api-version=2018-12-01.8.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0370dc6.japanwest.batch.azure.com/$metadata#certificates\"\
-        ,\"value\":[\r\n    {\r\n      \"thumbprint\":\"cff2ab63c8c955aaf71989efa641b906558d9fb7\"\
-        ,\"thumbprintAlgorithm\":\"sha1\",\"url\":\"https://batchf0370dc6.japanwest.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)\"\
-        ,\"state\":\"active\",\"stateTransitionTime\":\"2017-11-07T17:43:15.8259688Z\"\
-        ,\"publicData\":\"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78\"\
-        \r\n    }\r\n  ]\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0370dc6.westcentralus.batch.azure.com/$metadata#certificates\",\"value\":[\r\n
+        \   {\r\n      \"thumbprint\":\"cff2ab63c8c955aaf71989efa641b906558d9fb7\",\"thumbprintAlgorithm\":\"sha1\",\"url\":\"https://batchf0370dc6.westcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)\",\"state\":\"active\",\"stateTransitionTime\":\"2019-03-04T18:16:27.7523466Z\",\"publicData\":\"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78\"\r\n
+        \   }\r\n  ]\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:43:16 GMT']
-      request-id: [54e5af1f-eb4b-424f-910f-841264e0e4c1]
+      date: ['Mon, 04 Mar 2019 18:16:27 GMT']
+      request-id: [24db8aca-c442-4259-97b5-3756ab5635bf]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -64,25 +60,19 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
+          azure-batch/6.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:43:16 GMT']
+      ocp-date: ['Mon, 04 Mar 2019 18:16:28 GMT']
     method: GET
-    uri: https://batchf0370dc6.japanwest.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2017-09-01.6.0
+    uri: https://batchf0370dc6.westcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2018-12-01.8.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0370dc6.japanwest.batch.azure.com/$metadata#certificates/@Element\"\
-        ,\"thumbprint\":\"cff2ab63c8c955aaf71989efa641b906558d9fb7\",\"thumbprintAlgorithm\"\
-        :\"sha1\",\"url\":\"https://batchf0370dc6.japanwest.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)\"\
-        ,\"state\":\"active\",\"stateTransitionTime\":\"2017-11-07T17:43:15.8259688Z\"\
-        ,\"publicData\":\"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78\"\
-        \r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0370dc6.westcentralus.batch.azure.com/$metadata#certificates/@Element\",\"thumbprint\":\"cff2ab63c8c955aaf71989efa641b906558d9fb7\",\"thumbprintAlgorithm\":\"sha1\",\"url\":\"https://batchf0370dc6.westcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)\",\"state\":\"active\",\"stateTransitionTime\":\"2019-03-04T18:16:27.7523466Z\",\"publicData\":\"MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd+nalxwlQ9+qbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq+x1LG83761Ir8PiSy+6oxwCHOaYZyvheW0PByntC/WFwUipfn78\"\r\n}"}
     headers:
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:43:17 GMT']
-      request-id: [d767e9ce-4630-4137-8999-19e0f7e5e6f9]
+      date: ['Mon, 04 Mar 2019 18:16:28 GMT']
+      request-id: [a0aa29ca-5471-4b1d-85eb-254e1897f3a9]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]
@@ -95,24 +85,23 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
+          azure-batch/6.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:43:17 GMT']
+      ocp-date: ['Mon, 04 Mar 2019 18:16:28 GMT']
     method: POST
-    uri: https://batchf0370dc6.japanwest.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)/canceldelete?api-version=2017-09-01.6.0
+    uri: https://batchf0370dc6.westcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)/canceldelete?api-version=2018-12-01.8.0
   response:
-    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0370dc6.japanwest.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\"\
-        ,\"code\":\"CertificateStateActive\",\"message\":{\r\n    \"lang\":\"en-US\"\
-        ,\"value\":\"The specified certificate is in active state.\\nRequestId:e8e2f9ff-4882-436f-9aec-530e7e89f186\\\
-        nTime:2017-11-07T17:43:17.8903897Z\"\r\n  }\r\n}"}
+    body: {string: "{\r\n  \"odata.metadata\":\"https://batchf0370dc6.westcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\",\"code\":\"CertificateStateActive\",\"message\":{\r\n
+        \   \"lang\":\"en-US\",\"value\":\"The specified certificate is in active
+        state.\\nRequestId:b5d17278-b5f2-4a59-94ac-9cdcc98fb8cc\\nTime:2019-03-04T18:16:28.8414714Z\"\r\n
+        \ }\r\n}"}
     headers:
-      content-length: ['358']
+      content-length: ['362']
       content-type: [application/json;odata=minimalmetadata]
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:43:17 GMT']
-      request-id: [e8e2f9ff-4882-436f-9aec-530e7e89f186]
+      date: ['Mon, 04 Mar 2019 18:16:28 GMT']
+      request-id: [b5d17278-b5f2-4a59-94ac-9cdcc98fb8cc]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-content-type-options: [nosniff]
@@ -124,19 +113,18 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
       Content-Length: ['0']
-      Content-Type: [application/json; odata=minimalmetadata; charset=utf-8]
-      User-Agent: [python/3.6.1 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.18
-          msrest_azure/0.4.16 batchserviceclient/4.0.0 Azure-SDK-For-Python]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.4.34
+          azure-batch/6.0.1 Azure-SDK-For-Python]
       accept-language: [en-US]
-      ocp-date: ['Tue, 07 Nov 2017 17:43:17 GMT']
+      ocp-date: ['Mon, 04 Mar 2019 18:16:28 GMT']
     method: DELETE
-    uri: https://batchf0370dc6.japanwest.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2017-09-01.6.0
+    uri: https://batchf0370dc6.westcentralus.batch.azure.com/certificates(thumbprintAlgorithm=sha1,thumbprint=cff2ab63c8c955aaf71989efa641b906558d9fb7)?api-version=2018-12-01.8.0
   response:
     body: {string: ''}
     headers:
       dataserviceversion: ['3.0']
-      date: ['Tue, 07 Nov 2017 17:43:18 GMT']
-      request-id: [ebc307e3-7463-4657-9b33-f2aa58d11f3d]
+      date: ['Mon, 04 Mar 2019 18:16:29 GMT']
+      request-id: [8d94a759-72dc-44cd-948f-cf6b0739f9be]
       server: [Microsoft-HTTPAPI/2.0]
       strict-transport-security: [max-age=31536000; includeSubDomains]
       transfer-encoding: [chunked]

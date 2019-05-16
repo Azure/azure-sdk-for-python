@@ -28,6 +28,7 @@ class OperationDefinition(Model):
         'display': {'key': 'display', 'type': 'OperationDisplayDefinition'},
     }
 
-    def __init__(self, name=None, display=None):
-        self.name = name
-        self.display = display
+    def __init__(self, **kwargs):
+        super(OperationDefinition, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)

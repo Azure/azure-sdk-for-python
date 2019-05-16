@@ -1,0 +1,154 @@
+# Variables:
+#  'BuildTargetingString' comma separated glob strings selecting the packages that should be built. EG: "azure-keyvault,azure-mgmt-batch" or "azure-*"
+#  'codecov-python-repository-token' Is the codecov.io repository token.
+
+trigger:
+  - master
+
+variables:
+  PythonVersion: '3.6'
+
+jobs:
+  - job: 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python $(PythonVersion)'
+        inputs:
+          versionSpec: $(PythonVersion)
+
+      - script: |
+          pip install wheel setuptools pathlib twine readme-renderer[md]
+        displayName: 'Prep Environment'
+
+      - task: PythonScript@0
+        displayName: 'Generate Packages'
+        inputs:
+          scriptPath: 'scripts/devops_tasks/build_packages.py'
+          arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(BuildTargetingString)"'
+
+      - script: |
+          twine check $(Build.ArtifactStagingDirectory)/*
+        displayName: 'Verify Readme'
+
+      - task: PublishBuildArtifacts@1
+        condition: succeededOrFailed()
+        displayName: 'Publish Artifacts'
+        inputs:
+          artifactName: packages
+
+  - job: 'Analyze'
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python $(PythonVersion)'
+        inputs:
+          versionSpec: '$(PythonVersion)'
+
+      - script: |
+          pip install setuptools wheel Jinja2
+          pip install doc-warden==0.3.0
+          ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
+        displayName: 'Verify Readmes'
+
+      - task: PythonScript@0
+        displayName: 'Analyze dependencies'
+        inputs:
+          scriptPath: 'scripts/analyze_deps.py'
+          arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.html"'
+
+      - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+        # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
+        # builds should be sufficient.
+        condition: and(succeededOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
+        displayName: 'Component Detection'
+
+      - task: PublishBuildArtifacts@1
+        condition: succeededOrFailed()
+        displayName: 'Publish Report Artifacts'
+        inputs:
+          artifactName: reports
+
+  - job: 'Test'
+
+    dependsOn:
+      - 'Build'
+
+    strategy:
+      matrix:
+        Linux_Python27:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '2.7'
+        Linux_Python34:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.4'
+        Linux_Python35:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.5'
+        Linux_Python36:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.6'
+        Linux_Python37:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.7'
+        Windows_Python35:
+          OSName: 'Windows'
+          OSVmImage: 'vs2017-win2016'
+          PythonVersion: '3.5'
+        MacOS_Python27:
+          OSName: 'MacOS'
+          OSVmImage: 'macOS-10.13'
+          PythonVersion: '2.7'
+
+    pool:
+      vmImage: '$(OSVmImage)'
+
+    steps:
+      - template: templates/steps/archetype-sdk-client.yml
+
+      - script: |
+          coverage xml
+        displayName: 'Generate Coverage XML'
+
+      - script: |
+          codecov -t $(codecov-python-repository-token)
+        displayName: 'Publish Code Cov'
+        condition: ne(variables['codecov-python-repository-token'], '')
+
+      - task: PublishCodeCoverageResults@1
+        displayName: 'Publish Code Coverage to DevOps'
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+
+# Run PyPy tests without coverage
+  - job: 'Test_PyPy'
+
+    variables:
+      OSName: 'Linux'
+      PythonVersion: 'pypy3'
+
+    dependsOn:
+      - 'Build'
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+      - template: templates/steps/archetype-sdk-client.yml
+        parameters:
+          coverageParam: '--disablecov'

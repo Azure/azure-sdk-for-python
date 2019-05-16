@@ -1,0 +1,7 @@
+[packaging]
+package_name = "azure-mgmt-batchai"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Batch AI Management"
+package_doc_id = "batchai"
+is_stable = true
+is_arm = true

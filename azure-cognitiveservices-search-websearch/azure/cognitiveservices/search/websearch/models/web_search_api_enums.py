@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class AnswerType(Enum):
+class AnswerType(str, Enum):
 
     web_pages = "WebPages"
     images = "Images"
@@ -24,7 +24,7 @@ class AnswerType(Enum):
     time_zone = "TimeZone"
 
 
-class ErrorCode(Enum):
+class ErrorCode(str, Enum):
 
     none = "None"
     server_error = "ServerError"
@@ -34,7 +34,7 @@ class ErrorCode(Enum):
     insufficient_authorization = "InsufficientAuthorization"
 
 
-class ErrorSubCode(Enum):
+class ErrorSubCode(str, Enum):
 
     unexpected_error = "UnexpectedError"
     resource_error = "ResourceError"
@@ -49,21 +49,21 @@ class ErrorSubCode(Enum):
     authorization_expired = "AuthorizationExpired"
 
 
-class Freshness(Enum):
+class Freshness(str, Enum):
 
     day = "Day"
     week = "Week"
     month = "Month"
 
 
-class SafeSearch(Enum):
+class SafeSearch(str, Enum):
 
     off = "Off"
     moderate = "Moderate"
     strict = "Strict"
 
 
-class TextFormat(Enum):
+class TextFormat(str, Enum):
 
     raw = "Raw"
     html = "Html"

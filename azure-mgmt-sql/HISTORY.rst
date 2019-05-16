@@ -3,6 +3,147 @@
 Release History
 ===============
 
+0.12.0 (2019-03-28)
++++++++++++++++++++
+
+**Features**
+
+- Model ManagedDatabase has a new parameter recoverable_database_id
+- Model ManagedDatabase has a new parameter restorable_dropped_database_id
+- Model ServerSecurityAlertPolicy has a new parameter creation_time
+- Model ManagedInstanceUpdate has a new parameter public_data_endpoint_enabled
+- Model ManagedInstanceUpdate has a new parameter proxy_override
+- Model ManagedInstanceUpdate has a new parameter timezone_id
+- Model ManagedDatabaseUpdate has a new parameter recoverable_database_id
+- Model ManagedDatabaseUpdate has a new parameter restorable_dropped_database_id
+- Model ManagedInstance has a new parameter public_data_endpoint_enabled
+- Model ManagedInstance has a new parameter proxy_override
+- Model ManagedInstance has a new parameter timezone_id
+- Added operation group ManagedServerSecurityAlertPoliciesOperations
+- Added operation group VirtualClustersOperations
+- Added operation group ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
+- Added operation group RestorableDroppedManagedDatabasesOperations
+- Added operation group ManagedDatabaseSensitivityLabelsOperations
+- Added operation group RecoverableManagedDatabasesOperations
+- Added operation group ServerVulnerabilityAssessmentsOperations
+- Added operation group ManagedInstanceVulnerabilityAssessmentsOperations
+- Added operation group ManagedDatabaseSecurityAlertPoliciesOperations
+- Added operation group SensitivityLabelsOperations
+
+0.11.0 (2018-11-08)
++++++++++++++++++++
+
+**Features**
+
+- Model ServerBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model ExtendedServerBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model DatabaseBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model ExtendedDatabaseBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Added operation DatabaseVulnerabilityAssessmentsOperations.list_by_database
+- Added operation ManagedDatabaseVulnerabilityAssessmentsOperations.list_by_database
+- Added operation group ManagedBackupShortTermRetentionPoliciesOperations
+
+0.10.0 (2018-10-18)
++++++++++++++++++++
+
+**Features**
+
+- Model DatabaseVulnerabilityAssessment has a new parameter storage_account_access_key
+- Model ManagedInstanceUpdate has a new parameter dns_zone_partner
+- Model ManagedInstanceUpdate has a new parameter collation
+- Model ManagedInstanceUpdate has a new parameter dns_zone
+- Model ManagedInstance has a new parameter dns_zone_partner
+- Model ManagedInstance has a new parameter collation
+- Model ManagedInstance has a new parameter dns_zone
+- Added operation BackupShortTermRetentionPoliciesOperations.list_by_database
+- Added operation group ManagedDatabaseVulnerabilityAssessmentsOperations
+- Added operation group ExtendedDatabaseBlobAuditingPoliciesOperations
+- Added operation group TdeCertificatesOperations
+- Added operation group ManagedInstanceKeysOperations
+- Added operation group ServerBlobAuditingPoliciesOperations
+- Added operation group ManagedInstanceEncryptionProtectorsOperations
+- Added operation group ExtendedServerBlobAuditingPoliciesOperations
+- Added operation group ServerSecurityAlertPoliciesOperations
+- Added operation group ManagedDatabaseVulnerabilityAssessmentScansOperations
+- Added operation group ManagedInstanceTdeCertificatesOperations
+- Added operation group ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations
+
+**Breaking changes**
+
+- Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.delete has a new signature
+- Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.get has a new signature
+- Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.create_or_update has a new signature
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
+0.9.1 (2018-05-24)
+++++++++++++++++++
+
+**Features**
+
+- Managed instances, databases, and failover groups
+- Vulnerability assessments
+- Backup short term retention policies
+- Elastic Jobs
+
+0.9.0 (2018-04-25)
+++++++++++++++++++
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes.
+
+- Model signatures now use only keyword-argument syntax. All positional arguments must be re-written as keyword-arguments.
+  To keep auto-completion in most cases, models are now generated for Python 2 and Python 3. Python 3 uses the "*" syntax for keyword-only arguments.
+- Enum types now use the "str" mixin (class AzureEnum(str, Enum)) to improve the behavior when unrecognized enum values are encountered.
+  While this is not a breaking change, the distinctions are important, and are documented here:
+  https://docs.python.org/3/library/enum.html#others
+  At a glance:
+
+  - "is" should not be used at all.
+  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be prefered.
+
+- New Long Running Operation:
+
+  - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
+  - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
+    without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
+  - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
+    the response of the initial call will be returned without polling.
+  - `polling` parameter accepts instances of subclasses of `msrest.polling.PollingMethod`.
+  - `add_done_callback` will no longer raise if called after polling is finished, but will instead execute the callback right away.
+
+**SQL Breaking changes**
+
+- Database and ElasticPool now use Sku property for scale and tier-related properties. We have made this change in order to allow future support of autoscale, and to allow for new vCore-based editions.
+   * Database.sku has replaced Database.requested_service_objective_name and Database.edition. Database scale can be set by setting Sku.name to the requested service objective name (e.g. S0, P1, or GP_Gen4_1), or by setting Sku.name to the sku name (e.g. Standard, Premium, or GP_Gen4) and set Sku.capacity to the scale measured in DTU or vCores.
+   * Database.current_sku has replaced Database.service_level_objetive.
+   * Database.current_service_objective_id and Database.requested_service_objective_id have been removed.
+   * ElasticPool.sku has replaced ElasticPool.dtu. Elastic pool scale can be set by setting Sku.name to the requested sku name (e.g. StandardPool, PremiumPool, or GP_Gen4) and setting Sku.capacity to the scale measured in DTU or vCores.
+   * ElasticPool.per_database_settings has replaced ElasticPool.database_dtu_min and ElasticPool.database_dtu_max.
+- Database.max_size_bytes is now an integer instead of string.
+- LocationCapabilities tree has been changed in order to support capabilities of new vCore-based database and elastic pool editions.
+
+**Features**
+
+- Added support for List and Cancel operation on Azure database and elastic pool REST API
+- Added Long Term Retention V2 commands, including getting backups, deleting backups, setting the V2 policies, and getting the V2 policies
+
+  * Removed support for managing Vaults used for Long Term Retention V1
+  * Changed BackupLongTermRetentionPolicy class, removing the Long Term Retention V1 properties and adding the Long Term Retention V2 properties
+  * Removed BackupLongTermRetentionPolicyState
+
+0.8.6 (2018-03-22)
+++++++++++++++++++
+
+**Features**
+
+- Added support for List and Cancel operation on Azure database and elastic pool REST API
+- Added support for Auto-tuning REST API
+
 0.8.5 (2018-01-18)
 ++++++++++++++++++
 
@@ -47,16 +188,16 @@ Release History
 
 **Disclaimer**
 
-We were using a slightly unorthodox convention for some operation ids. 
-Some resource operations were "nested" inside others, e.g. blob auditing policies was nested inside databases as in client.databases.get_blob_auditing_policies(..) 
+We were using a slightly unorthodox convention for some operation ids.
+Some resource operations were "nested" inside others, e.g. blob auditing policies was nested inside databases as in client.databases.get_blob_auditing_policies(..)
 instead of the flattened ARM standard client.database_blob_auditing_policies.get(...).
 
-This convention has lead to some inconsistencies, makes some APIs difficult to find, and is at odds with future APIs. 
-For example if we wanted to implement listing db audit policies by server, continuing the current convention would be 
+This convention has lead to some inconsistencies, makes some APIs difficult to find, and is at odds with future APIs.
+For example if we wanted to implement listing db audit policies by server, continuing the current convention would be
 client.databases.list_blob_auditing_policies_by_server(..) which makes much less sense than the ARM standard which would beclient.database_blob_auditing_policies.list_by_server(...)`.
 
-In order to resolve this and provide a good path moving forward, 
-we have renamed the inconsistent operations to follow the ARM standard. 
+In order to resolve this and provide a good path moving forward,
+we have renamed the inconsistent operations to follow the ARM standard.
 This is an unfortunate breaking change, but it's best to do now while the SDK is still in preview and since most of these operations were only recently added.
 
 **Breaking changes**

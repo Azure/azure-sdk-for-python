@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from .operations.videos_operations import VideosOperations
@@ -42,7 +42,7 @@ class VideoSearchAPIConfiguration(Configuration):
         self.credentials = credentials
 
 
-class VideoSearchAPI(object):
+class VideoSearchAPI(SDKClient):
     """The Video Search API lets you search on Bing for video that are relevant to the user's search query, for insights about a video or for videos that are trending based on search requests made by others. This section provides technical details about the query parameters and headers that you use to request videos and the JSON response objects that contain them. For examples that show how to make requests, see [Searching the Web for Videos](https://docs.microsoft.com/azure/cognitive-services/bing-video-search/search-the-web).
 
     :ivar config: Configuration for client.
@@ -61,7 +61,7 @@ class VideoSearchAPI(object):
             self, credentials, base_url=None):
 
         self.config = VideoSearchAPIConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(VideoSearchAPI, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '1.0'

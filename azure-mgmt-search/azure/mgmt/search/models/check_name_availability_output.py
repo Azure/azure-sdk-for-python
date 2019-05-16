@@ -25,8 +25,7 @@ class CheckNameAvailabilityOutput(Model):
      (incorrect length, unsupported characters, etc.). 'AlreadyExists'
      indicates that the name is already in use and is therefore unavailable.
      Possible values include: 'Invalid', 'AlreadyExists'
-    :vartype reason: str or :class:`UnavailableNameReason
-     <azure.mgmt.search.models.UnavailableNameReason>`
+    :vartype reason: str or ~azure.mgmt.search.models.UnavailableNameReason
     :ivar message: A message that explains why the name is invalid and
      provides resource naming requirements. Available only if 'Invalid' is
      returned in the 'reason' property.
@@ -45,7 +44,8 @@ class CheckNameAvailabilityOutput(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super(CheckNameAvailabilityOutput, self).__init__(**kwargs)
         self.is_name_available = None
         self.reason = None
         self.message = None

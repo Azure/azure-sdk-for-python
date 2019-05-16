@@ -55,9 +55,9 @@ class RollingUpgradePolicy(Model):
         'pause_time_between_batches': {'key': 'pauseTimeBetweenBatches', 'type': 'str'},
     }
 
-    def __init__(self, max_batch_instance_percent=None, max_unhealthy_instance_percent=None, max_unhealthy_upgraded_instance_percent=None, pause_time_between_batches=None):
-        super(RollingUpgradePolicy, self).__init__()
-        self.max_batch_instance_percent = max_batch_instance_percent
-        self.max_unhealthy_instance_percent = max_unhealthy_instance_percent
-        self.max_unhealthy_upgraded_instance_percent = max_unhealthy_upgraded_instance_percent
-        self.pause_time_between_batches = pause_time_between_batches
+    def __init__(self, **kwargs):
+        super(RollingUpgradePolicy, self).__init__(**kwargs)
+        self.max_batch_instance_percent = kwargs.get('max_batch_instance_percent', None)
+        self.max_unhealthy_instance_percent = kwargs.get('max_unhealthy_instance_percent', None)
+        self.max_unhealthy_upgraded_instance_percent = kwargs.get('max_unhealthy_upgraded_instance_percent', None)
+        self.pause_time_between_batches = kwargs.get('pause_time_between_batches', None)
