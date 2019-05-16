@@ -12,7 +12,7 @@ pr:
     - sdk/servicebus/
 
 variables:
-  build_targeting_string: 'sdk/servicebus'
+  build_targeting_string: 'azure-servicebus'
 
 jobs:
 - template: ../../eng/pipelines/templates/jobs/archetype-sdk-client.yml
