@@ -28,10 +28,9 @@ import logging
 
 _LOGGER = logging.getLogger(__name__)
 
-#pylint: disable=too-few-public-methods
 class AsyncPagedMixin(AsyncIterator):
 
-    def __init__(self, *args, **kwargs): #pylint: disable=unused-argument
+    def __init__(self, *args, **kwargs):
         """Bring async to Paging.
 
         "async_command" is mandatory keyword argument for this mixin to work.
@@ -40,6 +39,7 @@ class AsyncPagedMixin(AsyncIterator):
         if not self._async_get_next:
             _LOGGER.debug("Paging async iterator protocol is not available for %s",
                           self.__class__.__name__)
+        super(AsyncPagedMixin, self).__init__(*args, **kwargs)
 
     async def _async_advance_page(self):
         if not self._async_get_next:

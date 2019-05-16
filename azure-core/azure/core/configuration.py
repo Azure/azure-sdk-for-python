@@ -24,11 +24,9 @@
 #
 # --------------------------------------------------------------------------
 
-#pylint: disable=too-few-public-methods
 
 class Configuration(object):
 
-    #pylint: disable=too-many-instance-attributes
     def __init__(self, transport=None, **kwargs):
         # Communication configuration - applied per transport.
         self.connection = ConnectionConfiguration(**kwargs)

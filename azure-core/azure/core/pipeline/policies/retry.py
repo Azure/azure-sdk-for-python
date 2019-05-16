@@ -65,7 +65,6 @@ class RetryPolicy(HTTPPolicy):
     :param retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
     """
 
-    #pylint: disable=too-many-instance-attributes
     #: Maximum backoff time.
     BACKOFF_MAX = 120
 

@@ -39,7 +39,7 @@ if sys.version_info >= (3, 5, 2):
     # Not executed on old Python, no syntax error
     from .async_paging import AsyncPagedMixin  # type: ignore
 else:
-    class AsyncPagedMixin(object):  # type: ignore #pylint: disable=too-few-public-methods
+    class AsyncPagedMixin(object):  # type: ignore
         pass
 
 class Paged(AsyncPagedMixin, Iterator):

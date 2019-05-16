@@ -68,7 +68,6 @@ def map_error(status_code, response, error_map):
 class AzureError(Exception):
     """Base exception for all errors."""
 
-    #pylint: disable=too-many-instance-attributes
     def __init__(self, message, *args, **kwargs):
         self.inner_exception = kwargs.get('error')
         self.response = kwargs.get('response')

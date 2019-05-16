@@ -74,7 +74,6 @@ class PipelineContext(dict):
         return super(PipelineContext, self).pop(*args)
 
 
-#pylint: disable=too-few-public-methods
 class PipelineRequest(object):
     """Represents a HTTP request in a Pipeline.
 
@@ -97,7 +96,6 @@ class PipelineRequest(object):
         self.context = context
 
 
-#pylint: disable=too-few-public-methods
 class PipelineResponse(object):
     """A pipeline response object.
 

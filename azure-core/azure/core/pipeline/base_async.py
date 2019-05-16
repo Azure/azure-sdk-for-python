@@ -49,7 +49,6 @@ except ImportError: # Python <= 3.7
             return None
 
 
-#pylint: disable=too-few-public-methods
 class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]): #pylint: disable=unsubscriptable-object
     """Async implementation of the SansIO policy.
     """
@@ -70,7 +69,6 @@ class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPRes
         return response
 
 
-#pylint: disable=too-few-public-methods
 class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]): #pylint: disable=unsubscriptable-object
 
     def __init__(self, sender) -> None:
