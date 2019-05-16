@@ -28,7 +28,7 @@ class MgmtRelayNamespaceTest(AzureMgmtTestCase):
 
         # Create a Namespace
         namespace_name = "testingpythontestcasenamespace"
-        namespaceparameter=RelayNamespace(location, {'tag1':'value1', 'tag2':'value2'}, Sku(SkuTier.standard))
+        namespaceparameter=RelayNamespace(location=location, tags={'tag1':'value1', 'tag2':'value2'}, sku=Sku(tier=SkuTier.standard))
         creatednamespace = self.relay_client.namespaces.create_or_update(resource_group_name, namespace_name, namespaceparameter).result()
         self.assertEqual(creatednamespace.name, namespace_name)
         #
