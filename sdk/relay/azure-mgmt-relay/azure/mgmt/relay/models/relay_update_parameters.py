@@ -67,9 +67,9 @@ class RelayUpdateParameters(ResourceNamespacePatch):
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
     }
 
-    def __init__(self, tags=None, sku=None):
-        super(RelayUpdateParameters, self).__init__(tags=tags)
-        self.sku = sku
+    def __init__(self, **kwargs):
+        super(RelayUpdateParameters, self).__init__(**kwargs)
+        self.sku = kwargs.get('sku', None)
         self.provisioning_state = None
         self.created_at = None
         self.updated_at = None
