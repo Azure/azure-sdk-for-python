@@ -32,7 +32,6 @@ from azure.storage.blob.models import (
     BlobPermissions,
     ContentSettings,
     BlobProperties,
-    # DeleteSnapshot,
     # Include,
     # ContainerPermissions,
 )
@@ -553,13 +552,14 @@ class StorageCommonBlobTest(StorageTestCase):
         #Arrange
         self._create_block_blob()
         self._create_block_blob()
-        blob_list = self.bs.list_blobs(self.container_name)
+        container = self.bsc.get_container_client(self.container_name)
+        blob_list = container.list_blob_properties()
 
         #Act
 
         #Assert
         for blob in blob_list:
-            self.assertTrue(blob.properties.server_encrypted)
+            self.assertTrue(blob.server_encrypted)
 
     @record
     def test_no_server_encryption(self):
@@ -580,18 +580,20 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_get_blob_properties_with_snapshot(self):
         # Arrange
         blob_name = self._create_block_blob()
+        container = self.bsc.get_container_client(self.container_name)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         res = blob.create_snapshot()
-        blobs = list(self.bs.list_blobs(self.container_name, include='snapshots'))
+        blobs = list(container.list_blob_properties(include='snapshots'))
         self.assertEqual(len(blobs), 2)
 
         # Act
-        blob = self.bs.get_blob_properties(self.container_name, blob_name, snapshot=res.snapshot)
+        snapshot = self.bsc.get_blob_client(self.container_name, res)
+        blob = snapshot.get_blob_properties()
 
         # Assert
         self.assertIsNotNone(blob)
-        self.assertEqual(blob.properties.blob_type, self.bs.blob_type)
-        self.assertEqual(blob.properties.content_length, len(self.byte_data))
+        self.assertEqual(blob.blob_type, snapshot.blob_type)
+        self.assertEqual(blob.content_length, len(self.byte_data))
 
     @record
     def test_get_blob_properties_with_leased_blob(self):
@@ -676,7 +678,8 @@ class StorageCommonBlobTest(StorageTestCase):
         snapshot.delete_blob()
 
         # Assert
-        blobs = list(self.bs.list_blobs(self.container_name, include='snapshots'))
+        container = self.bsc.get_container_client(self.container_name)
+        blobs = list(container.list_blob_properties(include='snapshots'))
         self.assertEqual(len(blobs), 1)
         self.assertEqual(blobs[0].name, blob_name)
         self.assertIsNone(blobs[0].snapshot)
@@ -685,14 +688,15 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_delete_blob_snapshots(self):
         # Arrange
         blob_name = self._create_block_blob()
-        self.bs.create_snapshot(self.container_name, blob_name)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.create_snapshot()
 
         # Act
-        self.bs.delete_blob(self.container_name, blob_name,
-                            delete_snapshots=DeleteSnapshot.Only)
+        blob.delete_blob(delete_snapshots='only')  # TODO: Separate calls?
 
         # Assert
-        blobs = list(self.bs.list_blobs(self.container_name, include='snapshots'))
+        container = self.bsc.get_container_client(self.container_name)
+        blobs = list(container.list_blob_properties(include='snapshots'))
         self.assertEqual(len(blobs), 1)
         self.assertIsNone(blobs[0].snapshot)
 
@@ -700,14 +704,15 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_delete_blob_with_snapshots(self):
         # Arrange
         blob_name = self._create_block_blob()
-        self.bs.create_snapshot(self.container_name, blob_name)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.create_snapshot()
 
         # Act
-        self.bs.delete_blob(self.container_name, blob_name,
-                            delete_snapshots=DeleteSnapshot.Include)
+        blob.delete_blob(delete_snapshots='include')
 
         # Assert
-        blobs = list(self.bs.list_blobs(self.container_name, include='snapshots'))
+        container = self.bsc.get_container_client(self.container_name)
+        blobs = list(container.list_blob_properties(include='snapshots'))
         self.assertEqual(len(blobs), 0)
 
     @record

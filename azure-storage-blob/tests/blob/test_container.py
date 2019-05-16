@@ -9,6 +9,7 @@ import requests
 from datetime import datetime, timedelta
 from azure.common import (AzureConflictHttpError, AzureException,
                           AzureHttpError, AzureMissingResourceHttpError)
+from azure.core import HttpResponseError, ResourceNotFoundError
 from azure.storage.blob import (
     SharedKeyCredentials,
     BlobServiceClient,
@@ -33,7 +34,6 @@ class StorageContainerTest(StorageTestCase):
         url = self._get_account_url()
         credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
         self.bsc = BlobServiceClient(url, credentials=credentials)
-        self.bs = self._create_storage_service(BlockBlobService, self.settings)
         self.test_containers = []
 
     def tearDown(self):
@@ -59,8 +59,9 @@ class StorageContainerTest(StorageTestCase):
 
     def _create_container(self, prefix=TEST_CONTAINER_PREFIX):
         container_name = self._get_container_reference(prefix)
-        self.bs.create_container(container_name)
-        return container_name
+        container = self.bsc.get_container_client(container_name)
+        container.create_container()
+        return container
 
     #--Test cases for containers -----------------------------------------
     @record
@@ -69,34 +70,11 @@ class StorageContainerTest(StorageTestCase):
         container_name = self._get_container_reference()
 
         # Act
-        created = self.bs.create_container(container_name)
+        container = self.bsc.get_container_client(container_name)
+        created = container.create_container()
 
         # Assert
         self.assertTrue(created)
-
-    @record
-    def test_create_container_fail_on_exist(self):
-        # Arrange
-        container_name = self._get_container_reference()
-
-        # Act
-        created = self.bs.create_container(container_name, None, None, True)
-
-        # Assert
-        self.assertTrue(created)
-
-    @record
-    def test_create_container_with_already_existing_container(self):
-        # Arrange
-        container_name = self._get_container_reference()
-
-        # Act
-        created1 = self.bs.create_container(container_name)
-        created2 = self.bs.create_container(container_name)
-
-        # Assert
-        self.assertTrue(created1)
-        self.assertFalse(created2)
 
     @record
     def test_create_container_with_already_existing_container_fail_on_exist(self):
@@ -104,9 +82,10 @@ class StorageContainerTest(StorageTestCase):
         container_name = self._get_container_reference()
 
         # Act
-        created = self.bs.create_container(container_name)
-        with self.assertRaises(AzureConflictHttpError):
-            self.bs.create_container(container_name, None, None, True)
+        container = self.bsc.get_container_client(container_name)
+        created = container.create_container()
+        with self.assertRaises(HttpResponseError):
+            container.create_container()
 
         # Assert
         self.assertTrue(created)
@@ -117,8 +96,10 @@ class StorageContainerTest(StorageTestCase):
         container_name = self._get_container_reference()
 
         # Act
-        created = self.bs.create_container(container_name, None, 'container')
-        anonymous_service = BlockBlobService(self.settings.STORAGE_ACCOUNT_NAME)
+        container = self.bsc.get_container_client(container_name)
+        created = container.create_container(public_access='container')
+
+        anonymous_service = ContainerClient(self._get_account_url(), container=container_name)
 
         # Assert
         self.assertTrue(created)
@@ -130,13 +111,20 @@ class StorageContainerTest(StorageTestCase):
         container_name = self._get_container_reference()
 
         # Act
-        created = self.bs.create_container(container_name, None, 'blob')
-        self.bs.create_blob_from_text(container_name, 'blob1', u'xyz')
-        anonymous_service = BlockBlobService(self.settings.STORAGE_ACCOUNT_NAME)
+        container = self.bsc.get_container_client(container_name)
+        created = container.create_container(public_access='blob')
+
+        blob = container.get_blob_client("blob1")
+        blob.upload_blob(u'xyz')
+        
+        anonymous_service = BlobClient(
+            self._get_account_url(),
+            container=container_name,
+            blob="blob1")
 
         # Assert
         self.assertTrue(created)
-        anonymous_service.get_blob_to_text(container_name, 'blob1')
+        anonymous_service.download_blob()
 
     @record
     def test_create_container_with_metadata(self):
@@ -145,11 +133,12 @@ class StorageContainerTest(StorageTestCase):
         metadata = {'hello': 'world', 'number': '42'}
 
         # Act
-        created = self.bs.create_container(container_name, metadata)
+        container = self.bsc.get_container_client(container_name)
+        created = container.create_container(metadata)
 
         # Assert
         self.assertTrue(created)
-        md = self.bs.get_container_metadata(container_name)
+        md = container.get_container_metadata()
         self.assertDictEqual(md, metadata)
 
     @record

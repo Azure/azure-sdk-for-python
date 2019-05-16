@@ -13,6 +13,7 @@ from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import StorageServiceProperties
+from ._generated.models import BlobProperties as GenBlobProps
 from .common import BlockState, BlobType
 
 
@@ -173,33 +174,31 @@ class ContainerProperties(object):
 
     def __init__(self):
         self.name = None
-        self.last_modified = None
-        self.etag = None
-        self.lease = LeaseProperties()
-        self.public_access = None
-        self.has_immutability_policy = None
-        self.has_legal_hold = None
-        self.metadata = None
+        self.last_modified = kwargs.get('Last-Modified')
+        self.etag = kwargs.get('ETag')
+        self.lease = LeaseProperties(**kwargs)
+        self.public_access = kwargs.get('x-ms-blob-public-access')
+        self.has_immutability_policy = kwargs.get('x-ms-has-immutability-policy')
+        self.has_legal_hold = kwargs.get('x-ms-has-legal-hold')
+        self.metadata = kwargs.get('metadata')
 
     @classmethod
-    def _from_generated_container(cls, generated):
-        lease = LeaseProperties()
-        lease.status = generated.properties.lease_status.value
-        lease.state = generated.properties.lease_state.value
-        lease.duration = generated.properties.lease_duration.value
+    def _from_generated(cls, generated):
         props = cls()
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
         props.etag = generated.properties.etag
-        props.lease = lease
+        props.lease = LeaseProperties._from_generated(generated)
         props.public_access = generated.properties.public_access
         props.has_immutability_policy = generated.properties.has_immutability_policy
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
+        return props
+
 
 class ContainerPropertiesPaged(Paged):
 
-    def __init__(self, command, prefix=prefix, results_per_page=results_per_page, **kwargs):
+    def __init__(self, command, prefix=None, results_per_page=None, **kwargs):
         super(ContainerPropertiesPaged, self).__init__(command, None, **kwargs)
         self.service_endpoint = None
         self.prefix = prefix
@@ -235,7 +234,7 @@ class ContainerPropertiesPaged(Paged):
 
     def __next__(self):
         item = super(ContainerPropertiesPaged, self).__next__()
-        return ContainerProperties._from_generated_container(item)
+        return ContainerProperties._from_generated(item)
 
 
 class SnapshotProperties(object):
@@ -319,11 +318,86 @@ class BlobProperties(object):
         self.blob_tier = kwargs.get('x-ms-access-tier')
         self.blob_tier_change_time = kwargs.get('x-ms-access-tier-change-time')
         self.blob_tier_inferred = kwargs.get('x-ms-access-tier-inferred')
+        self.deleted = False
         self.deleted_time = None
         self.remaining_retention_days = None
         self.creation_time = kwargs.get('x-ms-creation-time')
         self.archive_status = kwargs.get('x-ms-archive-status')
 
+    @classmethod
+    def _from_generated(cls, generated):
+        blob = BlobProperties()
+        blob.name = generated.name
+        blob.blob_type = BlobType(generated.properties.blob_type.value)
+        blob.etag = generated.properties.etag
+        blob.deleted = generated.deleted
+        blob.snapshot = generated.snapshot
+        blob.metadata = generated.metadata
+        blob.lease = LeaseProperties._from_generated(generated)
+        blob.copy = CopyProperties._from_generated(generated)
+        blob.last_modified = generated.properties.last_modified
+        blob.creation_time = generated.properties.creation_time
+        blob.content_settings = ContentSettings._from_generated(generated)
+        blob.content_length = generated.properties.content_length
+        blob.page_blob_sequence_number = generated.properties.blob_sequence_number
+        blob.server_encrypted = generated.properties.server_encrypted
+        blob.deleted_time = generated.properties.deleted_time
+        blob.remaining_retention_days = generated.properties.remaining_retention_days
+        blob.blob_tier = generated.properties.access_tier
+        blob.blob_tier_inferred = generated.properties.access_tier_inferred
+        blob.archive_status = generated.properties.archive_status
+        blob.blob_tier_change_time = generated.properties.access_tier_change_time
+        return blob
+
+
+
+class BlobPropertiesPaged(Paged):
+
+    def __init__(self, command, container=None, prefix=None, results_per_page=None, **kwargs):
+        super(BlobPropertiesPaged, self).__init__(command, None, **kwargs)
+        self.service_endpoint = None
+        self.prefix = prefix
+        self.current_marker = None
+        self.results_per_page = results_per_page
+        self.next_marker = ""
+        self.container_name = container
+        self.delimiter = None
+        self.segment = None
+
+    def _advance_page(self):
+        # type: () -> List[Model]
+        """Force moving the cursor to the next azure call.
+
+        This method is for advanced usage, iterator protocol is prefered.
+
+        :raises: StopIteration if no further page
+        :return: The current page list
+        :rtype: list
+        """
+        if self.next_marker is None:
+            raise StopIteration("End of paging")
+        self._current_page_iter_index = 0
+        self._response = self._get_next(
+            prefix=self.prefix,
+            marker=self.next_marker,
+            maxresults=self.results_per_page)
+
+        self.service_endpoint = self._response.service_endpoint
+        self.prefix = self._response.prefix
+        self.current_marker = self._response.marker
+        self.results_per_page = self._response.max_results
+        self.current_page = self._response.segment.blob_items
+        self.next_marker = self._response.next_marker or None
+        self.container_name = self._response.container_name
+        self.delimiter = self._response.delimiter
+        return self.current_page
+
+    def __next__(self):
+        item = super(BlobPropertiesPaged, self).__next__()
+        if isinstance(item, BlobProperties):
+            return item
+        return BlobProperties._from_generated(item)
+    
 
 class LeaseProperties(object):
     """
@@ -343,6 +417,17 @@ class LeaseProperties(object):
         self.status = kwargs.get('x-ms-lease-status')
         self.state = kwargs.get('x-ms-lease-state')
         self.duration = kwargs.get('x-ms-lease-duration')
+
+    @classmethod
+    def _from_generated(cls, generated):
+        lease = cls()
+        if generated.properties.lease_status:
+            lease.status = generated.properties.lease_status.value
+        if generated.properties.lease_state:
+            lease.state = generated.properties.lease_state.value
+        if generated.properties.lease_duration:
+            lease.duration = generated.properties.lease_duration.value
+        return lease
 
 
 class ContentSettings(object):
@@ -383,6 +468,17 @@ class ContentSettings(object):
         self.content_md5 = content_md5 or kwargs.get('Content-MD5')
         self.content_disposition = content_disposition or kwargs.get('Content-Disposition')
         self.cache_control = cache_control or kwargs.get('Cache-Control')
+
+    @classmethod
+    def _from_generated(cls, generated):
+        settings = cls()
+        settings.content_type = generated.properties.content_type
+        settings.content_encoding = generated.properties.content_encoding
+        settings.content_language = generated.properties.content_language
+        settings.content_md5 = generated.properties.content_md5
+        settings.content_disposition = generated.properties.content_disposition
+        settings.cache_control = generated.properties.cache_control
+        return settings
 
 
 class CopyProperties(object):
@@ -434,6 +530,20 @@ class CopyProperties(object):
         self.status_description = kwargs.get('x-ms-copy-status-description')
         self.incremental_copy = kwargs.get('x-ms-incremental-copy')
         self.destination_snapshot = kwargs.get('x-ms-copy-destination-snapshot')
+
+    @classmethod
+    def _from_generated(cls, generated):
+        copy = cls()
+        copy.id = generated.properties.copy_id
+        if generated.properties.copy_status:
+            copy.status = generated.properties.copy_status.value
+        copy.source = generated.properties.copy_source
+        copy.progress = generated.properties.copy_progress
+        copy.completion_time = generated.properties.copy_completion_time
+        copy.status_description = generated.properties.copy_status_description
+        copy.incremental_copy = generated.properties.incremental_copy
+        copy.destination_snapshot = generated.properties.destination_snapshot
+        return copy
 
 
 class BlobBlock(object):

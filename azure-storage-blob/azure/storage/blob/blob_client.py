@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from base64 import b64encode
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING
@@ -644,6 +643,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             modified_access_conditions=mod_conditions,
             cls=return_response_headers,
             headers=headers,
+            error_map=basic_error_map(),
             **kwargs
         )
 

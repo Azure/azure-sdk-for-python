@@ -170,30 +170,18 @@ class BlobServiceClient(object):
         except StorageErrorException as error:
             process_storage_error(error)
 
-
-    def get_container_properties(self, lease=None, timeout=None, **kwargs):
-        # type: (Optional[Union[Lease, str]], Optional[int], **Any) -> ContainerProperties
-        """
-        :returns: ContainerProperties
-        """
-        access_conditions = get_access_conditions(lease)
-        response = self._client.container.get_properties(
-            timeout=timeout, lease_access_conditions=access_conditions, **kwargs)
-        deserialized = ContainerProperties()
-        deserialized.name = response.name
-        # Transfer data from response -> deserilized
-        return deserialized
-
     def list_container_properties(
             self, prefix=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
-            timeout=None  # type: Optional[int]
+            timeout=None,  # type: Optional[int]
+            **kwargs
         ):
-        # type: (...) -> Iterable[ContainerProperties]
+        # type: (...) -> ContainerPropertiesPaged
         """
         :returns: An iterable (auto-paging) of ContainerProperties.
         """
         include = 'metadata' if include_metadata else None
+        results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.service.list_containers_segment,
             include=include,
