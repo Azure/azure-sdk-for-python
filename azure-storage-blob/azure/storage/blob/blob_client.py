@@ -663,12 +663,66 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
-            premium_page_blob_tier=None  # type: Optional[Union[str, PremiumPageBlobTier]]
+            premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
+            **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
         :returns: Blob-updated property dict (Etag and last modified).
         """
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        blob_headers = None
+        if content_settings:
+            blob_headers = BlobHTTPHeaders(
+                blob_cache_control=content_settings.cache_control,
+                blob_content_type=content_settings.content_type,
+                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_encoding=content_settings.content_encoding,
+                blob_content_language=content_settings.content_language,
+                blob_content_disposition=content_settings.content_disposition
+            )
+        if self.blob_type == BlobType.PageBlob:
+            if content_length is None:
+                raise ValueError("A content length must be specified for a Page Blob.")
+            if premium_page_blob_tier:
+                try:
+                    headers['x-ms-access-tier'] = premium_page_blob_tier.value
+                except AttributeError:
+                    headers['x-ms-access-tier'] = premium_page_blob_tier
+            return self._client.page_blob.create(
+                content_length=0,
+                blob_content_length=content_length,
+                blob_sequence_number=sequence_number,
+                blob_http_headers=blob_headers,
+                timeout=timeout,
+                lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
+                cls=return_response_headers,
+                headers=headers,
+                error_map=basic_error_map(),
+                **kwargs
+            )
+        elif self.blob_type == BlobType.AppendBlob:
+            if content_length or premium_page_blob_tier or sequence_number:
+                raise ValueError("The following options cannot be used with Append Blobs: {}".format(
+                    "\n".join("content_length", "premium_page_blob_tier", "sequence_number")))
+            return self._client.append_blob.create(
+                content_length=0,
+                blob_http_headers=blob_headers,
+                timeout=timeout,
+                lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
+                cls=return_response_headers,
+                headers=headers,
+                error_map=basic_error_map(),
+                **kwargs
+            )
+        else:
+            raise TypeError("Create operation not supported by BlobClients of type BlockBlob.")
 
     def create_snapshot(
             self, metadata=None,  # type: Optional[Dict[str, str]]

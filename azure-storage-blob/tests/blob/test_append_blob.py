@@ -99,8 +99,8 @@ class StorageAppendBlobTest(StorageTestCase):
         # Assert
         blob_properties = blob.get_blob_properties()
         self.assertIsNotNone(blob_properties)
-        self.assertEqual(blob_properties.etag, create_resp.etag)
-        self.assertEqual(blob_properties.last_modified, create_resp.last_modified)
+        self.assertEqual(blob_properties.etag, create_resp.get('ETag'))
+        self.assertEqual(blob_properties.last_modified, create_resp.get('Last-Modified'))
 
     @record
     def test_create_blob_with_lease_id(self):
@@ -108,26 +108,26 @@ class StorageAppendBlobTest(StorageTestCase):
         blob = self._create_blob()
 
         # Act
-        with blob.acquire_lease() as lease:
-            create_resp = blob.create_blob(lease=lease)
+        lease = blob.acquire_lease()
+        create_resp = blob.create_blob(lease=lease)
 
         # Assert
-        lob_properties = blob.get_blob_properties()
+        blob_properties = blob.get_blob_properties()
         self.assertIsNotNone(blob_properties)
-        self.assertEqual(blob_properties.etag, create_resp.etag)
-        self.assertEqual(blob_properties.last_modified, create_resp.last_modified)
+        self.assertEqual(blob_properties.etag, create_resp.get('ETag'))
+        self.assertEqual(blob_properties.last_modified, create_resp.get('Last-Modified'))
 
     @record
     def test_create_blob_with_metadata(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
-        blob_name = self._get_blob_reference()
+        blob = self._get_blob_reference()
 
         # Act
-        self.bs.create_blob(self.container_name, blob_name, metadata=metadata)
+        blob.create_blob(metadata=metadata)
 
         # Assert
-        md = self.bs.get_blob_metadata(self.container_name, blob_name)
+        md = blob.get_blob_metadata()
         self.assertDictEqual(md, metadata)
 
     @record
