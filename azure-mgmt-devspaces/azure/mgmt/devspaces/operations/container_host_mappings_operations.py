@@ -58,7 +58,7 @@ class ContainerHostMappingsOperations(object):
         :rtype: ~azure.mgmt.devspaces.models.ContainerHostMapping or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.devspaces.models.ErrorResponseException>`
+         :class:`DevSpacesErrorResponseException<azure.mgmt.devspaces.models.DevSpacesErrorResponseException>`
         """
         container_host_mapping = models.ContainerHostMapping(container_host_resource_id=container_host_resource_id)
 
@@ -94,7 +94,7 @@ class ContainerHostMappingsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DevSpacesErrorResponseException(self._deserialize, response)
 
         deserialized = None
 

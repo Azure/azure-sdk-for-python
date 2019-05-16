@@ -24,7 +24,7 @@ try:
     from .resource_py3 import Resource
     from .kubernetes_connection_details_py3 import KubernetesConnectionDetails
     from .error_details_py3 import ErrorDetails
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .dev_spaces_error_response_py3 import DevSpacesErrorResponse, DevSpacesErrorResponseException
 except (SyntaxError, ImportError):
     from .container_host_mapping import ContainerHostMapping
     from .tracked_resource import TrackedResource
@@ -40,7 +40,7 @@ except (SyntaxError, ImportError):
     from .resource import Resource
     from .kubernetes_connection_details import KubernetesConnectionDetails
     from .error_details import ErrorDetails
-    from .error_response import ErrorResponse, ErrorResponseException
+    from .dev_spaces_error_response import DevSpacesErrorResponse, DevSpacesErrorResponseException
 from .resource_provider_operation_definition_paged import ResourceProviderOperationDefinitionPaged
 from .controller_paged import ControllerPaged
 from .dev_spaces_management_client_enums import (
@@ -63,7 +63,7 @@ __all__ = [
     'Resource',
     'KubernetesConnectionDetails',
     'ErrorDetails',
-    'ErrorResponse', 'ErrorResponseException',
+    'DevSpacesErrorResponse', 'DevSpacesErrorResponseException',
     'ResourceProviderOperationDefinitionPaged',
     'ControllerPaged',
     'ProvisioningState',

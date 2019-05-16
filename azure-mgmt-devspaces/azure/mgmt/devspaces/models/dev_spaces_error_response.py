@@ -13,7 +13,7 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
-class ErrorResponse(Model):
+class DevSpacesErrorResponse(Model):
     """Error response indicates that the service is not able to process the
     incoming request. The reason is provided in the error message.
 
@@ -26,12 +26,12 @@ class ErrorResponse(Model):
     }
 
     def __init__(self, **kwargs):
-        super(ErrorResponse, self).__init__(**kwargs)
+        super(DevSpacesErrorResponse, self).__init__(**kwargs)
         self.error = kwargs.get('error', None)
 
 
-class ErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponse'.
+class DevSpacesErrorResponseException(HttpOperationError):
+    """Server responsed with exception of type: 'DevSpacesErrorResponse'.
 
     :param deserialize: A deserializer
     :param response: Server response to be deserialized.
@@ -39,4 +39,4 @@ class ErrorResponseException(HttpOperationError):
 
     def __init__(self, deserialize, response, *args):
 
-        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
+        super(DevSpacesErrorResponseException, self).__init__(deserialize, response, 'DevSpacesErrorResponse', *args)
