@@ -312,7 +312,7 @@ class KeyClient:
         return (DeletedKey._from_deleted_key_item(item) for item in pages)
 
     def list_keys(self, **kwargs):
-        # type: ( Mapping[str, Any]) -> Generator[KeyBase]
+        # type: (Mapping[str, Any]) -> Generator[KeyBase]
 
         """List keys in the specified vault.
 
