@@ -32,6 +32,6 @@ class CheckNameAvailability(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, **kwargs) -> None:
         super(CheckNameAvailability, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.name = name
