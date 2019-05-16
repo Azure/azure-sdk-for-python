@@ -64,6 +64,7 @@ class AsyncPipelineClient(object):
             ContentDecodePolicy(),
             config.redirect_policy,
             config.retry_policy,
+            config.custom_hook_policy,
             config.logging_policy,
         ]
 
