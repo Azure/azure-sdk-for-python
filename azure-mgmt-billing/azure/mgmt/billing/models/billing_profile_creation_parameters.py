@@ -24,15 +24,12 @@ class BillingProfileCreationParameters(Model):
     :param invoice_email_opt_in: If the billing profile is opted in to receive
      invoices via email.
     :type invoice_email_opt_in: bool
-    :param enable_azure_sku_ids: Azure skus to enable for this billing
-     profile.
-    :type enable_azure_sku_ids: list[str]
+    :param enable_azure_sk_us: Azure skus to enable for this billing profile..
+    :type enable_azure_sk_us:
+     list[~azure.mgmt.billing.models.EnabledAzureSKUs]
     :param create_azure_subscriptions: Create azure subscriptions when
      creating this billing profile.
     :type create_azure_subscriptions: bool
-    :param payment_instrument_id: The paymentInstrument associated with the
-     billing profile at creation.
-    :type payment_instrument_id: str
     """
 
     _attribute_map = {
@@ -40,9 +37,8 @@ class BillingProfileCreationParameters(Model):
         'po_number': {'key': 'poNumber', 'type': 'str'},
         'address': {'key': 'address', 'type': 'Address'},
         'invoice_email_opt_in': {'key': 'invoiceEmailOptIn', 'type': 'bool'},
-        'enable_azure_sku_ids': {'key': 'enableAzureSkuIds', 'type': '[str]'},
+        'enable_azure_sk_us': {'key': 'enableAzureSKUs', 'type': '[EnabledAzureSKUs]'},
         'create_azure_subscriptions': {'key': 'createAzureSubscriptions', 'type': 'bool'},
-        'payment_instrument_id': {'key': 'paymentInstrumentId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -51,6 +47,5 @@ class BillingProfileCreationParameters(Model):
         self.po_number = kwargs.get('po_number', None)
         self.address = kwargs.get('address', None)
         self.invoice_email_opt_in = kwargs.get('invoice_email_opt_in', None)
-        self.enable_azure_sku_ids = kwargs.get('enable_azure_sku_ids', None)
+        self.enable_azure_sk_us = kwargs.get('enable_azure_sk_us', None)
         self.create_azure_subscriptions = kwargs.get('create_azure_subscriptions', None)
-        self.payment_instrument_id = kwargs.get('payment_instrument_id', None)
