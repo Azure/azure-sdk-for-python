@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .video_layer import VideoLayer
+from .video_layer_py3 import VideoLayer
 
 
 class H264Layer(VideoLayer):
@@ -32,8 +32,9 @@ class H264Layer(VideoLayer):
     :type label: str
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param bitrate: The average bitrate in bits per second at which to encode
-     the input video when generating this layer. This is a required field.
+    :param bitrate: Required. The average bitrate in bits per second at which
+     to encode the input video when generating this layer. This is a required
+     field.
     :type bitrate: int
     :param max_bitrate: The maximum bitrate (in bits per second), at which the
      VBV buffer should be assumed to refill. If not specified, defaults to the
@@ -58,14 +59,14 @@ class H264Layer(VideoLayer):
      when encoding this layer. If not specified, the encoder will turn it on
      whenever the video profile permits its use.
     :type adaptive_bframe: bool
-    :param profile: Which profile of the H.264 standard should be used when
-     encoding this layer. Default is Auto. Possible values include: 'Auto',
-     'Baseline', 'Main', 'High', 'High422', 'High444'
+    :param profile: We currently support Baseline, Main, High, High422,
+     High444. Default is Auto. Possible values include: 'Auto', 'Baseline',
+     'Main', 'High', 'High422', 'High444'
     :type profile: str or ~azure.mgmt.media.models.H264VideoProfile
-    :param level: Which level of the H.264 standard should be used when
-     encoding this layer. The value can be Auto, or a number that matches the
-     H.264 profile. If not specified, the default is Auto, which lets the
-     encoder choose the Level that is appropriate for this layer.
+    :param level: We currently support Level up to 6.2. The value can be Auto,
+     or a number that matches the H.264 profile. If not specified, the default
+     is Auto, which lets the encoder choose the Level that is appropriate for
+     this layer.
     :type level: str
     :param buffer_window: The VBV buffer window length. The value should be in
      ISO 8601 format. The value should be in the range [0.1-100] seconds. The
@@ -83,6 +84,7 @@ class H264Layer(VideoLayer):
 
     _validation = {
         'odatatype': {'required': True},
+        'bitrate': {'required': True},
     }
 
     _attribute_map = {
@@ -96,14 +98,14 @@ class H264Layer(VideoLayer):
         'frame_rate': {'key': 'frameRate', 'type': 'str'},
         'slices': {'key': 'slices', 'type': 'int'},
         'adaptive_bframe': {'key': 'adaptiveBFrame', 'type': 'bool'},
-        'profile': {'key': 'profile', 'type': 'H264VideoProfile'},
+        'profile': {'key': 'profile', 'type': 'str'},
         'level': {'key': 'level', 'type': 'str'},
         'buffer_window': {'key': 'bufferWindow', 'type': 'duration'},
         'reference_frames': {'key': 'referenceFrames', 'type': 'int'},
-        'entropy_mode': {'key': 'entropyMode', 'type': 'EntropyMode'},
+        'entropy_mode': {'key': 'entropyMode', 'type': 'str'},
     }
 
-    def __init__(self, *, width: str=None, height: str=None, label: str=None, bitrate: int=None, max_bitrate: int=None, b_frames: int=None, frame_rate: str=None, slices: int=None, adaptive_bframe: bool=None, profile=None, level: str=None, buffer_window=None, reference_frames: int=None, entropy_mode=None, **kwargs) -> None:
+    def __init__(self, *, bitrate: int, width: str=None, height: str=None, label: str=None, max_bitrate: int=None, b_frames: int=None, frame_rate: str=None, slices: int=None, adaptive_bframe: bool=None, profile=None, level: str=None, buffer_window=None, reference_frames: int=None, entropy_mode=None, **kwargs) -> None:
         super(H264Layer, self).__init__(width=width, height=height, label=label, bitrate=bitrate, max_bitrate=max_bitrate, b_frames=b_frames, frame_rate=frame_rate, slices=slices, adaptive_bframe=adaptive_bframe, **kwargs)
         self.profile = profile
         self.level = level

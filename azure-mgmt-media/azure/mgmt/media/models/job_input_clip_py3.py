@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .job_input import JobInput
+from .job_input_py3 import JobInput
 
 
 class JobInputClip(JobInput):
@@ -20,17 +20,18 @@ class JobInputClip(JobInput):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param label: A label that is assigned to a JobInput, that is used to
+    :param odatatype: Required. Constant filled by server.
+    :type odatatype: str
+    :param files: List of files. Required for JobInputHttp. Maximum of 4000
+     characters each.
+    :type files: list[str]
+    :param label: A label that is assigned to a JobInputClip, that is used to
      satisfy a reference used in the Transform. For example, a Transform can be
      authored so as to take an image file with the label 'xyz' and apply it as
      an overlay onto the input video before it is encoded. When submitting a
      Job, exactly one of the JobInputs should be the image file, and it should
      have the label 'xyz'.
     :type label: str
-    :param odatatype: Required. Constant filled by server.
-    :type odatatype: str
-    :param files: List of files. Required for JobInputHttp.
-    :type files: list[str]
     """
 
     _validation = {
@@ -38,16 +39,17 @@ class JobInputClip(JobInput):
     }
 
     _attribute_map = {
-        'label': {'key': 'label', 'type': 'str'},
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'files': {'key': 'files', 'type': '[str]'},
+        'label': {'key': 'label', 'type': 'str'},
     }
 
     _subtype_map = {
         'odatatype': {'#Microsoft.Media.JobInputAsset': 'JobInputAsset', '#Microsoft.Media.JobInputHttp': 'JobInputHttp'}
     }
 
-    def __init__(self, *, label: str=None, files=None, **kwargs) -> None:
-        super(JobInputClip, self).__init__(label=label, **kwargs)
+    def __init__(self, *, files=None, label: str=None, **kwargs) -> None:
+        super(JobInputClip, self).__init__(**kwargs)
         self.files = files
+        self.label = label
         self.odatatype = '#Microsoft.Media.JobInputClip'

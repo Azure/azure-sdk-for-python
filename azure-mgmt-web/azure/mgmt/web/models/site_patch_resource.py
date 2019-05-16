@@ -58,6 +58,10 @@ class SitePatchResource(ProxyOnlyResource):
     :param reserved: <code>true</code> if reserved; otherwise,
      <code>false</code>. Default value: False .
     :type reserved: bool
+    :param is_xenon: Obsolete: Hyper-V sandbox. Default value: False .
+    :type is_xenon: bool
+    :param hyper_v: Hyper-V sandbox. Default value: False .
+    :type hyper_v: bool
     :ivar last_modified_time_utc: Last time the app was modified, in UTC.
      Read-only.
     :vartype last_modified_time_utc: datetime
@@ -86,6 +90,9 @@ class SitePatchResource(ProxyOnlyResource):
      authentication (TLS mutual authentication); otherwise, <code>false</code>.
      Default is <code>false</code>.
     :type client_cert_enabled: bool
+    :param client_cert_exclusion_paths: client certificate authentication
+     comma-separated exclusion paths
+    :type client_cert_exclusion_paths: str
     :param host_names_disabled: <code>true</code> to disable the public
      hostnames of the app; otherwise, <code>false</code>.
      If <code>true</code>, the app is only accessible via API management
@@ -113,9 +120,6 @@ class SitePatchResource(ProxyOnlyResource):
     :param cloning_info: If specified during app creation, the app is cloned
      from a source app.
     :type cloning_info: ~azure.mgmt.web.models.CloningInfo
-    :param snapshot_info: If specified during app creation, the app is created
-     from a previous snapshot.
-    :type snapshot_info: ~azure.mgmt.web.models.SnapshotRecoveryRequest
     :ivar resource_group: Name of the resource group the app belongs to.
      Read-only.
     :vartype resource_group: str
@@ -130,6 +134,14 @@ class SitePatchResource(ProxyOnlyResource):
      requests. Issues redirect for
      http requests
     :type https_only: bool
+    :param redundancy_mode: Site redundancy mode. Possible values include:
+     'None', 'Manual', 'Failover', 'ActiveActive', 'GeoRedundant'
+    :type redundancy_mode: str or ~azure.mgmt.web.models.RedundancyMode
+    :ivar in_progress_operation_id: Specifies an operation id if this site has
+     a pending operation.
+    :vartype in_progress_operation_id: str
+    :param geo_distributions: GeoDistributions for this site
+    :type geo_distributions: list[~azure.mgmt.web.models.GeoDistribution]
     """
 
     _validation = {
@@ -153,6 +165,7 @@ class SitePatchResource(ProxyOnlyResource):
         'is_default_container': {'readonly': True},
         'default_host_name': {'readonly': True},
         'slot_swap_status': {'readonly': True},
+        'in_progress_operation_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -170,6 +183,8 @@ class SitePatchResource(ProxyOnlyResource):
         'host_name_ssl_states': {'key': 'properties.hostNameSslStates', 'type': '[HostNameSslState]'},
         'server_farm_id': {'key': 'properties.serverFarmId', 'type': 'str'},
         'reserved': {'key': 'properties.reserved', 'type': 'bool'},
+        'is_xenon': {'key': 'properties.isXenon', 'type': 'bool'},
+        'hyper_v': {'key': 'properties.hyperV', 'type': 'bool'},
         'last_modified_time_utc': {'key': 'properties.lastModifiedTimeUtc', 'type': 'iso-8601'},
         'site_config': {'key': 'properties.siteConfig', 'type': 'SiteConfig'},
         'traffic_manager_host_names': {'key': 'properties.trafficManagerHostNames', 'type': '[str]'},
@@ -178,6 +193,7 @@ class SitePatchResource(ProxyOnlyResource):
         'hosting_environment_profile': {'key': 'properties.hostingEnvironmentProfile', 'type': 'HostingEnvironmentProfile'},
         'client_affinity_enabled': {'key': 'properties.clientAffinityEnabled', 'type': 'bool'},
         'client_cert_enabled': {'key': 'properties.clientCertEnabled', 'type': 'bool'},
+        'client_cert_exclusion_paths': {'key': 'properties.clientCertExclusionPaths', 'type': 'str'},
         'host_names_disabled': {'key': 'properties.hostNamesDisabled', 'type': 'bool'},
         'outbound_ip_addresses': {'key': 'properties.outboundIpAddresses', 'type': 'str'},
         'possible_outbound_ip_addresses': {'key': 'properties.possibleOutboundIpAddresses', 'type': 'str'},
@@ -186,45 +202,52 @@ class SitePatchResource(ProxyOnlyResource):
         'suspended_till': {'key': 'properties.suspendedTill', 'type': 'iso-8601'},
         'max_number_of_workers': {'key': 'properties.maxNumberOfWorkers', 'type': 'int'},
         'cloning_info': {'key': 'properties.cloningInfo', 'type': 'CloningInfo'},
-        'snapshot_info': {'key': 'properties.snapshotInfo', 'type': 'SnapshotRecoveryRequest'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'is_default_container': {'key': 'properties.isDefaultContainer', 'type': 'bool'},
         'default_host_name': {'key': 'properties.defaultHostName', 'type': 'str'},
         'slot_swap_status': {'key': 'properties.slotSwapStatus', 'type': 'SlotSwapStatus'},
         'https_only': {'key': 'properties.httpsOnly', 'type': 'bool'},
+        'redundancy_mode': {'key': 'properties.redundancyMode', 'type': 'RedundancyMode'},
+        'in_progress_operation_id': {'key': 'properties.inProgressOperationId', 'type': 'str'},
+        'geo_distributions': {'key': 'properties.geoDistributions', 'type': '[GeoDistribution]'},
     }
 
-    def __init__(self, kind=None, enabled=None, host_name_ssl_states=None, server_farm_id=None, reserved=False, site_config=None, scm_site_also_stopped=False, hosting_environment_profile=None, client_affinity_enabled=None, client_cert_enabled=None, host_names_disabled=None, container_size=None, daily_memory_time_quota=None, cloning_info=None, snapshot_info=None, https_only=None):
-        super(SitePatchResource, self).__init__(kind=kind)
+    def __init__(self, **kwargs):
+        super(SitePatchResource, self).__init__(**kwargs)
         self.state = None
         self.host_names = None
         self.repository_site_name = None
         self.usage_state = None
-        self.enabled = enabled
+        self.enabled = kwargs.get('enabled', None)
         self.enabled_host_names = None
         self.availability_state = None
-        self.host_name_ssl_states = host_name_ssl_states
-        self.server_farm_id = server_farm_id
-        self.reserved = reserved
+        self.host_name_ssl_states = kwargs.get('host_name_ssl_states', None)
+        self.server_farm_id = kwargs.get('server_farm_id', None)
+        self.reserved = kwargs.get('reserved', False)
+        self.is_xenon = kwargs.get('is_xenon', False)
+        self.hyper_v = kwargs.get('hyper_v', False)
         self.last_modified_time_utc = None
-        self.site_config = site_config
+        self.site_config = kwargs.get('site_config', None)
         self.traffic_manager_host_names = None
-        self.scm_site_also_stopped = scm_site_also_stopped
+        self.scm_site_also_stopped = kwargs.get('scm_site_also_stopped', False)
         self.target_swap_slot = None
-        self.hosting_environment_profile = hosting_environment_profile
-        self.client_affinity_enabled = client_affinity_enabled
-        self.client_cert_enabled = client_cert_enabled
-        self.host_names_disabled = host_names_disabled
+        self.hosting_environment_profile = kwargs.get('hosting_environment_profile', None)
+        self.client_affinity_enabled = kwargs.get('client_affinity_enabled', None)
+        self.client_cert_enabled = kwargs.get('client_cert_enabled', None)
+        self.client_cert_exclusion_paths = kwargs.get('client_cert_exclusion_paths', None)
+        self.host_names_disabled = kwargs.get('host_names_disabled', None)
         self.outbound_ip_addresses = None
         self.possible_outbound_ip_addresses = None
-        self.container_size = container_size
-        self.daily_memory_time_quota = daily_memory_time_quota
+        self.container_size = kwargs.get('container_size', None)
+        self.daily_memory_time_quota = kwargs.get('daily_memory_time_quota', None)
         self.suspended_till = None
         self.max_number_of_workers = None
-        self.cloning_info = cloning_info
-        self.snapshot_info = snapshot_info
+        self.cloning_info = kwargs.get('cloning_info', None)
         self.resource_group = None
         self.is_default_container = None
         self.default_host_name = None
         self.slot_swap_status = None
-        self.https_only = https_only
+        self.https_only = kwargs.get('https_only', None)
+        self.redundancy_mode = kwargs.get('redundancy_mode', None)
+        self.in_progress_operation_id = None
+        self.geo_distributions = kwargs.get('geo_distributions', None)

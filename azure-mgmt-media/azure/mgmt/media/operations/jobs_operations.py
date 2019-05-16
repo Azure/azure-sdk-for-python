@@ -22,7 +22,7 @@ class JobsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The Version of the API to be used with the client request. Constant value: "2018-03-30-preview".
+    :ivar api_version: The Version of the API to be used with the client request. Constant value: "2018-07-01".
     """
 
     models = models
@@ -32,12 +32,12 @@ class JobsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-30-preview"
+        self.api_version = "2018-07-01"
 
         self.config = config
 
     def list(
-            self, resource_group_name, account_name, transform_name, filter=None, top=None, skip=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, transform_name, filter=None, orderby=None, custom_headers=None, raw=False, **operation_config):
         """List Jobs.
 
         Lists all of the Jobs for the Transform.
@@ -51,14 +51,9 @@ class JobsOperations(object):
         :type transform_name: str
         :param filter: Restricts the set of items returned.
         :type filter: str
-        :param top: Specifies a non-negative integer n that limits the number
-         of items returned from a collection. The service returns the number of
-         available items up to but not greater than the specified value n.
-        :type top: int
-        :param skip: Specifies a non-negative integer n that excludes the
-         first n items of the queried collection from the result. The service
-         returns items starting at position n+1.
-        :type skip: int
+        :param orderby: Specifies the the key by which the result collection
+         should be ordered.
+        :type orderby: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -88,10 +83,8 @@ class JobsOperations(object):
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
                 if filter is not None:
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if top is not None:
-                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if skip is not None:
-                    query_parameters['$skip'] = self._serialize.query("skip", skip, 'int')
+                if orderby is not None:
+                    query_parameters['$orderby'] = self._serialize.query("orderby", orderby, 'str')
 
             else:
                 url = next_link
@@ -99,7 +92,7 @@ class JobsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -108,9 +101,8 @@ class JobsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ApiErrorException(self._deserialize, response)
@@ -171,7 +163,7 @@ class JobsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -180,8 +172,8 @@ class JobsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             raise models.ApiErrorException(self._deserialize, response)
@@ -243,6 +235,7 @@ class JobsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -255,9 +248,8 @@ class JobsOperations(object):
         body_content = self._serialize.body(parameters, 'Job')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [201]:
             raise models.ApiErrorException(self._deserialize, response)
@@ -316,7 +308,6 @@ class JobsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -325,8 +316,8 @@ class JobsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.ApiErrorException(self._deserialize, response)
@@ -335,6 +326,84 @@ class JobsOperations(object):
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/transforms/{transformName}/jobs/{jobName}'}
+
+    def update(
+            self, resource_group_name, account_name, transform_name, job_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Update Job.
+
+        Update is only supported for description and priority. Updating
+        Priority will take effect when the Job state is Queued or Scheduled and
+        depending on the timing the priority update may be ignored.
+
+        :param resource_group_name: The name of the resource group within the
+         Azure subscription.
+        :type resource_group_name: str
+        :param account_name: The Media Services account name.
+        :type account_name: str
+        :param transform_name: The Transform name.
+        :type transform_name: str
+        :param job_name: The Job name.
+        :type job_name: str
+        :param parameters: The request parameters
+        :type parameters: ~azure.mgmt.media.models.Job
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Job or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.media.models.Job or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ApiErrorException<azure.mgmt.media.models.ApiErrorException>`
+        """
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'transformName': self._serialize.url("transform_name", transform_name, 'str'),
+            'jobName': self._serialize.url("job_name", job_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'Job')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ApiErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Job', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaServices/{accountName}/transforms/{transformName}/jobs/{jobName}'}
 
     def cancel_job(
             self, resource_group_name, account_name, transform_name, job_name, custom_headers=None, raw=False, **operation_config):
@@ -378,7 +447,6 @@ class JobsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -387,8 +455,8 @@ class JobsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ApiErrorException(self._deserialize, response)

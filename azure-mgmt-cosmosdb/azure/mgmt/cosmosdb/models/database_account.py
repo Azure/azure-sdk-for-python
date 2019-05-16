@@ -18,16 +18,14 @@ class DatabaseAccount(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The unique resource identifier of the database account.
     :vartype id: str
     :ivar name: The name of the database account.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: Required. The location of the resource group to which the
-     resource belongs.
+    :param location: The location of the resource group to which the resource
+     belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -77,13 +75,15 @@ class DatabaseAccount(Resource):
      for the Cosmos DB account.
     :type virtual_network_rules:
      list[~azure.mgmt.cosmosdb.models.VirtualNetworkRule]
+    :param enable_multiple_write_locations: Enables the account to write in
+     multiple locations
+    :type enable_multiple_write_locations: bool
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'document_endpoint': {'readonly': True},
         'database_account_offer_type': {'readonly': True},
         'write_locations': {'readonly': True},
@@ -110,6 +110,7 @@ class DatabaseAccount(Resource):
         'read_locations': {'key': 'properties.readLocations', 'type': '[Location]'},
         'failover_policies': {'key': 'properties.failoverPolicies', 'type': '[FailoverPolicy]'},
         'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
+        'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -127,3 +128,4 @@ class DatabaseAccount(Resource):
         self.read_locations = None
         self.failover_policies = None
         self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
+        self.enable_multiple_write_locations = kwargs.get('enable_multiple_write_locations', None)

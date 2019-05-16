@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .format import Format
+from .format_py3 import Format
 
 
 class MultiBitrateFormat(Format):
@@ -24,9 +24,9 @@ class MultiBitrateFormat(Format):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param filename_pattern: The pattern of the file names for the generated
-     output files. The following macros are supported in the file name:
-     {Basename} - The base name of the input video {Extension} - The
+    :param filename_pattern: Required. The pattern of the file names for the
+     generated output files. The following macros are supported in the file
+     name: {Basename} - The base name of the input video {Extension} - The
      appropriate extension for this format. {Label} - The label assigned to the
      codec/layer. {Index} - A unique index for thumbnails. Only applicable to
      thumbnails. {Bitrate} - The audio/video bitrate. Not applicable to
@@ -41,6 +41,7 @@ class MultiBitrateFormat(Format):
     """
 
     _validation = {
+        'filename_pattern': {'required': True},
         'odatatype': {'required': True},
     }
 
@@ -54,7 +55,7 @@ class MultiBitrateFormat(Format):
         'odatatype': {'#Microsoft.Media.Mp4Format': 'Mp4Format', '#Microsoft.Media.TransportStreamFormat': 'TransportStreamFormat'}
     }
 
-    def __init__(self, *, filename_pattern: str=None, output_files=None, **kwargs) -> None:
+    def __init__(self, *, filename_pattern: str, output_files=None, **kwargs) -> None:
         super(MultiBitrateFormat, self).__init__(filename_pattern=filename_pattern, **kwargs)
         self.output_files = output_files
         self.odatatype = '#Microsoft.Media.MultiBitrateFormat'

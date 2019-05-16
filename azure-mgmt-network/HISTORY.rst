@@ -3,6 +3,258 @@
 Release History
 ===============
 
+2.7.0 (2019-04-25)
+++++++++++++++++++
+
+**Features**
+
+- Model P2SVpnGateway has a new parameter custom_routes
+- Model Subnet has a new parameter nat_gateway
+- Model VpnConnection has a new parameter use_local_azure_ip_address
+- Model EffectiveRoute has a new parameter disable_bgp_route_propagation
+- Model VirtualNetworkGateway has a new parameter custom_routes
+- Added operation ApplicationGatewaysOperations.backend_health_on_demand
+- Added operation DdosProtectionPlansOperations.update_tags
+- Added operation group NatGatewaysOperations
+
+**Bug fixes and preview API updates**
+
+- Parameter output_blob_sas_url of model GetVpnSitesConfigurationRequest is now required
+- Operation VpnSitesConfigurationOperations.download has a new signature
+- Model ExpressRouteCircuit no longer has parameter allow_global_reach
+
+2.6.0 (2019-03-21)
+++++++++++++++++++
+
+**Features**
+
+- Model ApplicationGateway has a new parameter firewall_policy
+- Model ApplicationGatewayBackendHealthServer has a new parameter health_probe_log
+- Model ExpressRouteCircuitPeering has a new parameter peered_connections
+- Model ExpressRouteCircuit has a new parameter global_reach_enabled
+- Added operation group PeerExpressRouteCircuitConnectionsOperations
+- Added operation group WebApplicationFirewallPoliciesOperations
+
+**Bugfixes**
+
+- Fix incorrect operation ApplicationGatewaysOperations.list_available_request_headers
+- Fix incorrect operation ApplicationGatewaysOperations.list_available_server_variables
+- Fix incorrect operation ApplicationGatewaysOperations.list_available_response_headers
+
+2.6.0rc1 (2019-02-15)
++++++++++++++++++++++
+
+**Features**
+
+- Model AzureFirewall has a new parameter threat_intel_mode
+- Model ApplicationGatewayRewriteRule has a new parameter conditions
+- Model ApplicationGatewayRewriteRule has a new parameter rule_sequence
+- Model ApplicationGatewayAutoscaleConfiguration has a new parameter max_capacity
+- Added operation SubnetsOperations.prepare_network_policies
+
+2.5.1 (2019-01-15)
+++++++++++++++++++
+
+**Features**
+
+- Add missing ddos_custom_policies operations
+
+2.5.0 (2019-01-04)
+++++++++++++++++++
+
+**Features**
+
+- Model PublicIPAddress has a new parameter ddos_settings
+- Added operation ApplicationGatewaysOperations.list_available_request_headers
+- Added operation ApplicationGatewaysOperations.list_available_server_variables
+- Added operation ApplicationGatewaysOperations.list_available_response_headers
+- Added operation ApplicationSecurityGroupsOperations.update_tags
+
+2.4.0 (2018-11-27)
+++++++++++++++++++
+
+**Features**
+
+- Model ApplicationGatewaySslCertificate has a new parameter key_vault_secret_id
+- Model ApplicationGatewayRequestRoutingRule has a new parameter rewrite_rule_set
+- Model FlowLogInformation has a new parameter format
+- Model ApplicationGateway has a new parameter identity
+- Model ApplicationGateway has a new parameter rewrite_rule_sets
+- Model TrafficAnalyticsConfigurationProperties has a new parameter traffic_analytics_interval
+- Model ApplicationGatewayPathRule has a new parameter rewrite_rule_set
+- Model ApplicationGatewayUrlPathMap has a new parameter default_rewrite_rule_set
+
+**Breaking changes**
+
+- Model ApplicationGatewayTrustedRootCertificate no longer has parameter keyvault_secret_id (replaced by key_vault_secret_id)
+
+2.3.0 (2018-11-07)
+++++++++++++++++++
+
+**Features**
+
+- Model ApplicationGatewayWebApplicationFirewallConfiguration has a new parameter exclusions
+- Model ApplicationGatewayWebApplicationFirewallConfiguration has a new parameter file_upload_limit_in_mb
+- Model ApplicationGatewayWebApplicationFirewallConfiguration has a new parameter max_request_body_size_in_kb
+- Model ApplicationGatewayHttpListener has a new parameter custom_error_configurations
+- Model ExpressRouteCircuit has a new parameter bandwidth_in_gbps
+- Model ExpressRouteCircuit has a new parameter stag
+- Model ExpressRouteCircuit has a new parameter express_route_port
+- Model EvaluatedNetworkSecurityGroup has a new parameter applied_to
+- Model NetworkConfigurationDiagnosticResult has a new parameter profile
+- Model ApplicationGateway has a new parameter custom_error_configurations
+- Added operation group LoadBalancerOutboundRulesOperations
+- Added operation group ExpressRouteLinksOperations
+- Added operation group ExpressRoutePortsOperations
+- Added operation group ExpressRoutePortsLocationsOperations
+
+**Breaking changes**
+
+- Model NetworkConfigurationDiagnosticResult no longer has parameter traffic_query
+- Operation NetworkWatchersOperations.get_network_configuration_diagnostic has a new signature (no longer takes target_resource_id, queries, but a NetworkConfigurationDiagnosticParameters instance)
+
+2.2.1 (2018-09-14)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix unexpected exception with network_profiles.delete
+
+2.2.0 (2018-09-11)
+++++++++++++++++++
+
+Default API version is now 2018-08-01
+
+**Features**
+
+- Model AzureFirewall has a new parameter nat_rule_collections
+- Model VirtualHub has a new parameter route_table
+- Model VirtualHub has a new parameter virtual_network_connections
+- Model VirtualHub has a new parameter p2_svpn_gateway
+- Model VirtualHub has a new parameter express_route_gateway
+- Model VirtualHub has a new parameter vpn_gateway
+- Model VirtualWAN has a new parameter allow_vnet_to_vnet_traffic
+- Model VirtualWAN has a new parameter p2_svpn_server_configurations
+- Model VirtualWAN has a new parameter office365_local_breakout_category
+- Model VirtualWAN has a new parameter allow_branch_to_branch_traffic
+- Model VirtualWAN has a new parameter security_provider_name
+- Model VpnSite has a new parameter is_security_site
+- Model VpnConnection has a new parameter connection_bandwidth
+- Model VpnConnection has a new parameter enable_internet_security
+- Model VpnConnection has a new parameter vpn_connection_protocol_type
+- Model VpnConnection has a new parameter enable_rate_limiting
+- Model ServiceEndpointPolicy has a new parameter subnets
+- Model AzureFirewallApplicationRule has a new parameter fqdn_tags
+- Model AzureFirewallApplicationRule has a new parameter target_fqdns
+- Model VpnGateway has a new parameter vpn_gateway_scale_unit
+- Model ApplicationGatewayBackendHttpSettings has a new parameter trusted_root_certificates
+- Model VirtualNetworkGatewayConnection has a new parameter connection_protocol
+- Model ExpressRouteCircuitPeering has a new parameter express_route_connection
+- Model Subnet has a new parameter delegations
+- Model Subnet has a new parameter address_prefixes
+- Model Subnet has a new parameter ip_configuration_profiles
+- Model Subnet has a new parameter service_association_links
+- Model Subnet has a new parameter interface_endpoints
+- Model Subnet has a new parameter purpose
+- Model ApplicationGateway has a new parameter trusted_root_certificates
+- Model NetworkInterface has a new parameter tap_configurations
+- Model NetworkInterface has a new parameter hosted_workloads
+- Model NetworkInterface has a new parameter interface_endpoint
+- Model VirtualNetworkGatewayConnectionListEntity has a new parameter connection_protocol
+- Model HubVirtualNetworkConnection has a new parameter enable_internet_security
+- Model NetworkInterfaceIPConfiguration has a new parameter virtual_network_taps
+- Added operation VirtualNetworkGatewaysOperations.reset_vpn_client_shared_key
+- Added operation group ExpressRouteConnectionsOperations
+- Added operation group AzureFirewallFqdnTagsOperations
+- Added operation group VirtualNetworkTapsOperations
+- Added operation group NetworkProfilesOperations
+- Added operation group P2sVpnServerConfigurationsOperations
+- Added operation group AvailableDelegationsOperations
+- Added operation group InterfaceEndpointsOperations
+- Added operation group P2sVpnGatewaysOperations
+- Added operation group AvailableResourceGroupDelegationsOperations
+- Added operation group ExpressRouteGatewaysOperations
+- Added operation group NetworkInterfaceTapConfigurationsOperations
+
+**Breaking changes**
+
+- Model VirtualHub no longer has parameter hub_virtual_network_connections
+- Model VpnConnection no longer has parameter connection_bandwidth_in_mbps
+- Model AzureFirewallApplicationRule no longer has parameter target_urls
+- Model VpnGateway no longer has parameter policies
+- Model AzureFirewallIPConfiguration no longer has parameter internal_public_ip_address
+- Model ApplicationGatewayAutoscaleConfiguration has a new signature
+- Renamed virtual_wa_ns to virtual_wans
+
+2.1.0 (2018-08-28)
+++++++++++++++++++
+
+Default API version is now 2018-07-01
+
+**Features**
+
+- Model ExpressRouteCircuit has a new parameter allow_global_reach
+- Model PublicIPAddress has a new parameter public_ip_prefix
+- Model BackendAddressPool has a new parameter outbound_rule (replaces outbound_nat_rule)
+- Model FrontendIPConfiguration has a new parameter outbound_rules (replaces outbound_nat_rule)
+- Model FrontendIPConfiguration has a new parameter public_ip_prefix
+- Model LoadBalancingRule has a new parameter enable_tcp_reset
+- Model VirtualNetworkGatewayConnectionListEntity has a new parameter express_route_gateway_bypass
+- Model VirtualNetworkGatewayConnection has a new parameter express_route_gateway_bypass
+- Model Subnet has a new parameter service_endpoint_policies
+- Model InboundNatPool has a new parameter enable_tcp_reset
+- Model LoadBalancer has a new parameter outbound_rules (replaces outbound_nat_rule)
+- Model InboundNatRule has a new parameter enable_tcp_reset
+- Added operation group ServiceEndpointPolicyDefinitionsOperations
+- Added operation group ServiceEndpointPoliciesOperations
+- Added operation group PublicIPPrefixesOperations
+
+**Breaking changes**
+
+- Model BackendAddressPool no longer has parameter outbound_nat_rule (now outbound_rules)
+- Model FrontendIPConfiguration no longer has parameter outbound_nat_rules (now outbound_rules)
+- Model LoadBalancer no longer has parameter outbound_nat_rules (now outbound_rules)
+
+2.0.1 (2018-08-07)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix packet_captures.get_status empty output
+
+2.0.0 (2018-07-27)
+++++++++++++++++++
+
+**Features**
+
+- Supports now 2018-06-01 and 2018-04-01. 2018-06-01 is the new default.
+- Client class can be used as a context manager to keep the underlying HTTP session open for performance
+
+**Features starting 2018-04-01**
+
+- Model FlowLogInformation has a new parameter flow_analytics_configuration
+- Model ApplicationGateway has a new parameter enable_fips
+- Model ApplicationGateway has a new parameter autoscale_configuration
+- Model ApplicationGateway has a new parameter zones
+- Model ConnectionSharedKey has a new parameter id
+- Added operation group HubVirtualNetworkConnectionsOperations
+- Added operation group AzureFirewallsOperations
+- Added operation group VirtualHubsOperations
+- Added operation group VpnGatewaysOperations
+- Added operation group VpnSitesOperations
+- Added operation group VirtualWANsOperations
+- Added operation group VpnSitesConfigurationOperations
+- Added operation group VpnConnectionsOperations
+
+**Breaking changes starting 2018-04-01**
+
+- Operation VirtualNetworkGatewayConnectionsOperations.set_shared_key has a new parameter "id"
+- Operation DdosProtectionPlansOperations.create_or_update parameter "parameters" has been flatten to "tags/location"
+
+**Breaking changes starting 2018-06-01**
+
+- The new class VpnConnection introduced in 2018-04-01 renamed "connection_bandwidth" to "connection_bandwidth_in_mbps"
+
 2.0.0rc3 (2018-06-14)
 +++++++++++++++++++++
 

@@ -26,14 +26,14 @@ class ProcessInfo(ProxyOnlyResource):
     :type kind: str
     :ivar type: Resource type.
     :vartype type: str
-    :param process_info_id: ARM Identifier for deployment.
-    :type process_info_id: int
-    :param process_info_name: Deployment name.
-    :type process_info_name: str
+    :ivar identifier: ARM Identifier for deployment.
+    :vartype identifier: int
+    :param deployment_name: Deployment name.
+    :type deployment_name: str
     :param href: HRef URI.
     :type href: str
-    :param mini_dump: Minidump URI.
-    :type mini_dump: str
+    :param minidump: Minidump URI.
+    :type minidump: str
     :param is_profile_running: Is profile running?
     :type is_profile_running: bool
     :param is_iis_profile_running: Is the IIS Profile running?
@@ -64,38 +64,38 @@ class ProcessInfo(ProxyOnlyResource):
     :type thread_count: int
     :param start_time: Start time.
     :type start_time: datetime
-    :param total_processor_time: Total CPU time.
-    :type total_processor_time: str
-    :param user_processor_time: User CPU time.
-    :type user_processor_time: str
-    :param privileged_processor_time: Privileged CPU time.
-    :type privileged_processor_time: str
-    :param working_set64: Working set.
-    :type working_set64: long
-    :param peak_working_set64: Peak working set.
-    :type peak_working_set64: long
-    :param private_memory_size64: Private memory size.
-    :type private_memory_size64: long
-    :param virtual_memory_size64: Virtual memory size.
-    :type virtual_memory_size64: long
-    :param peak_virtual_memory_size64: Peak virtual memory usage.
-    :type peak_virtual_memory_size64: long
-    :param paged_system_memory_size64: Paged system memory.
-    :type paged_system_memory_size64: long
-    :param nonpaged_system_memory_size64: Non-paged system memory.
-    :type nonpaged_system_memory_size64: long
-    :param paged_memory_size64: Paged memory.
-    :type paged_memory_size64: long
-    :param peak_paged_memory_size64: Peak paged memory.
-    :type peak_paged_memory_size64: long
+    :param total_cpu_time: Total CPU time.
+    :type total_cpu_time: str
+    :param user_cpu_time: User CPU time.
+    :type user_cpu_time: str
+    :param privileged_cpu_time: Privileged CPU time.
+    :type privileged_cpu_time: str
+    :param working_set: Working set.
+    :type working_set: long
+    :param peak_working_set: Peak working set.
+    :type peak_working_set: long
+    :param private_memory: Private memory size.
+    :type private_memory: long
+    :param virtual_memory: Virtual memory size.
+    :type virtual_memory: long
+    :param peak_virtual_memory: Peak virtual memory usage.
+    :type peak_virtual_memory: long
+    :param paged_system_memory: Paged system memory.
+    :type paged_system_memory: long
+    :param non_paged_system_memory: Non-paged system memory.
+    :type non_paged_system_memory: long
+    :param paged_memory: Paged memory.
+    :type paged_memory: long
+    :param peak_paged_memory: Peak paged memory.
+    :type peak_paged_memory: long
     :param time_stamp: Time stamp.
     :type time_stamp: datetime
     :param environment_variables: List of environment variables.
     :type environment_variables: dict[str, str]
     :param is_scm_site: Is this the SCM site?
     :type is_scm_site: bool
-    :param is_web_job: Is this a Web Job?
-    :type is_web_job: bool
+    :param is_webjob: Is this a Web Job?
+    :type is_webjob: bool
     :param description: Description of process.
     :type description: str
     """
@@ -104,6 +104,7 @@ class ProcessInfo(ProxyOnlyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'identifier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -111,79 +112,79 @@ class ProcessInfo(ProxyOnlyResource):
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'process_info_id': {'key': 'properties.id', 'type': 'int'},
-        'process_info_name': {'key': 'properties.name', 'type': 'str'},
+        'identifier': {'key': 'properties.identifier', 'type': 'int'},
+        'deployment_name': {'key': 'properties.deployment_name', 'type': 'str'},
         'href': {'key': 'properties.href', 'type': 'str'},
-        'mini_dump': {'key': 'properties.miniDump', 'type': 'str'},
-        'is_profile_running': {'key': 'properties.isProfileRunning', 'type': 'bool'},
-        'is_iis_profile_running': {'key': 'properties.isIisProfileRunning', 'type': 'bool'},
-        'iis_profile_timeout_in_seconds': {'key': 'properties.iisProfileTimeoutInSeconds', 'type': 'float'},
+        'minidump': {'key': 'properties.minidump', 'type': 'str'},
+        'is_profile_running': {'key': 'properties.is_profile_running', 'type': 'bool'},
+        'is_iis_profile_running': {'key': 'properties.is_iis_profile_running', 'type': 'bool'},
+        'iis_profile_timeout_in_seconds': {'key': 'properties.iis_profile_timeout_in_seconds', 'type': 'float'},
         'parent': {'key': 'properties.parent', 'type': 'str'},
         'children': {'key': 'properties.children', 'type': '[str]'},
         'threads': {'key': 'properties.threads', 'type': '[ProcessThreadInfo]'},
-        'open_file_handles': {'key': 'properties.openFileHandles', 'type': '[str]'},
+        'open_file_handles': {'key': 'properties.open_file_handles', 'type': '[str]'},
         'modules': {'key': 'properties.modules', 'type': '[ProcessModuleInfo]'},
-        'file_name': {'key': 'properties.fileName', 'type': 'str'},
-        'command_line': {'key': 'properties.commandLine', 'type': 'str'},
-        'user_name': {'key': 'properties.userName', 'type': 'str'},
-        'handle_count': {'key': 'properties.handleCount', 'type': 'int'},
-        'module_count': {'key': 'properties.moduleCount', 'type': 'int'},
-        'thread_count': {'key': 'properties.threadCount', 'type': 'int'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'total_processor_time': {'key': 'properties.totalProcessorTime', 'type': 'str'},
-        'user_processor_time': {'key': 'properties.userProcessorTime', 'type': 'str'},
-        'privileged_processor_time': {'key': 'properties.privilegedProcessorTime', 'type': 'str'},
-        'working_set64': {'key': 'properties.workingSet64', 'type': 'long'},
-        'peak_working_set64': {'key': 'properties.peakWorkingSet64', 'type': 'long'},
-        'private_memory_size64': {'key': 'properties.privateMemorySize64', 'type': 'long'},
-        'virtual_memory_size64': {'key': 'properties.virtualMemorySize64', 'type': 'long'},
-        'peak_virtual_memory_size64': {'key': 'properties.peakVirtualMemorySize64', 'type': 'long'},
-        'paged_system_memory_size64': {'key': 'properties.pagedSystemMemorySize64', 'type': 'long'},
-        'nonpaged_system_memory_size64': {'key': 'properties.nonpagedSystemMemorySize64', 'type': 'long'},
-        'paged_memory_size64': {'key': 'properties.pagedMemorySize64', 'type': 'long'},
-        'peak_paged_memory_size64': {'key': 'properties.peakPagedMemorySize64', 'type': 'long'},
-        'time_stamp': {'key': 'properties.timeStamp', 'type': 'iso-8601'},
-        'environment_variables': {'key': 'properties.environmentVariables', 'type': '{str}'},
-        'is_scm_site': {'key': 'properties.isScmSite', 'type': 'bool'},
-        'is_web_job': {'key': 'properties.isWebJob', 'type': 'bool'},
+        'file_name': {'key': 'properties.file_name', 'type': 'str'},
+        'command_line': {'key': 'properties.command_line', 'type': 'str'},
+        'user_name': {'key': 'properties.user_name', 'type': 'str'},
+        'handle_count': {'key': 'properties.handle_count', 'type': 'int'},
+        'module_count': {'key': 'properties.module_count', 'type': 'int'},
+        'thread_count': {'key': 'properties.thread_count', 'type': 'int'},
+        'start_time': {'key': 'properties.start_time', 'type': 'iso-8601'},
+        'total_cpu_time': {'key': 'properties.total_cpu_time', 'type': 'str'},
+        'user_cpu_time': {'key': 'properties.user_cpu_time', 'type': 'str'},
+        'privileged_cpu_time': {'key': 'properties.privileged_cpu_time', 'type': 'str'},
+        'working_set': {'key': 'properties.working_set', 'type': 'long'},
+        'peak_working_set': {'key': 'properties.peak_working_set', 'type': 'long'},
+        'private_memory': {'key': 'properties.private_memory', 'type': 'long'},
+        'virtual_memory': {'key': 'properties.virtual_memory', 'type': 'long'},
+        'peak_virtual_memory': {'key': 'properties.peak_virtual_memory', 'type': 'long'},
+        'paged_system_memory': {'key': 'properties.paged_system_memory', 'type': 'long'},
+        'non_paged_system_memory': {'key': 'properties.non_paged_system_memory', 'type': 'long'},
+        'paged_memory': {'key': 'properties.paged_memory', 'type': 'long'},
+        'peak_paged_memory': {'key': 'properties.peak_paged_memory', 'type': 'long'},
+        'time_stamp': {'key': 'properties.time_stamp', 'type': 'iso-8601'},
+        'environment_variables': {'key': 'properties.environment_variables', 'type': '{str}'},
+        'is_scm_site': {'key': 'properties.is_scm_site', 'type': 'bool'},
+        'is_webjob': {'key': 'properties.is_webjob', 'type': 'bool'},
         'description': {'key': 'properties.description', 'type': 'str'},
     }
 
-    def __init__(self, kind=None, process_info_id=None, process_info_name=None, href=None, mini_dump=None, is_profile_running=None, is_iis_profile_running=None, iis_profile_timeout_in_seconds=None, parent=None, children=None, threads=None, open_file_handles=None, modules=None, file_name=None, command_line=None, user_name=None, handle_count=None, module_count=None, thread_count=None, start_time=None, total_processor_time=None, user_processor_time=None, privileged_processor_time=None, working_set64=None, peak_working_set64=None, private_memory_size64=None, virtual_memory_size64=None, peak_virtual_memory_size64=None, paged_system_memory_size64=None, nonpaged_system_memory_size64=None, paged_memory_size64=None, peak_paged_memory_size64=None, time_stamp=None, environment_variables=None, is_scm_site=None, is_web_job=None, description=None):
-        super(ProcessInfo, self).__init__(kind=kind)
-        self.process_info_id = process_info_id
-        self.process_info_name = process_info_name
-        self.href = href
-        self.mini_dump = mini_dump
-        self.is_profile_running = is_profile_running
-        self.is_iis_profile_running = is_iis_profile_running
-        self.iis_profile_timeout_in_seconds = iis_profile_timeout_in_seconds
-        self.parent = parent
-        self.children = children
-        self.threads = threads
-        self.open_file_handles = open_file_handles
-        self.modules = modules
-        self.file_name = file_name
-        self.command_line = command_line
-        self.user_name = user_name
-        self.handle_count = handle_count
-        self.module_count = module_count
-        self.thread_count = thread_count
-        self.start_time = start_time
-        self.total_processor_time = total_processor_time
-        self.user_processor_time = user_processor_time
-        self.privileged_processor_time = privileged_processor_time
-        self.working_set64 = working_set64
-        self.peak_working_set64 = peak_working_set64
-        self.private_memory_size64 = private_memory_size64
-        self.virtual_memory_size64 = virtual_memory_size64
-        self.peak_virtual_memory_size64 = peak_virtual_memory_size64
-        self.paged_system_memory_size64 = paged_system_memory_size64
-        self.nonpaged_system_memory_size64 = nonpaged_system_memory_size64
-        self.paged_memory_size64 = paged_memory_size64
-        self.peak_paged_memory_size64 = peak_paged_memory_size64
-        self.time_stamp = time_stamp
-        self.environment_variables = environment_variables
-        self.is_scm_site = is_scm_site
-        self.is_web_job = is_web_job
-        self.description = description
+    def __init__(self, **kwargs):
+        super(ProcessInfo, self).__init__(**kwargs)
+        self.identifier = None
+        self.deployment_name = kwargs.get('deployment_name', None)
+        self.href = kwargs.get('href', None)
+        self.minidump = kwargs.get('minidump', None)
+        self.is_profile_running = kwargs.get('is_profile_running', None)
+        self.is_iis_profile_running = kwargs.get('is_iis_profile_running', None)
+        self.iis_profile_timeout_in_seconds = kwargs.get('iis_profile_timeout_in_seconds', None)
+        self.parent = kwargs.get('parent', None)
+        self.children = kwargs.get('children', None)
+        self.threads = kwargs.get('threads', None)
+        self.open_file_handles = kwargs.get('open_file_handles', None)
+        self.modules = kwargs.get('modules', None)
+        self.file_name = kwargs.get('file_name', None)
+        self.command_line = kwargs.get('command_line', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.handle_count = kwargs.get('handle_count', None)
+        self.module_count = kwargs.get('module_count', None)
+        self.thread_count = kwargs.get('thread_count', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.total_cpu_time = kwargs.get('total_cpu_time', None)
+        self.user_cpu_time = kwargs.get('user_cpu_time', None)
+        self.privileged_cpu_time = kwargs.get('privileged_cpu_time', None)
+        self.working_set = kwargs.get('working_set', None)
+        self.peak_working_set = kwargs.get('peak_working_set', None)
+        self.private_memory = kwargs.get('private_memory', None)
+        self.virtual_memory = kwargs.get('virtual_memory', None)
+        self.peak_virtual_memory = kwargs.get('peak_virtual_memory', None)
+        self.paged_system_memory = kwargs.get('paged_system_memory', None)
+        self.non_paged_system_memory = kwargs.get('non_paged_system_memory', None)
+        self.paged_memory = kwargs.get('paged_memory', None)
+        self.peak_paged_memory = kwargs.get('peak_paged_memory', None)
+        self.time_stamp = kwargs.get('time_stamp', None)
+        self.environment_variables = kwargs.get('environment_variables', None)
+        self.is_scm_site = kwargs.get('is_scm_site', None)
+        self.is_webjob = kwargs.get('is_webjob', None)
+        self.description = kwargs.get('description', None)

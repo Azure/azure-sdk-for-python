@@ -3,6 +3,81 @@
 Release History
 ===============
 
+0.12.0 (2019-03-28)
++++++++++++++++++++
+
+**Features**
+
+- Model ManagedDatabase has a new parameter recoverable_database_id
+- Model ManagedDatabase has a new parameter restorable_dropped_database_id
+- Model ServerSecurityAlertPolicy has a new parameter creation_time
+- Model ManagedInstanceUpdate has a new parameter public_data_endpoint_enabled
+- Model ManagedInstanceUpdate has a new parameter proxy_override
+- Model ManagedInstanceUpdate has a new parameter timezone_id
+- Model ManagedDatabaseUpdate has a new parameter recoverable_database_id
+- Model ManagedDatabaseUpdate has a new parameter restorable_dropped_database_id
+- Model ManagedInstance has a new parameter public_data_endpoint_enabled
+- Model ManagedInstance has a new parameter proxy_override
+- Model ManagedInstance has a new parameter timezone_id
+- Added operation group ManagedServerSecurityAlertPoliciesOperations
+- Added operation group VirtualClustersOperations
+- Added operation group ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
+- Added operation group RestorableDroppedManagedDatabasesOperations
+- Added operation group ManagedDatabaseSensitivityLabelsOperations
+- Added operation group RecoverableManagedDatabasesOperations
+- Added operation group ServerVulnerabilityAssessmentsOperations
+- Added operation group ManagedInstanceVulnerabilityAssessmentsOperations
+- Added operation group ManagedDatabaseSecurityAlertPoliciesOperations
+- Added operation group SensitivityLabelsOperations
+
+0.11.0 (2018-11-08)
++++++++++++++++++++
+
+**Features**
+
+- Model ServerBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model ExtendedServerBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model DatabaseBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Model ExtendedDatabaseBlobAuditingPolicy has a new parameter is_azure_monitor_target_enabled
+- Added operation DatabaseVulnerabilityAssessmentsOperations.list_by_database
+- Added operation ManagedDatabaseVulnerabilityAssessmentsOperations.list_by_database
+- Added operation group ManagedBackupShortTermRetentionPoliciesOperations
+
+0.10.0 (2018-10-18)
++++++++++++++++++++
+
+**Features**
+
+- Model DatabaseVulnerabilityAssessment has a new parameter storage_account_access_key
+- Model ManagedInstanceUpdate has a new parameter dns_zone_partner
+- Model ManagedInstanceUpdate has a new parameter collation
+- Model ManagedInstanceUpdate has a new parameter dns_zone
+- Model ManagedInstance has a new parameter dns_zone_partner
+- Model ManagedInstance has a new parameter collation
+- Model ManagedInstance has a new parameter dns_zone
+- Added operation BackupShortTermRetentionPoliciesOperations.list_by_database
+- Added operation group ManagedDatabaseVulnerabilityAssessmentsOperations
+- Added operation group ExtendedDatabaseBlobAuditingPoliciesOperations
+- Added operation group TdeCertificatesOperations
+- Added operation group ManagedInstanceKeysOperations
+- Added operation group ServerBlobAuditingPoliciesOperations
+- Added operation group ManagedInstanceEncryptionProtectorsOperations
+- Added operation group ExtendedServerBlobAuditingPoliciesOperations
+- Added operation group ServerSecurityAlertPoliciesOperations
+- Added operation group ManagedDatabaseVulnerabilityAssessmentScansOperations
+- Added operation group ManagedInstanceTdeCertificatesOperations
+- Added operation group ManagedDatabaseVulnerabilityAssessmentRuleBaselinesOperations
+
+**Breaking changes**
+
+- Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.delete has a new signature
+- Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.get has a new signature
+- Operation DatabaseVulnerabilityAssessmentRuleBaselinesOperations.create_or_update has a new signature
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
 0.9.1 (2018-05-24)
 ++++++++++++++++++
 

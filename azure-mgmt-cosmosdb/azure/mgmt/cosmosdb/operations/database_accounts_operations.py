@@ -73,7 +73,7 @@ class DatabaseAccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -82,8 +82,8 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -122,6 +122,7 @@ class DatabaseAccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -134,9 +135,8 @@ class DatabaseAccountsOperations(object):
         body_content = self._serialize.body(update_parameters, 'DatabaseAccountPatchParameters')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -225,6 +225,7 @@ class DatabaseAccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -237,9 +238,8 @@ class DatabaseAccountsOperations(object):
         body_content = self._serialize.body(create_update_parameters, 'DatabaseAccountCreateUpdateParameters')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -327,7 +327,6 @@ class DatabaseAccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -336,8 +335,8 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202, 204]:
             exp = CloudError(response)
@@ -421,9 +420,8 @@ class DatabaseAccountsOperations(object):
         body_content = self._serialize.body(failover_parameters, 'FailoverPolicies')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202, 204]:
             exp = CloudError(response)
@@ -518,7 +516,7 @@ class DatabaseAccountsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -527,9 +525,8 @@ class DatabaseAccountsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -587,7 +584,7 @@ class DatabaseAccountsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -596,9 +593,8 @@ class DatabaseAccountsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -653,7 +649,7 @@ class DatabaseAccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -662,8 +658,8 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -718,7 +714,7 @@ class DatabaseAccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -727,8 +723,8 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -779,9 +775,8 @@ class DatabaseAccountsOperations(object):
         body_content = self._serialize.body(region_parameter_for_offline, 'RegionForOnlineOffline')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -869,9 +864,8 @@ class DatabaseAccountsOperations(object):
         body_content = self._serialize.body(region_parameter_for_online, 'RegionForOnlineOffline')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.ErrorResponseException(self._deserialize, response)
@@ -927,6 +921,71 @@ class DatabaseAccountsOperations(object):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     online_region.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/onlineRegion'}
 
+    def get_read_only_keys(
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the read-only access keys for the specified Azure Cosmos DB
+        database account.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DatabaseAccountListReadOnlyKeysResult or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.cosmosdb.models.DatabaseAccountListReadOnlyKeysResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_read_only_keys.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DatabaseAccountListReadOnlyKeysResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_read_only_keys.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/readonlykeys'}
+
     def list_read_only_keys(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
         """Lists the read-only access keys for the specified Azure Cosmos DB
@@ -963,7 +1022,7 @@ class DatabaseAccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -972,8 +1031,8 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)
@@ -1024,9 +1083,8 @@ class DatabaseAccountsOperations(object):
         body_content = self._serialize.body(key_to_regenerate, 'DatabaseAccountRegenerateKeyParameters')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             exp = CloudError(response)
@@ -1114,7 +1172,6 @@ class DatabaseAccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -1123,8 +1180,8 @@ class DatabaseAccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.head(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.head(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 404]:
             exp = CloudError(response)
@@ -1185,7 +1242,7 @@ class DatabaseAccountsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -1194,9 +1251,8 @@ class DatabaseAccountsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -1262,7 +1318,7 @@ class DatabaseAccountsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -1271,9 +1327,8 @@ class DatabaseAccountsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -1295,7 +1350,7 @@ class DatabaseAccountsOperations(object):
 
     def list_metric_definitions(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Retrieves metric defintions for the given database account.
+        """Retrieves metric definitions for the given database account.
 
         :param resource_group_name: Name of an Azure resource group.
         :type resource_group_name: str
@@ -1333,7 +1388,7 @@ class DatabaseAccountsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -1342,9 +1397,8 @@ class DatabaseAccountsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
@@ -1363,3 +1417,3028 @@ class DatabaseAccountsOperations(object):
 
         return deserialized
     list_metric_definitions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/metricDefinitions'}
+
+    def list_sql_databases(
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the SQL databases under an existing Azure Cosmos DB database
+        account.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of SqlDatabase
+        :rtype:
+         ~azure.mgmt.cosmosdb.models.SqlDatabasePaged[~azure.mgmt.cosmosdb.models.SqlDatabase]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_sql_databases.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.SqlDatabasePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.SqlDatabasePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_sql_databases.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases'}
+
+    def get_sql_database(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the SQL databases under an existing Azure Cosmos DB database
+        account with the provided name.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: SqlDatabase or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.SqlDatabase or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_sql_database.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SqlDatabase', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_sql_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}'}
+
+
+    def _create_update_sql_database_initial(
+            self, resource_group_name, account_name, database_name, resource, options, custom_headers=None, raw=False, **operation_config):
+        create_update_sql_database_parameters = models.SqlDatabaseCreateUpdateParameters(resource=resource, options=options)
+
+        # Construct URL
+        url = self.create_update_sql_database.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(create_update_sql_database_parameters, 'SqlDatabaseCreateUpdateParameters')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SqlDatabase', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_update_sql_database(
+            self, resource_group_name, account_name, database_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update an Azure Cosmos DB SQL database.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param resource: The standard JSON format of a SQL database
+        :type resource: ~azure.mgmt.cosmosdb.models.SqlDatabaseResource
+        :param options: A key-value pair of options to be applied for the
+         request. This corresponds to the headers sent with the request.
+        :type options: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns SqlDatabase or
+         ClientRawResponse<SqlDatabase> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlDatabase]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlDatabase]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_update_sql_database_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            database_name=database_name,
+            resource=resource,
+            options=options,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('SqlDatabase', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_update_sql_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}'}
+
+
+    def _delete_sql_database_initial(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.delete_sql_database.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete_sql_database(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Azure Cosmos DB SQL database.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_sql_database_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            database_name=database_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete_sql_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}'}
+
+    def list_sql_containers(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the SQL container under an existing Azure Cosmos DB database
+        account.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of SqlContainer
+        :rtype:
+         ~azure.mgmt.cosmosdb.models.SqlContainerPaged[~azure.mgmt.cosmosdb.models.SqlContainer]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_sql_containers.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.SqlContainerPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.SqlContainerPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_sql_containers.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers'}
+
+    def get_sql_container(
+            self, resource_group_name, account_name, database_name, container_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the SQL container under an existing Azure Cosmos DB database
+        account.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param container_name: Cosmos DB container name.
+        :type container_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: SqlContainer or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.SqlContainer or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_sql_container.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'containerName': self._serialize.url("container_name", container_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SqlContainer', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_sql_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers/{containerName}'}
+
+
+    def _create_update_sql_container_initial(
+            self, resource_group_name, account_name, database_name, container_name, resource, options, custom_headers=None, raw=False, **operation_config):
+        create_update_sql_container_parameters = models.SqlContainerCreateUpdateParameters(resource=resource, options=options)
+
+        # Construct URL
+        url = self.create_update_sql_container.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'containerName': self._serialize.url("container_name", container_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(create_update_sql_container_parameters, 'SqlContainerCreateUpdateParameters')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('SqlContainer', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_update_sql_container(
+            self, resource_group_name, account_name, database_name, container_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update an Azure Cosmos DB SQL container.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param container_name: Cosmos DB container name.
+        :type container_name: str
+        :param resource: The standard JSON format of a container
+        :type resource: ~azure.mgmt.cosmosdb.models.SqlContainerResource
+        :param options: A key-value pair of options to be applied for the
+         request. This corresponds to the headers sent with the request.
+        :type options: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns SqlContainer or
+         ClientRawResponse<SqlContainer> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.SqlContainer]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.SqlContainer]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_update_sql_container_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            database_name=database_name,
+            container_name=container_name,
+            resource=resource,
+            options=options,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('SqlContainer', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_update_sql_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers/{containerName}'}
+
+
+    def _delete_sql_container_initial(
+            self, resource_group_name, account_name, database_name, container_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.delete_sql_container.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'containerName': self._serialize.url("container_name", container_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete_sql_container(
+            self, resource_group_name, account_name, database_name, container_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Azure Cosmos DB SQL container.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param container_name: Cosmos DB container name.
+        :type container_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_sql_container_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            database_name=database_name,
+            container_name=container_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete_sql_container.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/sql/databases/{databaseName}/containers/{containerName}'}
+
+    def list_mongo_db_databases(
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the MongoDB databases under an existing Azure Cosmos DB database
+        account.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of MongoDBDatabase
+        :rtype:
+         ~azure.mgmt.cosmosdb.models.MongoDBDatabasePaged[~azure.mgmt.cosmosdb.models.MongoDBDatabase]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_mongo_db_databases.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.MongoDBDatabasePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.MongoDBDatabasePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_mongo_db_databases.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases'}
+
+    def get_mongo_db_database(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the MongoDB databases under an existing Azure Cosmos DB database
+        account with the provided name.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: MongoDBDatabase or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.MongoDBDatabase or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_mongo_db_database.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('MongoDBDatabase', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_mongo_db_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}'}
+
+
+    def _create_update_mongo_db_database_initial(
+            self, resource_group_name, account_name, database_name, resource, options, custom_headers=None, raw=False, **operation_config):
+        create_update_mongo_db_database_parameters = models.MongoDBDatabaseCreateUpdateParameters(resource=resource, options=options)
+
+        # Construct URL
+        url = self.create_update_mongo_db_database.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(create_update_mongo_db_database_parameters, 'MongoDBDatabaseCreateUpdateParameters')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('MongoDBDatabase', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_update_mongo_db_database(
+            self, resource_group_name, account_name, database_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or updates Azure Cosmos DB MongoDB database.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param resource: The standard JSON format of a MongoDB database
+        :type resource: ~azure.mgmt.cosmosdb.models.MongoDBDatabaseResource
+        :param options: A key-value pair of options to be applied for the
+         request. This corresponds to the headers sent with the request.
+        :type options: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns MongoDBDatabase or
+         ClientRawResponse<MongoDBDatabase> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongoDBDatabase]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongoDBDatabase]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_update_mongo_db_database_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            database_name=database_name,
+            resource=resource,
+            options=options,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('MongoDBDatabase', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_update_mongo_db_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}'}
+
+
+    def _delete_mongo_db_database_initial(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.delete_mongo_db_database.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete_mongo_db_database(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Azure Cosmos DB MongoDB database.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_mongo_db_database_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            database_name=database_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete_mongo_db_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}'}
+
+    def list_mongo_db_collections(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the MongoDB collection under an existing Azure Cosmos DB database
+        account.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of MongoDBCollection
+        :rtype:
+         ~azure.mgmt.cosmosdb.models.MongoDBCollectionPaged[~azure.mgmt.cosmosdb.models.MongoDBCollection]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_mongo_db_collections.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.MongoDBCollectionPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.MongoDBCollectionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_mongo_db_collections.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections'}
+
+    def get_mongo_db_collection(
+            self, resource_group_name, account_name, database_name, collection_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the MongoDB collection under an existing Azure Cosmos DB database
+        account.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param collection_name: Cosmos DB collection name.
+        :type collection_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: MongoDBCollection or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.MongoDBCollection or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_mongo_db_collection.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('MongoDBCollection', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_mongo_db_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections/{collectionName}'}
+
+
+    def _create_update_mongo_db_collection_initial(
+            self, resource_group_name, account_name, database_name, collection_name, resource, options, custom_headers=None, raw=False, **operation_config):
+        create_update_mongo_db_collection_parameters = models.MongoDBCollectionCreateUpdateParameters(resource=resource, options=options)
+
+        # Construct URL
+        url = self.create_update_mongo_db_collection.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(create_update_mongo_db_collection_parameters, 'MongoDBCollectionCreateUpdateParameters')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('MongoDBCollection', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_update_mongo_db_collection(
+            self, resource_group_name, account_name, database_name, collection_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update an Azure Cosmos DB MongoDB Collection.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param collection_name: Cosmos DB collection name.
+        :type collection_name: str
+        :param resource: The standard JSON format of a MongoDB collection
+        :type resource: ~azure.mgmt.cosmosdb.models.MongoDBCollectionResource
+        :param options: A key-value pair of options to be applied for the
+         request. This corresponds to the headers sent with the request.
+        :type options: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns MongoDBCollection or
+         ClientRawResponse<MongoDBCollection> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.MongoDBCollection]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.MongoDBCollection]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_update_mongo_db_collection_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            database_name=database_name,
+            collection_name=collection_name,
+            resource=resource,
+            options=options,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('MongoDBCollection', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_update_mongo_db_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections/{collectionName}'}
+
+
+    def _delete_mongo_db_collection_initial(
+            self, resource_group_name, account_name, database_name, collection_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.delete_mongo_db_collection.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'collectionName': self._serialize.url("collection_name", collection_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete_mongo_db_collection(
+            self, resource_group_name, account_name, database_name, collection_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Azure Cosmos DB MongoDB Collection.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param collection_name: Cosmos DB collection name.
+        :type collection_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_mongo_db_collection_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            database_name=database_name,
+            collection_name=collection_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete_mongo_db_collection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/mongodb/databases/{databaseName}/collections/{collectionName}'}
+
+    def list_tables(
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the Tables under an existing Azure Cosmos DB database account.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of Table
+        :rtype:
+         ~azure.mgmt.cosmosdb.models.TablePaged[~azure.mgmt.cosmosdb.models.Table]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_tables.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.TablePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.TablePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_tables.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/table/tables'}
+
+    def get_table(
+            self, resource_group_name, account_name, table_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the Tables under an existing Azure Cosmos DB database account with
+        the provided name.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param table_name: Cosmos DB table name.
+        :type table_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Table or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.Table or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_table.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'tableName': self._serialize.url("table_name", table_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Table', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/table/tables/{tableName}'}
+
+
+    def _create_update_table_initial(
+            self, resource_group_name, account_name, table_name, resource, options, custom_headers=None, raw=False, **operation_config):
+        create_update_table_parameters = models.TableCreateUpdateParameters(resource=resource, options=options)
+
+        # Construct URL
+        url = self.create_update_table.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'tableName': self._serialize.url("table_name", table_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(create_update_table_parameters, 'TableCreateUpdateParameters')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('Table', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_update_table(
+            self, resource_group_name, account_name, table_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update an Azure Cosmos DB Table.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param table_name: Cosmos DB table name.
+        :type table_name: str
+        :param resource: The standard JSON format of a Table
+        :type resource: ~azure.mgmt.cosmosdb.models.TableResource
+        :param options: A key-value pair of options to be applied for the
+         request. This corresponds to the headers sent with the request.
+        :type options: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns Table or
+         ClientRawResponse<Table> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.Table]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.Table]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_update_table_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            table_name=table_name,
+            resource=resource,
+            options=options,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('Table', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_update_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/table/tables/{tableName}'}
+
+
+    def _delete_table_initial(
+            self, resource_group_name, account_name, table_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.delete_table.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'tableName': self._serialize.url("table_name", table_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete_table(
+            self, resource_group_name, account_name, table_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Azure Cosmos DB Table.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param table_name: Cosmos DB table name.
+        :type table_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_table_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            table_name=table_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/table/tables/{tableName}'}
+
+    def list_cassandra_keyspaces(
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the Cassandra keyspaces under an existing Azure Cosmos DB
+        database account.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of CassandraKeyspace
+        :rtype:
+         ~azure.mgmt.cosmosdb.models.CassandraKeyspacePaged[~azure.mgmt.cosmosdb.models.CassandraKeyspace]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_cassandra_keyspaces.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.CassandraKeyspacePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.CassandraKeyspacePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_cassandra_keyspaces.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces'}
+
+    def get_cassandra_keyspace(
+            self, resource_group_name, account_name, keyspace_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the Cassandra keyspaces under an existing Azure Cosmos DB database
+        account with the provided name.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: CassandraKeyspace or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.CassandraKeyspace or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_cassandra_keyspace.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('CassandraKeyspace', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_cassandra_keyspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceName}'}
+
+
+    def _create_update_cassandra_keyspace_initial(
+            self, resource_group_name, account_name, keyspace_name, resource, options, custom_headers=None, raw=False, **operation_config):
+        create_update_cassandra_keyspace_parameters = models.CassandraKeyspaceCreateUpdateParameters(resource=resource, options=options)
+
+        # Construct URL
+        url = self.create_update_cassandra_keyspace.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(create_update_cassandra_keyspace_parameters, 'CassandraKeyspaceCreateUpdateParameters')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('CassandraKeyspace', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_update_cassandra_keyspace(
+            self, resource_group_name, account_name, keyspace_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update an Azure Cosmos DB Cassandra keyspace.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param resource: The standard JSON format of a Cassandra keyspace
+        :type resource: ~azure.mgmt.cosmosdb.models.CassandraKeyspaceResource
+        :param options: A key-value pair of options to be applied for the
+         request. This corresponds to the headers sent with the request.
+        :type options: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns CassandraKeyspace or
+         ClientRawResponse<CassandraKeyspace> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.CassandraKeyspace]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.CassandraKeyspace]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_update_cassandra_keyspace_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            keyspace_name=keyspace_name,
+            resource=resource,
+            options=options,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('CassandraKeyspace', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_update_cassandra_keyspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceName}'}
+
+
+    def _delete_cassandra_keyspace_initial(
+            self, resource_group_name, account_name, keyspace_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.delete_cassandra_keyspace.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete_cassandra_keyspace(
+            self, resource_group_name, account_name, keyspace_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Azure Cosmos DB Cassandra keyspace.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_cassandra_keyspace_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            keyspace_name=keyspace_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete_cassandra_keyspace.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceName}'}
+
+    def list_cassandra_tables(
+            self, resource_group_name, account_name, keyspace_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the Cassandra table under an existing Azure Cosmos DB database
+        account.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of CassandraTable
+        :rtype:
+         ~azure.mgmt.cosmosdb.models.CassandraTablePaged[~azure.mgmt.cosmosdb.models.CassandraTable]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_cassandra_tables.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+                    'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.CassandraTablePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.CassandraTablePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_cassandra_tables.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceName}/tables'}
+
+    def get_cassandra_table(
+            self, resource_group_name, account_name, keyspace_name, table_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the Cassandra table under an existing Azure Cosmos DB database
+        account.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param table_name: Cosmos DB table name.
+        :type table_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: CassandraTable or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.CassandraTable or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_cassandra_table.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('CassandraTable', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_cassandra_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceName}/tables/{tableName}'}
+
+
+    def _create_update_cassandra_table_initial(
+            self, resource_group_name, account_name, keyspace_name, table_name, resource, options, custom_headers=None, raw=False, **operation_config):
+        create_update_cassandra_table_parameters = models.CassandraTableCreateUpdateParameters(resource=resource, options=options)
+
+        # Construct URL
+        url = self.create_update_cassandra_table.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(create_update_cassandra_table_parameters, 'CassandraTableCreateUpdateParameters')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('CassandraTable', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_update_cassandra_table(
+            self, resource_group_name, account_name, keyspace_name, table_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update an Azure Cosmos DB Cassandra Table.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param table_name: Cosmos DB table name.
+        :type table_name: str
+        :param resource: The standard JSON format of a Cassandra table
+        :type resource: ~azure.mgmt.cosmosdb.models.CassandraTableResource
+        :param options: A key-value pair of options to be applied for the
+         request. This corresponds to the headers sent with the request.
+        :type options: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns CassandraTable or
+         ClientRawResponse<CassandraTable> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.CassandraTable]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.CassandraTable]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_update_cassandra_table_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            keyspace_name=keyspace_name,
+            table_name=table_name,
+            resource=resource,
+            options=options,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('CassandraTable', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_update_cassandra_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceName}/tables/{tableName}'}
+
+
+    def _delete_cassandra_table_initial(
+            self, resource_group_name, account_name, keyspace_name, table_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.delete_cassandra_table.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'keyspaceName': self._serialize.url("keyspace_name", keyspace_name, 'str'),
+            'tableName': self._serialize.url("table_name", table_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete_cassandra_table(
+            self, resource_group_name, account_name, keyspace_name, table_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Azure Cosmos DB Cassandra table.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param keyspace_name: Cosmos DB keyspace name.
+        :type keyspace_name: str
+        :param table_name: Cosmos DB table name.
+        :type table_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_cassandra_table_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            keyspace_name=keyspace_name,
+            table_name=table_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete_cassandra_table.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/cassandra/keyspaces/{keyspaceName}/tables/{tableName}'}
+
+    def list_gremlin_databases(
+            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the Gremlin databases under an existing Azure Cosmos DB database
+        account.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of GremlinDatabase
+        :rtype:
+         ~azure.mgmt.cosmosdb.models.GremlinDatabasePaged[~azure.mgmt.cosmosdb.models.GremlinDatabase]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_gremlin_databases.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3)
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.GremlinDatabasePaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.GremlinDatabasePaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_gremlin_databases.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases'}
+
+    def get_gremlin_database(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the Gremlin databases under an existing Azure Cosmos DB database
+        account with the provided name.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: GremlinDatabase or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.GremlinDatabase or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_gremlin_database.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('GremlinDatabase', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_gremlin_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseName}'}
+
+
+    def _create_update_gremlin_database_initial(
+            self, resource_group_name, account_name, database_name, resource, options, custom_headers=None, raw=False, **operation_config):
+        create_update_gremlin_database_parameters = models.GremlinDatabaseCreateUpdateParameters(resource=resource, options=options)
+
+        # Construct URL
+        url = self.create_update_gremlin_database.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(create_update_gremlin_database_parameters, 'GremlinDatabaseCreateUpdateParameters')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('GremlinDatabase', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_update_gremlin_database(
+            self, resource_group_name, account_name, database_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update an Azure Cosmos DB Gremlin database.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param resource: The standard JSON format of a Gremlin database
+        :type resource: ~azure.mgmt.cosmosdb.models.GremlinDatabaseResource
+        :param options: A key-value pair of options to be applied for the
+         request. This corresponds to the headers sent with the request.
+        :type options: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns GremlinDatabase or
+         ClientRawResponse<GremlinDatabase> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.GremlinDatabase]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.GremlinDatabase]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_update_gremlin_database_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            database_name=database_name,
+            resource=resource,
+            options=options,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('GremlinDatabase', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_update_gremlin_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseName}'}
+
+
+    def _delete_gremlin_database_initial(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.delete_gremlin_database.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete_gremlin_database(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Azure Cosmos DB Gremlin database.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_gremlin_database_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            database_name=database_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete_gremlin_database.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseName}'}
+
+    def list_gremlin_graphs(
+            self, resource_group_name, account_name, database_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the Gremlin graph under an existing Azure Cosmos DB database
+        account.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of GremlinGraph
+        :rtype:
+         ~azure.mgmt.cosmosdb.models.GremlinGraphPaged[~azure.mgmt.cosmosdb.models.GremlinGraph]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_gremlin_graphs.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.GremlinGraphPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.GremlinGraphPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_gremlin_graphs.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseName}/graphs'}
+
+    def get_gremlin_graph(
+            self, resource_group_name, account_name, database_name, graph_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the Gremlin graph under an existing Azure Cosmos DB database
+        account.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param graph_name: Cosmos DB graph name.
+        :type graph_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: GremlinGraph or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.cosmosdb.models.GremlinGraph or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_gremlin_graph.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'graphName': self._serialize.url("graph_name", graph_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('GremlinGraph', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_gremlin_graph.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseName}/graphs/{graphName}'}
+
+
+    def _create_update_gremlin_graph_initial(
+            self, resource_group_name, account_name, database_name, graph_name, resource, options, custom_headers=None, raw=False, **operation_config):
+        create_update_gremlin_graph_parameters = models.GremlinGraphCreateUpdateParameters(resource=resource, options=options)
+
+        # Construct URL
+        url = self.create_update_gremlin_graph.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'graphName': self._serialize.url("graph_name", graph_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(create_update_gremlin_graph_parameters, 'GremlinGraphCreateUpdateParameters')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('GremlinGraph', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_update_gremlin_graph(
+            self, resource_group_name, account_name, database_name, graph_name, resource, options, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update an Azure Cosmos DB Gremlin graph.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param graph_name: Cosmos DB graph name.
+        :type graph_name: str
+        :param resource: The standard JSON format of a Gremlin graph
+        :type resource: ~azure.mgmt.cosmosdb.models.GremlinGraphResource
+        :param options: A key-value pair of options to be applied for the
+         request. This corresponds to the headers sent with the request.
+        :type options: dict[str, str]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns GremlinGraph or
+         ClientRawResponse<GremlinGraph> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.cosmosdb.models.GremlinGraph]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.cosmosdb.models.GremlinGraph]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_update_gremlin_graph_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            database_name=database_name,
+            graph_name=graph_name,
+            resource=resource,
+            options=options,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('GremlinGraph', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_update_gremlin_graph.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseName}/graphs/{graphName}'}
+
+
+    def _delete_gremlin_graph_initial(
+            self, resource_group_name, account_name, database_name, graph_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.delete_gremlin_graph.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'graphName': self._serialize.url("graph_name", graph_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete_gremlin_graph(
+            self, resource_group_name, account_name, database_name, graph_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Azure Cosmos DB Gremlin graph.
+
+        :param resource_group_name: Name of an Azure resource group.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name.
+        :type account_name: str
+        :param database_name: Cosmos DB database name.
+        :type database_name: str
+        :param graph_name: Cosmos DB graph name.
+        :type graph_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_gremlin_graph_initial(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            database_name=database_name,
+            graph_name=graph_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete_gremlin_graph.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/apis/gremlin/databases/{databaseName}/graphs/{graphName}'}

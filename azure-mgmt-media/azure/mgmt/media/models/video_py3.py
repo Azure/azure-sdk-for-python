@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .codec import Codec
+from .codec_py3 import Codec
 
 
 class Video(Codec):
@@ -44,7 +44,7 @@ class Video(Codec):
         'label': {'key': 'label', 'type': 'str'},
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'key_frame_interval': {'key': 'keyFrameInterval', 'type': 'duration'},
-        'stretch_mode': {'key': 'stretchMode', 'type': 'StretchMode'},
+        'stretch_mode': {'key': 'stretchMode', 'type': 'str'},
     }
 
     _subtype_map = {

@@ -36,7 +36,8 @@ class Server(TrackedResource):
      Can only be specified when the server is being created (and is required
      for creation).
     :type administrator_login: str
-    :param version: Server version. Possible values include: '9.5', '9.6'
+    :param version: Server version. Possible values include: '9.5', '9.6',
+     '10', '10.0', '10.2'
     :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'
@@ -54,6 +55,13 @@ class Server(TrackedResource):
     :type earliest_restore_date: datetime
     :param storage_profile: Storage profile of a server.
     :type storage_profile: ~azure.mgmt.rdbms.postgresql.models.StorageProfile
+    :param replication_role: The replication role of the server.
+    :type replication_role: str
+    :param master_server_id: The master server id of a replica server.
+    :type master_server_id: str
+    :param replica_capacity: The maximum number of replicas that a master
+     server can have.
+    :type replica_capacity: int
     """
 
     _validation = {
@@ -61,6 +69,7 @@ class Server(TrackedResource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'location': {'required': True},
+        'replica_capacity': {'minimum': 0},
     }
 
     _attribute_map = {
@@ -77,6 +86,9 @@ class Server(TrackedResource):
         'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
         'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
+        'replication_role': {'key': 'properties.replicationRole', 'type': 'str'},
+        'master_server_id': {'key': 'properties.masterServerId', 'type': 'str'},
+        'replica_capacity': {'key': 'properties.replicaCapacity', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -89,3 +101,6 @@ class Server(TrackedResource):
         self.fully_qualified_domain_name = kwargs.get('fully_qualified_domain_name', None)
         self.earliest_restore_date = kwargs.get('earliest_restore_date', None)
         self.storage_profile = kwargs.get('storage_profile', None)
+        self.replication_role = kwargs.get('replication_role', None)
+        self.master_server_id = kwargs.get('master_server_id', None)
+        self.replica_capacity = kwargs.get('replica_capacity', None)

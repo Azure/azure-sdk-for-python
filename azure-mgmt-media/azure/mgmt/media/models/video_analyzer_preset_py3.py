@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .audio_analyzer_preset import AudioAnalyzerPreset
+from .audio_analyzer_preset_py3 import AudioAnalyzerPreset
 
 
 class VideoAnalyzerPreset(AudioAnalyzerPreset):
@@ -21,13 +21,28 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param audio_language: The language for the audio payload in the input
-     using the BCP-47 format of 'language tag-region' (e.g: 'en-US'). The list
-     of supported languages are, 'en-US', 'en-GB', 'es-ES', 'es-MX', 'fr-FR',
-     'it-IT', 'ja-JP', 'pt-BR', 'zh-CN'.
+     using the BCP-47 format of 'language tag-region' (e.g: 'en-US').  The list
+     of supported languages are English ('en-US' and 'en-GB'), Spanish ('es-ES'
+     and 'es-MX'), French ('fr-FR'), Italian ('it-IT'), Japanese ('ja-JP'),
+     Portuguese ('pt-BR'), Chinese ('zh-CN'), German ('de-DE'), Arabic ('ar-EG'
+     and 'ar-SY'), Russian ('ru-RU'), Hindi ('hi-IN'), and Korean ('ko-KR'). If
+     you know the language of your content, it is recommended that you specify
+     it. If the language isn't specified or set to null, automatic language
+     detection will choose the first language detected and process with the
+     selected language for the duration of the file. This language detection
+     feature currently supports English, Chinese, French, German, Italian,
+     Japanese, Spanish, Russian, and Portuguese. It does not currently support
+     dynamically switching between languages after the first language is
+     detected. The automatic detection works best with audio recordings with
+     clearly discernable speech. If automatic detection fails to find the
+     language, transcription would fallback to 'en-US'."
     :type audio_language: str
-    :param audio_insights_only: Whether to only extract audio insights when
-     processing a video file.
-    :type audio_insights_only: bool
+    :param insights_to_extract: The type of insights to be extracted. If not
+     set then based on the content the type will selected.  If the content is
+     audio only then only audio insights are extracted and if it is video only.
+     Possible values include: 'AudioInsightsOnly', 'VideoInsightsOnly',
+     'AllInsights'
+    :type insights_to_extract: str or ~azure.mgmt.media.models.InsightsType
     """
 
     _validation = {
@@ -37,10 +52,10 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
     _attribute_map = {
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'audio_language': {'key': 'audioLanguage', 'type': 'str'},
-        'audio_insights_only': {'key': 'audioInsightsOnly', 'type': 'bool'},
+        'insights_to_extract': {'key': 'insightsToExtract', 'type': 'str'},
     }
 
-    def __init__(self, *, audio_language: str=None, audio_insights_only: bool=None, **kwargs) -> None:
+    def __init__(self, *, audio_language: str=None, insights_to_extract=None, **kwargs) -> None:
         super(VideoAnalyzerPreset, self).__init__(audio_language=audio_language, **kwargs)
-        self.audio_insights_only = audio_insights_only
+        self.insights_to_extract = insights_to_extract
         self.odatatype = '#Microsoft.Media.VideoAnalyzerPreset'

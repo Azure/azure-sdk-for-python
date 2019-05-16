@@ -3,6 +3,21 @@
 Release History
 ===============
 
+2.1.0 (2018-09-10)
+++++++++++++++++++
+
+**Features**
+
+- Model RecordSet has a new parameter target_resource
+- Added operation group DnsResourceReferenceOperations
+
+2.0.0 (2018-07-01)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix ARM compliance (correct settings of location, tags, etc.)
+
 2.0.0rc2 (2018-07-05)
 +++++++++++++++++++++
 

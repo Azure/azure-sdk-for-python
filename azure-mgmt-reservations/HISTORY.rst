@@ -3,6 +3,29 @@
 Release History
 ===============
 
+0.3.2 (2019-04-18)
+++++++++++++++++++
+
+**Features**
+
+- Added operation ReservationOrderOperations.purchase
+- Added operation ReservationOrderOperations.calculate
+
+0.3.1 (2018-11-05)
+++++++++++++++++++
+
+**Features**
+
+- Add redhat support
+
+0.3.0 (2018-08-22)
+++++++++++++++++++
+
+**Features**
+
+* Model Patch has a new parameter 'name'
+* Enum ReservedResourceType has a new value 'cosmos_db'
+
 0.2.1 (2018-06-14)
 ++++++++++++++++++
 

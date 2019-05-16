@@ -20,20 +20,23 @@ class Patch(Model):
      ~azure.mgmt.reservations.models.AppliedScopeType
     :param applied_scopes:
     :type applied_scopes: list[str]
-    :param instance_flexibility: Possible values include: 'On', 'Off',
-     'NotSupported'
+    :param instance_flexibility: Possible values include: 'On', 'Off'
     :type instance_flexibility: str or
      ~azure.mgmt.reservations.models.InstanceFlexibility
+    :param name: Name of the Reservation
+    :type name: str
     """
 
     _attribute_map = {
         'applied_scope_type': {'key': 'properties.appliedScopeType', 'type': 'str'},
         'applied_scopes': {'key': 'properties.appliedScopes', 'type': '[str]'},
         'instance_flexibility': {'key': 'properties.instanceFlexibility', 'type': 'str'},
+        'name': {'key': 'properties.name', 'type': 'str'},
     }
 
-    def __init__(self, *, applied_scope_type=None, applied_scopes=None, instance_flexibility=None, **kwargs) -> None:
+    def __init__(self, *, applied_scope_type=None, applied_scopes=None, instance_flexibility=None, name: str=None, **kwargs) -> None:
         super(Patch, self).__init__(**kwargs)
         self.applied_scope_type = applied_scope_type
         self.applied_scopes = applied_scopes
         self.instance_flexibility = instance_flexibility
+        self.name = name

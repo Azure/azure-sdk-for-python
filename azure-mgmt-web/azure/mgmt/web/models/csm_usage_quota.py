@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class CsmUsageQuota(Model):
     """Usage of the quota resource.
 
-    :param unit: Units of measurement for the quota resourse.
+    :param unit: Units of measurement for the quota resource.
     :type unit: str
     :param next_reset_time: Next reset time for the resource counter.
     :type next_reset_time: datetime
@@ -35,10 +35,10 @@ class CsmUsageQuota(Model):
         'name': {'key': 'name', 'type': 'LocalizableString'},
     }
 
-    def __init__(self, unit=None, next_reset_time=None, current_value=None, limit=None, name=None):
-        super(CsmUsageQuota, self).__init__()
-        self.unit = unit
-        self.next_reset_time = next_reset_time
-        self.current_value = current_value
-        self.limit = limit
-        self.name = name
+    def __init__(self, **kwargs):
+        super(CsmUsageQuota, self).__init__(**kwargs)
+        self.unit = kwargs.get('unit', None)
+        self.next_reset_time = kwargs.get('next_reset_time', None)
+        self.current_value = kwargs.get('current_value', None)
+        self.limit = kwargs.get('limit', None)
+        self.name = kwargs.get('name', None)

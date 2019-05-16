@@ -3,6 +3,65 @@
 Release History
 ===============
 
+2.6.0 (2019-04-29)
+++++++++++++++++++
+
+**Preview features**
+
+- Added operation ClustersOperations.put
+- Added operation ClustersOperations.list_available_clusters
+- Added operation ClustersOperations.list_namespaces
+- Added operation ClustersOperations.delete
+
+**Bugfixes**
+
+- Remove useless files packaged by mistake (azure.mgmt.eventhub.operations folder)
+
+2.5.0 (2019-04-09)
+++++++++++++++++++
+
+**Features**
+
+- Added operation NamespacesOperations.create_or_update_network_rule_set for the 2017-04-01 API version
+- Added operation NamespacesOperations.get_network_rule_set for the 2017-04-01 API version
+
+2.4.0 (2019-03-06)
+++++++++++++++++++
+
+**Features**
+
+- MultiApi support for 2015-08-01, 2017-04-01 and 2018-01-01-preview
+- 2017-04-01 is the default API version
+
+2.3.0 (2019-02-04)
+++++++++++++++++++
+
+**Features**
+
+- Model CaptureDescription has a new parameter skip_empty_archives
+
+2.2.0 (2018-10-29)
+++++++++++++++++++
+
+**Features**
+
+- Add kafka_enabled attribute
+
+**Note**
+
+- azure-mgmt-nspkg is not installed anymore on Python 3 (PEP420-based namespace package)
+
+2.1.0 (2018-07-31)
+++++++++++++++++++
+
+**Features**
+
+- Add pending_replication_operations_count support
+
+**Bugfixes**
+
+- Fix some Python3 models
+
 2.0.0 (2018-05-04)
 ++++++++++++++++++
 
@@ -24,7 +83,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
   - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
   - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
-  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
     without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
   - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
     the response of the initial call will be returned without polling.

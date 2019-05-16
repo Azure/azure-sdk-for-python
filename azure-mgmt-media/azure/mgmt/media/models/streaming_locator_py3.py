@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from .proxy_resource_py3 import ProxyResource
 
 
 class StreamingLocator(ProxyResource):
@@ -28,28 +28,35 @@ class StreamingLocator(ProxyResource):
     :vartype type: str
     :param asset_name: Required. Asset Name
     :type asset_name: str
-    :ivar created: Creation time of Streaming Locator
+    :ivar created: The creation time of the Streaming Locator.
     :vartype created: datetime
-    :param start_time: StartTime of Streaming Locator
+    :param start_time: The start time of the Streaming Locator.
     :type start_time: datetime
-    :param end_time: EndTime of Streaming Locator
+    :param end_time: The end time of the Streaming Locator.
     :type end_time: datetime
-    :param streaming_locator_id: StreamingLocatorId of Streaming Locator
+    :param streaming_locator_id: The StreamingLocatorId of the Streaming
+     Locator.
     :type streaming_locator_id: str
-    :param streaming_policy_name: Required. Streaming policy name used by this
-     streaming locator. Either specify the name of streaming policy you created
-     or use one of the predefined streaming polices. The predefined streaming
-     policies available are: 'Predefined_DownloadOnly',
+    :param streaming_policy_name: Required. Name of the Streaming Policy used
+     by this Streaming Locator. Either specify the name of Streaming Policy you
+     created or use one of the predefined Streaming Policies. The predefined
+     Streaming Policies available are: 'Predefined_DownloadOnly',
      'Predefined_ClearStreamingOnly', 'Predefined_DownloadAndClearStreaming',
-     'Predefined_ClearKey', 'Predefined_SecureStreaming' and
-     'Predefined_SecureStreamingWithFairPlay'
+     'Predefined_ClearKey', 'Predefined_MultiDrmCencStreaming' and
+     'Predefined_MultiDrmStreaming'
     :type streaming_policy_name: str
-    :param default_content_key_policy_name: Default ContentKeyPolicy used by
-     this Streaming Locator
+    :param default_content_key_policy_name: Name of the default
+     ContentKeyPolicy used by this Streaming Locator.
     :type default_content_key_policy_name: str
-    :param content_keys: ContentKeys used by this Streaming Locator
+    :param content_keys: The ContentKeys used by this Streaming Locator.
     :type content_keys:
-     list[~azure.mgmt.media.models.StreamingLocatorUserDefinedContentKey]
+     list[~azure.mgmt.media.models.StreamingLocatorContentKey]
+    :param alternative_media_id: Alternative Media ID of this Streaming
+     Locator
+    :type alternative_media_id: str
+    :param filters: A list of asset or account filters which apply to this
+     streaming locator
+    :type filters: list[str]
     """
 
     _validation = {
@@ -72,10 +79,12 @@ class StreamingLocator(ProxyResource):
         'streaming_locator_id': {'key': 'properties.streamingLocatorId', 'type': 'str'},
         'streaming_policy_name': {'key': 'properties.streamingPolicyName', 'type': 'str'},
         'default_content_key_policy_name': {'key': 'properties.defaultContentKeyPolicyName', 'type': 'str'},
-        'content_keys': {'key': 'properties.contentKeys', 'type': '[StreamingLocatorUserDefinedContentKey]'},
+        'content_keys': {'key': 'properties.contentKeys', 'type': '[StreamingLocatorContentKey]'},
+        'alternative_media_id': {'key': 'properties.alternativeMediaId', 'type': 'str'},
+        'filters': {'key': 'properties.filters', 'type': '[str]'},
     }
 
-    def __init__(self, *, asset_name: str, streaming_policy_name: str, start_time=None, end_time=None, streaming_locator_id: str=None, default_content_key_policy_name: str=None, content_keys=None, **kwargs) -> None:
+    def __init__(self, *, asset_name: str, streaming_policy_name: str, start_time=None, end_time=None, streaming_locator_id: str=None, default_content_key_policy_name: str=None, content_keys=None, alternative_media_id: str=None, filters=None, **kwargs) -> None:
         super(StreamingLocator, self).__init__(**kwargs)
         self.asset_name = asset_name
         self.created = None
@@ -85,3 +94,5 @@ class StreamingLocator(ProxyResource):
         self.streaming_policy_name = streaming_policy_name
         self.default_content_key_policy_name = default_content_key_policy_name
         self.content_keys = content_keys
+        self.alternative_media_id = alternative_media_id
+        self.filters = filters

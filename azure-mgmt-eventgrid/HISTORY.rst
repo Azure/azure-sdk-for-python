@@ -3,6 +3,54 @@
 Release History
 ===============
 
+2.1.0rc1 (2019-03-11)
++++++++++++++++++++++
+
+**Disclaimer**
+
+Preview features that were on 2.0.0rc2 only and not on 2.0.0 has been ported in this version.
+
+This version also adds the following preview features:
+-	Manual Add/delete of domain topics.
+-	Pagination/search filtering for list operations.
+-	Adding service bus queue as destination
+
+
+2.0.0 (2019-02-01)
+++++++++++++++++++
+
+**Disclaimer**
+
+Not all preview features of the 2.0.0rc2 were confirmed in this 2.0.0 stable version. In particular, the following features will still be available only in the 2.0.0rc2 for now:
+
+- Domains.
+-	Advanced filters support.
+-	Event subscription expiration date
+-	Input mapping and event delivery schema.
+
+All other features are now considerd stable to use in production. This includes:
+
+-	Deadletter destination.
+-	Storage queue as destination.
+-	Hybrid connection as destination.
+-	Retry policy.
+-	Manual handshake.
+
+
+2.0.0rc2 (2018-10-24)
++++++++++++++++++++++
+
+**Features**
+
+- Model EventSubscriptionFilter has a new parameter advanced_filters
+- Model EventSubscriptionUpdateParameters has a new parameter expiration_time_utc
+- Model EventSubscription has a new parameter expiration_time_utc
+- Added operation EventSubscriptionsOperations.list_by_domain_topic
+- Added operation group DomainTopicsOperations
+- Added operation group DomainsOperations
+
+Internal API version is 2018-09-15-preview
+
 2.0.0rc1 (2018-05-04)
 +++++++++++++++++++++
 
@@ -14,9 +62,9 @@ Release History
 - delivering events to Azure Storage queue and Azure hybrid connections
 - deadlettering
 - retry policies
-- manual subscription validation handshake validation. 
+- manual subscription validation handshake validation.
 
-Internal API version is 2018-05-01-preview 
+Internal API version is 2018-05-01-preview
 
 1.0.0 (2018-04-26)
 ++++++++++++++++++
@@ -39,7 +87,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 
   - Return type changes from `msrestazure.azure_operation.AzureOperationPoller` to `msrest.polling.LROPoller`. External API is the same.
   - Return type is now **always** a `msrest.polling.LROPoller`, regardless of the optional parameters used.
-  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`, 
+  - The behavior has changed when using `raw=True`. Instead of returning the initial call result as `ClientRawResponse`,
     without polling, now this returns an LROPoller. After polling, the final resource will be returned as a `ClientRawResponse`.
   - New `polling` parameter. The default behavior is `Polling=True` which will poll using ARM algorithm. When `Polling=False`,
     the response of the initial call will be returned without polling.

@@ -65,9 +65,10 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
      missing in profile.
     :param str base_url: Service URL
     :param profile: A dict using operation group name to API version.
-    :type profile: dict[str, str]    """
+    :type profile: dict[str, str]
+    """
 
-    DEFAULT_API_VERSION = '2017-10-01'
+    DEFAULT_API_VERSION = '2019-04-01'
     _PROFILE_TAG = "azure.mgmt.containerregistry.ContainerRegistryManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -98,6 +99,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
            * 2017-03-01: :mod:`v2017_03_01.models<azure.mgmt.containerregistry.v2017_03_01.models>`
            * 2017-10-01: :mod:`v2017_10_01.models<azure.mgmt.containerregistry.v2017_10_01.models>`
            * 2018-02-01-preview: :mod:`v2018_02_01_preview.models<azure.mgmt.containerregistry.v2018_02_01_preview.models>`
+           * 2018-09-01: :mod:`v2018_09_01.models<azure.mgmt.containerregistry.v2018_09_01.models>`
+           * 2019-04-01: :mod:`v2019_04_01.models<azure.mgmt.containerregistry.v2019_04_01.models>`
         """
         if api_version == '2017-03-01':
             from .v2017_03_01 import models
@@ -108,8 +111,14 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         elif api_version == '2018-02-01-preview':
             from .v2018_02_01_preview import models
             return models
+        elif api_version == '2018-09-01':
+            from .v2018_09_01 import models
+            return models
+        elif api_version == '2019-04-01':
+            from .v2019_04_01 import models
+            return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
-    
+
     @property
     def build_steps(self):
         """Instance depends on the API version:
@@ -156,6 +165,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
            * 2017-03-01: :class:`Operations<azure.mgmt.containerregistry.v2017_03_01.operations.Operations>`
            * 2017-10-01: :class:`Operations<azure.mgmt.containerregistry.v2017_10_01.operations.Operations>`
            * 2018-02-01-preview: :class:`Operations<azure.mgmt.containerregistry.v2018_02_01_preview.operations.Operations>`
+           * 2018-09-01: :class:`Operations<azure.mgmt.containerregistry.v2018_09_01.operations.Operations>`
+           * 2019-04-01: :class:`Operations<azure.mgmt.containerregistry.v2019_04_01.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2017-03-01':
@@ -164,6 +175,10 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
             from .v2017_10_01.operations import Operations as OperationClass
         elif api_version == '2018-02-01-preview':
             from .v2018_02_01_preview.operations import Operations as OperationClass
+        elif api_version == '2018-09-01':
+            from .v2018_09_01.operations import Operations as OperationClass
+        elif api_version == '2019-04-01':
+            from .v2019_04_01.operations import Operations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -175,6 +190,8 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
            * 2017-03-01: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2017_03_01.operations.RegistriesOperations>`
            * 2017-10-01: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2017_10_01.operations.RegistriesOperations>`
            * 2018-02-01-preview: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2018_02_01_preview.operations.RegistriesOperations>`
+           * 2018-09-01: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2018_09_01.operations.RegistriesOperations>`
+           * 2019-04-01: :class:`RegistriesOperations<azure.mgmt.containerregistry.v2019_04_01.operations.RegistriesOperations>`
         """
         api_version = self._get_api_version('registries')
         if api_version == '2017-03-01':
@@ -183,6 +200,10 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
             from .v2017_10_01.operations import RegistriesOperations as OperationClass
         elif api_version == '2018-02-01-preview':
             from .v2018_02_01_preview.operations import RegistriesOperations as OperationClass
+        elif api_version == '2018-09-01':
+            from .v2018_09_01.operations import RegistriesOperations as OperationClass
+        elif api_version == '2019-04-01':
+            from .v2019_04_01.operations import RegistriesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -193,12 +214,50 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
 
            * 2017-10-01: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2017_10_01.operations.ReplicationsOperations>`
            * 2018-02-01-preview: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2018_02_01_preview.operations.ReplicationsOperations>`
+           * 2018-09-01: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2018_09_01.operations.ReplicationsOperations>`
+           * 2019-04-01: :class:`ReplicationsOperations<azure.mgmt.containerregistry.v2019_04_01.operations.ReplicationsOperations>`
         """
         api_version = self._get_api_version('replications')
         if api_version == '2017-10-01':
             from .v2017_10_01.operations import ReplicationsOperations as OperationClass
         elif api_version == '2018-02-01-preview':
             from .v2018_02_01_preview.operations import ReplicationsOperations as OperationClass
+        elif api_version == '2018-09-01':
+            from .v2018_09_01.operations import ReplicationsOperations as OperationClass
+        elif api_version == '2019-04-01':
+            from .v2019_04_01.operations import ReplicationsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def runs(self):
+        """Instance depends on the API version:
+
+           * 2018-09-01: :class:`RunsOperations<azure.mgmt.containerregistry.v2018_09_01.operations.RunsOperations>`
+           * 2019-04-01: :class:`RunsOperations<azure.mgmt.containerregistry.v2019_04_01.operations.RunsOperations>`
+        """
+        api_version = self._get_api_version('runs')
+        if api_version == '2018-09-01':
+            from .v2018_09_01.operations import RunsOperations as OperationClass
+        elif api_version == '2019-04-01':
+            from .v2019_04_01.operations import RunsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def tasks(self):
+        """Instance depends on the API version:
+
+           * 2018-09-01: :class:`TasksOperations<azure.mgmt.containerregistry.v2018_09_01.operations.TasksOperations>`
+           * 2019-04-01: :class:`TasksOperations<azure.mgmt.containerregistry.v2019_04_01.operations.TasksOperations>`
+        """
+        api_version = self._get_api_version('tasks')
+        if api_version == '2018-09-01':
+            from .v2018_09_01.operations import TasksOperations as OperationClass
+        elif api_version == '2019-04-01':
+            from .v2019_04_01.operations import TasksOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -209,12 +268,18 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
 
            * 2017-10-01: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2017_10_01.operations.WebhooksOperations>`
            * 2018-02-01-preview: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2018_02_01_preview.operations.WebhooksOperations>`
+           * 2018-09-01: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2018_09_01.operations.WebhooksOperations>`
+           * 2019-04-01: :class:`WebhooksOperations<azure.mgmt.containerregistry.v2019_04_01.operations.WebhooksOperations>`
         """
         api_version = self._get_api_version('webhooks')
         if api_version == '2017-10-01':
             from .v2017_10_01.operations import WebhooksOperations as OperationClass
         elif api_version == '2018-02-01-preview':
             from .v2018_02_01_preview.operations import WebhooksOperations as OperationClass
+        elif api_version == '2018-09-01':
+            from .v2018_09_01.operations import WebhooksOperations as OperationClass
+        elif api_version == '2019-04-01':
+            from .v2019_04_01.operations import WebhooksOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

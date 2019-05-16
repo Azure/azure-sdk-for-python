@@ -55,6 +55,33 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         disk_resource = async_creation.result()
 
     @ResourceGroupPreparer()
+    def test_grant_access(self, resource_group, location):
+        '''Create an empty Managed Disk.'''
+        DiskCreateOption = self.compute_client.disks.models.DiskCreateOption
+
+        async_creation = self.compute_client.disks.create_or_update(
+            resource_group.name,
+            'my_disk_name',
+            {
+                'location': location,
+                'disk_size_gb': 20,
+                'creation_data': {
+                    'create_option': DiskCreateOption.empty
+                }
+            }
+        )
+        disk_resource = async_creation.result()
+
+        grant_access_poller = self.compute_client.disks.grant_access(
+            resource_group.name,
+            'my_disk_name',
+            'Read',
+            '1',
+        )
+        access_uri = grant_access_poller.result()
+        assert access_uri.access_sas is not None
+
+    @ResourceGroupPreparer()
     def test_md_from_storage_blob(self, resource_group, location):
         '''Create a Managed Disk from Blob Storage.'''
         DiskCreateOption = self.compute_client.disks.models.DiskCreateOption
@@ -66,7 +93,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
                 'location': location,
                 'creation_data': {
                     'create_option': DiskCreateOption.import_enum,
-                    'source_uri': 'https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd'
+                    'source_uri': self.settings.LINUX_OS_VHD  # 'https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd'
                 }
             }
         )
@@ -227,7 +254,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         disk_resource = async_creation.result()
 
         # Sample from here
-        StorageAccountTypes = self.compute_client.disks.models.StorageAccountTypes
+        StorageAccountTypes = self.compute_client.disks.models.DiskStorageAccountTypes
         managed_disk = self.compute_client.disks.get(resource_group.name, 'myDisk')
         managed_disk.account_type = StorageAccountTypes.standard_lrs
         async_update = self.compute_client.disks.create_or_update(
@@ -248,7 +275,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
                     'os_disk': {
                         'os_type': 'Linux',
                         'os_state': "Generalized",
-                        'blob_uri': 'https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd',
+                        'blob_uri': self.settings.LINUX_OS_VHD,  # 'https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd'
                         'caching': "ReadWrite",
                     }
                 }
@@ -334,7 +361,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
                             'name': naming_infix + 'ipconfig',
                             'subnet': {
                                 'id': subnet_id
-                            } 
+                            }
                         }]
                     }]
                 }

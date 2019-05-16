@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .tracked_resource import TrackedResource
 
 
-class Zone(Resource):
+class Zone(TrackedResource):
     """Describes a DNS zone.
 
     Variables are only populated by the server, and will be ignored when
@@ -20,16 +20,18 @@ class Zone(Resource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
+    :param location: Required. The geo-location where the resource lives
+    :type location: str
     :param etag: The etag of the zone.
     :type etag: str
     :param max_number_of_record_sets: The maximum number of record sets that
@@ -57,8 +59,8 @@ class Zone(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'max_number_of_record_sets': {'key': 'properties.maxNumberOfRecordSets', 'type': 'long'},
         'number_of_record_sets': {'key': 'properties.numberOfRecordSets', 'type': 'long'},

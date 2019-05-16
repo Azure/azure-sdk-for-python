@@ -24,16 +24,12 @@ class StoredProcedureParameter(Model):
      ~azure.mgmt.datafactory.models.StoredProcedureParameterType
     """
 
-    _validation = {
-        'value': {'required': True},
-    }
-
     _attribute_map = {
         'value': {'key': 'value', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, value, type=None):
-        super(StoredProcedureParameter, self).__init__()
-        self.value = value
-        self.type = type
+    def __init__(self, **kwargs):
+        super(StoredProcedureParameter, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.type = kwargs.get('type', None)

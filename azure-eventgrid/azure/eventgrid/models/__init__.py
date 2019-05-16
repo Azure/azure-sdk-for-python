@@ -19,18 +19,25 @@ try:
     from .resource_delete_success_data_py3 import ResourceDeleteSuccessData
     from .resource_delete_failure_data_py3 import ResourceDeleteFailureData
     from .resource_delete_cancel_data_py3 import ResourceDeleteCancelData
+    from .resource_action_success_data_py3 import ResourceActionSuccessData
+    from .resource_action_failure_data_py3 import ResourceActionFailureData
+    from .resource_action_cancel_data_py3 import ResourceActionCancelData
     from .event_grid_event_py3 import EventGridEvent
     from .subscription_validation_event_data_py3 import SubscriptionValidationEventData
     from .subscription_validation_response_py3 import SubscriptionValidationResponse
     from .subscription_deleted_event_data_py3 import SubscriptionDeletedEventData
     from .iot_hub_device_created_event_data_py3 import IotHubDeviceCreatedEventData
     from .iot_hub_device_deleted_event_data_py3 import IotHubDeviceDeletedEventData
+    from .iot_hub_device_connected_event_data_py3 import IotHubDeviceConnectedEventData
+    from .iot_hub_device_disconnected_event_data_py3 import IotHubDeviceDisconnectedEventData
     from .device_twin_metadata_py3 import DeviceTwinMetadata
     from .device_twin_properties_py3 import DeviceTwinProperties
     from .device_twin_info_properties_py3 import DeviceTwinInfoProperties
     from .device_twin_info_x509_thumbprint_py3 import DeviceTwinInfoX509Thumbprint
     from .device_twin_info_py3 import DeviceTwinInfo
     from .device_life_cycle_event_properties_py3 import DeviceLifeCycleEventProperties
+    from .device_connection_state_event_info_py3 import DeviceConnectionStateEventInfo
+    from .device_connection_state_event_properties_py3 import DeviceConnectionStateEventProperties
     from .container_registry_image_pushed_event_data_py3 import ContainerRegistryImagePushedEventData
     from .container_registry_image_deleted_event_data_py3 import ContainerRegistryImageDeletedEventData
     from .container_registry_event_target_py3 import ContainerRegistryEventTarget
@@ -51,18 +58,25 @@ except (SyntaxError, ImportError):
     from .resource_delete_success_data import ResourceDeleteSuccessData
     from .resource_delete_failure_data import ResourceDeleteFailureData
     from .resource_delete_cancel_data import ResourceDeleteCancelData
+    from .resource_action_success_data import ResourceActionSuccessData
+    from .resource_action_failure_data import ResourceActionFailureData
+    from .resource_action_cancel_data import ResourceActionCancelData
     from .event_grid_event import EventGridEvent
     from .subscription_validation_event_data import SubscriptionValidationEventData
     from .subscription_validation_response import SubscriptionValidationResponse
     from .subscription_deleted_event_data import SubscriptionDeletedEventData
     from .iot_hub_device_created_event_data import IotHubDeviceCreatedEventData
     from .iot_hub_device_deleted_event_data import IotHubDeviceDeletedEventData
+    from .iot_hub_device_connected_event_data import IotHubDeviceConnectedEventData
+    from .iot_hub_device_disconnected_event_data import IotHubDeviceDisconnectedEventData
     from .device_twin_metadata import DeviceTwinMetadata
     from .device_twin_properties import DeviceTwinProperties
     from .device_twin_info_properties import DeviceTwinInfoProperties
     from .device_twin_info_x509_thumbprint import DeviceTwinInfoX509Thumbprint
     from .device_twin_info import DeviceTwinInfo
     from .device_life_cycle_event_properties import DeviceLifeCycleEventProperties
+    from .device_connection_state_event_info import DeviceConnectionStateEventInfo
+    from .device_connection_state_event_properties import DeviceConnectionStateEventProperties
     from .container_registry_image_pushed_event_data import ContainerRegistryImagePushedEventData
     from .container_registry_image_deleted_event_data import ContainerRegistryImageDeletedEventData
     from .container_registry_event_target import ContainerRegistryEventTarget
@@ -87,18 +101,25 @@ __all__ = [
     'ResourceDeleteSuccessData',
     'ResourceDeleteFailureData',
     'ResourceDeleteCancelData',
+    'ResourceActionSuccessData',
+    'ResourceActionFailureData',
+    'ResourceActionCancelData',
     'EventGridEvent',
     'SubscriptionValidationEventData',
     'SubscriptionValidationResponse',
     'SubscriptionDeletedEventData',
     'IotHubDeviceCreatedEventData',
     'IotHubDeviceDeletedEventData',
+    'IotHubDeviceConnectedEventData',
+    'IotHubDeviceDisconnectedEventData',
     'DeviceTwinMetadata',
     'DeviceTwinProperties',
     'DeviceTwinInfoProperties',
     'DeviceTwinInfoX509Thumbprint',
     'DeviceTwinInfo',
     'DeviceLifeCycleEventProperties',
+    'DeviceConnectionStateEventInfo',
+    'DeviceConnectionStateEventProperties',
     'ContainerRegistryImagePushedEventData',
     'ContainerRegistryImageDeletedEventData',
     'ContainerRegistryEventTarget',

@@ -1,10 +1,39 @@
 {
+  "azure-applicationinsights": {
+		"service_name": "Application Insights",
+		"category ": "Client",
+    "namespaces": [
+      "azure.applicationinsights"
+    ]
+	},
   "azure-batch": {
     "category ": "Client",
     "namespaces": [
       "azure.batch"
     ],
     "service_name": "Batch"
+  },
+  "azure-cognitiveservices-anomalydetector": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.anomalydetector"
+    ],
+    "service_name": "Cognitive Services Anomaly Detector"
+  },
+  "azure-cognitiveservices-knowledge-qnamaker": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.knowledge.qnamaker"
+    ],
+    "service_name": "Cognitive Services Knozledge QnA Maker"
+  },
+  "azure-cognitiveservices-language-luis": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.language.luis.authoring",
+      "azure.cognitiveservices.language.luis.runtime"
+    ],
+    "service_name": "Cognitive Services Language LUIS"
   },
   "azure-cognitiveservices-language-spellcheck": {
     "category": "Client",
@@ -19,6 +48,20 @@
       "azure.cognitiveservices.language.textanalytics"
     ],
     "service_name": "Cognitive Services Language TextAnalytics"
+  },
+  "azure-cognitiveservices-search-autosuggest": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.autosuggest"
+    ],
+    "service_name": "Cognitive Services Search Autosuggest"
+  },
+  "azure-cognitiveservices-search-customimagesearch": {
+    "category": "Client",
+    "namespaces": [
+      "azure.cognitiveservices.search.customimagesearch"
+    ],
+    "service_name": "Cognitive Services Search CustomImageSearch"
   },
   "azure-cognitiveservices-search-customsearch": {
     "category": "Client",
@@ -136,12 +179,33 @@
     ],
     "service_name": "Advisor"
   },
+  "azure-mgmt-alertsmanagement": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.alertsmanagement"
+    ],
+    "service_name": "Alerts Management"
+  },
+  "azure-mgmt-applicationinsights": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.applicationinsights"
+    ],
+    "service_name": "Application Insights"
+  },
   "azure-mgmt-authorization": {
     "category ": "Management",
     "namespaces": [
       "azure.mgmt.authorization"
     ],
     "service_name": "Authorization"
+  },
+  "azure-mgmt-automation": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.automation"
+    ],
+    "service_name": "Automation"
   },
   "azure-mgmt-batch": {
     "category ": "Management",
@@ -185,7 +249,7 @@
     ],
     "service_name": "Commerce"
   },
-  "azure-mgmt-compute/azure.mgmt.compute.compute": {
+  "azure-mgmt-compute/azure.mgmt.compute": {
     "category ": "Management",
     "namespaces": [
       "azure.mgmt.compute.v2015_06_15",
@@ -194,7 +258,12 @@
       "azure.mgmt.compute.v2017_03_30",
       "azure.mgmt.compute.v2017_09_01",
       "azure.mgmt.compute.v2017_12_01",
-      "azure.mgmt.compute.v2018_04_01"
+      "azure.mgmt.compute.v2018_04_01",
+      "azure.mgmt.compute.v2018_06_01",
+      "azure.mgmt.compute.v2018_09_30",
+      "azure.mgmt.compute.v2018_10_01",
+      "azure.mgmt.compute.v2019_03_01",
+      "azure.mgmt.compute.v2019_04_01"
     ],
     "service_name": "Virtual Machines"
   },
@@ -216,14 +285,22 @@
     "category ": "Management",
     "namespaces": [
       "azure.mgmt.containerregistry.v2017_03_01",
-      "azure.mgmt.containerregistry.v2017_10_01"
+      "azure.mgmt.containerregistry.v2017_10_01",
+      "azure.mgmt.containerregistry.v2018_02_01_preview",
+      "azure.mgmt.containerregistry.v2018_09_01",
+      "azure.mgmt.containerregistry.v2019_04_01"
     ],
     "service_name": "Container Registry"
   },
   "azure-mgmt-containerservice": {
     "category ": "Management",
     "namespaces": [
-      "azure.mgmt.containerservice"
+      "azure.mgmt.containerservice.v2017_07_01",
+      "azure.mgmt.containerservice.v2018_03_01",
+      "azure.mgmt.containerservice.v2018_08_01_preview",
+      "azure.mgmt.containerservice.v2018_09_30_preview",
+      "azure.mgmt.containerservice.v2019_02_01",
+      "azure.mgmt.containerservice.v2019_04_30"
     ],
     "service_name": "Container Service"
   },
@@ -233,6 +310,13 @@
       "azure.mgmt.cosmosdb"
     ],
     "service_name": "Cosmos DB"
+  },
+  "azure-mgmt-databricks": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.databricks"
+    ],
+    "service_name": "Data Bricks"
   },
   "azure-mgmt-datafactory": {
     "category ": "Management",
@@ -257,6 +341,20 @@
     ],
     "service_name": "Data Lake Store"
   },
+  "azure-mgmt-datamigration": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.datamigration"
+    ],
+    "service_name": "Data migration"
+  },
+  "azure-mgmt-devspaces": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.devspaces"
+    ],
+    "service_name": "DevSpaces"
+  },
   "azure-mgmt-devtestlabs": {
     "category ": "Management",
     "namespaces": [
@@ -267,7 +365,9 @@
   "azure-mgmt-dns": {
     "category ": "Management",
     "namespaces": [
-      "azure.mgmt.dns"
+      "azure.mgmt.dns.v2016_04_01",
+      "azure.mgmt.dns.v2018_03_01_preview",
+      "azure.mgmt.dns.v2018_05_01"
     ],
     "service_name": "DNS"
   },
@@ -281,7 +381,9 @@
   "azure-mgmt-eventhub": {
     "category ": "Management",
     "namespaces": [
-      "azure.mgmt.eventhub"
+      "azure.mgmt.eventhub.v2015_08_01",
+      "azure.mgmt.eventhub.v2017_04_01",
+      "azure.mgmt.eventhub.v2018_01_01_preview"
     ],
     "service_name": "Event Hubs"
   },
@@ -298,6 +400,20 @@
       "azure.mgmt.hdinsight"
     ],
     "service_name": "HDInsight"
+  },
+  "azure-mgmt-imagebuilder": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.imagebuilder"
+    ],
+    "service_name": "ImageBuilder"
+  },
+  "azure-mgmt-iotcentral": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.iotcentral"
+    ],
+    "service_name": "IoT Central"
   },
   "azure-mgmt-iothub": {
     "category ": "Management",
@@ -319,6 +435,20 @@
       "azure.mgmt.keyvault"
     ],
     "service_name": "Key Vault"
+  },
+  "azure-mgmt-kusto": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.kusto"
+    ],
+    "service_name": "Kusto"
+  },
+  "azure-mgmt-labservices": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.labservices"
+    ],
+    "service_name": "LabServices"
   },
   "azure-mgmt-loganalytics": {
     "category ": "Management",
@@ -348,12 +478,40 @@
     ],
     "service_name": "Management Groups"
   },
+  "azure-mgmt-managementpartner": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.managementpartner"
+    ],
+    "service_name": "Management Partner"
+  },
+  "azure-mgmt-maps": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.maps"
+    ],
+    "service_name": "Maps"
+  },
+  "azure-mgmt-marketplaceordering": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.marketplaceordering"
+    ],
+    "service_name": "Market Place Ordering"
+  },
   "azure-mgmt-media": {
     "category ": "Management",
     "namespaces": [
       "azure.mgmt.media"
     ],
     "service_name": "Media Services"
+  },
+  "azure-mgmt-mixedreality": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.mixedreality"
+    ],
+    "service_name": "Mixed Reality"
   },
   "azure-mgmt-monitor": {
     "category ": "Management",
@@ -369,6 +527,13 @@
     ],
     "service_name": "MSI"
   },
+  "azure-mgmt-netapp": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.netapp"
+    ],
+    "service_name": "NetApp"
+  },
   "azure-mgmt-network": {
     "category ": "Management",
     "namespaces": [
@@ -382,7 +547,15 @@
       "azure.mgmt.network.v2017_10_01",
       "azure.mgmt.network.v2017_11_01",
       "azure.mgmt.network.v2018_01_01",
-      "azure.mgmt.network.v2018_02_01"
+      "azure.mgmt.network.v2018_02_01",
+      "azure.mgmt.network.v2018_04_01",
+      "azure.mgmt.network.v2018_06_01",
+      "azure.mgmt.network.v2018_07_01",
+      "azure.mgmt.network.v2018_08_01",
+      "azure.mgmt.network.v2018_10_01",
+      "azure.mgmt.network.v2018_11_01",
+      "azure.mgmt.network.v2018_12_01",
+      "azure.mgmt.network.v2019_02_01"
     ],
     "service_name": "Network"
   },
@@ -406,6 +579,13 @@
       "azure.mgmt.powerbiembedded"
     ],
     "service_name": "Power BI Embedded"
+  },
+  "azure-mgmt-rdbms/azure.mgmt.rdbms.mariadb": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.rdbms.mariadb"
+    ],
+    "service_name": "MariaDB"
   },
   "azure-mgmt-rdbms/azure.mgmt.rdbms.mysql": {
     "category ": "Management",
@@ -461,12 +641,20 @@
       "azure.mgmt.resource.resources.v2016_09_01",
       "azure.mgmt.resource.resources.v2017_05_10",
       "azure.mgmt.resource.resources.v2018_02_01",
+      "azure.mgmt.resource.resources.v2018_05_01",
       "azure.mgmt.resource.policy.v2015_10_01_preview",
       "azure.mgmt.resource.policy.v2016_04_01",
       "azure.mgmt.resource.policy.v2016_12_01",
       "azure.mgmt.resource.links.v2016_09_01"
     ],
     "service_name": "Resource Management"
+  },
+  "azure-mgmt-resourcegraph": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.resourcegraph"
+    ],
+    "service_name": "Resource Graph"
   },
   "azure-mgmt-scheduler": {
     "category ": "Management",
@@ -481,6 +669,13 @@
       "azure.mgmt.search"
     ],
     "service_name": "Search Management"
+  },
+  "azure-mgmt-security": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.security"
+    ],
+    "service_name": "Security Management"
   },
   "azure-mgmt-servermanager": {
     "category ": "Management",
@@ -503,12 +698,26 @@
     ],
     "service_name": "Service Fabric"
   },
+  "azure-mgmt-signalr": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.signalr"
+    ],
+    "service_name": "SignalR Management"
+  },
   "azure-mgmt-sql": {
     "category ": "Management",
     "namespaces": [
       "azure.mgmt.sql"
     ],
     "service_name": "SQL"
+  },
+  "azure-mgmt-sqlvirtualmachine": {
+    "category ": "Management",
+    "namespaces": [
+      "azure.mgmt.sqlvirtualmachine"
+    ],
+    "service_name": "SQL Virtual Machine"
   },
   "azure-mgmt-storage": {
     "category ": "Management",
@@ -518,7 +727,9 @@
       "azure.mgmt.storage.v2016_12_01",
       "azure.mgmt.storage.v2017_06_01",
       "azure.mgmt.storage.v2017_10_01",
-      "azure.mgmt.storage.v2018_02_01"
+      "azure.mgmt.storage.v2018_02_01",
+      "azure.mgmt.storage.v2018_07_01",
+      "azure.mgmt.storage.v2019_04_01"
     ],
     "service_name": "Storage"
   },

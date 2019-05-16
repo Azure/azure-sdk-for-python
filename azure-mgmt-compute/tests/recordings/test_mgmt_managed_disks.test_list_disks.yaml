@@ -5,19 +5,18 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.4 (Windows-10-10.0.16299-SP0) requests/2.18.4 msrest/0.4.26
-          msrest_azure/0.4.20 computemanagementclient/4.0.0rc1 Azure-SDK-For-Python]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.6.0
+          computemanagementclient/4.5.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_list_disks403a1004/providers/Microsoft.Compute/disks?api-version=2018-04-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_list_disks403a1004/providers/Microsoft.Compute/disks?api-version=2018-09-30
   response:
     body: {string: '{"value":[]}'}
     headers:
       cache-control: [no-cache]
       content-length: ['12']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 21 Mar 2018 21:30:41 GMT']
+      date: ['Fri, 12 Apr 2019 22:50:50 GMT']
       expires: ['-1']
       pragma: [no-cache]
       strict-transport-security: [max-age=31536000; includeSubDomains]

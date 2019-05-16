@@ -16,6 +16,7 @@ from .version import VERSION
 from .operations.vault_certificates_operations import VaultCertificatesOperations
 from .operations.registered_identities_operations import RegisteredIdentitiesOperations
 from .operations.replication_usages_operations import ReplicationUsagesOperations
+from .operations.recovery_services_operations import RecoveryServicesOperations
 from .operations.vaults_operations import VaultsOperations
 from .operations.operations import Operations
 from .operations.vault_extended_info_operations import VaultExtendedInfoOperations
@@ -67,6 +68,8 @@ class RecoveryServicesClient(SDKClient):
     :vartype registered_identities: azure.mgmt.recoveryservices.operations.RegisteredIdentitiesOperations
     :ivar replication_usages: ReplicationUsages operations
     :vartype replication_usages: azure.mgmt.recoveryservices.operations.ReplicationUsagesOperations
+    :ivar recovery_services: RecoveryServices operations
+    :vartype recovery_services: azure.mgmt.recoveryservices.operations.RecoveryServicesOperations
     :ivar vaults: Vaults operations
     :vartype vaults: azure.mgmt.recoveryservices.operations.VaultsOperations
     :ivar operations: Operations operations
@@ -100,6 +103,8 @@ class RecoveryServicesClient(SDKClient):
         self.registered_identities = RegisteredIdentitiesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.replication_usages = ReplicationUsagesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.recovery_services = RecoveryServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.vaults = VaultsOperations(
             self._client, self.config, self._serialize, self._deserialize)

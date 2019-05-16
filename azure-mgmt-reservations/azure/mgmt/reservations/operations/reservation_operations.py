@@ -24,7 +24,7 @@ class ReservationOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Supported version. Constant value: "2018-06-01".
+    :ivar api_version: Supported version for this document is 2019-04-01. Constant value: "2019-04-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class ReservationOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-06-01"
+        self.api_version = "2019-04-01"
 
         self.config = config
 
@@ -56,6 +56,7 @@ class ReservationOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -68,9 +69,8 @@ class ReservationOperations(object):
         body_content = self._serialize.body(body, 'SplitRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.ErrorException(self._deserialize, response)
@@ -92,7 +92,6 @@ class ReservationOperations(object):
 
         Split a `Reservation` into two `Reservation`s with specified quantity
         distribution.
-        .
 
         :param reservation_order_id: Order Id of the reservation
         :type reservation_order_id: str
@@ -162,6 +161,7 @@ class ReservationOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -174,9 +174,8 @@ class ReservationOperations(object):
         body_content = self._serialize.body(body, 'MergeRequest')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.ErrorException(self._deserialize, response)
@@ -283,7 +282,7 @@ class ReservationOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -292,9 +291,8 @@ class ReservationOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorException(self._deserialize, response)
@@ -347,7 +345,7 @@ class ReservationOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -356,8 +354,8 @@ class ReservationOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -391,6 +389,7 @@ class ReservationOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -403,9 +402,8 @@ class ReservationOperations(object):
         body_content = self._serialize.body(parameters, 'Patch')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
             raise models.ErrorException(self._deserialize, response)
@@ -479,7 +477,6 @@ class ReservationOperations(object):
         """Get `Reservation` revisions.
 
         List of all the revisions for the `Reservation`.
-        .
 
         :param reservation_id: Id of the Reservation Item
         :type reservation_id: str
@@ -517,7 +514,7 @@ class ReservationOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -526,9 +523,8 @@ class ReservationOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorException(self._deserialize, response)

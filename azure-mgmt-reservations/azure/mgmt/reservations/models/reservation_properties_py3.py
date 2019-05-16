@@ -19,11 +19,10 @@ class ReservationProperties(Model):
     sending a request.
 
     :param reserved_resource_type: Possible values include: 'VirtualMachines',
-     'SqlDatabases', 'SuseLinux'
+     'SqlDatabases', 'SuseLinux', 'CosmosDb'
     :type reserved_resource_type: str or
      ~azure.mgmt.reservations.models.ReservedResourceType
-    :param instance_flexibility: Possible values include: 'On', 'Off',
-     'NotSupported'
+    :param instance_flexibility: Possible values include: 'On', 'Off'
     :type instance_flexibility: str or
      ~azure.mgmt.reservations.models.InstanceFlexibility
     :param display_name: Friendly name for user to easily identify the
@@ -34,7 +33,7 @@ class ReservationProperties(Model):
     :param applied_scope_type: Possible values include: 'Single', 'Shared'
     :type applied_scope_type: str or
      ~azure.mgmt.reservations.models.AppliedScopeType
-    :param quantity: Quantity of the SKUs that are part of the Reservation.
+    :param quantity:
     :type quantity: int
     :param provisioning_state: Current state of the reservation.
     :type provisioning_state: str

@@ -26,8 +26,8 @@ class DatabaseAccountCreateUpdateParameters(Resource):
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: Required. The location of the resource group to which the
-     resource belongs.
+    :param location: The location of the resource group to which the resource
+     belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -41,7 +41,8 @@ class DatabaseAccountCreateUpdateParameters(Resource):
     :param locations: Required. An array that contains the georeplication
      locations enabled for the Cosmos DB account.
     :type locations: list[~azure.mgmt.cosmosdb.models.Location]
-    :ivar database_account_offer_type: Required.  Default value: "Standard" .
+    :ivar database_account_offer_type: Required. The offer type for the
+     database. Default value: "Standard" .
     :vartype database_account_offer_type: str
     :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
      the set of IP addresses or IP address ranges in CIDR form to be included
@@ -62,13 +63,15 @@ class DatabaseAccountCreateUpdateParameters(Resource):
      for the Cosmos DB account.
     :type virtual_network_rules:
      list[~azure.mgmt.cosmosdb.models.VirtualNetworkRule]
+    :param enable_multiple_write_locations: Enables the account to write in
+     multiple locations
+    :type enable_multiple_write_locations: bool
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'locations': {'required': True},
         'database_account_offer_type': {'required': True, 'constant': True},
     }
@@ -88,6 +91,7 @@ class DatabaseAccountCreateUpdateParameters(Resource):
         'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
         'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
         'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
+        'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
     }
 
     database_account_offer_type = "Standard"
@@ -102,3 +106,4 @@ class DatabaseAccountCreateUpdateParameters(Resource):
         self.enable_automatic_failover = kwargs.get('enable_automatic_failover', None)
         self.capabilities = kwargs.get('capabilities', None)
         self.virtual_network_rules = kwargs.get('virtual_network_rules', None)
+        self.enable_multiple_write_locations = kwargs.get('enable_multiple_write_locations', None)

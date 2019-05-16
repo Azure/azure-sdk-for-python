@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operation_status_response import OperationStatusResponse
+from .operation_status_response_py3 import OperationStatusResponse
 
 
 class LogAnalyticsOperationResult(OperationStatusResponse):
