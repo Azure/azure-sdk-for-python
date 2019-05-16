@@ -58,14 +58,14 @@ class ControllersOperations(object):
         :rtype: ~azure.mgmt.devspaces.models.Controller or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.devspaces.models.ErrorResponseException>`
+         :class:`DevSpacesErrorResponseException<azure.mgmt.devspaces.models.DevSpacesErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'name': self._serialize.url("name", name, 'str', max_length=31, min_length=3, pattern=r'^[a-zA-Z0-9](-?[a-zA-Z0-9])*$')
+            'name': self._serialize.url("name", name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]([_-]*[a-zA-Z0-9])*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -88,7 +88,7 @@ class ControllersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DevSpacesErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -110,7 +110,7 @@ class ControllersOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'name': self._serialize.url("name", name, 'str', max_length=31, min_length=3, pattern=r'^[a-zA-Z0-9](-?[a-zA-Z0-9])*$')
+            'name': self._serialize.url("name", name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]([_-]*[a-zA-Z0-9])*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -137,7 +137,7 @@ class ControllersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DevSpacesErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
@@ -178,7 +178,7 @@ class ControllersOperations(object):
          or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.devspaces.models.Controller]]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.devspaces.models.ErrorResponseException>`
+         :class:`DevSpacesErrorResponseException<azure.mgmt.devspaces.models.DevSpacesErrorResponseException>`
         """
         raw_result = self._create_initial(
             resource_group_name=resource_group_name,
@@ -215,7 +215,7 @@ class ControllersOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'name': self._serialize.url("name", name, 'str', max_length=31, min_length=3, pattern=r'^[a-zA-Z0-9](-?[a-zA-Z0-9])*$')
+            'name': self._serialize.url("name", name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]([_-]*[a-zA-Z0-9])*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -237,7 +237,7 @@ class ControllersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202, 204]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DevSpacesErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -264,7 +264,7 @@ class ControllersOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.devspaces.models.ErrorResponseException>`
+         :class:`DevSpacesErrorResponseException<azure.mgmt.devspaces.models.DevSpacesErrorResponseException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -289,7 +289,7 @@ class ControllersOperations(object):
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevSpaces/controllers/{name}'}
 
     def update(
-            self, resource_group_name, name, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, name, tags=None, target_container_host_credentials_base64=None, custom_headers=None, raw=False, **operation_config):
         """Updates an Azure Dev Spaces Controller.
 
         Updates the properties of an existing Azure Dev Spaces Controller with
@@ -302,6 +302,9 @@ class ControllersOperations(object):
         :type name: str
         :param tags: Tags for the Azure Dev Spaces Controller.
         :type tags: dict[str, str]
+        :param target_container_host_credentials_base64: Credentials of the
+         target container host (base64).
+        :type target_container_host_credentials_base64: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -311,16 +314,16 @@ class ControllersOperations(object):
         :rtype: ~azure.mgmt.devspaces.models.Controller or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.devspaces.models.ErrorResponseException>`
+         :class:`DevSpacesErrorResponseException<azure.mgmt.devspaces.models.DevSpacesErrorResponseException>`
         """
-        controller_update_parameters = models.ControllerUpdateParameters(tags=tags)
+        controller_update_parameters = models.ControllerUpdateParameters(tags=tags, target_container_host_credentials_base64=target_container_host_credentials_base64)
 
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'name': self._serialize.url("name", name, 'str', max_length=31, min_length=3, pattern=r'^[a-zA-Z0-9](-?[a-zA-Z0-9])*$')
+            'name': self._serialize.url("name", name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]([_-]*[a-zA-Z0-9])*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -346,12 +349,14 @@ class ControllersOperations(object):
         request = self._client.patch(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+        if response.status_code not in [200, 201]:
+            raise models.DevSpacesErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
         if response.status_code == 200:
+            deserialized = self._deserialize('Controller', response)
+        if response.status_code == 201:
             deserialized = self._deserialize('Controller', response)
 
         if raw:
@@ -380,7 +385,7 @@ class ControllersOperations(object):
         :rtype:
          ~azure.mgmt.devspaces.models.ControllerPaged[~azure.mgmt.devspaces.models.Controller]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.devspaces.models.ErrorResponseException>`
+         :class:`DevSpacesErrorResponseException<azure.mgmt.devspaces.models.DevSpacesErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -416,7 +421,7 @@ class ControllersOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DevSpacesErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -447,7 +452,7 @@ class ControllersOperations(object):
         :rtype:
          ~azure.mgmt.devspaces.models.ControllerPaged[~azure.mgmt.devspaces.models.Controller]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.devspaces.models.ErrorResponseException>`
+         :class:`DevSpacesErrorResponseException<azure.mgmt.devspaces.models.DevSpacesErrorResponseException>`
         """
         def internal_paging(next_link=None, raw=False):
 
@@ -482,7 +487,7 @@ class ControllersOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                raise models.DevSpacesErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -522,7 +527,7 @@ class ControllersOperations(object):
         :rtype: ~azure.mgmt.devspaces.models.ControllerConnectionDetailsList
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.devspaces.models.ErrorResponseException>`
+         :class:`DevSpacesErrorResponseException<azure.mgmt.devspaces.models.DevSpacesErrorResponseException>`
         """
         list_connection_details_parameters = models.ListConnectionDetailsParameters(target_container_host_resource_id=target_container_host_resource_id)
 
@@ -531,7 +536,7 @@ class ControllersOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
-            'name': self._serialize.url("name", name, 'str', max_length=31, min_length=3, pattern=r'^[a-zA-Z0-9](-?[a-zA-Z0-9])*$')
+            'name': self._serialize.url("name", name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]([_-]*[a-zA-Z0-9])*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -558,7 +563,7 @@ class ControllersOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            raise models.DevSpacesErrorResponseException(self._deserialize, response)
 
         deserialized = None
 

@@ -17,12 +17,17 @@ class ControllerUpdateParameters(Model):
 
     :param tags: Tags for the Azure Dev Spaces Controller.
     :type tags: dict[str, str]
+    :param target_container_host_credentials_base64: Credentials of the target
+     container host (base64).
+    :type target_container_host_credentials_base64: str
     """
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
+        'target_container_host_credentials_base64': {'key': 'properties.targetContainerHostCredentialsBase64', 'type': 'str'},
     }
 
-    def __init__(self, *, tags=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, target_container_host_credentials_base64: str=None, **kwargs) -> None:
         super(ControllerUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
+        self.target_container_host_credentials_base64 = target_container_host_credentials_base64
