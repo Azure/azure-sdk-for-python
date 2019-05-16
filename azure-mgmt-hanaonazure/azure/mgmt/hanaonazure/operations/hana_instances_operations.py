@@ -241,28 +241,9 @@ class HanaInstancesOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HanaOnAzure/hanaInstances/{hanaInstanceName}'}
 
-    def create(
+
+    def _create_initial(
             self, resource_group_name, hana_instance_name, custom_headers=None, raw=False, **operation_config):
-        """Creates a SAP HANA instance.
-
-        Creates a SAP HANA instance for the specified subscription, resource
-        group, and instance name.
-
-        :param resource_group_name: Name of the resource group.
-        :type resource_group_name: str
-        :param hana_instance_name: Name of the SAP HANA on Azure instance.
-        :type hana_instance_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: HanaInstance or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.hanaonazure.models.HanaInstance or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.hanaonazure.models.ErrorResponseException>`
-        """
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -290,11 +271,13 @@ class HanaInstancesOperations(object):
         request = self._client.put(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [201]:
+        if response.status_code not in [200, 201]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
 
+        if response.status_code == 200:
+            deserialized = self._deserialize('HanaInstance', response)
         if response.status_code == 201:
             deserialized = self._deserialize('HanaInstance', response)
 
@@ -303,6 +286,56 @@ class HanaInstancesOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def create(
+            self, resource_group_name, hana_instance_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates a SAP HANA instance.
+
+        Creates a SAP HANA instance for the specified subscription, resource
+        group, and instance name.
+
+        :param resource_group_name: Name of the resource group.
+        :type resource_group_name: str
+        :param hana_instance_name: Name of the SAP HANA on Azure instance.
+        :type hana_instance_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns HanaInstance or
+         ClientRawResponse<HanaInstance> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.hanaonazure.models.HanaInstance]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.hanaonazure.models.HanaInstance]]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.hanaonazure.models.ErrorResponseException>`
+        """
+        raw_result = self._create_initial(
+            resource_group_name=resource_group_name,
+            hana_instance_name=hana_instance_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('HanaInstance', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HanaOnAzure/hanaInstances/{hanaInstanceName}'}
 
     def update(
