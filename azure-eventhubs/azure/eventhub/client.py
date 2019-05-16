@@ -344,3 +344,9 @@ class EventHubClient(EventHubClientAbstract):
             self, target, partition=partition, send_timeout=send_timeout)
         self.clients.append(handler)
         return handler
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.stop()

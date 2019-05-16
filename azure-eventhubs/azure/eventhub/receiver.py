@@ -342,4 +342,33 @@ class Receiver(object):
         return self
 
     def __next__(self):
-        return next(self.messages_iter)
+        while True:
+            try:
+                message = next(self.messages_iter)
+                ed = EventData(message=message)
+                self.offset = ed.offset
+                return ed
+            except (errors.TokenExpired, errors.AuthenticationException):
+                log.info("Receiver disconnected due to token error. Attempting reconnect.")
+                self.reconnect()
+            except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+                if shutdown.action.retry and self.auto_reconnect:
+                    log.info("Receiver detached. Attempting reconnect.")
+                    self.reconnect()
+                log.info("Receiver detached. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
+            except errors.MessageHandlerError as shutdown:
+                if self.auto_reconnect:
+                    log.info("Receiver detached. Attempting reconnect.")
+                    self.reconnect()
+                log.info("Receiver detached. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
+            except Exception as e:
+                log.info("Unexpected error occurred (%r). Shutting down.", e)
+                error = EventHubError("Receive failed: {}".format(e))
+                self.close(exception=error)
+                raise error
