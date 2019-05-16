@@ -5,8 +5,6 @@
 # --------------------------------------------------------------------------
 
 from devtools_testutils import ResourceGroupPreparer
-from azure.keyvault.keys import KeyClient
-from devtools_testutils import ResourceGroupPreparer
 from keyvault_preparer import KeyVaultPreparer
 from keyvault_testcase import KeyvaultTestCase
 from dateutil import parser as date_parse
@@ -29,12 +27,14 @@ class KeyVaultKeyTest(KeyvaultTestCase):
 
     def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops=None):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
-        key_ops = key_ops or ['encrypt', 'decrypt', 'sign', 'verify', 'wrapKey', 'unwrapKey']
+        key_ops = key_ops or ['encrypt', 'decrypt',
+                              'sign', 'verify', 'wrapKey', 'unwrapKey']
         key = key_attributes.key_material
         kid = key_attributes.id
         self.assertTrue(kid.index(prefix) == 0,
                         "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
-        self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
+        self.assertEqual(
+            key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(key.n and key.e, 'Bad RSA public material.')
         self.assertEqual(key_ops, key.key_ops,
                          "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops))
@@ -70,7 +70,8 @@ class KeyVaultKeyTest(KeyvaultTestCase):
         # create key
         created_key = client.create_key(key_name, 'RSA')
         self.assertIsNotNone(created_key.version)
-        self._validate_rsa_key_bundle(created_key, vault_client.vault_url, key_name, 'RSA')
+        self._validate_rsa_key_bundle(
+            created_key, vault_client.vault_url, key_name, 'RSA')
         # assert it creates a version on creation of the key
         self.assertTrue(len(list(client.list_key_versions(key_name))) == 1)
 
@@ -85,10 +86,13 @@ class KeyVaultKeyTest(KeyvaultTestCase):
             "unwrapKey"
         ]
         tags = {"purpose": "unit test", "test name ": "CreateGetDeleteKeyTest"}
-        created_key = client.create_key(key_name, 'RSA', size=key_size, key_ops=key_ops, tags=tags)
-        self.assertTrue(created_key.version and created_key.tags, 'Missing the optional key attributes.')
+        created_key = client.create_key(
+            key_name, 'RSA', size=key_size, key_ops=key_ops, tags=tags)
+        self.assertTrue(created_key.version and created_key.tags,
+                        'Missing the optional key attributes.')
         self.assertEqual(tags, created_key.tags)
-        self._validate_rsa_key_bundle(created_key, vault_client.vault_url, key_name, 'RSA')
+        self._validate_rsa_key_bundle(
+            created_key, vault_client.vault_url, key_name, 'RSA')
 
         # get the created key with version
         key = client.get_key(key_name, created_key.version)
@@ -96,13 +100,14 @@ class KeyVaultKeyTest(KeyvaultTestCase):
         self._assert_key_attributes_equal(created_key, key)
 
         # get key without version
-        self._assert_key_attributes_equal(created_key, client.get_key(created_key.name, ''))
+        self._assert_key_attributes_equal(
+            created_key, client.get_key(created_key.name, ''))
 
         # update key with version
         if self.is_live:
             # wait to ensure the key's update time won't equal its creation time
             time.sleep(1)
-        updated = self._update_key(client, created_key)
+        self._update_key(client, created_key)
 
         # delete the new key
         deleted_key = client.delete_key(key_name)
@@ -156,10 +161,8 @@ class KeyVaultKeyTest(KeyvaultTestCase):
         # create many keys
         for x in range(0, max_keys):
             key_name = 'key{}'.format(x)
-            key = None
-            while not key:
-                key = client.create_key(key_name, 'RSA')
-                expected[key.name] = key
+            key = client.create_key(key_name, 'RSA')
+            expected[key.name] = key
 
         # list keys
         result = list(client.list_keys(max_page_size=max_keys))
@@ -179,12 +182,11 @@ class KeyVaultKeyTest(KeyvaultTestCase):
 
         # create many key versions
         for _ in range(0, max_keys):
-            key = None
-            while not key:
-                key = client.create_key(key_name, 'RSA')
-                expected[key.id] = key
+            key = client.create_key(key_name, 'RSA')
+            expected[key.id] = key
 
-        result = client.list_key_versions(key_name, max_page_size=max_page_size)
+        result = client.list_key_versions(
+            key_name, max_page_size=max_page_size)
 
         # validate list key versions with attributes
         for key in result:
@@ -244,4 +246,5 @@ class KeyVaultKeyTest(KeyvaultTestCase):
         # validate the recovered keys
         expected = {k: v for k, v in keys.items() if k.startswith('keyrec')}
         actual = {k: client.get_key(k, "") for k in expected.keys()}
-        self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
+        self.assertEqual(
+            len(set(expected.keys()) & set(actual.keys())), len(expected))

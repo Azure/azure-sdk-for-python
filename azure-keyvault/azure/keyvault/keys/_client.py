@@ -5,28 +5,19 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import Any, Dict, Generator, Mapping, Optional, List
-from datetime import datetime
 import uuid
 
+from typing import TYPE_CHECKING
 from azure.core.configuration import Configuration
-from azure.core.pipeline.policies import (
-    UserAgentPolicy,
-    RetryPolicy,
-    RedirectPolicy,)
+from azure.core.pipeline.policies import UserAgentPolicy, RetryPolicy, RedirectPolicy
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest, HttpResponse
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import ClientRequestError
 from azure.keyvault._internal import _BearerTokenCredentialPolicy
 
 from .._generated import DESERIALIZE, SERIALIZE
-from ._models import (
-    Key,
-    DeletedKey,
-    KeyBase,
-)
+from ._models import Key, DeletedKey, KeyBase
 from .._generated.v7_0.models import (
-    DeletedKeyItem,
     DeletedKeyItemPaged,
     KeyCreateParameters,
     KeyItemPaged,
@@ -34,6 +25,11 @@ from .._generated.v7_0.models import (
     KeyUpdateParameters,
 )
 from .._generated.v7_0.models import KeyAttributes as _KeyAttributes
+
+if TYPE_CHECKING:
+    from azure.core.pipeline.transport import HttpTransport
+    from typing import Any, Dict, Generator, Mapping, Optional, List
+    from datetime import datetime
 
 
 class KeyClient:
@@ -43,7 +39,7 @@ class KeyClient:
     def create_config(**kwargs):
         # type: (Any) -> Configuration
         config = Configuration(**kwargs)
-        config.user_agent = UserAgentPolicy('KeyClient', **kwargs)
+        config.user_agent = UserAgentPolicy("KeyClient", **kwargs)
         config.headers = None
         config.retry = RetryPolicy(**kwargs)
         config.redirect = RedirectPolicy(**kwargs)
@@ -52,14 +48,14 @@ class KeyClient:
 
     def __init__(self, vault_url, credentials, config=None, transport=None, **kwargs):
         # type: (str, Any, Configuration, HttpTransport, Mapping[str, Any]) -> None
-
+        # TODO: update type hint for credentials
         if not credentials:
-            raise ValueError('credentials')
+            raise ValueError("credentials")
 
         if not vault_url:
-            raise ValueError('vault_url')
+            raise ValueError("vault_url")
 
-        self.vault_url = vault_url.strip('/')   # do we need to strip these
+        self.vault_url = vault_url.strip("/")
         config = config or KeyClient.create_config(**kwargs)
         transport = RequestsTransport(config.connection)
         policies = [
@@ -131,32 +127,23 @@ class KeyClient:
                 :dedent: 4
                 :caption: Creates a key in the key vault
         """
-        url = '/'.join([self.vault_url, 'keys', name, 'create'])
-        headers = {
-            'Content-Type': 'application/json; charset=utf-8',
-            'x-ms-client-request-id': str(uuid.uuid1()),
-        }
+        url = "/".join([self.vault_url, "keys", name, "create"])
+        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
         attributes = _KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
 
         key = KeyCreateParameters(
-            kty=key_type,
-            key_size=size,
-            key_ops=key_ops,
-            key_attributes=attributes,
-            tags=tags,
-            curve=curve,
-            **kwargs
+            kty=key_type, key_size=size, key_ops=key_ops, key_attributes=attributes, tags=tags, curve=curve, **kwargs
         )
-        query_parameters = {'api-version': self._api_version}
-        request_body = SERIALIZE.body(key, 'KeyCreateParameters')
-        request = HttpRequest('POST', url, headers, data=request_body)
+        query_parameters = {"api-version": self._api_version}
+        request_body = SERIALIZE.body(key, "KeyCreateParameters")
+        request = HttpRequest("POST", url, headers, data=request_body)
         request.format_parameters(query_parameters)
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise ClientRequestError("Request failed status code {}.  {}".format(response.status_code, response.text()))
 
-        bundle = DESERIALIZE('KeyBundle', response)
+        bundle = DESERIALIZE("KeyBundle", response)
 
         return Key._from_key_bundle(bundle)
 
@@ -184,23 +171,22 @@ class KeyClient:
                 :dedent: 4
                 :caption: Deletes a key in the key vault
         """
-        url = '/'.join([self.vault_url, 'keys', name])
+        url = "/".join([self.vault_url, "keys", name])
 
-        request = HttpRequest('DELETE', url)
-        query_parameters = {'api-version': self._api_version}
+        request = HttpRequest("DELETE", url)
+        query_parameters = {"api-version": self._api_version}
         request.format_parameters(query_parameters)
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise ClientRequestError("Request failed status code {}.  {}".format(response.status_code, response.text()))
 
-        bundle = DESERIALIZE('DeletedKeyBundle', response)
+        bundle = DESERIALIZE("DeletedKeyBundle", response)
 
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     def get_key(self, name, version, **kwargs):
         # type: (str, str, Mapping[str, Any]) -> Key
-
         """Gets the public part of a stored key.
 
         The get key operation is applicable to all key types. If the requested
@@ -227,23 +213,22 @@ class KeyClient:
         if version is None:
             version = ""
 
-        url = '/'.join([self.vault_url, 'keys', name, version])
-        request = HttpRequest('GET', url)
+        url = "/".join([self.vault_url, "keys", name, version])
+        request = HttpRequest("GET", url)
 
-        query_parameters = {'api-version': self._api_version}
+        query_parameters = {"api-version": self._api_version}
         request.format_parameters(query_parameters)
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise ClientRequestError("Request failed status code {}.  {}".format(response.status_code, response.text()))
 
-        bundle = DESERIALIZE('KeyBundle', response)
+        bundle = DESERIALIZE("KeyBundle", response)
 
         return Key._from_key_bundle(bundle)
 
     def get_deleted_key(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> DeletedKey
-
         """Gets the public part of a deleted key.
 
         The Get Deleted Key operation is applicable for soft-delete enabled
@@ -265,23 +250,22 @@ class KeyClient:
                 :dedent: 4
                 :caption: Retrieves a deleted key from the key vault
         """
-        url = '/'.join([self.vault_url, 'deletedkeys', name])
+        url = "/".join([self.vault_url, "deletedkeys", name])
 
-        request = HttpRequest('GET', url)
-        query_parameters = {'api-version': self._api_version}
+        request = HttpRequest("GET", url)
+        query_parameters = {"api-version": self._api_version}
         request.format_parameters(query_parameters)
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise ClientRequestError("Request failed status code {}.  {}".format(response.status_code, response.text()))
 
-        bundle = DESERIALIZE('DeletedKeyBundle', response)
+        bundle = DESERIALIZE("DeletedKeyBundle", response)
 
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     def list_deleted_keys(self, **kwargs):
         # type: (Mapping[str, Any]) -> Generator[DeletedKey]
-
         """Lists the deleted keys in the specified vault.
 
         Retrieves a list of the keys in the Key Vault as JSON Web Key
@@ -305,7 +289,7 @@ class KeyClient:
                 :dedent: 4
                 :caption: List all the deleted keys in the vault
         """
-        url = '{}/deletedkeys'.format(self.vault_url)
+        url = "{}/deletedkeys".format(self.vault_url)
         max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = DeletedKeyItemPaged(paging, DESERIALIZE.dependencies)
@@ -313,7 +297,6 @@ class KeyClient:
 
     def list_keys(self, **kwargs):
         # type: (Mapping[str, Any]) -> Generator[KeyBase]
-
         """List keys in the specified vault.
 
         Retrieves a list of the keys in the Key Vault as JSON Web Key
@@ -325,7 +308,7 @@ class KeyClient:
 
         :returns: An iterator like instance of Key
         :rtype:
-         typing.Generator[~azure.keyvault.keys._models.Key]
+         typing.Generator[~azure.keyvault.keys._models.KeyBase]
         :raises: ~azure.core.exceptions.ClientRequestError if the client failed to retrieve the key
 
         Example:
@@ -336,7 +319,7 @@ class KeyClient:
                 :dedent: 4
                 :caption: List all keys in the vault
         """
-        url = '{}/keys'.format(self.vault_url)
+        url = "{}/keys".format(self.vault_url)
         max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = KeyItemPaged(paging, DESERIALIZE.dependencies)
@@ -344,7 +327,6 @@ class KeyClient:
 
     def list_key_versions(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> Generator[KeyBase]
-
         """Retrieves a list of individual key versions with the same key name.
 
         The full key identifier, attributes, and tags are provided in the
@@ -354,7 +336,7 @@ class KeyClient:
         :type name
         :returns: An iterator like instance of Key
         :rtype:
-         typing.Generator[~azure.keyvault.keys._models.Key]
+         typing.Generator[~azure.keyvault.keys._models.KeyBase]
         :raises: ~azure.core.exceptions.ClientRequestError if the client failed to retrieve the key
 
         Example:
@@ -365,7 +347,7 @@ class KeyClient:
                 :dedent: 4
                 :caption: List all versions of the specified key
         """
-        url = '{}/keys/{}/versions'.format(self.vault_url, name)
+        url = "{}/keys/{}/versions".format(self.vault_url, name)
         max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = KeyItemPaged(paging, DESERIALIZE.dependencies)
@@ -394,15 +376,15 @@ class KeyClient:
                 :dedent: 4
                 :caption: Permanently deletes the specified key
         """
-        url = '/'.join([self.vault_url, 'deletedkeys', name])
-        query_parameters = {'api-version': self._api_version}
+        url = "/".join([self.vault_url, "deletedkeys", name])
+        query_parameters = {"api-version": self._api_version}
 
-        request = HttpRequest('DELETE', url)
+        request = HttpRequest("DELETE", url)
         request.format_parameters(query_parameters)
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 204:
-            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise ClientRequestError("Request failed status code {}.  {}".format(response.status_code, response.text()))
 
         return
 
@@ -431,25 +413,22 @@ class KeyClient:
                 :dedent: 4
                 :caption: Recovers the specified soft-deleted key
         """
-        url = '/'.join([self.vault_url, 'deletedkeys', name, 'recover'])
-        query_parameters = {'api-version': self._api_version}
+        url = "/".join([self.vault_url, "deletedkeys", name, "recover"])
+        query_parameters = {"api-version": self._api_version}
 
-        request = HttpRequest('POST', url)
+        request = HttpRequest("POST", url)
         request.format_parameters(query_parameters)
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise ClientRequestError("Request failed status code {}.  {}".format(response.status_code, response.text()))
 
-        bundle = DESERIALIZE('KeyBundle', response)
+        bundle = DESERIALIZE("KeyBundle", response)
 
         return Key._from_key_bundle(bundle)
 
-    def update_key(
-        self, name, version, key_ops=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs
-    ):
+    def update_key(self, name, version, key_ops=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs):
         # type: (str, str, Optional[List[str]], Optional[bool], Optional[datetime], Optional[datetime], Optional[str], Mapping[str, Any]) -> Key
-
         """The update key operation changes specified attributes of a stored key
         and can be applied to any key type and key version stored in Azure Key
         Vault.
@@ -488,26 +467,23 @@ class KeyClient:
                 :caption: Updates a key in the key vault
         """
 
-        url = '/'.join([self.vault_url, 'keys', name, version])
+        url = "/".join([self.vault_url, "keys", name, version])
 
         attributes = _KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
         key = KeyUpdateParameters(key_ops=key_ops, key_attributes=attributes, tags=tags)
 
-        headers = {
-            'Content-Type': 'application/json; charset=utf-8',
-            'x-ms-client-request-id': str(uuid.uuid1()),
-        }
-        query_parameters = {'api-version': self._api_version}
-        request_body = SERIALIZE.body(key, 'KeyUpdateParameters')
+        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
+        query_parameters = {"api-version": self._api_version}
+        request_body = SERIALIZE.body(key, "KeyUpdateParameters")
 
-        request = HttpRequest('PATCH', url, headers=headers, data=request_body)
+        request = HttpRequest("PATCH", url, headers=headers, data=request_body)
         request.format_parameters(query_parameters)
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise ClientRequestError("Request failed status code {}.  {}".format(response.status_code, response.text()))
         # should this return key attributes or key ?
-        bundle = DESERIALIZE('KeyBundle', response)
+        bundle = DESERIALIZE("KeyBundle", response)
 
         return Key._from_key_bundle(bundle)
 
@@ -545,20 +521,19 @@ class KeyClient:
                 :dedent: 4
                 :caption: Backs up the specified key to the key vault
         """
-        url = '/'.join([self.vault_url, 'keys', name, 'backup'])
-        request = HttpRequest('POST', url)
-        query_parameters = {'api-version': self._api_version}
+        url = "/".join([self.vault_url, "keys", name, "backup"])
+        request = HttpRequest("POST", url)
+        query_parameters = {"api-version": self._api_version}
         request.format_parameters(query_parameters)
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise ClientRequestError("Request failed status code {}.  {}".format(response.status_code, response.text()))
 
-        result = DESERIALIZE('BackupKeyResult', response)
+        result = DESERIALIZE("BackupKeyResult", response)
         return result.value
 
     def restore_key(self, backup, **kwargs):
         # type: (bytes, Mapping[str, Any]) -> Key
-
         """Restores a backed up key to a vault.
 
         Imports a previously backed up key into Azure Key Vault, restoring the
@@ -590,24 +565,21 @@ class KeyClient:
                 :dedent: 4
                 :caption: Restores a backed up key to the vault
         """
-        url = '/'.join([self.vault_url, 'keys', 'restore'])
+        url = "/".join([self.vault_url, "keys", "restore"])
 
-        query_parameters = {'api-version': self._api_version}
+        query_parameters = {"api-version": self._api_version}
 
-        headers = {
-            'Content-Type': 'application/json; charset=utf-8',
-            'x-ms-client-request-id': str(uuid.uuid1())
-        }
+        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
         restore_parameters = KeyRestoreParameters(key_bundle_backup=backup)
-        request_body = SERIALIZE.body(restore_parameters, 'KeyRestoreParameters')
+        request_body = SERIALIZE.body(restore_parameters, "KeyRestoreParameters")
 
-        request = HttpRequest('POST', url, headers, data=request_body)
+        request = HttpRequest("POST", url, headers, data=request_body)
         request.format_parameters(query_parameters)
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise ClientRequestError("Request failed status code {}.  {}".format(response.status_code, response.text()))
 
-        bundle = DESERIALIZE('KeyBundle', response)
+        bundle = DESERIALIZE("KeyBundle", response)
 
         return Key._from_key_bundle(bundle)
 
@@ -617,13 +589,13 @@ class KeyClient:
             url = next_link
             query_parameters = {}
         else:
-            query_parameters = {'api-version': self._api_version}
+            query_parameters = {"api-version": self._api_version}
             if max_page_size is not None:
-                query_parameters['maxresults'] = str(max_page_size)
+                query_parameters["maxresults"] = str(max_page_size)
 
-        headers = {'x-ms-client-request-id': str(uuid.uuid1())}
+        headers = {"x-ms-client-request-id": str(uuid.uuid1())}
 
-        request = HttpRequest('GET', url, headers)
+        request = HttpRequest("GET", url, headers)
         request.format_parameters(query_parameters)
 
         response = self._pipeline.run(request, **kwargs).http_response

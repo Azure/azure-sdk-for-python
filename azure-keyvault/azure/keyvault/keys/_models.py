@@ -26,23 +26,13 @@ class KeyBase(object):
     def _from_key_bundle(cls, key_bundle):
         # type: (models.KeyBundle) -> KeyBase
         """Construct a key from an autorest-generated KeyBundle"""
-        return cls(
-            key_bundle.attributes,
-            key_bundle.key.kid,
-            managed=None,
-            tags=key_bundle.tags,
-        )
+        return cls(key_bundle.attributes, key_bundle.key.kid, managed=None, tags=key_bundle.tags)
 
     @classmethod
     def _from_key_item(cls, key_item):
         # type: (models.KeyItem) -> KeyBase
         """Construct a Key from an autorest-generated KeyItem"""
-        return cls(
-            key_item.attributes,
-            key_item.kid,
-            managed=key_item.managed,
-            tags=key_item.tags,
-        )
+        return cls(key_item.attributes, key_item.kid, managed=key_item.managed, tags=key_item.tags)
 
     @property
     def id(self):
@@ -127,7 +117,7 @@ class Key(KeyBase):
     """
 
     def __init__(self, attributes, vault_id, key_material, **kwargs):
-        # type: (models.KeyAttributes, models.JsonWebKey, Mapping[str, Any]) -> None
+        # type: (models.KeyAttributes, str, models.JsonWebKey, Mapping[str, Any]) -> None
         super(Key, self).__init__(attributes, vault_id, **kwargs)
         self._key_material = key_material
 
@@ -136,11 +126,7 @@ class Key(KeyBase):
         # type: (models.KeyBundle) -> Key
         """Construct a key from an autorest-generated KeyBundle"""
         return cls(
-            key_bundle.attributes,
-            key_bundle.key.kid,
-            key_bundle.key,
-            managed=key_bundle.managed,
-            tags=key_bundle.tags,
+            key_bundle.attributes, key_bundle.key.kid, key_bundle.key, managed=key_bundle.managed, tags=key_bundle.tags
         )
 
     @property
@@ -154,7 +140,16 @@ class DeletedKey(Key):
     well as when it will be purged, if soft-delete is enabled for the vault.
     """
 
-    def __init__(self, attributes, vault_id, key_material=None, deleted_date=None, recovery_id=None, scheduled_purge_date=None, **kwargs):
+    def __init__(
+        self,
+        attributes,
+        vault_id,
+        key_material=None,
+        deleted_date=None,
+        recovery_id=None,
+        scheduled_purge_date=None,
+        **kwargs
+    ):
         # type: (models.JsonWebKey, str, models.JsonWebKey, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
         super(DeletedKey, self).__init__(attributes, vault_id, key_material, **kwargs)
         self._deleted_date = deleted_date
