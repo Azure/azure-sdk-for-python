@@ -24,7 +24,7 @@ class ControllerUpdateParameters(Model):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'target_container_host_credentials_base64': {'key': 'Properties.targetContainerHostCredentialsBase64', 'type': 'str'},
+        'target_container_host_credentials_base64': {'key': 'properties.targetContainerHostCredentialsBase64', 'type': 'str'},
     }
 
     def __init__(self, *, tags=None, target_container_host_credentials_base64: str=None, **kwargs) -> None:
