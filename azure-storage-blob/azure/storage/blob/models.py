@@ -14,6 +14,7 @@ from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import StorageServiceProperties
 from ._generated.models import BlobProperties as GenBlobProps
+from ._utils import decode_base64
 from .common import BlockState, BlobType
 
 
@@ -229,7 +230,7 @@ class ContainerPropertiesPaged(Paged):
         self._current_page_iter_index = 0
         self._response = self._get_next(
             prefix=self.prefix,
-            marker=self.next_marker,
+            marker=self.next_marker or None,
             maxresults=self.results_per_page)
 
         self.service_endpoint = self._response.service_endpoint
@@ -237,11 +238,13 @@ class ContainerPropertiesPaged(Paged):
         self.current_marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = self._response.container_items
-        self.next_marker = self._response.next_marker
+        self.next_marker = self._response.next_marker or None
         return self.current_page
 
     def __next__(self):
         item = super(ContainerPropertiesPaged, self).__next__()
+        if isinstance(item, ContainerProperties):
+            return item
         return ContainerProperties._from_generated(item)
 
 
@@ -570,6 +573,13 @@ class BlobBlock(object):
 
     def _set_size(self, size):
         self.size = size
+
+    @classmethod
+    def _from_generated(cls, generated):
+        block = cls()
+        block.id = decode_base64(generated.name)
+        block.size = generated.size
+        return block
 
 
 class PageRange(object):

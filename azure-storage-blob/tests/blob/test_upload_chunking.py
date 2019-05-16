@@ -5,6 +5,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
+import pytest
+
+pytestmark = pytest.mark.skip
+
 import os
 
 #from azure.storage.blob._upload_chunking import _SubStream

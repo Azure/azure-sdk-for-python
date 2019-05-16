@@ -49,6 +49,13 @@ def encode_base64(data):
     encoded = base64.b64encode(data)
     return encoded.decode('utf-8')
 
+def decode_base64(data):
+    if isinstance(data, _unicode_type):
+        data = data.encode('utf-8')
+    decoded = base64.b64decode(data)
+    return decoded.decode('utf-8')
+
+
 def return_response_headers(response, deserialized, response_headers):
     return response_headers
 

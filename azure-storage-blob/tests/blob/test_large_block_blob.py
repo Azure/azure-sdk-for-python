@@ -5,6 +5,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
+import pytest
+
+pytestmark = pytest.mark.skip
+
 import os
 import unittest
 

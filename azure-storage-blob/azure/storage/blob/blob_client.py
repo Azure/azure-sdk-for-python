@@ -25,7 +25,7 @@ from .constants import (
 )
 from .common import BlobType
 from .lease import Lease
-from .models import SnapshotProperties
+from .models import SnapshotProperties, BlobBlock
 from ._utils import (
     create_client,
     create_configuration,
@@ -43,7 +43,10 @@ from ._deserialize import (
     deserialize_blob_stream,
     deserialize_metadata
 )
-from ._generated.models import BlobHTTPHeaders, StorageErrorException
+from ._generated.models import (
+    BlobHTTPHeaders,
+    StorageErrorException,
+    BlockLookupList)
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -319,7 +322,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         if not length:
             try:
                 length = len(data)
-            except AttributeError:
+            except TypeError:
                 raise ValueError("Please specifiy content length.")
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -393,6 +396,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         # chunk so a transactional MD5 can be retrieved.
         first_get_size = MAX_SINGLE_GET_SIZE if not validate_content else MAX_CHUNK_GET_SIZE
 
+        range_header = None
+        #if length or offset:
         initial_request_start = offset if offset is not None else 0
 
         if length is not None and length - offset < first_get_size:
@@ -797,7 +802,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         if not length:
             try:
                 length = len(data)
-            except AttributeError:
+            except TypeError:
                 raise ValueError("Please specify content length.")
         self._client.block_blob.stage_block(
             block_id,
@@ -824,15 +829,31 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         """
 
     def get_block_list(
-            self, block_list_type=None,  # type: Optional[str]
+            self, block_list_type="committed",  # type: Optional[str]
             lease=None,  # type: Optional[Union[Lease, str]]
-            timeout=None  # type: int
+            timeout=None,  # type: int
+            **kwargs
         ):
         # type: (...) -> Tuple[List[BlobBlock], List[BlobBlock]]
         """
         :raises: InvalidOperation when blob client type is not BlockBlob.
         :returns: A tuple of two sets - committed and uncommitted blocks
         """
+        access_conditions = get_access_conditions(lease)
+        blocks= self._client.block_blob.get_block_list(
+            list_type=block_list_type,
+            snapshot=self.snapshot,
+            timeout=timeout,
+            lease_access_conditions=access_conditions,
+            **kwargs
+        )
+        committed = []
+        uncommitted = []
+        if blocks.committed_blocks:
+            committed = [BlobBlock._from_generated(b) for b in blocks.committed_blocks]
+        if blocks.uncommitted_blocks:
+            uncommitted = [BlobBlock._from_generated(b) for b in blocks.uncommitted_blocks]
+        return committed, uncommitted
 
     def commit_block_list(
             self, block_list,  # type: List[BlobBlock]
@@ -844,13 +865,47 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None  # type: Optional[int]
+            timeout=None,  # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
         :raises: InvalidOperation when blob client type is not BlockBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
+        if validate_content:
+            raise NotImplementedError()
+        block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
+        for block in block_list:
+            if block.state.value == 'committed':
+                block_lookup.committed.append(block.id)
+            elif block.state.value == 'uncommitted':
+                block_lookup.uncommitted.append(block.id)
+            else:
+                block_lookup.latest.append(block.id)
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+        blob_headers = None
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        if content_settings:
+            blob_headers = BlobHTTPHeaders(
+                blob_cache_control=content_settings.cache_control,
+                blob_content_type=content_settings.content_type,
+                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_encoding=content_settings.content_encoding,
+                blob_content_language=content_settings.content_language,
+                blob_content_disposition=content_settings.content_disposition
+            )
+        return self._client.block_blob.commit_block_list(
+            block_lookup,
+            blob_http_headers=blob_headers,
+            lease_access_conditions=access_conditions,
+            timeout=timeout,
+            modified_access_conditions=mod_conditions,
+            cls=return_response_headers,
+            **kwargs)
 
     def set_premium_page_blob_tier(self, premium_page_blob_tier, timeout=None):
         # type: (Union[str, PremiumPageBlobTier], Optional[int]) -> None

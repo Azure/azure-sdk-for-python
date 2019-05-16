@@ -4,6 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import pytest
+
+pytestmark = pytest.mark.skip
+
 from io import BytesIO
 from azure.storage.blob import (
     BlobServiceClient,

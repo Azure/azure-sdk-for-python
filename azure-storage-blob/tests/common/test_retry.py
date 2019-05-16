@@ -4,6 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+import pytest
+
+pytestmark = pytest.mark.skip
 
 from azure.common import (
     AzureHttpError,
