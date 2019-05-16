@@ -13,3 +13,5 @@ from .v2017_07_01.models import *
 from .v2018_03_31.models import *
 from .v2018_08_01_preview.models import *
 from .v2018_09_30_preview.models import *
+from .v2019_02_01.models import *
+from .v2019_04_30.models import *

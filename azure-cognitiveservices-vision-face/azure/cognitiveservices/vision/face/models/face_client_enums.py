@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class RecognitionModel(str, Enum):
+
+    recognition_01 = "recognition_01"
+    recognition_02 = "recognition_02"
+
+
 class Gender(str, Enum):
 
     male = "male"
