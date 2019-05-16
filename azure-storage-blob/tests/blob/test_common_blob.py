@@ -565,16 +565,16 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_no_server_encryption(self):
         # Arrange
         blob_name = self._create_block_blob()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         #Act
         def callback(response):
-            response.headers['x-ms-server-encrypted'] = 'false'
+            response.http_response.headers['x-ms-server-encrypted'] = 'false'
 
-        self.bs.response_callback = callback
-        blob = self.bs.get_blob_properties(self.container_name, blob_name)
+        props = blob.get_blob_properties(raw_response_hook=callback)
 
         #Assert
-        self.assertFalse(blob.properties.server_encrypted)
+        self.assertFalse(props.server_encrypted)
 
     @record
     def test_get_blob_properties_with_snapshot(self):

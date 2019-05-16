@@ -121,8 +121,7 @@ class BlobServiceClient(object):
         :return: The blob service stats.
         :rtype: Dict[str, Any]
         """
-        response = self._client.service.get_statistics(timeout=timeout, **kwargs)  # type: Dict[str, Any]
-        return response.__dict__
+        return self._client.service.get_statistics(timeout=timeout, **kwargs)
 
     def get_service_properties(self, timeout=None, **kwargs):
         # type(Optional[int]) -> Dict[str, Any]

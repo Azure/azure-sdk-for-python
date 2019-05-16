@@ -41,7 +41,7 @@ class ServiceStatsTest(StorageTestCase):
 
     @staticmethod
     def override_response_body_with_unavailable_status(response):
-        response.body = SERVICE_UNAVAILABLE_RESP_BODY
+        response.http_response.text = lambda: SERVICE_UNAVAILABLE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
 
@@ -59,18 +59,13 @@ class ServiceStatsTest(StorageTestCase):
 
     @record
     def test_blob_service_stats_when_unavailable(self):
-        pytest.fail("Waiting on Linear retry and custom response hook.")
         # Arrange
         url = self._get_account_url()
-        config = BlobServiceClient.create_configuration()
-        #config.response_callback = self.override_response_body_with_unavailable_status
-        #config.retry_policy = LinearRetry(backoff=1).retry
-
         credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
-        bs = BlobServiceClient(url, credentials=credentials, configuration=config)
+        bs = BlobServiceClient(url, credentials=credentials)
 
         # Act
-        stats = bs.get_service_stats()
+        stats = bs.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)
 
         # Assert
         self._assert_stats_unavailable(stats)

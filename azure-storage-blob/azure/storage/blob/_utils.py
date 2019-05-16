@@ -20,7 +20,8 @@ from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
     NetworkTraceLoggingPolicy,
-    ProxyPolicy
+    ProxyPolicy,
+    CustomHookPolicy
 )
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -74,6 +75,7 @@ def create_configuration(**kwargs):
     config.redirect_policy = RedirectPolicy(**kwargs)
     config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
+    config.custom_hook_policy = CustomHookPolicy(**kwargs)
     return config
 
 
@@ -93,6 +95,7 @@ def create_pipeline(configuration, credentials, **kwargs):
         config.redirect_policy,
         config.retry_policy,
         config.logging_policy,
+        config.custom_hook_policy,
     ]
     return Pipeline(transport, policies=policies)
 
