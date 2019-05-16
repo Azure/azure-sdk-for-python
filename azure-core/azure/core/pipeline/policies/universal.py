@@ -137,7 +137,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
 
     This accepts both global configuration, and per-request level with "enable_http_logger"
     """
-    def __init__(self, logging_enable=False):
+    def __init__(self, logging_enable=False, **kwargs):
         self.enable_http_logger = logging_enable
 
     def on_request(self, request):
@@ -279,8 +279,9 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         """
         # Try to use content-type from headers if available
         content_type = None
-        if 'content-type' in response.headers:
-            content_type = response.headers['content-type'].split(";")[0].strip().lower()
+        if response.content_type:
+            content_type = response.content_type[0].strip().lower()
+
         # Ouch, this server did not declare what it sent...
         # Let's guess it's JSON...
         # Also, since Autorest was considering that an empty body was a valid JSON,

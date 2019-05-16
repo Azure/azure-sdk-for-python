@@ -28,17 +28,18 @@ from typing import Any, Callable, AsyncIterator, Optional
 import aiohttp
 import logging
 
-from azure.core.exceptions import (
-    ServiceRequestError,
-    ServiceResponseError,
-    raise_with_traceback
-)
 from .base import HttpRequest
 from .base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
     _ResponseStopIteration,
     _iterate_response_content)
+
+from azure.core.configuration import Configuration
+from azure.core.exceptions import (
+    ServiceRequestError,
+    ServiceResponseError,
+    raise_with_traceback)
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -49,21 +50,30 @@ class AioHttpTransport(AsyncHttpTransport):
     """AioHttp HTTP sender implementation.
     """
 
-    def __init__(self, configuration=None, *, loop=None):
+    def __init__(self, configuration=None, *, session=None, loop=None, session_owner=True):
         self._loop = loop
-        self.session = None
-        self.config = configuration
+        self._session_owner = session_owner
+        self.session = session
+        self.config = configuration or Configuration()
 
     async def __aenter__(self):
-        self.config.connection.keep_alive = True
-        self.session = aiohttp.ClientSession(loop=self._loop)
-        await self.session.__aenter__()
+        await self.open()
         return self
 
-    async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
-        await self.session.__aexit__(*exc_details)
-        self.session = None
-        self.config.connection.keep_alive = False
+    async def __aexit__(self, *args):  # pylint: disable=arguments-differ
+        await self.close()
+    
+    async def open(self):
+        if not self.session and self._session_owner:
+            self.session = aiohttp.ClientSession(loop=self._loop)
+        if self.session is not None:
+            await self.session.__aenter__()
+
+    async def close(self):
+        if self._session_owner and self.session:
+            await self.session.close()
+            self._session_owner = False
+            self.session = None
 
     def _build_ssl_config(self, **config):
         verify = config.get('connection_verify', self.config.connection.verify)
@@ -99,16 +109,13 @@ class AioHttpTransport(AsyncHttpTransport):
         Will pre-load the body into memory to be available with a sync method.
         pass stream=True to avoid this behavior.
         """
-        if self.config.connection.keep_alive and self.session:
-            session = self.session
-        else:
-            session = aiohttp.ClientSession(loop=self._loop)
+        await self.open()
         error = None
         response = None
         config['ssl'] = self._build_ssl_config(**config)
         try:
             stream_response = config.pop("stream", False)
-            result = await session.request(
+            result = await self.session.request(
                 request.method,
                 request.url,
                 headers=request.headers,
@@ -122,9 +129,6 @@ class AioHttpTransport(AsyncHttpTransport):
                 await response.load_body()
         except aiohttp.client_exceptions.ClientConnectorError as err:
             error = ServiceRequestError(err, error=err)
-        finally:
-            if not self.config.connection.keep_alive and (not response or not stream_response):
-                await session.close()
 
         if error:
             raise error
@@ -161,6 +165,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         self.status_code = aiohttp_response.status
         self.headers = aiohttp_response.headers
         self.reason = aiohttp_response.reason
+        self.content_type = aiohttp_response.headers.get('content-type')
         self._body = None
 
     def body(self) -> bytes:
