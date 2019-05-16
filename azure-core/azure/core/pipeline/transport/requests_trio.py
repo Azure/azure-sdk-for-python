@@ -27,8 +27,8 @@ import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
-import urllib3
-from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
+import urllib3 # type: ignore
+from typing import Any, Callable, Union, Optional, AsyncIterator as AsyncIteratorType
 
 import requests
 from requests.models import CONTENT_CHUNK_SIZE
@@ -50,7 +50,7 @@ from azure.core.exceptions import (
 _LOGGER = logging.getLogger(__name__)
 
 
-import trio
+import trio # type: ignore
 
 class TrioStreamDownloadGenerator(AsyncIterator):
 
@@ -80,9 +80,9 @@ class TrioStreamDownloadGenerator(AsyncIterator):
             self.response.close()
             raise
 
-class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):
+class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse): # type: ignore
 
-    def stream_download(self) -> AsyncIteratorType[bytes]:
+    def stream_download(self) -> AsyncIteratorType[bytes]: # type: ignore
         """Generator for streaming request body data.
 
         :param callback: Custom callback for monitoring progress.
@@ -107,7 +107,7 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
         """
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None
-        error = None
+        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
         if self.config.proxy_policy and 'proxies' not in kwargs:
             kwargs['proxies'] = self.config.proxy_policy.proxies
         try:

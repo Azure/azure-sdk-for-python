@@ -36,7 +36,7 @@ import warnings
 import requests
 from requests.models import CONTENT_CHUNK_SIZE
 
-from urllib3 import Retry  # Needs requests 2.16 at least to be safe
+from urllib3 import Retry # type: ignore # Needs requests 2.16 at least to be safe
 
 from .base import HTTPPolicy
 

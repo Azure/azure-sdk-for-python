@@ -35,7 +35,7 @@ from .redirect import RedirectPolicy
 from azure.core.exceptions import TooManyRedirectsError
 
 
-class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):
+class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy): # type: ignore
     """An async redirect policy."""
 
     async def send(self, request):

@@ -33,9 +33,9 @@ import threading
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 import warnings
 try:
-    from urlparse import urlparse
+    from urlparse import urlparse # type: ignore
 except ImportError:
-    from urllib.parse import urlparse
+    from urllib.parse import urlparse # type: ignore
 
 from azure.core.exceptions import TooManyRedirectsError
 

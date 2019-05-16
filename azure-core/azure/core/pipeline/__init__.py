@@ -25,6 +25,10 @@
 # --------------------------------------------------------------------------
 
 import abc
+from typing import TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional, Tuple, Callable, Iterator  # pylint: disable=unused-import
+
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 try:
     ABC = abc.ABC
@@ -107,7 +111,7 @@ class PipelineResponse(object):
     However, nothing prevents a policy to actually sub-class this class a return it instead of the initial instance.
     """
     def __init__(self, http_request, http_response, context):
-        # type: (HttpRequest[HTTPRequestType], HTTPResponseType, Optional[Dict[str, Any]]) -> None
+        # type: (HTTPRequestType, HTTPResponseType, Optional[Dict[str, Any]]) -> None
         self.http_request = http_request
         self.http_response = http_response
         self.context = context

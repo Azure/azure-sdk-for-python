@@ -93,7 +93,7 @@ class AioHttpTransport(AsyncHttpTransport):
             return form_data
         return request.data
 
-    async def send(self, request: HttpRequest, **config: Any) -> AsyncHttpResponse:
+    async def send(self, request: HttpRequest, **config: Any) -> Optional[AioHttpTransportResponse]:
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.

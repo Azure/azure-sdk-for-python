@@ -30,11 +30,11 @@ try:
 except ImportError:
     from collections import Iterator
 
-from typing import Dict, Any, List, Callable, Optional, TYPE_CHECKING  # pylint: disable=unused-import
+from typing import Dict, Any, List, Callable, Optional, TypeVar, TYPE_CHECKING  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
-    from .pipeline import HttpResponse  # pylint: disable=unused-import
-    from msrest.serialization import Deserializer, Model  # pylint: disable=unused-import
+    HTTPResponseType = TypeVar("HTTPResponseType")
+    from msrest.serialization import Deserializer, Model  # type: ignore # pylint: disable=unused-import
 
 if sys.version_info >= (3, 5, 2):
     # Not executed on old Python, no syntax error
@@ -54,7 +54,7 @@ class Paged(AsyncPagedMixin, Iterator):
     _attribute_map = {}  # type: Dict[str, Dict[str, Any]]
 
     def __init__(self, command, deserializer, **kwargs):
-        # type: (Callable[[str], HttpResponse], Deserializer, Any) -> None
+        # type: (Callable[[str], HTTPResponseType], Deserializer, Any) -> None
         super(Paged, self).__init__(**kwargs)  # type: ignore
         # Sets next_link, current_page, and _current_page_iter_index.
         self.next_link = ""
@@ -62,7 +62,7 @@ class Paged(AsyncPagedMixin, Iterator):
         self._current_page_iter_index = 0
         self._deserializer = deserializer
         self._get_next = command
-        self._response = None  # type: Optional[HttpResponse]
+        self._response = None  # type: Optional[HTTPResponseType]
 
     def __iter__(self):
         """Return 'self'."""

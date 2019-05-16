@@ -28,9 +28,9 @@ import logging
 import os
 import sys
 try:
-    from urlparse import urljoin, urlparse
+    from urlparse import urljoin, urlparse # type: ignore
 except ImportError:
-    from urllib.parse import urljoin, urlparse
+    from urllib.parse import urljoin, urlparse # type: ignore
 import warnings
 import xml.etree.ElementTree as ET
 
@@ -74,7 +74,7 @@ class PipelineClient(object):
         )
 
     def _request(self, method, url, params, headers, content, form_content, stream_content):
-        # type: (str, str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
+        # type: (str, str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]], Any) -> HttpRequest
         """Create HttpRequest object.
 
         :param str url: URL for the request.
@@ -135,7 +135,7 @@ class PipelineClient(object):
         return request
 
     def put(self, url, params=None, headers=None, content=None, form_content=None, stream_content=None):
-        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
+        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]], Any) -> HttpRequest
         """Create a PUT request object.
 
         :param str url: The request URL.
@@ -147,7 +147,7 @@ class PipelineClient(object):
         return request
 
     def post(self, url, params=None, headers=None, content=None, form_content=None, stream_content=None):
-        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
+        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]], Any) -> HttpRequest
         """Create a POST request object.
 
         :param str url: The request URL.
@@ -159,7 +159,7 @@ class PipelineClient(object):
         return request
 
     def head(self, url, params=None, headers=None, content=None, form_content=None, stream_content=None):
-        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
+        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]], Any) -> HttpRequest
         """Create a HEAD request object.
 
         :param str url: The request URL.
@@ -171,7 +171,7 @@ class PipelineClient(object):
         return request
 
     def patch(self, url, params=None, headers=None, content=None, form_content=None, stream_content=None):
-        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
+        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]], Any) -> HttpRequest
         """Create a PATCH request object.
 
         :param str url: The request URL.

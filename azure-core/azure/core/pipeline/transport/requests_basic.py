@@ -26,8 +26,10 @@
 from __future__ import absolute_import
 import requests
 import threading
-import urllib3
-from urllib3.util.retry import Retry
+import urllib3 # type: ignore
+from urllib3.util.retry import Retry # type: ignore
+from typing import Iterator, Optional, Any, TypeVar, Union
+from . import HttpRequest
 
 from .base import (
     HttpTransport,
@@ -94,7 +96,7 @@ class StreamDownloadGenerator(object):
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
 
     def stream_download(self):
-        # type: (Optional[int], Optional[Callable]) -> Iterator[bytes]
+        # type: () -> Iterator[bytes]
         """Generator for streaming request body data."""
         return StreamDownloadGenerator(self.internal_response, self.block_size)
 
@@ -114,7 +116,7 @@ class RequestsTransport(HttpTransport):
     _protocols = ['http://', 'https://']
 
     def __init__(self, configuration=None, session=None):
-        # type: (Optional[requests.Session]) -> None
+        # type: (Optional[Any], Optional[requests.Session]) -> None
         self._session_mapping = threading.local()
         self.config = configuration or Configuration()
         self.session = session or requests.Session()
@@ -158,7 +160,7 @@ class RequestsTransport(HttpTransport):
     def close(self):
         self.session.close()
 
-    def send(self, request, **kwargs):
+    def send(self, request, **kwargs): # type: ignore
         # type: (HttpRequest, Any) -> HttpResponse
         """Send request object according to configuration.
 
@@ -169,7 +171,7 @@ class RequestsTransport(HttpTransport):
         :param HttpRequest request: The request object to be sent.
         """
         response = None
-        error = None
+        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
         if self.config.proxy_policy and 'proxies' not in kwargs:
             kwargs['proxies'] = self.config.proxy_policy.proxies
 

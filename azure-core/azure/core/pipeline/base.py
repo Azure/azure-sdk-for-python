@@ -28,9 +28,9 @@ import json
 import logging
 import os.path
 try:
-    from urlparse import urlparse
+    from urlparse import urlparse # type: ignore
 except ImportError:
-    from urllib.parse import urlparse
+    from urllib.parse import urlparse # type: ignore
 import xml.etree.ElementTree as ET
 from azure.core.pipeline import AbstractContextManager, PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
@@ -52,7 +52,7 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseT
         self._policy = policy
 
     def send(self, request):
-        # type: (PipelineRequest[HTTPRequestType], Any) -> PipelineResponse[HTTPRequestType, HTTPResponseType]
+        # type: (PipelineRequest) -> PipelineResponse
         self._policy.on_request(request)
         try:
             response = self.next.send(request)
@@ -67,7 +67,7 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseT
 class _TransportRunner(HTTPPolicy):
 
     def __init__(self, sender):
-        # type: (HttpTransport) -> None
+        # type: (Any) -> None
         super(_TransportRunner, self).__init__()
         self._sender = sender
 
@@ -87,7 +87,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     """
 
     def __init__(self, transport, policies=None):
-        # type: (HttpTransport, List[Union[HTTPPolicy, SansIOHTTPPolicy]]) -> None
+        # type: (Any, List[Union[HTTPPolicy, SansIOHTTPPolicy]]) -> None
         self._impl_policies = []  # type: List[HTTPPolicy]
         self._transport = transport  # type: HTTPPolicy
 
@@ -112,6 +112,6 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     def run(self, request, **kwargs):
         # type: (HTTPRequestType, Any) -> PipelineResponse
         context = PipelineContext(self._transport, **kwargs)
-        pipeline_request = PipelineRequest(request, context)  # type: PipelineRequest[HTTPRequestType]
+        pipeline_request = PipelineRequest(request, context)  # type: PipelineRequest
         first_node = self._impl_policies[0] if self._impl_policies else _TransportRunner(self._transport)
         return first_node.send(pipeline_request)  # type: ignore

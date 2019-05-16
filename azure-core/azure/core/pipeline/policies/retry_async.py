@@ -43,7 +43,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 
-class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):
+class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy): # type: ignore
 
 
     async def _sleep_for_retry(self, response, transport):
