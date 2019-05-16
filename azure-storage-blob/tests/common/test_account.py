@@ -59,33 +59,6 @@ class StorageAccountTest(StorageTestCase):
         self.assertEqual(service.account_key, self.account_key)
 
     # --Test cases --------------------------------------------------------
-    def test_create_block_blob_service(self):
-        # Arrange
-
-        # Act
-        service = self.account.create_block_blob_service()
-
-        # Assert
-        self.validate_service(service, BlockBlobService)
-
-    def test_create_page_blob_service(self):
-        # Arrange
-
-        # Act
-        service = self.account.create_page_blob_service()
-
-        # Assert
-        self.validate_service(service, PageBlobService)
-
-    def test_create_append_blob_service(self):
-        # Arrange
-
-        # Act
-        service = self.account.create_append_blob_service()
-
-        # Assert
-        self.validate_service(service, AppendBlobService)
-
     def test_create_service_no_key(self):
         # Arrange
 

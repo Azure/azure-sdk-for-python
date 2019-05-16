@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import base64
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List, Type,
     TYPE_CHECKING
@@ -36,6 +37,17 @@ if TYPE_CHECKING:
     from azure.core.exceptions import AzureError
     from .lease import Lease
 
+try:
+    _unicode_type = unicode
+except NameError:
+    _unicode_type = str
+
+
+def encode_base64(data):
+    if isinstance(data, _unicode_type):
+        data = data.encode('utf-8')
+    encoded = base64.b64encode(data)
+    return encoded.decode('utf-8')
 
 def return_response_headers(response, deserialized, response_headers):
     return response_headers

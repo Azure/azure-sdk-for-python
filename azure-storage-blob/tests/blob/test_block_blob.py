@@ -12,12 +12,13 @@ from azure.common import AzureHttpError
 from azure.storage.blob import (
     #BlobBlock,  # TODO
     #BlobBlockList,
+    SharedKeyCredentials,
     BlobServiceClient,
     ContainerClient,
-    BlobClient,
-    #ContentSettings,
+    BlobClient
 )
-#from azure.storage.blob.models import StandardBlobTier
+from azure.storage.blob.common import StandardBlobTier
+from azure.storage.blob.models import ContentSettings, BlobBlock
 from tests.testcase import (
     StorageTestCase,
     TestMode,
@@ -35,7 +36,16 @@ class StorageBlockBlobTest(StorageTestCase):
     def setUp(self):
         super(StorageBlockBlobTest, self).setUp()
 
-        self.bs = self._create_storage_service(BlockBlobService, self.settings)
+        url = self._get_account_url()
+        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
+
+        # test chunking functionality by reducing the size of each chunk,
+        # otherwise the tests would take too long to execute
+        self.config = BlobServiceClient.create_configuration()
+        self.config.connection.data_block_size = 4 * 1024
+
+        self.bsc = BlobServiceClient(url, credentials=credentials, configuration=self.config)
+
 
         self.container_name = self.get_resource_name('utcontainer')
 
@@ -45,8 +55,8 @@ class StorageBlockBlobTest(StorageTestCase):
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
         # the tests would take too long to execute
-        self.bs.MAX_BLOCK_SIZE = 4 * 1024
-        self.bs.MAX_SINGLE_PUT_SIZE = 32 * 1024
+        #self.bs.MAX_BLOCK_SIZE = 4 * 1024
+        #self.bs.MAX_SINGLE_PUT_SIZE = 32 * 1024
 
     def tearDown(self):
         if not self.is_playback():
@@ -69,12 +79,14 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def _create_blob(self):
         blob_name = self._get_blob_reference()
-        self.bs.create_blob_from_bytes(self.container_name, blob_name, b'')
-        return blob_name
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(b'')
+        return blob
 
     def assertBlobEqual(self, container_name, blob_name, expected_data):
-        actual_data = self.bs.get_blob_to_bytes(container_name, blob_name)
-        self.assertEqual(actual_data.content, expected_data)
+        blob = self.bsc.get_blob_client(container_name, blob_name)
+        actual_data = blob.download_blob()
+        self.assertEqual(b"".join(list(actual_data)), expected_data)
 
     class NonSeekableFile(object):
         def __init__(self, wrapped_file):
@@ -91,14 +103,11 @@ class StorageBlockBlobTest(StorageTestCase):
     @record
     def test_put_block(self):
         # Arrange
-        blob_name = self._create_blob()
+        blob = self._create_blob()
 
         # Act
         for i in range(5):
-            resp = self.bs.put_block(self.container_name,
-                                     blob_name,
-                                     'block {0}'.format(i).encode('utf-8'),
-                                     i)
+            resp = blob.stage_block(i, 'block {0}'.format(i).encode('utf-8'))
             self.assertIsNone(resp)
 
         # Assert
