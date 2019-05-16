@@ -39,7 +39,7 @@ class DiagnosticSettingsCategoryResource(ProxyOnlyResource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'category_type': {'key': 'properties.categoryType', 'type': 'CategoryType'},
+        'category_type': {'key': 'properties.categoryType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

@@ -34,7 +34,7 @@ class LogSettings(Model):
     }
 
     _attribute_map = {
-        'category': {'key': 'category', 'type': 'Category'},
+        'category': {'key': 'category', 'type': 'str'},
         'enabled': {'key': 'enabled', 'type': 'bool'},
         'retention_policy': {'key': 'retentionPolicy', 'type': 'RetentionPolicy'},
     }
