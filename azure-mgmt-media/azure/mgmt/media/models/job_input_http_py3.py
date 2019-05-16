@@ -19,7 +19,8 @@ class JobInputHttp(JobInputClip):
 
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param files: List of files. Required for JobInputHttp.
+    :param files: List of files. Required for JobInputHttp. Maximum of 4000
+     characters each.
     :type files: list[str]
     :param label: A label that is assigned to a JobInputClip, that is used to
      satisfy a reference used in the Transform. For example, a Transform can be
@@ -29,8 +30,9 @@ class JobInputHttp(JobInputClip):
      have the label 'xyz'.
     :type label: str
     :param base_uri: Base URI for HTTPS job input. It will be concatenated
-     with provided file names.   If no base uri is given, then the provided
-     file list is assumed to be fully qualified uris.
+     with provided file names. If no base uri is given, then the provided file
+     list is assumed to be fully qualified uris. Maximum length of 4000
+     characters.
     :type base_uri: str
     """
 

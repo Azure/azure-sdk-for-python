@@ -29,7 +29,7 @@ class VolumePatch(Model):
     :param tags: Resource tags
     :type tags: object
     :param service_level: serviceLevel. The service level of the file system.
-     Possible values include: 'Standard', 'Premium', 'Extreme'. Default value:
+     Possible values include: 'Standard', 'Premium', 'Ultra'. Default value:
      "Premium" .
     :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :param usage_threshold: usageThreshold. Maximum storage quota allowed for
@@ -37,6 +37,9 @@ class VolumePatch(Model):
      Minimum size is 100 GiB. Upper limit is 100TiB. Default value:
      107374182400 .
     :type usage_threshold: long
+    :param export_policy: exportPolicy. Set of export policy rules
+    :type export_policy:
+     ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
     """
 
     _validation = {
@@ -54,9 +57,10 @@ class VolumePatch(Model):
         'tags': {'key': 'tags', 'type': 'object'},
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
         'usage_threshold': {'key': 'properties.usageThreshold', 'type': 'long'},
+        'export_policy': {'key': 'properties.exportPolicy', 'type': 'VolumePatchPropertiesExportPolicy'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, service_level="Premium", usage_threshold: int=107374182400, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, service_level="Premium", usage_threshold: int=107374182400, export_policy=None, **kwargs) -> None:
         super(VolumePatch, self).__init__(**kwargs)
         self.location = location
         self.id = None
@@ -65,3 +69,4 @@ class VolumePatch(Model):
         self.tags = tags
         self.service_level = service_level
         self.usage_threshold = usage_threshold
+        self.export_policy = export_policy

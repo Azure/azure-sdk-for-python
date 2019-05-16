@@ -59,6 +59,11 @@ class VirtualMachineUpdate(UpdateResource):
      <br><br> Currently, a VM can only be added to availability set at creation
      time. An existing VM cannot be added to an availability set.
     :type availability_set: ~azure.mgmt.compute.v2018_04_01.models.SubResource
+    :param proximity_placement_group: Specifies information about the
+     proximity placement group that the virtual machine should be assigned to.
+     <br><br>Minimum api-version: 2018-04-01.
+    :type proximity_placement_group:
+     ~azure.mgmt.compute.v2018_04_01.models.SubResource
     :ivar provisioning_state: The provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
@@ -101,6 +106,7 @@ class VirtualMachineUpdate(UpdateResource):
         'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
+        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
         'license_type': {'key': 'properties.licenseType', 'type': 'str'},
@@ -109,7 +115,7 @@ class VirtualMachineUpdate(UpdateResource):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, license_type: str=None, identity=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, plan=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, proximity_placement_group=None, license_type: str=None, identity=None, zones=None, **kwargs) -> None:
         super(VirtualMachineUpdate, self).__init__(tags=tags, **kwargs)
         self.plan = plan
         self.hardware_profile = hardware_profile
@@ -118,6 +124,7 @@ class VirtualMachineUpdate(UpdateResource):
         self.network_profile = network_profile
         self.diagnostics_profile = diagnostics_profile
         self.availability_set = availability_set
+        self.proximity_placement_group = proximity_placement_group
         self.provisioning_state = None
         self.instance_view = None
         self.license_type = license_type

@@ -45,9 +45,9 @@ class LongTermRetentionBackupsOperations(object):
 
         :param location_name: The location of the database.
         :type location_name: str
-        :param long_term_retention_server_name:
+        :param long_term_retention_server_name: The name of the server
         :type long_term_retention_server_name: str
-        :param long_term_retention_database_name:
+        :param long_term_retention_database_name: The name of the database
         :type long_term_retention_database_name: str
         :param backup_name: The backup name.
         :type backup_name: str
@@ -153,9 +153,9 @@ class LongTermRetentionBackupsOperations(object):
 
         :param location_name: The location of the database
         :type location_name: str
-        :param long_term_retention_server_name:
+        :param long_term_retention_server_name: The name of the server
         :type long_term_retention_server_name: str
-        :param long_term_retention_database_name:
+        :param long_term_retention_database_name: The name of the database
         :type long_term_retention_database_name: str
         :param backup_name: The backup name.
         :type backup_name: str
@@ -200,9 +200,9 @@ class LongTermRetentionBackupsOperations(object):
 
         :param location_name: The location of the database
         :type location_name: str
-        :param long_term_retention_server_name:
+        :param long_term_retention_server_name: The name of the server
         :type long_term_retention_server_name: str
-        :param long_term_retention_database_name:
+        :param long_term_retention_database_name: The name of the database
         :type long_term_retention_database_name: str
         :param only_latest_per_database: Whether or not to only get the latest
          backup for each database.
@@ -364,7 +364,7 @@ class LongTermRetentionBackupsOperations(object):
 
         :param location_name: The location of the database
         :type location_name: str
-        :param long_term_retention_server_name:
+        :param long_term_retention_server_name: The name of the server
         :type long_term_retention_server_name: str
         :param only_latest_per_database: Whether or not to only get the latest
          backup for each database.

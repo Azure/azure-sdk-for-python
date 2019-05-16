@@ -20,7 +20,7 @@ def should_skip_lib(lib_name):
     return lib_name in skip_pkgs or lib_name.endswith('-nspkg')
 
 def locate_libs(base_dir):
-    packages = [os.path.dirname(p) for p in glob.glob(os.path.join(base_dir, 'azure*', 'setup.py'))]
+    packages = [os.path.dirname(p) for p in (glob.glob(os.path.join(base_dir, 'azure*', 'setup.py')) + glob.glob(os.path.join(base_dir, 'sdk/*/azure*', 'setup.py')))]
     return sorted(packages)
 
 def locate_wheels(base_dir):

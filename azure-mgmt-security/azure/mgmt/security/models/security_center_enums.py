@@ -12,33 +12,24 @@
 from enum import Enum
 
 
-class AlertNotifications(str, Enum):
-
-    on = "On"  #: Get notifications on new alerts
-    off = "Off"  #: Don't get notifications on new alerts
-
-
-class AlertsToAdmins(str, Enum):
-
-    on = "On"  #: Send notification on new alerts to the subscription's admins
-    off = "Off"  #: Don't send notification on new alerts to the subscription's admins
-
-
 class PricingTier(str, Enum):
 
     free = "Free"  #: Get free Azure security center experience with basic security features
     standard = "Standard"  #: Get the standard Azure security center experience with advanced security features
 
 
-class AutoProvision(str, Enum):
+class ReportedSeverity(str, Enum):
 
-    on = "On"  #: Install missing security agent on VMs automatically
-    off = "Off"  #: Do not install security agent on the VMs automatically
+    informational = "Informational"
+    low = "Low"
+    medium = "Medium"
+    high = "High"
 
 
 class SettingKind(str, Enum):
 
     data_export_setting = "DataExportSetting"
+    alert_suppression_setting = "AlertSuppressionSetting"
 
 
 class SecurityFamily(str, Enum):
@@ -47,6 +38,20 @@ class SecurityFamily(str, Enum):
     ngfw = "Ngfw"
     saas_waf = "SaasWaf"
     va = "Va"
+
+
+class AadConnectivityState(str, Enum):
+
+    discovered = "Discovered"
+    not_licensed = "NotLicensed"
+    connected = "Connected"
+
+
+class ExternalSecuritySolutionKind(str, Enum):
+
+    cef = "CEF"
+    ata = "ATA"
+    aad = "AAD"
 
 
 class Protocol(str, Enum):
@@ -69,15 +74,25 @@ class StatusReason(str, Enum):
     newer_request_initiated = "NewerRequestInitiated"
 
 
-class AadConnectivityState(str, Enum):
+class AutoProvision(str, Enum):
 
-    discovered = "Discovered"
-    not_licensed = "NotLicensed"
-    connected = "Connected"
+    on = "On"  #: Install missing security agent on VMs automatically
+    off = "Off"  #: Do not install security agent on the VMs automatically
 
 
-class ExternalSecuritySolutionKind(str, Enum):
+class AlertNotifications(str, Enum):
 
-    cef = "CEF"
-    ata = "ATA"
-    aad = "AAD"
+    on = "On"  #: Get notifications on new alerts
+    off = "Off"  #: Don't get notifications on new alerts
+
+
+class AlertsToAdmins(str, Enum):
+
+    on = "On"  #: Send notification on new alerts to the subscription's admins
+    off = "Off"  #: Don't send notification on new alerts to the subscription's admins
+
+
+class ConnectionType(str, Enum):
+
+    internal = "Internal"
+    external = "External"
