@@ -53,10 +53,10 @@ class KeyClient:
     def create_config(**kwargs):
         # type: (Any) -> Configuration
         config = Configuration(**kwargs)
-        config.user_agent = UserAgentPolicy("KeyClient", **kwargs)
-        config.headers = None
-        config.retry = RetryPolicy(**kwargs)
-        config.redirect = RedirectPolicy(**kwargs)
+        config.user_agent_policy = UserAgentPolicy("KeyClient", **kwargs)
+        config.headers_policy = None
+        config.retry_policy = RetryPolicy(**kwargs)
+        config.redirect_policy = RedirectPolicy(**kwargs)
 
         # TODO: these are requests-specific
         config.cert = config.timeout = None
@@ -69,12 +69,12 @@ class KeyClient:
         config = config or KeyClient.create_config()
         transport = RequestsTransport(config)
         policies = [
-            config.user_agent,
-            config.headers,
+            config.user_agent_policy,
+            config.headers_policy,
             BearerTokenCredentialPolicy(credentials),
-            config.redirect,
-            config.retry,
-            config.logging,
+            config.redirect_policy,
+            config.retry_policy,
+            config.logging_policy,
         ]
         self._pipeline = Pipeline(transport, policies=policies)
         models = {

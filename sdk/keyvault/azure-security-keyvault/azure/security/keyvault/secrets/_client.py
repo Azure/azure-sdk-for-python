@@ -18,7 +18,7 @@ from azure.core.pipeline.policies import (
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest, HttpResponse
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
-from azure.keyvault._internal import _BearerTokenCredentialPolicy
+from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
 
 from .._generated import DESERIALIZE, SERIALIZE
 from .._generated.v7_0.models import (
@@ -63,10 +63,10 @@ class SecretClient:
         """Creates a default configuration for SecretClient.
         """
         config = Configuration(**kwargs)
-        config.user_agent = UserAgentPolicy('SecretClient', **kwargs)
-        config.headers = None
-        config.retry = RetryPolicy(**kwargs)
-        config.redirect = RedirectPolicy(**kwargs)
+        config.user_agent_policy = UserAgentPolicy('SecretClient', **kwargs)
+        config.headers_policy = None
+        config.retry_policy = RetryPolicy(**kwargs)
+        config.redirect_policy = RedirectPolicy(**kwargs)
         return config
 
     def __init__(self, vault_url, credentials, config=None, **kwargs):
@@ -78,14 +78,14 @@ class SecretClient:
 
         self._vault_url = vault_url
         config = config or SecretClient.create_config(**kwargs)
-        transport = RequestsTransport(config.connection)
+        transport = RequestsTransport(config)
         policies = [
-            config.user_agent,
-            config.headers,
+            config.user_agent_policy,
+            config.headers_policy,
             _BearerTokenCredentialPolicy(credentials),
-            config.redirect,
-            config.retry,
-            config.logging,
+            config.redirect_policy,
+            config.retry_policy,
+            config.logging_policy,
         ]
         self._pipeline = Pipeline(transport, policies=policies)
 
