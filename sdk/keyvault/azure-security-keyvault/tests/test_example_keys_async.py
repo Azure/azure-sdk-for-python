@@ -33,7 +33,6 @@ def await_prepared_test(test_fn):
 
     return run
 
-
 def create_vault_client():
     client_id = ""
     client_secret = ""

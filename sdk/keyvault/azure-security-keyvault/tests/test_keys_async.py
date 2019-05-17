@@ -312,7 +312,6 @@ class KeyVaultKeyTest(KeyVaultTestCase):
     @VaultClientPreparer(enable_soft_delete=True)
     @await_prepared_test
     async def test_recover_purge(self, vault_client, **kwargs):
-
         self.assertIsNotNone(vault_client)
         client = vault_client.keys
         keys = {}

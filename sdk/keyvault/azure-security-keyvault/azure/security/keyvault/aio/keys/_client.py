@@ -20,14 +20,12 @@ from ...keys._models import Key, DeletedKey, KeyBase, _KeyOperationResult
 
 class KeyClient:
     """The KeyClient class defines a high level interface for managing keys in the specified vault.
-
     :param credentials: A credential or credential provider which can be used to authenticate to the vault,
     a ValueError will be raised if the entity is not provided
     :type credentials: azure.authentication.Credential or azure.authentication.CredentialProvider
     :param str vault_url: The url of the vault to which the client will connect,
     a ValueError will be raised if the entity is not provided
     :param ~azure.core.configuration.Configuration config: The configuration for the KeyClient
-
     Example:
     .. literalinclude:: ../tests/test_examples_keys_async.py
     :start-after: [START create_key_client]
@@ -415,7 +413,6 @@ class KeyClient:
     async def backup_key(self, name: str, **kwargs: Mapping[str, Any]) -> bytes:
         """Requests that a backup of the specified key be downloaded to the
         client.
-
         The Key Backup operation exports a key from Azure Key Vault in a
         protected form. Note that this operation does NOT return key material
         in a form that can be used outside the Azure Key Vault system, the
@@ -430,7 +427,6 @@ class KeyClient:
         another geographical area. For example, a backup from the US
         geographical area cannot be restored in an EU geographical area. This
         operation requires the key/backup permission.
-
         :param name: The name of the key.
         :type name
         :return: The raw bytes of the key backup.
@@ -450,7 +446,6 @@ class KeyClient:
 
     async def restore_key(self, backup: bytes, **kwargs: Mapping[str, Any]) -> KeyBase:
         """Restores a backed up key to a vault.
-
         Imports a previously backed up key into Azure Key Vault, restoring the
         key, its key identifier, attributes and access control policies. The
         RESTORE operation may be used to import a previously backed up key.
@@ -511,7 +506,6 @@ class KeyClient:
 
     async def get_deleted_key(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedKey:
         """Gets the public part of a deleted key.
-
         The Get Deleted Key operation is applicable for soft-delete enabled
         vaults. While the operation can be invoked on any vault, it will return
         an error if invoked on a non soft-delete enabled vault. This operation
@@ -536,7 +530,6 @@ class KeyClient:
 
     async def list_deleted_keys(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[DeletedKey]:
         """Lists the deleted keys in the specified vault.
-
         Retrieves a list of the keys in the Key Vault as JSON Web Key
         structures that contain the public part of a deleted key. This
         operation includes deletion-specific information. The Get Deleted Keys
@@ -564,12 +557,10 @@ class KeyClient:
 
     async def purge_deleted_key(self, name: str, **kwargs: Mapping[str, Any]) -> None:
         """Permanently deletes the specified key.
-
         The Purge Deleted Key operation is applicable for soft-delete enabled
         vaults. While the operation can be invoked on any vault, it will return
         an error if invoked on a non soft-delete enabled vault. This operation
         requires the keys/purge permission.
-
         :param name: The name of the key
         :type name
         :returns: None
@@ -587,7 +578,6 @@ class KeyClient:
 
     async def recover_deleted_key(self, name: str, **kwargs: Mapping[str, Any]) -> KeyBase:
         """Recovers the deleted key to its latest version.
-
         The Recover Deleted Key operation is applicable for deleted keys in
         soft-delete enabled vaults. It recovers the deleted key back to its
         latest version under /keys. An attempt to recover an non-deleted key
