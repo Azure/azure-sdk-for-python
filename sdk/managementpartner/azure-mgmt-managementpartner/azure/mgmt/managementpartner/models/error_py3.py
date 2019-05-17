@@ -24,8 +24,8 @@ class Error(Model):
         'error': {'key': 'error', 'type': 'ExtendedErrorInfo'},
     }
 
-    def __init__(self, error=None):
-        super(Error, self).__init__()
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(Error, self).__init__(**kwargs)
         self.error = error
 
 

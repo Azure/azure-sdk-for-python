@@ -27,7 +27,7 @@ class ExtendedErrorInfo(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, code=None, message=None):
-        super(ExtendedErrorInfo, self).__init__()
+    def __init__(self, *, code=None, message: str=None, **kwargs) -> None:
+        super(ExtendedErrorInfo, self).__init__(**kwargs)
         self.code = code
         self.message = message
