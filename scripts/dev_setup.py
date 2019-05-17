@@ -53,7 +53,7 @@ nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
 # Manually push meta-packages at the end, in reverse dependency order
 meta_packages = ['azure-mgmt', 'azure']
 
-content_packages = [p for p in packages.keys() if p not in nspkg_packages+meta_packages and p in targeted_packages]
+content_packages = sorted([p for p in packages.keys() if p not in nspkg_packages+meta_packages and p in targeted_packages])
 
 # Put azure-common in front
 if 'azure-common' in content_packages:
