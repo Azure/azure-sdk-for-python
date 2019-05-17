@@ -316,7 +316,7 @@ class DomainTopicsOperations(object):
         :type filter: str
         :param top: The number of results to return per page for the list
          operation. Valid range for top parameter is 1 to 100. If not
-         specified, the default number of results to be returned is 20 iterms
+         specified, the default number of results to be returned is 20 items
          per page.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
