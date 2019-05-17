@@ -20,20 +20,20 @@ def await_prepared_test(test_fn):
     """Synchronous wrapper for async test methods. Used to avoid making changes
        upstream to AbstractPreparer (which doesn't await the functions it wraps)
     """
+
     @functools.wraps(test_fn)
     def run(test_class_instance, *args, **kwargs):
         # TODO: this is a workaround for VaultClientPreparer creating a sync client; let's obviate it
         vault_client = kwargs.get("vault_client")
-        credentials = test_class_instance.settings.get_credentials(
-            resource="https://vault.azure.net")
+        credentials = test_class_instance.settings.get_credentials(resource="https://vault.azure.net")
         aio_client = VaultClient(vault_client.vault_url, credentials)
         loop = asyncio.get_event_loop()
         return loop.run_until_complete(test_fn(test_class_instance, vault_client=aio_client))
+
     return run
 
 
 class TestExamplesKeyVault(KeyVaultTestCase):
-
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
     @await_prepared_test
@@ -43,10 +43,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # [START set_secret]
             from dateutil import parser as date_parse
 
-            expires = date_parse.parse('2050-02-02T08:00:00.000Z')
+            expires = date_parse.parse("2050-02-02T08:00:00.000Z")
 
             # create a secret with optional arguments
-            secret = await secret_client.set_secret('secret-name', 'secret-value', enabled=True, expires=expires)
+            secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True, expires=expires)
 
             print(secret.version)
             print(secret.created)
@@ -62,11 +62,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # [START get_secret]
 
             # get secret with version
-            secret = await secret_client.get_secret('secret-name', secret_version)
+            secret = await secret_client.get_secret("secret-name", secret_version)
 
             # if the version argument is an empty string or None, the latest
             # version of the secret will be returned
-            secret = await secret_client.get_secret('secret-name', '')
+            secret = await secret_client.get_secret("secret-name", "")
 
             print(secret.id)
             print(secret.name)
@@ -81,13 +81,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
             # update attributes of an existing secret
 
-            content_type = 'text/plain'
-            tags = {'foo': 'updated tag'}
+            content_type = "text/plain"
+            tags = {"foo": "updated tag"}
             secret_version = secret.version
             updated_secret = await secret_client.update_secret_attributes(
-                'secret-name', secret_version,
-                content_type=content_type,
-                tags=tags)
+                "secret-name", secret_version, content_type=content_type, tags=tags
+            )
 
             print(updated_secret.version)
             print(updated_secret.updated)
@@ -102,7 +101,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # [START delete_secret]
 
             # delete a secret
-            deleted_secret = await secret_client.delete_secret('secret-name')
+            deleted_secret = await secret_client.delete_secret("secret-name")
 
             print(deleted_secret.name)
             print(deleted_secret.deleted_date)
@@ -136,7 +135,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             from azure.security.keyvault.vault_client import VaultClient
 
             # gets a list of all versions of a secret
-            secret_versions = secret_client.list_secret_versions('secret-name')
+            secret_versions = secret_client.list_secret_versions("secret-name")
 
             async for secret in secret_versions:
                 # the list doesn't include secret values
@@ -167,7 +166,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @await_prepared_test
     async def test_example_secrets_backup_restore(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
-        created_secret = await secret_client.set_secret('secret-name', 'secret-value')
+        created_secret = await secret_client.set_secret("secret-name", "secret-value")
         secret_name = created_secret.name
         try:
             # [START backup_secret]
@@ -189,7 +188,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
             # [START get_deleted_secret]
             # gets a deleted secret (requires soft-delete enabled for the vault)
-            deleted_secret = await secret_client.get_deleted_secret('secret-name')
+            deleted_secret = await secret_client.get_deleted_secret("secret-name")
             print(deleted_secret.name)
 
             # [END get_deleted_secret]
@@ -217,7 +216,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @await_prepared_test
     async def test_example_secrets_recover_purge(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
-        created_secret = await secret_client.set_secret('secret-name', 'secret-value')
+        created_secret = await secret_client.set_secret("secret-name", "secret-value")
         await secret_client.delete_secret(created_secret.name)
         if self.is_live:
             # wait a second to ensure the secret has been deleted
@@ -227,8 +226,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # [START recover_deleted_secret]
 
             # recover deleted secret to the latest version
-            recover_deleted_secret = await secret_client.recover_deleted_secret(
-                'secret-name')
+            recover_deleted_secret = await secret_client.recover_deleted_secret("secret-name")
             print(recover_deleted_secret.id)
             print(recover_deleted_secret.name)
 
@@ -248,7 +246,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
             # if the vault has soft-delete enabled, purge permanently deletes the secret
             # (without soft-delete, an ordinary delete is permanent)
-            await secret_client.purge_deleted_secret('secret-name')
+            await secret_client.purge_deleted_secret("secret-name")
 
             # [END purge_deleted_secret]
         except KeyVaultErrorException:

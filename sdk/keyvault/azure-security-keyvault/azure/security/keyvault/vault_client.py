@@ -8,6 +8,7 @@ from .secrets._client import SecretClient
 
 
 class VaultClient(object):
+
     def __init__(self, vault_url, credentials, config=None, **kwargs):
         self._vault_url = vault_url.strip(" /")
         self._secrets = SecretClient(self._vault_url, credentials, config=config, **kwargs)
