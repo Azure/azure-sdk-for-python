@@ -150,7 +150,7 @@ class DeletedKey(Key):
         scheduled_purge_date=None,
         **kwargs
     ):
-        # type: (models.JsonWebKey, str, models.JsonWebKey, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
+        # type: (models.KeyAttributes, str, models.JsonWebKey, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
         super(DeletedKey, self).__init__(attributes, vault_id, key_material, **kwargs)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id

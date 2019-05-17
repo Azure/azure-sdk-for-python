@@ -482,7 +482,7 @@ class KeyClient:
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
             raise ClientRequestError("Request failed status code {}.  {}".format(response.status_code, response.text()))
-        # should this return key attributes or key ?
+        
         bundle = DESERIALIZE("KeyBundle", response)
 
         return Key._from_key_bundle(bundle)
