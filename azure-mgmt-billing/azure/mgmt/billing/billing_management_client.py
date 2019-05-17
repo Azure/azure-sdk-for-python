@@ -14,6 +14,7 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.billing_accounts_operations import BillingAccountsOperations
+from .operations.billing_accounts_validate_address_operations import BillingAccountsValidateAddressOperations
 from .operations.available_balances_operations import AvailableBalancesOperations
 from .operations.payment_methods_operations import PaymentMethodsOperations
 from .operations.billing_profiles_operations import BillingProfilesOperations
@@ -77,6 +78,8 @@ class BillingManagementClient(SDKClient):
 
     :ivar billing_accounts: BillingAccounts operations
     :vartype billing_accounts: azure.mgmt.billing.operations.BillingAccountsOperations
+    :ivar billing_accounts_validate_address: BillingAccountsValidateAddress operations
+    :vartype billing_accounts_validate_address: azure.mgmt.billing.operations.BillingAccountsValidateAddressOperations
     :ivar available_balances: AvailableBalances operations
     :vartype available_balances: azure.mgmt.billing.operations.AvailableBalancesOperations
     :ivar payment_methods: PaymentMethods operations
@@ -138,6 +141,8 @@ class BillingManagementClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
         self.billing_accounts = BillingAccountsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.billing_accounts_validate_address = BillingAccountsValidateAddressOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.available_balances = AvailableBalancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
