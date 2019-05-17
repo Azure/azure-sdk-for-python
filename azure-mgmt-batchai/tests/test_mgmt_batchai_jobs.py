@@ -6,6 +6,11 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=line-too-long
+import unittest
+import pytest
+
+pytestmark = pytest.mark.skip
+
 import re
 from azure.storage.blob import ContainerClient, BlobClient, SharedKeyCredentials
 from azure.storage.file import FileService

@@ -4,7 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+import pytest
 
+pytestmark = pytest.mark.xfail
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,

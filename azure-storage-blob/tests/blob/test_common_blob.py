@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import pytest
 import requests
 import time
 import unittest
@@ -265,6 +266,7 @@ class StorageCommonBlobTest(StorageTestCase):
                            'snapshot=2016-11-09T14:11:07.6175300Z&sas')
 
     def test_make_container_url(self):
+        pytest.skip("not yet supported")
         # Arrange
 
         # Act
@@ -275,6 +277,7 @@ class StorageCommonBlobTest(StorageTestCase):
                          + '.blob.core.windows.net/vhds?restype=container')
 
     def test_make_container_url_with_protocol(self):
+        pytest.skip("not yet supported")
         # Arrange
 
         # Act
@@ -285,6 +288,7 @@ class StorageCommonBlobTest(StorageTestCase):
                          + '.blob.core.windows.net/vhds?restype=container')
 
     def test_make_container_url_with_sas(self):
+        pytest.skip("not yet supported")
         # Arrange
 
         # Act
@@ -914,6 +918,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_copy_blob_with_existing_blob(self):
+        pytest.skip("copy not yet supported")
         # Arrange
         blob_name = self._create_block_blob()
 
@@ -932,6 +937,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_copy_blob_async_private_blob(self):
+        pytest.skip("copy not yet supported")
         # Arrange
         self._create_remote_container()
         source_blob_name = self._create_remote_block_blob()
@@ -946,6 +952,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_copy_blob_async_private_blob_with_sas(self):
+        pytest.skip("copy not yet supported")
         # Arrange
         data = b'12345678' * 1024 * 1024
         self._create_remote_container()
@@ -977,6 +984,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_abort_copy_blob(self):
+        pytest.skip("copy not yet supported")
         # Arrange
         data = b'12345678' * 1024 * 1024
         self._create_remote_container()
@@ -1010,6 +1018,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_abort_copy_blob_with_synchronous_copy_fails(self):
+        pytest.skip("copy not yet supported")
         # Arrange
         source_blob_name = self._create_block_blob()
         source_blob_url = self.bs.make_blob_url(
@@ -1192,6 +1201,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_no_sas_public_blob(self):
+        pytest.skip("not yet supported")
         # Arrange
         data = b'a public blob can be read without a shared access signature'
         blob_name = 'blob1.txt'
@@ -1209,6 +1219,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_public_access_blob(self):
+        pytest.skip("not yet supported")
         # Arrange
         data = b'public access blob'
         blob_name = 'blob1.txt'
@@ -1326,6 +1337,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_token_credential(self):
+        pytest.skip("not yet supported")
         token_credential = TokenCredential(self.generate_oauth_token())
 
         # Action 1: make sure token works
@@ -1451,6 +1463,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_get_account_information(self):
+        pytest.skip("not yet supported")
         # Act)
         info = self.bs.get_blob_account_information()
 
@@ -1460,6 +1473,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_get_account_information_with_container_name(self):
+        pytest.skip("not yet supported")
         # Act
         # Container name gets ignored
         info = self.bs.get_blob_account_information("missing")
@@ -1470,6 +1484,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_get_account_information_with_blob_name(self):
+        pytest.skip("not yet supported")
         # Act
         # Both container and blob names get ignored
         blob = self.bsc.get_blob_client("missing", "missing")
@@ -1482,6 +1497,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_get_account_information_with_container_sas(self):
         # SAS URL is calculated from storage key, so this test runs live only
+        pytest.skip("not yet supported")
         if TestMode.need_recording_file(self.test_mode):
             return
 
@@ -1505,6 +1521,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_get_account_information_with_blob_sas(self):
         # SAS URL is calculated from storage key, so this test runs live only
+        pytest.skip("not yet supported")
         if TestMode.need_recording_file(self.test_mode):
             return
 

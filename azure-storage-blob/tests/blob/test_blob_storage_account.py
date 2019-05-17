@@ -5,7 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import pytest
 
+pytestmark = pytest.mark.xfail
 import unittest
 
 from azure.storage.blob import (

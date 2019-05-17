@@ -3,7 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import pytest
 
+pytestmark = pytest.mark.xfail
 from datetime import datetime, timedelta
 from azure.common import AzureHttpError
 from azure.storage.blob import (
