@@ -28,4 +28,4 @@ import sys
 # Ignore collection of async tests for Python 2
 collect_ignore = []
 if sys.version_info < (3, 5):
-    collect_ignore.append("asynctests")
+    collect_ignore.append("azure_core_asynctests")
