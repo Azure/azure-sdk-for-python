@@ -22,7 +22,7 @@ try:
     import azure.common
 except:
     sdk_root = Path(__file__).parents[1]
-    sys.path.append(str((sdk_root / "azure-common").resolve()))
+    sys.path.append(str((sdk_root / "sdk" / "core" / "azure-common").resolve()))
     import azure.common
 
 import pkg_resources
