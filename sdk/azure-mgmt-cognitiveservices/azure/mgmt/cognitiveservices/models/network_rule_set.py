@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class NetworkRuleSet(Model):
-    """A set of rules governing the network accessibility of a vault.
+    """A set of rules governing the network accessibility.
 
     :param bypass: Tells what traffic can bypass network rules. This can be
      'AzureServices' or 'None'.  If not specified the default is
