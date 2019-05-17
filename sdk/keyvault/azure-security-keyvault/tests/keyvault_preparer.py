@@ -4,7 +4,7 @@ import os
 import requests
 import time
 
-from azure.keyvault import VaultClient
+from azure.security.keyvault import VaultClient
 from azure.mgmt.keyvault import KeyVaultManagementClient
 from azure.mgmt.keyvault.models import SecretPermissions, KeyPermissions, CertificatePermissions, StoragePermissions, \
     Permissions, Sku, SkuName, AccessPolicyEntry, VaultProperties, VaultCreateOrUpdateParameters, Vault

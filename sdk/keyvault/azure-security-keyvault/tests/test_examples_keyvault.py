@@ -1,12 +1,12 @@
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
+# Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 
 import time
 
-from azure.keyvault.secrets._client import SecretClient
+from azure.security.keyvault.secrets._client import SecretClient
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import ResourceGroupPreparer
 from keyvault_preparer import KeyVaultPreparer

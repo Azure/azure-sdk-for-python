@@ -1,11 +1,16 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 from keyvault_preparer import KeyVaultPreparer
 from keyvault_testcase import KeyvaultTestCase
-from azure.keyvault.keys import KeyClient
+from azure.security.keyvault.keys import KeyClient
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 from time import sleep, time
 import copy
 from dateutil import parser as date_parse
-from azure.keyvault._internal import _VaultId as KeyVaultId
+from azure.security.keyvault._internal import _VaultId as KeyVaultId
 
 
 class KeyClientTests(KeyvaultTestCase):
