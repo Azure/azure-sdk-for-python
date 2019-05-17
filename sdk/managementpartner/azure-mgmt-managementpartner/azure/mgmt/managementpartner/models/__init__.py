@@ -9,11 +9,18 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .partner_response import PartnerResponse
-from .extended_error_info import ExtendedErrorInfo
-from .error import Error, ErrorException
-from .operation_display import OperationDisplay
-from .operation_response import OperationResponse
+try:
+    from .partner_response_py3 import PartnerResponse
+    from .extended_error_info_py3 import ExtendedErrorInfo
+    from .error_py3 import Error, ErrorException
+    from .operation_display_py3 import OperationDisplay
+    from .operation_response_py3 import OperationResponse
+except (SyntaxError, ImportError):
+    from .partner_response import PartnerResponse
+    from .extended_error_info import ExtendedErrorInfo
+    from .error import Error, ErrorException
+    from .operation_display import OperationDisplay
+    from .operation_response import OperationResponse
 from .operation_response_paged import OperationResponsePaged
 
 __all__ = [

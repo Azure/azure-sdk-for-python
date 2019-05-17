@@ -9,12 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.partner_operations import PartnerOperations
 from .operations.operation_operations import OperationOperations
+from .operations.partners_operations import PartnersOperations
 from . import models
 
 
@@ -45,7 +46,7 @@ class ACEProvisioningManagementPartnerAPIConfiguration(AzureConfiguration):
         self.credentials = credentials
 
 
-class ACEProvisioningManagementPartnerAPI(object):
+class ACEProvisioningManagementPartnerAPI(SDKClient):
     """This API describe ACE Provisioning ManagementPartner
 
     :ivar config: Configuration for client.
@@ -55,6 +56,8 @@ class ACEProvisioningManagementPartnerAPI(object):
     :vartype partner: azure.mgmt.managementpartner.operations.PartnerOperations
     :ivar operation: Operation operations
     :vartype operation: azure.mgmt.managementpartner.operations.OperationOperations
+    :ivar partners: Partners operations
+    :vartype partners: azure.mgmt.managementpartner.operations.PartnersOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -66,7 +69,7 @@ class ACEProvisioningManagementPartnerAPI(object):
             self, credentials, base_url=None):
 
         self.config = ACEProvisioningManagementPartnerAPIConfiguration(credentials, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(ACEProvisioningManagementPartnerAPI, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2018-02-01'
@@ -76,4 +79,6 @@ class ACEProvisioningManagementPartnerAPI(object):
         self.partner = PartnerOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operation = OperationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.partners = PartnersOperations(
             self._client, self.config, self._serialize, self._deserialize)
