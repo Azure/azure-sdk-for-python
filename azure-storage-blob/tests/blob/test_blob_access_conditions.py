@@ -24,6 +24,7 @@ from azure.storage.blob import (
     SharedKeyCredentials,
     Lease
 )
+from azure.storage.blob.common import BlobType
 from azure.storage.blob.models import(
     ContentSettings,
     BlobProperties
@@ -83,7 +84,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
     def _create_container_and_page_blob(self, container_name, blob_name,
                                         content_length):
         self._create_container(container_name)
-        resp = self.pbs.create_blob(self.container_name, blob_name, str(content_length))
+        blob = self.bsc.get_blob_client(container_name, blob_name, blob_type=BlobType.PageBlob)
+        resp = blob.create_blob(str(content_length))
 
     def _create_container_and_append_blob(self, container_name, blob_name):
         self._create_container(container_name)
@@ -1556,7 +1558,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
 
         # Act
-        self.pbs.update_page(self.container_name, 'blob1', data, 0, 511, if_modified_since=test_datetime)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        blob.upload_page(data, 0, 511, if_modified_since=test_datetime)
 
         # Assert
 
@@ -1570,8 +1573,9 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
 
         # Act
-        with self.assertRaises(AzureHttpError):
-            self.pbs.update_page(self.container_name, 'blob1', data, 0, 511, if_modified_since=test_datetime)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        with self.assertRaises(HttpResponseError):
+            blob.upload_page(data, 0, 511, if_modified_since=test_datetime)
 
         # Assert
 
@@ -1585,7 +1589,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
 
         # Act
-        self.pbs.update_page(self.container_name, 'blob1', data, 0, 511, if_unmodified_since=test_datetime)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        blob.upload_page(data, 0, 511, if_unmodified_since=test_datetime)
 
         # Assert
 
@@ -1599,8 +1604,9 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
 
         # Act
-        with self.assertRaises(AzureHttpError):
-            self.pbs.update_page(self.container_name, 'blob1', data, 0, 511, if_unmodified_since=test_datetime)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        with self.assertRaises(HttpResponseError):
+            blob.upload_page(data, 0, 511, if_unmodified_since=test_datetime)
 
         # Assert
 
@@ -1610,10 +1616,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024)
         data = b'abcdefghijklmnop' * 32
-        etag = self.bs.get_blob_properties(self.container_name, 'blob1').properties.etag
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        etag = blob.get_blob_properties().etag
 
         # Act
-        self.pbs.update_page(self.container_name, 'blob1', data, 0, 511, if_match=etag)
+        blob.upload_page(data, 0, 511, if_match=etag)
 
         # Assert
 
@@ -1625,8 +1632,9 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
 
         # Act
-        with self.assertRaises(AzureHttpError):
-            self.pbs.update_page(self.container_name, 'blob1', data, 0, 511, if_match='0x111111111111111')
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        with self.assertRaises(HttpResponseError):
+            blob.upload_page(data, 0, 511, if_match='0x111111111111111')
 
         # Assert
 
@@ -1638,7 +1646,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
 
         # Act
-        self.pbs.update_page(self.container_name, 'blob1', data, 0, 511, if_none_match='0x111111111111111')
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        blob.upload_page(data, 0, 511, if_none_match='0x111111111111111')
 
         # Assert
 
@@ -1648,11 +1657,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024)
         data = b'abcdefghijklmnop' * 32
-        etag = self.pbs.get_blob_properties(self.container_name, 'blob1').properties.etag
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(AzureHttpError):
-            self.pbs.update_page(self.container_name, 'blob1', data, 0, 511, if_none_match=etag)
+        with self.assertRaises(HttpResponseError):
+            blob.upload_page(data, 0, 511, if_none_match=etag)
 
         # Assert
 
@@ -1664,8 +1674,9 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
         test_datetime = (datetime.datetime.utcnow() -
                          datetime.timedelta(minutes=15))
-        self.pbs.update_page(self.container_name, 'blob1', data, 0, 511)
-        self.pbs.update_page(self.container_name, 'blob1', data, 1024, 1535)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        blob.upload_page(data, 0, 511)
+        blob.upload_page(data, 1024, 1535)
 
         # Act
         ranges = self.pbs.get_page_ranges(self.container_name, 'blob1',
@@ -1686,8 +1697,9 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
         test_datetime = (datetime.datetime.utcnow() +
                          datetime.timedelta(minutes=15))
-        self.pbs.update_page(self.container_name, 'blob1', data, 0, 511)
-        self.pbs.update_page(self.container_name, 'blob1', data, 1024, 1535)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        blob.upload_page(data, 0, 511)
+        blob.upload_page(data, 1024, 1535)
 
         # Act
         with self.assertRaises(AzureHttpError):
@@ -1704,8 +1716,9 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
         test_datetime = (datetime.datetime.utcnow() +
                          datetime.timedelta(minutes=15))
-        self.pbs.update_page(self.container_name, 'blob1', data, 0, 511)
-        self.pbs.update_page(self.container_name, 'blob1', data, 1024, 1535)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        blob.upload_page(data, 0, 511)
+        blob.upload_page(data, 1024, 1535)
 
         # Act
         ranges = self.pbs.get_page_ranges(self.container_name, 'blob1',
@@ -1726,6 +1739,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
         test_datetime = (datetime.datetime.utcnow() -
                          datetime.timedelta(minutes=15))
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
         self.pbs.update_page(self.container_name, 'blob1', data, 0, 511)
         self.pbs.update_page(self.container_name, 'blob1', data, 1024, 1535)
 

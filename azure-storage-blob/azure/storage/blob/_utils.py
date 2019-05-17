@@ -28,7 +28,8 @@ from azure.core.exceptions import ResourceNotFoundError
 from ._generated import AzureBlobStorage
 from ._generated.models import (
     LeaseAccessConditions,
-    ModifiedAccessConditions
+    ModifiedAccessConditions,
+    SequenceNumberAccessConditions
 )
 
 if TYPE_CHECKING:
@@ -131,6 +132,20 @@ def get_access_conditions(lease):
     except AttributeError:
         lease_id = lease
     return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+
+def get_sequence_conditions(
+        if_sequence_number_lte=None, # type: Optional[int]
+        if_sequence_number_lt=None, # type: Optional[int]
+        if_sequence_number_eq=None, # type: Optional[int]
+    ):
+    # type: (...) -> Union[SequenceNumberAccessConditions, None]
+    if any([if_sequence_number_lte, if_sequence_number_lt, if_sequence_number_eq]):
+        return SequenceNumberAccessConditions(
+            if_sequence_number_less_than_or_equal_to=if_sequence_number_lte,
+            if_sequence_number_less_than=if_sequence_number_lt,
+            if_sequence_number_equal_to=if_sequence_number_eq
+        )
+    return None
 
 
 def get_modification_conditions(

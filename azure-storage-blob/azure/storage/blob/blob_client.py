@@ -33,6 +33,7 @@ from ._utils import (
     basic_error_map,
     get_access_conditions,
     get_modification_conditions,
+    get_sequence_conditions,
     return_response_headers,
     add_metadata_headers,
     process_storage_error,
@@ -1016,10 +1017,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :returns: Blob-updated property dict (Etag and last modified).
         """
 
-    def update_page(
+    def upload_page(
             self, page,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             start_range,  # type: int
             end_range,  # type: int
+            length=None,  # type: Optional[int]
             lease=None,  # type: Optional[Union[Lease, str]]
             validate_content=False,  # type: Optional[bool]
             if_sequence_number_lte=None, # type: Optional[int]
@@ -1029,13 +1031,49 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None # type: Optional[int]
+            timeout=None, # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
         :raises: InvalidOperation when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
+        # TODO Support encryption
+        if self.key_encryption_key:
+            raise NotImplementedError("Encrypted blobs not yet implmented.")
+        if validate_content:
+            raise NotImplementedError("Content validation not yet supported.")
+        if not length:
+            try:
+                length = len(page)
+            except TypeError:
+                raise ValueError("Please specifiy content length.")
+        if start_range is None or start_range % 512 != 0:
+            raise ValueError("start_range must be an integer that aligns with 512 page size")
+        if end_range is None or end_range % 512 != 511:
+            raise ValueError("end_range must be an integer that aligns with 512 page size")
+        content_range = 'bytes={0}-{1}'.format(start_range, end_range)
+        access_conditions = get_access_conditions(lease)
+        seq_conditions = get_sequence_conditions(
+            if_sequence_number_lte=if_sequence_number_lte,
+            if_sequence_number_lt=if_sequence_number_lt,
+            if_sequence_number_eq=if_sequence_number_eq
+        )
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        return self._client.page_blob.upload_pages(
+            page,
+            content_length=length,
+            transactional_content_md5=None,
+            timeout=timeout,
+            range=content_range,
+            lease_access_conditions=access_conditions,
+            sequence_number_access_conditions=seq_conditions,
+            modified_access_conditions=mod_conditions,
+            cls=return_response_headers,
+            **kwargs
+        )
 
     def clear_page(
             self, start_range,  # type: int
