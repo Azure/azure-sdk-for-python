@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class IPRule(Model):
+class IpRule(Model):
     """A rule governing the accessibility from a specific ip address or ip range.
 
     All required parameters must be populated in order to send to Azure.
@@ -32,5 +32,5 @@ class IPRule(Model):
     }
 
     def __init__(self, **kwargs):
-        super(IPRule, self).__init__(**kwargs)
+        super(IpRule, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)

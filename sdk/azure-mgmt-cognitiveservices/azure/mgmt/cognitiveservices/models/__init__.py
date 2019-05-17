@@ -13,7 +13,7 @@ try:
     from .sku_py3 import Sku
     from .cognitive_services_account_create_parameters_py3 import CognitiveServicesAccountCreateParameters
     from .cognitive_services_account_update_parameters_py3 import CognitiveServicesAccountUpdateParameters
-    from .ip_rule_py3 import IPRule
+    from .ip_rule_py3 import IpRule
     from .virtual_network_rule_py3 import VirtualNetworkRule
     from .network_rule_set_py3 import NetworkRuleSet
     from .cognitive_services_account_py3 import CognitiveServicesAccount
@@ -38,7 +38,7 @@ except (SyntaxError, ImportError):
     from .sku import Sku
     from .cognitive_services_account_create_parameters import CognitiveServicesAccountCreateParameters
     from .cognitive_services_account_update_parameters import CognitiveServicesAccountUpdateParameters
-    from .ip_rule import IPRule
+    from .ip_rule import IpRule
     from .virtual_network_rule import VirtualNetworkRule
     from .network_rule_set import NetworkRuleSet
     from .cognitive_services_account import CognitiveServicesAccount
@@ -78,7 +78,7 @@ __all__ = [
     'Sku',
     'CognitiveServicesAccountCreateParameters',
     'CognitiveServicesAccountUpdateParameters',
-    'IPRule',
+    'IpRule',
     'VirtualNetworkRule',
     'NetworkRuleSet',
     'CognitiveServicesAccount',

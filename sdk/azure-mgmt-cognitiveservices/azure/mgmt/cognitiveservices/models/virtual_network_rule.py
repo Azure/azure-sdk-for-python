@@ -22,6 +22,9 @@ class VirtualNetworkRule(Model):
     :type id: str
     :param state: Gets the state of virtual network rule.
     :type state: str
+    :param ignore_missing_vnet_service_endpoint: Ignore missing vnet service
+     endpoint or not.
+    :type ignore_missing_vnet_service_endpoint: bool
     """
 
     _validation = {
@@ -31,9 +34,11 @@ class VirtualNetworkRule(Model):
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'state': {'key': 'state', 'type': 'str'},
+        'ignore_missing_vnet_service_endpoint': {'key': 'ignoreMissingVnetServiceEndpoint', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(VirtualNetworkRule, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
         self.state = kwargs.get('state', None)
+        self.ignore_missing_vnet_service_endpoint = kwargs.get('ignore_missing_vnet_service_endpoint', None)

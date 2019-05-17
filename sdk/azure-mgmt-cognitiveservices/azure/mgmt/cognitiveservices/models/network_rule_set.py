@@ -26,7 +26,7 @@ class NetworkRuleSet(Model):
     :type default_action: str or
      ~azure.mgmt.cognitiveservices.models.NetworkRuleAction
     :param ip_rules: The list of IP address rules.
-    :type ip_rules: list[~azure.mgmt.cognitiveservices.models.IPRule]
+    :type ip_rules: list[~azure.mgmt.cognitiveservices.models.IpRule]
     :param virtual_network_rules: The list of virtual network rules.
     :type virtual_network_rules:
      list[~azure.mgmt.cognitiveservices.models.VirtualNetworkRule]
@@ -35,7 +35,7 @@ class NetworkRuleSet(Model):
     _attribute_map = {
         'bypass': {'key': 'bypass', 'type': 'str'},
         'default_action': {'key': 'defaultAction', 'type': 'str'},
-        'ip_rules': {'key': 'ipRules', 'type': '[IPRule]'},
+        'ip_rules': {'key': 'ipRules', 'type': '[IpRule]'},
         'virtual_network_rules': {'key': 'virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
     }
 
