@@ -15,7 +15,7 @@ from ._models import (
     KeyUpdateParameters,
 )
 from azure.core.configuration import Configuration
-from azure.core.exceptions import ClientRequestError
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     HTTPPolicy,
@@ -123,7 +123,7 @@ class KeyClient:
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError(
+            raise HttpResponseError(
                 "Request failed with code {}: '{}'".format(
                     response.status_code, response.text()
                 )
@@ -141,7 +141,7 @@ class KeyClient:
         request.format_parameters({"api-version": self.API_VERSION})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError(
+            raise HttpResponseError(
                 "Request failed with code {}: '{}'".format(
                     response.status_code, response.text()
                 )
@@ -172,7 +172,7 @@ class KeyClient:
         request.format_parameters({"api-version": self.API_VERSION})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError(
+            raise HttpResponseError(
                 "Request failed with code {}: '{}'".format(
                     response.status_code, response.text()
                 )
@@ -190,7 +190,7 @@ class KeyClient:
         request.format_parameters({"api-version": self.API_VERSION})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError(
+            raise HttpResponseError(
                 "Request failed with code {}: '{}'".format(
                     response.status_code, response.text()
                 )
@@ -226,7 +226,7 @@ class KeyClient:
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 204:
-            raise ClientRequestError(
+            raise HttpResponseError(
                 "Request failed with code {}: '{}'".format(
                     response.status_code, response.text()
                 )
@@ -243,7 +243,7 @@ class KeyClient:
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError(
+            raise HttpResponseError(
                 "Request failed with code {}: '{}'".format(
                     response.status_code, response.text()
                 )
@@ -272,7 +272,7 @@ class KeyClient:
         request.format_parameters({"api-version": self.API_VERSION})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError(
+            raise HttpResponseError(
                 "Request failed with code {}: '{}'".format(
                     response.status_code, response.text()
                 )
@@ -299,7 +299,7 @@ class KeyClient:
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise ClientRequestError(
+            raise HttpResponseError(
                 "Request failed with code {}: '{}'".format(
                     response.status_code, response.text()
                 )

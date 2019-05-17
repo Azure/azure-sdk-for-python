@@ -17,7 +17,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest, HttpResponse
 from azure.core.pipeline import Pipeline
-from azure.core.exceptions import ClientRequestError
+from azure.core.exceptions import HttpResponseError
 from azure.keyvault._internal import _BearerTokenCredentialPolicy
 
 from .._generated import DESERIALIZE, SERIALIZE
@@ -106,7 +106,7 @@ class SecretClient:
             the secret is returned
         :returns: An instance of Secret
         :rtype: ~azure.keyvault.secrets._models.Secret
-        :raises: ~azure.core.exceptions.ClientRequestError if the client failed to get the secret
+        :raises: ~azure.core.exceptions.HttpResponseError if the client failed to get the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_keyvault.py
@@ -135,7 +135,7 @@ class SecretClient:
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise HttpResponseError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
 
         bundle = DESERIALIZE('SecretBundle', response)
 
@@ -164,7 +164,7 @@ class SecretClient:
         :type tags: dict(str, str)
         :returns: The created secret
         :rtype: ~azure.keyvault.secrets._models.Secret
-        :raises: ~azure.core.exceptions.ClientRequestError if the client failed to create the secret
+        :raises: ~azure.core.exceptions.HttpResponseError if the client failed to create the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_keyvault.py
@@ -195,7 +195,7 @@ class SecretClient:
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise ClientRequestError('Request failed status code {}.  {}'.format(
+            raise HttpResponseError('Request failed status code {}.  {}'.format(
                 response.status_code, response.text()))
 
         bundle = DESERIALIZE('SecretBundle', response)
@@ -225,7 +225,7 @@ class SecretClient:
         :type tags: dict(str, str)
         :returns: The created secret
         :rtype: ~azure.keyvault.secrets._models.SecretAttributes
-        :raises: ~azure.core.exceptions.ClientRequestError if the client failed to create the secret
+        :raises: ~azure.core.exceptions.HttpResponseError if the client failed to create the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_keyvault.py
@@ -257,7 +257,7 @@ class SecretClient:
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise HttpResponseError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
 
         bundle = DESERIALIZE('SecretBundle', response)
 
@@ -331,7 +331,7 @@ class SecretClient:
         :param str name: The name of the secret.
         :returns: The raw bytes of the secret backup.
         :rtype: bytes
-        :raises: ~azure.core.exceptions.ClientRequestError, if client failed to back up the secret
+        :raises: ~azure.core.exceptions.HttpResponseError, if client failed to back up the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_keyvault.py
@@ -358,7 +358,7 @@ class SecretClient:
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise HttpResponseError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
 
         result = DESERIALIZE('BackupSecretResult', response)
 
@@ -374,7 +374,7 @@ class SecretClient:
         :param bytes backup: The raw bytes of the secret backup
         :returns: The restored secret
         :rtype: ~azure.keyvault.secrets._models.SecretAttributes
-        :raises: ~azure.core.exceptions.ClientRequestError, if client failed to restore the secret
+        :raises: ~azure.core.exceptions.HttpResponseError, if client failed to restore the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_keyvault.py
@@ -404,7 +404,7 @@ class SecretClient:
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise ClientRequestError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise HttpResponseError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
 
         bundle = DESERIALIZE('SecretBundle', response)
 
@@ -421,7 +421,7 @@ class SecretClient:
         :param str name: The name of the secret
         :return: The deleted secret.
         :rtype: ~azure.keyvault.secrets._models.DeletedSecret
-        :raises: ~azure.core.exceptions.ClientRequestError, if client failed to delete the secret
+        :raises: ~azure.core.exceptions.HttpResponseError, if client failed to delete the secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_keyvault.py
@@ -438,7 +438,7 @@ class SecretClient:
         request.format_parameters({'api-version': self._api_version})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
 
         bundle = DESERIALIZE('DeletedSecretBundle', response)
 
@@ -454,7 +454,7 @@ class SecretClient:
         :param str name: The name of the secret
         :return: The deleted secret.
         :rtype: ~azure.keyvault.secrets._models.DeletedSecret
-        :raises: ~azure.core.exceptions.ClientRequestError, if client failed to get the deleted secret
+        :raises: ~azure.core.exceptions.HttpResponseError, if client failed to get the deleted secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_keyvault.py
@@ -471,7 +471,7 @@ class SecretClient:
         request.format_parameters({'api-version': self._api_version})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
 
         bundle = DESERIALIZE('DeletedSecretBundle', response)
 
@@ -514,7 +514,7 @@ class SecretClient:
 
         :param str name: The name of the secret
         :returns: None
-        :raises: ~azure.core.exceptions.ClientRequestError, if client failed to return the purged secret
+        :raises: ~azure.core.exceptions.HttpResponseError, if client failed to return the purged secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_keyvault.py
@@ -532,7 +532,7 @@ class SecretClient:
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 204:
-            raise ClientRequestError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
         return
 
     def recover_deleted_secret(self, name, **kwargs):
@@ -546,7 +546,7 @@ class SecretClient:
         :param str name: The name of the secret
         :returns: The recovered deleted secret
         :rtype: ~azure.keyvault.secrets._models.SecretAttributes
-        :raises: ~azure.core.exceptions.ClientRequestError, if client failed to recover the deleted secret
+        :raises: ~azure.core.exceptions.HttpResponseError, if client failed to recover the deleted secret
 
         Example:
             .. literalinclude:: ../tests/test_examples_keyvault.py
@@ -564,7 +564,7 @@ class SecretClient:
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise ClientRequestError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
 
         bundle = DESERIALIZE('SecretBundle', response)
 
@@ -588,6 +588,6 @@ class SecretClient:
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise ClientRequestError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
 
         return response

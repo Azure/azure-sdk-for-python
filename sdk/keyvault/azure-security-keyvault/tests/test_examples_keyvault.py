@@ -7,7 +7,7 @@
 import time
 
 from azure.keyvault.secrets._client import SecretClient
-from azure.core.exceptions import ClientRequestError
+from azure.core.exceptions import HttpResponseError
 from devtools_testutils import ResourceGroupPreparer
 from keyvault_preparer import KeyVaultPreparer
 from keyvault_testcase import KeyvaultTestCase
@@ -77,7 +77,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             print(secret.expires)
 
             # [END set_secret]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
         try:
@@ -97,7 +97,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             print(secret.version)
             print(secret.vault_url)
             # [END get_secret]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
         try:
@@ -118,7 +118,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             print(updated_secret.tags)
 
             # [END update_secret_attributes]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
         try:
@@ -131,7 +131,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             print(deleted_secret.deleted_date)
 
             # [END delete_secret]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
     @ResourceGroupPreparer()
@@ -150,7 +150,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
                 print(secret.name)
 
             # [END list_secrets]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
         # pylint: disable=unused-variable
@@ -164,7 +164,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
                 print(secret.version)
 
             # [END list_secret_versions]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
         try:
@@ -179,7 +179,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
                 print(secret.name)
 
             # [END list_deleted_secrets]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
     @ResourceGroupPreparer()
@@ -197,7 +197,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             print(secret_backup)
 
             # [END backup_secret]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
         try:
@@ -212,7 +212,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             print(deleted_secret.name)
 
             # [END get_deleted_secret]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
         try:
@@ -225,7 +225,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             print(restored_secret.version)
 
             # [END restore_secret]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
     @ResourceGroupPreparer()
@@ -247,7 +247,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             print(recover_deleted_secret.name)
 
             # [END recover_deleted_secret]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
         try:
@@ -265,5 +265,5 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             secret_client.purge_deleted_secret('secret-name')
 
             # [END purge_deleted_secret]
-        except ClientRequestError:
+        except HttpResponseError:
             pass

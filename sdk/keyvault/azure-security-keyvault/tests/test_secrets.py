@@ -8,7 +8,7 @@
 from devtools_testutils import ResourceGroupPreparer
 from keyvault_preparer import KeyVaultPreparer
 from keyvault_testcase import KeyvaultTestCase
-from azure.core.exceptions import ClientRequestError
+from azure.core.exceptions import HttpResponseError
 
 from dateutil import parser as date_parse
 import time
@@ -127,7 +127,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
             assertRaises = self.assertRaisesRegexp
 
         # deleted secret isn't found
-        with assertRaises(ClientRequestError, r"not found"):
+        with assertRaises(HttpResponseError, r"not found"):
             client.get_secret(deleted.name, '')
 
     @ResourceGroupPreparer()
