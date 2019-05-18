@@ -99,7 +99,8 @@ class KeyClient:
             kty=key_type, key_size=size, key_ops=key_ops, key_attributes=attributes, tags=tags, curve=curve, **kwargs
         )
         body = self._serialize.body(create_params, "KeyCreateParameters")
-        request = HttpRequest("POST", url, headers, data=body)
+        request = HttpRequest("POST", url, headers)
+        request.set_json_body(body)
         request.format_parameters({"api-version": self.API_VERSION})
 
         response = self._pipeline.run(request, **kwargs).http_response
@@ -218,7 +219,8 @@ class KeyClient:
 
         update_params = KeyUpdateParameters(key_ops=key_ops, key_attributes=attributes, tags=tags)
         body = self._serialize.body(update_params, "KeyUpdateParameters")
-        request = HttpRequest("PATCH", url, headers=headers, data=body)
+        request = HttpRequest("PATCH", url, headers=headers)
+        request.set_json_body(body)
         request.format_parameters({"api-version": self.API_VERSION})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:

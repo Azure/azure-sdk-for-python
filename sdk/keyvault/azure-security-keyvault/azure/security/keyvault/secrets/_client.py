@@ -174,7 +174,8 @@ class SecretClient:
         secret = SecretSetParameters(secret_attributes=attributes, value=value, tags=tags, content_type=content_type)
         request_body = SERIALIZE.body(secret, "SecretSetParameters")
 
-        request = HttpRequest("PUT", url, headers, data=request_body)
+        request = HttpRequest("PUT", url, headers)
+        request.set_json_body(request_body)
 
         request.format_parameters(query_parameters)
 
@@ -232,7 +233,8 @@ class SecretClient:
 
         request_body = SERIALIZE.body(secret, "Secret")
 
-        request = HttpRequest("PATCH", url, headers, data=request_body)
+        request = HttpRequest("PATCH", url, headers)
+        request.set_json_body(request_body)
 
         request.format_parameters(query_parameters)
 
@@ -373,7 +375,8 @@ class SecretClient:
         restore_parameters = SecretRestoreParameters(secret_bundle_backup=backup)
         request_body = SERIALIZE.body(restore_parameters, "SecretRestoreParameters")
 
-        request = HttpRequest("POST", url, headers, data=request_body)
+        request = HttpRequest("POST", url, headers)
+        request.set_json_body(request_body)
 
         request.format_parameters(query_parameters)
 
