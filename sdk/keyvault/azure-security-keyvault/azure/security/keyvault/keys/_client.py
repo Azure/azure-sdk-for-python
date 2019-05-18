@@ -30,12 +30,7 @@ from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
 )
-from azure.core.pipeline.transport import (
-    RequestsTransport,
-    HttpRequest,
-    HttpResponse,
-    HttpTransport,
-)
+from azure.core.pipeline.transport import RequestsTransport, HttpRequest, HttpResponse, HttpTransport
 from msrest import Serializer, Deserializer
 
 
@@ -96,31 +91,12 @@ class KeyClient:
         self._deserialize = Deserializer(models)
         self._serialize = Serializer(models)
 
-    def create_key(
-        self,
-        name,
-        key_type,
-        size=None,
-        key_ops=None,
-        attributes=None,
-        tags=None,
-        curve=None,
-        **kwargs
-    ):
+    def create_key(self, name, key_type, size=None, key_ops=None, attributes=None, tags=None, curve=None, **kwargs):
         # type: (str, str, Optional[int], Optional[List[str]], Any, Any, Any, Any) -> Key
         url = "/".join([self.vault_url, "keys", name, "create"])
-        headers = {
-            "Content-Type": "application/json; charset=utf-8",
-            "x-ms-client-request-id": str(uuid.uuid1()),
-        }
+        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
         create_params = KeyCreateParameters(
-            kty=key_type,
-            key_size=size,
-            key_ops=key_ops,
-            key_attributes=attributes,
-            tags=tags,
-            curve=curve,
-            **kwargs
+            kty=key_type, key_size=size, key_ops=key_ops, key_attributes=attributes, tags=tags, curve=curve, **kwargs
         )
         body = self._serialize.body(create_params, "KeyCreateParameters")
         request = HttpRequest("POST", url, headers, data=body)
@@ -128,11 +104,7 @@ class KeyClient:
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise HttpResponseError(
-                "Request failed with code {}: '{}'".format(
-                    response.status_code, response.text()
-                )
-            )
+            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
 
         key = self._deserialize("Key", response)
 
@@ -146,11 +118,7 @@ class KeyClient:
         request.format_parameters({"api-version": self.API_VERSION})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise HttpResponseError(
-                "Request failed with code {}: '{}'".format(
-                    response.status_code, response.text()
-                )
-            )
+            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
         deleted_key = self._deserialize("DeletedKey", response)
 
         return deleted_key
@@ -177,11 +145,7 @@ class KeyClient:
         request.format_parameters({"api-version": self.API_VERSION})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise HttpResponseError(
-                "Request failed with code {}: '{}'".format(
-                    response.status_code, response.text()
-                )
-            )
+            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
         key = self._deserialize("Key", response)
 
         return key
@@ -195,11 +159,7 @@ class KeyClient:
         request.format_parameters({"api-version": self.API_VERSION})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise HttpResponseError(
-                "Request failed with code {}: '{}'".format(
-                    response.status_code, response.text()
-                )
-            )
+            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
         deleted_key = self._deserialize("DeletedKey", response)
 
         return deleted_key
@@ -231,11 +191,7 @@ class KeyClient:
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 204:
-            raise HttpResponseError(
-                "Request failed with code {}: '{}'".format(
-                    response.status_code, response.text()
-                )
-            )
+            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
 
         return
 
@@ -248,40 +204,25 @@ class KeyClient:
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise HttpResponseError(
-                "Request failed with code {}: '{}'".format(
-                    response.status_code, response.text()
-                )
-            )
+            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
 
         key = self._deserialize("Key", response)
 
         return key
 
-    def update_key(
-        self, name, version, key_ops=None, attributes=None, tags=None, **kwargs
-    ):
+    def update_key(self, name, version, key_ops=None, attributes=None, tags=None, **kwargs):
         # type: (str, str, Optional[List[str]], Mapping[str, str], Mapping[str, str], Any) -> Key
         url = "/".join([self.vault_url, "keys", name, version])
 
-        headers = {
-            "Content-Type": "application/json; charset=utf-8",
-            "x-ms-client-request-id": str(uuid.uuid1()),
-        }
+        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
 
-        update_params = KeyUpdateParameters(
-            key_ops=key_ops, key_attributes=attributes, tags=tags
-        )
+        update_params = KeyUpdateParameters(key_ops=key_ops, key_attributes=attributes, tags=tags)
         body = self._serialize.body(update_params, "KeyUpdateParameters")
         request = HttpRequest("PATCH", url, headers=headers, data=body)
         request.format_parameters({"api-version": self.API_VERSION})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise HttpResponseError(
-                "Request failed with code {}: '{}'".format(
-                    response.status_code, response.text()
-                )
-            )
+            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
         key = self._deserialize("Key", response)
 
         return key
@@ -304,11 +245,7 @@ class KeyClient:
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise HttpResponseError(
-                "Request failed with code {}: '{}'".format(
-                    response.status_code, response.text()
-                )
-            )
+            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
 
         return response
 

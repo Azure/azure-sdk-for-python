@@ -13,26 +13,28 @@ except ImportError:
 from collections import namedtuple
 
 
-_VaultId = namedtuple('VaultId', ['vault_url', 'collection', 'name', 'version'])
+_VaultId = namedtuple("VaultId", ["vault_url", "collection", "name", "version"])
 
 
 def _parse_vault_id(url):
     try:
         parsed_uri = parse.urlparse(url)
-    except Exception: # pylint: disable=broad-except
+    except Exception:  # pylint: disable=broad-except
         raise ValueError("'{}' is not not a valid url".format(url))
     if not (parsed_uri.scheme and parsed_uri.hostname):
         raise ValueError("'{}' is not not a valid url".format(url))
 
-    path = list(filter(None, parsed_uri.path.split('/')))
+    path = list(filter(None, parsed_uri.path.split("/")))
 
     if len(path) < 2 or len(path) > 3:
         raise ValueError("'{}' is not not a valid vault url".format(url))
 
-    return _VaultId(vault_url='{}://{}'.format(parsed_uri.scheme, parsed_uri.hostname),
-                    collection=path[0],
-                    name=path[1],
-                    version=path[2] if len(path) == 3 else None)
+    return _VaultId(
+        vault_url="{}://{}".format(parsed_uri.scheme, parsed_uri.hostname),
+        collection=path[0],
+        name=path[1],
+        version=path[2] if len(path) == 3 else None,
+    )
 
 
 # TODO: integrate with azure.core
@@ -41,7 +43,7 @@ class _BearerTokenCredentialPolicy(HTTPPolicy):
         self._credentials = credentials
 
     def send(self, request, **kwargs):
-        auth_header = 'Bearer ' + self._credentials.token['access_token']
-        request.http_request.headers['Authorization'] = auth_header
+        auth_header = "Bearer " + self._credentials.token["access_token"]
+        request.http_request.headers["Authorization"] = auth_header
 
         return self.next.send(request, **kwargs)

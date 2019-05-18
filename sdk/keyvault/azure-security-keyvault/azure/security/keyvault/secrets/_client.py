@@ -9,11 +9,7 @@ from datetime import datetime
 import uuid
 
 from azure.core.configuration import Configuration
-from azure.core.pipeline.policies import (
-    UserAgentPolicy,
-    RetryPolicy,
-    RedirectPolicy,
-)
+from azure.core.pipeline.policies import UserAgentPolicy, RetryPolicy, RedirectPolicy
 from azure.core.pipeline.transport import RequestsTransport, HttpRequest, HttpResponse
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import HttpResponseError
@@ -29,11 +25,7 @@ from .._generated.v7_0.models import (
 )
 from .._generated.v7_0.models import SecretAttributes as _SecretAttributes
 
-from ._models import (
-    Secret,
-    DeletedSecret,
-    SecretAttributes,
-)
+from ._models import Secret, DeletedSecret, SecretAttributes
 
 
 class SecretClient:
@@ -55,6 +47,7 @@ class SecretClient:
             :dedent: 4
             :caption: Creates a new instance of the Secret client
     """
+
     _api_version = "7.0"
 
     @staticmethod
@@ -62,7 +55,7 @@ class SecretClient:
         """Creates a default configuration for SecretClient.
         """
         config = Configuration(**kwargs)
-        config.user_agent_policy = UserAgentPolicy('SecretClient', **kwargs)
+        config.user_agent_policy = UserAgentPolicy("SecretClient", **kwargs)
         config.headers_policy = None
         config.retry_policy = RetryPolicy(**kwargs)
         config.redirect_policy = RedirectPolicy(**kwargs)
@@ -70,10 +63,10 @@ class SecretClient:
 
     def __init__(self, vault_url, credentials, config=None, **kwargs):
         if not credentials:
-            raise ValueError('credentials')
+            raise ValueError("credentials")
 
         if not vault_url:
-            raise ValueError('vault_url')
+            raise ValueError("vault_url")
 
         self._vault_url = vault_url
         config = config or SecretClient.create_config(**kwargs)
@@ -118,16 +111,13 @@ class SecretClient:
         """
         if version is None:
             version = ""
-        url = '/'.join((self._vault_url, 'secrets', name, version))
+        url = "/".join((self._vault_url, "secrets", name, version))
 
-        query_parameters = {'api-version': self._api_version}
+        query_parameters = {"api-version": self._api_version}
 
-        headers = {
-            'Content-Type': 'application/json; charset=utf-8',
-            'x-ms-client-request-id': str(uuid.uuid1())
-        }
+        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
 
-        request = HttpRequest('GET', url, headers)
+        request = HttpRequest("GET", url, headers)
 
         request.format_parameters(query_parameters)
 
@@ -136,12 +126,12 @@ class SecretClient:
         if response.status_code != 200:
             raise HttpResponseError(response=response)
 
-        bundle = DESERIALIZE('SecretBundle', response)
+        bundle = DESERIALIZE("SecretBundle", response)
 
         return Secret._from_secret_bundle(bundle)
 
     def set_secret(
-            self, name, value, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
+        self, name, value, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
     ):
         # type: (str, str, Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Secret
         """Sets a secret in the vault.
@@ -174,20 +164,17 @@ class SecretClient:
                 :caption: Set a secret in the key vault
 
         """
-        url = '/'.join((self._vault_url, 'secrets', name))
+        url = "/".join((self._vault_url, "secrets", name))
 
-        query_parameters = {'api-version': self._api_version}
+        query_parameters = {"api-version": self._api_version}
 
-        headers = {
-            'Content-Type': 'application/json; charset=utf-8',
-            'x-ms-client-request-id': str(uuid.uuid1())
-        }
+        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
 
         attributes = _SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
         secret = SecretSetParameters(secret_attributes=attributes, value=value, tags=tags, content_type=content_type)
-        request_body = SERIALIZE.body(secret, 'SecretSetParameters')
+        request_body = SERIALIZE.body(secret, "SecretSetParameters")
 
-        request = HttpRequest('PUT', url, headers, data=request_body)
+        request = HttpRequest("PUT", url, headers, data=request_body)
 
         request.format_parameters(query_parameters)
 
@@ -196,12 +183,12 @@ class SecretClient:
         if response.status_code != 200:
             raise HttpResponseError(response=response)
 
-        bundle = DESERIALIZE('SecretBundle', response)
+        bundle = DESERIALIZE("SecretBundle", response)
 
         return Secret._from_secret_bundle(bundle)
 
     def update_secret_attributes(
-            self, name, version, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
+        self, name, version, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
     ):
         # type: (str, str, Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> SecretAttributes
         """Updates the attributes associated with a specified secret in the key vault.
@@ -234,21 +221,18 @@ class SecretClient:
                 :caption: Updates the attributes associated with a specified secret in the key vault
 
         """
-        url = '/'.join((self._vault_url, 'secrets', name, version))
+        url = "/".join((self._vault_url, "secrets", name, version))
 
         attributes = _SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
         secret = SecretUpdateParameters(secret_attributes=attributes, tags=tags, content_type=content_type)
 
-        query_parameters = {'api-version': self._api_version}
+        query_parameters = {"api-version": self._api_version}
 
-        headers = {
-            'Content-Type': 'application/json; charset=utf-8',
-            'x-ms-client-request-id': str(uuid.uuid1())
-        }
+        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
 
-        request_body = SERIALIZE.body(secret, 'Secret')
+        request_body = SERIALIZE.body(secret, "Secret")
 
-        request = HttpRequest('PATCH', url, headers, data=request_body)
+        request = HttpRequest("PATCH", url, headers, data=request_body)
 
         request.format_parameters(query_parameters)
 
@@ -257,7 +241,7 @@ class SecretClient:
         if response.status_code != 200:
             raise HttpResponseError(response=response)
 
-        bundle = DESERIALIZE('SecretBundle', response)
+        bundle = DESERIALIZE("SecretBundle", response)
 
         return SecretAttributes._from_secret_bundle(bundle)
 
@@ -283,7 +267,7 @@ class SecretClient:
                 :caption: Lists all the secrets in the vault
 
         """
-        url = '{}/secrets'.format(self._vault_url)
+        url = "{}/secrets".format(self._vault_url)
         max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = SecretItemPaged(paging, DESERIALIZE)
@@ -312,7 +296,7 @@ class SecretClient:
 
         """
 
-        url = '{}/secrets/{}/versions'.format(self._vault_url, name)
+        url = "{}/secrets/{}/versions".format(self._vault_url, name)
         max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = SecretItemPaged(paging, DESERIALIZE)
@@ -340,16 +324,13 @@ class SecretClient:
                 :caption: Backs up the specified secret
 
         """
-        url = '/'.join((self._vault_url, 'secrets', name, 'backup'))
+        url = "/".join((self._vault_url, "secrets", name, "backup"))
 
-        query_parameters = {'api-version': self._api_version}
+        query_parameters = {"api-version": self._api_version}
 
-        headers = {
-            'Content-Type': 'application/json; charset=utf-8',
-            'x-ms-client-request-id': str(uuid.uuid1())
-        }
+        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
 
-        request = HttpRequest('POST', url, headers)
+        request = HttpRequest("POST", url, headers)
 
         request.format_parameters(query_parameters)
 
@@ -358,7 +339,7 @@ class SecretClient:
         if response.status_code != 200:
             raise HttpResponseError(response=response)
 
-        result = DESERIALIZE('BackupSecretResult', response)
+        result = DESERIALIZE("BackupSecretResult", response)
 
         return result.value
 
@@ -383,19 +364,16 @@ class SecretClient:
                 :caption: Restores a backed up secret to the vault
 
         """
-        url = '/'.join((self._vault_url, 'secrets', 'restore'))
+        url = "/".join((self._vault_url, "secrets", "restore"))
 
-        query_parameters = {'api-version': self._api_version}
+        query_parameters = {"api-version": self._api_version}
 
-        headers = {
-            'Content-Type': 'application/json; charset=utf-8',
-            'x-ms-client-request-id': str(uuid.uuid1())
-        }
+        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
 
         restore_parameters = SecretRestoreParameters(secret_bundle_backup=backup)
-        request_body = SERIALIZE.body(restore_parameters, 'SecretRestoreParameters')
+        request_body = SERIALIZE.body(restore_parameters, "SecretRestoreParameters")
 
-        request = HttpRequest('POST', url, headers, data=request_body)
+        request = HttpRequest("POST", url, headers, data=request_body)
 
         request.format_parameters(query_parameters)
 
@@ -404,7 +382,7 @@ class SecretClient:
         if response.status_code != 200:
             raise HttpResponseError(response=response)
 
-        bundle = DESERIALIZE('SecretBundle', response)
+        bundle = DESERIALIZE("SecretBundle", response)
 
         return SecretAttributes._from_secret_bundle(bundle)
 
@@ -430,15 +408,15 @@ class SecretClient:
                 :caption: Deletes a secret
 
         """
-        url = '/'.join([self._vault_url, 'secrets', name])
+        url = "/".join([self._vault_url, "secrets", name])
 
-        request = HttpRequest('DELETE', url)
-        request.format_parameters({'api-version': self._api_version})
+        request = HttpRequest("DELETE", url)
+        request.format_parameters({"api-version": self._api_version})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
             raise HttpResponseError(response=response)
 
-        bundle = DESERIALIZE('DeletedSecretBundle', response)
+        bundle = DESERIALIZE("DeletedSecretBundle", response)
 
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
@@ -465,13 +443,13 @@ class SecretClient:
         """
         url = "/".join([self.vault_url, "deletedsecrets", name])
 
-        request = HttpRequest('GET', url)
-        request.format_parameters({'api-version': self._api_version})
+        request = HttpRequest("GET", url)
+        request.format_parameters({"api-version": self._api_version})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
             raise HttpResponseError(response=response)
 
-        bundle = DESERIALIZE('DeletedSecretBundle', response)
+        bundle = DESERIALIZE("DeletedSecretBundle", response)
 
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
@@ -496,7 +474,7 @@ class SecretClient:
                 :caption: Lists the deleted secrets of the vault
 
         """
-        url = '{}/deletedsecrets'.format(self._vault_url)
+        url = "{}/deletedsecrets".format(self._vault_url)
         max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
         pages = DeletedSecretItemPaged(paging, DESERIALIZE)
@@ -525,8 +503,8 @@ class SecretClient:
         """
         url = "/".join([self.vault_url, "deletedsecrets", name])
 
-        request = HttpRequest('DELETE', url)
-        request.format_parameters({'api-version': self._api_version})
+        request = HttpRequest("DELETE", url)
+        request.format_parameters({"api-version": self._api_version})
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 204:
@@ -557,14 +535,14 @@ class SecretClient:
         """
         url = "/".join([self.vault_url, "deletedsecrets", name, "recover"])
 
-        request = HttpRequest('POST', url)
-        request.format_parameters({'api-version': self._api_version})
+        request = HttpRequest("POST", url)
+        request.format_parameters({"api-version": self._api_version})
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
             raise HttpResponseError(response=response)
 
-        bundle = DESERIALIZE('SecretBundle', response)
+        bundle = DESERIALIZE("SecretBundle", response)
 
         return SecretAttributes._from_secret_bundle(bundle)
 
@@ -574,13 +552,13 @@ class SecretClient:
             url = next_link
             query_parameters = {}
         else:
-            query_parameters = {'api-version': self._api_version}
+            query_parameters = {"api-version": self._api_version}
             if max_page_size is not None:
-                query_parameters['maxresults'] = str(max_page_size)
+                query_parameters["maxresults"] = str(max_page_size)
 
-        headers = {'x-ms-client-request-id': str(uuid.uuid1())}
+        headers = {"x-ms-client-request-id": str(uuid.uuid1())}
 
-        request = HttpRequest('GET', url, headers)
+        request = HttpRequest("GET", url, headers)
         request.format_parameters(query_parameters)
 
         response = self._pipeline.run(request, **kwargs).http_response

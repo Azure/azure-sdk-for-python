@@ -206,11 +206,7 @@ class KeyAttributes(Model):
      ~azure.keyvault.v7_0.models.DeletionRecoveryLevel
     """
 
-    _validation = {
-        "created": {"readonly": True},
-        "updated": {"readonly": True},
-        "recovery_level": {"readonly": True},
-    }
+    _validation = {"created": {"readonly": True}, "updated": {"readonly": True}, "recovery_level": {"readonly": True}}
 
     _attribute_map = {
         "enabled": {"key": "enabled", "type": "bool"},

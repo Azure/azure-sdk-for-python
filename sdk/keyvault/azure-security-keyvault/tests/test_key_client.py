@@ -74,9 +74,7 @@ class KeyClientTests(KeyvaultTestCase):
             sleep(30)
         client.purge_deleted_key(key_name)
         # verify the purge
-        recovery_ids_after_purge = {
-            key.recovery_id for key in client.get_all_deleted_keys()
-        }
+        recovery_ids_after_purge = {key.recovery_id for key in client.get_all_deleted_keys()}
         assert second_delete_result.recovery_id not in recovery_ids_after_purge
 
         return

@@ -12,21 +12,19 @@ from devtools_testutils import ResourceGroupPreparer
 from keyvault_preparer import KeyVaultPreparer
 from keyvault_testcase import KeyvaultTestCase
 
+
 def create_vault_client():
-    client_id = ''
-    client_secret = ''
-    tenant_id = ''
-    vault_url = ''
+    client_id = ""
+    client_secret = ""
+    tenant_id = ""
+    vault_url = ""
 
     # [START create_vault_client
     from azure.keyvault.vault_client import VaultClient
     from azure.common.credentials import ServicePrincipalCredentials
 
     credentials = ServicePrincipalCredentials(
-        client_id=client_id,
-        secret=client_secret,
-        tenant=tenant_id,
-        resource="https://vault.azure.net"
+        client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
     )
 
     # Create a new Vault client using Azure credentials
@@ -34,21 +32,19 @@ def create_vault_client():
     # [END create_vault_client]
     return vault_client
 
+
 def create_secret_client():
-    client_id = ''
-    client_secret = ''
-    tenant_id = ''
-    vault_url = ''
+    client_id = ""
+    client_secret = ""
+    tenant_id = ""
+    vault_url = ""
 
     # [START create_secret_client
     from azure.common.credentials import ServicePrincipalCredentials
     from azure.keyvault.secrets._client import SecretClient
 
     credentials = ServicePrincipalCredentials(
-        client_id=client_id,
-        secret=client_secret,
-        tenant=tenant_id,
-        resource='https://vault.azure.net'
+        client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
     )
 
     # Create a new Secret client using Azure credentials
@@ -56,8 +52,8 @@ def create_secret_client():
     # [END create_secret_client]
     return secret_client
 
-class TestExamplesKeyVault(KeyvaultTestCase):
 
+class TestExamplesKeyVault(KeyvaultTestCase):
     @ResourceGroupPreparer()
     @KeyVaultPreparer(enable_soft_delete=True)
     def test_example_secret_crud_operations(self, vault_client, **kwargs):
@@ -66,10 +62,10 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             # [START set_secret]
             from dateutil import parser as date_parse
 
-            expires = date_parse.parse('2050-02-02T08:00:00.000Z')
+            expires = date_parse.parse("2050-02-02T08:00:00.000Z")
 
             # create a secret with optional arguments
-            secret = secret_client.set_secret('secret-name', 'secret-value', enabled=True, expires=expires)
+            secret = secret_client.set_secret("secret-name", "secret-value", enabled=True, expires=expires)
 
             print(secret.version)
             print(secret.created)
@@ -85,11 +81,11 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             secret_version = secret.version
 
             # get secret with version
-            secret = secret_client.get_secret('secret-name', secret_version)
+            secret = secret_client.get_secret("secret-name", secret_version)
 
             # if the version argument is the empty string or None, the latest
             # version of the secret will be returned
-            secret = secret_client.get_secret('secret-name', '')
+            secret = secret_client.get_secret("secret-name", "")
 
             # gets a secret properties
             print(secret.id)
@@ -105,11 +101,11 @@ class TestExamplesKeyVault(KeyvaultTestCase):
 
             # update attributes of an existing secret
 
-            content_type = 'text/plain'
-            tags = {'foo': 'updated tag'}
+            content_type = "text/plain"
+            tags = {"foo": "updated tag"}
             secret_version = secret.version
             updated_secret = secret_client.update_secret_attributes(
-                'secret-name', secret_version, content_type=content_type, tags=tags
+                "secret-name", secret_version, content_type=content_type, tags=tags
             )
 
             print(updated_secret.version)
@@ -125,7 +121,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             # [START delete_secret]
 
             # delete a secret
-            deleted_secret = secret_client.delete_secret('secret-name')
+            deleted_secret = secret_client.delete_secret("secret-name")
 
             print(deleted_secret.name)
             print(deleted_secret.deleted_date)
@@ -157,7 +153,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
         try:
             # [START list_secret_versions]
             # gets a list of all versions of a secret
-            secret_versions = secret_client.list_secret_versions('secret-name')
+            secret_versions = secret_client.list_secret_versions("secret-name")
 
             for secret in secrets:
                 # the list doesn't include secret values
@@ -186,7 +182,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
     @KeyVaultPreparer(enable_soft_delete=True)
     def test_example_secrets_backup_restore(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
-        created_secret = secret_client.set_secret('secret-name', 'secret-value')
+        created_secret = secret_client.set_secret("secret-name", "secret-value")
         secret_name = created_secret.name
         try:
             # [START backup_secret]
@@ -208,7 +204,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
 
             # [START get_deleted_secret]
             # gets a deleted secret (requires soft-delete enabled for the vault)
-            deleted_secret = secret_client.get_deleted_secret('secret-name')
+            deleted_secret = secret_client.get_deleted_secret("secret-name")
             print(deleted_secret.name)
 
             # [END get_deleted_secret]
@@ -232,7 +228,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
     @KeyVaultPreparer(enable_soft_delete=True)
     def test_example_secrets_recover_purge(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
-        created_secret = secret_client.set_secret('secret-name', 'secret-value')
+        created_secret = secret_client.set_secret("secret-name", "secret-value")
         secret_client.delete_secret(created_secret.name)
         if self.is_live:
             # wait a second to ensure the secret has been deleted
@@ -242,7 +238,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             # [START recover_deleted_secret]
 
             # recover deleted secret to its latest version
-            recover_deleted_secret = secret_client.recover_deleted_secret('secret-name')
+            recover_deleted_secret = secret_client.recover_deleted_secret("secret-name")
             print(recover_deleted_secret.id)
             print(recover_deleted_secret.name)
 
@@ -262,7 +258,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
 
             # if the vault has soft-delete enabled, purge permanently deletes the secret
             # (without soft-delete, an ordinary delete is permanent)
-            secret_client.purge_deleted_secret('secret-name')
+            secret_client.purge_deleted_secret("secret-name")
 
             # [END purge_deleted_secret]
         except HttpResponseError:

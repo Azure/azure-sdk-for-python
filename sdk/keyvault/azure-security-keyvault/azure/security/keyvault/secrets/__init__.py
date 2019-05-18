@@ -7,7 +7,4 @@
 from ._client import SecretClient
 from ._models import Secret, SecretAttributes, DeletedSecret
 
-__all__ = ['SecretClient',
-           'SecretAttributes',
-           'Secret',
-           'DeletedSecret']
+__all__ = ["SecretClient", "SecretAttributes", "Secret", "DeletedSecret"]
