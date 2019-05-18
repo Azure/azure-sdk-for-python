@@ -135,7 +135,7 @@ class SecretClient:
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise HttpResponseError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise HttpResponseError(response=response)
 
         bundle = DESERIALIZE('SecretBundle', response)
 
@@ -195,8 +195,7 @@ class SecretClient:
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise HttpResponseError('Request failed status code {}.  {}'.format(
-                response.status_code, response.text()))
+            raise HttpResponseError(response=response)
 
         bundle = DESERIALIZE('SecretBundle', response)
 
@@ -257,7 +256,7 @@ class SecretClient:
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise HttpResponseError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise HttpResponseError(response=response)
 
         bundle = DESERIALIZE('SecretBundle', response)
 
@@ -288,7 +287,7 @@ class SecretClient:
         url = '{}/secrets'.format(self._vault_url)
         max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
-        pages = SecretItemPaged(paging, DESERIALIZE.dependencies)
+        pages = SecretItemPaged(paging, DESERIALIZE)
         return (SecretAttributes._from_secret_item(item) for item in pages)
 
     def list_secret_versions(self, name, **kwargs):
@@ -317,7 +316,7 @@ class SecretClient:
         url = '{}/secrets/{}/versions'.format(self._vault_url, name)
         max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
-        pages = SecretItemPaged(paging, DESERIALIZE.dependencies)
+        pages = SecretItemPaged(paging, DESERIALIZE)
         return (SecretAttributes._from_secret_item(item) for item in pages)
 
     def backup_secret(self, name, **kwargs):
@@ -358,7 +357,7 @@ class SecretClient:
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise HttpResponseError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise HttpResponseError(response=response)
 
         result = DESERIALIZE('BackupSecretResult', response)
 
@@ -404,7 +403,7 @@ class SecretClient:
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise HttpResponseError('Request failed status code {}.  {}'.format(response.status_code, response.text()))
+            raise HttpResponseError(response=response)
 
         bundle = DESERIALIZE('SecretBundle', response)
 
@@ -438,7 +437,7 @@ class SecretClient:
         request.format_parameters({'api-version': self._api_version})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+            raise HttpResponseError(response=response)
 
         bundle = DESERIALIZE('DeletedSecretBundle', response)
 
@@ -471,7 +470,7 @@ class SecretClient:
         request.format_parameters({'api-version': self._api_version})
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+            raise HttpResponseError(response=response)
 
         bundle = DESERIALIZE('DeletedSecretBundle', response)
 
@@ -501,7 +500,7 @@ class SecretClient:
         url = '{}/deletedsecrets'.format(self._vault_url)
         max_page_size = kwargs.get("max_page_size", None)
         paging = functools.partial(self._internal_paging, url, max_page_size)
-        pages = DeletedSecretItemPaged(paging, DESERIALIZE.dependencies)
+        pages = DeletedSecretItemPaged(paging, DESERIALIZE)
         return (DeletedSecret._from_deleted_secret_item(item) for item in pages)
 
     def purge_deleted_secret(self, name, **kwargs):
@@ -532,7 +531,7 @@ class SecretClient:
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 204:
-            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+            raise HttpResponseError(response=response)
         return
 
     def recover_deleted_secret(self, name, **kwargs):
@@ -564,7 +563,7 @@ class SecretClient:
 
         response = self._pipeline.run(request, **kwargs).http_response
         if response.status_code != 200:
-            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+            raise HttpResponseError(response=response)
 
         bundle = DESERIALIZE('SecretBundle', response)
 
@@ -588,6 +587,6 @@ class SecretClient:
         response = self._pipeline.run(request, **kwargs).http_response
 
         if response.status_code != 200:
-            raise HttpResponseError("Request failed with code {}: '{}'".format(response.status_code, response.text()))
+            raise HttpResponseError(response=response)
 
         return response

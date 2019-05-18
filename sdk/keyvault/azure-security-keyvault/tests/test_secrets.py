@@ -127,7 +127,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
             assertRaises = self.assertRaisesRegexp
 
         # deleted secret isn't found
-        with assertRaises(HttpResponseError, r"not found"):
+        with assertRaises(HttpResponseError, r"(?i)not found"):
             client.get_secret(deleted.name, '')
 
     @ResourceGroupPreparer()
