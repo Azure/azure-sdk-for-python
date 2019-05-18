@@ -9,6 +9,8 @@ from azure.eventhub.common import EventData, EventHubError, Offset
 from azure.eventhub.client import EventHubClient
 from azure.eventhub.sender import Sender
 from azure.eventhub.receiver import Receiver
+from uamqp.constants import MessageSendResult
+from uamqp.constants import TransportType
 
 __all__ = [
     "EventData",
@@ -17,5 +19,7 @@ __all__ = [
     "EventHubClient",
     "Sender",
     "Receiver",
+    "MessageSendResult",
+    "TransportType",
 ]
 

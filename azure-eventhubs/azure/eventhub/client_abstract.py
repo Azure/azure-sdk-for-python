@@ -101,13 +101,8 @@ class EventHubClientAbstract(object):
 
     """
 
-    @staticmethod
-    def create_config(**kwargs):
-        config = Configuration(**kwargs)
-        return config
-
     def __init__(
-            self, address, username=None, password=None, sas_token=None, configuration=None, **kwargs):
+            self, address, username=None, password=None, sas_token=None, aad_credential=None, **kwargs):
         """
         Constructs a new EventHubClient with the given address URL.
 
@@ -138,6 +133,7 @@ class EventHubClientAbstract(object):
         self.container_id = "eventhub.pysdk-" + str(uuid.uuid4())[:8]
         self.sas_token = sas_token
         self.address = urlparse(address)
+        self.aad_credential = aad_credential
         self.eh_name = self.address.path.lstrip('/')
         # self.http_proxy = kwargs.get("http_proxy")
         self.keep_alive = kwargs.get("keep_alive", 30)
@@ -157,13 +153,13 @@ class EventHubClientAbstract(object):
 
         self.clients = []
         self.stopped = False
-        self.config = self.create_config(**kwargs)
-        self.debug = self.config.network_trace_policy.network_trace_logging,
+        self.config = Configuration(**kwargs)
+        self.debug = self.config.network_tracing
 
         log.info("%r: Created the Event Hub client", self.container_id)
 
     @classmethod
-    def from_sas_token(cls, address, sas_token, eventhub=None, configuration=None, **kwargs):
+    def from_sas_token(cls, address, sas_token, eventhub=None, **kwargs):
         """Create an EventHubClient from an existing auth token or token generator.
 
         :param address: The Event Hub address URL
@@ -195,10 +191,10 @@ class EventHubClientAbstract(object):
 
         """
         address = _build_uri(address, eventhub)
-        return cls(address, sas_token=sas_token, configuration=configuration, **kwargs)
+        return cls(address, sas_token=sas_token, **kwargs)
 
     @classmethod
-    def from_connection_string(cls, conn_str, eventhub=None, configuration=None, **kwargs):
+    def from_connection_string(cls, conn_str, eventhub=None, **kwargs):
         """Create an EventHubClient from a connection string.
 
         :param conn_str: The connection string.
@@ -229,10 +225,10 @@ class EventHubClientAbstract(object):
         address, policy, key, entity = _parse_conn_str(conn_str)
         entity = eventhub or entity
         address = _build_uri(address, entity)
-        return cls(address, username=policy, password=key, configuration=configuration, **kwargs)
+        return cls(address, username=policy, password=key, **kwargs)
 
     @classmethod
-    def from_iothub_connection_string(cls, conn_str, configuration=None, **kwargs):
+    def from_iothub_connection_string(cls, conn_str, **kwargs):
         """
         Create an EventHubClient from an IoTHub connection string.
 
@@ -262,7 +258,7 @@ class EventHubClientAbstract(object):
         hub_name = address.split('.')[0]
         username = "{}@sas.root.{}".format(policy, hub_name)
         password = _generate_sas_token(address, policy, key)
-        client = cls("amqps://" + address, username=username, password=password, configuration=configuration, **kwargs)
+        client = cls("amqps://" + address, username=username, password=password, **kwargs)
         client._auth_config = {  # pylint: disable=protected-access
             'iot_username': policy,
             'iot_password': key,
@@ -270,6 +266,12 @@ class EventHubClientAbstract(object):
             'password': password}
         return client
 
+    @classmethod
+    def from_aad_credential(cls, address, aad_credential, eventhub=None, **kwargs):
+        address = _build_uri(address, eventhub)
+        return cls(address, aad_credential=aad_credential, **kwargs)
+
+    @abstractmethod
     def _create_auth(self, username=None, password=None):
         pass
 
@@ -287,12 +289,6 @@ class EventHubClientAbstract(object):
         properties["platform"] = sys.platform
         return properties
 
-    def _close_clients(self):
-        pass
-
-    def _start_clients(self):
-        pass
-
     def _process_redirect_uri(self, redirect):
         redirect_uri = redirect.address.decode('utf-8')
         auth_uri, _, _ = redirect_uri.partition("/ConsumerGroups")
@@ -301,27 +297,16 @@ class EventHubClientAbstract(object):
         self.eh_name = self.address.path.lstrip('/')
         self.mgmt_target = redirect_uri
 
-    def _handle_redirect(self, redirects):
+    @abstractmethod
+    def get_eventhub_information(self):
         pass
 
     @abstractmethod
-    def run(self):
-        pass
-
-    @abstractmethod
-    def stop(self):
-        pass
-
-    @abstractmethod
-    def get_eventhub_info(self):
-        pass
-
-    @abstractmethod
-    def add_receiver(
+    def create_receiver(
             self, consumer_group, partition, epoch=None, offset=None, prefetch=300,
             operation=None):
         pass
 
     @abstractmethod
-    def add_sender(self, partition=None, operation=None, send_timeout=60):
+    def create_sender(self, partition=None, operation=None, send_timeout=60):
         pass
