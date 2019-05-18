@@ -1,3 +1,9 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from msrest.paging import Paged
 from msrest.serialization import Model
 from .._internal import _parse_vault_id
