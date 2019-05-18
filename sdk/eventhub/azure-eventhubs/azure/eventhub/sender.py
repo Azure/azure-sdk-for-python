@@ -10,8 +10,9 @@ import time
 
 from uamqp import constants, errors
 from uamqp import SendClient
+from uamqp.constants import MessageSendResult
 
-from azure.eventhub.common import EventHubError, _error_handler
+from azure.eventhub.common import EventHubError, EventData, BatchSendEventData, _error_handler
 
 log = logging.getLogger(__name__)
 
@@ -30,7 +31,7 @@ class Sender(object):
 
     """
 
-    def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True):
+    def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=30, auto_reconnect=True):
         """
         Instantiate an EventHub event Sender handler.
 
@@ -60,6 +61,7 @@ class Sender(object):
         self.error = None
         self.keep_alive = keep_alive
         self.auto_reconnect = auto_reconnect
+        # max_retries = client.config.retry_policy.max_retries
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.reconnect_backoff = 1
         self.name = "EHSender-{}".format(uuid.uuid4())
@@ -235,37 +237,10 @@ class Sender(object):
             self.error = EventHubError("This send handler is now closed.")
         self._handler.close()
 
-    def send(self, event_data):
-        """
-        Sends an event data and blocks until acknowledgement is
-        received or operation times out.
-
-        :param event_data: The event to be sent.
-        :type event_data: ~azure.eventhub.common.EventData
-        :raises: ~azure.eventhub.common.EventHubError if the message fails to
-         send.
-        :return: The outcome of the message send.
-        :rtype: ~uamqp.constants.MessageSendResult
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START eventhub_client_sync_send]
-                :end-before: [END eventhub_client_sync_send]
-                :language: python
-                :dedent: 4
-                :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
-
-        """
-        if self.error:
-            raise self.error
-        if not self.running:
-            raise ValueError("Unable to send until client has been started.")
-        if event_data.partition_key and self.partition:
-            raise ValueError("EventData partition key cannot be used with a partition sender.")
-        event_data.message.on_send_complete = self._on_outcome
+    def _send_event_data(self, event_data):
         try:
             self._handler.send_message(event_data.message)
-            if self._outcome != constants.MessageSendResult.Ok:
+            if self._outcome != MessageSendResult.Ok:
                 raise Sender._error(self._outcome, self._condition)
         except errors.MessageException as failed:
             error = EventHubError(str(failed), failed)
@@ -300,6 +275,71 @@ class Sender(object):
         else:
             return self._outcome
 
+    def send(self, event_data):
+        """
+        Sends an event data and blocks until acknowledgement is
+        received or operation times out.
+
+        :param event_data: The event to be sent.
+        :type event_data: ~azure.eventhub.common.EventData
+        :raises: ~azure.eventhub.common.EventHubError if the message fails to
+         send.
+        :return: The outcome of the message send.
+        :rtype: ~uamqp.constants.MessageSendResult
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_client_sync_send]
+                :end-before: [END eventhub_client_sync_send]
+                :language: python
+                :dedent: 4
+                :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
+
+        """
+        if self.error:
+            raise self.error
+        if not self.running:
+            self.open()
+        if event_data.partition_key and self.partition:
+            raise ValueError("EventData partition key cannot be used with a partition sender.")
+        event_data.message.on_send_complete = self._on_outcome
+        return self._send_event_data(event_data)
+
+    def send_batch(self, batch_event_data):
+        """
+        Sends an event data and blocks until acknowledgement is
+        received or operation times out.
+
+        :param event_data: The event to be sent.
+        :type event_data: ~azure.eventhub.common.EventData
+        :raises: ~azure.eventhub.common.EventHubError if the message fails to
+         send.
+        :return: The outcome of the message send.
+        :rtype: ~uamqp.constants.MessageSendResult
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_client_sync_send]
+                :end-before: [END eventhub_client_sync_send]
+                :language: python
+                :dedent: 4
+                :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
+
+        """
+        if self.error:
+            raise self.error
+        event_data_list = list(batch_event_data)
+        if len(event_data_list) == 0:
+            raise ValueError("batch_event_data must not be empty")
+        for i in range(1, len(event_data_list)):
+            if event_data_list[i].partition_key != event_data_list[i-1].partition_key:
+                raise ValueError("partition key of all EventData must be the same if being sent in a batch")
+        if not self.running:
+            self.open()
+        wrapper_event_data = BatchSendEventData(event_data_list)
+        wrapper_event_data.message.on_send_complete = self._on_outcome
+        return self._send_event_data(wrapper_event_data)
+
     def transfer(self, event_data, callback=None):
         """
         Transfers an event data and notifies the callback when the operation is done.
@@ -322,7 +362,7 @@ class Sender(object):
         if self.error:
             raise self.error
         if not self.running:
-            raise ValueError("Unable to send until client has been started.")
+            self.open()
         if event_data.partition_key and self.partition:
             raise ValueError("EventData partition key cannot be used with a partition sender.")
         if callback:
@@ -345,7 +385,7 @@ class Sender(object):
         if self.error:
             raise self.error
         if not self.running:
-            raise ValueError("Unable to send until client has been started.")
+            self.open()
         try:
             self._handler.wait()
         except (errors.TokenExpired, errors.AuthenticationException):
@@ -383,6 +423,12 @@ class Sender(object):
         self._outcome = outcome
         self._condition = condition
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close(exc_val)
+
     @staticmethod
     def _error(outcome, condition):
-        return None if outcome == constants.MessageSendResult.Ok else EventHubError(outcome, condition)
+        return None if outcome == MessageSendResult.Ok else EventHubError(outcome, condition)

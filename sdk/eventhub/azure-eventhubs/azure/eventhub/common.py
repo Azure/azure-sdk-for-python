@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
 
+from enum import Enum
 import datetime
 import calendar
 import json
@@ -83,7 +84,7 @@ class EventData(object):
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
     PROP_DEVICE_ID = b"iothub-connection-device-id"
 
-    def __init__(self, body=None, batch=None, to_device=None, message=None):
+    def __init__(self, body=None, to_device=None, message=None):
         """
         Initialize EventData.
 
@@ -102,9 +103,7 @@ class EventData(object):
         self.msg_properties = MessageProperties()
         if to_device:
             self.msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
-        if batch:
-            self.message = BatchMessage(data=batch, multi_messages=True, properties=self.msg_properties)
-        elif message:
+        if message:
             self.message = message
             self.msg_properties = message.properties
             self._annotations = message.annotations
@@ -257,6 +256,16 @@ class EventData(object):
             return json.loads(data_str)
         except Exception as e:
             raise TypeError("Event data is not compatible with JSON type: {}".format(e))
+
+    def encode_message(self):
+        return self.message.encode_message()
+
+
+class BatchSendEventData(EventData):
+    def __init__(self, batch_event_data):
+        # TODO: rethink if to_device should be included in
+        self.message = BatchMessage(data=batch_event_data, multi_messages=True, properties=None)
+
 
 
 class Offset(object):
