@@ -238,6 +238,8 @@ class Sender(object):
         self._handler.close()
 
     def _send_event_data(self, event_data):
+        if not self.running:
+            self.open()
         try:
             self._handler.send_message(event_data.message)
             if self._outcome != MessageSendResult.Ok:
@@ -298,8 +300,6 @@ class Sender(object):
         """
         if self.error:
             raise self.error
-        if not self.running:
-            self.open()
         if event_data.partition_key and self.partition:
             raise ValueError("EventData partition key cannot be used with a partition sender.")
         event_data.message.on_send_complete = self._on_outcome
@@ -334,8 +334,6 @@ class Sender(object):
         for i in range(1, len(event_data_list)):
             if event_data_list[i].partition_key != event_data_list[i-1].partition_key:
                 raise ValueError("partition key of all EventData must be the same if being sent in a batch")
-        if not self.running:
-            self.open()
         wrapper_event_data = BatchSendEventData(event_data_list)
         wrapper_event_data.message.on_send_complete = self._on_outcome
         return self._send_event_data(wrapper_event_data)

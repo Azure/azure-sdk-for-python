@@ -207,7 +207,7 @@ class EventData(object):
         :type value: dict
         """
         self._app_properties = value
-        properties = dict(self._app_properties)
+        properties = None if value is None else dict(self._app_properties)
         self.message.application_properties = properties
 
     @property
