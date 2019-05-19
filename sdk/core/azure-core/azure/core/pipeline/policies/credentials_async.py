@@ -1,41 +1,18 @@
-# --------------------------------------------------------------------------
-#
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-#
-# The MIT License (MIT)
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the ""Software""), to
-# deal in the Software without restriction, including without limitation the
-# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-# sell copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-# IN THE SOFTWARE.
-#
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
 # --------------------------------------------------------------------------
-import asyncio
-from collections.abc import AsyncIterator
-import functools
-import logging
-from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
-
-import requests
-from requests.models import CONTENT_CHUNK_SIZE
-
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
+from azure.core.pipeline.policies.credentials import _BearerTokenCredentialPolicyBase
 
 
-class AsyncCredentialsPolicy(AsyncHTTPPolicy):
-    """Implementation of request-oauthlib except and retry logic.
-    """
-    pass  # TODO
+class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, AsyncHTTPPolicy):
+    # pylint:disable=too-few-public-methods
+    """Adds a bearer token Authorization header to requests."""
+
+    async def send(self, request: PipelineRequest) -> PipelineResponse:
+        token = await self._credential.get_token(self._scopes)
+        self._update_headers(request.http_request.headers, token)
+        return await self.next.send(request)
