@@ -5,7 +5,7 @@
 
 __version__ = "1.3.1"
 
-from azure.eventhub.common import EventData, EventHubError, Offset
+from azure.eventhub.common import EventData, EventHubError, EventPosition
 from azure.eventhub.client import EventHubClient
 from azure.eventhub.sender import Sender
 from azure.eventhub.receiver import Receiver
@@ -15,7 +15,7 @@ from uamqp.constants import TransportType
 __all__ = [
     "EventData",
     "EventHubError",
-    "Offset",
+    "EventPosition",
     "EventHubClient",
     "Sender",
     "Receiver",

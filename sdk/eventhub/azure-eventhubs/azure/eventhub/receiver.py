@@ -51,11 +51,11 @@ class Receiver(object):
         self.client = client
         self.source = source
         self.offset = offset
+        self.iter_started = False
         self.prefetch = prefetch
         self.epoch = epoch
         self.keep_alive = keep_alive
         self.auto_reconnect = auto_reconnect
-        #  max_retries = client.config.retry_policy.max_retries
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.reconnect_backoff = 1
         self.properties = None
@@ -338,7 +338,9 @@ class Receiver(object):
     def __iter__(self):
         if not self.running:
             self.open()
-        self.messages_iter = self._handler.receive_messages_iter()
+        if not self.iter_started:
+            self.iter_started = True
+            self.messages_iter = self._handler.receive_messages_iter()
         return self
 
     def __next__(self):

@@ -135,7 +135,7 @@ class EventData(object):
         :rtype: ~azure.eventhub.common.Offset
         """
         try:
-            return Offset(self._annotations[EventData.PROP_OFFSET].decode('UTF-8'))
+            return EventPosition(self._annotations[EventData.PROP_OFFSET].decode('UTF-8'))
         except (KeyError, AttributeError):
             return None
 
@@ -267,23 +267,22 @@ class BatchSendEventData(EventData):
         self.message = BatchMessage(data=batch_event_data, multi_messages=True, properties=None)
 
 
-
-class Offset(object):
+class EventPosition(object):
     """
-    The offset (position or timestamp) where a receiver starts. Examples:
+    The position(offset, sequence or timestamp) where a receiver starts. Examples:
 
     Beginning of the event stream:
-      >>> offset = Offset("-1")
+      >>> event_pos = EventPosition("-1")
     End of the event stream:
-      >>> offset = Offset("@latest")
+      >>> event_pos = EventPosition("@latest")
     Events after the specified offset:
-      >>> offset = Offset("12345")
+      >>> event_pos = EventPosition("12345")
     Events from the specified offset:
-      >>> offset = Offset("12345", True)
+      >>> event_pos = EventPosition("12345", True)
     Events after a datetime:
-      >>> offset = Offset(datetime.datetime.utcnow())
+      >>> event_pos = EventPosition(datetime.datetime.utcnow())
     Events after a specific sequence number:
-      >>> offset = Offset(1506968696002)
+      >>> event_pos = EventPosition(1506968696002)
     """
 
     def __init__(self, value, inclusive=False):
@@ -308,9 +307,29 @@ class Offset(object):
         if isinstance(self.value, datetime.datetime):
             timestamp = (calendar.timegm(self.value.utctimetuple()) * 1000) + (self.value.microsecond/1000)
             return ("amqp.annotation.x-opt-enqueued-time {} '{}'".format(operator, int(timestamp))).encode('utf-8')
-        if isinstance(self.value, six.integer_types):
+        elif isinstance(self.value, six.integer_types):
             return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')
         return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
+
+    @staticmethod
+    def from_start_of_sream():
+        return EventPosition("-1")
+
+    @staticmethod
+    def from_end_of_sream():
+        return EventPosition("@latest")
+
+    @staticmethod
+    def from_offset(offset, inclusive=False):
+        return EventPosition(offset, inclusive)
+
+    @staticmethod
+    def from_sequence(sequence, inclusive=False):
+        return EventPosition(sequence, inclusive)
+
+    @staticmethod
+    def from_enqueued_time(enqueued_time, inclusive=False):
+        return EventPosition(enqueued_time, inclusive)
 
 
 class EventHubError(Exception):
