@@ -414,4 +414,4 @@ class SecretClient:
                 :caption: Restores a backed up secret to the vault
         """
         bundle = await self._client.recover_deleted_secret(self.vault_url, name)
-        return SecretAttributes._from_deleted_secret_bundle(bundle)
+        return SecretAttributes._from_secret_bundle(bundle)
