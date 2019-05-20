@@ -3,12 +3,19 @@
 Release History
 ===============
 
+0.6.0 (2019-05-20)
+++++++++++++++++++
+
+**Features**
+
+- Adding new Skus to enums
+
 0.5.1 (2019-04-26)
 ++++++++++++++++++
 
 **Bugfixes**
 
-- Fixing incorrect RestAPI descriptio
+- Fixing incorrect RestAPI description
 
 0.5.0 (2019-04-15)
 ++++++++++++++++++
