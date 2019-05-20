@@ -32,7 +32,7 @@ class LuisApp(Model):
     :param entities: List of entities.
     :type entities:
      list[~azure.cognitiveservices.language.luis.authoring.models.HierarchicalModel]
-    :param closed_lists: List of closed lists.
+    :param closed_lists: List of list entities.
     :type closed_lists:
      list[~azure.cognitiveservices.language.luis.authoring.models.ClosedList]
     :param composites: List of composite entities.
@@ -56,7 +56,7 @@ class LuisApp(Model):
     :param patterns: List of patterns.
     :type patterns:
      list[~azure.cognitiveservices.language.luis.authoring.models.PatternRule]
-    :param utterances: List of sample utterances.
+    :param utterances: List of example utterances.
     :type utterances:
      list[~azure.cognitiveservices.language.luis.authoring.models.JSONUtterance]
     """

@@ -22,7 +22,8 @@ class JobInputClip(JobInput):
 
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param files: List of files. Required for JobInputHttp.
+    :param files: List of files. Required for JobInputHttp. Maximum of 4000
+     characters each.
     :type files: list[str]
     :param label: A label that is assigned to a JobInputClip, that is used to
      satisfy a reference used in the Transform. For example, a Transform can be

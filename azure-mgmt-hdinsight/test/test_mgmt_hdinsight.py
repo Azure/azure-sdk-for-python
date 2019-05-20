@@ -139,18 +139,23 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
     def test_create_kafka_cluster_with_disk_encryption(self, resource_group, location, storage_account, storage_account_key, vault):
         # create managed identities for Azure resources.
         msi_name = self.get_resource_name('hdipyuai')
-        msi = self.msi_client.user_assigned_identities.create_or_update(resource_group.name, msi_name, location)
+        msi_principal_id = "00000000-0000-0000-0000-000000000000"
+        msi_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/{}/providers/microsoft.managedidentity/userassignedidentities/{}".format(resource_group.name, msi_name)
+        if self.is_live:
+            msi = self.msi_client.user_assigned_identities.create_or_update(resource_group.name, msi_name, location)
+            msi_id = msi.id
+            msi_principal_id = msi.principal_id
 
         # add managed identity to vault
         required_permissions = Permissions(keys=[KeyPermissions.get, KeyPermissions.wrap_key, KeyPermissions.unwrap_key],
                                            secrets=[SecretPermissions.get, SecretPermissions.set,SecretPermissions.delete])
         vault.properties.access_policies.append(
             AccessPolicyEntry(tenant_id=self.tenant_id,
-                              object_id=msi.principal_id,
+                              object_id=msi_principal_id,
                               permissions=required_permissions)
         )
         update_params = VaultCreateOrUpdateParameters(location=location,
-                                                    properties=vault.properties)
+                                                      properties=vault.properties)
         vault = self.vault_mgmt_client.vaults.create_or_update(resource_group.name, vault.name, update_params).result()
         self.assertIsNotNone(vault)
 
@@ -173,13 +178,13 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         ]
         create_params.identity = ClusterIdentity(
             type=ResourceIdentityType.user_assigned,
-            user_assigned_identities={msi.id: ClusterIdentityUserAssignedIdentitiesValue()}
+            user_assigned_identities={msi_id: ClusterIdentityUserAssignedIdentitiesValue()}
         )
         create_params.properties.disk_encryption_properties = DiskEncryptionProperties(
             vault_uri=vault_key.vault,
             key_name=vault_key.name,
             key_version=vault_key.version,
-            msi_resource_id=msi.id
+            msi_resource_id=msi_id
         )
         cluster = self.hdinsight_client.clusters.create(resource_group.name, cluster_name, create_params).result()
         self.validate_cluster(cluster_name, create_params, cluster)
@@ -208,7 +213,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         self.assertIsNotNone(cluster.properties.disk_encryption_properties)
         self.assertEqual(rotate_params.vault_uri, cluster.properties.disk_encryption_properties.vault_uri)
         self.assertEqual(rotate_params.key_name, cluster.properties.disk_encryption_properties.key_name)
-        self.assertEqual(msi.id.lower(), cluster.properties.disk_encryption_properties.msi_resource_id.lower())
+        self.assertEqual(msi_id.lower(), cluster.properties.disk_encryption_properties.msi_resource_id.lower())
 
     @ResourceGroupPreparer(name_prefix='hdipy-', location=ADLS_LOCATION)
     @StorageAccountPreparer(name_prefix='hdipy', location=ADLS_LOCATION)
@@ -452,7 +457,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
 
         gateway = self.hdinsight_client.configurations.get(rg_name, cluster_name, gateway)
         self.assertEqual(len(gateway), 3)
-                
+
         core = self.hdinsight_client.configurations.get(rg_name, cluster_name, core_site)
         self.assertEqual(len(core), 2)
         self.assertTrue('fs.defaultFS' in core)
@@ -474,7 +479,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
         user_password = self.cluster_password
         http_settings = self.hdinsight_client.configurations.get(rg_name, cluster_name, gateway)
         self.validate_http_settings(http_settings, user_name, user_password)
-                
+
         new_password = 'NewPassword1!'
         update_params = {
             'restAuthCredential.isEnabled': 'true',
@@ -550,7 +555,7 @@ class MgmtHDInsightTest(AzureMgmtTestCase):
 
         install_giraph = "https://hdiconfigactions.blob.core.windows.net/linuxgiraphconfigactionv01/giraph-installer-v01.sh"
         script_name = "script1"
-        
+
         # Execute script actions, and persist on success.
         script_action_params = self.get_execute_script_action_params(script_name, install_giraph)
         self.hdinsight_client.clusters.execute_script_actions(rg_name, cluster_name, True, script_action_params).wait()

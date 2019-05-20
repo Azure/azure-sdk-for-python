@@ -3,26 +3,29 @@ import time
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtTestCase
 import azure.mgmt.netapp.models
-from azure.mgmt.netapp.models import NetAppAccountPatch
+from azure.mgmt.netapp.models import NetAppAccount, NetAppAccountPatch
 from setup import *
 
 accounts = [TEST_ACC_1, TEST_ACC_2]
 
-def create_account(client, rg, acc_name, location=LOCATION):
+def create_account(client, rg, acc_name, location=LOCATION, tags=None, active_directories=None):
+    account_body = NetAppAccount(location=location, tags=tags, active_directories=active_directories)
+
     account = client.accounts.create_or_update(
+        account_body,
         rg,
-        acc_name,
-        location
+        acc_name
     ).result()
 
     return account
 
-def wait_for_no_account(client, rg, acc_name):
+def wait_for_no_account(client, rg, acc_name, live=False):
     # a workaround for the async nature of certain ARM processes
     co=0
     while co<5:
         co += 1
-        time.sleep(2)
+        if live:
+            time.sleep(2)
         try:
             account = client.accounts.get(rg, acc_name)
         except:
@@ -30,9 +33,9 @@ def wait_for_no_account(client, rg, acc_name):
             # and is actually what we are waiting for
             break
 
-def delete_account(client, rg, acc_name):
+def delete_account(client, rg, acc_name, live=False):
     client.accounts.delete(rg, acc_name).wait()
-    wait_for_no_account(client, rg, acc_name)
+    wait_for_no_account(client, rg, acc_name, live)
 
 
 class NetAppAccountTestCase(AzureMgmtTestCase):
@@ -79,7 +82,7 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         tag = {'Tag1': 'Value2'}
         netapp_account_patch = NetAppAccountPatch(tags=tag)
 
-        account = self.client.accounts.update(TEST_RG, TEST_ACC_1, tags=netapp_account_patch.tags)
+        account = self.client.accounts.update(netapp_account_patch, TEST_RG, TEST_ACC_1)
         self.assertTrue(account.tags['Tag1'] == 'Value2')
 
         delete_account(self.client, TEST_RG, TEST_ACC_1)
