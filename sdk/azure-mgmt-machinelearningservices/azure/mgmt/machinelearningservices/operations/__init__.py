@@ -12,9 +12,11 @@
 from .operations import Operations
 from .workspaces_operations import WorkspacesOperations
 from .machine_learning_compute_operations import MachineLearningComputeOperations
+from .quotas_operations import QuotasOperations
 
 __all__ = [
     'Operations',
     'WorkspacesOperations',
     'MachineLearningComputeOperations',
+    'QuotasOperations',
 ]
