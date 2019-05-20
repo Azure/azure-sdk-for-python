@@ -151,7 +151,6 @@ class EventHubClientAbstract(object):
         # self.debug = kwargs.get("debug", False)  # debug
         #self.auth_timeout = auth_timeout
 
-        self.clients = []
         self.stopped = False
         self.config = Configuration(**kwargs)
         self.debug = self.config.network_tracing

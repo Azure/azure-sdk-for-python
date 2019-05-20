@@ -183,28 +183,6 @@ class Sender(object):
         # pylint: disable=protected-access
         return self._handler._message_sender.get_state()
 
-    def has_started(self):
-        """
-        Whether the handler has completed all start up processes such as
-        establishing the connection, session, link and authentication, and
-        is not ready to process messages.
-        **This function is now deprecated and will be removed in v2.0+.**
-
-        :rtype: bool
-        """
-        # pylint: disable=protected-access
-        timeout = False
-        auth_in_progress = False
-        if self._handler._connection.cbs:
-            timeout, auth_in_progress = self._handler._auth.handle_token()
-        if timeout:
-            raise EventHubError("Authorization timeout.")
-        if auth_in_progress:
-            return False
-        if not self._handler._client_ready():
-            return False
-        return True
-
     def close(self, exception=None):
         """
         Close down the handler. If the handler has already closed,

@@ -60,7 +60,7 @@ class EventHubClient(EventHubClientAbstract):
         transport_type = self.config.transport_type
         auth_timeout = self.config.auth_timeout
         if self.aad_credential and self.sas_token:
-            raise EventHubError("Can't have both sas_token and aad credential")
+            raise ValueError("Can't have both sas_token and aad_credential")
 
         elif self.aad_credential:
             get_jwt_token = functools.partial(self.aad_credential.get_token, ['https://eventhubs.azure.net//.default'])
@@ -167,7 +167,6 @@ class EventHubClient(EventHubClientAbstract):
             self.address.hostname, path, consumer_group, partition)
         handler = Receiver(
             self, source_url, offset=offset, epoch=epoch, prefetch=prefetch, keep_alive=keep_alive, auto_reconnect=auto_reconnect)
-        self.clients.append(handler)
         return handler
 
     def create_epoch_receiver(
@@ -215,5 +214,4 @@ class EventHubClient(EventHubClientAbstract):
 
         handler = Sender(
             self, target, partition=partition, send_timeout=send_timeout, keep_alive=keep_alive, auto_reconnect=auto_reconnect)
-        self.clients.append(handler)
         return handler

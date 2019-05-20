@@ -7,6 +7,7 @@ import logging
 import asyncio
 import time
 import datetime
+import functools
 
 from uamqp import authentication, constants, types, errors
 from uamqp import (
@@ -51,10 +52,19 @@ class EventHubClient(EventHubClientAbstract):
         :param password: The shared access key.
         :type password: str
         """
-        http_proxy = self.config.http_proxy_policy.http_proxy
+        http_proxy = self.config.http_proxy
         transport_type = self.config.transport_type
         auth_timeout = self.config.auth_timeout
-        if self.sas_token:
+        if self.aad_credential and self.sas_token:
+            raise ValueError("Can't have both sas_token and aad_credential")
+
+        elif self.aad_credential:
+            get_jwt_token = functools.partial(self.aad_credential.get_token, ['https://eventhubs.azure.net//.default'])
+            # TODO: should use async aad_credential.get_token. Check with Charles for async identity api
+            return authentication.JWTTokenAsync(self.auth_uri, self.auth_uri,
+                                                get_jwt_token, http_proxy=http_proxy,
+                                                transport_type=transport_type)
+        elif self.sas_token:
             token = self.sas_token() if callable(self.sas_token) else self.sas_token
             try:
                 expiry = int(parse_sas_token(token)['se'])
@@ -64,7 +74,8 @@ class EventHubClient(EventHubClientAbstract):
                 self.auth_uri, self.auth_uri, token,
                 expires_at=expiry,
                 timeout=auth_timeout,
-                http_proxy=http_proxy, transport_type=transport_type)
+                http_proxy=http_proxy,
+                transport_type=transport_type)
 
         username = username or self._auth_config['username']
         password = password or self._auth_config['password']
@@ -74,100 +85,7 @@ class EventHubClient(EventHubClientAbstract):
         return authentication.SASTokenAsync.from_shared_access_key(
             self.auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy, transport_type=transport_type)
 
-    async def _close_clients_async(self):
-        """
-        Close all open AsyncSender/AsyncReceiver clients.
-        """
-        await asyncio.gather(*[c.close_async() for c in self.clients])
-
-    async def _wait_for_client(self, client):
-        try:
-            while client.get_handler_state().value == 2:
-                await client._handler._connection.work_async()  # pylint: disable=protected-access
-        except Exception as exp:  # pylint: disable=broad-except
-            await client.close_async(exception=exp)
-
-    async def _start_client_async(self, client):
-        try:
-            if not client.running:
-                await client.open_async()
-        except Exception as exp:  # pylint: disable=broad-except
-            log.info("Encountered error while starting handler: %r", exp)
-            await client.close_async(exception=exp)
-            log.info("Finished closing failed handler")
-
-    async def _handle_redirect(self, redirects):
-        if len(redirects) != len(self.clients):
-            not_redirected = [c for c in self.clients if not c.redirected]
-            _, timeout = await asyncio.wait([self._wait_for_client(c) for c in not_redirected], timeout=5)
-            if timeout:
-                raise EventHubError("Some clients are attempting to redirect the connection.")
-            redirects = [c.redirected for c in self.clients if c.redirected]
-        if not all(r.hostname == redirects[0].hostname for r in redirects):
-            raise EventHubError("Multiple clients attempting to redirect to different hosts.")
-        self._process_redirect_uri(redirects[0])
-        await asyncio.gather(*[c.open_async() for c in self.clients])
-
-    async def run_async(self):
-        """
-        Run the EventHubClient asynchronously.
-        Opens the connection and starts running all AsyncSender/AsyncReceiver clients.
-        Returns a list of the start up results. For a succcesful client start the
-        result will be `None`, otherwise the exception raised.
-        If all clients failed to start, then run will fail, shut down the connection
-        and raise an exception.
-        If at least one client starts up successfully the run command will succeed.
-
-        :rtype: list[~azure.eventhub.common.EventHubError]
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_run_async]
-                :end-before: [END eventhub_client_run_async]
-                :language: python
-                :dedent: 4
-                :caption: Run the EventHubClient asynchronously.
-
-        """
-        log.info("%r: Starting %r clients", self.container_id, len(self.clients))
-        tasks = [self._start_client_async(c) for c in self.clients]
-        try:
-            await asyncio.gather(*tasks)
-            redirects = [c.redirected for c in self.clients if c.redirected]
-            failed = [c.error for c in self.clients if c.error]
-            if failed and len(failed) == len(self.clients):
-                log.warning("%r: All clients failed to start.", self.container_id)
-                raise failed[0]
-            if failed:
-                log.warning("%r: %r clients failed to start.", self.container_id, len(failed))
-            elif redirects:
-                await self._handle_redirect(redirects)
-        except EventHubError:
-            await self.stop_async()
-            raise
-        except Exception as exp:
-            await self.stop_async()
-            raise EventHubError(str(exp))
-        return failed
-
-    async def stop_async(self):
-        """
-        Stop the EventHubClient and all its Sender/Receiver clients.
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_async_stop]
-                :end-before: [END eventhub_client_async_stop]
-                :language: python
-                :dedent: 4
-                :caption: Stop the EventHubClient and all its Sender/Receiver clients.
-
-        """
-        log.info("%r: Stopping %r clients", self.container_id, len(self.clients))
-        self.stopped = True
-        await self._close_clients_async()
-
-    async def get_eventhub_info_async(self):
+    async def get_eventhub_information(self):
         """
         Get details on the specified EventHub async.
 
@@ -176,7 +94,6 @@ class EventHubClient(EventHubClientAbstract):
         alt_creds = {
             "username": self._auth_config.get("iot_username"),
             "password":self._auth_config.get("iot_password")}
-        # TODO: add proxy?
         try:
             mgmt_auth = self._create_auth(**alt_creds)
             mgmt_client = AMQPClientAsync(self.mgmt_target, auth=mgmt_auth, debug=self.debug)
@@ -200,8 +117,9 @@ class EventHubClient(EventHubClientAbstract):
         finally:
             await mgmt_client.close_async()
 
-    def add_async_receiver(
-            self, consumer_group, partition, offset=None, epoch=None, prefetch=300, operation=None, loop=None):
+    def create_receiver(
+            self, consumer_group, partition, offset=None, epoch=None, operation=None,
+            prefetch=None, keep_alive=None, auto_reconnect=None, loop=None):
         """
         Add an async receiver to the client for a particular consumer group and partition.
 
@@ -227,15 +145,19 @@ class EventHubClient(EventHubClientAbstract):
                 :caption: Add an async receiver to the client for a particular consumer group and partition.
 
         """
+        keep_alive = self.config.keep_alive if keep_alive is None else keep_alive
+        auto_reconnect = self.config.auto_reconnect if auto_reconnect is None else auto_reconnect
+        prefetch = self.config.prefetch if prefetch is None else prefetch
+
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
         handler = Receiver(
-            self, source_url, offset=offset, epoch=epoch, prefetch=prefetch, loop=loop)
-        self.clients.append(handler)
+            self, source_url, offset=offset, epoch=epoch, prefetch=prefetch, keep_alive=keep_alive,
+            auto_reconnect=auto_reconnect, loop=loop)
         return handler
 
-    def add_async_epoch_receiver(
+    def create_epoch_receiver(
             self, consumer_group, partition, epoch, prefetch=300, operation=None, loop=None):
         """
         Add an async receiver to the client with an epoch value. Only a single epoch receiver
@@ -265,16 +187,11 @@ class EventHubClient(EventHubClientAbstract):
                 :caption: Add an async receiver to the client with an epoch value.
 
         """
-        path = self.address.path + operation if operation else self.address.path
-        source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self.address.hostname, path, consumer_group, partition)
-        handler = Receiver(
-            self, source_url, prefetch=prefetch, epoch=epoch, loop=loop)
-        self.clients.append(handler)
-        return handler
+        return self.create_receiver(consumer_group, partition, epoch=epoch, prefetch=prefetch,
+                                          operation=operation, loop=loop)
 
-    def add_async_sender(
-            self, partition=None, operation=None, send_timeout=60, loop=None):
+    def create_sender(
+            self, partition=None, operation=None, send_timeout=None, keep_alive=None, auto_reconnect=None, loop=None):
         """
         Add an async sender to the client to send ~azure.eventhub.common.EventData object
         to an EventHub.
@@ -311,7 +228,11 @@ class EventHubClient(EventHubClientAbstract):
         target = "amqps://{}{}".format(self.address.hostname, self.address.path)
         if operation:
             target = target + operation
+        send_timeout = self.config.send_timeout if send_timeout is None else send_timeout
+        keep_alive = self.config.keep_alive if keep_alive is None else keep_alive
+        auto_reconnect = self.config.auto_reconnect if auto_reconnect is None else auto_reconnect
+
         handler = Sender(
-            self, target, partition=partition, send_timeout=send_timeout, loop=loop)
-        self.clients.append(handler)
+            self, target, partition=partition, send_timeout=send_timeout,
+            keep_alive=keep_alive, auto_reconnect=auto_reconnect, loop=loop)
         return handler

@@ -10,9 +10,9 @@ import logging
 from uamqp import constants, errors
 from uamqp import SendClientAsync
 
+from azure.eventhub import MessageSendResult
 from azure.eventhub import EventHubError
-from azure.eventhub.sender import Sender
-from azure.eventhub.common import _error_handler
+from azure.eventhub.common import _error_handler, BatchSendEventData
 
 log = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class Sender(object):
 
     def __init__(  # pylint: disable=super-init-not-called
             self, client, target, partition=None, send_timeout=60,
-            keep_alive=None, auto_reconnect=True, loop=None):
+            keep_alive=30, auto_reconnect=False, loop=None):
         """
         Instantiate an EventHub event SenderAsync handler.
 
@@ -60,8 +60,8 @@ class Sender(object):
         self.client = client
         self.target = target
         self.partition = partition
-        self.keep_alive = client.config.keep_alive_policy.keep_alive
-        self.auto_reconnect = client.config.auto_reconnect_policy.auto_reconnect
+        self.keep_alive = keep_alive
+        self.auto_reconnect = auto_reconnect
         self.timeout = send_timeout
         self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
         self.reconnect_backoff = 1
@@ -84,7 +84,7 @@ class Sender(object):
         self._outcome = None
         self._condition = None
 
-    async def open_async(self):
+    async def open(self):
         """
         Open the Sender using the supplied conneciton.
         If the handler has previously been redirected, the redirect
@@ -119,7 +119,7 @@ class Sender(object):
         while not await self._handler.client_ready_async():
             await asyncio.sleep(0.05)
 
-    async def _reconnect_async(self):
+    async def _reconnect(self):
         await self._handler.close_async()
         unsent_events = self._handler.pending_messages
         self._handler = SendClientAsync(
@@ -140,7 +140,7 @@ class Sender(object):
         except errors.TokenExpired as shutdown:
             log.info("AsyncSender disconnected due to token expiry. Shutting down.")
             error = EventHubError(str(shutdown), shutdown)
-            await self.close_async(exception=error)
+            await self.close(exception=error)
             raise error
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry and self.auto_reconnect:
@@ -148,7 +148,7 @@ class Sender(object):
                 return False
             log.info("AsyncSender reconnect failed. Shutting down.")
             error = EventHubError(str(shutdown), shutdown)
-            await self.close_async(exception=error)
+            await self.close(exception=error)
             raise error
         except errors.MessageHandlerError as shutdown:
             if self.auto_reconnect:
@@ -156,7 +156,7 @@ class Sender(object):
                 return False
             log.info("AsyncSender reconnect failed. Shutting down.")
             error = EventHubError(str(shutdown), shutdown)
-            await self.close_async(exception=error)
+            await self.close(exception=error)
             raise error
         except errors.AMQPConnectionError as shutdown:
             if str(shutdown).startswith("Unable to open authentication session") and self.auto_reconnect:
@@ -164,43 +164,21 @@ class Sender(object):
                 return False
             log.info("AsyncSender connection error (%r). Shutting down.", shutdown)
             error = EventHubError(str(shutdown))
-            await self.close_async(exception=error)
+            await self.close(exception=error)
             raise error
         except Exception as e:
             log.info("Unexpected error occurred (%r). Shutting down.", e)
             error = EventHubError("Sender reconnect failed: {}".format(e))
-            await self.close_async(exception=error)
+            await self.close(exception=error)
             raise error
 
-    async def reconnect_async(self):
+    async def reconnect(self):
         """If the Receiver was disconnected from the service with
         a retryable error - attempt to reconnect."""
-        while not await self._reconnect_async():
+        while not await self._reconnect():
             await asyncio.sleep(self.reconnect_backoff)
 
-    async def has_started(self):
-        """
-        Whether the handler has completed all start up processes such as
-        establishing the connection, session, link and authentication, and
-        is not ready to process messages.
-        **This function is now deprecated and will be removed in v2.0+.**
-
-        :rtype: bool
-        """
-        # pylint: disable=protected-access
-        timeout = False
-        auth_in_progress = False
-        if self._handler._connection.cbs:
-            timeout, auth_in_progress = await self._handler._auth.handle_token_async()
-        if timeout:
-            raise EventHubError("Authorization timeout.")
-        if auth_in_progress:
-            return False
-        if not await self._handler._client_ready_async():
-            return False
-        return True
-
-    async def close_async(self, exception=None):
+    async def close(self, exception=None):
         """
         Close down the handler. If the handler has already closed,
         this will be a no op. An optional exception can be passed in to
@@ -234,6 +212,46 @@ class Sender(object):
             self.error = EventHubError("This send handler is now closed.")
         await self._handler.close_async()
 
+    async def _send_event_data(self, event_data):
+        if not self.running:
+            await self.open()
+        try:
+            self._handler.send_message(event_data.message)
+            if self._outcome != MessageSendResult.Ok:
+                raise Sender._error(self._outcome, self._condition)
+        except errors.MessageException as failed:
+            error = EventHubError(str(failed), failed)
+            await self.close(exception=error)
+            raise error
+        except (errors.TokenExpired, errors.AuthenticationException):
+            log.info("Sender disconnected due to token error. Attempting reconnect.")
+            await self.reconnect()
+        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+            if shutdown.action.retry and self.auto_reconnect:
+                log.info("Sender detached. Attempting reconnect.")
+                await self.reconnect()
+            else:
+                log.info("Sender detached. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                await self.close(exception=error)
+                raise error
+        except errors.MessageHandlerError as shutdown:
+            if self.auto_reconnect:
+                log.info("Sender detached. Attempting reconnect.")
+                await self.reconnect()
+            else:
+                log.info("Sender detached. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                await self.close(exception=error)
+                raise error
+        except Exception as e:
+            log.info("Unexpected error occurred (%r). Shutting down.", e)
+            error = EventHubError("Send failed: {}".format(e))
+            await self.close(exception=error)
+            raise error
+        else:
+            return self._outcome
+
     async def send(self, event_data):
         """
         Sends an event data and asynchronously waits until
@@ -256,45 +274,45 @@ class Sender(object):
         """
         if self.error:
             raise self.error
-        if not self.running:
-            raise ValueError("Unable to send until client has been started.")
         if event_data.partition_key and self.partition:
             raise ValueError("EventData partition key cannot be used with a partition sender.")
         event_data.message.on_send_complete = self._on_outcome
-        try:
-            await self._handler.send_message_async(event_data.message)
-            if self._outcome != constants.MessageSendResult.Ok:
-                raise Sender._error(self._outcome, self._condition)
-        except (errors.TokenExpired, errors.AuthenticationException):
-            log.info("AsyncSender disconnected due to token error. Attempting reconnect.")
-            await self.reconnect_async()
-        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-            if shutdown.action.retry and self.auto_reconnect:
-                log.info("AsyncSender detached. Attempting reconnect.")
-                await self.reconnect_async()
-            else:
-                log.info("AsyncSender detached. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                await self.close_async(exception=error)
-                raise error
-        except errors.MessageHandlerError as shutdown:
-            if self.auto_reconnect:
-                log.info("AsyncSender detached. Attempting reconnect.")
-                await self.reconnect_async()
-            else:
-                log.info("AsyncSender detached. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                await self.close_async(exception=error)
-                raise error
-        except Exception as e:
-            log.info("Unexpected error occurred (%r). Shutting down.", e)
-            error = EventHubError("Send failed: {}".format(e))
-            await self.close_async(exception=error)
-            raise error
-        else:
-            return self._outcome
+        await self._send_event_data(event_data)
 
-    async def wait_async(self):
+    async def send_batch(self, batch_event_data):
+        """
+        Sends an event data and blocks until acknowledgement is
+        received or operation times out.
+
+        :param event_data: The event to be sent.
+        :type event_data: ~azure.eventhub.common.EventData
+        :raises: ~azure.eventhub.common.EventHubError if the message fails to
+         send.
+        :return: The outcome of the message send.
+        :rtype: ~uamqp.constants.MessageSendResult
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_client_sync_send]
+                :end-before: [END eventhub_client_sync_send]
+                :language: python
+                :dedent: 4
+                :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
+
+        """
+        if self.error:
+            raise self.error
+        event_data_list = list(batch_event_data)
+        if len(event_data_list) == 0:
+            raise ValueError("batch_event_data must not be empty")
+        for i in range(1, len(event_data_list)):
+            if event_data_list[i].partition_key != event_data_list[i-1].partition_key:
+                raise ValueError("partition key of all EventData must be the same if being sent in a batch")
+        wrapper_event_data = BatchSendEventData(event_data_list)
+        wrapper_event_data.message.on_send_complete = self._on_outcome
+        return await self._send_event_data(wrapper_event_data)
+
+    async def wait(self):
         """
         Wait until all transferred events have been sent.
         """
@@ -306,24 +324,24 @@ class Sender(object):
             await self._handler.wait_async()
         except (errors.TokenExpired, errors.AuthenticationException):
             log.info("AsyncSender disconnected due to token error. Attempting reconnect.")
-            await self.reconnect_async()
+            await self.reconnect()
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry and self.auto_reconnect:
                 log.info("AsyncSender detached. Attempting reconnect.")
-                await self.reconnect_async()
+                await self.reconnect()
             else:
                 log.info("AsyncSender detached. Shutting down.")
                 error = EventHubError(str(shutdown), shutdown)
-                await self.close_async(exception=error)
+                await self.close(exception=error)
                 raise error
         except errors.MessageHandlerError as shutdown:
             if self.auto_reconnect:
                 log.info("AsyncSender detached. Attempting reconnect.")
-                await self.reconnect_async()
+                await self.reconnect()
             else:
                 log.info("AsyncSender detached. Shutting down.")
                 error = EventHubError(str(shutdown), shutdown)
-                await self.close_async(exception=error)
+                await self.close(exception=error)
                 raise error
         except Exception as e:
             log.info("Unexpected error occurred (%r).", e)
@@ -340,13 +358,11 @@ class Sender(object):
         self._condition = condition
 
     async def __aenter__(self):
-        await self.open_async()
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        self.client.clients.remove(self)
-        await self.close_async(exc_val)
+        await self.close(exc_val)
 
     @staticmethod
     def _error(outcome, condition):
-        return None if outcome == constants.MessageSendResult.Ok else EventHubError(outcome, condition)
+        return None if outcome == MessageSendResult.Ok else EventHubError(outcome, condition)
