@@ -88,6 +88,8 @@ try:
     from .maps_geofence_event_properties_py3 import MapsGeofenceEventProperties
     from .app_configuration_key_value_modified_event_data_py3 import AppConfigurationKeyValueModifiedEventData
     from .app_configuration_key_value_deleted_event_data_py3 import AppConfigurationKeyValueDeletedEventData
+    from .signal_rservice_client_connection_connected_event_data_py3 import SignalRServiceClientConnectionConnectedEventData
+    from .signal_rservice_client_connection_disconnected_event_data_py3 import SignalRServiceClientConnectionDisconnectedEventData
 except (SyntaxError, ImportError):
     from .storage_blob_created_event_data import StorageBlobCreatedEventData
     from .storage_blob_deleted_event_data import StorageBlobDeletedEventData
@@ -167,6 +169,8 @@ except (SyntaxError, ImportError):
     from .maps_geofence_event_properties import MapsGeofenceEventProperties
     from .app_configuration_key_value_modified_event_data import AppConfigurationKeyValueModifiedEventData
     from .app_configuration_key_value_deleted_event_data import AppConfigurationKeyValueDeletedEventData
+    from .signal_rservice_client_connection_connected_event_data import SignalRServiceClientConnectionConnectedEventData
+    from .signal_rservice_client_connection_disconnected_event_data import SignalRServiceClientConnectionDisconnectedEventData
 from .event_grid_client_enums import (
     MediaJobState,
     MediaJobErrorCode,
@@ -253,6 +257,8 @@ __all__ = [
     'MapsGeofenceEventProperties',
     'AppConfigurationKeyValueModifiedEventData',
     'AppConfigurationKeyValueDeletedEventData',
+    'SignalRServiceClientConnectionConnectedEventData',
+    'SignalRServiceClientConnectionDisconnectedEventData',
     'MediaJobState',
     'MediaJobErrorCode',
     'MediaJobErrorCategory',
