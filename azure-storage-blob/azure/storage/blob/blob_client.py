@@ -773,12 +773,18 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             **kwargs)
         return response.get('x-ms-lease-time')
 
-    def set_standard_blob_tier(self, standard_blob_tier, timeout=None):
-        # type: (Union[str, StandardBlobTier], Optional[int]) -> None
+    def set_standard_blob_tier(self, standard_blob_tier, timeout=None, lease=None):
+        # type: (Union[str, StandardBlobTier], Optional[int], Optional[Union[Lease, str]]) -> None
         """
         :raises: InvalidOperation when blob client type is not BlockBlob.
         :returns: None
         """
+        access_conditions = get_access_conditions(lease)
+        self._client.blob.set_tier(
+            tier=standard_blob_tier,
+            timeout=timeout,
+            lease_access_conditions=access_conditions
+        )
 
     def stage_block(
             self, block_id,  # type: str
@@ -907,12 +913,18 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             cls=return_response_headers,
             **kwargs)
 
-    def set_premium_page_blob_tier(self, premium_page_blob_tier, timeout=None):
-        # type: (Union[str, PremiumPageBlobTier], Optional[int]) -> None
+    def set_premium_page_blob_tier(self, premium_page_blob_tier, timeout=None, lease=None):
+        # type: (Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[Lease, str]]) -> None
         """
         :raises: InvalidOperation when blob client type is not PageBlob.
         :returns: None
         """
+        access_conditions = get_access_conditions(lease)
+        self._client.blob.set_tier(
+            tier=premium_page_blob_tier,
+            timeout=timeout,
+            lease_access_conditions=access_conditions
+        )
 
     def get_page_ranges(
             self, start_range=None, # type: Optional[int]
@@ -930,6 +942,21 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :raises: InvalidOperation when blob client type is not PageBlob.
         :returns: A list of page ranges.
         """
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        page_range = None
+        if start_range is not None and end_range is None:
+            page_range = str(start_range)
+        elif start_range is not None and end_range is not None:
+            page_range = str(end_range - start_range + 1)
+        return self._client.page_blob.get_page_ranges(
+            snapshot=self.snapshot,
+            lease_access_conditions=access_conditions,
+            modified_access_conditions=mod_conditions,
+            timeout=timeout,
+            range=page_range
+        )
 
     def set_sequence_number(
             self, sequence_number_action,  # type: Union[str, SequenceNumberAction]
@@ -946,6 +973,18 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :raises: InvalidOperation when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        if sequence_number_action is None:
+            raise ValueError("A sequence number action must be specified")
+        return self._client.page_blob.update_sequence_number(
+            sequence_number_action=sequence_number_action,
+            timeout=timeout,
+            blob_sequence_number=sequence_number,
+            lease_access_conditions=access_conditions,
+            modified_access_conditions=mod_conditions
+        )
 
     def resize_blob(
             self, content_length,  # type: int
@@ -961,6 +1000,17 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :raises: InvalidOperation when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        if content_length is None:
+            raise ValueError("A content length must be specified for a Page Blob.")
+        return self._client.page_blob.resize(
+            blob_content_length=content_length,
+            timeout=timeout,
+            lease_access_conditions=access_conditions,
+            modified_access_conditions=mod_conditions
+        )
 
     def update_page(
             self, page,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
@@ -1016,7 +1066,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             self, copy_source,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
             destination_if_modified_since=None,  # type: Optional[datetime]
-            destination_if_unmodified_since=None,  # type: Optional[datetime]
+            destination_if_unmodified_since=None,  # type: Optional[datetime]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
             destination_if_match=None,  # type: Optional[str]
             destination_if_none_match=None,  # type: Optional[str]
             destination_lease=None,  # type: Optional[Union[str, Lease]]
