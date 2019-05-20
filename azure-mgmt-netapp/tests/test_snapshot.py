@@ -27,14 +27,15 @@ def create_snapshot(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_
 
     return snapshot
 
-def delete_snapshot(client, rg, account_name, pool_name, volume_name, snapshot_name):
+def delete_snapshot(client, rg, account_name, pool_name, volume_name, snapshot_name, live=False):
     client.snapshots.delete(rg, account_name, pool_name, volume_name, snapshot_name).wait()
 
     # wait to be sure it has gone - a workaround for the async nature of certain ARM processes
     co=0
     while co<5:
         co += 1
-        time.sleep(5)
+        if live:
+            time.sleep(5)
         try:
             snapshot = client.snapshots.get(rg, account_name, pool_name, volume_name, snapshot_namne)
         except:
