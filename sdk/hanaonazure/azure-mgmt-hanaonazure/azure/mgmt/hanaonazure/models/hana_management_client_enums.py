@@ -53,3 +53,14 @@ class HanaInstancePowerStateEnum(str, Enum):
     stopped = "stopped"
     restarting = "restarting"
     unknown = "unknown"
+
+
+class HanaProvisioningStatesEnum(str, Enum):
+
+    accepted = "Accepted"
+    creating = "Creating"
+    updating = "Updating"
+    failed = "Failed"
+    succeeded = "Succeeded"
+    deleting = "Deleting"
+    migrating = "Migrating"
