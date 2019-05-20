@@ -51,7 +51,8 @@ class StorageBlockBlobTest(StorageTestCase):
         self.container_name = self.get_resource_name('utcontainer')
 
         if not self.is_playback():
-            self.bs.create_container(self.container_name)
+            container = self.bsc.get_container_client(self.container_name)
+            container.create_container()
 
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
@@ -62,7 +63,8 @@ class StorageBlockBlobTest(StorageTestCase):
     def tearDown(self):
         if not self.is_playback():
             try:
-                self.bs.delete_container(self.container_name)
+                container = self.bsc.get_container_client(self.container_name)
+                container.delete_container()
             except:
                 pass
 
@@ -128,7 +130,6 @@ class StorageBlockBlobTest(StorageTestCase):
     @record
     def test_put_block_with_md5(self):
         # Arrange
-        pytest.skip("validate content not yet supported")  # TODO
         blob = self._create_blob()
 
         # Act
@@ -176,7 +177,6 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @record
     def test_put_block_list_with_md5(self):
-        pytest.skip("validate content not yet supported")  # TODO
         # Arrange
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -272,7 +272,6 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @record
     def test_create_blob_from_0_bytes(self):
-        pytest.skip("Raises error on range header")  # TODO
         # Arrange
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -319,7 +318,6 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_from_bytes_blob_with_lease_id(self):
         # parallel tests introduce random order of requests, can only run live
-        pytest.skip("Large blobs not yet supported")  # TODO
         if TestMode.need_recording_file(self.test_mode):
             return
 
@@ -338,7 +336,6 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(blob.properties.last_modified, create_resp.last_modified)
 
     def test_create_blob_from_bytes_with_metadata(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -357,7 +354,6 @@ class StorageBlockBlobTest(StorageTestCase):
 
 
     def test_create_blob_from_bytes_with_properties(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -380,7 +376,6 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
     def test_create_blob_from_bytes_with_progress(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -405,7 +400,6 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(blob.properties.last_modified, create_resp.last_modified)
 
     def test_create_blob_from_bytes_with_index(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -422,7 +416,6 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @record
     def test_create_blob_from_bytes_with_index_and_count(self):
-        pytest.skip("Upload index not yet supported")  # TODO
         # Arrange
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -436,7 +429,6 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @record
     def test_create_blob_from_bytes_with_index_and_count_and_properties(self):
-        pytest.skip("Upload index not yet supported")  # TODO
         # Arrange
         blob_name = self._get_blob_reference()
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -455,7 +447,6 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @record
     def test_create_blob_from_bytes_non_parallel(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # Arrange
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -468,7 +459,6 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
 
     def test_create_blob_from_path(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -508,7 +498,6 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('Last-Modified'))
 
     def test_create_blob_from_path_with_progress(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -533,7 +522,6 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assert_upload_progress(len(data), self.bs.MAX_BLOCK_SIZE, progress)
 
     def test_create_blob_from_path_with_properties(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -557,7 +545,6 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
     def test_create_blob_from_stream_chunked_upload(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -579,7 +566,6 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(blob.properties.last_modified, create_resp.last_modified)
 
     def test_create_blob_from_stream_non_seekable_chunked_upload_known_size(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -601,7 +587,6 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
 
     def test_create_blob_from_stream_non_seekable_chunked_upload_unknown_size(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -622,7 +607,6 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
 
     def test_create_blob_from_stream_with_progress_chunked_upload(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -647,7 +631,6 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assert_upload_progress(len(data), self.bs.MAX_BLOCK_SIZE, progress, unknown_size=True)
 
     def test_create_blob_from_stream_chunked_upload_with_count(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -667,7 +650,6 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
 
     def test_create_blob_from_stream_chunked_upload_with_count_and_properties(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -694,7 +676,6 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
     def test_create_blob_from_stream_chunked_upload_with_properties(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -752,14 +733,13 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @record
     def test_create_blob_from_text_with_encoding_and_progress(self):
-        pytest.skip("Probably no longer applicable as we're dropping callbacks")
         # Arrange
         blob_name = self._get_blob_reference()
         text = u'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
 
         # Act
-        progress = []
+        progress = []  # TODO: upload progress
 
         def callback(current, total):
             progress.append((current, total))
@@ -769,10 +749,9 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self.assert_upload_progress(len(data), self.bs.MAX_BLOCK_SIZE, progress)
+        #self.assert_upload_progress(len(data), self.bs.MAX_BLOCK_SIZE, progress)
 
     def test_create_blob_from_text_chunked_upload(self):
-        pytest.skip("Large blobs not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -793,30 +772,28 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @record
     def test_create_blob_with_md5(self):
-        pytest.skip("Validate content not yet supported")  # TODO
         # Arrange
         blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = b'hello world'
 
         # Act
-        self.bs.create_blob_from_bytes(self.container_name, blob_name, data,
-                                       validate_content=True)
+        blob.upload_blob(data, validate_content=True)
 
         # Assert
 
     def test_create_blob_with_md5_chunked(self):
-        pytest.skip("Validate content not yet supported")  # TODO
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
 
         # Arrange
         blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        self.bs.create_blob_from_bytes(self.container_name, blob_name, data,
-                                       validate_content=True)
+        blob.upload_blob(data, validate_content=True)
 
         # Assert
 

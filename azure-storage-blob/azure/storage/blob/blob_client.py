@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from io import BytesIO
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING
@@ -14,14 +15,15 @@ except ImportError:
     from urlparse import urlparse
     from urllib2 import quote, unquote
 
-from azure.core import Configuration
+from azure.core import Configuration, HttpResponseError
 
 from .constants import (
     MAX_SINGLE_PUT_SIZE,
     MAX_BLOCK_SIZE,
     MIN_LARGE_BLOCK_UPLOAD_THRESHOLD,
     MAX_SINGLE_GET_SIZE,
-    MAX_CHUNK_GET_SIZE
+    MAX_CHUNK_GET_SIZE,
+    MAX_PAGE_SIZE
 )
 from .common import BlobType
 from .lease import Lease
@@ -37,7 +39,8 @@ from ._utils import (
     return_response_headers,
     add_metadata_headers,
     process_storage_error,
-    encode_base64
+    encode_base64,
+    get_length
 )
 from ._deserialize import (
     deserialize_blob_properties,
@@ -48,6 +51,10 @@ from ._generated.models import (
     BlobHTTPHeaders,
     StorageErrorException,
     BlockLookupList)
+from ._upload_chunking import (
+    _upload_blob_chunks,
+    _PageBlobChunkUploader,
+    IterStreamer)
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -116,7 +123,10 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             quote(self.container),
             self.name.replace(' ', '%20').replace('?', '%3F')  # TODO: Confirm why recordings don't urlencode chars
         )
+        self.require_encryption = False
         self.key_encryption_key = None
+        self.key_resolver_function = None
+
         self._pipeline = create_pipeline(credentials, configuration, **kwargs)
         self._client = create_client(self.url, self._pipeline)
 
@@ -314,17 +324,25 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: dict[str, Any]
         """
-        # TODO: Upload other blob types
-        if self.blob_type != BlobType.BlockBlob:
-            raise NotImplementedError("Other blob types not yet implemented.")
-        # TODO Support encryption
-        if self.key_encryption_key:
-            raise NotImplementedError("Encrypted blobs not yet implmented.")
-        if not length:
-            try:
-                length = len(data)
-            except TypeError:
-                raise ValueError("Please specifiy content length.")
+        if self.require_encryption and not self.key_encryption_key:
+            raise ValueError("Encryption required but no key was provided.")
+
+        cek, iv, encryption_data = None, None, None
+        if self.key_encryption_key is not None:
+            cek, iv, encryption_data = _generate_blob_encryption_data(self.key_encryption_key)
+
+        if length is None:
+            length = get_length(data)
+
+        if isinstance(data, bytes):
+            stream = BytesIO(data)
+        elif hasattr(data, 'read'):
+            stream = data
+        elif hasattr(data, '__iter__'):
+            stream = IterStreamer(data)
+        else:
+            raise TypeError("Unsupported data type: {}".format(type(data)))
+
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         blob_headers = None
@@ -341,30 +359,76 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 blob_content_disposition=content_settings.content_disposition
             )
 
-        adjusted_count = length
-        if (self.key_encryption_key is not None) and (adjusted_count is not None):
-            adjusted_count += (16 - (length % 16))
-        if validate_content:
-            # TODO: Validate content
-            # computed_md5 = _get_content_md5(request.body)
-            # request.headers['Content-MD5'] = _to_str(computed_md5)
-            raise NotImplementedError("Content validation not yet supported.")
+        if self.blob_type == BlobType.BlockBlob:
+            adjusted_count = length
+            if (self.key_encryption_key is not None) and (adjusted_count is not None):
+                adjusted_count += (16 - (length % 16))
 
-        # Do single put if the size is smaller than MAX_SINGLE_PUT_SIZE
-        if adjusted_count is not None and (adjusted_count < MAX_SINGLE_PUT_SIZE):
-            return self._client.block_blob.upload(
-                data,
-                content_length=adjusted_count,
-                timeout=timeout,
+            # Do single put if the size is smaller than MAX_SINGLE_PUT_SIZE
+            if adjusted_count is not None and (adjusted_count < MAX_SINGLE_PUT_SIZE):
+                return self._client.block_blob.upload(
+                    data,
+                    content_length=adjusted_count,
+                    timeout=timeout,
+                    blob_http_headers=blob_headers,
+                    lease_access_conditions=access_conditions,
+                    modified_access_conditions=mod_conditions,
+                    headers=headers,
+                    cls=return_response_headers,
+                    validate_content=validate_content,
+                    **kwargs)
+            else:
+                # TODO Port over multi-threaded upload chunking
+                raise NotImplementedError("Chunked uploads not yet supported")
+
+
+        elif self.blob_type == BlobType.PageBlob:
+            if length is None or length < 0:
+                raise ValueError("A content length must be specified for a Page Blob.")
+            if length % 512 != 0:
+                raise ValueError("Invalid page blob size: {0}. "
+                                 "The size must be aligned to a 512-byte boundary.".format(count))
+            if premium_page_blob_tier:
+                try:
+                    headers['x-ms-access-tier'] = premium_page_blob_tier.value
+                except AttributeError:
+                    headers['x-ms-access-tier'] = premium_page_blob_tier
+            if encryption_data is not None:
+                headers['x-ms-meta-encryptiondata'] = encryption_data
+            response = self._client.page_blob.create(
+                content_length=0,
+                blob_content_length=length,
+                blob_sequence_number=None,
                 blob_http_headers=blob_headers,
+                timeout=timeout,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
-                headers=headers,
                 cls=return_response_headers,
+                headers=headers,
+                error_map=basic_error_map(),
                 **kwargs)
+            if length == 0:
+                return response
+
+            mod_conditions = get_modification_conditions(if_match=response['ETag'])
+            return _upload_blob_chunks(
+                blob_service=self._client.page_blob,
+                blob_size=length,
+                block_size=MAX_PAGE_SIZE,
+                stream=stream,
+                max_connections=max_connections,
+                validate_content=validate_content,
+                access_conditions=access_conditions,
+                uploader_class=_PageBlobChunkUploader,
+                modified_access_conditions=mod_conditions,
+                timeout=timeout,
+                content_encryption_key=cek,
+                initialization_vector=iv,
+                **kwargs
+            )
+        # TODO: Upload other blob types
         else:
-            # TODO Port over multi-threaded upload chunking
-            raise NotImplementedError("Chunked uploads not yet supported")
+            raise NotImplementedError("Other blob types not yet implemented.")
 
     def download_blob(
             self, offset=None,  # type: Optional[int]
@@ -386,11 +450,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
-        if validate_content:
-            # TODO: Validate content
-            # computed_md5 = _get_content_md5(request.body)
-            # request.headers['Content-MD5'] = _to_str(computed_md5)
-            raise NotImplementedError("Content validation not yet supported.")
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is on, get only MAX_CHUNK_GET_SIZE for the first
@@ -406,6 +465,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         else:
             initial_request_end = initial_request_start + first_get_size - 1
         range_header = 'bytes={0}-{1}'.format(initial_request_start, initial_request_end)
+
         try:
             stream = self._client.blob.download(
                 timeout=timeout,
@@ -414,13 +474,25 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 error_map=basic_error_map(),
+                validate_content=validate_content,
                 cls=deserialize_blob_stream,
                 **kwargs)
-            stream.properties.name = self.name
-            stream.properties.container = self.container
-            return stream
         except StorageErrorException as error:
-            process_storage_error(error)
+            if error.response.status_code == 416:
+                stream = self._client.blob.download(
+                    timeout=timeout,
+                    snapshot=self.snapshot,
+                    range=None,
+                    lease_access_conditions=access_conditions,
+                    modified_access_conditions=mod_conditions,
+                    error_map=basic_error_map(),
+                    cls=deserialize_blob_stream,
+                    **kwargs)
+            else:
+                process_storage_error(error)
+        stream.properties.name = self.name
+        stream.properties.container = self.container
+        return stream
 
     def delete_blob(
             self, lease=None,  # type: Optional[Union[str, Lease]]
@@ -849,9 +921,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :raises: InvalidOperation when blob client type is not BlockBlob.
         :returns: None
         """
-        if validate_content:
-            # TODO validate content
-            raise NotImplementedError()
         block_id = encode_base64(str(block_id))
         access_conditions = get_access_conditions(lease)
         if not length:
@@ -866,6 +935,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             transactional_content_md5=None,
             timeout=timeout,
             lease_access_conditions=access_conditions,
+            validate_content=validate_content,
             **kwargs)
 
     def stage_block_from_url(
@@ -928,16 +998,14 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :raises: InvalidOperation when blob client type is not BlockBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
-        if validate_content:
-            raise NotImplementedError()
         block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
         for block in block_list:
             if block.state.value == 'committed':
-                block_lookup.committed.append(block.id)
+                block_lookup.committed.append(encode_base64(str(block.id)))
             elif block.state.value == 'uncommitted':
-                block_lookup.uncommitted.append(block.id)
+                block_lookup.uncommitted.append(encode_base64(str(block.id)))
             else:
-                block_lookup.latest.append(block.id)
+                block_lookup.latest.append(encode_base64(str(block.id)))
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         blob_headers = None
@@ -960,6 +1028,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             timeout=timeout,
             modified_access_conditions=mod_conditions,
             cls=return_response_headers,
+            validate_content=validate_content,
             **kwargs)
 
     def set_premium_page_blob_tier(self, premium_page_blob_tier, timeout=None):
@@ -1018,7 +1087,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         """
 
     def upload_page(
-            self, page,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            self, page,  # type: bytes
             start_range,  # type: int
             end_range,  # type: int
             length=None,  # type: Optional[int]
@@ -1039,11 +1108,14 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :raises: InvalidOperation when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
-        # TODO Support encryption
-        if self.key_encryption_key:
-            raise NotImplementedError("Encrypted blobs not yet implmented.")
-        if validate_content:
-            raise NotImplementedError("Content validation not yet supported.")
+        if self.require_encryption and not self.key_encryption_key:
+            raise ValueError("Encryption required but no key was provided.")
+        cek, iv, encryption_data = None, None, None
+        if self.key_encryption_key is not None:
+            cek, iv, encryption_data = _generate_blob_encryption_data(self.key_encryption_key)
+        headers = kwargs.pop('headers', {})
+        if encryption_data is not None:
+                headers['x-ms-meta-encryptiondata'] = encryption_data
         if not length:
             try:
                 length = len(page)
@@ -1071,6 +1143,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             lease_access_conditions=access_conditions,
             sequence_number_access_conditions=seq_conditions,
             modified_access_conditions=mod_conditions,
+            validate_content=validate_content,
             cls=return_response_headers,
             **kwargs
         )
@@ -1086,7 +1159,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None  # type: Optional[int]
+            timeout=None,  # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
@@ -1103,6 +1177,29 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :raises: InvalidOperation when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
+        access_conditions = get_access_conditions(lease)
+        seq_conditions = get_sequence_conditions(
+            if_sequence_number_lte=if_sequence_number_lte,
+            if_sequence_number_lt=if_sequence_number_lt,
+            if_sequence_number_eq=if_sequence_number_eq
+        )
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        if start_range is None or start_range % 512 != 0:
+            raise ValueError("start_range must be an integer that aligns with 512 page size")
+        if end_range is None or end_range % 512 != 511:
+            raise ValueError("end_range must be an integer that aligns with 512 page size")
+        content_range = 'bytes={0}-{1}'.format(start_range, end_range)
+        return self._client.page_blob.clear_pages(
+            content_length=0,
+            timeout=timeout,
+            range=content_range,
+            lease_access_conditions=access_conditions,
+            sequence_number_access_conditions=seq_conditions,
+            modified_access_conditions=mod_conditions,
+            cls=return_response_headers,
+            **kwargs
+        )
 
     def incremental_copy(
             self, copy_source,  # type: str

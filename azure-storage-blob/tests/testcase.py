@@ -163,6 +163,9 @@ class StorageTestCase(unittest.TestCase):
     def _get_shared_key_credentials(self):
         return self.settings.STORAGE_ACCOUNT_NAME, self.settings.STORAGE_ACCOUNT_KEY
 
+    def _get_premium_shared_key_credentials(self):
+        return self.settings.PREMIUM_STORAGE_ACCOUNT_NAME, self.settings.PREMIUM_STORAGE_ACCOUNT_KEY,
+
     def _get_remote_shared_key_credentials(self):
         return self.settings.REMOTE_STORAGE_ACCOUNT_NAME, self.settings.REMOTE_STORAGE_ACCOUNT_KEY,
 
@@ -170,6 +173,12 @@ class StorageTestCase(unittest.TestCase):
         return "{}://{}.blob.core.windows.net".format(
             self.settings.PROTOCOL,
             self.settings.STORAGE_ACCOUNT_NAME
+        )
+
+    def _get_premium_account_url(self):
+        return "{}://{}.blob.core.windows.net".format(
+            self.settings.PROTOCOL,
+            self.settings.PREMIUM_STORAGE_ACCOUNT_NAME
         )
 
     def _get_remote_account_url(self):

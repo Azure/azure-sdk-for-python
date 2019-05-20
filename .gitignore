@@ -71,3 +71,4 @@ src/build
 adlEnv/
 
 code_reports
+azure-storage-blob/tests/settings_real.py

@@ -124,7 +124,8 @@ class ContainerClient(object):
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None  # type: Optional[int]
+            timeout=None,  # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> None
         """

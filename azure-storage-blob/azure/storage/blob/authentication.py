@@ -9,6 +9,11 @@ import hashlib
 import hmac
 import logging
 import sys
+try:
+    from urllib.parse import urlparse, quote, unquote
+except ImportError:
+    from urlparse import urlparse
+    from urllib2 import quote, unquote
 
 from azure.core.exceptions import AzureError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -95,7 +100,7 @@ class SharedKeyCredentials(SansIOHTTPPolicy):
         return request.http_request.method + '\n'
 
     def _get_canonicalized_resource(self, request):
-        uri_path = request.http_request.url.split('?')[0]
+        uri_path = urlparse(request.http_request.url).path
 
         # for emulator, use the DEV_ACCOUNT_NAME instead of DEV_ACCOUNT_SECONDARY_NAME
         # as this is how the emulator works
@@ -124,7 +129,7 @@ class SharedKeyCredentials(SansIOHTTPPolicy):
         string_to_sign = ''
         for name, value in sorted_queries:
             if value is not None:
-                string_to_sign += '\n' + name.lower() + ':' + value
+                string_to_sign += '\n' + name.lower() + ':' + unquote(value)
 
         return string_to_sign
 
@@ -140,6 +145,8 @@ class SharedKeyCredentials(SansIOHTTPPolicy):
             raise _wrap_exception(ex, AzureSigningError)
 
     def on_request(self, request, **kwargs):
+        request.http_request.headers['x-ms-client-request-id'] = 'ee0fb6b4-7b17-11e9-addd-f45c89a7d159'
+        #request.http_request.headers['x-ms-date'] = 'Mon, 20 May 2019 15:58:08 GMT'
         string_to_sign = \
             self._get_verb(request) + \
             self._get_headers(
@@ -155,4 +162,5 @@ class SharedKeyCredentials(SansIOHTTPPolicy):
             self._get_canonicalized_resource_query(request)
 
         self._add_authorization_header(request, string_to_sign)
+        request.context['string-to-sign'] = string_to_sign
         logger.debug("String_to_sign=%s", string_to_sign)
