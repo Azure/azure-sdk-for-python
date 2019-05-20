@@ -780,6 +780,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :returns: None
         """
         access_conditions = get_access_conditions(lease)
+        if standard_blob_tier is None:
+            raise ValueError("A StandardBlobTier must be specified")
         self._client.blob.set_tier(
             tier=standard_blob_tier,
             timeout=timeout,
@@ -920,6 +922,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :returns: None
         """
         access_conditions = get_access_conditions(lease)
+        if premium_page_blob_tier is None:
+            raise ValueError("A PremiumPageBlobTiermust be specified")
         self._client.blob.set_tier(
             tier=premium_page_blob_tier,
             timeout=timeout,
