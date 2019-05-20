@@ -102,7 +102,9 @@ class HttpRequest(object):
     def query(self):
         """The query parameters of the request as a dict."""
         query = urlparse(self.url).query
-        return {p[0]: p[-1] for p in [p.partition('=') for p in query.split('&')]}
+        if query:
+            return {p[0]: p[-1] for p in [p.partition('=') for p in query.split('&')]}
+        return {}
 
     @property
     def body(self):
@@ -165,7 +167,7 @@ class HttpRequest(object):
         if data is None:
             self.data = None
         else:
-            bytes_data = ET.tostring(data, encoding="utf8")
+            bytes_data = ET.tostring(data, encoding="utf-8")
             self.headers['Content-Length'] = str(len(bytes_data))
             self.data = bytes_data
         self.files = None
