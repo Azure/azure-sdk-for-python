@@ -87,12 +87,14 @@ from .sku_description_paged import SkuDescriptionPaged
 from .azure_resource_sku_paged import AzureResourceSkuPaged
 from .database_paged import DatabasePaged
 from .database_principal_paged import DatabasePrincipalPaged
+from .attached_database_configuration_paged import AttachedDatabaseConfigurationPaged
 from .data_connection_paged import DataConnectionPaged
 from .operation_paged import OperationPaged
 from .kusto_management_client_enums import (
     State,
     ProvisioningState,
     AzureSkuName,
+    AzureSkuTier,
     AzureScaleType,
     DataFormat,
     DatabasePrincipalRole,
@@ -143,11 +145,13 @@ __all__ = [
     'AzureResourceSkuPaged',
     'DatabasePaged',
     'DatabasePrincipalPaged',
+    'AttachedDatabaseConfigurationPaged',
     'DataConnectionPaged',
     'OperationPaged',
     'State',
     'ProvisioningState',
     'AzureSkuName',
+    'AzureSkuTier',
     'AzureScaleType',
     'DataFormat',
     'DatabasePrincipalRole',

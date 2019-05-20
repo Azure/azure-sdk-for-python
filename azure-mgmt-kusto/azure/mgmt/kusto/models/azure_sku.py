@@ -15,26 +15,24 @@ from msrest.serialization import Model
 class AzureSku(Model):
     """Azure SKU definition.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. SKU name. Possible values include:
      'Standard_DS13_v2+1TB_PS', 'Standard_DS13_v2+2TB_PS',
      'Standard_DS14_v2+3TB_PS', 'Standard_DS14_v2+4TB_PS', 'Standard_D13_v2',
      'Standard_D14_v2', 'Standard_L8s', 'Standard_L16s', 'Standard_D11_v2',
-     'Standard_D12_v2', 'Standard_L4s'
+     'Standard_D12_v2', 'Standard_L4s', 'Dev(No SLA)_Standard_D11_v2'
     :type name: str or ~azure.mgmt.kusto.models.AzureSkuName
     :param capacity: SKU capacity.
     :type capacity: int
-    :ivar tier: Required. SKU tier. Default value: "Standard" .
-    :vartype tier: str
+    :param tier: Required. SKU tier. Possible values include: 'Basic',
+     'Standard'
+    :type tier: str or ~azure.mgmt.kusto.models.AzureSkuTier
     """
 
     _validation = {
         'name': {'required': True},
-        'tier': {'required': True, 'constant': True},
+        'tier': {'required': True},
     }
 
     _attribute_map = {
@@ -43,9 +41,8 @@ class AzureSku(Model):
         'tier': {'key': 'tier', 'type': 'str'},
     }
 
-    tier = "Standard"
-
     def __init__(self, **kwargs):
         super(AzureSku, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.capacity = kwargs.get('capacity', None)
+        self.tier = kwargs.get('tier', None)

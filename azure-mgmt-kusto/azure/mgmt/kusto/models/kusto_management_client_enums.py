@@ -48,6 +48,13 @@ class AzureSkuName(str, Enum):
     standard_d11_v2 = "Standard_D11_v2"
     standard_d12_v2 = "Standard_D12_v2"
     standard_l4s = "Standard_L4s"
+    dev_no_sla_standard_d11_v2 = "Dev(No SLA)_Standard_D11_v2"
+
+
+class AzureSkuTier(str, Enum):
+
+    basic = "Basic"
+    standard = "Standard"
 
 
 class AzureScaleType(str, Enum):
