@@ -7,12 +7,12 @@ import asyncio
 import functools
 
 from azure.core.exceptions import ResourceNotFoundError
-from azure.keyvault._generated.v7_0.models import KeyVaultErrorException
+from azure.security.keyvault._generated.v7_0.models import KeyVaultErrorException
 from devtools_testutils import ResourceGroupPreparer
 from keyvault_preparer import KeyVaultPreparer
 from keyvault_testcase import KeyvaultTestCase
 
-from azure.keyvault.aio.vault_client import VaultClient
+from azure.security.keyvault.aio.vault_client import VaultClient
 
 from dateutil import parser as date_parse
 import time

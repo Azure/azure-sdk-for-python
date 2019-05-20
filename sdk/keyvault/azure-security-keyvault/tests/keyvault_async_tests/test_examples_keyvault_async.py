@@ -8,12 +8,12 @@ import time
 import asyncio
 import functools
 
-from azure.keyvault.secrets._client import SecretClient
+from azure.security.keyvault.secrets._client import SecretClient
 from devtools_testutils import ResourceGroupPreparer
 from keyvault_preparer import KeyVaultPreparer
 from keyvault_testcase import KeyvaultTestCase
-from azure.keyvault._generated.v7_0.models import KeyVaultErrorException
-from azure.keyvault.aio.vault_client import VaultClient
+from azure.security.keyvault._generated.v7_0.models import KeyVaultErrorException
+from azure.security.keyvault.aio.vault_client import VaultClient
 
 
 # TODO: Remove, later?
@@ -134,7 +134,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
 
         try:
             # [START list_secret_versions]
-            from azure.keyvault.vault_client import VaultClient
+            from azure.security.keyvault.vault_client import VaultClient
 
             # gets a list of all versions of a secret
             secret_versions = secret_client.list_secret_versions('secret-name')

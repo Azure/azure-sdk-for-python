@@ -11,8 +11,8 @@ from azure.core.pipeline.policies import UserAgentPolicy, AsyncRetryPolicy, Asyn
 from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.pipeline import AsyncPipeline
 
-from azure.keyvault._internal import _BearerTokenCredentialPolicy
-from azure.keyvault._generated import KeyVaultClientAsync
+from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
+from azure.security.keyvault._generated import KeyVaultClientAsync
 
 from ...secrets._models import Secret, DeletedSecret, SecretAttributes
 from datetime import datetime
@@ -94,7 +94,7 @@ class SecretClient:
                 :caption: Get secret from the key vault
         """
         bundle = await self._client.get_secret(self.vault_url, name, version, error_map={404: ResourceNotFoundError})
-        return Secret.from_secret_bundle(bundle)
+        return Secret._from_secret_bundle(bundle)
 
     async def set_secret(
         self,
@@ -143,7 +143,7 @@ class SecretClient:
         bundle = await self._client.set_secret(
             self.vault_url, name, value, secret_attributes=attributes, content_type=content_type, tags=tags
         )
-        return Secret.from_secret_bundle(bundle)
+        return Secret._from_secret_bundle(bundle)
 
     async def update_secret_attributes(
         self,
@@ -198,7 +198,7 @@ class SecretClient:
             secret_attributes=attributes,
             error_map={404: ResourceNotFoundError},
         )
-        return SecretAttributes.from_secret_bundle(bundle)  # pylint: disable=protected-access
+        return SecretAttributes._from_secret_bundle(bundle)  # pylint: disable=protected-access
 
     async def list_secrets(self, **kwargs: Mapping[str, Any]) -> AsyncGenerator[SecretAttributes, None]:
         """List secrets in the vault.
@@ -225,7 +225,7 @@ class SecretClient:
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_secrets(self.vault_url, maxresults=max_results)
         async for item in pages:
-            yield SecretAttributes.from_secret_item(item)
+            yield SecretAttributes._from_secret_item(item)
 
     async def list_secret_versions(
         self, name: str, **kwargs: Mapping[str, Any]
@@ -254,7 +254,7 @@ class SecretClient:
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_secret_versions(self.vault_url, name, maxresults=max_results)
         async for item in pages:
-            yield SecretAttributes.from_secret_item(item)
+            yield SecretAttributes._from_secret_item(item)
 
     async def backup_secret(self, name: str, **kwargs: Mapping[str, Any]) -> bytes:
         """Backs up the specified secret.
@@ -301,7 +301,7 @@ class SecretClient:
                 :caption: Restores a backed up secret to the vault
         """
         bundle = await self._client.restore_secret(self.vault_url, backup, error_map={409: ResourceExistsError})
-        return SecretAttributes.from_secret_bundle(bundle)
+        return SecretAttributes._from_secret_bundle(bundle)
 
     async def delete_secret(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedSecret:
         """Deletes a secret from the vault.
@@ -324,7 +324,7 @@ class SecretClient:
                 :caption: Deletes a secret
         """
         bundle = await self._client.delete_secret(self.vault_url, name, error_map={404: ResourceNotFoundError})
-        return DeletedSecret.from_deleted_secret_bundle(bundle)
+        return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     async def get_deleted_secret(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedSecret:
         """Gets the specified deleted secret.
@@ -346,7 +346,7 @@ class SecretClient:
                 :caption: Gets the deleted secret
         """
         bundle = await self._client.get_deleted_secret(self.vault_url, name, error_map={404: ResourceNotFoundError})
-        return DeletedSecret.from_deleted_secret_bundle(bundle)
+        return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     async def list_deleted_secrets(self, **kwargs: Mapping[str, Any]) -> AsyncGenerator[DeletedSecret, None]:
         """Lists deleted secrets of the vault.
@@ -370,7 +370,7 @@ class SecretClient:
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_deleted_secrets(self.vault_url, maxresults=max_results)
         async for item in pages:
-            yield DeletedSecret.from_deleted_secret_item(item)
+            yield DeletedSecret._from_deleted_secret_item(item)
 
     async def purge_deleted_secret(self, name: str, **kwargs: Mapping[str, Any]) -> None:
         """Permanently deletes the specified secret.
@@ -414,4 +414,4 @@ class SecretClient:
                 :caption: Restores a backed up secret to the vault
         """
         bundle = await self._client.recover_deleted_secret(self.vault_url, name)
-        return SecretAttributes.from_secret_bundle(bundle)
+        return SecretAttributes._from_deleted_secret_bundle(bundle)
