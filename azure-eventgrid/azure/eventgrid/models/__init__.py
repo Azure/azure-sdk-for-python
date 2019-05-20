@@ -30,6 +30,7 @@ try:
     from .iot_hub_device_deleted_event_data_py3 import IotHubDeviceDeletedEventData
     from .iot_hub_device_connected_event_data_py3 import IotHubDeviceConnectedEventData
     from .iot_hub_device_disconnected_event_data_py3 import IotHubDeviceDisconnectedEventData
+    from .iot_hub_device_telemetry_event_data_py3 import IotHubDeviceTelemetryEventData
     from .device_twin_metadata_py3 import DeviceTwinMetadata
     from .device_twin_properties_py3 import DeviceTwinProperties
     from .device_twin_info_properties_py3 import DeviceTwinInfoProperties
@@ -38,16 +39,55 @@ try:
     from .device_life_cycle_event_properties_py3 import DeviceLifeCycleEventProperties
     from .device_connection_state_event_info_py3 import DeviceConnectionStateEventInfo
     from .device_connection_state_event_properties_py3 import DeviceConnectionStateEventProperties
+    from .device_telemetry_event_properties_py3 import DeviceTelemetryEventProperties
     from .container_registry_image_pushed_event_data_py3 import ContainerRegistryImagePushedEventData
     from .container_registry_image_deleted_event_data_py3 import ContainerRegistryImageDeletedEventData
+    from .container_registry_chart_pushed_event_data_py3 import ContainerRegistryChartPushedEventData
+    from .container_registry_chart_deleted_event_data_py3 import ContainerRegistryChartDeletedEventData
     from .container_registry_event_target_py3 import ContainerRegistryEventTarget
     from .container_registry_event_request_py3 import ContainerRegistryEventRequest
     from .container_registry_event_actor_py3 import ContainerRegistryEventActor
     from .container_registry_event_source_py3 import ContainerRegistryEventSource
     from .container_registry_event_data_py3 import ContainerRegistryEventData
+    from .container_registry_artifact_event_target_py3 import ContainerRegistryArtifactEventTarget
+    from .container_registry_artifact_event_data_py3 import ContainerRegistryArtifactEventData
     from .service_bus_active_messages_available_with_no_listeners_event_data_py3 import ServiceBusActiveMessagesAvailableWithNoListenersEventData
     from .service_bus_deadletter_messages_available_with_no_listeners_event_data_py3 import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
     from .media_job_state_change_event_data_py3 import MediaJobStateChangeEventData
+    from .media_job_error_detail_py3 import MediaJobErrorDetail
+    from .media_job_error_py3 import MediaJobError
+    from .media_job_output_py3 import MediaJobOutput
+    from .media_job_output_asset_py3 import MediaJobOutputAsset
+    from .media_job_output_progress_event_data_py3 import MediaJobOutputProgressEventData
+    from .media_job_output_state_change_event_data_py3 import MediaJobOutputStateChangeEventData
+    from .media_job_scheduled_event_data_py3 import MediaJobScheduledEventData
+    from .media_job_processing_event_data_py3 import MediaJobProcessingEventData
+    from .media_job_canceling_event_data_py3 import MediaJobCancelingEventData
+    from .media_job_finished_event_data_py3 import MediaJobFinishedEventData
+    from .media_job_canceled_event_data_py3 import MediaJobCanceledEventData
+    from .media_job_errored_event_data_py3 import MediaJobErroredEventData
+    from .media_job_output_canceled_event_data_py3 import MediaJobOutputCanceledEventData
+    from .media_job_output_canceling_event_data_py3 import MediaJobOutputCancelingEventData
+    from .media_job_output_errored_event_data_py3 import MediaJobOutputErroredEventData
+    from .media_job_output_finished_event_data_py3 import MediaJobOutputFinishedEventData
+    from .media_job_output_processing_event_data_py3 import MediaJobOutputProcessingEventData
+    from .media_job_output_scheduled_event_data_py3 import MediaJobOutputScheduledEventData
+    from .media_live_event_encoder_connected_event_data_py3 import MediaLiveEventEncoderConnectedEventData
+    from .media_live_event_connection_rejected_event_data_py3 import MediaLiveEventConnectionRejectedEventData
+    from .media_live_event_encoder_disconnected_event_data_py3 import MediaLiveEventEncoderDisconnectedEventData
+    from .media_live_event_incoming_stream_received_event_data_py3 import MediaLiveEventIncomingStreamReceivedEventData
+    from .media_live_event_incoming_streams_out_of_sync_event_data_py3 import MediaLiveEventIncomingStreamsOutOfSyncEventData
+    from .media_live_event_incoming_video_streams_out_of_sync_event_data_py3 import MediaLiveEventIncomingVideoStreamsOutOfSyncEventData
+    from .media_live_event_incoming_data_chunk_dropped_event_data_py3 import MediaLiveEventIncomingDataChunkDroppedEventData
+    from .media_live_event_ingest_heartbeat_event_data_py3 import MediaLiveEventIngestHeartbeatEventData
+    from .media_live_event_track_discontinuity_detected_event_data_py3 import MediaLiveEventTrackDiscontinuityDetectedEventData
+    from .maps_geofence_entered_event_data_py3 import MapsGeofenceEnteredEventData
+    from .maps_geofence_exited_event_data_py3 import MapsGeofenceExitedEventData
+    from .maps_geofence_result_event_data_py3 import MapsGeofenceResultEventData
+    from .maps_geofence_geometry_py3 import MapsGeofenceGeometry
+    from .maps_geofence_event_properties_py3 import MapsGeofenceEventProperties
+    from .app_configuration_key_value_modified_event_data_py3 import AppConfigurationKeyValueModifiedEventData
+    from .app_configuration_key_value_deleted_event_data_py3 import AppConfigurationKeyValueDeletedEventData
 except (SyntaxError, ImportError):
     from .storage_blob_created_event_data import StorageBlobCreatedEventData
     from .storage_blob_deleted_event_data import StorageBlobDeletedEventData
@@ -69,6 +109,7 @@ except (SyntaxError, ImportError):
     from .iot_hub_device_deleted_event_data import IotHubDeviceDeletedEventData
     from .iot_hub_device_connected_event_data import IotHubDeviceConnectedEventData
     from .iot_hub_device_disconnected_event_data import IotHubDeviceDisconnectedEventData
+    from .iot_hub_device_telemetry_event_data import IotHubDeviceTelemetryEventData
     from .device_twin_metadata import DeviceTwinMetadata
     from .device_twin_properties import DeviceTwinProperties
     from .device_twin_info_properties import DeviceTwinInfoProperties
@@ -77,18 +118,60 @@ except (SyntaxError, ImportError):
     from .device_life_cycle_event_properties import DeviceLifeCycleEventProperties
     from .device_connection_state_event_info import DeviceConnectionStateEventInfo
     from .device_connection_state_event_properties import DeviceConnectionStateEventProperties
+    from .device_telemetry_event_properties import DeviceTelemetryEventProperties
     from .container_registry_image_pushed_event_data import ContainerRegistryImagePushedEventData
     from .container_registry_image_deleted_event_data import ContainerRegistryImageDeletedEventData
+    from .container_registry_chart_pushed_event_data import ContainerRegistryChartPushedEventData
+    from .container_registry_chart_deleted_event_data import ContainerRegistryChartDeletedEventData
     from .container_registry_event_target import ContainerRegistryEventTarget
     from .container_registry_event_request import ContainerRegistryEventRequest
     from .container_registry_event_actor import ContainerRegistryEventActor
     from .container_registry_event_source import ContainerRegistryEventSource
     from .container_registry_event_data import ContainerRegistryEventData
+    from .container_registry_artifact_event_target import ContainerRegistryArtifactEventTarget
+    from .container_registry_artifact_event_data import ContainerRegistryArtifactEventData
     from .service_bus_active_messages_available_with_no_listeners_event_data import ServiceBusActiveMessagesAvailableWithNoListenersEventData
     from .service_bus_deadletter_messages_available_with_no_listeners_event_data import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
     from .media_job_state_change_event_data import MediaJobStateChangeEventData
+    from .media_job_error_detail import MediaJobErrorDetail
+    from .media_job_error import MediaJobError
+    from .media_job_output import MediaJobOutput
+    from .media_job_output_asset import MediaJobOutputAsset
+    from .media_job_output_progress_event_data import MediaJobOutputProgressEventData
+    from .media_job_output_state_change_event_data import MediaJobOutputStateChangeEventData
+    from .media_job_scheduled_event_data import MediaJobScheduledEventData
+    from .media_job_processing_event_data import MediaJobProcessingEventData
+    from .media_job_canceling_event_data import MediaJobCancelingEventData
+    from .media_job_finished_event_data import MediaJobFinishedEventData
+    from .media_job_canceled_event_data import MediaJobCanceledEventData
+    from .media_job_errored_event_data import MediaJobErroredEventData
+    from .media_job_output_canceled_event_data import MediaJobOutputCanceledEventData
+    from .media_job_output_canceling_event_data import MediaJobOutputCancelingEventData
+    from .media_job_output_errored_event_data import MediaJobOutputErroredEventData
+    from .media_job_output_finished_event_data import MediaJobOutputFinishedEventData
+    from .media_job_output_processing_event_data import MediaJobOutputProcessingEventData
+    from .media_job_output_scheduled_event_data import MediaJobOutputScheduledEventData
+    from .media_live_event_encoder_connected_event_data import MediaLiveEventEncoderConnectedEventData
+    from .media_live_event_connection_rejected_event_data import MediaLiveEventConnectionRejectedEventData
+    from .media_live_event_encoder_disconnected_event_data import MediaLiveEventEncoderDisconnectedEventData
+    from .media_live_event_incoming_stream_received_event_data import MediaLiveEventIncomingStreamReceivedEventData
+    from .media_live_event_incoming_streams_out_of_sync_event_data import MediaLiveEventIncomingStreamsOutOfSyncEventData
+    from .media_live_event_incoming_video_streams_out_of_sync_event_data import MediaLiveEventIncomingVideoStreamsOutOfSyncEventData
+    from .media_live_event_incoming_data_chunk_dropped_event_data import MediaLiveEventIncomingDataChunkDroppedEventData
+    from .media_live_event_ingest_heartbeat_event_data import MediaLiveEventIngestHeartbeatEventData
+    from .media_live_event_track_discontinuity_detected_event_data import MediaLiveEventTrackDiscontinuityDetectedEventData
+    from .maps_geofence_entered_event_data import MapsGeofenceEnteredEventData
+    from .maps_geofence_exited_event_data import MapsGeofenceExitedEventData
+    from .maps_geofence_result_event_data import MapsGeofenceResultEventData
+    from .maps_geofence_geometry import MapsGeofenceGeometry
+    from .maps_geofence_event_properties import MapsGeofenceEventProperties
+    from .app_configuration_key_value_modified_event_data import AppConfigurationKeyValueModifiedEventData
+    from .app_configuration_key_value_deleted_event_data import AppConfigurationKeyValueDeletedEventData
 from .event_grid_client_enums import (
-    JobState,
+    MediaJobState,
+    MediaJobErrorCode,
+    MediaJobErrorCategory,
+    MediaJobRetry,
 )
 
 __all__ = [
@@ -112,6 +195,7 @@ __all__ = [
     'IotHubDeviceDeletedEventData',
     'IotHubDeviceConnectedEventData',
     'IotHubDeviceDisconnectedEventData',
+    'IotHubDeviceTelemetryEventData',
     'DeviceTwinMetadata',
     'DeviceTwinProperties',
     'DeviceTwinInfoProperties',
@@ -120,15 +204,57 @@ __all__ = [
     'DeviceLifeCycleEventProperties',
     'DeviceConnectionStateEventInfo',
     'DeviceConnectionStateEventProperties',
+    'DeviceTelemetryEventProperties',
     'ContainerRegistryImagePushedEventData',
     'ContainerRegistryImageDeletedEventData',
+    'ContainerRegistryChartPushedEventData',
+    'ContainerRegistryChartDeletedEventData',
     'ContainerRegistryEventTarget',
     'ContainerRegistryEventRequest',
     'ContainerRegistryEventActor',
     'ContainerRegistryEventSource',
     'ContainerRegistryEventData',
+    'ContainerRegistryArtifactEventTarget',
+    'ContainerRegistryArtifactEventData',
     'ServiceBusActiveMessagesAvailableWithNoListenersEventData',
     'ServiceBusDeadletterMessagesAvailableWithNoListenersEventData',
     'MediaJobStateChangeEventData',
-    'JobState',
+    'MediaJobErrorDetail',
+    'MediaJobError',
+    'MediaJobOutput',
+    'MediaJobOutputAsset',
+    'MediaJobOutputProgressEventData',
+    'MediaJobOutputStateChangeEventData',
+    'MediaJobScheduledEventData',
+    'MediaJobProcessingEventData',
+    'MediaJobCancelingEventData',
+    'MediaJobFinishedEventData',
+    'MediaJobCanceledEventData',
+    'MediaJobErroredEventData',
+    'MediaJobOutputCanceledEventData',
+    'MediaJobOutputCancelingEventData',
+    'MediaJobOutputErroredEventData',
+    'MediaJobOutputFinishedEventData',
+    'MediaJobOutputProcessingEventData',
+    'MediaJobOutputScheduledEventData',
+    'MediaLiveEventEncoderConnectedEventData',
+    'MediaLiveEventConnectionRejectedEventData',
+    'MediaLiveEventEncoderDisconnectedEventData',
+    'MediaLiveEventIncomingStreamReceivedEventData',
+    'MediaLiveEventIncomingStreamsOutOfSyncEventData',
+    'MediaLiveEventIncomingVideoStreamsOutOfSyncEventData',
+    'MediaLiveEventIncomingDataChunkDroppedEventData',
+    'MediaLiveEventIngestHeartbeatEventData',
+    'MediaLiveEventTrackDiscontinuityDetectedEventData',
+    'MapsGeofenceEnteredEventData',
+    'MapsGeofenceExitedEventData',
+    'MapsGeofenceResultEventData',
+    'MapsGeofenceGeometry',
+    'MapsGeofenceEventProperties',
+    'AppConfigurationKeyValueModifiedEventData',
+    'AppConfigurationKeyValueDeletedEventData',
+    'MediaJobState',
+    'MediaJobErrorCode',
+    'MediaJobErrorCategory',
+    'MediaJobRetry',
 ]
