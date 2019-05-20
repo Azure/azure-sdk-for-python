@@ -145,8 +145,6 @@ class SharedKeyCredentials(SansIOHTTPPolicy):
             raise _wrap_exception(ex, AzureSigningError)
 
     def on_request(self, request, **kwargs):
-        request.http_request.headers['x-ms-client-request-id'] = 'ee0fb6b4-7b17-11e9-addd-f45c89a7d159'
-        #request.http_request.headers['x-ms-date'] = 'Mon, 20 May 2019 15:58:08 GMT'
         string_to_sign = \
             self._get_verb(request) + \
             self._get_headers(
@@ -162,5 +160,4 @@ class SharedKeyCredentials(SansIOHTTPPolicy):
             self._get_canonicalized_resource_query(request)
 
         self._add_authorization_header(request, string_to_sign)
-        request.context['string-to-sign'] = string_to_sign
         logger.debug("String_to_sign=%s", string_to_sign)
