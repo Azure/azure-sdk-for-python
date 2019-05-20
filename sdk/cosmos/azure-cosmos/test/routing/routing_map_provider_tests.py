@@ -28,7 +28,7 @@ from azure.cosmos.routing import routing_range as routing_range
 @pytest.mark.usefixtures("teardown")
 class RoutingMapProviderTests(unittest.TestCase):
 
-    class MockedCosmosClient(object):
+    class MockedCosmosClientConnection(object):
         
         def __init__(self, partition_key_ranges):
             self.partition_key_ranges = partition_key_ranges
@@ -44,7 +44,7 @@ class RoutingMapProviderTests(unittest.TestCase):
         self.cached_collection_routing_map = _CollectionRoutingMap.CompleteRoutingMap(partitionRangeWithInfo, 'sample collection id')
 
     def instantiate_smart_routing_map_provider(self, partition_key_ranges):
-        client = RoutingMapProviderTests.MockedCosmosClient(partition_key_ranges)
+        client = RoutingMapProviderTests.MockedCosmosClientConnection(partition_key_ranges)
         return _SmartRoutingMapProvider(client)
     
     def test_full_range(self):

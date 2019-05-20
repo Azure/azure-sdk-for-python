@@ -1,8 +1,7 @@
-# Azure Cosmos client library for Python
+# Microsoft Azure Cosmos Python SDK
 
 Welcome to the repo containing all things Python for the Azure Cosmos DB API which is published with name [azure-cosmos](https://pypi.python.org/pypi/azure-cosmos/). For documentation please see the Microsoft Azure [link](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-api-sdk-python).
 
-# Getting started
 
 ## Pre-requirements
 
@@ -16,7 +15,7 @@ http://microsoft.github.io/PTVS/
 Install Cosmos DB emulator
 Follow instruction at https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator 
 
-## Installation
+## Installation:
 
     $ python setup.py install
 
@@ -24,27 +23,16 @@ Follow instruction at https://docs.microsoft.com/en-us/azure/cosmos-db/local-emu
 
     $ pip install azure-cosmos
 
-# Key concepts
-
-# Examples
-
-# Troubleshooting
-
-# Next steps
-
-# Contributing
 
 ## Running Testing
-
-Clone the repo
-
+Clone the repo 
 ```bash
 git clone https://github.com/Azure/azure-cosmos-python.git
 cd azure-cosmos-python
 ```
 
 Most of the test files under test sub-folder require you to enter your Azure Cosmos master key and host endpoint: 
-
+    
     masterKey = '[YOUR_KEY_HERE]'
     host = '[YOUR_ENDPOINT_HERE]'
 
@@ -58,6 +46,7 @@ To run the tests:
 **Note:**  
 Most of the test cases create containers in your Cosmos account. Containers are billing entities. By running these test cases, you may incur monetary costs on your account.
   
+
 ## Documentation generation
 
     Install Sphinx: http://sphinx-doc.org/install.html

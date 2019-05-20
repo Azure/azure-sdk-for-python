@@ -21,15 +21,14 @@
 
 import unittest
 import uuid
-import pytest
 import azure.cosmos.cosmos_client as cosmos_client
+import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 import azure.cosmos.retry_options as retry_options
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos.retry_utility as retry_utility
-import test_config
-
+import test.test_config as test_config
 
 #IMPORTANT NOTES: 
   
@@ -69,7 +68,7 @@ class Test_retry_policy_tests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, "Session", cls.connectionPolicy)
         cls.created_collection = test_config._test_config.create_single_partition_collection_if_not_exist(cls.client)
         cls.retry_after_in_milliseconds = 1000
 
@@ -77,8 +76,6 @@ class Test_retry_policy_tests(unittest.TestCase):
         connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5)
 
-        client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
-
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunction
 
@@ -87,11 +84,12 @@ class Test_retry_policy_tests(unittest.TestCase):
                                 'key': 'value'} 
 
         try:
-            client.CreateItem(self.created_collection['_self'], document_definition)
+            self.created_collection.create_item(body=document_definition)
         except errors.HTTPFailure as e:
             self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
-            self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, client.last_response_headers[HttpHeaders.ThrottleRetryCount])
-            self.assertGreaterEqual(client.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
+            self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryCount])
+            self.assertGreaterEqual( self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs],
+                                     connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
 
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
@@ -99,9 +97,6 @@ class Test_retry_policy_tests(unittest.TestCase):
         connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5, 2000)
 
-        client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
-
-        
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunction
 
@@ -110,11 +105,12 @@ class Test_retry_policy_tests(unittest.TestCase):
                                 'key': 'value'} 
 
         try:
-            client.CreateItem(self.created_collection['_self'], document_definition)
+            self.created_collection.create_item(body=document_definition)
         except errors.HTTPFailure as e:
             self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
-            self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, client.last_response_headers[HttpHeaders.ThrottleRetryCount])
-            self.assertGreaterEqual(client.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)
+            self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryCount])
+            self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs],
+                                    connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)
 
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
@@ -122,9 +118,6 @@ class Test_retry_policy_tests(unittest.TestCase):
         connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5, 2000, 3)
 
-        client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
-
-        
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunction
 
@@ -133,10 +126,11 @@ class Test_retry_policy_tests(unittest.TestCase):
                                 'key': 'value'} 
 
         try:
-            client.CreateItem(self.created_collection['_self'], document_definition)
+            self.created_collection.create_item(body=document_definition)
         except errors.HTTPFailure as e:
             self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
-            self.assertGreaterEqual(client.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)
+            self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs],
+                                    connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)
 
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
@@ -144,20 +138,17 @@ class Test_retry_policy_tests(unittest.TestCase):
         connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5)
 
-        client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
-        
         document_definition = { 'id': 'doc',
                                 'name': 'sample document',
                                 'key': 'value'} 
 
-        client.CreateItem(self.created_collection['_self'], document_definition)
+        self.created_collection.create_item(body=document_definition)
 
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunction
 
         try:
-            list(client.QueryItems(
-            self.created_collection['_self'],
+            list(self.created_collection.query_items(
             {
                 'query': 'SELECT * FROM root r WHERE r.id=@id',
                 'parameters': [
@@ -166,16 +157,14 @@ class Test_retry_policy_tests(unittest.TestCase):
             }))
         except errors.HTTPFailure as e:
             self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
-            self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, client.last_response_headers[HttpHeaders.ThrottleRetryCount])
-            self.assertGreaterEqual(client.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs], connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
+            self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
+                             self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryCount])
+            self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs],
+                                    connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
 
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
     def test_default_retry_policy_for_query(self):
-        connection_policy = Test_retry_policy_tests.connectionPolicy
-
-        client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
-
         document_definition_1 = { 'id': 'doc1',
                                   'name': 'sample document',
                                   'key': 'value'} 
@@ -183,13 +172,13 @@ class Test_retry_policy_tests(unittest.TestCase):
                                   'name': 'sample document',
                                   'key': 'value'} 
 
-        client.CreateItem(self.created_collection['_self'], document_definition_1)
-        client.CreateItem(self.created_collection['_self'], document_definition_2)
+        self.created_collection.create_item(body=document_definition_1)
+        self.created_collection.create_item(body=document_definition_2)
 
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunctionConnectionReset
 
-        docs = client.QueryItems(self.created_collection['_self'], "Select * from c", {'maxItemCount':1})
+        docs = self.created_collection.query_items(query="Select * from c", max_item_count=1, enable_cross_partition_query=True)
         
         result_docs = list(docs)
         self.assertEqual(result_docs[0]['id'], 'doc1')
@@ -199,37 +188,31 @@ class Test_retry_policy_tests(unittest.TestCase):
         self.counter = 0
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
 
-        client.DeleteItem(result_docs[0]['_self'])
-        client.DeleteItem(result_docs[1]['_self'])
+        self.created_collection.delete_item(item=result_docs[0], partition_key=result_docs[0]['id'])
+        self.created_collection.delete_item(item=result_docs[1], partition_key=result_docs[1]['id'])
 
     def test_default_retry_policy_for_read(self):
         connection_policy = Test_retry_policy_tests.connectionPolicy
 
-        client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
-        
         document_definition = { 'id': 'doc',
                                 'name': 'sample document',
                                 'key': 'value'} 
 
-        created_document = client.CreateItem(self.created_collection['_self'], document_definition)
+        created_document = self.created_collection.create_item(body=document_definition)
 
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunctionConnectionReset
 
-        doc = client.ReadItem(created_document['_self'], {})
+        doc = self.created_collection.get_item(item=created_document['id'], partition_key=created_document['id'])
         self.assertEqual(doc['id'], 'doc')
         self.assertEqual(self.counter, 3)
         
         self.counter = 0
         retry_utility._ExecuteFunction = self.OriginalExecuteFunction
                 
-        client.DeleteItem(doc['_self'])
+        self.created_collection.delete_item(item=created_document, partition_key=created_document['id'])
     
     def test_default_retry_policy_for_create(self):
-        connection_policy = Test_retry_policy_tests.connectionPolicy
-
-        client = cosmos_client.CosmosClient(Test_retry_policy_tests.host, {'masterKey': Test_retry_policy_tests.masterKey}, connection_policy)
-        
         document_definition = { 'id': 'doc',
                                 'name': 'sample document',
                                 'key': 'value'} 
@@ -239,7 +222,7 @@ class Test_retry_policy_tests(unittest.TestCase):
 
         created_document = {}
         try :
-            created_document = client.CreateItem(self.created_collection['_self'], document_definition)
+            created_document = self.created_collection.create_item(body=document_definition)
         except errors.HTTPFailure as err:
             self.assertEqual(err.status_code, 10054)
 
@@ -259,6 +242,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             return self.OriginalExecuteFunction(function, *args, **kwargs)
         else:
             raise errors.HTTPFailure(10054, "Connection was reset", {})
+
 
 if __name__ == '__main__':
     unittest.main()

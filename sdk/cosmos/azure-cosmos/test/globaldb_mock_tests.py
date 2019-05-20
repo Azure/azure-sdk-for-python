@@ -23,14 +23,14 @@ import unittest
 import json
 import pytest
 
-import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 import azure.cosmos.constants as constants
 from azure.cosmos.http_constants import StatusCodes
 import azure.cosmos.global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.retry_utility as retry_utility
-import test_config
+import test.test_config as test_config
 
 location_changed = False
 
@@ -164,7 +164,7 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         connection_policy = documents.ConnectionPolicy()
         connection_policy.EnableEndpointDiscovery = True
 
-        write_location_client = cosmos_client.CosmosClient(Test_globaldb_mock_tests.write_location_host, {'masterKey': Test_globaldb_mock_tests.masterKey}, connection_policy)
+        write_location_client = cosmos_client_connection.CosmosClientConnection(Test_globaldb_mock_tests.write_location_host, {'masterKey': Test_globaldb_mock_tests.masterKey}, connection_policy)
         self.assertEqual(write_location_client._global_endpoint_manager.WriteEndpoint, Test_globaldb_mock_tests.write_location_host)
         
         self.MockCreateDatabase(write_location_client, { 'id': 'mock database' })
@@ -175,7 +175,7 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         connection_policy = documents.ConnectionPolicy()
         connection_policy.EnableEndpointDiscovery = True
 
-        client = cosmos_client.CosmosClient(Test_globaldb_mock_tests.host, {'masterKey': Test_globaldb_mock_tests.masterKey}, connection_policy)
+        client = cosmos_client_connection.CosmosClientConnection(Test_globaldb_mock_tests.host, {'masterKey': Test_globaldb_mock_tests.masterKey}, connection_policy)
 
         self.assertEqual(client._global_endpoint_manager.WriteEndpoint, Test_globaldb_mock_tests.write_location_host)
         self.assertEqual(client._global_endpoint_manager.ReadEndpoint, Test_globaldb_mock_tests.write_location_host)

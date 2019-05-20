@@ -1,7 +1,5 @@
 import unittest
-import uuid
 import pytest
-import azure.cosmos.documents as documents
 from azure.cosmos.vector_session_token import VectorSessionToken
 from azure.cosmos.errors import CosmosError
 

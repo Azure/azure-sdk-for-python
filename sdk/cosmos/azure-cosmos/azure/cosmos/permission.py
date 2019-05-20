@@ -19,28 +19,17 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Internal Helper functions in the Azure Cosmos database service.
+"""Represents a Permission object in the Azure Cosmos DB SQL API service.
 """
 
-import platform
-import re as re
-from . import http_constants
+from .documents import PermissionMode
+class Permission:
 
-def _get_user_agent():
-    os_name = _safe_user_agent_header(platform.system())
-    os_version = _safe_user_agent_header(platform.release())
-    python_version = _safe_user_agent_header(platform.python_version())
-
-    user_agent = "{}/{} Python/{} {}/{}".format(os_name, os_version,
-        python_version,
-        http_constants.Versions.SDKName, http_constants.Versions.SDKVersion)
-    return user_agent
-
-def _safe_user_agent_header(s):
-    if s is None:
-        s = "unknown"
-    # remove all white spaces
-    s = re.sub(r"\s+", '', s)
-    if not s:
-        s = "unknown"
-    return s
+    def __init__(self, id, user_link, permission_mode, resource_link, properties):
+        # type: (str, str, PermissionMode, str, Dict[str, Any]) -> None
+        self.id = id
+        self.user_link = user_link
+        self.permission_mode = permission_mode
+        self.resource_link = resource_link
+        self.properties = properties
+        self.permission_link = u"{}/permissions/{}".format(self.user_link, self.id)

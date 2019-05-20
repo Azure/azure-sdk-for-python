@@ -22,10 +22,12 @@
 """Internal class for consistent hash ring implementation in the Azure Cosmos database service.
 """
 
-import azure.cosmos.partition as partition
 from struct import unpack
 import six
 from six.moves import xrange
+
+from . import partition
+
 
 class _ConsistentHashRing(object):
     """The ConsistentHashRing class implements a consistent hash ring using the 

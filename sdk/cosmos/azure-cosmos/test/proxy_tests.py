@@ -22,8 +22,8 @@
 import unittest
 import pytest
 import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client as cosmos_client
-import test_config
+import azure.cosmos.cosmos_client_connection as cosmos_client_connection
+import test.test_config as test_config
 import six
 if six.PY2:
     from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
@@ -91,7 +91,7 @@ class ProxyTests(unittest.TestCase):
 
     def test_success_with_correct_proxy(self):
         connection_policy.ProxyConfiguration.Port = self.serverPort 
-        client = cosmos_client.CosmosClient(self.host, {'masterKey': self.masterKey}, connection_policy)
+        client = cosmos_client_connection.CosmosClientConnection(self.host, {'masterKey': self.masterKey}, connection_policy)
         created_db = client.CreateDatabase({ 'id': self.testDbName })
         self.assertEqual(created_db['id'], self.testDbName, msg="Database id is incorrect")
 
@@ -99,7 +99,7 @@ class ProxyTests(unittest.TestCase):
         connection_policy.ProxyConfiguration.Port = self.serverPort + 1
         try:
             # client does a getDatabaseAccount on initialization, which fails
-            client = cosmos_client.CosmosClient(self.host, {'masterKey': self.masterKey}, connection_policy)
+            client = cosmos_client_connection.CosmosClientConnection(self.host, {'masterKey': self.masterKey}, connection_policy)
             self.fail("Client instantiation is not expected")
         except Exception as e:
             self.assertTrue(type(e) is ProxyError, msg="Error is not a ProxyError")

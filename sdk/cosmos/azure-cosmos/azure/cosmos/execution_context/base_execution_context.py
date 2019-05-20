@@ -23,9 +23,9 @@
 """
 
 from collections import deque
-import azure.cosmos.retry_utility as retry_utility
-import azure.cosmos.http_constants as http_constants
-import azure.cosmos.base as base
+from .. import retry_utility
+from .. import http_constants
+from .. import base
 
 class _QueryExecutionContextBase(object):
     """
