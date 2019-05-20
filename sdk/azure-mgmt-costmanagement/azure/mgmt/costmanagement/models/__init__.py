@@ -10,111 +10,112 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .error_base_py3 import ErrorBase
     from .error_details_py3 import ErrorDetails
     from .error_response_py3 import ErrorResponse, ErrorResponseException
     from .resource_py3 import Resource
-    from .dimension_py3 import Dimension
-    from .query_column_py3 import QueryColumn
-    from .query_py3 import Query
+    from .proxy_resource_py3 import ProxyResource
+    from .report_config_time_period_py3 import ReportConfigTimePeriod
+    from .report_config_dataset_configuration_py3 import ReportConfigDatasetConfiguration
+    from .report_config_aggregation_py3 import ReportConfigAggregation
+    from .report_config_grouping_py3 import ReportConfigGrouping
+    from .report_config_sorting_py3 import ReportConfigSorting
+    from .report_config_comparison_expression_py3 import ReportConfigComparisonExpression
+    from .report_config_filter_py3 import ReportConfigFilter
+    from .report_config_dataset_py3 import ReportConfigDataset
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
-    from .query_time_period_py3 import QueryTimePeriod
-    from .query_dataset_configuration_py3 import QueryDatasetConfiguration
-    from .query_aggregation_py3 import QueryAggregation
-    from .query_grouping_py3 import QueryGrouping
-    from .query_sorting_configuration_py3 import QuerySortingConfiguration
-    from .query_comparison_expression_py3 import QueryComparisonExpression
-    from .query_filter_py3 import QueryFilter
-    from .query_dataset_py3 import QueryDataset
-    from .query_definition_py3 import QueryDefinition
-    from .export_recurrence_period_py3 import ExportRecurrencePeriod
-    from .export_schedule_py3 import ExportSchedule
-    from .export_py3 import Export
-    from .export_list_result_py3 import ExportListResult
-    from .export_delivery_destination_py3 import ExportDeliveryDestination
-    from .export_delivery_info_py3 import ExportDeliveryInfo
-    from .common_export_properties_py3 import CommonExportProperties
-    from .export_execution_py3 import ExportExecution
-    from .export_execution_list_result_py3 import ExportExecutionListResult
+    from .scope_py3 import Scope
+    from .kpi_properties_py3 import KpiProperties
+    from .pivot_properties_py3 import PivotProperties
+    from .view_py3 import View
+    from .check_name_availability_request_body_py3 import CheckNameAvailabilityRequestBody
+    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
+    from .budget_time_period_py3 import BudgetTimePeriod
+    from .current_spend_py3 import CurrentSpend
+    from .notification_py3 import Notification
+    from .budget_model_py3 import BudgetModel
 except (SyntaxError, ImportError):
+    from .error_base import ErrorBase
     from .error_details import ErrorDetails
     from .error_response import ErrorResponse, ErrorResponseException
     from .resource import Resource
-    from .dimension import Dimension
-    from .query_column import QueryColumn
-    from .query import Query
+    from .proxy_resource import ProxyResource
+    from .report_config_time_period import ReportConfigTimePeriod
+    from .report_config_dataset_configuration import ReportConfigDatasetConfiguration
+    from .report_config_aggregation import ReportConfigAggregation
+    from .report_config_grouping import ReportConfigGrouping
+    from .report_config_sorting import ReportConfigSorting
+    from .report_config_comparison_expression import ReportConfigComparisonExpression
+    from .report_config_filter import ReportConfigFilter
+    from .report_config_dataset import ReportConfigDataset
     from .operation_display import OperationDisplay
     from .operation import Operation
-    from .query_time_period import QueryTimePeriod
-    from .query_dataset_configuration import QueryDatasetConfiguration
-    from .query_aggregation import QueryAggregation
-    from .query_grouping import QueryGrouping
-    from .query_sorting_configuration import QuerySortingConfiguration
-    from .query_comparison_expression import QueryComparisonExpression
-    from .query_filter import QueryFilter
-    from .query_dataset import QueryDataset
-    from .query_definition import QueryDefinition
-    from .export_recurrence_period import ExportRecurrencePeriod
-    from .export_schedule import ExportSchedule
-    from .export import Export
-    from .export_list_result import ExportListResult
-    from .export_delivery_destination import ExportDeliveryDestination
-    from .export_delivery_info import ExportDeliveryInfo
-    from .common_export_properties import CommonExportProperties
-    from .export_execution import ExportExecution
-    from .export_execution_list_result import ExportExecutionListResult
-from .dimension_paged import DimensionPaged
-from .query_paged import QueryPaged
+    from .scope import Scope
+    from .kpi_properties import KpiProperties
+    from .pivot_properties import PivotProperties
+    from .view import View
+    from .check_name_availability_request_body import CheckNameAvailabilityRequestBody
+    from .check_name_availability_result import CheckNameAvailabilityResult
+    from .budget_time_period import BudgetTimePeriod
+    from .current_spend import CurrentSpend
+    from .notification import Notification
+    from .budget_model import BudgetModel
+from .view_paged import ViewPaged
+from .budget_model_paged import BudgetModelPaged
 from .operation_paged import OperationPaged
 from .cost_management_client_enums import (
     TimeframeType,
     GranularityType,
-    QueryColumnType,
-    SortDirection,
-    StatusType,
-    RecurrenceType,
-    FormatType,
-    ExecutionType,
-    ExecutionStatus,
+    ReportConfigColumnType,
+    OperatorType,
+    ChartType,
+    MetricType,
+    KpiTypeType,
+    PivotTypeType,
+    CategoryType,
+    TimeGrainType,
+    NotificationOperatorType,
 )
 
 __all__ = [
+    'ErrorBase',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
     'Resource',
-    'Dimension',
-    'QueryColumn',
-    'Query',
+    'ProxyResource',
+    'ReportConfigTimePeriod',
+    'ReportConfigDatasetConfiguration',
+    'ReportConfigAggregation',
+    'ReportConfigGrouping',
+    'ReportConfigSorting',
+    'ReportConfigComparisonExpression',
+    'ReportConfigFilter',
+    'ReportConfigDataset',
     'OperationDisplay',
     'Operation',
-    'QueryTimePeriod',
-    'QueryDatasetConfiguration',
-    'QueryAggregation',
-    'QueryGrouping',
-    'QuerySortingConfiguration',
-    'QueryComparisonExpression',
-    'QueryFilter',
-    'QueryDataset',
-    'QueryDefinition',
-    'ExportRecurrencePeriod',
-    'ExportSchedule',
-    'Export',
-    'ExportListResult',
-    'ExportDeliveryDestination',
-    'ExportDeliveryInfo',
-    'CommonExportProperties',
-    'ExportExecution',
-    'ExportExecutionListResult',
-    'DimensionPaged',
-    'QueryPaged',
+    'Scope',
+    'KpiProperties',
+    'PivotProperties',
+    'View',
+    'CheckNameAvailabilityRequestBody',
+    'CheckNameAvailabilityResult',
+    'BudgetTimePeriod',
+    'CurrentSpend',
+    'Notification',
+    'BudgetModel',
+    'ViewPaged',
+    'BudgetModelPaged',
     'OperationPaged',
     'TimeframeType',
     'GranularityType',
-    'QueryColumnType',
-    'SortDirection',
-    'StatusType',
-    'RecurrenceType',
-    'FormatType',
-    'ExecutionType',
-    'ExecutionStatus',
+    'ReportConfigColumnType',
+    'OperatorType',
+    'ChartType',
+    'MetricType',
+    'KpiTypeType',
+    'PivotTypeType',
+    'CategoryType',
+    'TimeGrainType',
+    'NotificationOperatorType',
 ]

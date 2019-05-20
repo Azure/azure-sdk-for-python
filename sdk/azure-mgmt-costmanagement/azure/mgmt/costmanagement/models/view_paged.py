@@ -9,16 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .views_operations import ViewsOperations
-from .cost_management_operations import CostManagementOperations
-from .budgets_operations import BudgetsOperations
-from .budget_operations import BudgetOperations
-from .operations import Operations
+from msrest.paging import Paged
 
-__all__ = [
-    'ViewsOperations',
-    'CostManagementOperations',
-    'BudgetsOperations',
-    'BudgetOperations',
-    'Operations',
-]
+
+class ViewPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`View <azure.mgmt.costmanagement.models.View>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[View]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ViewPaged, self).__init__(*args, **kwargs)
