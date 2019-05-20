@@ -325,6 +325,35 @@ class Sender(object):
         wrapper_event_data.message.on_send_complete = self._on_outcome
         return await self._send_event_data(wrapper_event_data)
 
+    def queue_message(self, event_data, callback=None):
+        """
+        Transfers an event data and notifies the callback when the operation is done.
+
+        :param event_data: The event to be sent.
+        :type event_data: ~azure.eventhub.common.EventData
+        :param callback: Callback to be run once the message has been send.
+         This must be a function that accepts two arguments.
+        :type callback: callable[~uamqp.constants.MessageSendResult, ~azure.eventhub.common.EventHubError]
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_client_transfer]
+                :end-before: [END eventhub_client_transfer]
+                :language: python
+                :dedent: 4
+                :caption: Transfers an event data and notifies the callback when the operation is done.
+
+        """
+        if self.error:
+            raise self.error
+        if not self.running:
+            self.open()
+        if event_data.partition_key and self.partition:
+            raise ValueError("EventData partition key cannot be used with a partition sender.")
+        if callback:
+            event_data.message.on_send_complete = lambda o, c: callback(o, Sender._error(o, c))
+        self._handler.queue_message(event_data.message)
+
     async def send_pending_messages(self):
         """
         Wait until all transferred events have been sent.
