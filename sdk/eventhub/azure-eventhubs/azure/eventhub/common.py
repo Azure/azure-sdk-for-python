@@ -261,7 +261,7 @@ class EventData(object):
         return self.message.encode_message()
 
 
-class BatchSendEventData(EventData):
+class _BatchSendEventData(EventData):
     def __init__(self, batch_event_data):
         # TODO: rethink if to_device should be included in
         self.message = BatchMessage(data=batch_event_data, multi_messages=True, properties=None)
@@ -312,11 +312,11 @@ class EventPosition(object):
         return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
 
     @staticmethod
-    def from_start_of_sream():
+    def from_start_of_stream():
         return EventPosition("-1")
 
     @staticmethod
-    def from_end_of_sream():
+    def from_end_of_stream():
         return EventPosition("@latest")
 
     @staticmethod

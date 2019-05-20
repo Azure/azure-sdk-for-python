@@ -12,7 +12,7 @@ from uamqp import SendClientAsync
 
 from azure.eventhub import MessageSendResult
 from azure.eventhub import EventHubError
-from azure.eventhub.common import _error_handler, BatchSendEventData
+from azure.eventhub.common import _error_handler, _BatchSendEventData
 
 log = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class Sender(object):
 
     def __init__(  # pylint: disable=super-init-not-called
             self, client, target, partition=None, send_timeout=60,
-            keep_alive=30, auto_reconnect=False, loop=None):
+            keep_alive=None, auto_reconnect=False, loop=None):
         """
         Instantiate an EventHub event SenderAsync handler.
 
@@ -63,7 +63,7 @@ class Sender(object):
         self.keep_alive = keep_alive
         self.auto_reconnect = auto_reconnect
         self.timeout = send_timeout
-        self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
+        self.retry_policy = errors.ErrorPolicy(max_retries=self.client.config.max_retries, on_error=_error_handler)
         self.reconnect_backoff = 1
         self.name = "EHSender-{}".format(uuid.uuid4())
         self.redirected = None
@@ -83,6 +83,12 @@ class Sender(object):
             loop=self.loop)
         self._outcome = None
         self._condition = None
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close(exc_val)
 
     async def open(self):
         """
@@ -302,17 +308,24 @@ class Sender(object):
         """
         if self.error:
             raise self.error
-        event_data_list = list(batch_event_data)
-        if len(event_data_list) == 0:
-            raise ValueError("batch_event_data must not be empty")
-        for i in range(1, len(event_data_list)):
-            if event_data_list[i].partition_key != event_data_list[i-1].partition_key:
-                raise ValueError("partition key of all EventData must be the same if being sent in a batch")
-        wrapper_event_data = BatchSendEventData(event_data_list)
+
+        def verify_partition(ed_iter):
+            try:
+                ed = next(ed_iter)
+                partition_key = ed.partition_key
+                yield ed
+            except StopIteration:
+                raise ValueError("batch_event_data must not be empty")
+            for ed in ed_iter:
+                if ed.partition_key != partition_key:
+                    raise ValueError("partition key of all EventData must be the same if being sent in a batch")
+                yield ed
+
+        wrapper_event_data = _BatchSendEventData(verify_partition(batch_event_data))
         wrapper_event_data.message.on_send_complete = self._on_outcome
         return await self._send_event_data(wrapper_event_data)
 
-    async def wait(self):
+    async def send_pending_messages(self):
         """
         Wait until all transferred events have been sent.
         """
@@ -356,12 +369,6 @@ class Sender(object):
         """
         self._outcome = outcome
         self._condition = condition
-
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.close(exc_val)
 
     @staticmethod
     def _error(outcome, condition):

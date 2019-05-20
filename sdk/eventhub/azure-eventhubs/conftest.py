@@ -174,8 +174,6 @@ def connstr_receivers(connection_str):
         receiver = client.create_receiver("$default", p, prefetch=500, offset=EventPosition("@latest"))
         receivers.append(receiver)
         receiver.receive(timeout=1)
-    for r in receivers:
-        r.receive(timeout=1)
     yield connection_str, receivers
 
     for r in receivers:

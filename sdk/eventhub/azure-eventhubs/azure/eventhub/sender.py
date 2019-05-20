@@ -12,7 +12,7 @@ from uamqp import constants, errors
 from uamqp import SendClient
 from uamqp.constants import MessageSendResult
 
-from azure.eventhub.common import EventHubError, EventData, BatchSendEventData, _error_handler
+from azure.eventhub.common import EventHubError, EventData, _BatchSendEventData, _error_handler
 
 log = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ class Sender(object):
 
     """
 
-    def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=30, auto_reconnect=True):
+    def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True):
         """
         Instantiate an EventHub event Sender handler.
 
@@ -61,8 +61,7 @@ class Sender(object):
         self.error = None
         self.keep_alive = keep_alive
         self.auto_reconnect = auto_reconnect
-        # max_retries = client.config.retry_policy.max_retries
-        self.retry_policy = errors.ErrorPolicy(max_retries=3, on_error=_error_handler)
+        self.retry_policy = errors.ErrorPolicy(max_retries=self.client.config.max_retries, on_error=_error_handler)
         self.reconnect_backoff = 1
         self.name = "EHSender-{}".format(uuid.uuid4())
         if partition:
@@ -79,6 +78,12 @@ class Sender(object):
             properties=self.client.create_properties())
         self._outcome = None
         self._condition = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close(exc_val)
 
     def open(self):
         """
@@ -306,17 +311,24 @@ class Sender(object):
         """
         if self.error:
             raise self.error
-        event_data_list = list(batch_event_data)
-        if len(event_data_list) == 0:
-            raise ValueError("batch_event_data must not be empty")
-        for i in range(1, len(event_data_list)):
-            if event_data_list[i].partition_key != event_data_list[i-1].partition_key:
-                raise ValueError("partition key of all EventData must be the same if being sent in a batch")
-        wrapper_event_data = BatchSendEventData(event_data_list)
+
+        def verify_partition(ed_iter):
+            try:
+                ed = next(ed_iter)
+                partition_key = ed.partition_key
+                yield ed
+            except StopIteration:
+                raise ValueError("batch_event_data must not be empty")
+            for ed in ed_iter:
+                if ed.partition_key != partition_key:
+                    raise ValueError("partition key of all EventData must be the same if being sent in a batch")
+                yield ed
+
+        wrapper_event_data = _BatchSendEventData(verify_partition(batch_event_data))
         wrapper_event_data.message.on_send_complete = self._on_outcome
         return self._send_event_data(wrapper_event_data)
 
-    def transfer(self, event_data, callback=None):
+    def queue_message(self, event_data, callback=None):
         """
         Transfers an event data and notifies the callback when the operation is done.
 
@@ -345,7 +357,7 @@ class Sender(object):
             event_data.message.on_send_complete = lambda o, c: callback(o, Sender._error(o, c))
         self._handler.queue_message(event_data.message)
 
-    def wait(self):
+    def send_pending_messages(self):
         """
         Wait until all transferred events have been sent.
 
@@ -398,12 +410,6 @@ class Sender(object):
         """
         self._outcome = outcome
         self._condition = condition
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close(exc_val)
 
     @staticmethod
     def _error(outcome, condition):
