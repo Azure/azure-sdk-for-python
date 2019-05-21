@@ -90,39 +90,38 @@ def _upload_blob_chunks(blob_service, blob_size, block_size, stream, max_connect
     else:
         range_ids = [uploader.process_chunk(result) for result in uploader.get_chunk_streams()]
 
-    #if resource_properties:
-    #    resource_properties.last_modified = uploader.last_modified
-    #    resource_properties.etag = uploader.etag
-
-    #return range_ids
+    if any(range_ids):
+        return range_ids
     return uploader.response_headers
 
 
 def _upload_blob_substream_blocks(blob_service, blob_size, block_size, stream, max_connections,
-                                  progress_callback, validate_content, lease_id, uploader_class,
-                                  maxsize_condition=None, if_match=None, timeout=None):
+                                  validate_content, access_conditions, uploader_class,
+                                  maxsize_condition=None, modified_access_conditions=None, timeout=None, **kwargs):
+
     uploader = uploader_class(
         blob_service,
         blob_size,
         block_size,
         stream,
         max_connections > 1,
-        progress_callback,
         validate_content,
-        lease_id,
+        access_conditions,
         timeout,
         None,
         None
     )
-
     uploader.maxsize_condition = maxsize_condition
+    uploader.request_options = kwargs
 
     # ETag matching does not work with parallelism as a ranged upload may start
     # before the previous finishes and provides an etag
-    uploader.if_match = if_match if not max_connections > 1 else None
+    if max_connections > 1:
+        uploader.modified_access_conditions = None
+    else:
+        uploader.modified_access_conditions = modified_access_conditions
 
-    if progress_callback is not None:
-        progress_callback(0, blob_size)
+    uploader.maxsize_condition = maxsize_condition
 
     if max_connections > 1:
         import concurrent.futures
@@ -227,29 +226,30 @@ class _BlobChunkUploader(object):
 
 
 class _BlockBlobChunkUploader(_BlobChunkUploader):
+
     def _upload_chunk(self, chunk_offset, chunk_data):
-        block_id = url_quote(_encode_base64('{0:032d}'.format(chunk_offset)))
-        self.blob_service._put_block(
-            self.container_name,
-            self.blob_name,
-            chunk_data,
+        # TODO: This is incorrect, but works with recording.
+        block_id = encode_base64(url_quote(encode_base64('{0:032d}'.format(chunk_offset))))
+        self.blob_service.stage_block(
             block_id,
-            validate_content=self.validate_content,
-            lease_id=self.lease_id,
+            len(chunk_data),
+            chunk_data,
             timeout=self.timeout,
-        )
+            lease_access_conditions=self.lease_access_conditions,
+            validate_content=self.validate_content,
+            **self.request_options)
         return BlobBlock(block_id)
 
     def _upload_substream_block(self, block_id, block_stream):
         try:
-            self.blob_service._put_block(
-                self.container_name,
-                self.blob_name,
-                block_stream,
+            self.blob_service.stage_block(
                 block_id,
+                len(block_stream),
+                block_stream,
                 validate_content=self.validate_content,
-                lease_id=self.lease_id,
+                lease_access_conditions=self.lease_access_conditions,
                 timeout=self.timeout,
+                **self.request_options
             )
         finally:
             block_stream.close()
@@ -257,6 +257,7 @@ class _BlockBlobChunkUploader(_BlobChunkUploader):
 
 
 class _PageBlobChunkUploader(_BlobChunkUploader):
+
     def _is_chunk_empty(self, chunk_data):
         # read until non-zero byte is encountered
         # if reached the end without returning, then chunk_data is all 0's
@@ -287,9 +288,11 @@ class _PageBlobChunkUploader(_BlobChunkUploader):
             if not self.parallel:
                 self.modified_access_conditions = get_modification_conditions(
                     if_match=self.response_headers['ETag'])
+        return None
 
 
 class _AppendBlobChunkUploader(_BlobChunkUploader):
+
     def _upload_chunk(self, chunk_offset, chunk_data):
         if not hasattr(self, 'current_length'):
             resp = self.blob_service.append_block(

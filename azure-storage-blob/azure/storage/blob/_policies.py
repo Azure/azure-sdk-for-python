@@ -8,6 +8,7 @@ import base64
 import hashlib
 import sys
 from time import time
+import logging
 from wsgiref.handlers import format_date_time
 try:
     from urllib.parse import urlparse
@@ -23,6 +24,9 @@ except NameError:
     _unicode_type = str
 
 
+logger = logging.getLogger(__name__)
+
+
 class StorageBlobSettings(object):
 
     def __init__(self, **kwargs):
@@ -31,6 +35,7 @@ class StorageBlobSettings(object):
 
         # Block blob uploads
         self.min_large_block_upload_threshold = kwargs.get('min_large_block_upload_threshold', 4 * 1024 * 1024 + 1)
+        self.use_byte_buffer = False
 
         # Page blob uploads
         self.max_page_size = 4 * 1024 * 1024

@@ -15,6 +15,7 @@ except ImportError:
     from urlparse import urlparse
     from urllib2 import quote, unquote
 
+import six
 from azure.core import Configuration, HttpResponseError
 
 from .common import BlobType
@@ -45,7 +46,9 @@ from ._generated.models import (
     BlockLookupList)
 from ._upload_chunking import (
     _upload_blob_chunks,
+    _upload_blob_substream_blocks,
     _PageBlobChunkUploader,
+    _BlockBlobChunkUploader,
     IterStreamer)
 
 if TYPE_CHECKING:
@@ -252,6 +255,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
             maxsize_condition=None,  # type: Optional[int]
             max_connections=1,  # type: int
+            encoding='UTF-8', # type: str
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -323,8 +327,12 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         if self.key_encryption_key is not None:
             cek, iv, encryption_data = _generate_blob_encryption_data(self.key_encryption_key)
 
+        if isinstance(data, six.text_type):
+            data = data.encode(encoding)
         if length is None:
             length = get_length(data)
+        if isinstance(data, bytes):
+            data = data[:length]
 
         if isinstance(data, bytes):
             stream = BytesIO(data)
@@ -370,9 +378,58 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                     validate_content=validate_content,
                     **kwargs)
             else:
-                # TODO Port over multi-threaded upload chunking
-                raise NotImplementedError("Chunked uploads not yet supported")
+                cek, iv, encryption_data = None, None, None
 
+                blob_settings = self._config.blob_settings
+                use_original_upload_path = blob_settings.use_byte_buffer or \
+                    validate_content or self.require_encryption or \
+                    blob_settings.max_block_size < blob_settings.min_large_block_upload_threshold or \
+                    hasattr(stream, 'seekable') and not stream.seekable() or \
+                    not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
+
+                if use_original_upload_path:
+                    if self.key_encryption_key:
+                        cek, iv, encryption_data = _generate_blob_encryption_data(self.key_encryption_key)
+                    block_ids = _upload_blob_chunks(
+                        blob_service=self._client.block_blob,
+                        blob_size=length,
+                        block_size=blob_settings.max_block_size,
+                        stream=stream,
+                        max_connections=max_connections,
+                        validate_content=validate_content,
+                        access_conditions=access_conditions,
+                        uploader_class=_BlockBlobChunkUploader,
+                        timeout=timeout,
+                        content_encryption_key=cek,
+                        initialization_vector=iv,
+                        **kwargs
+                    )
+                else:
+                    block_ids = _upload_blob_substream_blocks(
+                        blob_service=self._client.block_blob,
+                        blob_size=length,
+                        block_size=blob_settings.max_block_size,
+                        stream=stream,
+                        max_connections=max_connections,
+                        validate_content=validate_content,
+                        access_conditions=access_conditions,
+                        uploader_class=_BlockBlobChunkUploader,
+                        timeout=timeout,
+                        **kwargs
+                    )
+
+                block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
+                block_lookup.latest = [b.id for b in block_ids]
+                return self._client.block_blob.commit_block_list(
+                    block_lookup,
+                    blob_http_headers=blob_headers,
+                    lease_access_conditions=access_conditions,
+                    timeout=timeout,
+                    modified_access_conditions=mod_conditions,
+                    cls=return_response_headers,
+                    validate_content=validate_content,
+                    headers=headers,
+                    **kwargs)
 
         elif self.blob_type == BlobType.PageBlob:
             if length is None or length < 0:
