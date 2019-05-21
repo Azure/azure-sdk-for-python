@@ -255,9 +255,9 @@ class CookieHeaders:
 class Versions:
     """Constants of versions.
     """
-    CurrentVersion = '2018-09-17'
+    CurrentVersion = '2018-12-31'
     SDKName = 'azure-cosmos'
-    SDKVersion = '3.0.3-SNAPSHOT'
+    SDKVersion = '4.0.0a1'
 
 
 class Delimiters:

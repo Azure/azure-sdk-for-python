@@ -22,15 +22,10 @@
 import unittest
 import time
 # from types import *
+
 import pytest
 import azure.cosmos.cosmos_client as cosmos_client
-import azure.cosmos.documents as documents
-import azure.cosmos.errors as errors
-import azure.cosmos.base as base
-import azure.cosmos.http_constants as http_constants
-import azure.cosmos.constants as constants
-import azure.cosmos.session as session
-import test_config
+import test.test_config as test_config
 
 @pytest.mark.usefixtures("teardown")
 class Test_session_container(unittest.TestCase):
@@ -40,8 +35,8 @@ class Test_session_container(unittest.TestCase):
     connectionPolicy = test_config._test_config.connectionPolicy
 
     def setUp(self):
-        self.client = cosmos_client.CosmosClient(self.host, {'masterKey': self.masterkey}, self.connectionPolicy)
-        self.session = self.client.Session
+        self.client = cosmos_client.CosmosClient(self.host, {'masterKey': self.masterkey}, "Session", self.connectionPolicy)
+        self.session = self.client.client_connection.Session
 
     def tearDown(self):
         pass
@@ -76,6 +71,7 @@ class Test_session_container(unittest.TestCase):
 
         token = self.session.get_session_token(u'dbs/sample%20database/colls/sample%20collection/docs/eb391181-5c49-415a-ab27-848ce21d5d11')
         assert token == '0:0#406#24=-1#12=-1'
+
 
 if __name__ == '__main__':
     unittest.main()

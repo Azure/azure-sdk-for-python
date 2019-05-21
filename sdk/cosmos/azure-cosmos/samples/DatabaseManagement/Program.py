@@ -1,4 +1,3 @@
-import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.errors as errors
 
@@ -49,7 +48,7 @@ class DatabaseManagement:
     def find_database(client, id):
         print('1. Query for Database')
 
-        databases = list(client.QueryDatabases({
+        databases = list(client.query_databases({
             "query": "SELECT * FROM r WHERE r.id=@id",
             "parameters": [
                 { "name":"@id", "value": id }
@@ -66,7 +65,7 @@ class DatabaseManagement:
         print("\n2. Create Database")
         
         try:
-            client.CreateDatabase({"id": id})
+            client.create_database(id=id)
             print('Database with id \'{0}\' created'.format(id))
 
         except errors.HTTPFailure as e:
@@ -80,14 +79,8 @@ class DatabaseManagement:
         print("\n3. Get a Database by id")
 
         try:
-            # All Azure Cosmos resources are addressable via a link
-            # This link is constructed from a combination of resource hierachy and 
-            # the resource id. 
-            # Eg. The link for database with an id of Foo would be dbs/Foo
-            database_link = 'dbs/' + id
-
-            database = client.ReadDatabase(database_link)
-            print('Database with id \'{0}\' was found, it\'s _self is {1}'.format(id, database['_self']))
+            database = client.get_database(id)
+            print('Database with id \'{0}\' was found, it\'s link is {1}'.format(id, database.database_link))
 
         except errors.HTTPFailure as e:
             if e.status_code == 404:
@@ -101,7 +94,7 @@ class DatabaseManagement:
         
         print('Databases:')
         
-        databases = list(client.ReadDatabases())
+        databases = list(client.list_database_properties())
         
         if not databases:
             return
@@ -114,8 +107,7 @@ class DatabaseManagement:
         print("\n5. Delete Database")
         
         try:
-           database_link = 'dbs/' + id
-           client.DeleteDatabase(database_link)
+           client.delete_database(id)
 
            print('Database with id \'{0}\' was deleted'.format(id))
 

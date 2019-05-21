@@ -18,3 +18,18 @@
 #LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
+
+"""Represents an offer in the Azure Cosmos DB SQL API service.
+"""
+
+class Offer(dict):
+    """ Represents a offer in an Azure Cosmos DB SQL API container.
+
+    To read and update offers use the associated methods on the :class:`Container`.
+    """
+
+    def __init__(self, offer_throughput, properties=None):
+        # type: (int, Dict[str, Any]) -> None
+        self.offer_throughput = offer_throughput
+        self.properties = properties
+

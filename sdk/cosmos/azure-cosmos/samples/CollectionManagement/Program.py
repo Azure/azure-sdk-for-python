@@ -1,6 +1,6 @@
-import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.errors as errors
+from azure.cosmos.partition_key import PartitionKey
 
 import samples.Shared.config as cfg
 
@@ -13,39 +13,39 @@ import samples.Shared.config as cfg
 # 2. Microsoft Azure Cosmos PyPi package - 
 #    https://pypi.python.org/pypi/azure-cosmos/
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic CRUD operations on a Collection resource for Azure Cosmos
+# Sample - demonstrates the basic CRUD operations on a Container resource for Azure Cosmos
 # 
-# 1. Query for Collection
+# 1. Query for Container
 #  
-# 2. Create Collection
+# 2. Create Container
 #    2.1 - Basic Create
-#    2.2 - Create collection with custom IndexPolicy
-#    2.3 - Create collection with offer throughput set
-#    2.4 - Create collection with unique key
+#    2.2 - Create container with custom IndexPolicy
+#    2.3 - Create container with offer throughput set
+#    2.4 - Create container with unique key
+#    2.5 - Create Collection with partition key V2
+#    2.6 - Create Collection with partition key V1
 #
-# 3. Manage Collection Offer Throughput
-#    3.1 - Get Collection performance tier
+# 3. Manage Container Offer Throughput
+#    3.1 - Get Container performance tier
 #    3.2 - Change performance tier
 #
-# 4. Get a Collection by its Id property
+# 4. Get a Container by its Id property
 #
-# 5. List all Collection resources in a Database
+# 5. List all Container resources in a Database
 #
-# 6. Delete Collection
+# 6. Delete Container
 # ----------------------------------------------------------------------------------------------------------
 # Note - 
 # 
-# Running this sample will create (and delete) multiple DocumentContainers on your account. 
-# Each time a DocumentContainer is created the account will be billed for 1 hour of usage based on
+# Running this sample will create (and delete) multiple Containers on your account.
+# Each time a Container is created the account will be billed for 1 hour of usage based on
 # the performance tier of that account. 
 # ----------------------------------------------------------------------------------------------------------
 
 HOST = cfg.settings['host']
 MASTER_KEY = cfg.settings['master_key']
 DATABASE_ID = cfg.settings['database_id']
-COLLECTION_ID = cfg.settings['collection_id']
-
-database_link = 'dbs/' + DATABASE_ID
+CONTAINER_ID = cfg.settings['container_id']
 
 class IDisposable(cosmos_client.CosmosClient):
     """ A context manager to automatically close an object with a close method
@@ -61,13 +61,12 @@ class IDisposable(cosmos_client.CosmosClient):
         # extra cleanup in here
         self = None
 
-class CollectionManagement:
+class ContainerManagement:
     @staticmethod
-    def find_Container(client, id):
-        print('1. Query for Collection')
+    def find_container(db, id):
+        print('1. Query for Container')
 
-        collections = list(client.QueryContainers(
-            database_link,
+        containers = list(db.query_containers(
             {
                 "query": "SELECT * FROM r WHERE r.id=@id",
                 "parameters": [
@@ -76,186 +75,196 @@ class CollectionManagement:
             }
         ))
 
-        if len(collections) > 0:
-            print('Collection with id \'{0}\' was found'.format(id))
+        if len(containers) > 0:
+            print('Container with id \'{0}\' was found'.format(id))
         else:
-            print('No collection with id \'{0}\' was found'. format(id))
+            print('No container with id \'{0}\' was found'. format(id))
         
     @staticmethod
-    def create_Container(client, id):
-        """ Execute the most basic Create of collection. 
-        This will create a collection with 400 RUs throughput and default indexing policy """
+    def create_Container(db, id):
+        """ Execute the most basic Create of container. 
+        This will create a container with 400 RUs throughput and default indexing policy """
 
-        print("\n2.1 Create Collection - Basic")
+        partition_key = PartitionKey(path='/id', kind='Hash')
+        print("\n2.1 Create Container - Basic")
         
         try:
-            client.CreateContainer(database_link, {"id": id})
-            print('Collection with id \'{0}\' created'.format(id))
+            db.create_container(id=id, partition_key=partition_key)
+            print('Container with id \'{0}\' created'.format(id))
 
         except errors.HTTPFailure as e:
             if e.status_code == 409:
-               print('A collection with id \'{0}\' already exists'.format(id))
+               print('A container with id \'{0}\' already exists'.format(id))
             else: 
                 raise errors.HTTPFailure(e.status_code)               
 
-        print("\n2.2 Create Collection - With custom index policy")
+        print("\n2.2 Create Container - With custom index policy")
         
         try:
             coll = {
-                "id": "collection_custom_index_policy",
+                "id": "container_custom_index_policy",
                 "indexingPolicy": {
                     "indexingMode": "lazy",
                     "automatic": False
                 }
             }
 
-            collection = client.CreateContainer(database_link, coll)
-            print('Collection with id \'{0}\' created'.format(collection['id']))
-            print('IndexPolicy Mode - \'{0}\''.format(collection['indexingPolicy']['indexingMode']))
-            print('IndexPolicy Automatic - \'{0}\''.format(collection['indexingPolicy']['automatic']))
+            container = db.create_container(
+                id=coll['id'],
+                partition_key=partition_key,
+                indexing_policy=coll['indexingPolicy']
+            )
+            print('Container with id \'{0}\' created'.format(container.id))
+            print('IndexPolicy Mode - \'{0}\''.format(container.properties['indexingPolicy']['indexingMode']))
+            print('IndexPolicy Automatic - \'{0}\''.format(container.properties['indexingPolicy']['automatic']))
             
         except errors.CosmosError as e:
             if e.status_code == 409:
-               print('A collection with id \'{0}\' already exists'.format(collection['id']))
+               print('A container with id \'{0}\' already exists'.format(container['id']))
             else: 
                 raise errors.HTTPFailure(e.status_code) 
 
-        print("\n2.3 Create Collection - With custom offer throughput")
+        print("\n2.3 Create Container - With custom offer throughput")
 
         try:
-            coll = {"id": "collection_custom_throughput"}
-            collection_options = { 'offerThroughput': 400 }
-            collection = client.CreateContainer(database_link, coll, collection_options )
-            print('Collection with id \'{0}\' created'.format(collection['id']))
+            coll = {"id": "container_custom_throughput"}
+            container = db.create_container(
+                id=coll['id'],
+                partition_key=partition_key,
+                offer_throughput=400
+            )
+            print('Container with id \'{0}\' created'.format(container.id))
             
         except errors.HTTPFailure as e:
             if e.status_code == 409:
-               print('A collection with id \'{0}\' already exists'.format(collection['id']))
+               print('A container with id \'{0}\' already exists'.format(container.id))
             else: 
                 raise errors.HTTPFailure(e.status_code)
 
-        print("\n2.4 Create Collection - With Unique keys")
+        print("\n2.4 Create Container - With Unique keys")
 
         try:
-            coll = {"id": "collection_unique_keys", 'uniqueKeyPolicy': {'uniqueKeys': [{'paths': ['/field1/field2', '/field3']}]}}
-            collection_options = { 'offerThroughput': 400 }
-            collection = client.CreateContainer(database_link, coll, collection_options )
-            unique_key_paths = collection['uniqueKeyPolicy']['uniqueKeys'][0]['paths']
-            print('Collection with id \'{0}\' created'.format(collection['id']))
+            container = db.create_container(
+                id="container_unique_keys",
+                partition_key=partition_key,
+                unique_key_policy={'uniqueKeys': [{'paths': ['/field1/field2', '/field3']}]}
+            )
+            unique_key_paths = container.properties['uniqueKeyPolicy']['uniqueKeys'][0]['paths']
+            print('Container with id \'{0}\' created'.format(container.id))
             print('Unique Key Paths - \'{0}\', \'{1}\''.format(unique_key_paths[0], unique_key_paths[1]))
             
         except errors.HTTPFailure as e:
             if e.status_code == 409:
-               print('A collection with id \'{0}\' already exists'.format(collection['id']))
+               print('A container with id \'{0}\' already exists'.format(container.id))
             else: 
                 raise errors.HTTPFailure(e.status_code)
 
-        print("\n2.5 Create Collection - With Partition key")
-        
-        try:
-            coll = {
-                "id": "collection_partition_key",
-                "partitionKey": {
-                    "paths": [
-                      "/field1"
-                    ],
-                    "kind": "Hash"
-                }
-            }
+        print("\n2.5 Create Collection - With Partition key V2 (Default)")
 
-            collection = client.CreateContainer(database_link, coll)
-            print('Collection with id \'{0}\' created'.format(collection['id']))
-            
+        try:
+            container = db.create_container(
+                id="collection_partition_key_v2",
+                partition_key=PartitionKey(path='/id', kind='Hash')
+            )
+
+            print('Container with id \'{0}\' created'.format(container.id))
+            print('Partition Key - \'{0}\''.format(container.properties['partitionKey']))
+
         except errors.CosmosError as e:
             if e.status_code == 409:
-               print('A collection with id \'{0}\' already exists'.format(collection['id']))
-            else: 
-                raise errors.HTTPFailure(e.status_code) 
+                print('A container with id \'{0}\' already exists'.format(container.id))
+            else:
+                raise errors.HTTPFailure(e.status_code)
+
+        print("\n2.6 Create Collection - With Partition key V1")
+
+        try:
+            container = db.create_container(
+                id="collection_partition_key_v1",
+                partition_key=PartitionKey(path='/id', kind='Hash', version=1)
+            )
+
+            print('Container with id \'{0}\' created'.format(container.id))
+            print('Partition Key - \'{0}\''.format(container.properties['partitionKey']))
+
+        except errors.CosmosError as e:
+            if e.status_code == 409:
+                print('A container with id \'{0}\' already exists'.format(container.id))
+            else:
+                raise errors.HTTPFailure(e.status_code)
 
     @staticmethod
-    def manage_offer_throughput(client, id):
-        print("\n3.1 Get Collection Performance tier")
+    def manage_offer_throughput(db, id):
+        print("\n3.1 Get Container Performance tier")
         
-        #A Collection's Offer Throughput determines the performance throughput of a collection. 
-        #A Collection is loosely coupled to Offer through the Offer's offerResourceId
-        #Offer.offerResourceId == Collection._rid
-        #Offer.resource == Collection._self
+        #A Container's Offer Throughput determines the performance throughput of a container. 
+        #A Container is loosely coupled to Offer through the Offer's offerResourceId
+        #Offer.offerResourceId == Container._rid
+        #Offer.resource == Container._self
         
         try:
-            # read the collection, so we can get its _self
-            collection_link = database_link + '/colls/{0}'.format(id)
-            collection = client.ReadContainer(collection_link)
+            # read the container, so we can get its _self
+            container = db.get_container(container=id)
 
             # now use its _self to query for Offers
-            offer = list(client.QueryOffers('SELECT * FROM c WHERE c.resource = \'{0}\''.format(collection['_self'])))[0]
+            offer = container.read_offer()
             
-            print('Found Offer \'{0}\' for Collection \'{1}\' and its throughput is \'{2}\''.format(offer['id'], collection['_self'], offer['content']['offerThroughput']))
+            print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(offer.properties['id'], container.id, offer.properties['content']['offerThroughput']))
 
         except errors.HTTPFailure as e:
             if e.status_code == 404:
-                print('A collection with id \'{0}\' does not exist'.format(id))
+                print('A container with id \'{0}\' does not exist'.format(id))
             else: 
                 raise errors.HTTPFailure(e.status_code)
 
-        print("\n3.2 Change Offer Throughput of Collection")
+        print("\n3.2 Change Offer Throughput of Container")
                            
-        #The Offer Throughput of a collection controls the throughput allocated to the Collection
-        #To increase (or decrease) the throughput of any Collection you need to adjust the Offer.content.offerThroughput
-        #of the Offer record linked to the Collection
-        
-        #The following code shows how you can change Collection's throughput
-        offer['content']['offerThroughput'] += 100
-        offer = client.ReplaceOffer(offer['_self'], offer)
+        #The Offer Throughput of a container controls the throughput allocated to the Container
 
-        print('Replaced Offer. Offer Throughput is now \'{0}\''.format(offer['content']['offerThroughput']))
+        #The following code shows how you can change Container's throughput
+        offer = container.replace_throughput(offer.offer_throughput + 100)
+        print('Replaced Offer. Offer Throughput is now \'{0}\''.format(offer.properties['content']['offerThroughput']))
                                 
     @staticmethod
-    def read_Container(client, id):
-        print("\n4. Get a Collection by id")
+    def read_Container(db, id):
+        print("\n4. Get a Container by id")
 
         try:
-            # All Azure Cosmos resources are addressable via a link
-            # This link is constructed from a combination of resource hierachy and 
-            # the resource id. 
-            # Eg. The link for collection with an id of Bar in database Foo would be dbs/Foo/colls/Bar
-            collection_link = database_link + '/colls/{0}'.format(id)
-
-            collection = client.ReadContainer(collection_link)
-            print('Collection with id \'{0}\' was found, it\'s _self is {1}'.format(collection['id'], collection['_self']))
+            container = db.get_container(id)
+            print('Container with id \'{0}\' was found, it\'s link is {1}'.format(container.id, container.container_link))
 
         except errors.HTTPFailure as e:
             if e.status_code == 404:
-               print('A collection with id \'{0}\' does not exist'.format(id))
+               print('A container with id \'{0}\' does not exist'.format(id))
             else: 
                 raise errors.HTTPFailure(e.status_code)    
     
     @staticmethod
-    def list_Containers(client):
-        print("\n5. List all Collection in a Database")
+    def list_Containers(db):
+        print("\n5. List all Container in a Database")
         
-        print('Collections:')
+        print('Containers:')
         
-        collections = list(client.ReadContainers(database_link))
+        containers = list(db.list_container_properties())
         
-        if not collections:
+        if not containers:
             return
 
-        for collection in collections:
-            print(collection['id'])          
+        for container in containers:
+            print(container['id'])
         
     @staticmethod
-    def delete_Container(client, id):
-        print("\n6. Delete Collection")
+    def delete_Container(db, id):
+        print("\n6. Delete Container")
         
         try:
-           collection_link = database_link + '/colls/{0}'.format(id)
-           client.DeleteContainer(collection_link)
+            db.delete_container(id)
 
-           print('Collection with id \'{0}\' was deleted'.format(id))
+            print('Container with id \'{0}\' was deleted'.format(id))
 
         except errors.HTTPFailure as e:
             if e.status_code == 404:
-               print('A collection with id \'{0}\' does not exist'.format(id))
+               print('A container with id \'{0}\' does not exist'.format(id))
             else: 
                 raise errors.HTTPFailure(e.status_code)   
 
@@ -265,7 +274,7 @@ def run_sample():
         try:
             # setup database for this sample
             try:
-                client.CreateDatabase({"id": DATABASE_ID})
+                db = client.create_database(id=DATABASE_ID)
             
             except errors.HTTPFailure as e:
                 if e.status_code == 409:
@@ -273,27 +282,27 @@ def run_sample():
                 else: 
                     raise errors.HTTPFailure(e.status_code)
             
-            # query for a collection            
-            CollectionManagement.find_Container(client, COLLECTION_ID)
+            # query for a container            
+            ContainerManagement.find_container(db, CONTAINER_ID)
             
-            # create a collection
-            CollectionManagement.create_Container(client, COLLECTION_ID)
+            # create a container
+            ContainerManagement.create_Container(db, CONTAINER_ID)
             
-            # get & change Offer Throughput of collection
-            CollectionManagement.manage_offer_throughput(client, COLLECTION_ID)
+            # get & change Offer Throughput of container
+            ContainerManagement.manage_offer_throughput(db, CONTAINER_ID)
 
-            # get a collection using its id
-            CollectionManagement.read_Container(client, COLLECTION_ID)
+            # get a container using its id
+            ContainerManagement.read_Container(db, CONTAINER_ID)
 
-            # list all collection on an account
-            CollectionManagement.list_Containers(client)
+            # list all container on an account
+            ContainerManagement.list_Containers(db)
 
-            # delete collection by id
-            CollectionManagement.delete_Container(client, COLLECTION_ID)
+            # delete container by id
+            ContainerManagement.delete_Container(db, CONTAINER_ID)
 
             # cleanup database after sample
             try:
-                client.DeleteDatabase(database_link)
+                client.delete_database(db)
             
             except errors.CosmosError as e:
                 if e.status_code == 404:
@@ -306,6 +315,7 @@ def run_sample():
         
         finally:
             print("\nrun_sample done")
+
 
 if __name__ == '__main__':
     try:

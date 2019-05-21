@@ -30,8 +30,9 @@ from six.moves import xrange
 
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
-import test_config
+import test.test_config as test_config
 from azure.cosmos.errors import HTTPFailure
+from azure.cosmos.partition_key import PartitionKey
 
 class _config:
     host = test_config._test_config.host
@@ -50,7 +51,7 @@ class AggregateQueryTestSequenceMeta(type):
     def __new__(mcs, name, bases, dict):
         def _run_one(query, expected_result):
             def test(self):
-                self._execute_query_and_validate_results(mcs.client, mcs.collection_link, query, expected_result)
+                self._execute_query_and_validate_results(mcs.created_collection, query, expected_result)
 
             return test
 
@@ -62,35 +63,35 @@ class AggregateQueryTestSequenceMeta(type):
                     "tests.")
 
             mcs.client = cosmos_client.CosmosClient(_config.host,
-                                                        {'masterKey': _config.master_key}, _config.connection_policy)
+                                                        {'masterKey': _config.master_key}, "Session", _config.connection_policy)
             created_db = test_config._test_config.create_database_if_not_exist(mcs.client)
-            created_collection = _create_collection(mcs.client, created_db)
-            mcs.collection_link = _get_collection_link(created_db, created_collection)
+            mcs.created_collection = _create_collection(created_db)
 
             # test documents
             document_definitions = []
 
             values = [None, False, True, "abc", "cdfg", "opqrs", "ttttttt", "xyz", "oo", "ppp"]
             for value in values:
-                d = {_config.PARTITION_KEY: value}
+                d = {_config.PARTITION_KEY: value, 'id': str(uuid.uuid4())}
                 document_definitions.append(d)
 
             for i in xrange(_config.DOCS_WITH_SAME_PARTITION_KEY):
                 d = {_config.PARTITION_KEY: _config.UNIQUE_PARTITION_KEY,
                      'resourceId': i,
-                     _config.FIELD: i + 1}
+                     _config.FIELD: i + 1,
+                     'id': str(uuid.uuid4())}
                 document_definitions.append(d)
 
             _config.docs_with_numeric_id = \
                 _config.DOCUMENTS_COUNT - len(values) - _config.DOCS_WITH_SAME_PARTITION_KEY
             for i in xrange(_config.docs_with_numeric_id):
-                d = {_config.PARTITION_KEY: i + 1}
+                d = {_config.PARTITION_KEY: i + 1, 'id': str(uuid.uuid4())}
                 document_definitions.append(d)
 
             _config.sum = _config.docs_with_numeric_id \
                           * (_config.docs_with_numeric_id + 1) / 2.0
 
-            _insert_doc(mcs.collection_link, document_definitions, mcs.client)
+            _insert_doc(mcs.created_collection, document_definitions)
 
         def _generate_test_configs():
             aggregate_query_format = 'SELECT VALUE {}(r.{}) FROM r WHERE {}'
@@ -142,10 +143,11 @@ class AggregateQueryTestSequenceMeta(type):
                 test_name = "test_%s" % test_name
                 dict[test_name] = _run_one(query, expected_result)
 
-        def _create_collection(client, created_db):
-            collection_definition = {
-                'id': 'aggregate tests collection ' + str(uuid.uuid4()),
-                'indexingPolicy': {
+        def _create_collection(created_db):
+            # type: (Database) -> Container
+            created_collection = created_db.create_container(
+                id='aggregate tests collection ' + str(uuid.uuid4()),
+                indexing_policy={
                     'includedPaths': [
                         {
                             'path': '/',
@@ -162,40 +164,24 @@ class AggregateQueryTestSequenceMeta(type):
                         }
                     ]
                 },
-                'partitionKey': {
-                    'paths': [
-                        '/{}'.format(_config.PARTITION_KEY)
-                    ],
-                    'kind': documents.PartitionKind.Hash
-                }
-            }
-
-            collection_options = {'offerThroughput': 10100}
-            created_collection = client.CreateContainer(_get_database_link(created_db),
-                                                         collection_definition,
-                                                         collection_options)
+                partition_key=PartitionKey(
+                    path='/{}'.format(_config.PARTITION_KEY),
+                    kind=documents.PartitionKind.Hash,
+                ),
+                offer_throughput=10100
+            )
 
             return created_collection
 
-        def _insert_doc(collection_link, document_definitions, client):
+        def _insert_doc(collection, document_definitions):
+            # type: (Container, Dict[str, Any]) -> [Dict[str, Any]]
             created_docs = []
             for d in document_definitions:
-                created_doc = client.CreateItem(collection_link, d)
+                print(d)
+                created_doc = collection.create_item(body=d)
                 created_docs.append(created_doc)
 
             return created_docs
-
-        def _get_database_link(database, is_name_based=True):
-            if is_name_based:
-                return 'dbs/' + database['id']
-            else:
-                return database['_self']
-
-        def _get_collection_link(database, document_collection, is_name_based=True):
-            if is_name_based:
-                return _get_database_link(database) + '/colls/' + document_collection['id']
-            else:
-                return document_collection['_self']
 
         _all_tests = []
 
@@ -208,13 +194,17 @@ class AggregateQueryTestSequenceMeta(type):
 
 @pytest.mark.usefixtures("teardown")
 class AggregationQueryTest(with_metaclass(AggregateQueryTestSequenceMeta, unittest.TestCase)):
-    def _execute_query_and_validate_results(self, client, collection_link, query, expected):
+    def _execute_query_and_validate_results(self, collection, query, expected):
+        # type: (Container, str, [Dict[str, Any]]) -> None
         print('Running test with query: ' + query)
 
         # executes the query and validates the results against the expected results
         options = {'enableCrossPartitionQuery': 'true'}
 
-        result_iterable = client.QueryItems(collection_link, query, options)
+        result_iterable = collection.query_items(
+            query=query,
+            enable_cross_partition_query=True
+        )
 
         def _verify_result():
             ######################################

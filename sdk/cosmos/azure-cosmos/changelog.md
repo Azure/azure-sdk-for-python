@@ -1,3 +1,7 @@
+## Changes in 4.0.0a1 : ##
+
+- Alpha release for new object model.
+
 ## Changes in 3.0.2 : ##
 
 - Added Support for MultiPolygon Datatype
