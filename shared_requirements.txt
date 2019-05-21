@@ -6,6 +6,7 @@ azure-cognitiveservices-language-nspkg
 azure-cognitiveservices-search-nspkg
 azure-cognitiveservices-vision-nspkg
 azure-common~=1.1
+azure-core~=1.0.0
 azure-cosmosdb-table~=1.0
 azure-datalake-store~=0.0.18
 azure-eventgrid~=1.1
