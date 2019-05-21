@@ -309,7 +309,8 @@ class Sender(object):
         if self.error:
             raise self.error
 
-        def verify_partition(ed_iter):
+        def verify_partition(event_datas):
+            ed_iter = iter(event_datas)
             try:
                 ed = next(ed_iter)
                 partition_key = ed.partition_key
