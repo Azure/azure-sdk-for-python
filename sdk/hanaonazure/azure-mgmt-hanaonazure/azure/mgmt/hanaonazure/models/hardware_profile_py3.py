@@ -25,7 +25,7 @@ class HardwareProfile(Model):
     :ivar hana_instance_size: Specifies the HANA instance SKU. Possible values
      include: 'S72m', 'S144m', 'S72', 'S144', 'S192', 'S192m', 'S192xm', 'S96',
      'S384', 'S384m', 'S384xm', 'S384xxm', 'S576m', 'S576xm', 'S768', 'S768m',
-     'S768xm', 'S960m'
+     'S768xm', 'S960m', 'S224o', 'S224m', 'S224om', 'S224oxm', 'S224oxxm'
     :vartype hana_instance_size: str or
      ~azure.mgmt.hanaonazure.models.HanaInstanceSizeNamesEnum
     """
@@ -40,7 +40,7 @@ class HardwareProfile(Model):
         'hana_instance_size': {'key': 'hanaInstanceSize', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(HardwareProfile, self).__init__(**kwargs)
         self.hardware_type = None
         self.hana_instance_size = None
