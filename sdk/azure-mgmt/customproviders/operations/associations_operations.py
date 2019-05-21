@@ -41,7 +41,7 @@ class AssociationsOperations(object):
 
     def _create_or_update_initial(
             self, scope, association_name, target_resource_id=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.Association(target_resource_id=target_resource_id)
+        association = models.Association(target_resource_id=target_resource_id)
 
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -67,7 +67,7 @@ class AssociationsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'Association')
+        body_content = self._serialize.body(association, 'Association')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
