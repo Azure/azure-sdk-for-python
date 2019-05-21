@@ -17,11 +17,13 @@ class ServerPropertiesForCreate(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ServerPropertiesForDefaultCreate,
-    ServerPropertiesForRestore, ServerPropertiesForGeoRestore
+    ServerPropertiesForRestore, ServerPropertiesForGeoRestore,
+    ServerPropertiesForReplica
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: '9.5', '9.6'
+    :param version: Server version. Possible values include: '9.5', '9.6',
+     '10', '10.0', '10.2'
     :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'
@@ -45,7 +47,7 @@ class ServerPropertiesForCreate(Model):
     }
 
     _subtype_map = {
-        'create_mode': {'Default': 'ServerPropertiesForDefaultCreate', 'PointInTimeRestore': 'ServerPropertiesForRestore', 'GeoRestore': 'ServerPropertiesForGeoRestore'}
+        'create_mode': {'Default': 'ServerPropertiesForDefaultCreate', 'PointInTimeRestore': 'ServerPropertiesForRestore', 'GeoRestore': 'ServerPropertiesForGeoRestore', 'Replica': 'ServerPropertiesForReplica'}
     }
 
     def __init__(self, *, version=None, ssl_enforcement=None, storage_profile=None, **kwargs) -> None:

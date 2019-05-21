@@ -12,6 +12,36 @@
 from enum import Enum
 
 
+class FilterTrackPropertyType(str, Enum):
+
+    unknown = "Unknown"  #: The unknown track property type.
+    type = "Type"  #: The type.
+    name = "Name"  #: The name.
+    language = "Language"  #: The language.
+    four_cc = "FourCC"  #: The fourCC.
+    bitrate = "Bitrate"  #: The bitrate.
+
+
+class FilterTrackPropertyCompareOperation(str, Enum):
+
+    equal = "Equal"  #: The equal operation.
+    not_equal = "NotEqual"  #: The not equal operation.
+
+
+class MetricUnit(str, Enum):
+
+    bytes = "Bytes"  #: The number of bytes.
+    count = "Count"  #: The count.
+    milliseconds = "Milliseconds"  #: The number of milliseconds.
+
+
+class MetricAggregationType(str, Enum):
+
+    average = "Average"  #: The average.
+    count = "Count"  #: The count of a number of items, usually requests.
+    total = "Total"  #: The sum.
+
+
 class StorageAccountType(str, Enum):
 
     primary = "Primary"  #: The primary storage account for the Media Services account.
@@ -76,6 +106,12 @@ class AacAudioProfile(str, Enum):
     he_aac_v2 = "HeAacV2"  #: Specifies that the output audio is to be encoded into HE-AAC v2 profile.
 
 
+class AnalysisResolution(str, Enum):
+
+    source_resolution = "SourceResolution"
+    standard_definition = "StandardDefinition"
+
+
 class StretchMode(str, Enum):
 
     none = "None"  #: Strictly respect the output resolution without considering the pixel aspect ratio or display aspect ratio of the input video.
@@ -131,11 +167,22 @@ class H264Complexity(str, Enum):
 
 class EncoderNamedPreset(str, Enum):
 
-    adaptive_streaming = "AdaptiveStreaming"  #: Produces a set of GOP aligned MP4 files with H.264 video and stereo AAC audio. Auto-generates a bitrate ladder based on the input resolution and bitrate. The auto-generated preset will never exceed the input resolution and bitrate. For example, if the input is 720p at 3 Mbps, output will remain 720p at best, and will start at rates lower than 3 Mbps. The output will will have video and audio in separate MP4 files, which is optimal for adaptive streaming.
+    h264_single_bitrate_sd = "H264SingleBitrateSD"  #: Produces an MP4 file where the video is encoded with H.264 codec at 2200 kbps and a picture height of 480 pixels, and the stereo audio is encoded with AAC-LC codec at 64 kbps.
+    h264_single_bitrate720p = "H264SingleBitrate720p"  #: Produces an MP4 file where the video is encoded with H.264 codec at 4500 kbps and a picture height of 720 pixels, and the stereo audio is encoded with AAC-LC codec at 64 kbps.
+    h264_single_bitrate1080p = "H264SingleBitrate1080p"  #: Produces an MP4 file where the video is encoded with H.264 codec at 6750 kbps and a picture height of 1080 pixels, and the stereo audio is encoded with AAC-LC codec at 64 kbps.
+    adaptive_streaming = "AdaptiveStreaming"  #: Produces a set of GOP aligned MP4 files with H.264 video and stereo AAC audio. Auto-generates a bitrate ladder based on the input resolution and bitrate. The auto-generated preset will never exceed the input resolution and bitrate. For example, if the input is 720p at 3 Mbps, output will remain 720p at best, and will start at rates lower than 3 Mbps. The output will have video and audio in separate MP4 files, which is optimal for adaptive streaming.
     aac_good_quality_audio = "AACGoodQualityAudio"  #: Produces a single MP4 file containing only stereo audio encoded at 192 kbps.
+    content_aware_encoding_experimental = "ContentAwareEncodingExperimental"  #: Exposes an experimental preset for content-aware encoding. Given any input content, the service attempts to automatically determine the optimal number of layers, appropriate bitrate and resolution settings for delivery by adaptive streaming. The underlying algorithms will continue to evolve over time. The output will contain MP4 files with video and audio interleaved.
     h264_multiple_bitrate1080p = "H264MultipleBitrate1080p"  #: Produces a set of 8 GOP-aligned MP4 files, ranging from 6000 kbps to 400 kbps, and stereo AAC audio. Resolution starts at 1080p and goes down to 360p.
     h264_multiple_bitrate720p = "H264MultipleBitrate720p"  #: Produces a set of 6 GOP-aligned MP4 files, ranging from 3400 kbps to 400 kbps, and stereo AAC audio. Resolution starts at 720p and goes down to 360p.
     h264_multiple_bitrate_sd = "H264MultipleBitrateSD"  #: Produces a set of 5 GOP-aligned MP4 files, ranging from 1600kbps to 400 kbps, and stereo AAC audio. Resolution starts at 480p and goes down to 360p.
+
+
+class InsightsType(str, Enum):
+
+    audio_insights_only = "AudioInsightsOnly"  #: Generate audio only insights. Ignore video even if present. Fails if no audio is present.
+    video_insights_only = "VideoInsightsOnly"  #: Generate video only insights. Ignore audio if present. Fails if no video is present.
+    all_insights = "AllInsights"  #: Generate both audio and video insights. Fails if either audio or video Insights fail.
 
 
 class OnErrorType(str, Enum):
@@ -242,6 +289,7 @@ class LiveEventEncodingType(str, Enum):
 
     none = "None"
     basic = "Basic"
+    standard = "Standard"
 
 
 class LiveEventResourceState(str, Enum):

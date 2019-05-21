@@ -25,7 +25,7 @@ class DatabasesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2017-09-07-privatepreview".
+    :ivar api_version: Client API Version. Constant value: "2019-01-21".
     """
 
     models = models
@@ -35,9 +35,80 @@ class DatabasesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-09-07-privatepreview"
+        self.api_version = "2019-01-21"
 
         self.config = config
+
+    def check_name_availability(
+            self, resource_group_name, cluster_name, name, custom_headers=None, raw=False, **operation_config):
+        """Checks that the database name is valid and is not already in use.
+
+        :param resource_group_name: The name of the resource group containing
+         the Kusto cluster.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Kusto cluster.
+        :type cluster_name: str
+        :param name: Database name.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: CheckNameResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.kusto.models.CheckNameResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        database_name = models.DatabaseCheckNameRequest(name=name)
+
+        # Construct URL
+        url = self.check_name_availability.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(database_name, 'DatabaseCheckNameRequest')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('CheckNameResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/checkNameAvailability'}
 
     def list_by_cluster(
             self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
@@ -286,9 +357,7 @@ class DatabasesOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, cluster_name, database_name, soft_delete_period_in_days, location=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.DatabaseUpdate(location=location, soft_delete_period_in_days=soft_delete_period_in_days)
-
+            self, resource_group_name, cluster_name, database_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -340,7 +409,7 @@ class DatabasesOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, cluster_name, database_name, soft_delete_period_in_days, location=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, cluster_name, database_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates a database.
 
         :param resource_group_name: The name of the resource group containing
@@ -350,11 +419,9 @@ class DatabasesOperations(object):
         :type cluster_name: str
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
-        :param soft_delete_period_in_days: The number of days data should be
-         kept before it stops being accessible to queries.
-        :type soft_delete_period_in_days: int
-        :param location: Resource location
-        :type location: str
+        :param parameters: The database parameters supplied to the Update
+         operation.
+        :type parameters: ~azure.mgmt.kusto.models.DatabaseUpdate
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -372,8 +439,7 @@ class DatabasesOperations(object):
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             database_name=database_name,
-            soft_delete_period_in_days=soft_delete_period_in_days,
-            location=location,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -480,3 +546,226 @@ class DatabasesOperations(object):
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}'}
+
+    def list_principals(
+            self, resource_group_name, cluster_name, database_name, custom_headers=None, raw=False, **operation_config):
+        """Returns a list of database principals of the given Kusto cluster and
+        database.
+
+        :param resource_group_name: The name of the resource group containing
+         the Kusto cluster.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Kusto cluster.
+        :type cluster_name: str
+        :param database_name: The name of the database in the Kusto cluster.
+        :type database_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of DatabasePrincipal
+        :rtype:
+         ~azure.mgmt.kusto.models.DatabasePrincipalPaged[~azure.mgmt.kusto.models.DatabasePrincipal]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def internal_paging(next_link=None, raw=False):
+
+            if not next_link:
+                # Construct URL
+                url = self.list_principals.metadata['url']
+                path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+                    'databaseName': self._serialize.url("database_name", database_name, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.post(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        deserialized = models.DatabasePrincipalPaged(internal_paging, self._deserialize.dependencies)
+
+        if raw:
+            header_dict = {}
+            client_raw_response = models.DatabasePrincipalPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            return client_raw_response
+
+        return deserialized
+    list_principals.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/listPrincipals'}
+
+    def add_principals(
+            self, resource_group_name, cluster_name, database_name, value=None, custom_headers=None, raw=False, **operation_config):
+        """Add Database principals permissions.
+
+        :param resource_group_name: The name of the resource group containing
+         the Kusto cluster.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Kusto cluster.
+        :type cluster_name: str
+        :param database_name: The name of the database in the Kusto cluster.
+        :type database_name: str
+        :param value: The list of Kusto database principals.
+        :type value: list[~azure.mgmt.kusto.models.DatabasePrincipal]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DatabasePrincipalListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.kusto.models.DatabasePrincipalListResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        database_principals_to_add = models.DatabasePrincipalListRequest(value=value)
+
+        # Construct URL
+        url = self.add_principals.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(database_principals_to_add, 'DatabasePrincipalListRequest')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DatabasePrincipalListResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    add_principals.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/addPrincipals'}
+
+    def remove_principals(
+            self, resource_group_name, cluster_name, database_name, value=None, custom_headers=None, raw=False, **operation_config):
+        """Remove Database principals permissions.
+
+        :param resource_group_name: The name of the resource group containing
+         the Kusto cluster.
+        :type resource_group_name: str
+        :param cluster_name: The name of the Kusto cluster.
+        :type cluster_name: str
+        :param database_name: The name of the database in the Kusto cluster.
+        :type database_name: str
+        :param value: The list of Kusto database principals.
+        :type value: list[~azure.mgmt.kusto.models.DatabasePrincipal]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: DatabasePrincipalListResult or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.kusto.models.DatabasePrincipalListResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        database_principals_to_remove = models.DatabasePrincipalListRequest(value=value)
+
+        # Construct URL
+        url = self.remove_principals.metadata['url']
+        path_format_arguments = {
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'clusterName': self._serialize.url("cluster_name", cluster_name, 'str'),
+            'databaseName': self._serialize.url("database_name", database_name, 'str'),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(database_principals_to_remove, 'DatabasePrincipalListRequest')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('DatabasePrincipalListResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    remove_principals.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/removePrincipals'}

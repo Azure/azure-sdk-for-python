@@ -17,8 +17,8 @@ For a more complete set of Azure libraries, see the `azure <https://pypi.python.
 Usage
 =====
 
-For code examples, see `MyService Management
-<https://docs.microsoft.com/python/api/overview/azure/>`__
+For code examples, see `Billing
+<https://docs.microsoft.com/python/api/overview/azure/billing>`__
 on docs.microsoft.com.
 
 

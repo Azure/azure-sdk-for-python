@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dead_letter_destination import DeadLetterDestination
+from .dead_letter_destination_py3 import DeadLetterDestination
 
 
 class StorageBlobDeadLetterDestination(DeadLetterDestination):

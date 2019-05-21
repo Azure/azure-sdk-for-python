@@ -1,10 +1,14 @@
+import ast
 import importlib
+import inspect
+import ast
 import logging
 import os
 import pkgutil
 import re
 import sys
 import types
+import glob
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -18,7 +22,7 @@ try:
     import azure.common
 except:
     sdk_root = Path(__file__).parents[1]
-    sys.path.append(str((sdk_root / "azure-common").resolve()))
+    sys.path.append(str((sdk_root / "sdk" / "core" / "azure-common").resolve()))
     import azure.common
 
 import pkg_resources
@@ -40,11 +44,24 @@ def parse_input(input_parameter):
         module_name = ".".join([module_name, split_package_name[1]])
     return package_name, module_name
 
-def get_versionned_modules(package_name, module_name, sdk_root=None):
+# given an input of a name, we need to return the appropriate relative diff between the sdk_root and the actual package directory
+def resolve_package_directory(package_name, sdk_root):
+    packages = [os.path.dirname(p) for p in (glob.glob('{}/setup.py'.format(package_name)) + glob.glob('sdk/*/{}/setup.py'.format(package_name)))]
+
+    if len(packages) > 1:
+        print('There should only be a single package matched in either repository structure. The following were found: {}'.format(packages))
+        sys.exit(1)
+
+    return os.path.relpath(packages[0], sdk_root)
+
+
+def get_versioned_modules(package_name, module_name, sdk_root=None):
     if not sdk_root:
         sdk_root = Path(__file__).parents[1]
 
-    azure.__path__.append(str((sdk_root / package_name / "azure").resolve()))
+    path_to_package = resolve_package_directory(package_name, sdk_root)
+    azure.__path__.append(str((sdk_root / path_to_package / "azure").resolve()))
+
     # Doesn't work with namespace package
     # sys.path.append(str((sdk_root / package_name).resolve()))
     module_to_generate = importlib.import_module(module_name)
@@ -52,37 +69,63 @@ def get_versionned_modules(package_name, module_name, sdk_root=None):
             for (_, label, ispkg) in pkgutil.iter_modules(module_to_generate.__path__)
             if label.startswith("v20") and ispkg]
 
+class ApiVersionExtractor(ast.NodeVisitor):
+    def __init__(self, *args, **kwargs):
+        self.api_version = None
+        super(ApiVersionExtractor, self).__init__(*args, **kwargs)
+
+    def visit_Assign(self, node):
+        try:
+            if node.targets[0].id == "api_version":
+                self.api_version = node.value.s
+        except Exception:
+            pass
+
+
 def extract_api_version_from_code(function):
     """Will extract from __code__ the API version. Should be use if you use this is an operation group with no constant api_version.
     """
     try:
-        if "api_version" in function.__code__.co_varnames:
-            return function.__code__.co_consts[1]
-    except Exception:
-        pass
+        srccode = inspect.getsource(function)
+        try:
+            ast_tree = ast.parse(srccode)
+        except IndentationError:
+            ast_tree = ast.parse('with 0:\n'+srccode)
 
-def build_operation_meta(versionned_modules):
+        api_version_visitor = ApiVersionExtractor()
+        api_version_visitor.visit(ast_tree)
+        return api_version_visitor.api_version
+    except Exception:
+        raise
+
+def build_operation_meta(versioned_modules):
     version_dict = {}
     mod_to_api_version = {}
-    for versionned_label, versionned_mod in versionned_modules:
+    for versionned_label, versionned_mod in versioned_modules:
         extracted_api_versions = set()
         client_doc = versionned_mod.__dict__[versionned_mod.__all__[0]].__doc__
         operations = list(re.finditer(r':ivar (?P<attr>[a-z_]+): \w+ operations\n\s+:vartype (?P=attr): .*.operations.(?P<clsname>\w+)\n', client_doc))
         for operation in operations:
             attr, clsname = operation.groups()
+            _LOGGER.debug("Class name: %s", clsname)
             version_dict.setdefault(attr, []).append((versionned_label, clsname))
 
             # Create a fake operation group to extract easily the real api version
             extracted_api_version = None
             try:
                 extracted_api_version = versionned_mod.operations.__dict__[clsname](None, None, None, None).api_version
+                _LOGGER.debug("Found an obvious API version: %s", extracted_api_version)
+                if extracted_api_version:
+                    extracted_api_versions.add(extracted_api_version)
             except Exception:
-                # Should not happen. I guess it mixed operation groups like VMSS Network...
+                _LOGGER.debug("Should not happen. I guess it mixed operation groups like VMSS Network...")
                 for func_name, function in versionned_mod.operations.__dict__[clsname].__dict__.items():
                     if not func_name.startswith("__"):
+                        _LOGGER.debug("Try to extract API version from: %s", func_name)
                         extracted_api_version = extract_api_version_from_code(function)
-            if extracted_api_version:
-                extracted_api_versions.add(extracted_api_version)
+                        _LOGGER.debug("Extracted API version: %s", extracted_api_version)
+                        if extracted_api_version:
+                            extracted_api_versions.add(extracted_api_version)
 
         if not extracted_api_versions:
             sys.exit("Was not able to extract api_version of {}".format(versionned_label))
@@ -180,7 +223,9 @@ def build_operation_group(module_name, operation_name, versions):
     return result
 
 def find_client_file(package_name, module_name):
-    module_path = Path(package_name) / Path(module_name.replace(".", os.sep))
+    path_to_package = resolve_package_directory(package_name, Path(__file__).parents[1])
+    module_path = Path(path_to_package) / Path(module_name.replace(".", os.sep))
+
     return next(module_path.glob('*_client.py'))
 
 _CODE_PREFIX = """
@@ -194,8 +239,8 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
     package_name, module_name = parse_input(sys.argv[1])
-    versionned_modules = get_versionned_modules(package_name, module_name)
-    version_dict, mod_to_api_version = build_operation_meta(versionned_modules)
+    versioned_modules = get_versioned_modules(package_name, module_name)
+    version_dict, mod_to_api_version = build_operation_meta(versioned_modules)
     model_string = build_models_string(module_name, mod_to_api_version)
 
     operations_string = []

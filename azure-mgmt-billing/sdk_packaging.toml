@@ -1,8 +1,8 @@
 [packaging]
 package_name = "azure-mgmt-billing"
 package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "MyService Management"
-package_doc_id = ""
+package_pprint_name = "Billing"
+package_doc_id = "billing"
 is_stable = false
 is_arm = true
 need_msrestazure = true

@@ -25,8 +25,8 @@ class SourceTrigger(Model):
      the trigger.
     :type source_trigger_events: list[str or
      ~azure.mgmt.containerregistry.v2018_09_01.models.SourceTriggerEvent]
-    :param status: The current status of build trigger. Possible values
-     include: 'Disabled', 'Enabled'
+    :param status: The current status of trigger. Possible values include:
+     'Disabled', 'Enabled'
     :type status: str or
      ~azure.mgmt.containerregistry.v2018_09_01.models.TriggerStatus
     :param name: Required. The name of the trigger.

@@ -22,7 +22,7 @@ class FileOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2018-08-01.7.0".
+    :ivar api_version: Client API Version. Constant value: "2018-12-01.8.0".
     """
 
     models = models
@@ -32,7 +32,7 @@ class FileOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-08-01.7.0"
+        self.api_version = "2018-12-01.8.0"
 
         self.config = config
 
@@ -84,6 +84,7 @@ class FileOperations(object):
         # Construct URL
         url = self.delete_from_task.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'taskId': self._serialize.url("task_id", task_id, 'str'),
             'filePath': self._serialize.url("file_path", file_path, 'str')
@@ -184,6 +185,7 @@ class FileOperations(object):
         # Construct URL
         url = self.get_from_task.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'taskId': self._serialize.url("task_id", task_id, 'str'),
             'filePath': self._serialize.url("file_path", file_path, 'str')
@@ -299,6 +301,7 @@ class FileOperations(object):
         # Construct URL
         url = self.get_properties_from_task.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'taskId': self._serialize.url("task_id", task_id, 'str'),
             'filePath': self._serialize.url("file_path", file_path, 'str')
@@ -402,6 +405,7 @@ class FileOperations(object):
         # Construct URL
         url = self.delete_from_compute_node.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'filePath': self._serialize.url("file_path", file_path, 'str')
@@ -502,6 +506,7 @@ class FileOperations(object):
         # Construct URL
         url = self.get_from_compute_node.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'filePath': self._serialize.url("file_path", file_path, 'str')
@@ -616,6 +621,7 @@ class FileOperations(object):
         # Construct URL
         url = self.get_properties_from_compute_node.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'poolId': self._serialize.url("pool_id", pool_id, 'str'),
             'nodeId': self._serialize.url("node_id", node_id, 'str'),
             'filePath': self._serialize.url("file_path", file_path, 'str')
@@ -723,6 +729,7 @@ class FileOperations(object):
                 # Construct URL
                 url = self.list_from_task.metadata['url']
                 path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
                     'jobId': self._serialize.url("job_id", job_id, 'str'),
                     'taskId': self._serialize.url("task_id", task_id, 'str')
                 }
@@ -832,6 +839,7 @@ class FileOperations(object):
                 # Construct URL
                 url = self.list_from_compute_node.metadata['url']
                 path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
                     'poolId': self._serialize.url("pool_id", pool_id, 'str'),
                     'nodeId': self._serialize.url("node_id", node_id, 'str')
                 }

@@ -10,11 +10,11 @@ import io
 import logging
 import time
 import unittest
-
 import requests
 
 import azure.batch
 from azure.batch import models
+
 from batch_preparers import (
     AccountPreparer,
     PoolPreparer,
@@ -28,7 +28,7 @@ from devtools_testutils import (
 )
 
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = 'westcentralus'
 BATCH_RESOURCE = 'https://batch.core.windows.net/'
 
 
@@ -54,7 +54,7 @@ class BatchTest(AzureMgmtTestCase):
         client = self.create_basic_client(
             azure.batch.BatchServiceClient,
             credentials=credentials,
-            base_url=self._batch_url(batch_account)
+            batch_url=self._batch_url(batch_account)
         )
         return client
 
@@ -62,7 +62,7 @@ class BatchTest(AzureMgmtTestCase):
         client = self.create_basic_client(
             azure.batch.BatchServiceClient,
             credentials=credentials,
-            base_url=self._batch_url(batch_account)
+            batch_url=self._batch_url(batch_account)
         )
         return client
 
@@ -74,6 +74,20 @@ class BatchTest(AzureMgmtTestCase):
             self.assertEqual(err.error.code, code)
         except Exception as err:
             self.fail("Expected BatchErrorExcption, instead got: {!r}".format(err))
+
+    def assertCreateTasksError(self, code, func, *args, **kwargs):
+        try:
+            func(*args, **kwargs)
+            self.fail("CreateTasksError expected but not raised")
+        except models.CreateTasksErrorException as err:
+            try:
+                batch_error = err.errors.pop()
+                if code:
+                    self.assertEqual(batch_error.error.code, code)
+            except IndexError:
+                self.fail("Inner BatchErrorException expected but not exist")
+        except Exception as err:
+            self.fail("Expected CreateTasksError, instead got: {!r}".format(err))
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix='batch1', location=AZURE_LOCATION)
@@ -225,25 +239,6 @@ class BatchTest(AzureMgmtTestCase):
         )
         self.assertBatchError('InvalidPropertyValue', client.pool.add, test_image_pool, models.PoolAddOptions(timeout=45))
 
-        # Test Create Pool with OSDisk
-        os_disk = models.OSDisk(caching=models.CachingType.read_write)
-        test_osdisk_pool = models.PoolAddParameter(
-            id=self.get_resource_name('batch_osdisk_'),
-            vm_size='Standard_A1',
-            virtual_machine_configuration=models.VirtualMachineConfiguration(
-                image_reference=models.ImageReference(
-                    publisher='Canonical',
-                    offer='UbuntuServer',
-                    sku='16.04-LTS'
-                ),
-                node_agent_sku_id='batch.node.ubuntu 16.04',
-                os_disk=os_disk)
-        )
-        response = client.pool.add(test_osdisk_pool)
-        self.assertIsNone(response)
-        osdisk_pool = client.pool.get(test_osdisk_pool.id)
-        self.assertEqual(osdisk_pool.virtual_machine_configuration.os_disk.caching, os_disk.caching)
-
         # Test Create Pool with Data Disk
         data_disk = models.DataDisk(lun=1, disk_size_gb=50)
         test_disk_pool = models.PoolAddParameter(
@@ -314,7 +309,7 @@ class BatchTest(AzureMgmtTestCase):
             ),
             start_task=models.StartTask(
                 command_line="cmd.exe /c \"echo hello world\"",
-                resource_files=[models.ResourceFile(blob_source='https://blobsource.com', file_path='filename.txt')],
+                resource_files=[models.ResourceFile(http_url='https://blobsource.com', file_path='filename.txt')],
                 environment_settings=[models.EnvironmentSetting(name='ENV_VAR', value='env_value')],
                 user_identity=models.UserIdentity(
                     auto_user=models.AutoUserSpecification(
@@ -325,14 +320,6 @@ class BatchTest(AzureMgmtTestCase):
         )
         response = client.pool.add(test_paas_pool)
         self.assertIsNone(response)
-
-        # Test Upgrade Pool OS
-        self.assertBatchError(
-            "PoolVersionEqualsUpgradeVersion",
-            client.pool.upgrade_os,
-            test_paas_pool.id,
-            "*"
-        )
 
         # Test Update Pool Parameters
         params = models.PoolUpdatePropertiesParameter(
@@ -404,7 +391,7 @@ class BatchTest(AzureMgmtTestCase):
         # Test Pool Resize
         pool = client.pool.get(batch_pool.name)
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
-            time.sleep(20)
+            time.sleep(5)
             pool = client.pool.get(batch_pool.name)
         self.assertEqual(pool.target_dedicated_nodes, 2)
         self.assertEqual(pool.target_low_priority_nodes, 0)
@@ -417,8 +404,10 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNone(response)
         pool = client.pool.get(batch_pool.name)
         while self.is_live and pool.allocation_state != models.AllocationState.steady:
-            time.sleep(20)
+            time.sleep(5)
             pool = client.pool.get(batch_pool.name)
+        # It looks like there has test framework issue, it couldn't find the correct recording frame
+        # So in live mode, target-decicate is 0, and target low pri is 2
         self.assertEqual(pool.target_dedicated_nodes, 2)
         self.assertEqual(pool.target_low_priority_nodes, 0)
 
@@ -868,7 +857,7 @@ class BatchTest(AzureMgmtTestCase):
             constraints=models.TaskConstraints(max_task_retry_count=1))
         self.assertIsNone(response)
 
-        # Test Get Subtasks 
+        # Test Get Subtasks
         # TODO: Test with actual subtasks
         subtasks = client.task.list_subtasks(batch_job.id, task_param.id)
         self.assertIsInstance(subtasks, models.CloudTaskListSubtasksResult)
@@ -877,6 +866,54 @@ class BatchTest(AzureMgmtTestCase):
         # Test Delete Task
         response = client.task.delete(batch_job.id, task_param.id)
         self.assertIsNone(response)
+
+        # Test Bulk Add Task Failure
+        task_id = "mytask"
+        tasks_to_add = []
+        resource_files = []
+        for i in range(10000):
+            resource_file = models.ResourceFile(
+                http_url="https://mystorageaccount.blob.core.windows.net/files/resourceFile{}".format(str(i)),
+                file_path="resourceFile{}".format(str(i)))
+            resource_files.append(resource_file)
+        task = models.TaskAddParameter(
+            id=task_id,
+            command_line="sleep 1",
+            resource_files=resource_files)
+        tasks_to_add.append(task)
+        self.assertCreateTasksError(
+            "RequestBodyTooLarge",
+            client.task.add_collection,
+            batch_job.id,
+            tasks_to_add)
+        self.assertCreateTasksError(
+            "RequestBodyTooLarge",
+            client.task.add_collection,
+            batch_job.id,
+            tasks_to_add,
+            threads=3)
+
+        # Test Bulk Add Task Success
+        task_id = "mytask"
+        tasks_to_add = []
+        resource_files = []
+        for i in range(100):
+            resource_file = models.ResourceFile(
+                http_url="https://mystorageaccount.blob.core.windows.net/files/resourceFile" + str(i),
+                file_path="resourceFile"+str(i))
+            resource_files.append(resource_file)
+        for i in range(733):
+            task = models.TaskAddParameter(
+                id=task_id + str(i),
+                command_line="sleep 1",
+                resource_files=resource_files)
+            tasks_to_add.append(task)
+        result = client.task.add_collection(batch_job.id, tasks_to_add)
+        self.assertIsInstance(result, models.TaskAddCollectionResult)
+        self.assertEqual(len(result.value), 733)
+        self.assertEqual(result.value[0].status, models.TaskAddStatus.success)
+        self.assertTrue(
+            all(t.status == models.TaskAddStatus.success for t in result.value))
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION)

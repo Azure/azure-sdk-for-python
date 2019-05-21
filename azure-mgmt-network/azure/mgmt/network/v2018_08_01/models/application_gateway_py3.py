@@ -105,6 +105,10 @@ class ApplicationGateway(Resource):
     :param provisioning_state: Provisioning state of the application gateway
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
     :type provisioning_state: str
+    :param custom_error_configurations: Custom error configurations of the
+     application gateway resource.
+    :type custom_error_configurations:
+     list[~azure.mgmt.network.v2018_08_01.models.ApplicationGatewayCustomError]
     :param etag: A unique read-only string that changes whenever the resource
      is updated.
     :type etag: str
@@ -147,11 +151,12 @@ class ApplicationGateway(Resource):
         'autoscale_configuration': {'key': 'properties.autoscaleConfiguration', 'type': 'ApplicationGatewayAutoscaleConfiguration'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'custom_error_configurations': {'key': 'properties.customErrorConfigurations', 'type': '[ApplicationGatewayCustomError]'},
         'etag': {'key': 'etag', 'type': 'str'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, trusted_root_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, redirect_configurations=None, web_application_firewall_configuration=None, enable_http2: bool=None, enable_fips: bool=None, autoscale_configuration=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, ssl_policy=None, gateway_ip_configurations=None, authentication_certificates=None, trusted_root_certificates=None, ssl_certificates=None, frontend_ip_configurations=None, frontend_ports=None, probes=None, backend_address_pools=None, backend_http_settings_collection=None, http_listeners=None, url_path_maps=None, request_routing_rules=None, redirect_configurations=None, web_application_firewall_configuration=None, enable_http2: bool=None, enable_fips: bool=None, autoscale_configuration=None, resource_guid: str=None, provisioning_state: str=None, custom_error_configurations=None, etag: str=None, zones=None, **kwargs) -> None:
         super(ApplicationGateway, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.sku = sku
         self.ssl_policy = ssl_policy
@@ -175,5 +180,6 @@ class ApplicationGateway(Resource):
         self.autoscale_configuration = autoscale_configuration
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
+        self.custom_error_configurations = custom_error_configurations
         self.etag = etag
         self.zones = zones

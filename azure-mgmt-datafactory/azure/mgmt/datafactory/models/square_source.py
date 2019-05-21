@@ -13,7 +13,9 @@ from .copy_source import CopySource
 
 
 class SquareSource(CopySource):
-    """A copy activity Square Serivce source.
+    """A copy activity Square Service source.
+
+    All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
@@ -25,7 +27,7 @@ class SquareSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
@@ -44,7 +46,7 @@ class SquareSource(CopySource):
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, query=None):
-        super(SquareSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
-        self.query = query
+    def __init__(self, **kwargs):
+        super(SquareSource, self).__init__(**kwargs)
+        self.query = kwargs.get('query', None)
         self.type = 'SquareSource'

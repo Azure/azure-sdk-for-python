@@ -264,12 +264,6 @@ class TransparentDataEncryptionActivityStatus(str, Enum):
     decrypting = "Decrypting"
 
 
-class BlobAuditingPolicyState(str, Enum):
-
-    enabled = "Enabled"
-    disabled = "Disabled"
-
-
 class AutomaticTuningMode(str, Enum):
 
     inherit = "Inherit"
@@ -329,6 +323,13 @@ class FailoverGroupReplicationRole(str, Enum):
 class IdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
+
+
+class ManagedInstanceProxyOverride(str, Enum):
+
+    proxy = "Proxy"
+    redirect = "Redirect"
+    default = "Default"
 
 
 class OperationOrigin(str, Enum):
@@ -411,6 +412,12 @@ class VirtualNetworkRuleState(str, Enum):
     unknown = "Unknown"
 
 
+class BlobAuditingPolicyState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class JobAgentState(str, Enum):
 
     creating = "Creating"
@@ -486,6 +493,7 @@ class ManagedDatabaseStatus(str, Enum):
     shutdown = "Shutdown"
     creating = "Creating"
     inaccessible = "Inaccessible"
+    updating = "Updating"
 
 
 class CatalogCollationType(str, Enum):
@@ -499,6 +507,7 @@ class ManagedDatabaseCreateMode(str, Enum):
     default = "Default"
     restore_external_backup = "RestoreExternalBackup"
     point_in_time_restore = "PointInTimeRestore"
+    recovery = "Recovery"
 
 
 class AutomaticTuningServerMode(str, Enum):
@@ -655,6 +664,18 @@ class LongTermRetentionDatabaseState(str, Enum):
     all = "All"
     live = "Live"
     deleted = "Deleted"
+
+
+class VulnerabilityAssessmentPolicyBaselineName(str, Enum):
+
+    master = "master"
+    default = "default"
+
+
+class SensitivityLabelSource(str, Enum):
+
+    current = "current"
+    recommended = "recommended"
 
 
 class CapabilityGroup(str, Enum):

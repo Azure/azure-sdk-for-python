@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
 class EventType(Resource):
@@ -30,6 +30,8 @@ class EventType(Resource):
     :type description: str
     :param schema_url: Url of the schema for this event type.
     :type schema_url: str
+    :param is_in_default_set: IsInDefaultSet flag of the event type.
+    :type is_in_default_set: bool
     """
 
     _validation = {
@@ -45,10 +47,12 @@ class EventType(Resource):
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'schema_url': {'key': 'properties.schemaUrl', 'type': 'str'},
+        'is_in_default_set': {'key': 'properties.isInDefaultSet', 'type': 'bool'},
     }
 
-    def __init__(self, *, display_name: str=None, description: str=None, schema_url: str=None, **kwargs) -> None:
+    def __init__(self, *, display_name: str=None, description: str=None, schema_url: str=None, is_in_default_set: bool=None, **kwargs) -> None:
         super(EventType, self).__init__(**kwargs)
         self.display_name = display_name
         self.description = description
         self.schema_url = schema_url
+        self.is_in_default_set = is_in_default_set

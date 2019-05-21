@@ -30,6 +30,9 @@ class ContainerGroup(Resource):
     :type location: str
     :param tags: The resource tags.
     :type tags: dict[str, str]
+    :param identity: The identity of the container group, if configured.
+    :type identity:
+     ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
     :ivar provisioning_state: The provisioning state of the container group.
      This only appears in the response.
     :vartype provisioning_state: str
@@ -68,6 +71,8 @@ class ContainerGroup(Resource):
      group.
     :type network_profile:
      ~azure.mgmt.containerinstance.models.ContainerGroupNetworkProfile
+    :param dns_config: The DNS config information for a container group.
+    :type dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
     """
 
     _validation = {
@@ -86,6 +91,7 @@ class ContainerGroup(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'ContainerGroupIdentity'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'containers': {'key': 'properties.containers', 'type': '[Container]'},
         'image_registry_credentials': {'key': 'properties.imageRegistryCredentials', 'type': '[ImageRegistryCredential]'},
@@ -96,10 +102,12 @@ class ContainerGroup(Resource):
         'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerGroupPropertiesInstanceView'},
         'diagnostics': {'key': 'properties.diagnostics', 'type': 'ContainerGroupDiagnostics'},
         'network_profile': {'key': 'properties.networkProfile', 'type': 'ContainerGroupNetworkProfile'},
+        'dns_config': {'key': 'properties.dnsConfig', 'type': 'DnsConfiguration'},
     }
 
     def __init__(self, **kwargs):
         super(ContainerGroup, self).__init__(**kwargs)
+        self.identity = kwargs.get('identity', None)
         self.provisioning_state = None
         self.containers = kwargs.get('containers', None)
         self.image_registry_credentials = kwargs.get('image_registry_credentials', None)
@@ -110,3 +118,4 @@ class ContainerGroup(Resource):
         self.instance_view = None
         self.diagnostics = kwargs.get('diagnostics', None)
         self.network_profile = kwargs.get('network_profile', None)
+        self.dns_config = kwargs.get('dns_config', None)

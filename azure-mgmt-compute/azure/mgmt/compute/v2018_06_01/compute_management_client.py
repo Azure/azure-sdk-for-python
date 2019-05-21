@@ -15,13 +15,14 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.availability_sets_operations import AvailabilitySetsOperations
+from .operations.proximity_placement_groups_operations import ProximityPlacementGroupsOperations
 from .operations.virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations
 from .operations.virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
 from .operations.virtual_machine_images_operations import VirtualMachineImagesOperations
 from .operations.usage_operations import UsageOperations
+from .operations.virtual_machines_operations import VirtualMachinesOperations
 from .operations.virtual_machine_sizes_operations import VirtualMachineSizesOperations
 from .operations.images_operations import ImagesOperations
-from .operations.virtual_machines_operations import VirtualMachinesOperations
 from .operations.virtual_machine_scale_sets_operations import VirtualMachineScaleSetsOperations
 from .operations.virtual_machine_scale_set_extensions_operations import VirtualMachineScaleSetExtensionsOperations
 from .operations.virtual_machine_scale_set_rolling_upgrades_operations import VirtualMachineScaleSetRollingUpgradesOperations
@@ -80,6 +81,8 @@ class ComputeManagementClient(SDKClient):
     :vartype operations: azure.mgmt.compute.v2018_06_01.operations.Operations
     :ivar availability_sets: AvailabilitySets operations
     :vartype availability_sets: azure.mgmt.compute.v2018_06_01.operations.AvailabilitySetsOperations
+    :ivar proximity_placement_groups: ProximityPlacementGroups operations
+    :vartype proximity_placement_groups: azure.mgmt.compute.v2018_06_01.operations.ProximityPlacementGroupsOperations
     :ivar virtual_machine_extension_images: VirtualMachineExtensionImages operations
     :vartype virtual_machine_extension_images: azure.mgmt.compute.v2018_06_01.operations.VirtualMachineExtensionImagesOperations
     :ivar virtual_machine_extensions: VirtualMachineExtensions operations
@@ -88,12 +91,12 @@ class ComputeManagementClient(SDKClient):
     :vartype virtual_machine_images: azure.mgmt.compute.v2018_06_01.operations.VirtualMachineImagesOperations
     :ivar usage: Usage operations
     :vartype usage: azure.mgmt.compute.v2018_06_01.operations.UsageOperations
+    :ivar virtual_machines: VirtualMachines operations
+    :vartype virtual_machines: azure.mgmt.compute.v2018_06_01.operations.VirtualMachinesOperations
     :ivar virtual_machine_sizes: VirtualMachineSizes operations
     :vartype virtual_machine_sizes: azure.mgmt.compute.v2018_06_01.operations.VirtualMachineSizesOperations
     :ivar images: Images operations
     :vartype images: azure.mgmt.compute.v2018_06_01.operations.ImagesOperations
-    :ivar virtual_machines: VirtualMachines operations
-    :vartype virtual_machines: azure.mgmt.compute.v2018_06_01.operations.VirtualMachinesOperations
     :ivar virtual_machine_scale_sets: VirtualMachineScaleSets operations
     :vartype virtual_machine_scale_sets: azure.mgmt.compute.v2018_06_01.operations.VirtualMachineScaleSetsOperations
     :ivar virtual_machine_scale_set_extensions: VirtualMachineScaleSetExtensions operations
@@ -142,6 +145,8 @@ class ComputeManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.availability_sets = AvailabilitySetsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.proximity_placement_groups = ProximityPlacementGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_extension_images = VirtualMachineExtensionImagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_extensions = VirtualMachineExtensionsOperations(
@@ -150,11 +155,11 @@ class ComputeManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.usage = UsageOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.virtual_machines = VirtualMachinesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_sizes = VirtualMachineSizesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.images = ImagesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.virtual_machines = VirtualMachinesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(
             self._client, self.config, self._serialize, self._deserialize)

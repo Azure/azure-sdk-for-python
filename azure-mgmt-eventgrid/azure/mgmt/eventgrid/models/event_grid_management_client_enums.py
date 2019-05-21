@@ -12,25 +12,7 @@
 from enum import Enum
 
 
-class EventSubscriptionProvisioningState(str, Enum):
-
-    creating = "Creating"
-    updating = "Updating"
-    deleting = "Deleting"
-    succeeded = "Succeeded"
-    canceled = "Canceled"
-    failed = "Failed"
-    awaiting_manual_action = "AwaitingManualAction"
-
-
-class EventDeliverySchema(str, Enum):
-
-    event_grid_schema = "EventGridSchema"
-    input_event_schema = "InputEventSchema"
-    cloud_event_v01_schema = "CloudEventV01Schema"
-
-
-class TopicProvisioningState(str, Enum):
+class DomainProvisioningState(str, Enum):
 
     creating = "Creating"
     updating = "Updating"
@@ -45,6 +27,44 @@ class InputSchema(str, Enum):
     event_grid_schema = "EventGridSchema"
     custom_event_schema = "CustomEventSchema"
     cloud_event_v01_schema = "CloudEventV01Schema"
+
+
+class DomainTopicProvisioningState(str, Enum):
+
+    creating = "Creating"
+    updating = "Updating"
+    deleting = "Deleting"
+    succeeded = "Succeeded"
+    canceled = "Canceled"
+    failed = "Failed"
+
+
+class EventSubscriptionProvisioningState(str, Enum):
+
+    creating = "Creating"
+    updating = "Updating"
+    deleting = "Deleting"
+    succeeded = "Succeeded"
+    canceled = "Canceled"
+    failed = "Failed"
+    awaiting_manual_action = "AwaitingManualAction"
+
+
+class EventDeliverySchema(str, Enum):
+
+    event_grid_schema = "EventGridSchema"
+    cloud_event_v01_schema = "CloudEventV01Schema"
+    custom_input_schema = "CustomInputSchema"
+
+
+class TopicProvisioningState(str, Enum):
+
+    creating = "Creating"
+    updating = "Updating"
+    deleting = "Deleting"
+    succeeded = "Succeeded"
+    canceled = "Canceled"
+    failed = "Failed"
 
 
 class ResourceRegionType(str, Enum):

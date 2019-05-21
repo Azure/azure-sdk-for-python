@@ -102,7 +102,6 @@ class InstanceFlexibility(str, Enum):
 
     on = "On"
     off = "Off"
-    not_supported = "NotSupported"
 
 
 class AppliedScopeType(str, Enum):

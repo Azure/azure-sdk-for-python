@@ -20,7 +20,8 @@ class ApplicationSettings(Model):
     :param id: Required. The application ID.
     :type id: str
     :param is_public: Required. Setting your application as public allows
-     other people to use your application's endpoint using their own keys.
+     other people to use your application's endpoint using their own keys for
+     billing purposes.
     :type is_public: bool
     """
 
