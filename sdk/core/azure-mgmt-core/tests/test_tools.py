@@ -1,5 +1,5 @@
 #--------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved. 
+# Copyright (c) Microsoft Corporation. All rights reserved.
 #
 # The MIT License (MIT)
 #
@@ -33,8 +33,8 @@ except ImportError:
 import requests
 import httpretty
 
-from msrestazure.azure_configuration import AzureConfiguration
-from msrestazure.tools import parse_resource_id, is_valid_resource_id, resource_id, is_valid_resource_name
+from azure.mgmt.core.azure_configuration import AzureConfiguration
+from azure.mgmt.core.tools import parse_resource_id, is_valid_resource_id, resource_id, is_valid_resource_name
 
 class TestTools(unittest.TestCase):
 

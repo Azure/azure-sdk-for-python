@@ -34,7 +34,7 @@ except ImportError:
     from urllib.parse import urlparse
 
 from msrest.exceptions import DeserializationError, ClientException
-from msrestazure.azure_exceptions import CloudError
+from azure.mgmt.core.azure_exceptions import CloudError
 
 
 FINISHED = frozenset(['succeeded', 'canceled', 'failed'])
@@ -325,7 +325,7 @@ class LongRunningOperation(object):
         async_url = _get_header_url(response, 'azure-asyncoperation')
         if async_url:
             self.async_url = async_url
-        
+
         location_url = _get_header_url(response, 'location')
         if location_url:
             self.location_url = location_url

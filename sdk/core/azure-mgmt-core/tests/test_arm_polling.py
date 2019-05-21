@@ -42,8 +42,8 @@ from msrest import Deserializer, Configuration
 from msrest.service_client import ServiceClient
 from msrest.exceptions import DeserializationError
 from msrest.polling import LROPoller
-from msrestazure.azure_exceptions import CloudError
-from msrestazure.polling.arm_polling import (
+from azure.mgmt.core.azure_exceptions import CloudError
+from azure.mgmt.core.polling.arm_polling import (
     LongRunningOperation,
     ARMPolling,
     BadStatus

@@ -1,6 +1,6 @@
 ﻿#--------------------------------------------------------------------------
 #
-# Copyright (c) Microsoft Corporation. All rights reserved. 
+# Copyright (c) Microsoft Corporation. All rights reserved.
 #
 # The MIT License (MIT)
 #
@@ -36,8 +36,8 @@ from requests import Request, Response
 
 from msrest import Deserializer
 from msrest.exceptions import DeserializationError
-from msrestazure.azure_exceptions import CloudError
-from msrestazure.azure_operation import (
+from azure.mgmt.core.azure_exceptions import CloudError
+from azure.mgmt.core.azure_operation import (
     LongRunningOperation,
     AzureOperationPoller,
     BadStatus,
@@ -82,7 +82,7 @@ class TestLongRunningOperation(unittest.TestCase):
         response.request.method = 'GET'
         response.headers = headers or {}
         response.headers.update({"content-type": "application/json; charset=utf8"})
-        
+
         if url == ASYNC_URL:
             response.request.url = url
             response.status_code = POLLING_STATUS
@@ -111,13 +111,13 @@ class TestLongRunningOperation(unittest.TestCase):
     @staticmethod
     def mock_outputs(response):
         body = response.json()
-        body = {TestLongRunningOperation.convert.sub(r'\1_\2', k).lower(): v 
+        body = {TestLongRunningOperation.convert.sub(r'\1_\2', k).lower(): v
                 for k, v in body.items()}
         properties = body.setdefault('properties', {})
         if 'name' in body:
             properties['name'] = body['name']
         if properties:
-            properties = {TestLongRunningOperation.convert.sub(r'\1_\2', k).lower(): v 
+            properties = {TestLongRunningOperation.convert.sub(r'\1_\2', k).lower(): v
                           for k, v in properties.items()}
             del body['properties']
             body.update(properties)
@@ -375,7 +375,7 @@ class TestLongRunningOperation(unittest.TestCase):
 
         LOCATION_BODY = json.dumps({ 'name': TEST_NAME })
         POLLING_STATUS = 200
-        
+
 
 
 if __name__ == '__main__':

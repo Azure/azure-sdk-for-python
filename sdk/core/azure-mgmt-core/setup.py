@@ -27,15 +27,14 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='msrestazure',
-    version='0.6.0',
+    name='azure-mgmt-core',
+    version='0.1.0',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
     packages=find_packages(exclude=["tests", "tests.*"]),
     url='https://github.com/Azure/msrestazure-for-python',
     license='MIT License',
-    description=('AutoRest swagger generator Python client runtime. '
-                 'Azure-specific module.'),
+    description='ARM specific runtime for Mgmt SDK',
     long_description=open('README.rst').read(),
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -50,7 +49,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Topic :: Software Development'],
     install_requires=[
-        "msrest>=0.6.0,<2.0.0",
+        "azure-core>=1.0.0",
         "adal>=0.6.0,<2.0.0",
     ],
 )

@@ -37,7 +37,7 @@ import oauthlib
 import adal
 import httpretty
 
-from msrestazure.azure_active_directory import (
+from azure.mgmt.core.azure_active_directory import (
     AADMixin,
     ServicePrincipalCredentials,
     UserPassCredentials,
@@ -47,7 +47,7 @@ from msrestazure.azure_active_directory import (
     get_msi_token,
     get_msi_token_webapp
 )
-from msrestazure.azure_cloud import AZURE_CHINA_CLOUD
+from azure.mgmt.core.azure_cloud import AZURE_CHINA_CLOUD
 from msrest.exceptions import TokenExpiredError, AuthenticationError
 
 import pytest

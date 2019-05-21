@@ -1,6 +1,6 @@
 #--------------------------------------------------------------------------
 #
-# Copyright (c) Microsoft Corporation. All rights reserved. 
+# Copyright (c) Microsoft Corporation. All rights reserved.
 #
 # The MIT License (MIT)
 #
@@ -25,7 +25,7 @@
 #--------------------------------------------------------------------------
 import unittest
 
-from msrestazure.azure_configuration import AzureConfiguration
+from azure.mgmt.core.azure_configuration import AzureConfiguration
 
 class TestAzConfiguration(unittest.TestCase):
 

@@ -43,8 +43,8 @@ from msrest.authentication import OAuthTokenAuthentication, Authentication, Basi
 from msrest.exceptions import TokenExpiredError as Expired
 from msrest.exceptions import AuthenticationError, raise_with_traceback
 
-from msrestazure.azure_cloud import AZURE_CHINA_CLOUD, AZURE_PUBLIC_CLOUD
-from msrestazure.azure_configuration import AzureConfiguration
+from azure.mgmt.core.azure_cloud import AZURE_CHINA_CLOUD, AZURE_PUBLIC_CLOUD
+from azure.mgmt.core.azure_configuration import AzureConfiguration
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -62,7 +62,7 @@ class AADMixin(OAuthTokenAuthentication):
 
         Optional kwargs may include:
 
-            - cloud_environment (msrestazure.azure_cloud.Cloud): A targeted cloud environment
+            - cloud_environment (azure.mgmt.core.azure_cloud.Cloud): A targeted cloud environment
             - china (bool): Configure auth for China-based service,
               default is 'False'.
             - tenant (str): Alternative tenant, default is 'common'.
@@ -78,7 +78,7 @@ class AADMixin(OAuthTokenAuthentication):
         if kwargs.get('china'):
             err_msg = ("china parameter is deprecated, "
                        "please use "
-                       "cloud_environment=msrestazure.azure_cloud.AZURE_CHINA_CLOUD")
+                       "cloud_environment=azure.mgmt.core.azure_cloud.AZURE_CHINA_CLOUD")
             warnings.warn(err_msg, DeprecationWarning)
             self._cloud_environment = AZURE_CHINA_CLOUD
         else:
@@ -236,7 +236,7 @@ class AADTokenCredentials(AADMixin):
 
     Optional kwargs may include:
 
-    - cloud_environment (msrestazure.azure_cloud.Cloud): A targeted cloud environment
+    - cloud_environment (azure.mgmt.core.azure_cloud.Cloud): A targeted cloud environment
     - china (bool): Configure auth for China-based service,
       default is 'False'.
     - tenant (str): Alternative tenant, default is 'common'.
@@ -272,7 +272,7 @@ class UserPassCredentials(AADMixin):
 
     Optional kwargs may include:
 
-    - cloud_environment (msrestazure.azure_cloud.Cloud): A targeted cloud environment
+    - cloud_environment (azure.mgmt.core.azure_cloud.Cloud): A targeted cloud environment
     - china (bool): Configure auth for China-based service,
       default is 'False'.
     - tenant (str): Alternative tenant, default is 'common'.
@@ -330,7 +330,7 @@ class ServicePrincipalCredentials(AADMixin):
 
     Optional kwargs may include:
 
-    - cloud_environment (msrestazure.azure_cloud.Cloud): A targeted cloud environment
+    - cloud_environment (azure.mgmt.core.azure_cloud.Cloud): A targeted cloud environment
     - china (bool): Configure auth for China-based service,
       default is 'False'.
     - tenant (str): Alternative tenant, default is 'common'.
@@ -547,7 +547,7 @@ class MSIAuthentication(BasicTokenAuthentication):
     - client_id: Identifies, by Azure AD client id, a specific explicit identity to use when authenticating to Azure AD. Mutually exclusive with object_id and msi_res_id.
     - object_id: Identifies, by Azure AD object id, a specific explicit identity to use when authenticating to Azure AD. Mutually exclusive with client_id and msi_res_id.
     - msi_res_id: Identifies, by ARM resource id, a specific explicit identity to use when authenticating to Azure AD. Mutually exclusive with client_id and object_id.
-    - cloud_environment (msrestazure.azure_cloud.Cloud): A targeted cloud environment
+    - cloud_environment (azure.mgmt.core.azure_cloud.Cloud): A targeted cloud environment
     - resource (str): Alternative authentication resource, default
       is 'https://management.core.windows.net/'.
 

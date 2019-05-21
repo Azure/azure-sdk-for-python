@@ -30,7 +30,7 @@ import unittest
 from requests import Response, RequestException
 
 from msrest import Deserializer, Configuration
-from msrestazure.azure_exceptions import CloudErrorData, CloudError, TypedErrorInfo
+from azure.mgmt.core.azure_exceptions import CloudErrorData, CloudError, TypedErrorInfo
 
 
 class TestCloudException(unittest.TestCase):

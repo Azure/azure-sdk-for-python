@@ -1,6 +1,6 @@
 #--------------------------------------------------------------------------
 #
-# Copyright (c) Microsoft Corporation. All rights reserved. 
+# Copyright (c) Microsoft Corporation. All rights reserved.
 #
 # The MIT License (MIT)
 #
@@ -29,7 +29,7 @@ import json
 import httpretty
 import requests
 
-from msrestazure import azure_cloud
+from azure.mgmt.core import azure_cloud
 
 class TestCloud(unittest.TestCase):
 
