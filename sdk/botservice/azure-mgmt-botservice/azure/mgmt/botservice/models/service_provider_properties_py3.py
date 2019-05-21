@@ -20,13 +20,13 @@ class ServiceProviderProperties(Model):
 
     :ivar id: Id for Service Provider
     :vartype id: str
-    :ivar display_name: Diplay Name of the Service Provider
+    :ivar display_name: Display Name of the Service Provider
     :vartype display_name: str
-    :ivar service_provider_name: Diplay Name of the Service Provider
+    :ivar service_provider_name: Display Name of the Service Provider
     :vartype service_provider_name: str
-    :ivar dev_portal_url: Diplay Name of the Service Provider
+    :ivar dev_portal_url: Display Name of the Service Provider
     :vartype dev_portal_url: str
-    :ivar icon_url: Diplay Name of the Service Provider
+    :ivar icon_url: Display Name of the Service Provider
     :vartype icon_url: str
     :param parameters: The list of parameters for the Service Provider
     :type parameters:

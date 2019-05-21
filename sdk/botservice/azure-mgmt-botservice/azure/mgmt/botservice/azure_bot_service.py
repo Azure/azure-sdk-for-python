@@ -17,6 +17,7 @@ from .operations.bots_operations import BotsOperations
 from .operations.channels_operations import ChannelsOperations
 from .operations.operations import Operations
 from .operations.bot_connection_operations import BotConnectionOperations
+from .operations.enterprise_channels_operations import EnterpriseChannelsOperations
 from . import models
 
 
@@ -66,6 +67,8 @@ class AzureBotService(SDKClient):
     :vartype operations: azure.mgmt.botservice.operations.Operations
     :ivar bot_connection: BotConnection operations
     :vartype bot_connection: azure.mgmt.botservice.operations.BotConnectionOperations
+    :ivar enterprise_channels: EnterpriseChannels operations
+    :vartype enterprise_channels: azure.mgmt.botservice.operations.EnterpriseChannelsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -93,4 +96,6 @@ class AzureBotService(SDKClient):
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.bot_connection = BotConnectionOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.enterprise_channels = EnterpriseChannelsOperations(
             self._client, self.config, self._serialize, self._deserialize)
