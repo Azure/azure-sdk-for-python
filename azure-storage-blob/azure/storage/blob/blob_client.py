@@ -17,14 +17,6 @@ except ImportError:
 
 from azure.core import Configuration, HttpResponseError
 
-from .constants import (
-    MAX_SINGLE_PUT_SIZE,
-    MAX_BLOCK_SIZE,
-    MIN_LARGE_BLOCK_UPLOAD_THRESHOLD,
-    MAX_SINGLE_GET_SIZE,
-    MAX_CHUNK_GET_SIZE,
-    MAX_PAGE_SIZE
-)
 from .common import BlobType
 from .lease import Lease
 from .models import SnapshotProperties, BlobBlock
@@ -127,7 +119,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         self.key_encryption_key = None
         self.key_resolver_function = None
 
-        self._pipeline = create_pipeline(credentials, configuration, **kwargs)
+        self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
         self._client = create_client(self.url, self._pipeline)
 
     @staticmethod
@@ -364,8 +356,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if (self.key_encryption_key is not None) and (adjusted_count is not None):
                 adjusted_count += (16 - (length % 16))
 
-            # Do single put if the size is smaller than MAX_SINGLE_PUT_SIZE
-            if adjusted_count is not None and (adjusted_count < MAX_SINGLE_PUT_SIZE):
+            # Do single put if the size is smaller than config.max_single_put_size
+            if adjusted_count is not None and (adjusted_count < self._config.blob_settings.max_single_put_size):
                 return self._client.block_blob.upload(
                     data,
                     content_length=adjusted_count,
@@ -414,7 +406,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             return _upload_blob_chunks(
                 blob_service=self._client.page_blob,
                 blob_size=length,
-                block_size=MAX_PAGE_SIZE,
+                block_size=self._config.blob_settings.max_page_size,
                 stream=stream,
                 max_connections=max_connections,
                 validate_content=validate_content,
@@ -452,9 +444,10 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_modified_since, if_unmodified_since, if_match, if_none_match)
 
         # The service only provides transactional MD5s for chunks under 4MB.
-        # If validate_content is on, get only MAX_CHUNK_GET_SIZE for the first
+        # If validate_content is on, get only max_chunk_get_size for the first
         # chunk so a transactional MD5 can be retrieved.
-        first_get_size = MAX_SINGLE_GET_SIZE if not validate_content else MAX_CHUNK_GET_SIZE
+        first_get_size = self._config.blob_settings.max_single_get_size \
+            if not validate_content else self._config.blob_settings.max_chunk_get_size
 
         range_header = None
         #if length or offset:
@@ -1039,7 +1032,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             validate_content=validate_content,
             **kwargs)
 
-    def set_premium_page_blob_tier(self, premium_page_blob_tier, timeout=None, lease=None):
+    def set_premium_page_blob_tier(self, premium_page_blob_tier, timeout=None, lease=None, **kwargs):
         # type: (Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[Lease, str]]) -> None
         """
         :raises: InvalidOperation when blob client type is not PageBlob.
@@ -1051,7 +1044,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         self._client.blob.set_tier(
             tier=premium_page_blob_tier,
             timeout=timeout,
-            lease_access_conditions=access_conditions
+            lease_access_conditions=access_conditions,
+            **kwargs
         )
 
     def get_page_ranges(
@@ -1063,7 +1057,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None # type: Optional[int]
+            timeout=None, # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> List[PageRange]
         """
@@ -1078,13 +1073,36 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             page_range = str(start_range)
         elif start_range is not None and end_range is not None:
             page_range = str(end_range - start_range + 1)
-        return self._client.page_blob.get_page_ranges(
-            snapshot=self.snapshot,
-            lease_access_conditions=access_conditions,
-            modified_access_conditions=mod_conditions,
-            timeout=timeout,
-            range=page_range
-        )
+        if previous_snapshot_diff:
+            try:
+                prev_snapshot = previous_snapshot_diff.snapshot
+            except AttributeError:
+                prev_snapshot = previous_snapshot_diff
+            ranges = self._client.page_blob.get_page_ranges_diff(
+                snapshot=self.snapshot,
+                prevsnapshot=prev_snapshot,
+                lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
+                timeout=timeout,
+                range=page_range,
+                **kwargs
+            )
+        else:
+            ranges = self._client.page_blob.get_page_ranges(
+                snapshot=self.snapshot,
+                lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
+                timeout=timeout,
+                range=page_range,
+                **kwargs
+            )
+        page_range = []
+        clear_range = []
+        if ranges.page_range:
+            page_range = [{'start': b.start, 'end': b.end} for b in ranges.page_range]
+        if ranges.clear_range:
+            clear_range = [{'start': b.start, 'end': b.end} for b in ranges.clear_range]
+        return page_range, clear_range
 
     def set_sequence_number(
             self, sequence_number_action,  # type: Union[str, SequenceNumberAction]
@@ -1094,7 +1112,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None # type: Optional[int]
+            timeout=None, # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
@@ -1111,7 +1130,9 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             timeout=timeout,
             blob_sequence_number=sequence_number,
             lease_access_conditions=access_conditions,
-            modified_access_conditions=mod_conditions
+            modified_access_conditions=mod_conditions,
+            cls=return_response_headers,
+            **kwargs
         )
 
     def resize_blob(
@@ -1121,7 +1142,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None # type: Optional[int]
+            timeout=None, # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
@@ -1137,7 +1159,9 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             blob_content_length=content_length,
             timeout=timeout,
             lease_access_conditions=access_conditions,
-            modified_access_conditions=mod_conditions
+            modified_access_conditions=mod_conditions,
+            cls=return_response_headers,
+            **kwargs
         )
 
     def upload_page(

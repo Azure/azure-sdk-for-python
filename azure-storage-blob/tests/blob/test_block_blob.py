@@ -46,6 +46,8 @@ class StorageBlockBlobTest(StorageTestCase):
         # otherwise the tests would take too long to execute
         self.config = BlobServiceClient.create_configuration()
         self.config.connection.data_block_size = 4 * 1024
+        self.config.blob_settings.max_single_put_size = 32 * 1024
+        self.config.blob_settings.max_block_size = 4 * 1024
 
         self.bsc = BlobServiceClient(url, credentials=credentials, configuration=self.config)
 
@@ -55,12 +57,6 @@ class StorageBlockBlobTest(StorageTestCase):
         if not self.is_playback():
             container = self.bsc.get_container_client(self.container_name)
             container.create_container()
-
-        # test chunking functionality by reducing the threshold
-        # for chunking and the size of each chunk, otherwise
-        # the tests would take too long to execute
-        #self.bs.MAX_BLOCK_SIZE = 4 * 1024
-        #self.bs.MAX_SINGLE_PUT_SIZE = 32 * 1024
 
     def tearDown(self):
         if not self.is_playback():

@@ -58,7 +58,7 @@ class BlobServiceClient(object):
         # TODO: Alternative constructors
         self.url = url
         self.account = None
-        self._pipeline = create_pipeline(configuration, credentials, **kwargs)
+        self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
         self._client = create_client(url, self._pipeline)
 
     @classmethod
@@ -195,7 +195,7 @@ class BlobServiceClient(object):
 
         :returns: A ContainerClient.
         """
-        return ContainerClient(self.url, container=container, _pipeline=self._pipeline)
+        return ContainerClient(self.url, container=container, configuration=self._config, _pipeline=self._pipeline)
 
     def get_blob_client(
             self, container,  # type: Union[ContainerProperties, str]
@@ -210,5 +210,5 @@ class BlobServiceClient(object):
         :returns: A BlobClient.
         """
         return BlobClient(
-            self.url, container=container, blob=blob,
-            blob_type=blob_type, snapshot=snapshot, _pipeline=self._pipeline)
+            self.url, container=container, blob=blob, blob_type=blob_type,
+            snapshot=snapshot, configuration=self._config, _pipeline=self._pipeline)

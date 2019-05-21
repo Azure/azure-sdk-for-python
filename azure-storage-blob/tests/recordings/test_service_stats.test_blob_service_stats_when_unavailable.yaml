@@ -8,7 +8,7 @@ interactions:
       x-ms-date: ['Fri, 09 Nov 2018 23:10:47 GMT']
       x-ms-version: ['2018-03-28']
     method: GET
-    uri: https://storagename.blob.core.windows.net/?restype=service&comp=stats
+    uri: https://storagename-secondary.blob.core.windows.net/?restype=service&comp=stats
   response:
     body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>live</Status><LastSyncTime>Fri,\
         \ 09 Nov 2018 23:07:44 GMT</LastSyncTime></GeoReplication></StorageServiceStats>"}

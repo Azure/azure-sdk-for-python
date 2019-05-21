@@ -7,8 +7,6 @@
 # --------------------------------------------------------------------------
 import pytest
 
-pytestmark = pytest.mark.xfail
-
 import pytest
 import os
 import unittest
@@ -16,18 +14,16 @@ from datetime import datetime, timedelta
 from azure.common import AzureHttpError
 from azure.core.exceptions import HttpResponseError
 
-#from azure.storage.blob import BlobPermissions
-
-from azure.storage.blob.common import BlobType, PremiumPageBlobTier
+from azure.storage.blob.common import (
+    BlobType,
+    PremiumPageBlobTier,
+    SequenceNumberAction)
 from azure.storage.blob.models import BlobProperties
 from azure.storage.blob import (
     SharedKeyCredentials,
     BlobServiceClient,
     ContainerClient,
-    BlobClient,
-    #SequenceNumberAction,
-    #PageRange,
-)
+    BlobClient)
 
 from tests.testcase import (
     StorageTestCase,
@@ -52,7 +48,11 @@ class StoragePageBlobTest(StorageTestCase):
 
         url = self._get_account_url()
         self.config = BlobServiceClient.create_configuration()
+
+        # test chunking functionality by reducing the size of each chunk,
+        # otherwise the tests would take too long to execute
         self.config.connection.data_block_size = 4 * 1024
+        self.config.blob_settings.max_page_size = 4 * 1024
         credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
 
         self.bs = BlobServiceClient(url, credentials=credentials, configuration=self.config)
@@ -61,10 +61,6 @@ class StoragePageBlobTest(StorageTestCase):
         if not self.is_playback():
             container = self.bs.get_container_client(self.container_name)
             container.create_container()
-
-        # test chunking functionality by reducing the size of each chunk,
-        # otherwise the tests would take too long to execute
-        #self.bs.MAX_PAGE_SIZE = 4 * 1024
 
     def tearDown(self):
         if not self.is_playback():
@@ -192,14 +188,14 @@ class StoragePageBlobTest(StorageTestCase):
         # Act
         resp = blob.create_blob(EIGHT_TB)
         props = blob.get_blob_properties()
-        ranges = blob.get_page_ranges()
+        page_ranges, cleared = blob.get_page_ranges()
 
         # Assert
         self.assertIsNotNone(resp.get('ETag'))
         self.assertIsNotNone(resp.get('Last-Modified'))
         self.assertIsInstance(props, BlobProperties)
         self.assertEqual(props.content_length, EIGHT_TB)
-        self.assertEqual(0, len(ranges))
+        self.assertEqual(0, len(page_ranges))
 
     @record
     def test_create_larger_than_8tb_blob_fail(self):
@@ -222,7 +218,7 @@ class StoragePageBlobTest(StorageTestCase):
         end_range = EIGHT_TB - 1
         resp = blob.upload_page(data, start_range, end_range)
         props = blob.get_blob_properties()
-        ranges = blob.get_page_ranges()
+        page_ranges, cleared = blob.get_page_ranges()
         
         # Assert
         self.assertIsNotNone(resp.get('ETag'))
@@ -230,9 +226,9 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsNotNone(resp.get('x-ms-blob-sequence-number'))
         self.assertRangeEqual(self.container_name, blob.name, data, start_range, end_range)
         self.assertEqual(props.content_length, EIGHT_TB)
-        self.assertEqual(1, len(ranges))
-        self.assertEqual(ranges[0].start, start_range)
-        self.assertEqual(ranges[0].end, end_range)
+        self.assertEqual(1, len(page_ranges))
+        self.assertEqual(page_ranges[0]['start'], start_range)
+        self.assertEqual(page_ranges[0]['end'], end_range)
 
     @record
     def test_update_page_with_md5(self):
@@ -363,7 +359,7 @@ class StoragePageBlobTest(StorageTestCase):
         blob = self._create_blob()
 
         # Act
-        ranges = blob.get_page_ranges()
+        ranges, cleared = blob.get_page_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
@@ -379,16 +375,16 @@ class StoragePageBlobTest(StorageTestCase):
         resp2 = blob.upload_page(data, 1024, 1535)
 
         # Act
-        ranges = blob.get_page_ranges()
+        ranges, cleared = blob.get_page_ranges()
 
         # Assert
         self.assertIsNotNone(ranges)
         self.assertIsInstance(ranges, list)
         self.assertEqual(len(ranges), 2)
-        self.assertEqual(ranges[0].start, 0)
-        self.assertEqual(ranges[0].end, 511)
-        self.assertEqual(ranges[1].start, 1024)
-        self.assertEqual(ranges[1].end, 1535)
+        self.assertEqual(ranges[0]['start'], 0)
+        self.assertEqual(ranges[0]['end'], 511)
+        self.assertEqual(ranges[1]['start'], 1024)
+        self.assertEqual(ranges[1]['end'], 1535)
 
 
     @record
@@ -402,29 +398,29 @@ class StoragePageBlobTest(StorageTestCase):
         blob.clear_page(512, 1023)
 
         # Act
-        ranges1 = self.bs.get_page_ranges_diff(self.container_name, blob_name, snapshot1.snapshot)
-        ranges2 = self.bs.get_page_ranges_diff(self.container_name, blob_name, snapshot2.snapshot)
+        ranges1, cleared1 = blob.get_page_ranges(previous_snapshot_diff=snapshot1)
+        ranges2, cleared2 = blob.get_page_ranges(previous_snapshot_diff=snapshot2.snapshot)
 
         # Assert
         self.assertIsNotNone(ranges1)
         self.assertIsInstance(ranges1, list)
-        self.assertEqual(len(ranges1), 3)
-        self.assertEqual(ranges1[0].is_cleared, False)
-        self.assertEqual(ranges1[0].start, 0)
-        self.assertEqual(ranges1[0].end, 511)
-        self.assertEqual(ranges1[1].is_cleared, True)
-        self.assertEqual(ranges1[1].start, 512)
-        self.assertEqual(ranges1[1].end, 1023)
-        self.assertEqual(ranges1[2].is_cleared, False)
-        self.assertEqual(ranges1[2].start, 1024)
-        self.assertEqual(ranges1[2].end, 1535)
+        self.assertEqual(len(ranges1), 2)
+        self.assertIsInstance(cleared1, list)
+        self.assertEqual(len(cleared1), 1)
+        self.assertEqual(ranges1[0]['start'], 0)
+        self.assertEqual(ranges1[0]['end'], 511)
+        self.assertEqual(cleared1[0]['start'], 512)
+        self.assertEqual(cleared1[0]['end'], 1023)
+        self.assertEqual(ranges1[1]['start'], 1024)
+        self.assertEqual(ranges1[1]['end'], 1535)
 
         self.assertIsNotNone(ranges2)
         self.assertIsInstance(ranges2, list)
-        self.assertEqual(len(ranges2), 1)
-        self.assertEqual(ranges2[0].is_cleared, True)
-        self.assertEqual(ranges2[0].start, 512)
-        self.assertEqual(ranges2[0].end, 1023)
+        self.assertEqual(len(ranges2), 0)
+        self.assertIsInstance(cleared2, list)
+        self.assertEqual(len(cleared2), 1)
+        self.assertEqual(cleared2[0]['start'], 512)
+        self.assertEqual(cleared2[0]['end'], 1023)
 
     @record    
     def test_update_page_fail(self):
@@ -447,34 +443,34 @@ class StoragePageBlobTest(StorageTestCase):
     @record
     def test_resize_blob(self):
         # Arrange
-        blob_name = self._create_blob(1024)
+        blob = self._create_blob(1024)
         
         # Act
-        resp = self.bs.resize_blob(self.container_name, blob_name, 512)
+        resp = blob.resize_blob(512)
 
         # Assert
         self.assertIsNotNone(resp.get('ETag'))
         self.assertIsNotNone(resp.get('Last-Modified'))
-        self.assertIsNotNone(resp.sequence_number)
-        blob = self.bs.get_blob_properties(self.container_name, blob_name)
-        self.assertIsInstance(blob, Blob)
-        self.assertEqual(blob.properties.content_length, 512)
+        self.assertIsNotNone(resp.get('x-ms-blob-sequence-number'))
+        props = blob.get_blob_properties()
+        self.assertIsInstance(props, BlobProperties)
+        self.assertEqual(props.content_length, 512)
 
     @record
     def test_set_sequence_number_blob(self):
         # Arrange
-        blob_name = self._create_blob()
+        blob = self._create_blob()
         
         # Act
-        resp = self.bs.set_sequence_number(self.container_name, blob_name, SequenceNumberAction.Update, 6)     
+        resp = blob.set_sequence_number(SequenceNumberAction.Update, 6)     
 
         #Assert
         self.assertIsNotNone(resp.get('ETag'))
         self.assertIsNotNone(resp.get('Last-Modified'))
-        self.assertIsNotNone(resp.sequence_number)
-        blob = self.bs.get_blob_properties(self.container_name, blob_name)
-        self.assertIsInstance(blob, Blob)
-        self.assertEqual(blob.properties.page_blob_sequence_number, 6)
+        self.assertIsNotNone(resp.get('x-ms-blob-sequence-number'))
+        props = blob.get_blob_properties()
+        self.assertIsInstance(props, BlobProperties)
+        self.assertEqual(props.page_blob_sequence_number, 6)
 
     def test_create_blob_from_bytes(self):
         # parallel tests introduce random order of requests, can only run live
@@ -613,7 +609,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.name, data)
-        #self.assert_upload_progress(len(data), self.bs.MAX_PAGE_SIZE, progress)
+        #self.assert_upload_progress(len(data), self.config.blob_settings.max_page_size, progress)
 
     def test_create_blob_from_stream(self):
         # parallel tests introduce random order of requests, can only run live
@@ -660,12 +656,12 @@ class StoragePageBlobTest(StorageTestCase):
         # Assert
         # the uploader should have skipped the empty ranges
         self.assertBlobEqual(self.container_name, blob.name, data[:blob_size])
-        page_ranges = list(blob.get_page_ranges())
+        page_ranges, cleared = list(blob.get_page_ranges())
         self.assertEqual(len(page_ranges), 2)
-        self.assertEqual(page_ranges[0].start, 0)
-        self.assertEqual(page_ranges[0].end, 4095)
-        self.assertEqual(page_ranges[1].start, 8192)
-        self.assertEqual(page_ranges[1].end, 12287)
+        self.assertEqual(page_ranges[0]['start'], 0)
+        self.assertEqual(page_ranges[0]['end'], 4095)
+        self.assertEqual(page_ranges[1]['start'], 8192)
+        self.assertEqual(page_ranges[1]['end'], 12287)
         self.assertEqual(props.etag, create_resp.get('ETag'))
         self.assertEqual(props.last_modified, create_resp.get('Last-Modified'))
 
@@ -712,7 +708,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.name, data[:blob_size])
-        #self.assert_upload_progress(len(data), self.bs.MAX_PAGE_SIZE, progress)
+        #self.assert_upload_progress(len(data), self.config.blob_settings.max_page_size, progress)
 
     def test_create_blob_from_stream_truncated(self):
         # parallel tests introduce random order of requests, can only run live
@@ -756,7 +752,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.name, data[:blob_size])
-        #self.assert_upload_progress(blob_size, self.bs.MAX_PAGE_SIZE, progress)
+        #self.assert_upload_progress(blob_size, self.config.blob_settings.max_page_size, progress)
 
     @record
     def test_create_blob_with_md5_small(self):

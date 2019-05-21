@@ -98,14 +98,11 @@ def _upload_blob_chunks(blob_service, blob_size, block_size, stream, max_connect
     return uploader.response_headers
 
 
-def _upload_blob_substream_blocks(blob_service, container_name, blob_name,
-                                  blob_size, block_size, stream, max_connections,
+def _upload_blob_substream_blocks(blob_service, blob_size, block_size, stream, max_connections,
                                   progress_callback, validate_content, lease_id, uploader_class,
                                   maxsize_condition=None, if_match=None, timeout=None):
     uploader = uploader_class(
         blob_service,
-        container_name,
-        blob_name,
         blob_size,
         block_size,
         stream,

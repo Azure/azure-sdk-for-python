@@ -35,6 +35,7 @@ from azure.core.pipeline.policies import (
 from azure.core.exceptions import ResourceNotFoundError
 
 from ._policies import (
+    StorageBlobSettings,
     StorageHeadersPolicy,
     StorageContentValidation,
     StorageSecondaryAccount)
@@ -148,14 +149,15 @@ def create_configuration(**kwargs):
     config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
     config.custom_hook_policy = CustomHookPolicy(**kwargs)
+    config.blob_settings = StorageBlobSettings(**kwargs)
     return config
 
 
 def create_pipeline(configuration, credentials, **kwargs):
-    # type: (Configuration, Optional[HTTPPolicy], **Any) -> Pipeline
-    if kwargs.get('_pipeline'):
-        return kwargs['_pipeline']
+    # type: (Configuration, Optional[HTTPPolicy], **Any) -> Tuple[Configuration, Pipeline]
     config = configuration or create_configuration(**kwargs)
+    if kwargs.get('_pipeline'):
+        return config, kwargs['_pipeline']
     transport = kwargs.get('transport')  # type: HttpTransport
     if not transport:
         transport = RequestsTransport(config)
@@ -171,7 +173,7 @@ def create_pipeline(configuration, credentials, **kwargs):
         config.logging_policy,
         config.custom_hook_policy,
     ]
-    return Pipeline(transport, policies=policies)
+    return config, Pipeline(transport, policies=policies)
 
 
 def basic_error_map():

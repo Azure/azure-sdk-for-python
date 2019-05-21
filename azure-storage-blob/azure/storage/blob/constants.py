@@ -4,19 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-
-# Block blob uploads
-MAX_SINGLE_PUT_SIZE = 64 * 1024 * 1024
-MAX_BLOCK_SIZE = 4 * 1024 * 1024
-MIN_LARGE_BLOCK_UPLOAD_THRESHOLD = 4 * 1024 * 1024 + 1
-
-# Page blob uploads
-MAX_PAGE_SIZE = 4 * 1024 * 1024
-
-# Blob downloads
-MAX_SINGLE_GET_SIZE = 32 * 1024 * 1024
-MAX_CHUNK_GET_SIZE = 4 * 1024 * 1024
-
 # Default credentials for Development Storage Service
 DEV_ACCOUNT_NAME = 'devstoreaccount1'
 DEV_ACCOUNT_SECONDARY_NAME = 'devstoreaccount1-secondary'

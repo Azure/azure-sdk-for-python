@@ -76,7 +76,7 @@ class ContainerClient(object):
             parsed_url.hostname,
             quote(self.name)
         )
-        self._pipeline = create_pipeline(credentials, configuration, **kwargs)
+        self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
         self._client = create_client(self.url, self._pipeline)
 
     @staticmethod
@@ -279,4 +279,4 @@ class ContainerClient(object):
         """
         return BlobClient(
             self.url, container=self.name, blob=blob, blob_type=blob_type,
-            snapshot=snapshot, _pipeline=self._pipeline)
+            snapshot=snapshot, configuration=self._config, _pipeline=self._pipeline)

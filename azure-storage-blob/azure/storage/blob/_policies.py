@@ -23,6 +23,23 @@ except NameError:
     _unicode_type = str
 
 
+class StorageBlobSettings(object):
+
+    def __init__(self, **kwargs):
+        self.max_single_put_size = kwargs.get('max_single_put_size', 64 * 1024 * 1024)
+        self.max_block_size = kwargs.get('max_block_size', 4 * 1024 * 1024)
+
+        # Block blob uploads
+        self.min_large_block_upload_threshold = kwargs.get('min_large_block_upload_threshold', 4 * 1024 * 1024 + 1)
+
+        # Page blob uploads
+        self.max_page_size = 4 * 1024 * 1024
+
+        # Blob downloads
+        self.max_single_get_size = 32 * 1024 * 1024
+        self.max_chunk_get_size = 4 * 1024 * 1024
+
+
 class StorageHeadersPolicy(HeadersPolicy):
 
     def on_request(self, request):
