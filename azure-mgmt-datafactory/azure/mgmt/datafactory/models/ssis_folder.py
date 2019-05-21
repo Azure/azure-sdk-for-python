@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .ssis_object_metadata import SsisObjectMetadata
 
 
-class SsisObjectMetadata(Model):
-    """SSIS object metadata.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SsisEnvironment, SsisPackage, SsisProject, SsisFolder
+class SsisFolder(SsisObjectMetadata):
+    """Ssis folder.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -41,13 +38,6 @@ class SsisObjectMetadata(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'type': {'Environment': 'SsisEnvironment', 'Package': 'SsisPackage', 'Project': 'SsisProject', 'Folder': 'SsisFolder'}
-    }
-
-    def __init__(self, *, id: int=None, name: str=None, description: str=None, **kwargs) -> None:
-        super(SsisObjectMetadata, self).__init__(**kwargs)
-        self.id = id
-        self.name = name
-        self.description = description
-        self.type = None
+    def __init__(self, **kwargs):
+        super(SsisFolder, self).__init__(**kwargs)
+        self.type = 'Folder'

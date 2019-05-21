@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .ssis_object_metadata import SsisObjectMetadata
 
 
-class SsisObjectMetadata(Model):
-    """SSIS object metadata.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SsisEnvironment, SsisPackage, SsisProject, SsisFolder
+class SsisPackage(SsisObjectMetadata):
+    """Ssis Package.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -28,6 +25,14 @@ class SsisObjectMetadata(Model):
     :type description: str
     :param type: Required. Constant filled by server.
     :type type: str
+    :param folder_id: Folder id which contains package.
+    :type folder_id: long
+    :param project_version: Project version which contains package.
+    :type project_version: long
+    :param project_id: Project id which contains package.
+    :type project_id: long
+    :param parameters: Parameters in package
+    :type parameters: list[~azure.mgmt.datafactory.models.SsisParameter]
     """
 
     _validation = {
@@ -39,15 +44,16 @@ class SsisObjectMetadata(Model):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'Environment': 'SsisEnvironment', 'Package': 'SsisPackage', 'Project': 'SsisProject', 'Folder': 'SsisFolder'}
+        'folder_id': {'key': 'folderId', 'type': 'long'},
+        'project_version': {'key': 'projectVersion', 'type': 'long'},
+        'project_id': {'key': 'projectId', 'type': 'long'},
+        'parameters': {'key': 'parameters', 'type': '[SsisParameter]'},
     }
 
     def __init__(self, **kwargs):
-        super(SsisObjectMetadata, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.type = None
+        super(SsisPackage, self).__init__(**kwargs)
+        self.folder_id = kwargs.get('folder_id', None)
+        self.project_version = kwargs.get('project_version', None)
+        self.project_id = kwargs.get('project_id', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.type = 'Package'

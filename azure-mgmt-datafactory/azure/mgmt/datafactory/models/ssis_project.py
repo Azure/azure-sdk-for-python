@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .ssis_object_metadata import SsisObjectMetadata
 
 
-class SsisObjectMetadata(Model):
-    """SSIS object metadata.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SsisEnvironment, SsisPackage, SsisProject, SsisFolder
+class SsisProject(SsisObjectMetadata):
+    """Ssis project.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -28,6 +25,15 @@ class SsisObjectMetadata(Model):
     :type description: str
     :param type: Required. Constant filled by server.
     :type type: str
+    :param folder_id: Folder id which contains project.
+    :type folder_id: long
+    :param version: Project version.
+    :type version: long
+    :param environment_refs: Environment reference in project
+    :type environment_refs:
+     list[~azure.mgmt.datafactory.models.SsisEnvironmentReference]
+    :param parameters: Parameters in project
+    :type parameters: list[~azure.mgmt.datafactory.models.SsisParameter]
     """
 
     _validation = {
@@ -39,15 +45,16 @@ class SsisObjectMetadata(Model):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'Environment': 'SsisEnvironment', 'Package': 'SsisPackage', 'Project': 'SsisProject', 'Folder': 'SsisFolder'}
+        'folder_id': {'key': 'folderId', 'type': 'long'},
+        'version': {'key': 'version', 'type': 'long'},
+        'environment_refs': {'key': 'environmentRefs', 'type': '[SsisEnvironmentReference]'},
+        'parameters': {'key': 'parameters', 'type': '[SsisParameter]'},
     }
 
     def __init__(self, **kwargs):
-        super(SsisObjectMetadata, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.description = kwargs.get('description', None)
-        self.type = None
+        super(SsisProject, self).__init__(**kwargs)
+        self.folder_id = kwargs.get('folder_id', None)
+        self.version = kwargs.get('version', None)
+        self.environment_refs = kwargs.get('environment_refs', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.type = 'Project'

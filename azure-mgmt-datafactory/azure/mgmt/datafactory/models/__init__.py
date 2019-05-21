@@ -403,6 +403,13 @@ try:
     from .integration_runtime_compute_properties_py3 import IntegrationRuntimeComputeProperties
     from .managed_integration_runtime_py3 import ManagedIntegrationRuntime
     from .integration_runtime_node_ip_address_py3 import IntegrationRuntimeNodeIpAddress
+    from .ssis_variable_py3 import SsisVariable
+    from .ssis_environment_py3 import SsisEnvironment
+    from .ssis_parameter_py3 import SsisParameter
+    from .ssis_package_py3 import SsisPackage
+    from .ssis_environment_reference_py3 import SsisEnvironmentReference
+    from .ssis_project_py3 import SsisProject
+    from .ssis_folder_py3 import SsisFolder
     from .ssis_object_metadata_py3 import SsisObjectMetadata
     from .ssis_object_metadata_list_response_py3 import SsisObjectMetadataListResponse
     from .integration_runtime_node_monitoring_data_py3 import IntegrationRuntimeNodeMonitoringData
@@ -804,6 +811,13 @@ except (SyntaxError, ImportError):
     from .integration_runtime_compute_properties import IntegrationRuntimeComputeProperties
     from .managed_integration_runtime import ManagedIntegrationRuntime
     from .integration_runtime_node_ip_address import IntegrationRuntimeNodeIpAddress
+    from .ssis_variable import SsisVariable
+    from .ssis_environment import SsisEnvironment
+    from .ssis_parameter import SsisParameter
+    from .ssis_package import SsisPackage
+    from .ssis_environment_reference import SsisEnvironmentReference
+    from .ssis_project import SsisProject
+    from .ssis_folder import SsisFolder
     from .ssis_object_metadata import SsisObjectMetadata
     from .ssis_object_metadata_list_response import SsisObjectMetadataListResponse
     from .integration_runtime_node_monitoring_data import IntegrationRuntimeNodeMonitoringData
@@ -1280,6 +1294,13 @@ __all__ = [
     'IntegrationRuntimeComputeProperties',
     'ManagedIntegrationRuntime',
     'IntegrationRuntimeNodeIpAddress',
+    'SsisVariable',
+    'SsisEnvironment',
+    'SsisParameter',
+    'SsisPackage',
+    'SsisEnvironmentReference',
+    'SsisProject',
+    'SsisFolder',
     'SsisObjectMetadata',
     'SsisObjectMetadataListResponse',
     'IntegrationRuntimeNodeMonitoringData',
