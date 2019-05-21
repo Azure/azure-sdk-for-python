@@ -21,8 +21,8 @@ class ResourceSku(Model):
      number code, such as A0 or P3.  Required (if sku is specified)
     :type name: str
     :param tier: Optional tier of this particular SKU. `Basic` is deprecated,
-     use `Standard` instead for Basic tier. Possible values include: 'Free',
-     'Basic', 'Standard', 'Premium'
+     use `Standard` instead. Possible values include: 'Free', 'Basic',
+     'Standard', 'Premium'
     :type tier: str or ~azure.mgmt.signalr.models.SignalRSkuTier
     :param size: Optional, string. When the name field is the combination of
      tier and some other value, this would be the standalone code.
@@ -48,10 +48,10 @@ class ResourceSku(Model):
         'capacity': {'key': 'capacity', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, name: str, tier=None, size: str=None, family: str=None, capacity: int=None, **kwargs) -> None:
         super(ResourceSku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.tier = kwargs.get('tier', None)
-        self.size = kwargs.get('size', None)
-        self.family = kwargs.get('family', None)
-        self.capacity = kwargs.get('capacity', None)
+        self.name = name
+        self.tier = tier
+        self.size = size
+        self.family = family
+        self.capacity = capacity

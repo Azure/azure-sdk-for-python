@@ -20,7 +20,7 @@ class Resource(Model):
 
     :ivar id: Fully qualified resource Id for the resource.
     :vartype id: str
-    :ivar name: The name of the resouce.
+    :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the service - e.g.
      "Microsoft.SignalRService/SignalR"
@@ -39,7 +39,7 @@ class Resource(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
