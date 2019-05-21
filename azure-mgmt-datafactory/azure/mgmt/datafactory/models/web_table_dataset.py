@@ -15,6 +15,8 @@ from .dataset import Dataset
 class WebTableDataset(Dataset):
     """The dataset points to a HTML table in the web page.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -23,7 +25,11 @@ class WebTableDataset(Dataset):
     :param structure: Columns that define the structure of the dataset. Type:
      array (or Expression with resultType array), itemType: DatasetDataElement.
     :type structure: object
-    :param linked_service_name: Linked service reference.
+    :param schema: Columns that define the physical type schema of the
+     dataset. Type: array (or Expression with resultType array), itemType:
+     DatasetSchemaDataElement.
+    :type schema: object
+    :param linked_service_name: Required. Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -32,10 +38,13 @@ class WebTableDataset(Dataset):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param folder: The folder that this Dataset is in. If not specified,
+     Dataset will appear at the root level.
+    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param index: The zero-based index of the table in the web page. Type:
-     integer (or Expression with resultType integer), minimum: 0.
+    :param index: Required. The zero-based index of the table in the web page.
+     Type: integer (or Expression with resultType integer), minimum: 0.
     :type index: object
     :param path: The relative URL to the web page from the linked service URL.
      Type: string (or Expression with resultType string).
@@ -52,16 +61,18 @@ class WebTableDataset(Dataset):
         'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'structure': {'key': 'structure', 'type': 'object'},
+        'schema': {'key': 'schema', 'type': 'object'},
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'index': {'key': 'typeProperties.index', 'type': 'object'},
         'path': {'key': 'typeProperties.path', 'type': 'object'},
     }
 
-    def __init__(self, linked_service_name, index, additional_properties=None, description=None, structure=None, parameters=None, annotations=None, path=None):
-        super(WebTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations)
-        self.index = index
-        self.path = path
+    def __init__(self, **kwargs):
+        super(WebTableDataset, self).__init__(**kwargs)
+        self.index = kwargs.get('index', None)
+        self.path = kwargs.get('path', None)
         self.type = 'WebTable'

@@ -16,9 +16,11 @@ class SecureString(SecretBase):
     """Azure Data Factory secure string definition. The string value will be
     masked with asterisks '*' during Get or List API calls.
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param value: Value of secure string.
+    :param value: Required. Value of secure string.
     :type value: str
     """
 
@@ -32,7 +34,7 @@ class SecureString(SecretBase):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self, value):
-        super(SecureString, self).__init__()
-        self.value = value
+    def __init__(self, **kwargs):
+        super(SecureString, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
         self.type = 'SecureString'

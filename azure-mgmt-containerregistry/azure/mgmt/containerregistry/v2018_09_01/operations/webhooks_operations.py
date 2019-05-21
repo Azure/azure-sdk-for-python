@@ -64,7 +64,7 @@ class WebhooksOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
             'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
@@ -112,7 +112,7 @@ class WebhooksOperations(object):
         url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
             'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
@@ -222,7 +222,7 @@ class WebhooksOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
             'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
@@ -306,7 +306,7 @@ class WebhooksOperations(object):
         url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
             'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
@@ -434,7 +434,7 @@ class WebhooksOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
                     'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -504,7 +504,7 @@ class WebhooksOperations(object):
         url = self.ping.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
             'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
@@ -572,7 +572,7 @@ class WebhooksOperations(object):
         url = self.get_callback_config.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
             'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
         }
@@ -641,7 +641,7 @@ class WebhooksOperations(object):
                 url = self.list_events.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
                     'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
                     'webhookName': self._serialize.url("webhook_name", webhook_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$')
                 }

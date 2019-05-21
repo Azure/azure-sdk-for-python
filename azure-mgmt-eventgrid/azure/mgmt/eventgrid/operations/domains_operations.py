@@ -25,7 +25,7 @@ class DomainsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-09-15-preview".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-02-01-preview".
     """
 
     models = models
@@ -35,7 +35,7 @@ class DomainsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-09-15-preview"
+        self.api_version = "2019-02-01-preview"
 
         self.config = config
 
@@ -156,9 +156,10 @@ class DomainsOperations(object):
 
     def create_or_update(
             self, resource_group_name, domain_name, domain_info, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create a domain.
+        """Create or update a domain.
 
-        Asynchronously creates a new domain with the specified parameters.
+        Asynchronously creates or updates a new domain with the specified
+        parameters.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription.
@@ -395,11 +396,15 @@ class DomainsOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}'}
 
     def list_by_subscription(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List domains under an Azure subscription.
 
         List all the domains under an Azure subscription.
 
+        :param filter: Filter the results using OData syntax.
+        :type filter: str
+        :param top: The number of results to return.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -423,6 +428,10 @@ class DomainsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
 
             else:
                 url = next_link
@@ -461,7 +470,7 @@ class DomainsOperations(object):
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/domains'}
 
     def list_by_resource_group(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List domains under a resource group.
 
         List all the domains under a resource group.
@@ -469,6 +478,10 @@ class DomainsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
+        :param filter: Filter the results using OData syntax.
+        :type filter: str
+        :param top: The number of results to return.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -493,6 +506,10 @@ class DomainsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
 
             else:
                 url = next_link

@@ -18,28 +18,32 @@ class StoredImagePrediction(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar image_uri:
-    :vartype image_uri: str
-    :ivar thumbnail_uri:
+    :ivar resized_image_uri: The URI to the (resized) prediction image.
+    :vartype resized_image_uri: str
+    :ivar thumbnail_uri: The URI to the thumbnail of the original prediction
+     image.
     :vartype thumbnail_uri: str
-    :ivar domain:
+    :ivar original_image_uri: The URI to the original prediction image.
+    :vartype original_image_uri: str
+    :ivar domain: Domain used for the prediction.
     :vartype domain: str
-    :ivar id:
+    :ivar id: Prediction Id.
     :vartype id: str
-    :ivar project:
+    :ivar project: Project Id.
     :vartype project: str
-    :ivar iteration:
+    :ivar iteration: Iteration Id.
     :vartype iteration: str
-    :ivar created:
+    :ivar created: Date this prediction was created.
     :vartype created: datetime
-    :ivar predictions:
+    :ivar predictions: List of predictions.
     :vartype predictions:
      list[~azure.cognitiveservices.vision.customvision.training.models.Prediction]
     """
 
     _validation = {
-        'image_uri': {'readonly': True},
+        'resized_image_uri': {'readonly': True},
         'thumbnail_uri': {'readonly': True},
+        'original_image_uri': {'readonly': True},
         'domain': {'readonly': True},
         'id': {'readonly': True},
         'project': {'readonly': True},
@@ -49,8 +53,9 @@ class StoredImagePrediction(Model):
     }
 
     _attribute_map = {
-        'image_uri': {'key': 'imageUri', 'type': 'str'},
+        'resized_image_uri': {'key': 'resizedImageUri', 'type': 'str'},
         'thumbnail_uri': {'key': 'thumbnailUri', 'type': 'str'},
+        'original_image_uri': {'key': 'originalImageUri', 'type': 'str'},
         'domain': {'key': 'domain', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'project': {'key': 'project', 'type': 'str'},
@@ -61,8 +66,9 @@ class StoredImagePrediction(Model):
 
     def __init__(self, **kwargs):
         super(StoredImagePrediction, self).__init__(**kwargs)
-        self.image_uri = None
+        self.resized_image_uri = None
         self.thumbnail_uri = None
+        self.original_image_uri = None
         self.domain = None
         self.id = None
         self.project = None

@@ -13,7 +13,7 @@ from .sub_closed_list import SubClosedList
 
 
 class SubClosedListResponse(SubClosedList):
-    """Sublist of items for a Closed list.
+    """Sublist of items for a list entity.
 
     :param canonical_form: The standard form that the list represents.
     :type canonical_form: str

@@ -21,7 +21,8 @@ class FaceDescription(Model):
      'Male', 'Female'
     :type gender: str or
      ~azure.cognitiveservices.vision.computervision.models.Gender
-    :param face_rectangle:
+    :param face_rectangle: Rectangle in the image containing the identified
+     face.
     :type face_rectangle:
      ~azure.cognitiveservices.vision.computervision.models.FaceRectangle
     """

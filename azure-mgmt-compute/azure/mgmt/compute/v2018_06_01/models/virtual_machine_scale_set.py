@@ -57,12 +57,17 @@ class VirtualMachineScaleSet(Resource):
     :param single_placement_group: When true this limits the scale set to a
      single placement group, of max size 100 virtual machines.
     :type single_placement_group: bool
-    :param zone_balance: Whether to force stictly even Virtual Machine
+    :param zone_balance: Whether to force strictly even Virtual Machine
      distribution cross x-zones in case there is zone outage.
     :type zone_balance: bool
     :param platform_fault_domain_count: Fault Domain count for each placement
      group.
     :type platform_fault_domain_count: int
+    :param proximity_placement_group: Specifies information about the
+     proximity placement group that the virtual machine scale set should be
+     assigned to. <br><br>Minimum api-version: 2018-04-01.
+    :type proximity_placement_group:
+     ~azure.mgmt.compute.v2018_06_01.models.SubResource
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -96,6 +101,7 @@ class VirtualMachineScaleSet(Resource):
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'zone_balance': {'key': 'properties.zoneBalance', 'type': 'bool'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
+        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
@@ -112,5 +118,6 @@ class VirtualMachineScaleSet(Resource):
         self.single_placement_group = kwargs.get('single_placement_group', None)
         self.zone_balance = kwargs.get('zone_balance', None)
         self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
+        self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
         self.identity = kwargs.get('identity', None)
         self.zones = kwargs.get('zones', None)

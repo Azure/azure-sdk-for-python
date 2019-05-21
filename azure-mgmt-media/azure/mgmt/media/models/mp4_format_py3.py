@@ -17,9 +17,9 @@ class Mp4Format(MultiBitrateFormat):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param filename_pattern: The pattern of the file names for the generated
-     output files. The following macros are supported in the file name:
-     {Basename} - The base name of the input video {Extension} - The
+    :param filename_pattern: Required. The pattern of the file names for the
+     generated output files. The following macros are supported in the file
+     name: {Basename} - The base name of the input video {Extension} - The
      appropriate extension for this format. {Label} - The label assigned to the
      codec/layer. {Index} - A unique index for thumbnails. Only applicable to
      thumbnails. {Bitrate} - The audio/video bitrate. Not applicable to
@@ -34,6 +34,7 @@ class Mp4Format(MultiBitrateFormat):
     """
 
     _validation = {
+        'filename_pattern': {'required': True},
         'odatatype': {'required': True},
     }
 
@@ -43,6 +44,6 @@ class Mp4Format(MultiBitrateFormat):
         'output_files': {'key': 'outputFiles', 'type': '[OutputFile]'},
     }
 
-    def __init__(self, *, filename_pattern: str=None, output_files=None, **kwargs) -> None:
+    def __init__(self, *, filename_pattern: str, output_files=None, **kwargs) -> None:
         super(Mp4Format, self).__init__(filename_pattern=filename_pattern, output_files=output_files, **kwargs)
         self.odatatype = '#Microsoft.Media.Mp4Format'

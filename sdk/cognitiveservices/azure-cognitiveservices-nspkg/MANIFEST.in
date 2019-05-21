@@ -1,0 +1,2 @@
+include *.rst
+include azure/cognitiveservices/__init__.py

@@ -13,10 +13,9 @@ from msrest.serialization import Model
 
 
 class PagedServiceResourceDescriptionList(Model):
-    """The list of service resources in the cluster. The list is paged when all of
-    the results cannot fit in a single message. The next set of results can be
-    obtained by executing the same query with the continuation token provided
-    in this list.
+    """The list of service resources. The list is paged when all of the results
+    cannot fit in a single message. The next set of results can be obtained by
+    executing the same query with the continuation token provided in this list.
 
     :param continuation_token: The continuation token parameter is used to
      obtain next set of results. The continuation token is included in the
@@ -25,7 +24,7 @@ class PagedServiceResourceDescriptionList(Model):
      returns next set of results. If there are no further results, then the
      continuation token is not included in the response.
     :type continuation_token: str
-    :param items: List of service resource description.
+    :param items: One page of the list.
     :type items: list[~azure.servicefabric.models.ServiceResourceDescription]
     """
 

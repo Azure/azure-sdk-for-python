@@ -22,7 +22,7 @@ class UpgradeOperationHistoricalStatusInfoProperties(Model):
      operation.
     :vartype running_status:
      ~azure.mgmt.compute.v2018_10_01.models.UpgradeOperationHistoryStatus
-    :ivar progress: Counts of the VM's in each state.
+    :ivar progress: Counts of the VMs in each state.
     :vartype progress:
      ~azure.mgmt.compute.v2018_10_01.models.RollingUpgradeProgressInfo
     :ivar error: Error Details for this upgrade if there are any.

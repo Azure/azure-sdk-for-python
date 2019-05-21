@@ -30,6 +30,12 @@ class RoleAssignment(Model):
     :type role_definition_id: str
     :param principal_id: The principal ID.
     :type principal_id: str
+    :param principal_type: The principal type of the assigned principal ID.
+     Possible values include: 'User', 'Group', 'ServicePrincipal', 'Unknown',
+     'DirectoryRoleTemplate', 'ForeignGroup', 'Application', 'MSI',
+     'DirectoryObjectOrGroup', 'Everyone'
+    :type principal_type: str or
+     ~azure.mgmt.authorization.v2018_09_01_preview.models.PrincipalType
     :param can_delegate: The Delegation flag for the roleassignment
     :type can_delegate: bool
     """
@@ -47,10 +53,11 @@ class RoleAssignment(Model):
         'scope': {'key': 'properties.scope', 'type': 'str'},
         'role_definition_id': {'key': 'properties.roleDefinitionId', 'type': 'str'},
         'principal_id': {'key': 'properties.principalId', 'type': 'str'},
+        'principal_type': {'key': 'properties.principalType', 'type': 'str'},
         'can_delegate': {'key': 'properties.canDelegate', 'type': 'bool'},
     }
 
-    def __init__(self, *, scope: str=None, role_definition_id: str=None, principal_id: str=None, can_delegate: bool=None, **kwargs) -> None:
+    def __init__(self, *, scope: str=None, role_definition_id: str=None, principal_id: str=None, principal_type=None, can_delegate: bool=None, **kwargs) -> None:
         super(RoleAssignment, self).__init__(**kwargs)
         self.id = None
         self.name = None
@@ -58,4 +65,5 @@ class RoleAssignment(Model):
         self.scope = scope
         self.role_definition_id = role_definition_id
         self.principal_id = principal_id
+        self.principal_type = principal_type
         self.can_delegate = can_delegate

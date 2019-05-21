@@ -51,18 +51,28 @@ class VirtualMachineScaleSet(Resource):
     :param overprovision: Specifies whether the Virtual Machine Scale Set
      should be overprovisioned.
     :type overprovision: bool
+    :param do_not_run_extensions_on_overprovisioned_vms: When Overprovision is
+     enabled, extensions are launched only on the requested number of VMs which
+     are finally kept. This property will hence ensure that the extensions do
+     not run on the extra overprovisioned VMs.
+    :type do_not_run_extensions_on_overprovisioned_vms: bool
     :ivar unique_id: Specifies the ID which uniquely identifies a Virtual
      Machine Scale Set.
     :vartype unique_id: str
     :param single_placement_group: When true this limits the scale set to a
      single placement group, of max size 100 virtual machines.
     :type single_placement_group: bool
-    :param zone_balance: Whether to force stictly even Virtual Machine
+    :param zone_balance: Whether to force strictly even Virtual Machine
      distribution cross x-zones in case there is zone outage.
     :type zone_balance: bool
     :param platform_fault_domain_count: Fault Domain count for each placement
      group.
     :type platform_fault_domain_count: int
+    :param proximity_placement_group: Specifies information about the
+     proximity placement group that the virtual machine scale set should be
+     assigned to. <br><br>Minimum api-version: 2018-04-01.
+    :type proximity_placement_group:
+     ~azure.mgmt.compute.v2018_10_01.models.SubResource
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -92,15 +102,17 @@ class VirtualMachineScaleSet(Resource):
         'virtual_machine_profile': {'key': 'properties.virtualMachineProfile', 'type': 'VirtualMachineScaleSetVMProfile'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
+        'do_not_run_extensions_on_overprovisioned_vms': {'key': 'properties.doNotRunExtensionsOnOverprovisionedVMs', 'type': 'bool'},
         'unique_id': {'key': 'properties.uniqueId', 'type': 'str'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'zone_balance': {'key': 'properties.zoneBalance', 'type': 'bool'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
+        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, location: str, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, single_placement_group: bool=None, zone_balance: bool=None, platform_fault_domain_count: int=None, identity=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, do_not_run_extensions_on_overprovisioned_vms: bool=None, single_placement_group: bool=None, zone_balance: bool=None, platform_fault_domain_count: int=None, proximity_placement_group=None, identity=None, zones=None, **kwargs) -> None:
         super(VirtualMachineScaleSet, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.plan = plan
@@ -108,9 +120,11 @@ class VirtualMachineScaleSet(Resource):
         self.virtual_machine_profile = virtual_machine_profile
         self.provisioning_state = None
         self.overprovision = overprovision
+        self.do_not_run_extensions_on_overprovisioned_vms = do_not_run_extensions_on_overprovisioned_vms
         self.unique_id = None
         self.single_placement_group = single_placement_group
         self.zone_balance = zone_balance
         self.platform_fault_domain_count = platform_fault_domain_count
+        self.proximity_placement_group = proximity_placement_group
         self.identity = identity
         self.zones = zones

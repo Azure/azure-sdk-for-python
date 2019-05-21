@@ -77,7 +77,7 @@ class PolicyState(Model):
     :param policy_set_definition_parameters: Policy set definition parameters,
      if the policy assignment is for a policy set.
     :type policy_set_definition_parameters: str
-    :param management_group_ids: Comma seperated list of management group IDs,
+    :param management_group_ids: Comma separated list of management group IDs,
      which represent the hierarchy of the management groups the resource is
      under.
     :type management_group_ids: str
@@ -85,6 +85,11 @@ class PolicyState(Model):
      definition inside the policy set, if the policy assignment is for a policy
      set.
     :type policy_definition_reference_id: str
+    :param compliance_state: Compliance state of the resource.
+    :type compliance_state: str
+    :param policy_evaluation_details: Policy evaluation details.
+    :type policy_evaluation_details:
+     ~azure.mgmt.policyinsights.models.PolicyEvaluationDetails
     """
 
     _attribute_map = {
@@ -116,6 +121,8 @@ class PolicyState(Model):
         'policy_set_definition_parameters': {'key': 'policySetDefinitionParameters', 'type': 'str'},
         'management_group_ids': {'key': 'managementGroupIds', 'type': 'str'},
         'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
+        'compliance_state': {'key': 'complianceState', 'type': 'str'},
+        'policy_evaluation_details': {'key': 'policyEvaluationDetails', 'type': 'PolicyEvaluationDetails'},
     }
 
     def __init__(self, **kwargs):
@@ -148,3 +155,5 @@ class PolicyState(Model):
         self.policy_set_definition_parameters = kwargs.get('policy_set_definition_parameters', None)
         self.management_group_ids = kwargs.get('management_group_ids', None)
         self.policy_definition_reference_id = kwargs.get('policy_definition_reference_id', None)
+        self.compliance_state = kwargs.get('compliance_state', None)
+        self.policy_evaluation_details = kwargs.get('policy_evaluation_details', None)
