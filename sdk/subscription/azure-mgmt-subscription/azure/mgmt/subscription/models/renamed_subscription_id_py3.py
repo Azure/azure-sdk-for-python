@@ -12,17 +12,24 @@
 from msrest.serialization import Model
 
 
-class SubscriptionCreationResult(Model):
-    """The created subscription object.
+class RenamedSubscriptionId(Model):
+    """Renamed Subscription Id.
 
-    :param subscription_link: The link to the new subscription.
-    :type subscription_link: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: Renamed Subscription Id
+    :vartype value: str
     """
 
-    _attribute_map = {
-        'subscription_link': {'key': 'subscriptionLink', 'type': 'str'},
+    _validation = {
+        'value': {'readonly': True},
     }
 
-    def __init__(self, **kwargs):
-        super(SubscriptionCreationResult, self).__init__(**kwargs)
-        self.subscription_link = kwargs.get('subscription_link', None)
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(RenamedSubscriptionId, self).__init__(**kwargs)
+        self.value = None

@@ -3,6 +3,19 @@
 Release History
 ===============
 
+0.4.0 (2019-05-21)
+++++++++++++++++++
+
+**Features**
+
+- Added operation SubscriptionsOperations.rename
+- Added operation SubscriptionsOperations.cancel
+
+**Breaking changes**
+
+- Removed operation group SubscriptionFactoryOperations
+- Removed operation group SubscriptionOperationOperations
+
 0.3.0 (2019-04-05)
 ++++++++++++++++++
 
