@@ -18,23 +18,25 @@ class ProxyResource(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Azure resource ID.
+    :ivar id: Azure resource identifier.
     :vartype id: str
     :ivar name: Azure resource name.
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
+    :param location: Azure resource location.
     :type location: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
+    :ivar etag: Azure resource etag.
+    :vartype etag: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
+        'etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -42,11 +44,15 @@ class ProxyResource(Model):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
         super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.location = location
+        self.tags = tags
+        self.etag = None

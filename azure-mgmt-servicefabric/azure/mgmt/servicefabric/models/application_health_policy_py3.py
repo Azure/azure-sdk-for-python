@@ -17,40 +17,22 @@ class ApplicationHealthPolicy(Model):
     one of its children entities.
     .
 
-    :param consider_warning_as_error: Indicates whether warnings are treated
-     with the same severity as errors. Default value: False .
-    :type consider_warning_as_error: bool
-    :param max_percent_unhealthy_deployed_applications: The maximum allowed
-     percentage of unhealthy deployed applications. Allowed values are Byte
-     values from zero to 100.
-     The percentage represents the maximum tolerated percentage of deployed
-     applications that can be unhealthy before the application is considered in
-     error.
-     This is calculated by dividing the number of unhealthy deployed
-     applications over the number of nodes where the application is currently
-     deployed on in the cluster.
-     The computation rounds up to tolerate one failure on small numbers of
-     nodes. Default percentage is zero.
-     . Default value: 0 .
-    :type max_percent_unhealthy_deployed_applications: int
-    :param default_service_type_health_policy:
+    :param default_service_type_health_policy: The health policy used by
+     default to evaluate the health of a service type.
     :type default_service_type_health_policy:
      ~azure.mgmt.servicefabric.models.ServiceTypeHealthPolicy
-    :param service_type_health_policy_map:
-    :type service_type_health_policy_map:
-     list[~azure.mgmt.servicefabric.models.ServiceTypeHealthPolicyMapItem]
+    :param service_type_health_policies: The map with service type health
+     policy per service type name. The map is empty by default.
+    :type service_type_health_policies: dict[str,
+     ~azure.mgmt.servicefabric.models.ServiceTypeHealthPolicy]
     """
 
     _attribute_map = {
-        'consider_warning_as_error': {'key': 'ConsiderWarningAsError', 'type': 'bool'},
-        'max_percent_unhealthy_deployed_applications': {'key': 'MaxPercentUnhealthyDeployedApplications', 'type': 'int'},
-        'default_service_type_health_policy': {'key': 'DefaultServiceTypeHealthPolicy', 'type': 'ServiceTypeHealthPolicy'},
-        'service_type_health_policy_map': {'key': 'ServiceTypeHealthPolicyMap', 'type': '[ServiceTypeHealthPolicyMapItem]'},
+        'default_service_type_health_policy': {'key': 'defaultServiceTypeHealthPolicy', 'type': 'ServiceTypeHealthPolicy'},
+        'service_type_health_policies': {'key': 'serviceTypeHealthPolicies', 'type': '{ServiceTypeHealthPolicy}'},
     }
 
-    def __init__(self, *, consider_warning_as_error: bool=False, max_percent_unhealthy_deployed_applications: int=0, default_service_type_health_policy=None, service_type_health_policy_map=None, **kwargs) -> None:
+    def __init__(self, *, default_service_type_health_policy=None, service_type_health_policies=None, **kwargs) -> None:
         super(ApplicationHealthPolicy, self).__init__(**kwargs)
-        self.consider_warning_as_error = consider_warning_as_error
-        self.max_percent_unhealthy_deployed_applications = max_percent_unhealthy_deployed_applications
         self.default_service_type_health_policy = default_service_type_health_policy
-        self.service_type_health_policy_map = service_type_health_policy_map
+        self.service_type_health_policies = service_type_health_policies
