@@ -7,10 +7,10 @@ from azure_devtools.scenario_tests import GeneralNameReplacer
 from devtools_testutils import AzureMgmtTestCase
 
 
-class KeyvaultTestCase(AzureMgmtTestCase):
+class KeyVaultTestCase(AzureMgmtTestCase):
     def setUp(self):
         self.list_test_size = 7
-        super(KeyvaultTestCase, self).setUp()
+        super(KeyVaultTestCase, self).setUp()
 
     def tearDown(self):
-        super(KeyvaultTestCase, self).tearDown()
+        super(KeyVaultTestCase, self).tearDown()

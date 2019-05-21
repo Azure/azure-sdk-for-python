@@ -3,14 +3,12 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 import time
 
-from azure.security.keyvault.secrets._client import SecretClient
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import ResourceGroupPreparer
-from keyvault_preparer import KeyVaultPreparer
-from keyvault_testcase import KeyvaultTestCase
+from .preparer import VaultClientPreparer
+from .test_case import KeyVaultTestCase
 
 
 def create_vault_client():
@@ -20,7 +18,7 @@ def create_vault_client():
     vault_url = ""
 
     # [START create_vault_client
-    from azure.keyvault.vault_client import VaultClient
+    from azure.security.keyvault.vault_client import VaultClient
     from azure.common.credentials import ServicePrincipalCredentials
 
     credentials = ServicePrincipalCredentials(
@@ -41,7 +39,7 @@ def create_secret_client():
 
     # [START create_secret_client
     from azure.common.credentials import ServicePrincipalCredentials
-    from azure.keyvault.secrets._client import SecretClient
+    from azure.security.keyvault.secrets._client import SecretClient
 
     credentials = ServicePrincipalCredentials(
         client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
@@ -53,9 +51,9 @@ def create_secret_client():
     return secret_client
 
 
-class TestExamplesKeyVault(KeyvaultTestCase):
+class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer(enable_soft_delete=True)
     def test_example_secret_crud_operations(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
         try:
@@ -131,7 +129,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             pass
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer(enable_soft_delete=True)
     def test_example_secret_list_operations(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
         try:
@@ -179,7 +177,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             pass
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer(enable_soft_delete=True)
     def test_example_secrets_backup_restore(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
         created_secret = secret_client.set_secret("secret-name", "secret-value")
@@ -225,7 +223,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             pass
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer(enable_soft_delete=True)
     def test_example_secrets_recover_purge(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
         created_secret = secret_client.set_secret("secret-name", "secret-value")

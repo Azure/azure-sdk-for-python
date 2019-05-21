@@ -41,7 +41,7 @@ DEFAULT_PERMISSIONS = Permissions(
 DEFAULT_SKU = SkuName.premium.value
 
 
-class KeyVaultPreparer(AzureMgmtPreparer):
+class VaultClientPreparer(AzureMgmtPreparer):
     def __init__(
         self,
         sku=None,
@@ -58,7 +58,7 @@ class KeyVaultPreparer(AzureMgmtPreparer):
         playback_fake_resource=None,
         client_kwargs=None,
     ):
-        super(KeyVaultPreparer, self).__init__(
+        super(VaultClientPreparer, self).__init__(
             name_prefix,
             24,
             disable_recording=disable_recording,

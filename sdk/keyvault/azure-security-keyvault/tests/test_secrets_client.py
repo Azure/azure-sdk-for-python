@@ -5,15 +5,15 @@
 # --------------------------------------------------------------------------
 
 from devtools_testutils import ResourceGroupPreparer
-from keyvault_preparer import KeyVaultPreparer
-from keyvault_testcase import KeyvaultTestCase
+from .preparer import VaultClientPreparer
+from .test_case import KeyVaultTestCase
 from azure.core.exceptions import HttpResponseError
 
 from dateutil import parser as date_parse
 import time
 
 
-class KeyVaultSecretTest(KeyvaultTestCase):
+class SecretClientTests(KeyVaultTestCase):
     def _assert_secret_attributes_equal(self, s1, s2):
         self.assertEqual(s1.id, s2.id)
         self.assertEqual(s1.content_type, s2.content_type)
@@ -43,7 +43,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer(enable_soft_delete=True)
     def test_secret_crud_operations(self, vault_client, **kwargs):
 
         self.assertIsNotNone(vault_client)
@@ -125,7 +125,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
             client.get_secret(deleted.name, "")
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer()
+    @VaultClientPreparer()
     def test_secret_list(self, vault_client, **kwargs):
 
         self.assertIsNotNone(vault_client)
@@ -148,7 +148,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         self._validate_secret_list(result, expected)
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer()
+    @VaultClientPreparer()
     def test_list_versions(self, vault_client, **kwargs):
 
         self.assertIsNotNone(vault_client)
@@ -178,7 +178,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer(enable_soft_delete=True)
     def test_list_deleted_secrets(self, vault_client, **kwargs):
 
         self.assertIsNotNone(vault_client)
@@ -203,7 +203,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         self._validate_secret_list(list(client.list_deleted_secrets()), expected)
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer()
+    @VaultClientPreparer()
     def test_backup_restore(self, vault_client, **kwargs):
 
         self.assertIsNotNone(vault_client)
@@ -226,7 +226,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         self._assert_secret_attributes_equal(created_bundle, restored)
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer(enable_soft_delete=True)
     def test_recover_purge(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
         client = vault_client.secrets

@@ -8,10 +8,9 @@ import time
 import asyncio
 import functools
 
-from azure.security.keyvault.secrets._client import SecretClient
 from devtools_testutils import ResourceGroupPreparer
-from keyvault_preparer import KeyVaultPreparer
-from keyvault_testcase import KeyvaultTestCase
+from .preparer import VaultClientPreparer
+from .test_case import KeyVaultTestCase
 from azure.security.keyvault._generated.v7_0.models import KeyVaultErrorException
 from azure.security.keyvault.aio.vault_client import VaultClient
 
@@ -23,7 +22,7 @@ def await_prepared_test(test_fn):
     """
     @functools.wraps(test_fn)
     def run(test_class_instance, *args, **kwargs):
-        # TODO: this is a workaround for KeyVaultPreparer creating a sync client; let's obviate it
+        # TODO: this is a workaround for VaultClientPreparer creating a sync client; let's obviate it
         vault_client = kwargs.get("vault_client")
         credentials = test_class_instance.settings.get_credentials(
             resource="https://vault.azure.net")
@@ -33,10 +32,10 @@ def await_prepared_test(test_fn):
     return run
 
 
-class TestExamplesKeyVault(KeyvaultTestCase):
+class TestExamplesKeyVault(KeyVaultTestCase):
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer(enable_soft_delete=True)
     @await_prepared_test
     async def test_example_secret_crud_operations(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
@@ -113,7 +112,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             pass
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer(enable_soft_delete=True)
     @await_prepared_test
     async def test_example_secret_list_operations(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
@@ -164,7 +163,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             pass
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer(enable_soft_delete=True)
     @await_prepared_test
     async def test_example_secrets_backup_restore(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
@@ -214,7 +213,7 @@ class TestExamplesKeyVault(KeyvaultTestCase):
             pass
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer(enable_soft_delete=True)
     @await_prepared_test
     async def test_example_secrets_recover_purge(self, vault_client, **kwargs):
         secret_client = vault_client.secrets

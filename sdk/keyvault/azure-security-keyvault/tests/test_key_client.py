@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from keyvault_preparer import KeyVaultPreparer
-from keyvault_testcase import KeyvaultTestCase
+from .preparer import VaultClientPreparer
+from .test_case import KeyVaultTestCase
 from azure.security.keyvault.keys import KeyClient
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 from time import sleep, time
@@ -13,9 +13,9 @@ from dateutil import parser as date_parse
 from azure.security.keyvault._internal import _VaultId as KeyVaultId
 
 
-class KeyClientTests(KeyvaultTestCase):
+class KeyClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer(enable_soft_delete=True)
     def test_new_client(self, vault_client, **kwargs):
         client = vault_client.keys
 

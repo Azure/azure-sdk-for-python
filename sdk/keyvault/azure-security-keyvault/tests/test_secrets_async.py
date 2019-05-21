@@ -7,10 +7,9 @@ import asyncio
 import functools
 
 from azure.core.exceptions import ResourceNotFoundError
-from azure.security.keyvault._generated.v7_0.models import KeyVaultErrorException
 from devtools_testutils import ResourceGroupPreparer
-from keyvault_preparer import KeyVaultPreparer
-from keyvault_testcase import KeyvaultTestCase
+from .preparer import VaultClientPreparer
+from .test_case import KeyVaultTestCase
 
 from azure.security.keyvault.aio.vault_client import VaultClient
 
@@ -25,7 +24,7 @@ def await_prepared_test(test_fn):
 
     @functools.wraps(test_fn)
     def run(test_class_instance, *args, **kwargs):
-        # TODO: this is a workaround for KeyVaultPreparer creating a sync client
+        # TODO: this is a workaround for VaultClientPreparer creating a sync client
         vault_client = kwargs.get("vault_client")
         credentials = test_class_instance.settings.get_credentials(resource="https://vault.azure.net")
         aio_client = VaultClient(vault_client.vault_url, credentials)
@@ -35,7 +34,7 @@ def await_prepared_test(test_fn):
     return run
 
 
-class KeyVaultSecretTest(KeyvaultTestCase):
+class KeyVaultSecretTest(KeyVaultTestCase):
     async def _poll_until_resource_found(self, fn, secret_names, max_retries=20, retry_delay=6):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""
 
@@ -85,7 +84,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer(enable_soft_delete=True)
     @await_prepared_test
     async def test_secret_crud_operations(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -147,7 +146,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
             await client.get_secret(updated.name, "")
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer()
+    @VaultClientPreparer()
     @await_prepared_test
     async def test_secret_list(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -170,7 +169,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         await self._validate_secret_list(result, expected)
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer()
+    @VaultClientPreparer()
     @await_prepared_test
     async def test_list_versions(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -200,7 +199,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer(enable_soft_delete=True)
     @await_prepared_test
     async def test_list_deleted_secrets(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -224,7 +223,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         await self._validate_secret_list(result, expected)
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer()
+    @VaultClientPreparer()
     @await_prepared_test
     async def test_backup_restore(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -248,7 +247,7 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         self._assert_secret_attributes_equal(created_bundle, restored)
 
     @ResourceGroupPreparer()
-    @KeyVaultPreparer(enable_soft_delete=True)
+    @VaultClientPreparer(enable_soft_delete=True)
     @await_prepared_test
     async def test_recover_purge(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
