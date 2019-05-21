@@ -43,7 +43,7 @@ known_content_issues:
   - ['azure-cognitiveservices-vision-customvision/README.rst', '#4554']
   - ['azure-cognitiveservices-vision-face/README.rst', '#4554']
   - ['azure-cognitiveservices-vision-nspkg/README.rst', '#4554']
-  - ['azure-eventgrid/README.rst', '#4554']
+  - ['sdk/eventgrid/azure-eventgrid/README.rst', '#4554']
   - ['azure-graphrbac/README.rst', '#4554']
   - ['sdk/keyvault/azure-keyvault/README.rst', '#4554']
   - ['azure-loganalytics/README.rst', '#4554']
