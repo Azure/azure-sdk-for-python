@@ -3,28 +3,17 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import functools
 from typing import Any, Dict, Generator, Mapping, Optional
 from datetime import datetime
-import uuid
 
-from azure.core.configuration import Configuration
-from azure.core.pipeline.policies import UserAgentPolicy, RetryPolicy, RedirectPolicy
-from azure.core.pipeline.transport import RequestsTransport, HttpRequest, HttpResponse
+from azure.core import Configuration
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline import Pipeline
-from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline.policies import RetryPolicy, RedirectPolicy, UserAgentPolicy
+from azure.core.pipeline.transport import RequestsTransport
 from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
 
-from .._generated import DESERIALIZE, SERIALIZE
-from .._generated.v7_0.models import (
-    DeletedSecretItemPaged,
-    SecretItemPaged,
-    SecretRestoreParameters,
-    SecretSetParameters,
-    SecretUpdateParameters,
-)
-from .._generated.v7_0.models import SecretAttributes as _SecretAttributes
-
+from .._generated import KeyVaultClient
 from ._models import Secret, DeletedSecret, SecretAttributes
 
 
@@ -48,20 +37,15 @@ class SecretClient:
             :caption: Creates a new instance of the Secret client
     """
 
+    # pylint:disable=protected-access
+
     _api_version = "7.0"
 
     @staticmethod
     def create_config(**kwargs):
-        """Creates a default configuration for SecretClient.
-        """
-        config = Configuration(**kwargs)
-        config.user_agent_policy = UserAgentPolicy("SecretClient", **kwargs)
-        config.headers_policy = None
-        config.retry_policy = RetryPolicy(**kwargs)
-        config.redirect_policy = RedirectPolicy(**kwargs)
-        return config
+        pass  # TODO
 
-    def __init__(self, vault_url, credentials, config=None, **kwargs):
+    def __init__(self, vault_url, credentials, config=None, api_version=None, **kwargs):
         if not credentials:
             raise ValueError("credentials")
 
@@ -69,24 +53,33 @@ class SecretClient:
             raise ValueError("vault_url")
 
         self._vault_url = vault_url
-        config = config or SecretClient.create_config(**kwargs)
-        transport = RequestsTransport(config)
+
+        if api_version is None:
+            api_version = KeyVaultClient.DEFAULT_API_VERSION
+
+        config = config or KeyVaultClient.get_configuration_class(api_version)(credentials)
+
+        # TODO generated default pipeline should be fine when token policy isn't necessary
         policies = [
-            config.user_agent_policy,
             config.headers_policy,
+            config.user_agent_policy,
+            config.proxy_policy,
             _BearerTokenCredentialPolicy(credentials),
             config.redirect_policy,
             config.retry_policy,
             config.logging_policy,
         ]
-        self._pipeline = Pipeline(transport, policies=policies)
+        transport = RequestsTransport(config)
+        pipeline = Pipeline(transport, policies=policies)
+
+        self._client = KeyVaultClient(credentials, api_version=self._api_version, pipeline=pipeline)
 
     @property
     def vault_url(self):
         # type: () -> str
         return self._vault_url
 
-    def get_secret(self, name, version, **kwargs):
+    def get_secret(self, name, version=None, **kwargs):
         # type: (str, str, Mapping[str, Any]) -> Secret
         """Get a specified secret from the vault.
 
@@ -109,25 +102,7 @@ class SecretClient:
                 :caption: Get secret from the key vault
 
         """
-        if version is None:
-            version = ""
-        url = "/".join((self._vault_url, "secrets", name, version))
-
-        query_parameters = {"api-version": self._api_version}
-
-        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
-
-        request = HttpRequest("GET", url, headers)
-
-        request.format_parameters(query_parameters)
-
-        response = self._pipeline.run(request, **kwargs).http_response
-
-        if response.status_code != 200:
-            raise HttpResponseError(response=response)
-
-        bundle = DESERIALIZE("SecretBundle", response)
-
+        bundle = self._client.get_secret(self._vault_url, name, version, error_map={404: ResourceNotFoundError})
         return Secret._from_secret_bundle(bundle)
 
     def set_secret(
@@ -164,28 +139,13 @@ class SecretClient:
                 :caption: Set a secret in the key vault
 
         """
-        url = "/".join((self._vault_url, "secrets", name))
-
-        query_parameters = {"api-version": self._api_version}
-
-        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
-
-        attributes = _SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
-        secret = SecretSetParameters(secret_attributes=attributes, value=value, tags=tags, content_type=content_type)
-        request_body = SERIALIZE.body(secret, "SecretSetParameters")
-
-        request = HttpRequest("PUT", url, headers)
-        request.set_json_body(request_body)
-
-        request.format_parameters(query_parameters)
-
-        response = self._pipeline.run(request, **kwargs).http_response
-
-        if response.status_code != 200:
-            raise HttpResponseError(response=response)
-
-        bundle = DESERIALIZE("SecretBundle", response)
-
+        if enabled is not None or not_before is not None or expires is not None:
+            attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        else:
+            attributes = None
+        bundle = self._client.set_secret(
+            self.vault_url, name, value, secret_attributes=attributes, content_type=content_type, tags=tags
+        )
         return Secret._from_secret_bundle(bundle)
 
     def update_secret_attributes(
@@ -222,30 +182,20 @@ class SecretClient:
                 :caption: Updates the attributes associated with a specified secret in the key vault
 
         """
-        url = "/".join((self._vault_url, "secrets", name, version))
-
-        attributes = _SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
-        secret = SecretUpdateParameters(secret_attributes=attributes, tags=tags, content_type=content_type)
-
-        query_parameters = {"api-version": self._api_version}
-
-        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
-
-        request_body = SERIALIZE.body(secret, "Secret")
-
-        request = HttpRequest("PATCH", url, headers)
-        request.set_json_body(request_body)
-
-        request.format_parameters(query_parameters)
-
-        response = self._pipeline.run(request, **kwargs).http_response
-
-        if response.status_code != 200:
-            raise HttpResponseError(response=response)
-
-        bundle = DESERIALIZE("SecretBundle", response)
-
-        return SecretAttributes._from_secret_bundle(bundle)
+        if enabled is not None or not_before is not None or expires is not None:
+            attributes = self._client.models.SecretAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        else:
+            attributes = None
+        bundle = self._client.update_secret(
+            self.vault_url,
+            name,
+            secret_version=version,
+            content_type=content_type,
+            tags=tags,
+            secret_attributes=attributes,
+            error_map={404: ResourceNotFoundError},
+        )
+        return SecretAttributes._from_secret_bundle(bundle)  # pylint: disable=protected-access
 
     def list_secrets(self, **kwargs):
         # type: (Mapping[str, Any]) -> Generator[SecretAttributes]
@@ -269,10 +219,8 @@ class SecretClient:
                 :caption: Lists all the secrets in the vault
 
         """
-        url = "{}/secrets".format(self._vault_url)
         max_page_size = kwargs.get("max_page_size", None)
-        paging = functools.partial(self._internal_paging, url, max_page_size)
-        pages = SecretItemPaged(paging, DESERIALIZE)
+        pages = self._client.get_secrets(self._vault_url, maxresults=max_page_size)
         return (SecretAttributes._from_secret_item(item) for item in pages)
 
     def list_secret_versions(self, name, **kwargs):
@@ -297,11 +245,8 @@ class SecretClient:
                 :caption: List all versions of the specified secret
 
         """
-
-        url = "{}/secrets/{}/versions".format(self._vault_url, name)
         max_page_size = kwargs.get("max_page_size", None)
-        paging = functools.partial(self._internal_paging, url, max_page_size)
-        pages = SecretItemPaged(paging, DESERIALIZE)
+        pages = self._client.get_secret_versions(self._vault_url, name, maxresults=max_page_size)
         return (SecretAttributes._from_secret_item(item) for item in pages)
 
     def backup_secret(self, name, **kwargs):
@@ -326,24 +271,8 @@ class SecretClient:
                 :caption: Backs up the specified secret
 
         """
-        url = "/".join((self._vault_url, "secrets", name, "backup"))
-
-        query_parameters = {"api-version": self._api_version}
-
-        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
-
-        request = HttpRequest("POST", url, headers)
-
-        request.format_parameters(query_parameters)
-
-        response = self._pipeline.run(request, **kwargs).http_response
-
-        if response.status_code != 200:
-            raise HttpResponseError(response=response)
-
-        result = DESERIALIZE("BackupSecretResult", response)
-
-        return result.value
+        backup_result = self._client.backup_secret(self.vault_url, name, error_map={404: ResourceNotFoundError})
+        return backup_result.value
 
     def restore_secret(self, backup, **kwargs):
         # type: (bytes, Mapping[str, Any]) -> SecretAttributes
@@ -366,27 +295,7 @@ class SecretClient:
                 :caption: Restores a backed up secret to the vault
 
         """
-        url = "/".join((self._vault_url, "secrets", "restore"))
-
-        query_parameters = {"api-version": self._api_version}
-
-        headers = {"Content-Type": "application/json; charset=utf-8", "x-ms-client-request-id": str(uuid.uuid1())}
-
-        restore_parameters = SecretRestoreParameters(secret_bundle_backup=backup)
-        request_body = SERIALIZE.body(restore_parameters, "SecretRestoreParameters")
-
-        request = HttpRequest("POST", url, headers)
-        request.set_json_body(request_body)
-
-        request.format_parameters(query_parameters)
-
-        response = self._pipeline.run(request, **kwargs).http_response
-
-        if response.status_code != 200:
-            raise HttpResponseError(response=response)
-
-        bundle = DESERIALIZE("SecretBundle", response)
-
+        bundle = self._client.restore_secret(self.vault_url, backup, error_map={409: ResourceExistsError})
         return SecretAttributes._from_secret_bundle(bundle)
 
     def delete_secret(self, name, **kwargs):
@@ -411,16 +320,7 @@ class SecretClient:
                 :caption: Deletes a secret
 
         """
-        url = "/".join([self._vault_url, "secrets", name])
-
-        request = HttpRequest("DELETE", url)
-        request.format_parameters({"api-version": self._api_version})
-        response = self._pipeline.run(request, **kwargs).http_response
-        if response.status_code != 200:
-            raise HttpResponseError(response=response)
-
-        bundle = DESERIALIZE("DeletedSecretBundle", response)
-
+        bundle = self._client.delete_secret(self.vault_url, name, error_map={404: ResourceNotFoundError})
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     def get_deleted_secret(self, name, **kwargs):
@@ -444,16 +344,7 @@ class SecretClient:
                 :caption: Gets the deleted secret
 
         """
-        url = "/".join([self.vault_url, "deletedsecrets", name])
-
-        request = HttpRequest("GET", url)
-        request.format_parameters({"api-version": self._api_version})
-        response = self._pipeline.run(request, **kwargs).http_response
-        if response.status_code != 200:
-            raise HttpResponseError(response=response)
-
-        bundle = DESERIALIZE("DeletedSecretBundle", response)
-
+        bundle = self._client.get_deleted_secret(self.vault_url, name, error_map={404: ResourceNotFoundError})
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
     def list_deleted_secrets(self, **kwargs):
@@ -477,11 +368,9 @@ class SecretClient:
                 :caption: Lists the deleted secrets of the vault
 
         """
-        url = "{}/deletedsecrets".format(self._vault_url)
         max_page_size = kwargs.get("max_page_size", None)
-        paging = functools.partial(self._internal_paging, url, max_page_size)
-        pages = DeletedSecretItemPaged(paging, DESERIALIZE)
-        return (DeletedSecret._from_deleted_secret_item(item) for item in pages)
+        pages = self._client.get_deleted_secrets(self._vault_url, maxresults=max_page_size)
+        return (SecretAttributes._from_secret_item(item) for item in pages)
 
     def purge_deleted_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> None
@@ -504,15 +393,7 @@ class SecretClient:
                 :caption: Restores a backed up secret to the vault
 
         """
-        url = "/".join([self.vault_url, "deletedsecrets", name])
-
-        request = HttpRequest("DELETE", url)
-        request.format_parameters({"api-version": self._api_version})
-
-        response = self._pipeline.run(request, **kwargs).http_response
-        if response.status_code != 204:
-            raise HttpResponseError(response=response)
-        return
+        self._client.purge_deleted_secret(self.vault_url, name)
 
     def recover_deleted_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> SecretAttributes
@@ -536,37 +417,5 @@ class SecretClient:
                 :caption: Restores a backed up secret to the vault
 
         """
-        url = "/".join([self.vault_url, "deletedsecrets", name, "recover"])
-
-        request = HttpRequest("POST", url)
-        request.format_parameters({"api-version": self._api_version})
-
-        response = self._pipeline.run(request, **kwargs).http_response
-        if response.status_code != 200:
-            raise HttpResponseError(response=response)
-
-        bundle = DESERIALIZE("SecretBundle", response)
-
+        bundle = self._client.recover_deleted_secret(self.vault_url, name)
         return SecretAttributes._from_secret_bundle(bundle)
-
-    def _internal_paging(self, url, max_page_size, next_link=None, raw=False, **kwargs):
-        # type: (str, int, Optional[str], Optional[bool], Mapping[str, Any]) -> HttpResponse
-        if next_link:
-            url = next_link
-            query_parameters = {}
-        else:
-            query_parameters = {"api-version": self._api_version}
-            if max_page_size is not None:
-                query_parameters["maxresults"] = str(max_page_size)
-
-        headers = {"x-ms-client-request-id": str(uuid.uuid1())}
-
-        request = HttpRequest("GET", url, headers)
-        request.format_parameters(query_parameters)
-
-        response = self._pipeline.run(request, **kwargs).http_response
-
-        if response.status_code != 200:
-            raise HttpResponseError(response=response)
-
-        return response

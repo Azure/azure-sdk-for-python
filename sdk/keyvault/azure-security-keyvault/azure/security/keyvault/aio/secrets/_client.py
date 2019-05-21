@@ -12,7 +12,7 @@ from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.pipeline import AsyncPipeline
 
 from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
-from azure.security.keyvault._generated import KeyVaultClientAsync
+from azure.security.keyvault._generated import KeyVaultClient
 from azure.security.keyvault.aio._internal import AsyncPagingAdapter
 
 from ...secrets._models import Secret, DeletedSecret, SecretAttributes
@@ -40,6 +40,10 @@ class SecretClient:
             :caption: Creates a new instance of the Secret client
     """
 
+    @staticmethod
+    def create_config(**kwargs):
+        pass  # TODO
+
     def __init__(self, vault_url, credentials, config=None, api_version=None, **kwargs):
         if not credentials:
             raise ValueError("credentials")
@@ -50,15 +54,17 @@ class SecretClient:
         self._vault_url = vault_url
 
         if api_version is None:
-            api_version = KeyVaultClientAsync.DEFAULT_API_VERSION
-        config = config or KeyVaultClientAsync.get_configuration_class(api_version)(credentials)
+            api_version = KeyVaultClient.DEFAULT_API_VERSION
+
+        # TODO: need config to get default policies, config requires credentials but doesn't do anything with them
+        config = config or KeyVaultClient.get_configuration_class(api_version, aio=True)(credentials)
 
         # TODO generated default pipeline should be fine when token policy isn't necessary
         policies = [
-            _BearerTokenCredentialPolicy(credentials),
             config.headers_policy,
             config.user_agent_policy,
             config.proxy_policy,
+            _BearerTokenCredentialPolicy(credentials),
             config.redirect_policy,
             config.retry_policy,
             config.logging_policy,
@@ -66,7 +72,7 @@ class SecretClient:
         transport = AsyncioRequestsTransport(config)
         pipeline = AsyncPipeline(transport, policies=policies)
 
-        self._client = KeyVaultClientAsync(credentials, api_version=api_version, pipeline=pipeline)
+        self._client = KeyVaultClient(credentials, api_version=api_version, pipeline=pipeline, aio=True)
 
     @property
     def vault_url(self) -> str:

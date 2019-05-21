@@ -15,12 +15,12 @@ from .v7_0.version import VERSION as V7_0_VERSION
 from .v2016_10_01.version import VERSION as V2016_10_01_VERSION
 
 
-class KeyVaultClientAsync(MultiApiClientMixin):
+class KeyVaultClient(MultiApiClientMixin):
     """The key vault client performs cryptographic key operations and vault operations against the Key Vault service.
     Implementation depends on the API version:
 
-         * 2016-10-01: :class:`v2016_10_01.KeyVaultClient<azure.keyvault._generated.v2016_10_01.KeyVaultClientAsync>`
-         * 7.0: :class:`v7_0.KeyVaultClient<azure.keyvault._generated.v7_0.KeyVaultClientAsync>`
+         * 2016-10-01: :class:`v2016_10_01.KeyVaultClient<azure.keyvault._generated.v2016_10_01.KeyVaultClient>`
+         * 7.0: :class:`v7_0.KeyVaultClient<azure.keyvault._generated.v7_0.KeyVaultClient>`
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -38,25 +38,32 @@ class KeyVaultClientAsync(MultiApiClientMixin):
 
     _init_complete = False
 
-    def __init__(self, credentials, pipeline=None, api_version=None, profile=KnownProfiles.default):
+    def __init__(self, credentials, pipeline=None, api_version=None, aio=False, profile=KnownProfiles.default):
         self._client_impls = {}
         self._pipeline = pipeline
         self._entered = False
-        super(KeyVaultClientAsync, self).__init__(api_version=api_version, profile=profile)
+        self._aio = aio
+        super(KeyVaultClient, self).__init__(api_version=api_version, profile=profile)
 
         self._credentials = credentials
         self._init_complete = True
 
     @staticmethod
-    def get_configuration_class(api_version):
+    def get_configuration_class(api_version, aio=False):
         """
         Get the versioned configuration implementation corresponding to the current profile.
         :return: The versioned configuration implementation.
         """
         if api_version == V7_0_VERSION:
-            from .v7_0.aio import KeyVaultClientConfiguration as ImplConfig
+            if aio:
+                from .v7_0.aio import KeyVaultClientConfiguration as ImplConfig
+            else:
+                from .v7_0 import KeyVaultClientConfiguration as ImplConfig
         elif api_version == V2016_10_01_VERSION:
-            from .v2016_10_01.aio import KeyVaultClientConfiguration as ImplConfig
+            if aio:
+                from .v2016_10_01.aio import KeyVaultClientConfiguration as ImplConfig
+            else:
+                from .v2016_10_01 import KeyVaultClientConfiguration as ImplConfig
         else:
             raise NotImplementedError("API version {} is not available".format(api_version))
         return ImplConfig
@@ -94,9 +101,15 @@ class KeyVaultClientAsync(MultiApiClientMixin):
         :return:
         """
         if api_version == V7_0_VERSION:
-            from .v7_0.aio import KeyVaultClient as ImplClient
+            if self._aio:
+                from .v7_0.aio import KeyVaultClient as ImplClient
+            else:
+                from .v7_0 import KeyVaultClient as ImplClient
         elif api_version == V2016_10_01_VERSION:
-            from .v2016_10_01.aio import KeyVaultClient as ImplClient
+            if self._aio:
+                from .v2016_10_01.aio import KeyVaultClient as ImplClient
+            else:
+                from .v2016_10_01 import KeyVaultClient as ImplClient
         else:
             raise NotImplementedError("API version {} is not available".format(api_version))
 
@@ -189,4 +202,4 @@ class KeyVaultClientAsync(MultiApiClientMixin):
             impl = self._get_client_impl()
             setattr(impl, name, attr)
         else:
-            super(KeyVaultClientAsync, self).__setattr__(name, attr)
+            super(KeyVaultClient, self).__setattr__(name, attr)
