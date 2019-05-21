@@ -14,8 +14,8 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.billing_accounts_operations import BillingAccountsOperations
-from .operations.available_balances_operations import AvailableBalancesOperations
 from .operations.payment_methods_operations import PaymentMethodsOperations
+from .operations.available_balances_operations import AvailableBalancesOperations
 from .operations.billing_profiles_operations import BillingProfilesOperations
 from .operations.invoice_sections_operations import InvoiceSectionsOperations
 from .operations.departments_operations import DepartmentsOperations
@@ -77,10 +77,10 @@ class BillingManagementClient(SDKClient):
 
     :ivar billing_accounts: BillingAccounts operations
     :vartype billing_accounts: azure.mgmt.billing.operations.BillingAccountsOperations
-    :ivar available_balances: AvailableBalances operations
-    :vartype available_balances: azure.mgmt.billing.operations.AvailableBalancesOperations
     :ivar payment_methods: PaymentMethods operations
     :vartype payment_methods: azure.mgmt.billing.operations.PaymentMethodsOperations
+    :ivar available_balances: AvailableBalances operations
+    :vartype available_balances: azure.mgmt.billing.operations.AvailableBalancesOperations
     :ivar billing_profiles: BillingProfiles operations
     :vartype billing_profiles: azure.mgmt.billing.operations.BillingProfilesOperations
     :ivar invoice_sections: InvoiceSections operations
@@ -139,9 +139,9 @@ class BillingManagementClient(SDKClient):
 
         self.billing_accounts = BillingAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.available_balances = AvailableBalancesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.payment_methods = PaymentMethodsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.available_balances = AvailableBalancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_profiles = BillingProfilesOperations(
             self._client, self.config, self._serialize, self._deserialize)

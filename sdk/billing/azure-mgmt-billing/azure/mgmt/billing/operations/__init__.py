@@ -10,8 +10,8 @@
 # --------------------------------------------------------------------------
 
 from .billing_accounts_operations import BillingAccountsOperations
-from .available_balances_operations import AvailableBalancesOperations
 from .payment_methods_operations import PaymentMethodsOperations
+from .available_balances_operations import AvailableBalancesOperations
 from .billing_profiles_operations import BillingProfilesOperations
 from .invoice_sections_operations import InvoiceSectionsOperations
 from .departments_operations import DepartmentsOperations
@@ -33,8 +33,8 @@ from .agreements_operations import AgreementsOperations
 
 __all__ = [
     'BillingAccountsOperations',
-    'AvailableBalancesOperations',
     'PaymentMethodsOperations',
+    'AvailableBalancesOperations',
     'BillingProfilesOperations',
     'InvoiceSectionsOperations',
     'DepartmentsOperations',
