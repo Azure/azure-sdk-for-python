@@ -1,5 +1,5 @@
 -e ../azure-sdk-tools
--e ../azure-core
+-e ../sdk/core/azure-core
 pylint==2.1.1; python_version >= '3.4'
 pylint==1.8.4; python_version < '3.4'
 aiohttp>=3.0; python_version >= '3.5'
