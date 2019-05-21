@@ -9,4 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.3.0"
+from .operations import Operations
+from .subscriptions_operations import SubscriptionsOperations
+from .tenants_operations import TenantsOperations
+
+__all__ = [
+    'Operations',
+    'SubscriptionsOperations',
+    'TenantsOperations',
+]
