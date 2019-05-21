@@ -8,19 +8,20 @@ interactions:
       Connection: [keep-alive]
       Content-Length: ['121']
       Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.15063-SP0) requests/2.18.4 msrest/0.4.17
-          textanalyticsapi/v2.0]
+      User-Agent: [python/3.6.6 (Windows-10-10.0.17763-SP0) msrest/0.6.1 azure-cognitiveservices-language-textanalytics/0.2.0]
+      X-BingApis-SDK-Client: [Python-SDK]
     method: POST
-    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v2.0/languages
+    uri: https://westcentralus.api.cognitive.microsoft.com/text/analytics/v2.1/languages
   response:
     body: {string: '{"documents":[{"id":"1","detectedLanguages":[{"name":"English","iso6391Name":"en","score":1.0}]}],"errors":[]}'}
     headers:
-      apim-request-id: [9be4d744-07aa-40e2-b9e6-0d07aaca6ea7]
+      apim-request-id: [80c2eed0-76c2-4b6d-a42c-6d91f1bb35af]
       content-type: [application/json; charset=utf-8]
-      date: ['Thu, 19 Oct 2017 22:02:20 GMT']
+      csp-billing-usage: [CognitiveServices.TextAnalytics.BatchScoring|1]
+      date: ['Tue, 12 Mar 2019 21:02:21 GMT']
       strict-transport-security: [max-age=31536000; includeSubDomains; preload]
       transfer-encoding: [chunked]
-      x-aml-ta-request-id: [038c732a-e9f8-4419-8299-1c718464d093]
+      x-aml-ta-request-id: [3211bf52-3057-40a2-ad42-98a0294aaf6d]
       x-content-type-options: [nosniff]
       x-ms-transaction-count: ['1']
     status: {code: 200, message: OK}

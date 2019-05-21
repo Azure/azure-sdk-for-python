@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ExplicitListItemUpdateObject(Model):
-    """Model object for updating an explicit list item.
+    """Model object for updating an explicit (exception) list item.
 
     :param explicit_list_item: The explicit list item.
     :type explicit_list_item: str

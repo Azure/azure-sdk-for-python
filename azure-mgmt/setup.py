@@ -10,7 +10,7 @@ from setuptools import setup
 
 setup(
     name='azure-mgmt',
-    version='4.0.0',
+    version='5.0.0a1',
     description='Microsoft Azure Resource Management Client Libraries for Python',
     long_description=open('README.rst', 'r').read(),
     license='MIT License',
@@ -35,7 +35,6 @@ setup(
         'azure-mgmt-applicationinsights~=0.1.1',
         'azure-mgmt-authorization~=0.50.0',
         'azure-mgmt-batch~=5.0',
-        'azure-mgmt-batchai~=2.0',
         'azure-mgmt-billing~=0.2.0',
         'azure-mgmt-cdn~=3.0',
         'azure-mgmt-cognitiveservices~=3.0',

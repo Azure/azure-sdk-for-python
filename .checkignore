@@ -1,5 +1,0 @@
-# Ignore folder content
-azure-servicebus/tests/*
-azure-servicemanagement-legacy/tests/*
-azure-mgmt/tests/*
-

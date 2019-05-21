@@ -15,9 +15,10 @@ from msrest.serialization import Model
 class IntentsSuggestionExample(Model):
     """Predicted/suggested intent.
 
-    :param text: The utterance. E.g.: what's the weather like in seattle?
+    :param text: The utterance. For example, "What's the weather like in
+     seattle?"
     :type text: str
-    :param tokenized_text: The utterance tokenized.
+    :param tokenized_text: The tokenized utterance.
     :type tokenized_text: list[str]
     :param intent_predictions: Predicted/suggested intents.
     :type intent_predictions:

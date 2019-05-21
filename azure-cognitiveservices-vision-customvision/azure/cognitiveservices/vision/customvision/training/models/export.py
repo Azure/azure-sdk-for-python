@@ -19,19 +19,19 @@ class Export(Model):
     sending a request.
 
     :ivar platform: Platform of the export. Possible values include: 'CoreML',
-     'TensorFlow', 'DockerFile', 'ONNX'
+     'TensorFlow', 'DockerFile', 'ONNX', 'VAIDK'
     :vartype platform: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.ExportPlatformModel
+     ~azure.cognitiveservices.vision.customvision.training.models.ExportPlatform
     :ivar status: Status of the export. Possible values include: 'Exporting',
      'Failed', 'Done'
     :vartype status: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.ExportStatusModel
+     ~azure.cognitiveservices.vision.customvision.training.models.ExportStatus
     :ivar download_uri: URI used to download the model.
     :vartype download_uri: str
     :ivar flavor: Flavor of the export. Possible values include: 'Linux',
-     'Windows', 'ONNX10', 'ONNX12'
+     'Windows', 'ONNX10', 'ONNX12', 'ARM'
     :vartype flavor: str or
-     ~azure.cognitiveservices.vision.customvision.training.models.ExportFlavorModel
+     ~azure.cognitiveservices.vision.customvision.training.models.ExportFlavor
     :ivar newer_version_available: Indicates an updated version of the export
      package is available and should be re-exported for the latest changes.
     :vartype newer_version_available: bool

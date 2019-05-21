@@ -16,6 +16,7 @@ try:
     from .sb_sku_py3 import SBSku
     from .sb_namespace_py3 import SBNamespace
     from .sb_namespace_update_parameters_py3 import SBNamespaceUpdateParameters
+    from .sb_namespace_migrate_py3 import SBNamespaceMigrate
     from .sb_authorization_rule_py3 import SBAuthorizationRule
     from .authorization_rule_properties_py3 import AuthorizationRuleProperties
     from .access_keys_py3 import AccessKeys
@@ -41,6 +42,10 @@ try:
     from .eventhub_py3 import Eventhub
     from .arm_disaster_recovery_py3 import ArmDisasterRecovery
     from .migration_config_properties_py3 import MigrationConfigProperties
+    from .subnet_py3 import Subnet
+    from .nw_rule_set_ip_rules_py3 import NWRuleSetIpRules
+    from .nw_rule_set_virtual_network_rules_py3 import NWRuleSetVirtualNetworkRules
+    from .network_rule_set_py3 import NetworkRuleSet
 except (SyntaxError, ImportError):
     from .tracked_resource import TrackedResource
     from .resource import Resource
@@ -48,6 +53,7 @@ except (SyntaxError, ImportError):
     from .sb_sku import SBSku
     from .sb_namespace import SBNamespace
     from .sb_namespace_update_parameters import SBNamespaceUpdateParameters
+    from .sb_namespace_migrate import SBNamespaceMigrate
     from .sb_authorization_rule import SBAuthorizationRule
     from .authorization_rule_properties import AuthorizationRuleProperties
     from .access_keys import AccessKeys
@@ -73,6 +79,10 @@ except (SyntaxError, ImportError):
     from .eventhub import Eventhub
     from .arm_disaster_recovery import ArmDisasterRecovery
     from .migration_config_properties import MigrationConfigProperties
+    from .subnet import Subnet
+    from .nw_rule_set_ip_rules import NWRuleSetIpRules
+    from .nw_rule_set_virtual_network_rules import NWRuleSetVirtualNetworkRules
+    from .network_rule_set import NetworkRuleSet
 from .operation_paged import OperationPaged
 from .sb_namespace_paged import SBNamespacePaged
 from .sb_authorization_rule_paged import SBAuthorizationRulePaged
@@ -87,6 +97,7 @@ from .eventhub_paged import EventhubPaged
 from .service_bus_management_client_enums import (
     SkuName,
     SkuTier,
+    NameSpaceType,
     AccessRights,
     KeyType,
     EntityStatus,
@@ -95,6 +106,8 @@ from .service_bus_management_client_enums import (
     EncodingCaptureDescription,
     ProvisioningStateDR,
     RoleDisasterRecovery,
+    NetworkRuleIPAction,
+    DefaultAction,
 )
 
 __all__ = [
@@ -104,6 +117,7 @@ __all__ = [
     'SBSku',
     'SBNamespace',
     'SBNamespaceUpdateParameters',
+    'SBNamespaceMigrate',
     'SBAuthorizationRule',
     'AuthorizationRuleProperties',
     'AccessKeys',
@@ -129,6 +143,10 @@ __all__ = [
     'Eventhub',
     'ArmDisasterRecovery',
     'MigrationConfigProperties',
+    'Subnet',
+    'NWRuleSetIpRules',
+    'NWRuleSetVirtualNetworkRules',
+    'NetworkRuleSet',
     'OperationPaged',
     'SBNamespacePaged',
     'SBAuthorizationRulePaged',
@@ -142,6 +160,7 @@ __all__ = [
     'EventhubPaged',
     'SkuName',
     'SkuTier',
+    'NameSpaceType',
     'AccessRights',
     'KeyType',
     'EntityStatus',
@@ -150,4 +169,6 @@ __all__ = [
     'EncodingCaptureDescription',
     'ProvisioningStateDR',
     'RoleDisasterRecovery',
+    'NetworkRuleIPAction',
+    'DefaultAction',
 ]

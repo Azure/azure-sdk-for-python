@@ -28,6 +28,8 @@ class EndpointInfo(Model):
     :type assigned_endpoint_key: str
     :param endpoint_region: The endpoint's region.
     :type endpoint_region: str
+    :param failed_regions: Regions where publishing failed.
+    :type failed_regions: str
     :param published_date_time: Timestamp when was last published.
     :type published_date_time: str
     """
@@ -39,6 +41,7 @@ class EndpointInfo(Model):
         'region': {'key': 'region', 'type': 'str'},
         'assigned_endpoint_key': {'key': 'assignedEndpointKey', 'type': 'str'},
         'endpoint_region': {'key': 'endpointRegion', 'type': 'str'},
+        'failed_regions': {'key': 'failedRegions', 'type': 'str'},
         'published_date_time': {'key': 'publishedDateTime', 'type': 'str'},
     }
 
@@ -50,4 +53,5 @@ class EndpointInfo(Model):
         self.region = kwargs.get('region', None)
         self.assigned_endpoint_key = kwargs.get('assigned_endpoint_key', None)
         self.endpoint_region = kwargs.get('endpoint_region', None)
+        self.failed_regions = kwargs.get('failed_regions', None)
         self.published_date_time = kwargs.get('published_date_time', None)
