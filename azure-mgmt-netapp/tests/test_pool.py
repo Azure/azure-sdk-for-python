@@ -24,12 +24,13 @@ def create_pool(client, rg=TEST_RG, acc_name=TEST_ACC_1, pool_name=TEST_POOL_1, 
 
     return pool
 
-def wait_for_no_pool(client, rg, acc_name, pool_name):
+def wait_for_no_pool(client, rg, acc_name, pool_name, live=False):
     # a workaround for the async nature of certain ARM processes
     co=0
     while co<5:
         co += 1
-        time.sleep(5)
+        if live:
+            time.sleep(5)
         try:
             pool = client.pools.get(rg, acc_name, pool_name)
         except:
@@ -37,9 +38,9 @@ def wait_for_no_pool(client, rg, acc_name, pool_name):
             # and is actually what we are waiting for
             break
 
-def delete_pool(client, rg, acc_name, pool_name):
+def delete_pool(client, rg, acc_name, pool_name, live=False):
     client.pools.delete(rg, acc_name, pool_name).wait()
-    wait_for_no_pool(client, rg, acc_name, pool_name)
+    wait_for_no_pool(client, rg, acc_name, pool_name, live)
 
 
 class NetAppAccountTestCase(AzureMgmtTestCase):
@@ -59,8 +60,8 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         pool_list = self.client.pools.list(TEST_RG, TEST_ACC_1)
         self.assertEqual(len(list(pool_list)), 0)
 
-        wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)
-        delete_account(self.client, TEST_RG, TEST_ACC_1)
+        wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
+        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_list_pools(self):
         pool = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, LOCATION)
@@ -76,8 +77,8 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         self.client.pools.delete(TEST_RG, TEST_ACC_1, TEST_POOL_1).wait()
         self.client.pools.delete(TEST_RG, TEST_ACC_1, TEST_POOL_2).wait()
         for pool in pools:
-            wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, pools[idx])
-        delete_account(self.client, TEST_RG, TEST_ACC_1)
+            wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, pools[idx], live=self.is_live)
+        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_get_pool_by_name(self):
         pool = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, LOCATION)
@@ -86,8 +87,8 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         self.assertEqual(pool.name, TEST_ACC_1 + '/' + TEST_POOL_1)
 
         self.client.pools.delete(TEST_RG, TEST_ACC_1, TEST_POOL_1).wait()
-        wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)
-        delete_account(self.client, TEST_RG, TEST_ACC_1)
+        wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
+        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_update_pool(self):
         pool = create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)
@@ -104,8 +105,8 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         self.assertEqual(pool.service_level, "Standard")
 
         self.client.pools.delete(TEST_RG, TEST_ACC_1, TEST_POOL_1).wait()
-        wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)
-        delete_account(self.client, TEST_RG, TEST_ACC_1)
+        wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
+        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 
     def test_patch_pool(self):
         create_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)
@@ -118,6 +119,6 @@ class NetAppAccountTestCase(AzureMgmtTestCase):
         self.assertTrue(pool.tags['Tag2'] == 'Value1')
 
         self.client.pools.delete(TEST_RG, TEST_ACC_1, TEST_POOL_1).wait()
-        wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1)
-        delete_account(self.client, TEST_RG, TEST_ACC_1)
+        wait_for_no_pool(self.client, TEST_RG, TEST_ACC_1, TEST_POOL_1, live=self.is_live)
+        delete_account(self.client, TEST_RG, TEST_ACC_1, live=self.is_live)
 

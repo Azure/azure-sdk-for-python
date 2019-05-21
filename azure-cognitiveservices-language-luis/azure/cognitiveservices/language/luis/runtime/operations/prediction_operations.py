@@ -53,7 +53,7 @@ class PredictionOperations(object):
         :param spell_check: Enable spell checking.
         :type spell_check: bool
         :param bing_spell_check_subscription_key: The subscription key to use
-         when enabling bing spell check
+         when enabling Bing spell check
         :type bing_spell_check_subscription_key: str
         :param log: Log query (default is true)
         :type log: bool

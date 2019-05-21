@@ -65,6 +65,3 @@ class AccessLevel(str, Enum):
     none = "None"
     read = "Read"
     write = "Write"
-
-# Manual change to avoid major release until the next major release
-StorageAccountTypes = DiskStorageAccountTypes

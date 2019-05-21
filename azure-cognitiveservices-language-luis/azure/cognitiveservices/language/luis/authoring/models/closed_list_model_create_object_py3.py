@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class ClosedListModelCreateObject(Model):
-    """Object model for creating a closed list.
+    """Object model for creating a list entity.
 
     :param sub_lists: Sublists for the feature.
     :type sub_lists:
      list[~azure.cognitiveservices.language.luis.authoring.models.WordListObject]
-    :param name: Name of the closed list feature.
+    :param name: Name of the list entity.
     :type name: str
     """
 

@@ -15,9 +15,13 @@ from msrest.serialization import Model
 class AutomaticOSUpgradePolicy(Model):
     """The configuration parameters used for performing automatic OS upgrade.
 
-    :param enable_automatic_os_upgrade: Whether OS upgrades should
+    :param enable_automatic_os_upgrade: Indicates whether OS upgrades should
      automatically be applied to scale set instances in a rolling fashion when
-     a newer version of the image becomes available. Default value is false.
+     a newer version of the OS image becomes available. Default value is false.
+     If this is set to true for Windows based scale sets, recommendation is to
+     set
+     [enableAutomaticUpdates](https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet)
+     to false.
     :type enable_automatic_os_upgrade: bool
     :param disable_automatic_rollback: Whether OS image rollback feature
      should be disabled. Default value is false.

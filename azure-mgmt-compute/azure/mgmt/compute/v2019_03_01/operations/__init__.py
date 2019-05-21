@@ -11,6 +11,7 @@
 
 from .operations import Operations
 from .availability_sets_operations import AvailabilitySetsOperations
+from .proximity_placement_groups_operations import ProximityPlacementGroupsOperations
 from .virtual_machine_extension_images_operations import VirtualMachineExtensionImagesOperations
 from .virtual_machine_extensions_operations import VirtualMachineExtensionsOperations
 from .virtual_machine_images_operations import VirtualMachineImagesOperations
@@ -31,6 +32,7 @@ from .gallery_image_versions_operations import GalleryImageVersionsOperations
 __all__ = [
     'Operations',
     'AvailabilitySetsOperations',
+    'ProximityPlacementGroupsOperations',
     'VirtualMachineExtensionImagesOperations',
     'VirtualMachineExtensionsOperations',
     'VirtualMachineImagesOperations',

@@ -254,7 +254,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         disk_resource = async_creation.result()
 
         # Sample from here
-        StorageAccountTypes = self.compute_client.disks.models.StorageAccountTypes
+        StorageAccountTypes = self.compute_client.disks.models.DiskStorageAccountTypes
         managed_disk = self.compute_client.disks.get(resource_group.name, 'myDisk')
         managed_disk.account_type = StorageAccountTypes.standard_lrs
         async_update = self.compute_client.disks.create_or_update(

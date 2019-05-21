@@ -1,0 +1,78 @@
+# Variables:
+#  'ServicePackage' : comma separated glob strings selecting the packages that dependencies will be installed for and against which live tests should run. EG: "azure-keyvault,azure-mgmt-batch"
+
+jobs:
+  - job: 'Test'
+
+    timeoutInMinutes: 120
+    strategy:
+      matrix:
+        Linux_Python35:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.5'
+        MacOs_Python37:
+          OSName: 'MacOS'
+          OSVmImage: 'macOS-10.14'
+          PythonVersion: '3.7'
+        Windows_Python27:
+          OSName: 'Windows'
+          OSVmImage: 'vs2017-win2016'
+          PythonVersion: '2.7'
+    continueOnError: false
+
+    pool:
+      vmImage: $(OSVmImage)
+
+    steps:
+      - powershell: |
+            Invoke-WebRequest -Uri "https://github.com/Azure/azure-sdk-tools/releases/download/sdk-tools_14793/sdk-tools.zip" `
+            -OutFile "sdk-tools.zip" | Wait-Process; Expand-Archive -Path "sdk-tools.zip" -DestinationPath "./sdk-tools/"
+        workingDirectory: '$(Build.BinariesDirectory)'
+        displayName: 'Download Tools Archive From Github Release and Extract it'
+
+      - task: UsePythonVersion@0
+        displayName: 'Use Python $(PythonVersion)'
+        inputs:
+          versionSpec: $(PythonVersion)
+
+      - task: PythonScript@0
+        displayName: 'Run VerifyAgentOS script'
+        inputs:
+          scriptPath: '$(Build.BinariesDirectory)/sdk-tools/scripts/python/verify_agent_os.py'
+          arguments: $(OSName)
+
+      - script: |
+          pip install pathlib twine beautifulsoup4
+        displayName: 'Prep Environment'
+
+      - task: PythonScript@0
+        displayName: 'Setup and Run Tests'
+        inputs:
+          scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+          arguments: '"$(BuildTargetingString)" --junitxml="junit/test-results.xml" --disablecov'
+        env:
+          # Service Bus Variables
+          SERVICE_BUS_HOSTNAME: $(python-sb-livetest-service-bus-hostname)
+          SERVICE_BUS_SAS_POLICY: $(python-sb-livetest-service-sas-policy)
+          SERVICE_BUS_SAS_KEY: $(python-sb-livetest-service-sas-key)
+          SERVICE_BUS_CONNECTION_STR: $(python-sb-livetest-service-connection-str)
+          SERVICE_BUS_CONNECTION_STR_RO: $(python-sb-livetest-service-connection-str-ro)
+          SERVICE_BUS_CONNECTION_STR_WO: $(python-sb-livetest-service-connection-str-wo)
+          SERVICE_BUS_CONNECTION_STR_ENTITY: $(python-sb-livetest-service-connection-entity)
+          # Event Hubs Variables
+          AZURE_STORAGE_ACCOUNT: $(python-eh-livetest-event-hub-storage-account)
+          AZURE_STORAGE_ACCESS_KEY: $(python-eh-livetest-event-hub-storage-access-key)
+          EVENT_HUB_HOSTNAME: $(python-eh-livetest-event-hub-hostname)
+          EVENT_HUB_NAME: $(python-eh-livetest-event-hub-name)
+          EVENT_HUB_SAS_POLICY: $(python-eh-livetest-event-hub-sas-policy)
+          EVENT_HUB_SAS_KEY: $(python-eh-livetest-event-hub-sas-key)
+          EVENT_HUB_NAMESPACE: $(python-eh-livetest-event-hub-namespace)
+          IOTHUB_CONNECTION_STR: $(python-eh-livetest-event-hub-iothub-connection-str)
+          IOTHUB_DEVICE: $(python-eh-livetest-event-hub-iothub-device)
+
+      - task: PublishTestResults@2
+        condition: succeededOrFailed()
+        inputs:
+          testResultsFiles: 'junit/test-results.xml'
+          testRunTitle: '$(OSName) Python $(PythonVersion)'
