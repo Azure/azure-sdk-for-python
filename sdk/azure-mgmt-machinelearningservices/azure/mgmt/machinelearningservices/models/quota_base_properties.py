@@ -18,8 +18,8 @@ class QuotaBaseProperties(Model):
     :param vm_family: Virtual Machine family name. The family name of the
      virtual machine size.
     :type vm_family: str
-    :param workspace_id: AML workspace Id. Fully qualified resource
-     indentifier of the workspace.
+    :param workspace_id: AML workspace Id. Fully qualified resource identifier
+     of the workspace.
     :type workspace_id: str
     :param quota: Quota. Quota.
     :type quota: int
