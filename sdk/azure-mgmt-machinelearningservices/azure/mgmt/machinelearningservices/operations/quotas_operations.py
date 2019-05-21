@@ -117,7 +117,7 @@ class QuotasOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BatchAI/locations/{location}/updateQuotas'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/updateQuotas'}
 
     def list_by_vm_family(
             self, location, custom_headers=None, raw=False, **operation_config):
@@ -184,4 +184,4 @@ class QuotasOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_vm_family.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.BatchAI/locations/{location}/listQuotas'}
+    list_by_vm_family.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/listQuotas'}

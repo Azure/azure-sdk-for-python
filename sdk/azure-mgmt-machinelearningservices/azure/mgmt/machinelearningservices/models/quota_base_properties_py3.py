@@ -21,7 +21,7 @@ class QuotaBaseProperties(Model):
     :param workspace_id: AML workspace Id. Fully qualified resource identifier
      of the workspace.
     :type workspace_id: str
-    :param quota: Quota. Quota.
+    :param quota: Quota. The workspace level quota.
     :type quota: int
     """
 
