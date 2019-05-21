@@ -11,12 +11,10 @@
 
 from .registration_definitions_operations import RegistrationDefinitionsOperations
 from .registration_assignments_operations import RegistrationAssignmentsOperations
-from .operation_statuses_operations import OperationStatusesOperations
 from .operations import Operations
 
 __all__ = [
     'RegistrationDefinitionsOperations',
     'RegistrationAssignmentsOperations',
-    'OperationStatusesOperations',
     'Operations',
 ]

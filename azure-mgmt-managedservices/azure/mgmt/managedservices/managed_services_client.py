@@ -15,7 +15,6 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.registration_definitions_operations import RegistrationDefinitionsOperations
 from .operations.registration_assignments_operations import RegistrationAssignmentsOperations
-from .operations.operation_statuses_operations import OperationStatusesOperations
 from .operations.operations import Operations
 from . import models
 
@@ -57,8 +56,6 @@ class ManagedServicesClient(SDKClient):
     :vartype registration_definitions: azure.mgmt.managedservices.operations.RegistrationDefinitionsOperations
     :ivar registration_assignments: RegistrationAssignments operations
     :vartype registration_assignments: azure.mgmt.managedservices.operations.RegistrationAssignmentsOperations
-    :ivar operation_statuses: OperationStatuses operations
-    :vartype operation_statuses: azure.mgmt.managedservices.operations.OperationStatusesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.managedservices.operations.Operations
 
@@ -82,8 +79,6 @@ class ManagedServicesClient(SDKClient):
         self.registration_definitions = RegistrationDefinitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.registration_assignments = RegistrationAssignmentsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.operation_statuses = OperationStatusesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)

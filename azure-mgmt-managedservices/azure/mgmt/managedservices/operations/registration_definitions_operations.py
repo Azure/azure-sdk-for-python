@@ -115,9 +115,8 @@ class RegistrationDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: RegistrationDefinition or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.managedservices.models.RegistrationDefinition or
-         ~msrest.pipeline.ClientRawResponse
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.managedservices.models.ErrorResponseException>`
         """
@@ -135,7 +134,6 @@ class RegistrationDefinitionsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -150,16 +148,9 @@ class RegistrationDefinitionsOperations(object):
         if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('RegistrationDefinition', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-        return deserialized
     delete.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationDefinitions/{registrationDefinitionId}'}
 
 
