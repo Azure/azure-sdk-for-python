@@ -107,6 +107,15 @@ class AsyncPipelineClient(object):
 
         return request
 
+    def _format_url_section(self, template, **kwargs):
+        while True:
+            try:
+                return template.format(**kwargs)
+            except KeyError as key:
+                components = template.split("/")
+                new_components = [c for c in components if "{{{}}}".format(key.args[0]) not in c]
+                template = "/".join(new_components)
+
     def format_url(self, url_template, **kwargs):
         # type: (str, Any) -> str
         """Format request URL with the client base URL, unless the
@@ -114,12 +123,15 @@ class AsyncPipelineClient(object):
 
         :param str url_template: The request URL to be formatted if necessary.
         """
-        url = url_template.format(**kwargs)
-        parsed = urlparse(url)
-        if not parsed.scheme or not parsed.netloc:
-            url = url.lstrip('/')
-            base = self._base_url.format(**kwargs).rstrip('/')
-            url = urljoin(base + '/', url)
+        url = self._format_url_section(url_template, **kwargs)
+        if url:
+            parsed = urlparse(url)
+            if not parsed.scheme or not parsed.netloc:
+                url = url.lstrip('/')
+                base = self._base_url.format(**kwargs).rstrip('/')
+                url = urljoin(base + '/', url)
+        else:
+            url = self._base_url.format(**kwargs)
         return url
 
     def get(self, url, params=None, headers=None, content=None, form_content=None):
