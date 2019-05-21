@@ -12,6 +12,12 @@
 from enum import Enum
 
 
+class AddressValidationStatus(str, Enum):
+
+    valid = "Valid"
+    invalid = "Invalid"
+
+
 class ProductType(str, Enum):
 
     azure_subscription = "AzureSubscription"
