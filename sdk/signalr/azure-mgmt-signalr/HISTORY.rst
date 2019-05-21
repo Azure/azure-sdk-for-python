@@ -3,10 +3,10 @@
 Release History
 ===============
 
-0.1.2 (2019-02-15)
+0.2.0 (2019-05-21)
 ++++++++++++++++++
 
-* Comments have been updated
+* Add restart operation
 
 0.1.1 (2018-09-04)
 ++++++++++++++++++
