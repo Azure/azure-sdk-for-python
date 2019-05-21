@@ -78,18 +78,26 @@ class StreamDownloadGenerator(object):
         return self
 
     def __next__(self):
-        try:
-            chunk = next(self.iter_content_func)
-            if not chunk:
+        retries_remaining = True
+        retry_total = 3
+        while retries_remaining:
+            try:
+                chunk = next(self.iter_content_func)
+                if not chunk:
+                    raise StopIteration()
+                return chunk
+            except StopIteration:
+                self.response.close()
                 raise StopIteration()
-            return chunk
-        except StopIteration:
-            self.response.close()
-            raise StopIteration()
-        except Exception as err:
-            _LOGGER.warning("Unable to stream download: %s", err)
-            self.response.close()
-            raise
+            except ServiceResponseError:
+                retry_total -= 1
+                if retry_total <= 0:
+                    retries_remaining = False
+                continue
+            except Exception as err:
+                _LOGGER.warning("Unable to stream download: %s", err)
+                self.response.close()
+                raise
             
     next = __next__  # Python 2 compatibility.
 

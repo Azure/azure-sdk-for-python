@@ -120,25 +120,33 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 
     def __len__(self):
         return self.content_length
-
+    
     async def __anext__(self):
         loop = _get_running_loop()
-        try:
-            chunk = await loop.run_in_executor(
-                None,
-                _iterate_response_content,
-                self.iter_content_func,
-            )
-            if not chunk:
-                raise _ResponseStopIteration()
-            return chunk
-        except _ResponseStopIteration:
-            self.response.close()
-            raise StopAsyncIteration()
-        except Exception as err:
-            _LOGGER.warning("Unable to stream download: %s", err)
-            self.response.close()
-            raise
+        retries_remaining = True
+        retry_total = 3
+        while retries_remaining:
+            try:
+                chunk = await loop.run_in_executor(
+                    None,
+                    _iterate_response_content,
+                    self.iter_content_func,
+                )
+                if not chunk:
+                    raise _ResponseStopIteration()
+                return chunk
+            except _ResponseStopIteration:
+                self.response.close()
+                raise StopAsyncIteration()
+            except ServiceResponseError:
+                retry_total -= 1
+                if retry_total <= 0:
+                    retries_remaining = False
+                continue
+            except Exception as err:
+                _LOGGER.warning("Unable to stream download: %s", err)
+                self.response.close()
+                raise
 
 
 class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):
