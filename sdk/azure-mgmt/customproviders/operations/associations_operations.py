@@ -17,8 +17,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class AssociationOperations(object):
-    """AssociationOperations operations.
+class AssociationsOperations(object):
+    """AssociationsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -281,7 +281,7 @@ class AssociationOperations(object):
         return deserialized
     get.metadata = {'url': '/{scope}/providers/Microsoft.CustomProviders/associations/{associationName}'}
 
-    def get_all(
+    def list_all(
             self, scope, custom_headers=None, raw=False, **operation_config):
         """Gets all association for the given scope.
 
@@ -302,7 +302,7 @@ class AssociationOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.get_all.metadata['url']
+                url = self.list_all.metadata['url']
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str', skip_quote=True)
                 }
@@ -344,4 +344,4 @@ class AssociationOperations(object):
             return client_raw_response
 
         return deserialized
-    get_all.metadata = {'url': '/{scope}/providers/Microsoft.CustomProviders/associations'}
+    list_all.metadata = {'url': '/{scope}/providers/Microsoft.CustomProviders/associations'}

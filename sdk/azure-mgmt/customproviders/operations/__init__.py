@@ -11,10 +11,10 @@
 
 from .operations import Operations
 from .custom_resource_provider_operations import CustomResourceProviderOperations
-from .association_operations import AssociationOperations
+from .associations_operations import AssociationsOperations
 
 __all__ = [
     'Operations',
     'CustomResourceProviderOperations',
-    'AssociationOperations',
+    'AssociationsOperations',
 ]

@@ -15,7 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.operations import Operations
 from .operations.custom_resource_provider_operations import CustomResourceProviderOperations
-from .operations.association_operations import AssociationOperations
+from .operations.associations_operations import AssociationsOperations
 from . import models
 
 
@@ -62,8 +62,8 @@ class customprovidersClient(SDKClient):
     :vartype operations: microsoft.customproviders.operations.Operations
     :ivar custom_resource_provider: CustomResourceProvider operations
     :vartype custom_resource_provider: microsoft.customproviders.operations.CustomResourceProviderOperations
-    :ivar association: Association operations
-    :vartype association: microsoft.customproviders.operations.AssociationOperations
+    :ivar associations: Associations operations
+    :vartype associations: microsoft.customproviders.operations.AssociationsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -89,5 +89,5 @@ class customprovidersClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.custom_resource_provider = CustomResourceProviderOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.association = AssociationOperations(
+        self.associations = AssociationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
