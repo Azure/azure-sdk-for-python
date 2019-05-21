@@ -1,6 +1,7 @@
 [run]
 include =
 	azure*
+	sdk*
 omit =
 	*/test*
 	env*

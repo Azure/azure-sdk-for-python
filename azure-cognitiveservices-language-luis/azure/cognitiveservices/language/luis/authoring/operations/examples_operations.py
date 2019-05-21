@@ -35,14 +35,14 @@ class ExamplesOperations(object):
 
     def add(
             self, app_id, version_id, example_label_object, custom_headers=None, raw=False, **operation_config):
-        """Adds a labeled example to the application.
+        """Adds a labeled example utterance in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param example_label_object: An example label with the expected intent
-         and entities.
+        :param example_label_object: A labeled example utterance with the
+         expected intent and entities.
         :type example_label_object:
          ~azure.cognitiveservices.language.luis.authoring.models.ExampleLabelObject
         :param dict custom_headers: headers that will be added to the request
@@ -100,13 +100,14 @@ class ExamplesOperations(object):
 
     def batch(
             self, app_id, version_id, example_label_object_array, custom_headers=None, raw=False, **operation_config):
-        """Adds a batch of labeled examples to the application.
+        """Adds a batch of labeled example utterances to a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
         :param version_id: The version ID.
         :type version_id: str
-        :param example_label_object_array: Array of examples.
+        :param example_label_object_array: Array of example utterances.
         :type example_label_object_array:
          list[~azure.cognitiveservices.language.luis.authoring.models.ExampleLabelObject]
         :param dict custom_headers: headers that will be added to the request
@@ -166,7 +167,8 @@ class ExamplesOperations(object):
 
     def list(
             self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Returns examples to be reviewed.
+        """Returns example utterances to be reviewed from a version of the
+        application.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -232,7 +234,8 @@ class ExamplesOperations(object):
 
     def delete(
             self, app_id, version_id, example_id, custom_headers=None, raw=False, **operation_config):
-        """Deletes the labeled example with the specified ID.
+        """Deletes the labeled example utterances with the specified ID from a
+        version of the application.
 
         :param app_id: The application ID.
         :type app_id: str

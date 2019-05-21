@@ -38,6 +38,9 @@ class CognitiveServicesAccount(Model):
     :type endpoint: str
     :param internal_id: The internal identifier.
     :type internal_id: str
+    :param custom_sub_domain_name: Optional subdomain name used for
+     token-based authentication.
+    :type custom_sub_domain_name: str
     :param sku: The SKU of Cognitive Services account.
     :type sku: ~azure.mgmt.cognitiveservices.models.Sku
     :param tags: Gets or sets a list of key value pairs that describe the
@@ -66,12 +69,13 @@ class CognitiveServicesAccount(Model):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
         'internal_id': {'key': 'properties.internalId', 'type': 'str'},
+        'custom_sub_domain_name': {'key': 'properties.customSubDomainName', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'Sku'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, etag: str=None, kind: str=None, location: str=None, endpoint: str=None, internal_id: str=None, sku=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, etag: str=None, kind: str=None, location: str=None, endpoint: str=None, internal_id: str=None, custom_sub_domain_name: str=None, sku=None, tags=None, **kwargs) -> None:
         super(CognitiveServicesAccount, self).__init__(**kwargs)
         self.etag = etag
         self.id = None
@@ -81,6 +85,7 @@ class CognitiveServicesAccount(Model):
         self.provisioning_state = None
         self.endpoint = endpoint
         self.internal_id = internal_id
+        self.custom_sub_domain_name = custom_sub_domain_name
         self.sku = sku
         self.tags = tags
         self.type = None

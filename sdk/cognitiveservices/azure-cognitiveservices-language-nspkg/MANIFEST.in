@@ -1,0 +1,3 @@
+include *.rst
+include azure/cognitiveservices/__init__.py
+include azure/cognitiveservices/language/__init__.py

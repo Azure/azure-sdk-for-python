@@ -15,19 +15,25 @@ from msrest.serialization import Model
 class OutputFile(Model):
     """Represents an output file produced.
 
-    :param labels: The list of labels that describe how the encoder should
-     multiplex video and audio into an output file. For example, if the encoder
-     is producing two video layers with labels v1 and v2, and one audio layer
-     with label a1, then an array like '[v1, a1]' tells the encoder to produce
-     an output file with the video track represented by v1 and the audio track
-     represented by a1.
+    All required parameters must be populated in order to send to Azure.
+
+    :param labels: Required. The list of labels that describe how the encoder
+     should multiplex video and audio into an output file. For example, if the
+     encoder is producing two video layers with labels v1 and v2, and one audio
+     layer with label a1, then an array like '[v1, a1]' tells the encoder to
+     produce an output file with the video track represented by v1 and the
+     audio track represented by a1.
     :type labels: list[str]
     """
+
+    _validation = {
+        'labels': {'required': True},
+    }
 
     _attribute_map = {
         'labels': {'key': 'labels', 'type': '[str]'},
     }
 
-    def __init__(self, *, labels=None, **kwargs) -> None:
+    def __init__(self, *, labels, **kwargs) -> None:
         super(OutputFile, self).__init__(**kwargs)
         self.labels = labels

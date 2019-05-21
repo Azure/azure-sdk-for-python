@@ -1,14 +1,6 @@
 azure.mgmt.eventhub package
 ===========================
 
-Submodules
-----------
-
-.. toctree::
-
-   azure.mgmt.eventhub.models
-   azure.mgmt.eventhub.operations
-
 Module contents
 ---------------
 
@@ -16,3 +8,12 @@ Module contents
     :members:
     :undoc-members:
     :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+
+   azure.mgmt.eventhub.v2018_01_01_preview
+   azure.mgmt.eventhub.v2017_04_01
+   azure.mgmt.eventhub.v2015_08_01
