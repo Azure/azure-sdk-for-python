@@ -11,6 +11,8 @@
 
 try:
     from .initiate_transfer_request_py3 import InitiateTransferRequest
+    from .address_py3 import Address
+    from .validate_address_response_py3 import ValidateAddressResponse
     from .product_details_py3 import ProductDetails
     from .accept_transfer_request_py3 import AcceptTransferRequest
     from .error_py3 import Error
@@ -22,7 +24,6 @@ try:
     from .transfer_billing_subscription_request_properties_py3 import TransferBillingSubscriptionRequestProperties
     from .transfer_billing_subscription_request_py3 import TransferBillingSubscriptionRequest
     from .update_auto_renew_operation_summary_py3 import UpdateAutoRenewOperationSummary
-    from .address_py3 import Address
     from .enabled_azure_sk_us_py3 import EnabledAzureSKUs
     from .billing_profile_py3 import BillingProfile
     from .invoice_section_properties_py3 import InvoiceSectionProperties
@@ -75,6 +76,8 @@ try:
     from .increase_line_of_credit_request_properties_py3 import IncreaseLineOfCreditRequestProperties
 except (SyntaxError, ImportError):
     from .initiate_transfer_request import InitiateTransferRequest
+    from .address import Address
+    from .validate_address_response import ValidateAddressResponse
     from .product_details import ProductDetails
     from .accept_transfer_request import AcceptTransferRequest
     from .error import Error
@@ -86,7 +89,6 @@ except (SyntaxError, ImportError):
     from .transfer_billing_subscription_request_properties import TransferBillingSubscriptionRequestProperties
     from .transfer_billing_subscription_request import TransferBillingSubscriptionRequest
     from .update_auto_renew_operation_summary import UpdateAutoRenewOperationSummary
-    from .address import Address
     from .enabled_azure_sk_us import EnabledAzureSKUs
     from .billing_profile import BillingProfile
     from .invoice_section_properties import InvoiceSectionProperties
@@ -145,6 +147,7 @@ from .transfer_details_paged import TransferDetailsPaged
 from .recipient_transfer_details_paged import RecipientTransferDetailsPaged
 from .operation_paged import OperationPaged
 from .billing_management_client_enums import (
+    AddressValidationStatus,
     ProductType,
     TransferStatus,
     ProductTransferStatus,
@@ -160,6 +163,8 @@ from .billing_management_client_enums import (
 
 __all__ = [
     'InitiateTransferRequest',
+    'Address',
+    'ValidateAddressResponse',
     'ProductDetails',
     'AcceptTransferRequest',
     'Error',
@@ -171,7 +176,6 @@ __all__ = [
     'TransferBillingSubscriptionRequestProperties',
     'TransferBillingSubscriptionRequest',
     'UpdateAutoRenewOperationSummary',
-    'Address',
     'EnabledAzureSKUs',
     'BillingProfile',
     'InvoiceSectionProperties',
@@ -229,6 +233,7 @@ __all__ = [
     'TransferDetailsPaged',
     'RecipientTransferDetailsPaged',
     'OperationPaged',
+    'AddressValidationStatus',
     'ProductType',
     'TransferStatus',
     'ProductTransferStatus',
