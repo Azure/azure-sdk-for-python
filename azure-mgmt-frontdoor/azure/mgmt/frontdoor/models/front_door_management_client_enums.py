@@ -226,13 +226,6 @@ class ManagedRuleEnabledState(str, Enum):
     enabled = "Enabled"
 
 
-class ProvisioningState(str, Enum):
-
-    succeeded = "Succeeded"
-    creating = "Creating"
-    failed = "Failed"
-
-
 class PolicyResourceState(str, Enum):
 
     creating = "Creating"
