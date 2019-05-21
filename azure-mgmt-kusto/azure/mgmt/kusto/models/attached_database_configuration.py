@@ -58,7 +58,7 @@ class AttachedDatabaseConfiguration(ProxyResource):
         'location': {'key': 'location', 'type': 'str'},
         'database_name': {'key': 'properties.databaseName', 'type': 'str'},
         'cluster_resource_id': {'key': 'properties.clusterResourceId', 'type': 'str'},
-        'attached_database_names': {'key': 'properties.AttachedDatabaseNames', 'type': '[str]'},
+        'attached_database_names': {'key': 'properties.attachedDatabaseNames', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
