@@ -25,7 +25,7 @@ import time
 
 import pytest
 import azure.cosmos.cosmos_client as cosmos_client
-import test.test_config as test_config
+import test_config
 
 @pytest.mark.usefixtures("teardown")
 class Test_session_container(unittest.TestCase):

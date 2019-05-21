@@ -33,7 +33,7 @@ import azure.cosmos.global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.endpoint_discovery_retry_policy as endpoint_discovery_retry_policy
 import azure.cosmos.retry_utility as retry_utility
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
-import test.test_config as test_config
+import test_config
 
 #IMPORTANT NOTES: 
   

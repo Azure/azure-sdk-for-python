@@ -25,7 +25,7 @@ import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos.routing.routing_map_provider import _PartitionKeyRangeCache
 from azure.cosmos.routing import routing_range as routing_range
-import test.test_config as test_config
+import test_config
 
 #IMPORTANT NOTES:
   

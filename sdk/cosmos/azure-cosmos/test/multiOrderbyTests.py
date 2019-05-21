@@ -25,7 +25,7 @@ import pytest
 import random
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos.partition_key import PartitionKey
-import test.test_config as test_config
+import test_config
 
 # IMPORTANT NOTES:
 

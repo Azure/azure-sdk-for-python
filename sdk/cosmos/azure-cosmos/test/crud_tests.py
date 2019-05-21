@@ -45,11 +45,11 @@ import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 import azure.cosmos.murmur_hash as murmur_hash
-import test.test_config as test_config
+import test_config
 import azure.cosmos.base as base
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos.partition_key import PartitionKey
-import test.conftest as conftest
+import conftest
 import azure.cosmos.retry_utility as retry_utility
 
 # IMPORTANT NOTES:

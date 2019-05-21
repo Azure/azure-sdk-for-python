@@ -1,7 +1,7 @@
 import unittest
 import azure.cosmos.cosmos_client as cosmos_client
 import pytest
-import test.test_config as test_config
+import test_config
 
 
 @pytest.mark.usefixtures("teardown")

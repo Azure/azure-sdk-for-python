@@ -23,7 +23,7 @@ import unittest
 import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client_connection as cosmos_client_connection
-import test.test_config as test_config
+import test_config
 import six
 if six.PY2:
     from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
