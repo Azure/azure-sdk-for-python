@@ -34,6 +34,7 @@ from .operations.billing_permissions_operations import BillingPermissionsOperati
 from .operations.billing_role_definitions_operations import BillingRoleDefinitionsOperations
 from .operations.billing_role_assignments_operations import BillingRoleAssignmentsOperations
 from .operations.agreements_operations import AgreementsOperations
+from .operations.line_of_credits_operations import LineOfCreditsOperations
 from . import models
 
 
@@ -117,6 +118,8 @@ class BillingManagementClient(SDKClient):
     :vartype billing_role_assignments: azure.mgmt.billing.operations.BillingRoleAssignmentsOperations
     :ivar agreements: Agreements operations
     :vartype agreements: azure.mgmt.billing.operations.AgreementsOperations
+    :ivar line_of_credits: LineOfCredits operations
+    :vartype line_of_credits: azure.mgmt.billing.operations.LineOfCreditsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -178,4 +181,6 @@ class BillingManagementClient(SDKClient):
         self.billing_role_assignments = BillingRoleAssignmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.agreements = AgreementsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.line_of_credits = LineOfCreditsOperations(
             self._client, self.config, self._serialize, self._deserialize)

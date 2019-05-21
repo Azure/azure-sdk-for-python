@@ -71,6 +71,8 @@ try:
     from .participants_py3 import Participants
     from .agreement_py3 import Agreement
     from .agreement_list_result_py3 import AgreementListResult
+    from .line_of_credit_py3 import LineOfCredit
+    from .increase_line_of_credit_request_properties_py3 import IncreaseLineOfCreditRequestProperties
 except (SyntaxError, ImportError):
     from .initiate_transfer_request import InitiateTransferRequest
     from .product_details import ProductDetails
@@ -133,6 +135,8 @@ except (SyntaxError, ImportError):
     from .participants import Participants
     from .agreement import Agreement
     from .agreement_list_result import AgreementListResult
+    from .line_of_credit import LineOfCredit
+    from .increase_line_of_credit_request_properties import IncreaseLineOfCreditRequestProperties
 from .payment_method_paged import PaymentMethodPaged
 from .billing_subscription_summary_paged import BillingSubscriptionSummaryPaged
 from .product_summary_paged import ProductSummaryPaged
@@ -216,6 +220,8 @@ __all__ = [
     'Participants',
     'Agreement',
     'AgreementListResult',
+    'LineOfCredit',
+    'IncreaseLineOfCreditRequestProperties',
     'PaymentMethodPaged',
     'BillingSubscriptionSummaryPaged',
     'ProductSummaryPaged',

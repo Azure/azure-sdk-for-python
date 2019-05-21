@@ -30,6 +30,7 @@ from .billing_permissions_operations import BillingPermissionsOperations
 from .billing_role_definitions_operations import BillingRoleDefinitionsOperations
 from .billing_role_assignments_operations import BillingRoleAssignmentsOperations
 from .agreements_operations import AgreementsOperations
+from .line_of_credits_operations import LineOfCreditsOperations
 
 __all__ = [
     'BillingAccountsOperations',
@@ -53,4 +54,5 @@ __all__ = [
     'BillingRoleDefinitionsOperations',
     'BillingRoleAssignmentsOperations',
     'AgreementsOperations',
+    'LineOfCreditsOperations',
 ]
