@@ -22,7 +22,7 @@ class BotsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-12-01. Constant value: "2018-07-12".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-07-12".
     """
 
     models = models
@@ -484,7 +484,7 @@ class BotsOperations(object):
         body_content = self._serialize.body(parameters, 'CheckNameAvailabilityRequestBody')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters, body_content)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
