@@ -3,6 +3,43 @@
 Release History
 ===============
 
+2.2.0 (2019-05-21)
+++++++++++++++++++
+
+**Features**
+
+- Model ValidateMigrationInputSqlServerSqlDbSyncTaskProperties has a new parameter client_data
+- Model ValidateMongoDbTaskProperties has a new parameter client_data
+- Model MigrateMySqlAzureDbForMySqlSyncTaskProperties has a new parameter client_data
+- Model MigrateSqlServerSqlDbTaskProperties has a new parameter client_data
+- Model ConnectToSourceMySqlTaskProperties has a new parameter client_data
+- Model MigrateMongoDbTaskProperties has a new parameter client_data
+- Model MigrateMySqlAzureDbForMySqlSyncDatabaseInput has a new parameter target_setting
+- Model MigrateMySqlAzureDbForMySqlSyncDatabaseInput has a new parameter source_setting
+- Model MigrateMySqlAzureDbForMySqlSyncDatabaseInput has a new parameter migration_setting
+- Model MigrateSqlServerSqlMITaskProperties has a new parameter client_data
+- Model MigrateSqlServerSqlDbSyncTaskProperties has a new parameter client_data
+- Model ValidateMigrationInputSqlServerSqlMITaskProperties has a new parameter client_data
+- Model ConnectToTargetSqlMITaskProperties has a new parameter client_data
+- Model MigrateSqlServerSqlMITaskOutputMigrationLevel has a new parameter orphaned_users_info
+- Model GetTdeCertificatesSqlTaskProperties has a new parameter client_data
+- Model ConnectToSourceSqlServerSyncTaskProperties has a new parameter client_data
+- Model MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties has a new parameter client_data
+- Model ConnectToSourceSqlServerTaskProperties has a new parameter client_data
+- Model ConnectToTargetAzureDbForMySqlTaskProperties has a new parameter client_data
+- Model GetUserTablesSqlTaskProperties has a new parameter client_data
+- Model ProjectTaskProperties has a new parameter client_data
+- Model MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput has a new parameter target_setting
+- Model MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput has a new parameter source_setting
+- Model MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput has a new parameter migration_setting
+- Model GetUserTablesSqlSyncTaskProperties has a new parameter client_data
+- Model MigrateSchemaSqlServerSqlDbTaskProperties has a new parameter client_data
+- Model ConnectToTargetSqlDbTaskProperties has a new parameter client_data
+- Model MigrateSyncCompleteCommandOutput has a new parameter id
+- Model ConnectToMongoDbTaskProperties has a new parameter client_data
+- Model ConnectToTargetSqlSqlDbSyncTaskProperties has a new parameter client_data
+- Model MigrateSqlServerSqlMITaskOutputMigrationLevel no longer has parameter orphaned_users
+
 2.1.0 (2018-11-05)
 ++++++++++++++++++
 
