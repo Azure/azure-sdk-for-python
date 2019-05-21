@@ -167,9 +167,10 @@ class HttpRequest(object):
         if data is None:
             self.data = None
         else:
-            bytes_data = ET.tostring(data, encoding="utf-8")
-            self.headers['Content-Length'] = str(len(bytes_data))
-            self.data = bytes_data
+            bytes_data = ET.tostring(data, encoding="utf8")
+            self.data = bytes_data.replace(b"encoding='utf8'", b"encoding='utf-8'")
+            self.headers['Content-Length'] = str(len(self.data))
+            
         self.files = None
 
     def set_json_body(self, data):
