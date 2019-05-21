@@ -18,16 +18,14 @@ class DatabaseAccount(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The unique resource identifier of the database account.
     :vartype id: str
     :ivar name: The name of the database account.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
-    :param location: Required. The location of the resource group to which the
-     resource belongs.
+    :param location: The location of the resource group to which the resource
+     belongs.
     :type location: str
     :param tags:
     :type tags: dict[str, str]
@@ -86,7 +84,6 @@ class DatabaseAccount(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
         'document_endpoint': {'readonly': True},
         'database_account_offer_type': {'readonly': True},
         'write_locations': {'readonly': True},

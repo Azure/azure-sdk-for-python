@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class LuisResult(Model):
     """Prediction, based on the input query, containing intent(s) and entities.
 
-    :param query: The input utterance that was analized.
+    :param query: The input utterance that was analyzed.
     :type query: str
     :param altered_query: The corrected utterance (when spell checking was
      enabled).
@@ -37,6 +37,9 @@ class LuisResult(Model):
     :param sentiment_analysis:
     :type sentiment_analysis:
      ~azure.cognitiveservices.language.luis.runtime.models.Sentiment
+    :param connected_service_result:
+    :type connected_service_result:
+     ~azure.cognitiveservices.language.luis.runtime.models.LuisResult
     """
 
     _attribute_map = {
@@ -47,6 +50,7 @@ class LuisResult(Model):
         'entities': {'key': 'entities', 'type': '[EntityModel]'},
         'composite_entities': {'key': 'compositeEntities', 'type': '[CompositeEntityModel]'},
         'sentiment_analysis': {'key': 'sentimentAnalysis', 'type': 'Sentiment'},
+        'connected_service_result': {'key': 'connectedServiceResult', 'type': 'LuisResult'},
     }
 
     def __init__(self, **kwargs):
@@ -58,3 +62,4 @@ class LuisResult(Model):
         self.entities = kwargs.get('entities', None)
         self.composite_entities = kwargs.get('composite_entities', None)
         self.sentiment_analysis = kwargs.get('sentiment_analysis', None)
+        self.connected_service_result = kwargs.get('connected_service_result', None)

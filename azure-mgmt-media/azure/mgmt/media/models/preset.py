@@ -17,8 +17,8 @@ class Preset(Model):
     the input media files should be processed.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AudioAnalyzerPreset, BuiltInStandardEncoderPreset,
-    StandardEncoderPreset
+    sub-classes are: FaceDetectorPreset, AudioAnalyzerPreset,
+    BuiltInStandardEncoderPreset, StandardEncoderPreset
 
     All required parameters must be populated in order to send to Azure.
 
@@ -35,7 +35,7 @@ class Preset(Model):
     }
 
     _subtype_map = {
-        'odatatype': {'#Microsoft.Media.AudioAnalyzerPreset': 'AudioAnalyzerPreset', '#Microsoft.Media.BuiltInStandardEncoderPreset': 'BuiltInStandardEncoderPreset', '#Microsoft.Media.StandardEncoderPreset': 'StandardEncoderPreset'}
+        'odatatype': {'#Microsoft.Media.FaceDetectorPreset': 'FaceDetectorPreset', '#Microsoft.Media.AudioAnalyzerPreset': 'AudioAnalyzerPreset', '#Microsoft.Media.BuiltInStandardEncoderPreset': 'BuiltInStandardEncoderPreset', '#Microsoft.Media.StandardEncoderPreset': 'StandardEncoderPreset'}
     }
 
     def __init__(self, **kwargs):

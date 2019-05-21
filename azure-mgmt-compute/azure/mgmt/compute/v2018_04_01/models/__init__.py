@@ -16,6 +16,8 @@ try:
     from .sku_py3 import Sku
     from .availability_set_py3 import AvailabilitySet
     from .availability_set_update_py3 import AvailabilitySetUpdate
+    from .proximity_placement_group_py3 import ProximityPlacementGroup
+    from .proximity_placement_group_update_py3 import ProximityPlacementGroupUpdate
     from .virtual_machine_size_py3 import VirtualMachineSize
     from .virtual_machine_extension_image_py3 import VirtualMachineExtensionImage
     from .virtual_machine_image_resource_py3 import VirtualMachineImageResource
@@ -157,6 +159,8 @@ except (SyntaxError, ImportError):
     from .sku import Sku
     from .availability_set import AvailabilitySet
     from .availability_set_update import AvailabilitySetUpdate
+    from .proximity_placement_group import ProximityPlacementGroup
+    from .proximity_placement_group_update import ProximityPlacementGroupUpdate
     from .virtual_machine_size import VirtualMachineSize
     from .virtual_machine_extension_image import VirtualMachineExtensionImage
     from .virtual_machine_image_resource import VirtualMachineImageResource
@@ -294,6 +298,7 @@ except (SyntaxError, ImportError):
 from .compute_operation_value_paged import ComputeOperationValuePaged
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
+from .proximity_placement_group_paged import ProximityPlacementGroupPaged
 from .usage_paged import UsagePaged
 from .virtual_machine_paged import VirtualMachinePaged
 from .image_paged import ImagePaged
@@ -307,6 +312,7 @@ from .disk_paged import DiskPaged
 from .snapshot_paged import SnapshotPaged
 from .compute_management_client_enums import (
     StatusLevelTypes,
+    ProximityPlacementGroupType,
     OperatingSystemTypes,
     VirtualMachineSizeTypes,
     CachingTypes,
@@ -342,6 +348,8 @@ __all__ = [
     'Sku',
     'AvailabilitySet',
     'AvailabilitySetUpdate',
+    'ProximityPlacementGroup',
+    'ProximityPlacementGroupUpdate',
     'VirtualMachineSize',
     'VirtualMachineExtensionImage',
     'VirtualMachineImageResource',
@@ -479,6 +487,7 @@ __all__ = [
     'ComputeOperationValuePaged',
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
+    'ProximityPlacementGroupPaged',
     'UsagePaged',
     'VirtualMachinePaged',
     'ImagePaged',
@@ -491,6 +500,7 @@ __all__ = [
     'DiskPaged',
     'SnapshotPaged',
     'StatusLevelTypes',
+    'ProximityPlacementGroupType',
     'OperatingSystemTypes',
     'VirtualMachineSizeTypes',
     'CachingTypes',

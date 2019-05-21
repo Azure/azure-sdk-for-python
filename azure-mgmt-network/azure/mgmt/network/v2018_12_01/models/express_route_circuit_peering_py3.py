@@ -70,6 +70,10 @@ class ExpressRouteCircuitPeering(SubResource):
      Private Peering for this circuit.
     :type connections:
      list[~azure.mgmt.network.v2018_12_01.models.ExpressRouteCircuitConnection]
+    :ivar peered_connections: The list of peered circuit connections
+     associated with Azure Private Peering for this circuit.
+    :vartype peered_connections:
+     list[~azure.mgmt.network.v2018_12_01.models.PeerExpressRouteCircuitConnection]
     :param name: Gets name of the resource that is unique within a resource
      group. This name can be used to access the resource.
     :type name: str
@@ -80,6 +84,7 @@ class ExpressRouteCircuitPeering(SubResource):
 
     _validation = {
         'peer_asn': {'maximum': 4294967295, 'minimum': 1},
+        'peered_connections': {'readonly': True},
         'etag': {'readonly': True},
     }
 
@@ -104,6 +109,7 @@ class ExpressRouteCircuitPeering(SubResource):
         'ipv6_peering_config': {'key': 'properties.ipv6PeeringConfig', 'type': 'Ipv6ExpressRouteCircuitPeeringConfig'},
         'express_route_connection': {'key': 'properties.expressRouteConnection', 'type': 'ExpressRouteConnectionId'},
         'connections': {'key': 'properties.connections', 'type': '[ExpressRouteCircuitConnection]'},
+        'peered_connections': {'key': 'properties.peeredConnections', 'type': '[PeerExpressRouteCircuitConnection]'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
@@ -129,5 +135,6 @@ class ExpressRouteCircuitPeering(SubResource):
         self.ipv6_peering_config = ipv6_peering_config
         self.express_route_connection = express_route_connection
         self.connections = connections
+        self.peered_connections = None
         self.name = name
         self.etag = None
