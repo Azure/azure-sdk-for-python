@@ -5,14 +5,20 @@ jobs:
   - job: 'Test'
 
     timeoutInMinutes: 120
-    # Will be adding more elements to the matrix, once this has couple of succesful runs
     strategy:
       matrix:
-        Linux_Python37:
+        Linux_Python35:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.5'
+        MacOs_Python37:
+          OSName: 'MacOS'
+          OSVmImage: 'macOS-10.14'
           PythonVersion: '3.7'
-      maxParallel: 1
+        Windows_Python27:
+          OSName: 'Windows'
+          OSVmImage: 'vs2017-win2016'
+          PythonVersion: '2.7'
     continueOnError: false
 
     pool:
