@@ -284,9 +284,13 @@ class KeyVaultSecretTest(KeyVaultTestCase):
         # validate the recovered secrets
         expected = {k: v for k, v in secrets.items() if k.startswith("secrec")}
         await self._poll_until_resource_found(client.get_secret, expected.keys())
-        actual = {k: await client.get_secret(k, "") for k in expected.keys()}
+
+        actual = {}
+        for k in expected.keys():
+            actual[k] = await client.get_secret(k, "")
+
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
         # validate none of our purged secrets are returned by list_deleted_secrets
-        deleted = [s.name async for s in client.list_deleted_secrets()]
-        self.assertTrue(not any(s in deleted for s in secrets.keys()))
+        async for deleted_secret in client.list_deleted_secrets():
+            self.assertTrue(not any(s in deleted_secret for s in secrets.keys()))

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Mapping, Optional, AsyncGenerator, Dict
+from typing import Any, AsyncIterable, Mapping, Optional, Dict
 
 from azure.core.configuration import Configuration
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
@@ -13,6 +13,7 @@ from azure.core.pipeline import AsyncPipeline
 
 from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
 from azure.security.keyvault._generated import KeyVaultClientAsync
+from azure.security.keyvault.aio._internal import AsyncPagingAdapter
 
 from ...secrets._models import Secret, DeletedSecret, SecretAttributes
 from datetime import datetime
@@ -200,7 +201,7 @@ class SecretClient:
         )
         return SecretAttributes._from_secret_bundle(bundle)  # pylint: disable=protected-access
 
-    async def list_secrets(self, **kwargs: Mapping[str, Any]) -> AsyncGenerator[SecretAttributes, None]:
+    def list_secrets(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[SecretAttributes]:
         """List secrets in the vault.
 
         The Get Secrets operation is applicable to the entire vault. However,
@@ -210,7 +211,7 @@ class SecretClient:
 
         :returns: An iterator like instance of Secrets
         :rtype:
-         typing.AsyncGenerator[~azure.keyvault.secrets._models.SecretAttributes]
+         typing.AsyncIterable[~azure.keyvault.secrets._models.SecretAttributes]
         :raises:
          :class:`HttpRequestError<azure.core.HttpRequestError>`
 
@@ -224,12 +225,12 @@ class SecretClient:
         """
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_secrets(self.vault_url, maxresults=max_results)
-        async for item in pages:
-            yield SecretAttributes._from_secret_item(item)
+        iterable = AsyncPagingAdapter(pages, SecretAttributes._from_secret_item)
+        return iterable
 
-    async def list_secret_versions(
+    def list_secret_versions(
         self, name: str, **kwargs: Mapping[str, Any]
-    ) -> AsyncGenerator[SecretAttributes, None]:
+    ) -> AsyncIterable[SecretAttributes]:
         """List all versions of the specified secret.
 
         The full secret identifier and attributes are provided in the response.
@@ -239,7 +240,7 @@ class SecretClient:
         :param str name: The name of the secret.
         :returns: An iterator like instance of Secret
         :rtype:
-         typing.AsyncGenerator[~azure.keyvault.secrets._models.SecretAttributes]
+         typing.AsyncIterable[~azure.keyvault.secrets._models.SecretAttributes]
         :raises:
          :class:`HttpRequestError<azure.core.HttpRequestError>`
 
@@ -253,8 +254,8 @@ class SecretClient:
         """
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_secret_versions(self.vault_url, name, maxresults=max_results)
-        async for item in pages:
-            yield SecretAttributes._from_secret_item(item)
+        iterable = AsyncPagingAdapter(pages, SecretAttributes._from_secret_item)
+        return iterable
 
     async def backup_secret(self, name: str, **kwargs: Mapping[str, Any]) -> bytes:
         """Backs up the specified secret.
@@ -348,7 +349,7 @@ class SecretClient:
         bundle = await self._client.get_deleted_secret(self.vault_url, name, error_map={404: ResourceNotFoundError})
         return DeletedSecret._from_deleted_secret_bundle(bundle)
 
-    async def list_deleted_secrets(self, **kwargs: Mapping[str, Any]) -> AsyncGenerator[DeletedSecret, None]:
+    def list_deleted_secrets(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[DeletedSecret]:
         """Lists deleted secrets of the vault.
 
         The Get Deleted Secrets operation returns the secrets that have
@@ -357,7 +358,7 @@ class SecretClient:
 
         :returns: An iterator like instance of DeletedSecrets
         :rtype:
-         typing.AsyncGenerator[~azure.keyvault.secrets._models.DeletedSecret]
+         typing.AsyncIterable[~azure.keyvault.secrets._models.DeletedSecret]
 
         Example:
             .. literalinclude:: ../tests/test_examples_keyvault_async.py
@@ -369,8 +370,8 @@ class SecretClient:
         """
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_deleted_secrets(self.vault_url, maxresults=max_results)
-        async for item in pages:
-            yield DeletedSecret._from_deleted_secret_item(item)
+        iterable = AsyncPagingAdapter(pages, DeletedSecret._from_deleted_secret_item)
+        return iterable
 
     async def purge_deleted_secret(self, name: str, **kwargs: Mapping[str, Any]) -> None:
         """Permanently deletes the specified secret.
