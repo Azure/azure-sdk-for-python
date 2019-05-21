@@ -13,10 +13,6 @@ import copy
 import sys
 import runpy
 
-if "travis_deploy" in sys.argv:
-    from build_package import travis_build_package
-    sys.exit(travis_build_package())
-
 root_folder = os.path.abspath(os.path.dirname(__file__))
 
 packages = [os.path.dirname(p) for p in (glob.glob('azure*/setup.py') + glob.glob('sdk/*/azure*/setup.py'))]
