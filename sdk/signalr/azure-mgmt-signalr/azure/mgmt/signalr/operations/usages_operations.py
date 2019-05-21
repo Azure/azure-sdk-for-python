@@ -16,14 +16,14 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class UsagesOperations(object):
+    """UsagesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client Api Version. Constant value: "2018-03-01-preview".
+    :ivar api_version: Client Api Version. Possible values include: '2018-03-01-preview', '2018-10-01'. Constant value: "2018-10-01".
     """
 
     models = models
@@ -33,23 +33,24 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01-preview"
+        self.api_version = "2018-10-01"
 
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available REST API operations of the
-        Microsoft.SignalRService provider.
+            self, location, custom_headers=None, raw=False, **operation_config):
+        """List usage quotas for Azure SignalR service by location.
 
+        :param location: the location like "eastus"
+        :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of SignalRUsage
         :rtype:
-         ~azure.mgmt.signalr.models.OperationPaged[~azure.mgmt.signalr.models.Operation]
+         ~azure.mgmt.signalr.models.SignalRUsagePaged[~azure.mgmt.signalr.models.SignalRUsage]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -57,6 +58,11 @@ class Operations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'location': self._serialize.url("location", location, 'str'),
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -88,12 +94,12 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.SignalRUsagePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.SignalRUsagePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.SignalRService/operations'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.SignalRService/locations/{location}/usages'}
