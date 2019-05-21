@@ -33,7 +33,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
     def test_activity_log(self, resource_group):
 
         # RBAC for this test (CLI command)
-        # > azure role assignment create 
+        # > azure role assignment create
         #     --objectId 00000000-0000-0000-0000-000000000
         #     --roleName "Monitoring Contributor Service Role"
         #     --scope /subscriptions/00000000-0000-0000-0000-000000000
@@ -65,8 +65,8 @@ class MgmtMonitorTest(AzureMgmtTestCase):
         # Get the VM or your resource and use "id" attribute, or build the id yourself from RG and name
         resource_id = (
             "subscriptions/{}/"
-            "resourceGroups/azvmc632/"
-            "providers/Microsoft.Compute/virtualMachines/azvmc632"
+            "resourceGroups/amar/"
+            "providers/Microsoft.Compute/virtualMachines/abuntu2"
         ).format(self.settings.SUBSCRIPTION_ID)
 
         metrics = list(self.client.metric_definitions.list(
@@ -82,14 +82,14 @@ class MgmtMonitorTest(AzureMgmtTestCase):
             )
 
         # Need to freeze the date for the recorded tests
-        today = datetime.date(2018, 3, 18)
+        today = datetime.date(2019, 3, 4)
         yesterday = today - datetime.timedelta(days=1)
 
         metrics = self.client.metrics.list(
             resource_id,
             timespan="{}/{}".format(yesterday, today),
             interval='PT1H',
-            metric='Percentage CPU',
+            metricnames='Percentage CPU',
             aggregation='Total'
         )
         self.assertGreaterEqual(len(metrics.value), 1)
@@ -202,7 +202,7 @@ class MgmtMonitorTest(AzureMgmtTestCase):
                 item.name.localized_value,
                 item.unit,
                 item.current_value,
-                item.limit 
+                item.limit
             ))
             self.assertIsNotNone(item.name)
 

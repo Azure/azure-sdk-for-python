@@ -22,6 +22,9 @@ try:
     from .sku_py3 import Sku
     from .status_py3 import Status
     from .storage_account_properties_py3 import StorageAccountProperties
+    from .virtual_network_rule_py3 import VirtualNetworkRule
+    from .ip_rule_py3 import IPRule
+    from .network_rule_set_py3 import NetworkRuleSet
     from .registry_py3 import Registry
     from .registry_update_parameters_py3 import RegistryUpdateParameters
     from .registry_password_py3 import RegistryPassword
@@ -66,6 +69,10 @@ try:
     from .source_trigger_py3 import SourceTrigger
     from .base_image_trigger_py3 import BaseImageTrigger
     from .trigger_properties_py3 import TriggerProperties
+    from .source_registry_credentials_py3 import SourceRegistryCredentials
+    from .secret_object_py3 import SecretObject
+    from .custom_registry_credentials_py3 import CustomRegistryCredentials
+    from .credentials_py3 import Credentials
     from .task_py3 import Task
     from .platform_update_parameters_py3 import PlatformUpdateParameters
     from .task_step_update_parameters_py3 import TaskStepUpdateParameters
@@ -101,6 +108,9 @@ except (SyntaxError, ImportError):
     from .sku import Sku
     from .status import Status
     from .storage_account_properties import StorageAccountProperties
+    from .virtual_network_rule import VirtualNetworkRule
+    from .ip_rule import IPRule
+    from .network_rule_set import NetworkRuleSet
     from .registry import Registry
     from .registry_update_parameters import RegistryUpdateParameters
     from .registry_password import RegistryPassword
@@ -145,6 +155,10 @@ except (SyntaxError, ImportError):
     from .source_trigger import SourceTrigger
     from .base_image_trigger import BaseImageTrigger
     from .trigger_properties import TriggerProperties
+    from .source_registry_credentials import SourceRegistryCredentials
+    from .secret_object import SecretObject
+    from .custom_registry_credentials import CustomRegistryCredentials
+    from .credentials import Credentials
     from .task import Task
     from .platform_update_parameters import PlatformUpdateParameters
     from .task_step_update_parameters import TaskStepUpdateParameters
@@ -179,6 +193,8 @@ from .container_registry_management_client_enums import (
     SkuName,
     SkuTier,
     ProvisioningState,
+    DefaultAction,
+    Action,
     PasswordName,
     RegistryUsageUnit,
     PolicyStatus,
@@ -197,6 +213,8 @@ from .container_registry_management_client_enums import (
     SourceTriggerEvent,
     TriggerStatus,
     BaseImageTriggerType,
+    SourceRegistryLoginMode,
+    SecretObjectType,
 )
 
 __all__ = [
@@ -212,6 +230,9 @@ __all__ = [
     'Sku',
     'Status',
     'StorageAccountProperties',
+    'VirtualNetworkRule',
+    'IPRule',
+    'NetworkRuleSet',
     'Registry',
     'RegistryUpdateParameters',
     'RegistryPassword',
@@ -256,6 +277,10 @@ __all__ = [
     'SourceTrigger',
     'BaseImageTrigger',
     'TriggerProperties',
+    'SourceRegistryCredentials',
+    'SecretObject',
+    'CustomRegistryCredentials',
+    'Credentials',
     'Task',
     'PlatformUpdateParameters',
     'TaskStepUpdateParameters',
@@ -289,6 +314,8 @@ __all__ = [
     'SkuName',
     'SkuTier',
     'ProvisioningState',
+    'DefaultAction',
+    'Action',
     'PasswordName',
     'RegistryUsageUnit',
     'PolicyStatus',
@@ -307,4 +334,6 @@ __all__ = [
     'SourceTriggerEvent',
     'TriggerStatus',
     'BaseImageTriggerType',
+    'SourceRegistryLoginMode',
+    'SecretObjectType',
 ]

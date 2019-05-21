@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -33,6 +33,8 @@ from .operations.users_operations import UsersOperations
 from .operations.disks_operations import DisksOperations
 from .operations.environments_operations import EnvironmentsOperations
 from .operations.secrets_operations import SecretsOperations
+from .operations.service_fabrics_operations import ServiceFabricsOperations
+from .operations.service_fabric_schedules_operations import ServiceFabricSchedulesOperations
 from .operations.virtual_machines_operations import VirtualMachinesOperations
 from .operations.virtual_machine_schedules_operations import VirtualMachineSchedulesOperations
 from .operations.virtual_networks_operations import VirtualNetworksOperations
@@ -71,7 +73,7 @@ class DevTestLabsClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class DevTestLabsClient(object):
+class DevTestLabsClient(SDKClient):
     """The DevTest Labs Client.
 
     :ivar config: Configuration for client.
@@ -117,6 +119,10 @@ class DevTestLabsClient(object):
     :vartype environments: azure.mgmt.devtestlabs.operations.EnvironmentsOperations
     :ivar secrets: Secrets operations
     :vartype secrets: azure.mgmt.devtestlabs.operations.SecretsOperations
+    :ivar service_fabrics: ServiceFabrics operations
+    :vartype service_fabrics: azure.mgmt.devtestlabs.operations.ServiceFabricsOperations
+    :ivar service_fabric_schedules: ServiceFabricSchedules operations
+    :vartype service_fabric_schedules: azure.mgmt.devtestlabs.operations.ServiceFabricSchedulesOperations
     :ivar virtual_machines: VirtualMachines operations
     :vartype virtual_machines: azure.mgmt.devtestlabs.operations.VirtualMachinesOperations
     :ivar virtual_machine_schedules: VirtualMachineSchedules operations
@@ -136,10 +142,10 @@ class DevTestLabsClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = DevTestLabsClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(DevTestLabsClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-05-15'
+        self.api_version = '2018-09-15'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -182,6 +188,10 @@ class DevTestLabsClient(object):
         self.environments = EnvironmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.secrets = SecretsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.service_fabrics = ServiceFabricsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.service_fabric_schedules = ServiceFabricSchedulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machines = VirtualMachinesOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -41,11 +41,11 @@ class Formula(Resource):
      ~azure.mgmt.devtestlabs.models.LabVirtualMachineCreationParameter
     :param vm: Information about a VM from which a formula is to be created.
     :type vm: ~azure.mgmt.devtestlabs.models.FormulaPropertiesFromVm
-    :param provisioning_state: The provisioning status of the resource.
-    :type provisioning_state: str
-    :param unique_identifier: The unique immutable identifier of a resource
+    :ivar provisioning_state: The provisioning status of the resource.
+    :vartype provisioning_state: str
+    :ivar unique_identifier: The unique immutable identifier of a resource
      (Guid).
-    :type unique_identifier: str
+    :vartype unique_identifier: str
     """
 
     _validation = {
@@ -53,6 +53,8 @@ class Formula(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'creation_date': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'unique_identifier': {'readonly': True},
     }
 
     _attribute_map = {
@@ -71,13 +73,13 @@ class Formula(Resource):
         'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, description=None, author=None, os_type=None, formula_content=None, vm=None, provisioning_state=None, unique_identifier=None):
-        super(Formula, self).__init__(location=location, tags=tags)
-        self.description = description
-        self.author = author
-        self.os_type = os_type
+    def __init__(self, **kwargs):
+        super(Formula, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.author = kwargs.get('author', None)
+        self.os_type = kwargs.get('os_type', None)
         self.creation_date = None
-        self.formula_content = formula_content
-        self.vm = vm
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+        self.formula_content = kwargs.get('formula_content', None)
+        self.vm = kwargs.get('vm', None)
+        self.provisioning_state = None
+        self.unique_identifier = None

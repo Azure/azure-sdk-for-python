@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class ClosedListModelUpdateObject(Model):
-    """Object model for updating a closed list.
+    """Object model for updating a list entity.
 
     :param sub_lists: The new sublists for the feature.
     :type sub_lists:
      list[~azure.cognitiveservices.language.luis.authoring.models.WordListObject]
-    :param name: The new name of the closed list feature.
+    :param name: The new name of the list entity.
     :type name: str
     """
 

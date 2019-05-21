@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .name_and_user_data_contract import NameAndUserDataContract
+from .meta_data_contract import MetaDataContract
 
 
-class LargeFaceList(NameAndUserDataContract):
+class LargeFaceList(MetaDataContract):
     """Large face list object.
 
     All required parameters must be populated in order to send to Azure.
@@ -21,6 +21,10 @@ class LargeFaceList(NameAndUserDataContract):
     :type name: str
     :param user_data: User specified data. Length should not exceed 16KB.
     :type user_data: str
+    :param recognition_model: Possible values include: 'recognition_01',
+     'recognition_02'. Default value: "recognition_01" .
+    :type recognition_model: str or
+     ~azure.cognitiveservices.vision.face.models.RecognitionModel
     :param large_face_list_id: Required. LargeFaceListId of the target large
      face list.
     :type large_face_list_id: str
@@ -35,6 +39,7 @@ class LargeFaceList(NameAndUserDataContract):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'user_data': {'key': 'userData', 'type': 'str'},
+        'recognition_model': {'key': 'recognitionModel', 'type': 'str'},
         'large_face_list_id': {'key': 'largeFaceListId', 'type': 'str'},
     }
 

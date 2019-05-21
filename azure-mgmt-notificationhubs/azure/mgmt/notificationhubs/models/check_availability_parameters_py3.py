@@ -27,7 +27,7 @@ class CheckAvailabilityParameters(Model):
     :type name: str
     :ivar type: Resource type
     :vartype type: str
-    :param location: Required. Resource location
+    :param location: Resource location
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
@@ -42,7 +42,6 @@ class CheckAvailabilityParameters(Model):
         'id': {'readonly': True},
         'name': {'required': True},
         'type': {'readonly': True},
-        'location': {'required': True},
     }
 
     _attribute_map = {
@@ -55,7 +54,7 @@ class CheckAvailabilityParameters(Model):
         'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
     }
 
-    def __init__(self, *, name: str, location: str, tags=None, sku=None, is_availiable: bool=None, **kwargs) -> None:
+    def __init__(self, *, name: str, location: str=None, tags=None, sku=None, is_availiable: bool=None, **kwargs) -> None:
         super(CheckAvailabilityParameters, self).__init__(**kwargs)
         self.id = None
         self.name = name

@@ -39,6 +39,14 @@ class MetricAlertResourcePatch(Model):
     :param window_size: Required. the period of time (in ISO 8601 duration
      format) that is used to monitor alert activity based on the threshold.
     :type window_size: timedelta
+    :param target_resource_type: the resource type of the target resource(s)
+     on which the alert is created/updated. Mandatory for
+     MultipleResourceMultipleMetricCriteria.
+    :type target_resource_type: str
+    :param target_resource_region: the region of the target resource(s) on
+     which the alert is created/updated. Mandatory for
+     MultipleResourceMultipleMetricCriteria.
+    :type target_resource_region: str
     :param criteria: Required. defines the specific alert criteria
      information.
     :type criteria: ~azure.mgmt.monitor.models.MetricAlertCriteria
@@ -70,13 +78,15 @@ class MetricAlertResourcePatch(Model):
         'scopes': {'key': 'properties.scopes', 'type': '[str]'},
         'evaluation_frequency': {'key': 'properties.evaluationFrequency', 'type': 'duration'},
         'window_size': {'key': 'properties.windowSize', 'type': 'duration'},
+        'target_resource_type': {'key': 'properties.targetResourceType', 'type': 'str'},
+        'target_resource_region': {'key': 'properties.targetResourceRegion', 'type': 'str'},
         'criteria': {'key': 'properties.criteria', 'type': 'MetricAlertCriteria'},
         'auto_mitigate': {'key': 'properties.autoMitigate', 'type': 'bool'},
         'actions': {'key': 'properties.actions', 'type': '[MetricAlertAction]'},
         'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, description: str, severity: int, enabled: bool, evaluation_frequency, window_size, criteria, tags=None, scopes=None, auto_mitigate: bool=None, actions=None, **kwargs) -> None:
+    def __init__(self, *, description: str, severity: int, enabled: bool, evaluation_frequency, window_size, criteria, tags=None, scopes=None, target_resource_type: str=None, target_resource_region: str=None, auto_mitigate: bool=None, actions=None, **kwargs) -> None:
         super(MetricAlertResourcePatch, self).__init__(**kwargs)
         self.tags = tags
         self.description = description
@@ -85,6 +95,8 @@ class MetricAlertResourcePatch(Model):
         self.scopes = scopes
         self.evaluation_frequency = evaluation_frequency
         self.window_size = window_size
+        self.target_resource_type = target_resource_type
+        self.target_resource_region = target_resource_region
         self.criteria = criteria
         self.auto_mitigate = auto_mitigate
         self.actions = actions

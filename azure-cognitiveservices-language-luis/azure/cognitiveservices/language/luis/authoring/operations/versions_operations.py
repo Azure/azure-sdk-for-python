@@ -35,8 +35,7 @@ class VersionsOperations(object):
 
     def clone(
             self, app_id, version_id, version=None, custom_headers=None, raw=False, **operation_config):
-        """Creates a new version using the current snapshot of the selected
-        application version.
+        """Creates a new version from the selected version.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -54,9 +53,7 @@ class VersionsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
         """
-        version_clone_object = None
-        if version is not None:
-            version_clone_object = models.TaskUpdateObject(version=version)
+        version_clone_object = models.TaskUpdateObject(version=version)
 
         # Construct URL
         url = self.clone.metadata['url']
@@ -78,10 +75,7 @@ class VersionsOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        if version_clone_object is not None:
-            body_content = self._serialize.body(version_clone_object, 'TaskUpdateObject')
-        else:
-            body_content = None
+        body_content = self._serialize.body(version_clone_object, 'TaskUpdateObject')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -104,7 +98,7 @@ class VersionsOperations(object):
 
     def list(
             self, app_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
-        """Gets the application versions info.
+        """Gets a list of versions for this application ID.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -167,7 +161,9 @@ class VersionsOperations(object):
 
     def get(
             self, app_id, version_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the version info.
+        """Gets the version information such as date created, last modified date,
+        endpoint URL, count of intents and entities, training and publishing
+        status.
 
         :param app_id: The application ID.
         :type app_id: str
@@ -467,7 +463,7 @@ class VersionsOperations(object):
 
     def delete_unlabelled_utterance(
             self, app_id, version_id, utterance, custom_headers=None, raw=False, **operation_config):
-        """Deleted an unlabelled utterance.
+        """Deleted an unlabelled utterance in a version of the application.
 
         :param app_id: The application ID.
         :type app_id: str

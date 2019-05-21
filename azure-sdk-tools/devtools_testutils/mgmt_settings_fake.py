@@ -22,6 +22,12 @@ CLIENT_OID = '00000000-0000-0000-0000-000000000000'
 CS_SUBSCRIPTION_KEY = '0000000000000000000000000000'
 # Event Grid key
 EVENT_GRID_KEY = '0000000000000000000000000000'
+# HDInsight tests
+HDI_ADLS_ACCOUNT_NAME = 'fakehdiadlsaccount'
+HDI_ADLS_CLIENT_ID = '00000000-0000-0000-0000-000000000000'
+
+# Ubuntu image
+LINUX_OS_VHD = "https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd"
 
 # Read for details of this file:
 # https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests

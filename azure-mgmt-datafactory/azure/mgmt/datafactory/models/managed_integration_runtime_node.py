@@ -44,9 +44,9 @@ class ManagedIntegrationRuntimeNode(Model):
         'errors': {'key': 'errors', 'type': '[ManagedIntegrationRuntimeError]'},
     }
 
-    def __init__(self, additional_properties=None, errors=None):
-        super(ManagedIntegrationRuntimeNode, self).__init__()
-        self.additional_properties = additional_properties
+    def __init__(self, **kwargs):
+        super(ManagedIntegrationRuntimeNode, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.node_id = None
         self.status = None
-        self.errors = errors
+        self.errors = kwargs.get('errors', None)

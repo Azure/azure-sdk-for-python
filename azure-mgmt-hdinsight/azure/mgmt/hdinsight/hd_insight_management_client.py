@@ -17,7 +17,7 @@ from .operations.clusters_operations import ClustersOperations
 from .operations.applications_operations import ApplicationsOperations
 from .operations.locations_operations import LocationsOperations
 from .operations.configurations_operations import ConfigurationsOperations
-from .operations.extension_operations import ExtensionOperations
+from .operations.extensions_operations import ExtensionsOperations
 from .operations.script_actions_operations import ScriptActionsOperations
 from .operations.script_execution_history_operations import ScriptExecutionHistoryOperations
 from .operations.operations import Operations
@@ -72,8 +72,8 @@ class HDInsightManagementClient(SDKClient):
     :vartype locations: azure.mgmt.hdinsight.operations.LocationsOperations
     :ivar configurations: Configurations operations
     :vartype configurations: azure.mgmt.hdinsight.operations.ConfigurationsOperations
-    :ivar extension: Extension operations
-    :vartype extension: azure.mgmt.hdinsight.operations.ExtensionOperations
+    :ivar extensions: Extensions operations
+    :vartype extensions: azure.mgmt.hdinsight.operations.ExtensionsOperations
     :ivar script_actions: ScriptActions operations
     :vartype script_actions: azure.mgmt.hdinsight.operations.ScriptActionsOperations
     :ivar script_execution_history: ScriptExecutionHistory operations
@@ -98,7 +98,7 @@ class HDInsightManagementClient(SDKClient):
         super(HDInsightManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2015-03-01-preview'
+        self.api_version = '2018-06-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -110,7 +110,7 @@ class HDInsightManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.configurations = ConfigurationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.extension = ExtensionOperations(
+        self.extensions = ExtensionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.script_actions = ScriptActionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
