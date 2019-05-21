@@ -1,7 +1,7 @@
 Microsoft Azure SDK for Python
 ==============================
 
-This is the Microsoft Azure Batch Management Client Library.
+This is the Microsoft Azure Key Vault Management Client Library.
 
 Azure Resource Manager (ARM) is the next generation of management APIs that
 replace the old Azure Service Management (ASM).
@@ -17,8 +17,8 @@ For a more complete set of Azure libraries, see the `azure <https://pypi.python.
 Usage
 =====
 
-For code examples, see `Batch Management
-<https://docs.microsoft.com/python/api/overview/azure/batch>`__
+For code examples, see `Key Vault Management
+<https://docs.microsoft.com/python/api/overview/azure/key-vault>`__
 on docs.microsoft.com.
 
 
@@ -30,4 +30,4 @@ If you encounter any bugs or have suggestions, please file an issue in the
 section of the project.
 
 
-.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-batch%2FREADME.png
+.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-keyvault%2FREADME.png
