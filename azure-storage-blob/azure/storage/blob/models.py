@@ -118,8 +118,13 @@ class StaticWebsite(GeneratedStaticWebsite):
 
     def __init__(self, **kwargs):
         self.enabled = kwargs.get('enabled', False)
-        self.index_document = kwargs.get('index_document')
-        self.error_document404_path = kwargs.get('error_document404_path')
+        if self.enabled:
+            self.index_document = kwargs.get('index_document')
+            self.error_document404_path = kwargs.get('error_document404_path')
+        else:
+            self.index_document = None
+            self.error_document404_path = None
+
 
 
 class CorsRule(GeneratedCorsRule):

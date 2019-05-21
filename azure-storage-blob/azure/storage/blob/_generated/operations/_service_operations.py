@@ -86,9 +86,10 @@ class ServiceOperations(object):
 
         # Construct body
         body_content = self._serialize.body(storage_service_properties, 'StorageServiceProperties')
-
+        
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
+        #raise Exception("Body {}".format(request.data))
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 

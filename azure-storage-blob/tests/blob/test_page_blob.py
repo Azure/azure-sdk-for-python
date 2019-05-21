@@ -7,7 +7,8 @@
 # --------------------------------------------------------------------------
 import pytest
 
-#pytestmark = pytest.mark.xfail
+pytestmark = pytest.mark.xfail
+
 import pytest
 import os
 import unittest

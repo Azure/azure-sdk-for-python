@@ -9,6 +9,10 @@ import hashlib
 import sys
 from time import time
 from wsgiref.handlers import format_date_time
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 from azure.core.pipeline.policies import HeadersPolicy, SansIOHTTPPolicy
 from azure.core.exceptions import AzureError
@@ -26,6 +30,18 @@ class StorageHeadersPolicy(HeadersPolicy):
         super(StorageHeadersPolicy, self).on_request(request)
         current_time = format_date_time(time())
         request.http_request.headers['x-ms-date'] = current_time
+
+
+class StorageSecondaryAccount(SansIOHTTPPolicy):
+
+    def on_request(self, request):
+        # type: (PipelineRequest, Any) -> None
+        use_secondary = request.context.options.pop('secondary_storage', False)
+        if use_secondary:
+            parsed_url = urlparse(request.http_request.url)
+            account = parsed_url.hostname.split(".blob.core.")[0]
+            secondary_account = account if account.endswith('-secondary') else account + '-secondary'
+            request.http_request.url = request.http_request.url.replace(account, secondary_account, 1)
 
 
 class StorageContentValidation(SansIOHTTPPolicy):

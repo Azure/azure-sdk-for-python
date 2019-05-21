@@ -34,7 +34,10 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.exceptions import ResourceNotFoundError
 
-from ._policies import StorageHeadersPolicy, StorageContentValidation
+from ._policies import (
+    StorageHeadersPolicy,
+    StorageContentValidation,
+    StorageSecondaryAccount)
 from ._generated import AzureBlobStorage
 from ._generated.models import (
     LeaseAccessConditions,
@@ -157,6 +160,7 @@ def create_pipeline(configuration, credentials, **kwargs):
     if not transport:
         transport = RequestsTransport(config)
     policies = [
+        StorageSecondaryAccount(),
         config.user_agent_policy,
         config.headers_policy,
         StorageContentValidation(),
@@ -178,10 +182,9 @@ def basic_error_map():
 
 
 def process_storage_error(error):
-    error_code = error.response.headers.get('x-ms-error-code')
-    if error_code:
-        error.error_code = error_code
-        error.message += "\nErrorCode: {}".format(error_code)
+    error.error_code = error.response.headers.get('x-ms-error-code')
+    if error.error_code:
+        error.message += "\nErrorCode: {}".format(error.error_code)
     raise error
 
 
