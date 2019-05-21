@@ -19,7 +19,7 @@ if sys.version_info < (3, 5):
     collect_ignore.append("examples/async_examples")
 else:
     sys.path.append(os.path.join(os.path.dirname(__file__), "tests"))
-    from asynctests import MockEventProcessor
+    from tests.asynctests import MockEventProcessor
     from azure.eventprocessorhost import EventProcessorHost
     from azure.eventprocessorhost import EventHubPartitionPump
     from azure.eventprocessorhost import AzureStorageCheckpointLeaseManager
@@ -29,8 +29,7 @@ else:
     from azure.eventprocessorhost.partition_pump import PartitionPump
     from azure.eventprocessorhost.partition_manager import PartitionManager
 
-from azure import eventhub
-from azure.eventhub import EventHubClient, Receiver, Offset
+from azure.eventhub import EventHubClient, Receiver, EventPosition
 
 
 def get_logger(filename, level=logging.INFO):
@@ -71,7 +70,7 @@ def create_eventhub(eventhub_config, client=None):
     raise ValueError("EventHub creation failed.")
 
 
-def cleanup_eventhub(servicebus_config, hub_name, client=None):
+def cleanup_eventhub(eventhub_config, hub_name, client=None):
     from azure.servicebus.control_client import ServiceBusService
     client = client or ServiceBusService(
         service_namespace=eventhub_config['namespace'],
@@ -166,36 +165,34 @@ def device_id():
 @pytest.fixture()
 def connstr_receivers(connection_str):
     client = EventHubClient.from_connection_string(connection_str, debug=False)
-    eh_hub_info = client.get_eventhub_info()
+    eh_hub_info = client.get_eventhub_information()
     partitions = eh_hub_info["partition_ids"]
 
-    recv_offset = Offset("@latest")
+    recv_offset = EventPosition("@latest")
     receivers = []
     for p in partitions:
-        receivers.append(client.add_receiver("$default", p, prefetch=500, offset=Offset("@latest")))
-
-    client.run()
-
-    for r in receivers:
-        r.receive(timeout=1)
+        receiver = client.create_receiver("$default", p, prefetch=500, offset=EventPosition("@latest"))
+        receivers.append(receiver)
+        receiver.receive(timeout=1)
     yield connection_str, receivers
 
-    client.stop()
+    for r in receivers:
+        r.close()
 
 
 @pytest.fixture()
 def connstr_senders(connection_str):
     client = EventHubClient.from_connection_string(connection_str, debug=True)
-    eh_hub_info = client.get_eventhub_info()
+    eh_hub_info = client.get_eventhub_information()
     partitions = eh_hub_info["partition_ids"]
 
     senders = []
     for p in partitions:
-        senders.append(client.add_sender(partition=p))
-
-    client.run()
+        sender = client.create_sender(partition=p)
+        senders.append(sender)
     yield connection_str, senders
-    client.stop()
+    for s in senders:
+        s.close()
 
 
 @pytest.fixture()

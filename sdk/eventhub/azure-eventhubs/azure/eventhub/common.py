@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals
 
+from enum import Enum
 import datetime
 import calendar
 import json
@@ -83,7 +84,7 @@ class EventData(object):
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
     PROP_DEVICE_ID = b"iothub-connection-device-id"
 
-    def __init__(self, body=None, batch=None, to_device=None, message=None):
+    def __init__(self, body=None, to_device=None, message=None):
         """
         Initialize EventData.
 
@@ -102,9 +103,7 @@ class EventData(object):
         self.msg_properties = MessageProperties()
         if to_device:
             self.msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
-        if batch:
-            self.message = BatchMessage(data=batch, multi_messages=True, properties=self.msg_properties)
-        elif message:
+        if message:
             self.message = message
             self.msg_properties = message.properties
             self._annotations = message.annotations
@@ -136,7 +135,7 @@ class EventData(object):
         :rtype: ~azure.eventhub.common.Offset
         """
         try:
-            return Offset(self._annotations[EventData.PROP_OFFSET].decode('UTF-8'))
+            return EventPosition(self._annotations[EventData.PROP_OFFSET].decode('UTF-8'))
         except (KeyError, AttributeError):
             return None
 
@@ -208,7 +207,7 @@ class EventData(object):
         :type value: dict
         """
         self._app_properties = value
-        properties = dict(self._app_properties)
+        properties = None if value is None else dict(self._app_properties)
         self.message.application_properties = properties
 
     @property
@@ -258,23 +257,32 @@ class EventData(object):
         except Exception as e:
             raise TypeError("Event data is not compatible with JSON type: {}".format(e))
 
+    def encode_message(self):
+        return self.message.encode_message()
 
-class Offset(object):
+
+class _BatchSendEventData(EventData):
+    def __init__(self, batch_event_data):
+        # TODO: rethink if to_device should be included in
+        self.message = BatchMessage(data=batch_event_data, multi_messages=True, properties=None)
+
+
+class EventPosition(object):
     """
-    The offset (position or timestamp) where a receiver starts. Examples:
+    The position(offset, sequence or timestamp) where a receiver starts. Examples:
 
     Beginning of the event stream:
-      >>> offset = Offset("-1")
+      >>> event_pos = EventPosition("-1")
     End of the event stream:
-      >>> offset = Offset("@latest")
+      >>> event_pos = EventPosition("@latest")
     Events after the specified offset:
-      >>> offset = Offset("12345")
+      >>> event_pos = EventPosition("12345")
     Events from the specified offset:
-      >>> offset = Offset("12345", True)
+      >>> event_pos = EventPosition("12345", True)
     Events after a datetime:
-      >>> offset = Offset(datetime.datetime.utcnow())
+      >>> event_pos = EventPosition(datetime.datetime.utcnow())
     Events after a specific sequence number:
-      >>> offset = Offset(1506968696002)
+      >>> event_pos = EventPosition(1506968696002)
     """
 
     def __init__(self, value, inclusive=False):
@@ -299,9 +307,29 @@ class Offset(object):
         if isinstance(self.value, datetime.datetime):
             timestamp = (calendar.timegm(self.value.utctimetuple()) * 1000) + (self.value.microsecond/1000)
             return ("amqp.annotation.x-opt-enqueued-time {} '{}'".format(operator, int(timestamp))).encode('utf-8')
-        if isinstance(self.value, six.integer_types):
+        elif isinstance(self.value, six.integer_types):
             return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')
         return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
+
+    @staticmethod
+    def from_start_of_stream():
+        return EventPosition("-1")
+
+    @staticmethod
+    def from_end_of_stream():
+        return EventPosition("@latest")
+
+    @staticmethod
+    def from_offset(offset, inclusive=False):
+        return EventPosition(offset, inclusive)
+
+    @staticmethod
+    def from_sequence(sequence, inclusive=False):
+        return EventPosition(sequence, inclusive)
+
+    @staticmethod
+    def from_enqueued_time(enqueued_time, inclusive=False):
+        return EventPosition(enqueued_time, inclusive)
 
 
 class EventHubError(Exception):

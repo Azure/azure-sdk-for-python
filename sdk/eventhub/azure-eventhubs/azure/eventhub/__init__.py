@@ -5,15 +5,21 @@
 
 __version__ = "1.3.1"
 
-from azure.eventhub.common import EventData, EventHubError, Offset
+from azure.eventhub.common import EventData, EventHubError, EventPosition
 from azure.eventhub.client import EventHubClient
 from azure.eventhub.sender import Sender
 from azure.eventhub.receiver import Receiver
+from uamqp.constants import MessageSendResult
+from uamqp.constants import TransportType
 
-try:
-    from azure.eventhub.async_ops import (
-        EventHubClientAsync,
-        AsyncSender,
-        AsyncReceiver)
-except (ImportError, SyntaxError):
-    pass  # Python 3 async features not supported
+__all__ = [
+    "EventData",
+    "EventHubError",
+    "EventPosition",
+    "EventHubClient",
+    "Sender",
+    "Receiver",
+    "MessageSendResult",
+    "TransportType",
+]
+

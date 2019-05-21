@@ -5,7 +5,8 @@
 
 import logging
 import asyncio
-from azure.eventhub import Offset, EventHubClientAsync
+from azure.eventhub import EventPosition
+from azure.eventhub.aio import EventHubClient
 from azure.eventprocessorhost.partition_pump import PartitionPump
 
 
@@ -64,14 +65,14 @@ class EventHubPartitionPump(PartitionPump):
         """
         await self.partition_context.get_initial_offset_async()
         # Create event hub client and receive handler and set options
-        self.eh_client = EventHubClientAsync(
+        self.eh_client = EventHubClient(
             self.host.eh_config.client_address,
             debug=self.host.eph_options.debug_trace,
             http_proxy=self.host.eph_options.http_proxy)
         self.partition_receive_handler = self.eh_client.add_async_receiver(
             self.partition_context.consumer_group_name,
             self.partition_context.partition_id,
-            Offset(self.partition_context.offset),
+            EventPosition(self.partition_context.offset),
             prefetch=self.host.eph_options.prefetch_count,
             keep_alive=self.host.eph_options.keep_alive_interval,
             auto_reconnect=self.host.eph_options.auto_reconnect_on_error,
