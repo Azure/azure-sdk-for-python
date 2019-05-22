@@ -43,7 +43,7 @@ known_content_issues:
   - ['azure-cognitiveservices-vision-customvision/README.rst', '#4554']
   - ['azure-cognitiveservices-vision-face/README.rst', '#4554']
   - ['azure-cognitiveservices-vision-nspkg/README.rst', '#4554']
-  - ['azure-eventgrid/README.rst', '#4554']
+  - ['sdk/eventgrid/azure-eventgrid/README.rst', '#4554']
   - ['azure-graphrbac/README.rst', '#4554']
   - ['sdk/keyvault/azure-keyvault/README.rst', '#4554']
   - ['azure-loganalytics/README.rst', '#4554']
@@ -63,6 +63,7 @@ known_content_issues:
   - ['sdk/cognitiveservices/azure-cognitiveservices-vision-nspkg/README.rst', 'nspkg and common']
   - ['sdk/core/azure-mgmt-datalake-nspkg/README.rst', 'nspkg and common']
   - ['sdk/core/azure-mgmt-nspkg/README.rst', 'nspkg and common']
+  - ['sdk/core/azure-core/README.md', 'nspkg and common']
 
 package_indexing_exclusion_list:
   - 'azure-sdk-tools'
