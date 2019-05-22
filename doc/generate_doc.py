@@ -47,7 +47,7 @@ RST_AUTODOC_TOCTREE = """.. toctree::
   ref/azure.common
 {generated_packages}
   ref/azure.servicebus
-  ref/azure.servicemanagement  
+  ref/azure.servicemanagement
 """
 
 MULTIAPI_VERSION_PACKAGE_TEMPLATE = """{title}
@@ -73,6 +73,9 @@ MULTIAPI_VERSION_NAMESPACE = [
     "azure.mgmt.network",
     "azure.mgmt.compute",
     "azure.mgmt.containerregistry",
+    "azure.mgmt.containerservice",
+    "azure.mgmt.dns",
+    "azure.mgmt.eventhub",
     "azure.mgmt.resource.resources",
     "azure.mgmt.resource.features",
     "azure.mgmt.resource.links",
@@ -98,7 +101,7 @@ def generate_doc(config_path, project_pattern=None):
 
         _LOGGER.info("Working on %s", namespace)
 
-        rst_path = './ref/{}.rst'.format(namespace) 
+        rst_path = './ref/{}.rst'.format(namespace)
         with Path(rst_path).open('w') as rst_file:
             rst_file.write(PACKAGE_TEMPLATE.format(
                 title=make_title(namespace+" package"),
@@ -115,6 +118,7 @@ def generate_doc(config_path, project_pattern=None):
 
         for multiapi_namespace in MULTIAPI_VERSION_NAMESPACE:
             if namespace.startswith(multiapi_namespace):
+                _LOGGER.info("MultiAPI namespace on %s", multiapi_namespace)
                 api_package = namespace.split(multiapi_namespace+".")[1]
                 multiapi_found_apiversion.setdefault(multiapi_namespace, []).append(api_package)
                 break

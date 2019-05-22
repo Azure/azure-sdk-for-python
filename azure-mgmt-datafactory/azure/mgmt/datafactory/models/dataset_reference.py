@@ -18,9 +18,12 @@ class DatasetReference(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar type: Dataset reference type. Default value: "DatasetReference" .
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Dataset reference type. Default value:
+     "DatasetReference" .
     :vartype type: str
-    :param reference_name: Reference dataset name.
+    :param reference_name: Required. Reference dataset name.
     :type reference_name: str
     :param parameters: Arguments for dataset.
     :type parameters: dict[str, object]
@@ -39,7 +42,7 @@ class DatasetReference(Model):
 
     type = "DatasetReference"
 
-    def __init__(self, reference_name, parameters=None):
-        super(DatasetReference, self).__init__()
-        self.reference_name = reference_name
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(DatasetReference, self).__init__(**kwargs)
+        self.reference_name = kwargs.get('reference_name', None)
+        self.parameters = kwargs.get('parameters', None)

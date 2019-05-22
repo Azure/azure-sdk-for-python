@@ -39,7 +39,8 @@ class Domain(TrackedResource):
     :vartype endpoint: str
     :param input_schema: This determines the format that Event Grid should
      expect for incoming events published to the domain. Possible values
-     include: 'EventGridSchema', 'CustomEventSchema', 'CloudEventV01Schema'
+     include: 'EventGridSchema', 'CustomEventSchema', 'CloudEventV01Schema'.
+     Default value: "EventGridSchema" .
     :type input_schema: str or ~azure.mgmt.eventgrid.models.InputSchema
     :param input_schema_mapping: Information about the InputSchemaMapping
      which specified the info about mapping event payload.
@@ -72,5 +73,5 @@ class Domain(TrackedResource):
         super(Domain, self).__init__(**kwargs)
         self.provisioning_state = None
         self.endpoint = None
-        self.input_schema = kwargs.get('input_schema', None)
+        self.input_schema = kwargs.get('input_schema', "EventGridSchema")
         self.input_schema_mapping = kwargs.get('input_schema_mapping', None)

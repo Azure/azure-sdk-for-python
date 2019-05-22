@@ -13,13 +13,13 @@ from msrest.serialization import Model
 
 
 class Line(Model):
-    """Line.
+    """Json object representing a recognized text line.
 
-    :param bounding_box:
+    :param bounding_box: Bounding box of a recognized line.
     :type bounding_box: list[int]
-    :param text:
+    :param text: The text content of the line.
     :type text: str
-    :param words:
+    :param words: List of words in the text line.
     :type words:
      list[~azure.cognitiveservices.vision.computervision.models.Word]
     """

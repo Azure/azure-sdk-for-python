@@ -12,6 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -23,7 +25,7 @@ class DomainTopicsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2018-09-15-preview".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-02-01-preview".
     """
 
     models = models
@@ -33,12 +35,12 @@ class DomainTopicsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-09-15-preview"
+        self.api_version = "2019-02-01-preview"
 
         self.config = config
 
     def get(
-            self, resource_group_name, domain_name, topic_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, domain_name, domain_topic_name, custom_headers=None, raw=False, **operation_config):
         """Get a domain topic.
 
         Get properties of a domain topic.
@@ -48,8 +50,8 @@ class DomainTopicsOperations(object):
         :type resource_group_name: str
         :param domain_name: Name of the domain
         :type domain_name: str
-        :param topic_name: Name of the topic
-        :type topic_name: str
+        :param domain_topic_name: Name of the topic
+        :type domain_topic_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -66,7 +68,7 @@ class DomainTopicsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
             'domainName': self._serialize.url("domain_name", domain_name, 'str'),
-            'topicName': self._serialize.url("topic_name", topic_name, 'str')
+            'domainTopicName': self._serialize.url("domain_topic_name", domain_topic_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -103,10 +105,197 @@ class DomainTopicsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/topics/{topicName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/topics/{domainTopicName}'}
+
+
+    def _create_or_update_initial(
+            self, resource_group_name, domain_name, domain_topic_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.create_or_update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
+            'domainTopicName': self._serialize.url("domain_topic_name", domain_topic_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [201]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+
+        if response.status_code == 201:
+            deserialized = self._deserialize('DomainTopic', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+
+    def create_or_update(
+            self, resource_group_name, domain_name, domain_topic_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create or update a domain topic.
+
+        Asynchronously creates or updates a new domain topic with the specified
+        parameters.
+
+        :param resource_group_name: The name of the resource group within the
+         user's subscription.
+        :type resource_group_name: str
+        :param domain_name: Name of the domain
+        :type domain_name: str
+        :param domain_topic_name: Name of the domain topic
+        :type domain_topic_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns DomainTopic or
+         ClientRawResponse<DomainTopic> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.eventgrid.models.DomainTopic]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.eventgrid.models.DomainTopic]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_or_update_initial(
+            resource_group_name=resource_group_name,
+            domain_name=domain_name,
+            domain_topic_name=domain_topic_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('DomainTopic', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/topics/{domainTopicName}'}
+
+
+    def _delete_initial(
+            self, resource_group_name, domain_name, domain_topic_name, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.delete.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'domainName': self._serialize.url("domain_name", domain_name, 'str'),
+            'domainTopicName': self._serialize.url("domain_topic_name", domain_topic_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202, 204]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            return client_raw_response
+
+    def delete(
+            self, resource_group_name, domain_name, domain_topic_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Delete a domain topic.
+
+        Delete existing domain topic.
+
+        :param resource_group_name: The name of the resource group within the
+         user's subscription.
+        :type resource_group_name: str
+        :param domain_name: Name of the domain
+        :type domain_name: str
+        :param domain_topic_name: Name of the domain topic
+        :type domain_topic_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._delete_initial(
+            resource_group_name=resource_group_name,
+            domain_name=domain_name,
+            domain_topic_name=domain_topic_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/domains/{domainName}/topics/{domainTopicName}'}
 
     def list_by_domain(
-            self, resource_group_name, domain_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, domain_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List domain topics.
 
         List all the topics in a domain.
@@ -116,6 +305,10 @@ class DomainTopicsOperations(object):
         :type resource_group_name: str
         :param domain_name: Domain name.
         :type domain_name: str
+        :param filter: Filter the results using OData syntax.
+        :type filter: str
+        :param top: The number of results to return.
+        :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -141,6 +334,10 @@ class DomainTopicsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
+                if top is not None:
+                    query_parameters['$top'] = self._serialize.query("top", top, 'int')
 
             else:
                 url = next_link

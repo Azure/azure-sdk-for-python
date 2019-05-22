@@ -26,8 +26,10 @@ class DataExportSetting(Setting):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param kind: Required. Constant filled by server.
-    :type kind: str
+    :param kind: Required. the kind of the settings string
+     (DataExportSetting). Possible values include: 'DataExportSetting',
+     'AlertSuppressionSetting'
+    :type kind: str or ~azure.mgmt.security.models.SettingKind
     :param enabled: Required. Is the data export setting is enabled
     :type enabled: bool
     """
@@ -48,7 +50,6 @@ class DataExportSetting(Setting):
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, enabled: bool, **kwargs) -> None:
-        super(DataExportSetting, self).__init__(**kwargs)
+    def __init__(self, *, kind, enabled: bool, **kwargs) -> None:
+        super(DataExportSetting, self).__init__(kind=kind, **kwargs)
         self.enabled = enabled
-        self.kind = 'DataExportSetting'

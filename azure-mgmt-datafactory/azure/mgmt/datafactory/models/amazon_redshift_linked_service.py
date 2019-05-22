@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class AmazonRedshiftLinkedService(LinkedService):
     """Linked service for Amazon Redshift.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,18 +31,18 @@ class AmazonRedshiftLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      Dataset.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param server: The name of the Amazon Redshift server. Type: string (or
-     Expression with resultType string).
+    :param server: Required. The name of the Amazon Redshift server. Type:
+     string (or Expression with resultType string).
     :type server: object
     :param username: The username of the Amazon Redshift source. Type: string
      (or Expression with resultType string).
     :type username: object
     :param password: The password of the Amazon Redshift source.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
-    :param database: The database name of the Amazon Redshift source. Type:
-     string (or Expression with resultType string).
+    :param database: Required. The database name of the Amazon Redshift
+     source. Type: string (or Expression with resultType string).
     :type database: object
     :param port: The TCP port number that the Amazon Redshift server uses to
      listen for client connections. The default value is 5439. Type: integer
@@ -73,12 +75,12 @@ class AmazonRedshiftLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, server, database, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, username=None, password=None, port=None, encrypted_credential=None):
-        super(AmazonRedshiftLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.server = server
-        self.username = username
-        self.password = password
-        self.database = database
-        self.port = port
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(AmazonRedshiftLinkedService, self).__init__(**kwargs)
+        self.server = kwargs.get('server', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.database = kwargs.get('database', None)
+        self.port = kwargs.get('port', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'AmazonRedshift'

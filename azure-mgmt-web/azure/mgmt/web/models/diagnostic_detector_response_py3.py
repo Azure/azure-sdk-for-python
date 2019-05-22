@@ -13,7 +13,7 @@ from .proxy_only_resource_py3 import ProxyOnlyResource
 
 
 class DiagnosticDetectorResponse(ProxyOnlyResource):
-    """Class representing Reponse from Diagnostic Detectors.
+    """Class representing Response from Diagnostic Detectors.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
