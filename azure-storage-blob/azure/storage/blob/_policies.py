@@ -17,6 +17,7 @@ except ImportError:
 
 from azure.core.pipeline.policies import HeadersPolicy, SansIOHTTPPolicy
 from azure.core.exceptions import AzureError
+from azure.core.polling import PollingMethod, LROPoller
 
 try:
     _unicode_type = unicode
@@ -31,9 +32,10 @@ class StorageBlobSettings(object):
 
     def __init__(self, **kwargs):
         self.max_single_put_size = kwargs.get('max_single_put_size', 64 * 1024 * 1024)
-        self.max_block_size = kwargs.get('max_block_size', 4 * 1024 * 1024)
+        self.copy_polling_interval = 2
 
         # Block blob uploads
+        self.max_block_size = kwargs.get('max_block_size', 4 * 1024 * 1024)
         self.min_large_block_upload_threshold = kwargs.get('min_large_block_upload_threshold', 4 * 1024 * 1024 + 1)
         self.use_byte_buffer = False
 
@@ -120,3 +122,94 @@ class StorageContentValidation(SansIOHTTPPolicy):
                        response.http_response.headers['content-md5'],computed_md5),
                    response=response.http_response
                )
+
+
+def finished(status):
+    if hasattr(status, 'value'):
+        status = status.value
+    return str(status).lower() in ['success', 'aborted', 'failed']
+
+
+def failed(status):
+    if hasattr(status, 'value'):
+        status = status.value
+    return str(status).lower() in ['failed', 'aborted']
+
+
+def succeeded(status):
+    if hasattr(status, 'value'):
+        status = status.value
+    return str(status).lower() in ['success']
+
+
+class CopyStatusPoller(LROPoller):
+
+    def id(self):
+        return self._polling_method.id
+
+    def abort(self):
+        return self._polling_method.abort()
+
+
+class CopyBlob(PollingMethod):
+    """An empty poller that returns the deserialized initial response.
+    """
+    def __init__(self, interval, **kwargs):
+        self._client = None
+        self._initial_response = None
+        self._status = 'pending'
+        self._access_conditions = kwargs.pop('modified_access_conditions')
+        self.id = None
+        self.etag = None
+        self.last_modified = None
+        self.polling_interval = interval
+        self.kwargs = kwargs
+        self.blob = None
+
+    def initialize(self, client, initial_response, _):
+        # type: (Any, requests.Response, Callable) -> None
+        self._client = client
+        self._status = initial_response['x-ms-copy-status']
+        self._initial_response = initial_response
+        self.id = initial_response['x-ms-copy-id']
+        self.etag = initial_response['ETag']
+        self.last_modified = initial_response['Last-Modified']
+        if initial_response.get('x-ms-error-code'):
+            raise Exception(initial_response['x-ms-error-code'])  # TODO
+
+    def run(self):
+        # type: () -> None
+        """Empty run, no polling.
+        """
+        while not self.finished():
+            self.blob = self._client.get_blob_properties(
+                modified_access_conditions=self._access_conditions, **self.kwargs)
+            self._status = self.blob.copy.status
+            self.etag = self.blob.etag
+            self.last_modified = self.blob.last_modified
+            self.sleep(self.polling_interval)
+
+    def abort(self):
+        if not self.finished():
+            return self._client._client.blob.abort_copy_from_url(self.id, **self.kwargs)
+        raise ValueError("Copy operation already complete.")
+
+    def status(self):
+        # type: () -> str
+        """Return the current status as a string.
+        :rtype: str
+        """
+        return self._status
+
+    def finished(self):
+        # type: () -> bool
+        """Is this polling finished?
+        :rtype: bool
+        """
+        return finished(self.status())
+
+    def resource(self):
+        # type: () -> Any
+        if not self.blob:
+            self.blob = self._client.get_blob_properties(**self.kwargs)
+        return self.blob

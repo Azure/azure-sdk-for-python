@@ -21,6 +21,7 @@ from azure.core import Configuration, HttpResponseError
 from .common import BlobType
 from .lease import Lease
 from .models import SnapshotProperties, BlobBlock
+from ._shared_access_signature import BlobSharedAccessSignature
 from ._utils import (
     create_client,
     create_configuration,
@@ -113,6 +114,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
 
         self.scheme = parsed_url.scheme
         self.account = parsed_url.hostname.split(".blob.core.")[0]
+        self.credentials = credentials
         self.url = "{}://{}/{}/{}".format(
             self.scheme,
             parsed_url.hostname,
@@ -249,6 +251,24 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
+        if not hasattr(self.credentials, 'account_key') and not self.credentials.account_key:
+            raise ValueError("No account SAS key available.")
+        sas = BlobSharedAccessSignature(self.account, self.credentials.account_key)
+        return sas.generate_blob(
+            self.container,
+            self.name,
+            permission,
+            expiry,
+            start=start,
+            policy_id=policy_id,
+            ip=ip,
+            protocol=protocol,
+            cache_control=cache_control,
+            content_disposition=content_disposition,
+            content_encoding=content_encoding,
+            content_language=content_language,
+            content_type=content_type,
+        )
 
     def get_account_information(self, timeout=None):
         # type: (Optional[int]) -> Dict[str, str]
@@ -901,7 +921,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         return snapshot
 
     def copy_blob_from_source(
-            self, copy_source,  # type: Any
+            self, copy_source,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
             source_if_modified_since=None,  # type: Optional[datetime]
             source_if_unmodified_since=None,  # type: Optional[datetime]
@@ -915,13 +935,82 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             source_lease=None,  # type: Optional[Union[Lease, str]]
             timeout=None,  # type: Optional[int]
             premium_page_blob_tier=None,
-            requires_sync=None  # type: Optional[bool]
+            requires_sync=False,  # type: Optional[bool]
+            polling=True,
+            **kwargs
         ):
         # type: (...) -> Any
         """
-        TODO: Fix type hints
         :returns: A pollable object to check copy operation status (and abort).
         """
+        from azure.core.polling import NoPolling
+        from ._policies import CopyBlob, CopyStatusPoller
+
+        if requires_sync and self.blob_type != BlobType.BlockBlob:
+            raise TypeError("The 'requires_sync' option can only be used with Block Blobs.")
+
+        if copy_source.startswith('/'):
+            # Backwards compatibility for earlier versions of the SDK where
+            # the copy source can be in the following formats:
+            # - Blob in named container:
+            #     /accountName/containerName/blobName
+            # - Snapshot in named container:
+            #     /accountName/containerName/blobName?snapshot=<DateTime>
+            # - Blob in root container:
+            #     /accountName/blobName
+            # - Snapshot in root container:
+            #     /accountName/blobName?snapshot=<DateTime>
+            account, _, source = \
+                copy_source.partition('/')[2].partition('/')
+            parsed_url = urlparse(self.url)
+            copy_source = "{}://{}/{}".format(
+                self.scheme,
+                parsed_url.hostname.replace(self.account, account),
+                source.strip('/')
+            )
+
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+        if source_lease:
+            try:
+                headers['x-ms-source-lease-id'] = source_lease.id
+            except AttributeError:
+                headers['x-ms-source-lease-id'] = source_lease
+
+        dest_access_conditions = get_access_conditions(destination_lease)
+        source_mod_conditions = get_modification_conditions(
+            source_if_modified_since,
+            source_if_unmodified_since,
+            source_if_match,
+            source_if_none_match)
+        dest_mod_conditions = get_modification_conditions(
+            destination_if_modified_since,
+            destination_if_unmodified_since,
+            destination_if_match,
+            destination_if_none_match)
+        start_copy = self._client.blob.start_copy_from_url(
+            copy_source,
+            timeout=timeout,
+            source_modified_access_conditions=source_mod_conditions,
+            modified_access_conditions=dest_mod_conditions,
+            lease_access_conditions=dest_access_conditions,
+            headers=headers,
+            cls=return_response_headers,
+            error_map=basic_error_map(),
+            **kwargs)
+        polling_interval = self._config.blob_settings.copy_polling_interval
+        if polling is True: polling_method = CopyBlob(
+            polling_interval,
+            timeout=timeout,
+            lease_access_conditions=dest_access_conditions,
+            modified_access_conditions=dest_mod_conditions,
+            **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        poller = CopyStatusPoller(self, start_copy, None, polling_method)
+        if requires_sync:
+            poller.wait()
+        return poller
 
     def acquire_lease(
             self, lease_duration=-1,  # type: int

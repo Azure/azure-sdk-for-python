@@ -71,6 +71,7 @@ class ContainerClient(object):
             self.name = container or unquote(path_container)
 
         self.scheme = parsed_url.scheme
+        self.credentials = credentials
         self.account = parsed_url.hostname.split(".blob.core.")[0]
         self.url = url if parsed_url.path else "{}://{}/{}".format(
             self.scheme,
@@ -295,5 +296,5 @@ class ContainerClient(object):
         :returns: A BlobClient.
         """
         return BlobClient(
-            self.url, container=self.name, blob=blob, blob_type=blob_type,
-            snapshot=snapshot, configuration=self._config, _pipeline=self._pipeline)
+            self.url, container=self.name, blob=blob, blob_type=blob_type, snapshot=snapshot,
+            credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline)

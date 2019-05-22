@@ -111,7 +111,7 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
         string_to_sign = string_to_sign.encode('utf-8')
     signed_hmac_sha256 = hmac.HMAC(key, string_to_sign, hashlib.sha256)
     digest = signed_hmac_sha256.digest()
-    encoded_digest = _encode_base64(digest)
+    encoded_digest = encode_base64(digest)
     return encoded_digest
 
 
