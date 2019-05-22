@@ -34,6 +34,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.exceptions import ResourceNotFoundError
 
+from .authentication import SharedKeyCredentials
 from ._policies import (
     StorageBlobSettings,
     StorageHeadersPolicy,
@@ -57,6 +58,20 @@ try:
     _unicode_type = unicode
 except NameError:
     _unicode_type = str
+
+def parse_connection_str(conn_str, credentials):
+    conn_settings = dict([s.split('=', 1) for s in conn_str.split(';')])
+    try:
+        account_url = "{}://{}.blob.{}".format(
+            conn_settings['DefaultEndpointsProtocol'],
+            conn_settings['AccountName'],
+            conn_settings['EndpointSuffix']
+        )
+        creds = credentials or SharedKeyCredentials(
+            conn_settings['AccountName'], conn_settings['AccountKey'])
+        return account_url, creds
+    except KeyError as error:
+        raise ValueError("Connection string missing setting: '{}'".format(error.args[0]))
 
 def url_quote(url):
     return quote(url)

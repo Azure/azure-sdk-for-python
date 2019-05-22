@@ -24,10 +24,9 @@ ACTIVE_DIRECTORY_APPLICATION_SECRET = "3Ujhg7pzkOeE7flc6Z187ugf5/cJnszGPjAiXmcwh
 ACTIVE_DIRECTORY_TENANT_ID = "32f988bf-54f1-15af-36ab-2d7cd364db47"
 
 # Use instead of STORAGE_ACCOUNT_NAME and STORAGE_ACCOUNT_KEY if custom settings are needed
-CONNECTION_STRING = ""
-BLOB_CONNECTION_STRING = ""
-PREMIUM_CONNECTION_STRING = ""
-
+CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=storagename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"
+BLOB_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=blobstoragename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"
+PREMIUM_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=premiumstoragename;AccountKey=NzhL3hKZbJBuJ2484dPTR+xF30kYaWSSCbs2BzLgVVI1woqeST/1IgqaLm6QAOTxtGvxctSNbIR/1hW8yH+bJg==;EndpointSuffix=core.windows.net"
 # Use 'https' or 'http' protocol for sending requests, 'https' highly recommended
 PROTOCOL = "https"
 

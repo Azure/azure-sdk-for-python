@@ -45,15 +45,16 @@ class StorageClientTest(StorageTestCase):
         self.account_name = self.settings.STORAGE_ACCOUNT_NAME
         self.account_key = self.settings.STORAGE_ACCOUNT_KEY
         self.sas_token = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
-        self.token_credential = TokenCredential('initial_token')
+        # self.token_credential = TokenCredential('initial_token')  # TODO
+        self.connection_string = self.settings.CONNECTION_STRING
 
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, type):
         self.assertIsNotNone(service)
-        self.assertEqual(service.account_name, self.account_name)
-        self.assertEqual(service.account_key, self.account_key)
-        self.assertEqual(service.primary_endpoint, '{}.{}.core.windows.net'.format(self.account_name, type))
-        self.assertEqual(service.secondary_endpoint, '{}-secondary.{}.core.windows.net'.format(self.account_name, type))
+        self.assertEqual(service.account, self.account_name)
+        # self.assertEqual(service.account_key, self.account_key)  # TODO
+        self.assertTrue('{}.{}.core.windows.net'.format(self.account_name, type) in service.url)
+        #self.assertEqual(service.secondary_endpoint, '{}-secondary.{}.core.windows.net'.format(self.account_name, type))  # TODO
 
     # --Direct Parameters Test Cases --------------------------------------------
     def test_create_service_with_key(self):
@@ -66,6 +67,16 @@ class StorageClientTest(StorageTestCase):
             # Assert
             self.validate_standard_account_endpoints(service, type[1])
             self.assertEqual(service.protocol, 'https')
+
+    def test_create_service_with_connection_string(self):
+
+        for type in SERVICES.items():
+            # Act
+            service = type[0].from_connection_string(self.connection_string, container="test", blob="test")
+
+            # Assert
+            self.validate_standard_account_endpoints(service, type[1])
+            self.assertEqual(service.scheme, 'https')
 
     def test_create_service_with_sas(self):
         # Arrange

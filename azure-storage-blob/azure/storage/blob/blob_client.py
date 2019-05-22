@@ -33,7 +33,8 @@ from ._utils import (
     add_metadata_headers,
     process_storage_error,
     encode_base64,
-    get_length
+    get_length,
+    parse_connection_str
 )
 from ._deserialize import (
     deserialize_blob_properties,
@@ -129,6 +130,26 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
     def create_configuration(**kwargs):
         # type: (**Any) -> Configuration
         return create_configuration(**kwargs)
+
+    @classmethod
+    def from_connection_string(
+            cls, conn_str,  # type: str
+            container,  # type: Union[str, ContainerProperties]
+            blob,  # type: Union[str, BlobProperties]
+            snapshot=None,  # type: Optional[str]
+            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
+            credentials=None,  # type: Optional[HTTPPolicy]
+            configuration=None,  # type: Optional[Configuration]
+            **kwargs  # type: Any
+        ):
+        """
+        Create BlobClient from a Connection String.
+        """
+        account_url, creds = parse_connection_str(conn_str, credentials)
+        return cls(
+            account_url, container=container, blob=blob,
+            snapshot=snapshot, blob_type=blob_type,
+            credentials=creds, configuration=configuration, **kwargs)
 
     def make_url(self, protocol=None, sas_token=None):
         # type: (Optional[str], Optional[str]) -> str

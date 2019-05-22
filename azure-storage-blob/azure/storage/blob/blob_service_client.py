@@ -9,6 +9,10 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List,
     TYPE_CHECKING
 )
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
 
 from .container_client import ContainerClient
 from .blob_client import BlobClient
@@ -25,7 +29,8 @@ from ._utils import (
     create_configuration,
     get_access_conditions,
     process_storage_error,
-    basic_error_map
+    basic_error_map,
+    parse_connection_str
 )
 
 if TYPE_CHECKING:
@@ -55,10 +60,13 @@ class BlobServiceClient(object):
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        # TODO: Parse URL
-        # TODO: Alternative constructors
-        self.url = url
-        self.account = None
+        parsed_url = urlparse(url)
+        self.scheme = parsed_url.scheme
+        self.account = parsed_url.hostname.split(".blob.core.")[0]
+        self.url = url if not parsed_url.path else "{}://{}".format(
+            self.scheme,
+            parsed_url.hostname
+        )
         self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
         self._client = create_client(url, self._pipeline)
 
@@ -67,6 +75,8 @@ class BlobServiceClient(object):
         """
         Create BlobServiceClient from a Connection String.
         """
+        account_url, creds = parse_connection_str(conn_str, credentials)
+        return cls(account_url, credentials=creds, configuration=configuration, **kwargs)
 
     @staticmethod
     def create_configuration(**kwargs):
