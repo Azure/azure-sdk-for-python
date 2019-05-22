@@ -147,7 +147,28 @@ class ContainerClient(object):
         ):
         # type: (...) -> None
         """
-        :returns: None
+        Marks the specified container for deletion. The container and any blobs
+        contained within it are later deleted during garbage collection.
+
+        :param ~azure.storage.blob.lease.Lease lease:
+            If specified, delete_container only succeeds if the
+            container's lease is active and matches this ID.
+            Required if the container has an active lease.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC. 
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
         """
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
@@ -170,7 +191,34 @@ class ContainerClient(object):
         ):
         # type: (...) -> Lease
         """
+        Requests a new lease. If the container does not have an active lease,
+        the Blob service creates a lease on the container and returns a new
+        lease ID.
+
+        :param int lease_duration:
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change. Default is -1 (infinite lease).
+        :param str proposed_lease_id:
+            Proposed lease ID, in a GUID string format. The Blob service returns
+            400 (Invalid request) if the proposed lease ID is not in the correct format.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC. 
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: A Lease object, that can be run in a context manager.
+        :rtype: ~azure.storage.blob.lease.Lease
         """
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
@@ -187,16 +235,47 @@ class ContainerClient(object):
             self, lease_break_period=None,  # type: Optional[int]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
             timeout=None  # type: Optional[int]
         ):
         # type: (...) -> int
         """
-        :returns: Approximate time remaining in the lease period, in seconds.
+        Break the lease, if the container has an active lease. Once a lease is
+        broken, it cannot be renewed. Any authorized request can break the lease;
+        the request is not required to specify a matching lease ID. When a lease
+        is broken, the lease break period is allowed to elapse, during which time
+        no lease operation except break and release can be performed on the container.
+        When a lease is successfully broken, the response indicates the interval
+        in seconds until a new lease can be acquired. 
+
+        :param int lease_break_period:
+            This is the proposed duration of seconds that the lease
+            should continue before it is broken, between 0 and 60 seconds. This
+            break period is only used if it is shorter than the time remaining
+            on the lease. If longer, the time remaining on the lease is used.
+            A new lease will not be available before the break period has
+            expired, but the lease may be held for longer than the break
+            period. If this header does not appear with a break
+            operation, a fixed-duration lease breaks after the remaining lease
+            period elapses, and an infinite lease breaks immediately.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC. 
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: Approximate time remaining in the lease period, in seconds.
+        :rtype: int
         """
         mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+            if_modified_since, if_unmodified_since)
         response = self._client.container.break_lease(
             timeout=timeout,
             break_period=lease_break_period,
@@ -219,7 +298,16 @@ class ContainerClient(object):
     def get_container_properties(self, lease=None, timeout=None, **kwargs):
         # type: (Optional[Union[Lease, str]], Optional[int], **Any) -> ContainerProperties
         """
-        :returns: ContainerProperties
+        Returns all user-defined metadata and system properties for the specified
+        container. The data returned does not include the container's list of blobs.
+
+        :param ~azure.storage.blob.lease.Lease lease:
+            If specified, get_container_properties only succeeds if the
+            container's lease is active and matches this ID.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: properties for the specified container within a container object.
+        :rtype: ~azure.storage.blob.models.ContainerProperties
         """
         access_conditions = get_access_conditions(lease)
         response = self._client.container.get_properties(
