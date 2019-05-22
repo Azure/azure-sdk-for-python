@@ -186,7 +186,7 @@ class ContainerProperties(object):
         Represents whether the container has a legal hold.
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.name = None
         self.last_modified = kwargs.get('Last-Modified')
         self.etag = kwargs.get('ETag')
@@ -218,7 +218,7 @@ class ContainerPropertiesPaged(Paged):
         self.prefix = prefix
         self.current_marker = None
         self.results_per_page = results_per_page
-        self.next_marker = ""
+        self.next_marker = kwargs.get('marker', "")
 
     def _advance_page(self):
         # type: () -> List[Model]

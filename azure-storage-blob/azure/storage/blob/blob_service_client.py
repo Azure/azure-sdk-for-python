@@ -15,6 +15,7 @@ from .blob_client import BlobClient
 from .models import (
     ContainerProperties,
     StorageServiceProperties,
+    ContainerPropertiesPaged
 )
 from ._generated.models import StorageErrorException
 from .common import BlobType
@@ -181,12 +182,14 @@ class BlobServiceClient(object):
         """
         include = 'metadata' if include_metadata else None
         results_per_page = kwargs.pop('results_per_page', None)
+        marker = kwargs.pop('marker', "")
         command = functools.partial(
             self._client.service.list_containers_segment,
             include=include,
             timeout=timeout,
             **kwargs)
-        return ContainerPropertiesPaged(command, prefix=prefix, results_per_page=results_per_page)
+        return ContainerPropertiesPaged(
+            command, prefix=prefix, results_per_page=results_per_page, marker=marker)
 
     def get_container_client(self, container):
         # type: (Union[ContainerProperties, str]) -> ContainerClient
