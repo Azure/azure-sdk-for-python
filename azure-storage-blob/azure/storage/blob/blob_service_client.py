@@ -9,6 +9,12 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List,
     TYPE_CHECKING
 )
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse
+
+from azure.storage.common import SharedAccessSignature
 
 from .container_client import ContainerClient
 from .blob_client import BlobClient
@@ -49,6 +55,8 @@ class BlobServiceClient(object):
 
     def __init__(
             self, url,  # type: str
+            account_name, # type: Optional[str]
+            account_key, # type: Optional[str]
             credentials=None,  # type: Optional[HTTPPolicy]
             configuration=None, # type: Optional[Configuration]
             **kwargs  # type: Any
@@ -58,6 +66,8 @@ class BlobServiceClient(object):
         # TODO: Alternative constructors
         self.url = url
         self.account = None
+        self.account_name = account_name
+        self.account_key = account_key
         self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
         self._client = create_client(url, self._pipeline)
 
@@ -78,7 +88,30 @@ class BlobServiceClient(object):
 
     def make_url(self, protocol=None, sas_token=None):
         # type: (Optional[str], Optional[str]) -> str
-        pass
+        """
+        Creates the url to access this blob.
+
+        :param str protocol:
+            Protocol to use: 'http' or 'https'. If not specified, uses the
+            protocol specified in the URL when the client was created..
+        :param str sas_token:
+            Shared access signature token created with
+            generate_shared_access_signature.
+        :return: blob access URL.
+        :rtype: str
+        """
+        parsed_url = urlparse(self.url)
+        new_scheme = protocol or parsed_url.scheme
+        query = []
+        if sas_token:
+            query.append(sas_token)
+        new_url = "{}://{}{}".format(
+            new_scheme,
+            parsed_url.netloc,
+            parsed_url.path)
+        if query:
+            new_url += "?{}".format('&'.join(query))
+        return new_url
 
     def generate_shared_access_signature(
             self, resource_types,  # type: Union[ResourceTypes, str]
@@ -88,13 +121,63 @@ class BlobServiceClient(object):
             ip=None,  # type: Optional[str]
             protocol=None  # type: Optional[str]
         ):
-        pass
+        '''
+        Generates a shared access signature for the blob service.
+        Use the returned signature with the sas_token parameter of any BlobService.
+        :param ResourceTypes resource_types:
+            Specifies the resource types that are accessible with the account SAS.
+        :param AccountPermissions permission:
+            The permissions associated with the shared access signature. The
+            user is restricted to operations allowed by the permissions.
+            Required unless an id is given referencing a stored access policy
+            which contains this field. This field must be omitted if it has been
+            specified in an associated stored access policy.
+        :param expiry:
+            The time at which the shared access signature becomes invalid.
+            Required unless an id is given referencing a stored access policy
+            which contains this field. This field must be omitted if it has
+            been specified in an associated stored access policy. Azure will always
+            convert values to UTC. If a date is passed in without timezone info, it
+            is assumed to be UTC.
+        :type expiry: datetime or str
+        :param start:
+            The time at which the shared access signature becomes valid. If
+            omitted, start time for this call is assumed to be the time when the
+            storage service receives the request. Azure will always convert values
+            to UTC. If a date is passed in without timezone info, it is assumed to
+            be UTC.
+        :type start: datetime or str
+        :param str ip:
+            Specifies an IP address or a range of IP addresses from which to accept requests.
+            If the IP address from which the request originates does not match the IP address
+            or address range specified on the SAS token, the request is not authenticated.
+            For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
+            restricts the request to those IP addresses.
+        :param str protocol:
+            Specifies the protocol permitted for a request made. The default value
+            is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
+        :return: A Shared Access Signature (sas) token.
+        :rtype: str
+        '''
+        if self.account_name is None:
+            raise ValueError('Account name should not be None')
+        if self.account_key is None:
+            raise ValueError('Account key should not be None')
+
+        sas = SharedAccessSignature(self.account_name, self.account_key)
+        return sas.generate_account(Services.BLOB, resource_types, permission,
+                                    expiry, start=start, ip=ip, protocol=protocol)
 
     def get_account_information(self, timeout=None):
         # type: (Optional[int]) -> Dict[str, str]
         """
         :returns: A dict of account information (SKU and account type).
         """
+        response = self._client.service.get_account_info(cls=return_response_headers)
+        return {
+            'SKU': response.get('x-ms-sku-name'),
+            'AccountType': response.get('x-ms-account-kind')
+        }
 
     def get_service_stats(self, timeout=None, **kwargs):
         # type: (Optional[int], **Any) -> Dict[str, Any]
