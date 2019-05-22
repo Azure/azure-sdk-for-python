@@ -1238,6 +1238,17 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         ):
         # type: (...) -> Tuple[List[BlobBlock], List[BlobBlock]]
         """
+        The Get Block List operation retrieves the list of blocks that have
+        been uploaded as part of a block blob.
+
+        :param str list_type:
+            Specifies whether to return the list of committed
+            blocks, the list of uncommitted blocks, or both lists together.
+            Possible values include: 'committed', 'uncommitted', 'all'
+        :param str lease:
+            Required if the blob has an active lease.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :raises: InvalidOperation when blob client type is not BlockBlob.
         :returns: A tuple of two sets - committed and uncommitted blocks
         """
@@ -1272,6 +1283,47 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
+        The Commit Block List operation writes a blob by specifying the list of
+        block IDs that make up the blob.
+
+        :param list block_list:
+            List of Bloclblobs.
+        :param str lease:
+            Required if the blob has an active lease.
+        :param ~azure.storage.blob.models.ContentSettings content_settings:
+            ContentSettings object used to set blob properties.
+        :param metadata:
+            Name-value pairs associated with the blob as metadata.
+        :param bool validate_content:
+            If true, calculates an MD5 hash of the page content. The storage 
+            service checks the hash of the content that has arrived
+            with the hash that was sent. This is primarily valuable for detecting 
+            bitflips on the wire if using http instead of https as https (the default) 
+            will already validate. Note that this MD5 hash is not stored with the 
+            blob.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC. 
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :raises: InvalidOperation when blob client type is not BlockBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
@@ -1311,6 +1363,18 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
     def set_premium_page_blob_tier(self, premium_page_blob_tier, timeout=None, lease=None, **kwargs):
         # type: (Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[Lease, str]]) -> None
         """
+        Sets the page blob tiers on the blob. This API is only supported for page blobs on premium accounts.
+
+        :param PremiumPageBlobTier premium_page_blob_tier:
+            A page blob tier value to set the blob to. The tier correlates to the size of the
+            blob and number of allowed IOPS. This is only applicable to page blobs on
+            premium storage accounts.
+        :param int timeout:
+            The timeout parameter is expressed in seconds. This method may make
+            multiple calls to the Azure service and the timeout will apply to
+            each call individually.
+        :param str lease:
+            Required if the blob has an active lease.
         :raises: InvalidOperation when blob client type is not PageBlob.
         :returns: None
         """
@@ -1338,6 +1402,52 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         ):
         # type: (...) -> List[PageRange]
         """
+        Returns the list of valid page ranges for a Page Blob or snapshot
+        of a page blob.
+
+        :param int start_range:
+            Start of byte range to use for getting valid page ranges.
+            If no end_range is given, all bytes after the start_range will be searched.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the end offset must be a modulus of
+            512-1. Examples of valid byte ranges are 0-511, 512-, etc.
+        :param int end_range:
+            End of byte range to use for getting valid page ranges.
+            If end_range is given, start_range must be provided.
+            This range will return valid page ranges for from the offset start up to
+            offset end.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the end offset must be a modulus of
+            512-1. Examples of valid byte ranges are 0-511, 512-, etc.
+        :param str lease:
+            Required if the blob has an active lease.
+        :param str previous_snapshot_diff:
+            The snapshot diff parameter that contains an opaque DateTime value that
+            specifies a previous blob snapshot to be compared
+            against a more recent snapshot or the current blob.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC. 
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :raises: InvalidOperation when blob client type is not PageBlob.
         :returns: A list of page ranges.
         """
@@ -1393,6 +1503,40 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
+        Sets the blob sequence number.
+
+        :param str sequence_number_action:
+            This property indicates how the service should modify the blob's sequence
+            number. See :class:`~azure.storage.blob.models.SequenceNumberAction` for more information.
+        :param str sequence_number:
+            This property sets the blob's sequence number. The sequence number is a
+            user-controlled property that you can use to track requests and manage
+            concurrency issues.
+        :param str lease:
+            Required if the blob has an active lease.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC. 
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :raises: InvalidOperation when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
@@ -1423,6 +1567,36 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
+        Resizes a page blob to the specified size. If the specified value is less
+        than the current size of the blob, then all pages above the specified value
+        are cleared.
+        :param int content_length:
+            Size to resize blob to.
+        :param str lease:
+            Required if the blob has an active lease.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC. 
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :raises: InvalidOperation when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
@@ -1459,6 +1633,64 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
+        The Upload Pages operation writes a range of pages to a page blob.
+
+        :param bytes page:
+            Content of the page.
+        :param int start_range:
+            Start of byte range to use for writing to a section of the blob.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the end offset must be a modulus of
+            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+        :param int end_range:
+            End of byte range to use for writing to a section of the blob.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the end offset must be a modulus of
+            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+        :param int length:
+            Length of the page
+        :param lease:
+            Required if the blob has an active lease.
+        :param bool validate_content:
+            If true, calculates an MD5 hash of the page content. The storage 
+            service checks the hash of the content that has arrived
+            with the hash that was sent. This is primarily valuable for detecting 
+            bitflips on the wire if using http instead of https as https (the default) 
+            will already validate. Note that this MD5 hash is not stored with the 
+            blob.
+        :param int if_sequence_number_lte:
+            If the blob's sequence number is less than or equal to
+            the specified value, the request proceeds; otherwise it fails.
+        :param int if_sequence_number_lt:
+            If the blob's sequence number is less than the specified
+            value, the request proceeds; otherwise it fails.
+        :param int if_sequence_number_eq:
+            If the blob's sequence number is equal to the specified
+            value, the request proceeds; otherwise it fails.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC. 
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify an ETag value for this conditional
+            header to write the page only if the blob's ETag value matches the
+            value specified. If the values do not match, the Blob service fails.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify an ETag value for this conditional
+            header to write the page only if the blob's ETag value does not
+            match the value specified. If the values are identical, the Blob
+            service fails.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+
         :raises: InvalidOperation when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
