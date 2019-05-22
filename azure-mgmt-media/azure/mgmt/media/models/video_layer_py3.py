@@ -35,8 +35,9 @@ class VideoLayer(Layer):
     :type label: str
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
-    :param bitrate: The average bitrate in bits per second at which to encode
-     the input video when generating this layer. This is a required field.
+    :param bitrate: Required. The average bitrate in bits per second at which
+     to encode the input video when generating this layer. This is a required
+     field.
     :type bitrate: int
     :param max_bitrate: The maximum bitrate (in bits per second), at which the
      VBV buffer should be assumed to refill. If not specified, defaults to the
@@ -65,6 +66,7 @@ class VideoLayer(Layer):
 
     _validation = {
         'odatatype': {'required': True},
+        'bitrate': {'required': True},
     }
 
     _attribute_map = {
@@ -84,7 +86,7 @@ class VideoLayer(Layer):
         'odatatype': {'#Microsoft.Media.H264Layer': 'H264Layer'}
     }
 
-    def __init__(self, *, width: str=None, height: str=None, label: str=None, bitrate: int=None, max_bitrate: int=None, b_frames: int=None, frame_rate: str=None, slices: int=None, adaptive_bframe: bool=None, **kwargs) -> None:
+    def __init__(self, *, bitrate: int, width: str=None, height: str=None, label: str=None, max_bitrate: int=None, b_frames: int=None, frame_rate: str=None, slices: int=None, adaptive_bframe: bool=None, **kwargs) -> None:
         super(VideoLayer, self).__init__(width=width, height=height, label=label, **kwargs)
         self.bitrate = bitrate
         self.max_bitrate = max_bitrate

@@ -16,6 +16,8 @@ try:
     from .sku_py3 import Sku
     from .availability_set_py3 import AvailabilitySet
     from .availability_set_update_py3 import AvailabilitySetUpdate
+    from .proximity_placement_group_py3 import ProximityPlacementGroup
+    from .proximity_placement_group_update_py3 import ProximityPlacementGroupUpdate
     from .virtual_machine_size_py3 import VirtualMachineSize
     from .virtual_machine_extension_image_py3 import VirtualMachineExtensionImage
     from .virtual_machine_image_resource_py3 import VirtualMachineImageResource
@@ -29,6 +31,7 @@ try:
     from .virtual_machine_image_py3 import VirtualMachineImage
     from .usage_name_py3 import UsageName
     from .usage_py3 import Usage
+    from .virtual_machine_reimage_parameters_py3 import VirtualMachineReimageParameters
     from .virtual_machine_capture_parameters_py3 import VirtualMachineCaptureParameters
     from .virtual_machine_capture_result_py3 import VirtualMachineCaptureResult
     from .plan_py3 import Plan
@@ -103,6 +106,8 @@ try:
     from .virtual_machine_scale_set_vm_profile_py3 import VirtualMachineScaleSetVMProfile
     from .virtual_machine_scale_set_update_vm_profile_py3 import VirtualMachineScaleSetUpdateVMProfile
     from .virtual_machine_scale_set_py3 import VirtualMachineScaleSet
+    from .virtual_machine_scale_set_vm_reimage_parameters_py3 import VirtualMachineScaleSetVMReimageParameters
+    from .virtual_machine_scale_set_reimage_parameters_py3 import VirtualMachineScaleSetReimageParameters
     from .virtual_machine_scale_set_update_py3 import VirtualMachineScaleSetUpdate
     from .virtual_machine_scale_set_vm_instance_ids_py3 import VirtualMachineScaleSetVMInstanceIDs
     from .virtual_machine_scale_set_vm_instance_required_ids_py3 import VirtualMachineScaleSetVMInstanceRequiredIDs
@@ -181,6 +186,8 @@ except (SyntaxError, ImportError):
     from .sku import Sku
     from .availability_set import AvailabilitySet
     from .availability_set_update import AvailabilitySetUpdate
+    from .proximity_placement_group import ProximityPlacementGroup
+    from .proximity_placement_group_update import ProximityPlacementGroupUpdate
     from .virtual_machine_size import VirtualMachineSize
     from .virtual_machine_extension_image import VirtualMachineExtensionImage
     from .virtual_machine_image_resource import VirtualMachineImageResource
@@ -194,6 +201,7 @@ except (SyntaxError, ImportError):
     from .virtual_machine_image import VirtualMachineImage
     from .usage_name import UsageName
     from .usage import Usage
+    from .virtual_machine_reimage_parameters import VirtualMachineReimageParameters
     from .virtual_machine_capture_parameters import VirtualMachineCaptureParameters
     from .virtual_machine_capture_result import VirtualMachineCaptureResult
     from .plan import Plan
@@ -268,6 +276,8 @@ except (SyntaxError, ImportError):
     from .virtual_machine_scale_set_vm_profile import VirtualMachineScaleSetVMProfile
     from .virtual_machine_scale_set_update_vm_profile import VirtualMachineScaleSetUpdateVMProfile
     from .virtual_machine_scale_set import VirtualMachineScaleSet
+    from .virtual_machine_scale_set_vm_reimage_parameters import VirtualMachineScaleSetVMReimageParameters
+    from .virtual_machine_scale_set_reimage_parameters import VirtualMachineScaleSetReimageParameters
     from .virtual_machine_scale_set_update import VirtualMachineScaleSetUpdate
     from .virtual_machine_scale_set_vm_instance_ids import VirtualMachineScaleSetVMInstanceIDs
     from .virtual_machine_scale_set_vm_instance_required_ids import VirtualMachineScaleSetVMInstanceRequiredIDs
@@ -342,6 +352,7 @@ except (SyntaxError, ImportError):
 from .compute_operation_value_paged import ComputeOperationValuePaged
 from .availability_set_paged import AvailabilitySetPaged
 from .virtual_machine_size_paged import VirtualMachineSizePaged
+from .proximity_placement_group_paged import ProximityPlacementGroupPaged
 from .usage_paged import UsagePaged
 from .virtual_machine_paged import VirtualMachinePaged
 from .image_paged import ImagePaged
@@ -359,6 +370,7 @@ from .snapshot_paged import SnapshotPaged
 from .compute_management_client_enums import (
     StatusLevelTypes,
     AvailabilitySetSkuTypes,
+    ProximityPlacementGroupType,
     OperatingSystemTypes,
     VirtualMachineSizeTypes,
     CachingTypes,
@@ -400,6 +412,8 @@ __all__ = [
     'Sku',
     'AvailabilitySet',
     'AvailabilitySetUpdate',
+    'ProximityPlacementGroup',
+    'ProximityPlacementGroupUpdate',
     'VirtualMachineSize',
     'VirtualMachineExtensionImage',
     'VirtualMachineImageResource',
@@ -413,6 +427,7 @@ __all__ = [
     'VirtualMachineImage',
     'UsageName',
     'Usage',
+    'VirtualMachineReimageParameters',
     'VirtualMachineCaptureParameters',
     'VirtualMachineCaptureResult',
     'Plan',
@@ -487,6 +502,8 @@ __all__ = [
     'VirtualMachineScaleSetVMProfile',
     'VirtualMachineScaleSetUpdateVMProfile',
     'VirtualMachineScaleSet',
+    'VirtualMachineScaleSetVMReimageParameters',
+    'VirtualMachineScaleSetReimageParameters',
     'VirtualMachineScaleSetUpdate',
     'VirtualMachineScaleSetVMInstanceIDs',
     'VirtualMachineScaleSetVMInstanceRequiredIDs',
@@ -561,6 +578,7 @@ __all__ = [
     'ComputeOperationValuePaged',
     'AvailabilitySetPaged',
     'VirtualMachineSizePaged',
+    'ProximityPlacementGroupPaged',
     'UsagePaged',
     'VirtualMachinePaged',
     'ImagePaged',
@@ -577,6 +595,7 @@ __all__ = [
     'SnapshotPaged',
     'StatusLevelTypes',
     'AvailabilitySetSkuTypes',
+    'ProximityPlacementGroupType',
     'OperatingSystemTypes',
     'VirtualMachineSizeTypes',
     'CachingTypes',

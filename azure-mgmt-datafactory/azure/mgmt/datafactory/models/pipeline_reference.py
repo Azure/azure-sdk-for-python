@@ -18,9 +18,12 @@ class PipelineReference(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar type: Pipeline reference type. Default value: "PipelineReference" .
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Pipeline reference type. Default value:
+     "PipelineReference" .
     :vartype type: str
-    :param reference_name: Reference pipeline name.
+    :param reference_name: Required. Reference pipeline name.
     :type reference_name: str
     :param name: Reference name.
     :type name: str
@@ -39,7 +42,7 @@ class PipelineReference(Model):
 
     type = "PipelineReference"
 
-    def __init__(self, reference_name, name=None):
-        super(PipelineReference, self).__init__()
-        self.reference_name = reference_name
-        self.name = name
+    def __init__(self, **kwargs):
+        super(PipelineReference, self).__init__(**kwargs)
+        self.reference_name = kwargs.get('reference_name', None)
+        self.name = kwargs.get('name', None)

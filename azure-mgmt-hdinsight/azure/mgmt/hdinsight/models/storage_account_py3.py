@@ -24,10 +24,17 @@ class StorageAccount(Model):
      specified for WASB storage accounts.
     :type container: str
     :param file_system: The filesystem, only to be specified for Azure Data
-     Lake Storage Gen 2.
+     Lake Storage type Gen 2.
     :type file_system: str
     :param key: The storage account access key.
     :type key: str
+    :param resource_id: The resource ID of storage account, only to be
+     specified for Azure Data Lake Storage Gen 2.
+    :type resource_id: str
+    :param msi_resource_id: The managed identity (MSI) that is allowed to
+     access the storage account, only to be specified for Azure Data Lake
+     Storage Gen 2.
+    :type msi_resource_id: str
     """
 
     _attribute_map = {
@@ -36,12 +43,16 @@ class StorageAccount(Model):
         'container': {'key': 'container', 'type': 'str'},
         'file_system': {'key': 'fileSystem', 'type': 'str'},
         'key': {'key': 'key', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'msi_resource_id': {'key': 'msiResourceId', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str=None, is_default: bool=None, container: str=None, file_system: str=None, key: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, is_default: bool=None, container: str=None, file_system: str=None, key: str=None, resource_id: str=None, msi_resource_id: str=None, **kwargs) -> None:
         super(StorageAccount, self).__init__(**kwargs)
         self.name = name
         self.is_default = is_default
         self.container = container
         self.file_system = file_system
         self.key = key
+        self.resource_id = resource_id
+        self.msi_resource_id = msi_resource_id

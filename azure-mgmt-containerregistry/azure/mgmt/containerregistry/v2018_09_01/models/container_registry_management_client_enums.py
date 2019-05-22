@@ -44,6 +44,17 @@ class ProvisioningState(str, Enum):
     canceled = "Canceled"
 
 
+class DefaultAction(str, Enum):
+
+    allow = "Allow"
+    deny = "Deny"
+
+
+class Action(str, Enum):
+
+    allow = "Allow"
+
+
 class PasswordName(str, Enum):
 
     password = "password"
@@ -78,6 +89,8 @@ class WebhookAction(str, Enum):
     push = "push"
     delete = "delete"
     quarantine = "quarantine"
+    chart_push = "chart_push"
+    chart_delete = "chart_delete"
 
 
 class RunStatus(str, Enum):
@@ -160,3 +173,14 @@ class BaseImageTriggerType(str, Enum):
 
     all = "All"
     runtime = "Runtime"
+
+
+class SourceRegistryLoginMode(str, Enum):
+
+    none = "None"
+    default = "Default"
+
+
+class SecretObjectType(str, Enum):
+
+    opaque = "Opaque"

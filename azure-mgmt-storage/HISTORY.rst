@@ -3,6 +3,29 @@
 Release History
 ===============
 
+3.3.0 (2019-04-22)
+++++++++++++++++++
+
+**Features**
+
+- Model BlobServiceProperties has a new parameter automatic_snapshot_policy_enabled
+- Added operation StorageAccountsOperations.revoke_user_delegation_keys
+- Added operation BlobContainerOperations.lease
+
+3.2.0 (2019-04-10)
+++++++++++++++++++
+
+**Features**
+
+- Added operation BlobContainersOperations.lease for API versions 2018_02_01 and later
+
+3.1.1 (2019-01-02)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Fix #4013 - "use_sub_domain" should be "use_sub_domain_name"
+
 3.1.0 (2018-11-15)
 ++++++++++++++++++
 

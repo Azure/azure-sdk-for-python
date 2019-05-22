@@ -95,6 +95,19 @@ class SubscriptionClient(MultiApiClientMixin, SDKClient):
             from .v2016_06_01 import models
             return models
         raise NotImplementedError("APIVersion {} is not available".format(api_version))
+    
+    @property
+    def operations(self):
+        """Instance depends on the API version:
+
+           * 2016-06-01: :class:`Operations<azure.mgmt.resource.subscriptions.v2016_06_01.operations.Operations>`
+        """
+        api_version = self._get_api_version('operations')
+        if api_version == '2016-06-01':
+            from .v2016_06_01.operations import Operations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
     def subscriptions(self):

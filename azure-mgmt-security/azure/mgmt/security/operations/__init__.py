@@ -10,37 +10,39 @@
 # --------------------------------------------------------------------------
 
 from .pricings_operations import PricingsOperations
-from .security_contacts_operations import SecurityContactsOperations
-from .workspace_settings_operations import WorkspaceSettingsOperations
+from .alerts_operations import AlertsOperations
+from .settings_operations import SettingsOperations
+from .allowed_connections_operations import AllowedConnectionsOperations
+from .discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
+from .external_security_solutions_operations import ExternalSecuritySolutionsOperations
+from .jit_network_access_policies_operations import JitNetworkAccessPoliciesOperations
+from .locations_operations import LocationsOperations
+from .operations import Operations
+from .tasks_operations import TasksOperations
+from .topology_operations import TopologyOperations
+from .advanced_threat_protection_operations import AdvancedThreatProtectionOperations
 from .auto_provisioning_settings_operations import AutoProvisioningSettingsOperations
 from .compliances_operations import CompliancesOperations
-from .advanced_threat_protection_operations import AdvancedThreatProtectionOperations
-from .settings_operations import SettingsOperations
 from .information_protection_policies_operations import InformationProtectionPoliciesOperations
-from .operations import Operations
-from .locations_operations import LocationsOperations
-from .tasks_operations import TasksOperations
-from .alerts_operations import AlertsOperations
-from .discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
-from .jit_network_access_policies_operations import JitNetworkAccessPoliciesOperations
-from .external_security_solutions_operations import ExternalSecuritySolutionsOperations
-from .topology_operations import TopologyOperations
+from .security_contacts_operations import SecurityContactsOperations
+from .workspace_settings_operations import WorkspaceSettingsOperations
 
 __all__ = [
     'PricingsOperations',
-    'SecurityContactsOperations',
-    'WorkspaceSettingsOperations',
+    'AlertsOperations',
+    'SettingsOperations',
+    'AllowedConnectionsOperations',
+    'DiscoveredSecuritySolutionsOperations',
+    'ExternalSecuritySolutionsOperations',
+    'JitNetworkAccessPoliciesOperations',
+    'LocationsOperations',
+    'Operations',
+    'TasksOperations',
+    'TopologyOperations',
+    'AdvancedThreatProtectionOperations',
     'AutoProvisioningSettingsOperations',
     'CompliancesOperations',
-    'AdvancedThreatProtectionOperations',
-    'SettingsOperations',
     'InformationProtectionPoliciesOperations',
-    'Operations',
-    'LocationsOperations',
-    'TasksOperations',
-    'AlertsOperations',
-    'DiscoveredSecuritySolutionsOperations',
-    'JitNetworkAccessPoliciesOperations',
-    'ExternalSecuritySolutionsOperations',
-    'TopologyOperations',
+    'SecurityContactsOperations',
+    'WorkspaceSettingsOperations',
 ]

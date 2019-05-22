@@ -22,7 +22,7 @@ class TaskOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2018-08-01.7.0".
+    :ivar api_version: Client API Version. Constant value: "2018-12-01.8.0".
     """
 
     models = models
@@ -32,7 +32,7 @@ class TaskOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-08-01.7.0"
+        self.api_version = "2018-12-01.8.0"
 
         self.config = config
 
@@ -40,8 +40,8 @@ class TaskOperations(object):
             self, job_id, task, task_add_options=None, custom_headers=None, raw=False, **operation_config):
         """Adds a task to the specified job.
 
-        The maximum lifetime of a task from addition to completion is 7 days.
-        If a task has not completed within 7 days of being added it will be
+        The maximum lifetime of a task from addition to completion is 180 days.
+        If a task has not completed within 180 days of being added it will be
         terminated by the Batch service and left in whatever state it was in at
         that time.
 
@@ -77,6 +77,7 @@ class TaskOperations(object):
         # Construct URL
         url = self.add.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -179,6 +180,7 @@ class TaskOperations(object):
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
+                    'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
                     'jobId': self._serialize.url("job_id", job_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -253,8 +255,8 @@ class TaskOperations(object):
         tasks which failed to add, a client can retry the request. In a retry,
         it is most efficient to resubmit only tasks that failed to add, and to
         omit tasks that were successfully added on the first attempt. The
-        maximum lifetime of a task from addition to completion is 7 days. If a
-        task has not completed within 7 days of being added it will be
+        maximum lifetime of a task from addition to completion is 180 days. If
+        a task has not completed within 180 days of being added it will be
         terminated by the Batch service and left in whatever state it was in at
         that time.
 
@@ -300,6 +302,7 @@ class TaskOperations(object):
         # Construct URL
         url = self.add_collection.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -409,6 +412,7 @@ class TaskOperations(object):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'taskId': self._serialize.url("task_id", task_id, 'str')
         }
@@ -518,6 +522,7 @@ class TaskOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'taskId': self._serialize.url("task_id", task_id, 'str')
         }
@@ -639,6 +644,7 @@ class TaskOperations(object):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'taskId': self._serialize.url("task_id", task_id, 'str')
         }
@@ -742,6 +748,7 @@ class TaskOperations(object):
         # Construct URL
         url = self.list_subtasks.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'taskId': self._serialize.url("task_id", task_id, 'str')
         }
@@ -851,6 +858,7 @@ class TaskOperations(object):
         # Construct URL
         url = self.terminate.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'taskId': self._serialize.url("task_id", task_id, 'str')
         }
@@ -964,6 +972,7 @@ class TaskOperations(object):
         # Construct URL
         url = self.reactivate.metadata['url']
         path_format_arguments = {
+            'batchUrl': self._serialize.url("self.config.batch_url", self.config.batch_url, 'str', skip_quote=True),
             'jobId': self._serialize.url("job_id", job_id, 'str'),
             'taskId': self._serialize.url("task_id", task_id, 'str')
         }

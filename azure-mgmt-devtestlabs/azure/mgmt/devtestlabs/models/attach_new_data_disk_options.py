@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class AttachNewDataDiskOptions(Model):
     """Properties to attach new disk to the Virtual Machine.
 
-    :param disk_size_gi_b: Size of the disk to be attached in GibiBytes.
+    :param disk_size_gi_b: Size of the disk to be attached in Gibibytes.
     :type disk_size_gi_b: int
     :param disk_name: The name of the disk to be attached.
     :type disk_name: str
@@ -30,8 +30,8 @@ class AttachNewDataDiskOptions(Model):
         'disk_type': {'key': 'diskType', 'type': 'str'},
     }
 
-    def __init__(self, disk_size_gi_b=None, disk_name=None, disk_type=None):
-        super(AttachNewDataDiskOptions, self).__init__()
-        self.disk_size_gi_b = disk_size_gi_b
-        self.disk_name = disk_name
-        self.disk_type = disk_type
+    def __init__(self, **kwargs):
+        super(AttachNewDataDiskOptions, self).__init__(**kwargs)
+        self.disk_size_gi_b = kwargs.get('disk_size_gi_b', None)
+        self.disk_name = kwargs.get('disk_name', None)
+        self.disk_type = kwargs.get('disk_type', None)

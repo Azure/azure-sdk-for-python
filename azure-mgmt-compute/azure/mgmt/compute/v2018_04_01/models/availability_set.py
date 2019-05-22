@@ -19,7 +19,7 @@ class AvailabilitySet(Resource):
     information about availability sets, see [Manage the availability of
     virtual
     machines](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-manage-availability?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json).
-    <br><br> For more information on Azure planned maintainance, see [Planned
+    <br><br> For more information on Azure planned maintenance, see [Planned
     maintenance for virtual machines in
     Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)
     <br><br> Currently, a VM can only be added to availability set at creation
@@ -48,6 +48,11 @@ class AvailabilitySet(Resource):
      the availability set.
     :type virtual_machines:
      list[~azure.mgmt.compute.v2018_04_01.models.SubResource]
+    :param proximity_placement_group: Specifies information about the
+     proximity placement group that the availability set should be assigned to.
+     <br><br>Minimum api-version: 2018-04-01.
+    :type proximity_placement_group:
+     ~azure.mgmt.compute.v2018_04_01.models.SubResource
     :ivar statuses: The resource status information.
     :vartype statuses:
      list[~azure.mgmt.compute.v2018_04_01.models.InstanceViewStatus]
@@ -72,6 +77,7 @@ class AvailabilitySet(Resource):
         'platform_update_domain_count': {'key': 'properties.platformUpdateDomainCount', 'type': 'int'},
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'virtual_machines': {'key': 'properties.virtualMachines', 'type': '[SubResource]'},
+        'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'statuses': {'key': 'properties.statuses', 'type': '[InstanceViewStatus]'},
         'sku': {'key': 'sku', 'type': 'Sku'},
     }
@@ -81,5 +87,6 @@ class AvailabilitySet(Resource):
         self.platform_update_domain_count = kwargs.get('platform_update_domain_count', None)
         self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
         self.virtual_machines = kwargs.get('virtual_machines', None)
+        self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
         self.statuses = None
         self.sku = kwargs.get('sku', None)

@@ -15,6 +15,8 @@ from .copy_source import CopySource
 class DocumentDbCollectionSource(CopySource):
     """A copy activity Document Database Collection source.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -25,7 +27,7 @@ class DocumentDbCollectionSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param query: Documents query. Type: string (or Expression with resultType
      string).
@@ -48,8 +50,8 @@ class DocumentDbCollectionSource(CopySource):
         'nesting_separator': {'key': 'nestingSeparator', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, query=None, nesting_separator=None):
-        super(DocumentDbCollectionSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait)
-        self.query = query
-        self.nesting_separator = nesting_separator
+    def __init__(self, **kwargs):
+        super(DocumentDbCollectionSource, self).__init__(**kwargs)
+        self.query = kwargs.get('query', None)
+        self.nesting_separator = kwargs.get('nesting_separator', None)
         self.type = 'DocumentDbCollectionSource'

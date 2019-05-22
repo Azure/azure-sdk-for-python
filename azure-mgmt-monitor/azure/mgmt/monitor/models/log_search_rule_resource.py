@@ -38,13 +38,14 @@ class LogSearchRuleResource(Resource):
     :type enabled: str or ~azure.mgmt.monitor.models.Enabled
     :ivar last_updated_time: Last time the rule was updated in IS08601 format.
     :vartype last_updated_time: datetime
-    :ivar provisioning_state: Provisioning state of the scheduledquery rule.
+    :ivar provisioning_state: Provisioning state of the scheduled query rule.
      Possible values include: 'Succeeded', 'Deploying', 'Canceled', 'Failed'
     :vartype provisioning_state: str or
      ~azure.mgmt.monitor.models.ProvisioningState
     :param source: Required. Data Source against which rule will Query Data
     :type source: ~azure.mgmt.monitor.models.Source
-    :param schedule: Required. Schedule (Frequnecy, Time Window) for rule.
+    :param schedule: Schedule (Frequency, Time Window) for rule. Required for
+     action type - AlertingAction
     :type schedule: ~azure.mgmt.monitor.models.Schedule
     :param action: Required. Action needs to be taken on rule execution.
     :type action: ~azure.mgmt.monitor.models.Action
@@ -58,7 +59,6 @@ class LogSearchRuleResource(Resource):
         'last_updated_time': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'source': {'required': True},
-        'schedule': {'required': True},
         'action': {'required': True},
     }
 

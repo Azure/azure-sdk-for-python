@@ -22,15 +22,15 @@ class RampUpRule(Model):
     :param reroute_percentage: Percentage of the traffic which will be
      redirected to <code>ActionHostName</code>.
     :type reroute_percentage: float
-    :param change_step: In auto ramp up scenario this is the step to to
+    :param change_step: In auto ramp up scenario this is the step to
      add/remove from <code>ReroutePercentage</code> until it reaches
      <code>MinReroutePercentage</code> or <code>MaxReroutePercentage</code>.
-     Site metrics are checked every N minutes specificed in
+     Site metrics are checked every N minutes specified in
      <code>ChangeIntervalInMinutes</code>.
      Custom decision algorithm can be provided in TiPCallback site extension
      which URL can be specified in <code>ChangeDecisionCallbackUrl</code>.
     :type change_step: float
-    :param change_interval_in_minutes: Specifies interval in mimuntes to
+    :param change_interval_in_minutes: Specifies interval in minutes to
      reevaluate ReroutePercentage.
     :type change_interval_in_minutes: int
     :param min_reroute_percentage: Specifies lower boundary above which
