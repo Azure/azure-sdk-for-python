@@ -23,6 +23,8 @@ try:
     from .transfer_billing_subscription_result_py3 import TransferBillingSubscriptionResult
     from .transfer_billing_subscription_request_properties_py3 import TransferBillingSubscriptionRequestProperties
     from .transfer_billing_subscription_request_py3 import TransferBillingSubscriptionRequest
+    from .validate_subscription_transfer_eligibility_error_py3 import ValidateSubscriptionTransferEligibilityError
+    from .validate_subscription_transfer_eligibility_result_py3 import ValidateSubscriptionTransferEligibilityResult
     from .update_auto_renew_operation_summary_py3 import UpdateAutoRenewOperationSummary
     from .enabled_azure_sk_us_py3 import EnabledAzureSKUs
     from .billing_profile_py3 import BillingProfile
@@ -51,6 +53,8 @@ try:
     from .invoice_list_result_py3 import InvoiceListResult
     from .product_summary_py3 import ProductSummary
     from .products_list_result_py3 import ProductsListResult
+    from .validate_product_transfer_eligibility_error_py3 import ValidateProductTransferEligibilityError
+    from .validate_product_transfer_eligibility_result_py3 import ValidateProductTransferEligibilityResult
     from .billing_subscription_summary_py3 import BillingSubscriptionSummary
     from .billing_subscriptions_list_result_py3 import BillingSubscriptionsListResult
     from .enrollment_account_context_py3 import EnrollmentAccountContext
@@ -86,6 +90,8 @@ except (SyntaxError, ImportError):
     from .transfer_billing_subscription_result import TransferBillingSubscriptionResult
     from .transfer_billing_subscription_request_properties import TransferBillingSubscriptionRequestProperties
     from .transfer_billing_subscription_request import TransferBillingSubscriptionRequest
+    from .validate_subscription_transfer_eligibility_error import ValidateSubscriptionTransferEligibilityError
+    from .validate_subscription_transfer_eligibility_result import ValidateSubscriptionTransferEligibilityResult
     from .update_auto_renew_operation_summary import UpdateAutoRenewOperationSummary
     from .enabled_azure_sk_us import EnabledAzureSKUs
     from .billing_profile import BillingProfile
@@ -114,6 +120,8 @@ except (SyntaxError, ImportError):
     from .invoice_list_result import InvoiceListResult
     from .product_summary import ProductSummary
     from .products_list_result import ProductsListResult
+    from .validate_product_transfer_eligibility_error import ValidateProductTransferEligibilityError
+    from .validate_product_transfer_eligibility_result import ValidateProductTransferEligibilityResult
     from .billing_subscription_summary import BillingSubscriptionSummary
     from .billing_subscriptions_list_result import BillingSubscriptionsListResult
     from .enrollment_account_context import EnrollmentAccountContext
@@ -148,8 +156,10 @@ from .billing_management_client_enums import (
     TransferStatus,
     ProductTransferStatus,
     EligibleProductType,
+    SubscriptionTransferValidationErrorCode,
     ProductStatusType,
     BillingFrequency,
+    ProductTransferValidationErrorCode,
     BillingSubscriptionStatusType,
     TransactionTypeKind,
     ReservationType,
@@ -171,6 +181,8 @@ __all__ = [
     'TransferBillingSubscriptionResult',
     'TransferBillingSubscriptionRequestProperties',
     'TransferBillingSubscriptionRequest',
+    'ValidateSubscriptionTransferEligibilityError',
+    'ValidateSubscriptionTransferEligibilityResult',
     'UpdateAutoRenewOperationSummary',
     'EnabledAzureSKUs',
     'BillingProfile',
@@ -199,6 +211,8 @@ __all__ = [
     'InvoiceListResult',
     'ProductSummary',
     'ProductsListResult',
+    'ValidateProductTransferEligibilityError',
+    'ValidateProductTransferEligibilityResult',
     'BillingSubscriptionSummary',
     'BillingSubscriptionsListResult',
     'EnrollmentAccountContext',
@@ -232,8 +246,10 @@ __all__ = [
     'TransferStatus',
     'ProductTransferStatus',
     'EligibleProductType',
+    'SubscriptionTransferValidationErrorCode',
     'ProductStatusType',
     'BillingFrequency',
+    'ProductTransferValidationErrorCode',
     'BillingSubscriptionStatusType',
     'TransactionTypeKind',
     'ReservationType',

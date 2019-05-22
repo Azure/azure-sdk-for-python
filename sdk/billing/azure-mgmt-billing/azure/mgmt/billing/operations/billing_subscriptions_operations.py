@@ -290,8 +290,8 @@ class BillingSubscriptionsOperations(object):
 
 
     def _transfer_initial(
-            self, billing_account_name, invoice_section_name, billing_subscription_name, destination_invoice_section_id=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.TransferBillingSubscriptionRequestProperties(destination_invoice_section_id=destination_invoice_section_id)
+            self, billing_account_name, invoice_section_name, billing_subscription_name, destination_invoice_section_id=None, destination_billing_profile_id=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.TransferBillingSubscriptionRequestProperties(destination_invoice_section_id=destination_invoice_section_id, destination_billing_profile_id=destination_billing_profile_id)
 
         # Construct URL
         url = self.transfer.metadata['url']
@@ -345,7 +345,7 @@ class BillingSubscriptionsOperations(object):
         return deserialized
 
     def transfer(
-            self, billing_account_name, invoice_section_name, billing_subscription_name, destination_invoice_section_id=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, billing_account_name, invoice_section_name, billing_subscription_name, destination_invoice_section_id=None, destination_billing_profile_id=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Transfers the subscription from one invoice section to another within a
         billing account.
 
@@ -358,6 +358,9 @@ class BillingSubscriptionsOperations(object):
         :param destination_invoice_section_id: The destination invoice section
          id.
         :type destination_invoice_section_id: str
+        :param destination_billing_profile_id: The destination billing profile
+         id.
+        :type destination_billing_profile_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -378,6 +381,7 @@ class BillingSubscriptionsOperations(object):
             invoice_section_name=invoice_section_name,
             billing_subscription_name=billing_subscription_name,
             destination_invoice_section_id=destination_invoice_section_id,
+            destination_billing_profile_id=destination_billing_profile_id,
             custom_headers=custom_headers,
             raw=True,
             **operation_config

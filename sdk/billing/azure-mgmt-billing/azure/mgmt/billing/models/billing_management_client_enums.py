@@ -50,6 +50,18 @@ class EligibleProductType(str, Enum):
     azure_reservation = "AzureReservation"
 
 
+class SubscriptionTransferValidationErrorCode(str, Enum):
+
+    invalid_source = "InvalidSource"
+    subscription_not_active = "SubscriptionNotActive"
+    insufficienct_permission_on_source = "InsufficienctPermissionOnSource"
+    insufficienct_permission_on_destination = "InsufficienctPermissionOnDestination"
+    destination_billing_profile_past_due = "DestinationBillingProfilePastDue"
+    subscription_type_not_supported = "SubscriptionTypeNotSupported"
+    cross_billing_account_not_allowed = "CrossBillingAccountNotAllowed"
+    not_available_for_destination_market = "NotAvailableForDestinationMarket"
+
+
 class ProductStatusType(str, Enum):
 
     active = "Active"
@@ -67,6 +79,19 @@ class BillingFrequency(str, Enum):
     one_time = "OneTime"
     monthly = "Monthly"
     usage_based = "UsageBased"
+
+
+class ProductTransferValidationErrorCode(str, Enum):
+
+    invalid_source = "InvalidSource"
+    product_not_active = "ProductNotActive"
+    insufficienct_permission_on_source = "InsufficienctPermissionOnSource"
+    insufficienct_permission_on_destination = "InsufficienctPermissionOnDestination"
+    destination_billing_profile_past_due = "DestinationBillingProfilePastDue"
+    product_type_not_supported = "ProductTypeNotSupported"
+    cross_billing_account_not_allowed = "CrossBillingAccountNotAllowed"
+    not_available_for_destination_market = "NotAvailableForDestinationMarket"
+    one_time_purchase_product_transfer_not_allowed = "OneTimePurchaseProductTransferNotAllowed"
 
 
 class BillingSubscriptionStatusType(str, Enum):

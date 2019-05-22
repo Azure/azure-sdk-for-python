@@ -239,7 +239,7 @@ class ProductsOperations(object):
     get.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/products/{productName}'}
 
     def transfer(
-            self, billing_account_name, invoice_section_name, product_name, destination_invoice_section_id=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, invoice_section_name, product_name, destination_invoice_section_id=None, destination_billing_profile_id=None, custom_headers=None, raw=False, **operation_config):
         """The operation to transfer a Product to another invoice section.
 
         :param billing_account_name: billing Account Id.
@@ -248,8 +248,12 @@ class ProductsOperations(object):
         :type invoice_section_name: str
         :param product_name: Invoice Id.
         :type product_name: str
-        :param destination_invoice_section_id: Destination invoice section id.
+        :param destination_invoice_section_id: The destination invoice section
+         id.
         :type destination_invoice_section_id: str
+        :param destination_billing_profile_id: The destination billing profile
+         id.
+        :type destination_billing_profile_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -261,7 +265,7 @@ class ProductsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        parameters = models.TransferProductRequestProperties(destination_invoice_section_id=destination_invoice_section_id)
+        parameters = models.TransferProductRequestProperties(destination_invoice_section_id=destination_invoice_section_id, destination_billing_profile_id=destination_billing_profile_id)
 
         # Construct URL
         url = self.transfer.metadata['url']
