@@ -9,6 +9,9 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING
 )
+
+from azure.storage.blob._shared_access_signature import BlobSharedAccessSignature
+
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -104,7 +107,18 @@ class ContainerClient(object):
 
     def make_url(self, protocol=None, sas_token=None):
         # type: (Optional[str], Optional[str]) -> str
-        pass
+        parsed_url = urlparse(self.url)
+        new_scheme = protocol or parsed_url.scheme
+        query = []
+        if sas_token:
+            query.append(sas_token)
+        new_url = "{}://{}{}".format(
+            new_scheme,
+            parsed_url.netloc,
+            parsed_url.path)
+        if query:
+            new_url += "?{}".format('&'.join(query))
+        return new_url
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[ContainerPermissions, str]]
@@ -120,7 +134,23 @@ class ContainerClient(object):
             content_type=None  # type: Optional[str]
         ):
         # type: (...) -> str
-        pass
+        if not hasattr(self.credentials, 'account_key') and not self.credentials.account_key:
+            raise ValueError("No account SAS key available.")
+        sas = BlobSharedAccessSignature(self.account, self.credentials.account_key)
+        return sas.generate_container(
+            self.name,
+            permission=permission,
+            expiry=expiry,
+            start=start,
+            policy_id=policy_id,
+            ip=ip,
+            protocol=protocol,
+            cache_control=cache_control,
+            content_disposition=content_disposition,
+            content_encoding=content_encoding,
+            content_language=content_language,
+            content_type=content_type,
+        )
 
     def create_container(self, metadata=None, public_access=None, timeout=None, **kwargs):
         # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], Optional[int]) -> None
