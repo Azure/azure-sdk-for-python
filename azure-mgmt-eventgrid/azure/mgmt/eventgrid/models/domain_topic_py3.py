@@ -24,6 +24,11 @@ class DomainTopic(Resource):
     :vartype name: str
     :ivar type: Type of the resource
     :vartype type: str
+    :param provisioning_state: Provisioning state of the domain topic.
+     Possible values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
+     'Canceled', 'Failed'
+    :type provisioning_state: str or
+     ~azure.mgmt.eventgrid.models.DomainTopicProvisioningState
     """
 
     _validation = {
@@ -36,7 +41,9 @@ class DomainTopic(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, provisioning_state=None, **kwargs) -> None:
         super(DomainTopic, self).__init__(**kwargs)
+        self.provisioning_state = provisioning_state

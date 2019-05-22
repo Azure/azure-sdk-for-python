@@ -76,6 +76,7 @@ class AccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -88,9 +89,8 @@ class AccountsOperations(object):
         body_content = self._serialize.body(parameters, 'CognitiveServicesAccountCreateParameters')
 
         # Construct and send request
-        request = self._client.put(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
             raise models.ErrorException(self._deserialize, response)
@@ -110,7 +110,7 @@ class AccountsOperations(object):
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}'}
 
     def update(
-            self, resource_group_name, account_name, sku=None, tags=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, sku=None, tags=None, properties=None, custom_headers=None, raw=False, **operation_config):
         """Updates a Cognitive Services account.
 
         :param resource_group_name: The name of the resource group within the
@@ -126,6 +126,9 @@ class AccountsOperations(object):
          resource. Each tag must have a key no greater than 128 characters and
          value no greater than 256 characters.
         :type tags: dict[str, str]
+        :param properties: Additional properties for Account. Only provided
+         fields will be updated.
+        :type properties: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -137,7 +140,7 @@ class AccountsOperations(object):
         :raises:
          :class:`ErrorException<azure.mgmt.cognitiveservices.models.ErrorException>`
         """
-        parameters = models.CognitiveServicesAccountUpdateParameters(sku=sku, tags=tags)
+        parameters = models.CognitiveServicesAccountUpdateParameters(sku=sku, tags=tags, properties=properties)
 
         # Construct URL
         url = self.update.metadata['url']
@@ -154,6 +157,7 @@ class AccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -166,9 +170,8 @@ class AccountsOperations(object):
         body_content = self._serialize.body(parameters, 'CognitiveServicesAccountUpdateParameters')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -219,7 +222,6 @@ class AccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -228,8 +230,8 @@ class AccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
             raise models.ErrorException(self._deserialize, response)
@@ -274,7 +276,7 @@ class AccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -283,8 +285,8 @@ class AccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -341,7 +343,7 @@ class AccountsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -350,9 +352,8 @@ class AccountsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorException(self._deserialize, response)
@@ -406,7 +407,7 @@ class AccountsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -415,9 +416,8 @@ class AccountsOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorException(self._deserialize, response)
@@ -471,7 +471,7 @@ class AccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -480,8 +480,8 @@ class AccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -540,6 +540,7 @@ class AccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -552,9 +553,8 @@ class AccountsOperations(object):
         body_content = self._serialize.body(parameters, 'RegenerateKeyParameters')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -608,7 +608,7 @@ class AccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -617,8 +617,8 @@ class AccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)
@@ -676,7 +676,7 @@ class AccountsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -685,8 +685,8 @@ class AccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorException(self._deserialize, response)

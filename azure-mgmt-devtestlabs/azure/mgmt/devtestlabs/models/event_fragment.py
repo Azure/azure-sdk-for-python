@@ -25,6 +25,6 @@ class EventFragment(Model):
         'event_name': {'key': 'eventName', 'type': 'str'},
     }
 
-    def __init__(self, event_name=None):
-        super(EventFragment, self).__init__()
-        self.event_name = event_name
+    def __init__(self, **kwargs):
+        super(EventFragment, self).__init__(**kwargs)
+        self.event_name = kwargs.get('event_name', None)

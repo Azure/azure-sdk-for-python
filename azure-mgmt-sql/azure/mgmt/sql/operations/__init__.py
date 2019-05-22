@@ -42,6 +42,7 @@ from .sync_agents_operations import SyncAgentsOperations
 from .sync_groups_operations import SyncGroupsOperations
 from .sync_members_operations import SyncMembersOperations
 from .subscription_usages_operations import SubscriptionUsagesOperations
+from .virtual_clusters_operations import VirtualClustersOperations
 from .virtual_network_rules_operations import VirtualNetworkRulesOperations
 from .extended_database_blob_auditing_policies_operations import ExtendedDatabaseBlobAuditingPoliciesOperations
 from .extended_server_blob_auditing_policies_operations import ExtendedServerBlobAuditingPoliciesOperations
@@ -62,10 +63,15 @@ from .long_term_retention_backups_operations import LongTermRetentionBackupsOper
 from .backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from .managed_backup_short_term_retention_policies_operations import ManagedBackupShortTermRetentionPoliciesOperations
 from .managed_databases_operations import ManagedDatabasesOperations
+from .managed_restorable_dropped_database_backup_short_term_retention_policies_operations import ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
 from .server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from .server_dns_aliases_operations import ServerDnsAliasesOperations
 from .server_security_alert_policies_operations import ServerSecurityAlertPoliciesOperations
+from .restorable_dropped_managed_databases_operations import RestorableDroppedManagedDatabasesOperations
 from .restore_points_operations import RestorePointsOperations
+from .managed_database_security_alert_policies_operations import ManagedDatabaseSecurityAlertPoliciesOperations
+from .managed_server_security_alert_policies_operations import ManagedServerSecurityAlertPoliciesOperations
+from .sensitivity_labels_operations import SensitivityLabelsOperations
 from .database_operations import DatabaseOperations
 from .elastic_pool_operations import ElasticPoolOperations
 from .capabilities_operations import CapabilitiesOperations
@@ -79,6 +85,10 @@ from .tde_certificates_operations import TdeCertificatesOperations
 from .managed_instance_tde_certificates_operations import ManagedInstanceTdeCertificatesOperations
 from .managed_instance_keys_operations import ManagedInstanceKeysOperations
 from .managed_instance_encryption_protectors_operations import ManagedInstanceEncryptionProtectorsOperations
+from .recoverable_managed_databases_operations import RecoverableManagedDatabasesOperations
+from .managed_instance_vulnerability_assessments_operations import ManagedInstanceVulnerabilityAssessmentsOperations
+from .server_vulnerability_assessments_operations import ServerVulnerabilityAssessmentsOperations
+from .managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -114,6 +124,7 @@ __all__ = [
     'SyncGroupsOperations',
     'SyncMembersOperations',
     'SubscriptionUsagesOperations',
+    'VirtualClustersOperations',
     'VirtualNetworkRulesOperations',
     'ExtendedDatabaseBlobAuditingPoliciesOperations',
     'ExtendedServerBlobAuditingPoliciesOperations',
@@ -134,10 +145,15 @@ __all__ = [
     'BackupLongTermRetentionPoliciesOperations',
     'ManagedBackupShortTermRetentionPoliciesOperations',
     'ManagedDatabasesOperations',
+    'ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations',
     'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
     'ServerSecurityAlertPoliciesOperations',
+    'RestorableDroppedManagedDatabasesOperations',
     'RestorePointsOperations',
+    'ManagedDatabaseSecurityAlertPoliciesOperations',
+    'ManagedServerSecurityAlertPoliciesOperations',
+    'SensitivityLabelsOperations',
     'DatabaseOperations',
     'ElasticPoolOperations',
     'CapabilitiesOperations',
@@ -151,4 +167,8 @@ __all__ = [
     'ManagedInstanceTdeCertificatesOperations',
     'ManagedInstanceKeysOperations',
     'ManagedInstanceEncryptionProtectorsOperations',
+    'RecoverableManagedDatabasesOperations',
+    'ManagedInstanceVulnerabilityAssessmentsOperations',
+    'ServerVulnerabilityAssessmentsOperations',
+    'ManagedDatabaseSensitivityLabelsOperations',
 ]

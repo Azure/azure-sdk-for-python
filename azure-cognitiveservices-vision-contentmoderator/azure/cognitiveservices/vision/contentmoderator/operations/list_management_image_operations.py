@@ -55,9 +55,9 @@ class ListManagementImageOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/lists/v1.0/imagelists/{listId}/images'
+        url = self.add_image.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -71,13 +71,13 @@ class ListManagementImageOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -92,6 +92,7 @@ class ListManagementImageOperations(object):
             return client_raw_response
 
         return deserialized
+    add_image.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}/images'}
 
     def delete_all_images(
             self, list_id, custom_headers=None, raw=False, **operation_config):
@@ -110,9 +111,9 @@ class ListManagementImageOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/lists/v1.0/imagelists/{listId}/images'
+        url = self.delete_all_images.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -122,13 +123,13 @@ class ListManagementImageOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -143,6 +144,7 @@ class ListManagementImageOperations(object):
             return client_raw_response
 
         return deserialized
+    delete_all_images.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}/images'}
 
     def get_all_image_ids(
             self, list_id, custom_headers=None, raw=False, **operation_config):
@@ -163,9 +165,9 @@ class ListManagementImageOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/lists/v1.0/imagelists/{listId}/images'
+        url = self.get_all_image_ids.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -175,13 +177,13 @@ class ListManagementImageOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.get(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -196,6 +198,7 @@ class ListManagementImageOperations(object):
             return client_raw_response
 
         return deserialized
+    get_all_image_ids.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}/images'}
 
     def delete_image(
             self, list_id, image_id, custom_headers=None, raw=False, **operation_config):
@@ -216,9 +219,9 @@ class ListManagementImageOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/lists/v1.0/imagelists/{listId}/images/{ImageId}'
+        url = self.delete_image.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str'),
             'ImageId': self._serialize.url("image_id", image_id, 'str')
         }
@@ -229,13 +232,13 @@ class ListManagementImageOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client.delete(url, query_parameters)
-        response = self._client.send(request, header_parameters, stream=False, **operation_config)
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -250,6 +253,7 @@ class ListManagementImageOperations(object):
             return client_raw_response
 
         return deserialized
+    delete_image.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}/images/{ImageId}'}
 
     def add_image_url_input(
             self, list_id, content_type, tag=None, label=None, data_representation="URL", value=None, custom_headers=None, raw=False, **operation_config):
@@ -281,9 +285,9 @@ class ListManagementImageOperations(object):
         image_url = models.BodyModel(data_representation=data_representation, value=value)
 
         # Construct URL
-        url = '/contentmoderator/lists/v1.0/imagelists/{listId}/images'
+        url = self.add_image_url_input.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -297,6 +301,7 @@ class ListManagementImageOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -306,9 +311,8 @@ class ListManagementImageOperations(object):
         body_content = self._serialize.body(image_url, 'BodyModel')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -323,6 +327,7 @@ class ListManagementImageOperations(object):
             return client_raw_response
 
         return deserialized
+    add_image_url_input.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}/images'}
 
     def add_image_file_input(
             self, list_id, image_stream, tag=None, label=None, custom_headers=None, raw=False, callback=None, **operation_config):
@@ -353,9 +358,9 @@ class ListManagementImageOperations(object):
          :class:`APIErrorException<azure.cognitiveservices.vision.contentmoderator.models.APIErrorException>`
         """
         # Construct URL
-        url = '/contentmoderator/lists/v1.0/imagelists/{listId}/images'
+        url = self.add_image_file_input.metadata['url']
         path_format_arguments = {
-            'baseUrl': self._serialize.url("self.config.base_url_parameter", self.config.base_url_parameter, 'str', skip_quote=True),
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'listId': self._serialize.url("list_id", list_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -369,6 +374,7 @@ class ListManagementImageOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'image/gif'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -377,9 +383,8 @@ class ListManagementImageOperations(object):
         body_content = self._client.stream_upload(image_stream, callback)
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.APIErrorException(self._deserialize, response)
@@ -394,3 +399,4 @@ class ListManagementImageOperations(object):
             return client_raw_response
 
         return deserialized
+    add_image_file_input.metadata = {'url': '/contentmoderator/lists/v1.0/imagelists/{listId}/images'}

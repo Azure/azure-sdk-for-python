@@ -25,15 +25,15 @@ class EventSubscriptionFilter(Model):
      Wildcard characters are not supported in this path.
     :type subject_ends_with: str
     :param included_event_types: A list of applicable event types that need to
-     be part of the event subscription.
-     If it is desired to subscribe to all event types, the string "all" needs
-     to be specified as an element in this list.
+     be part of the event subscription. If it is desired to subscribe to all
+     default event types, set the IncludedEventTypes to null.
     :type included_event_types: list[str]
     :param is_subject_case_sensitive: Specifies if the SubjectBeginsWith and
      SubjectEndsWith properties of the filter
      should be compared in a case sensitive manner. Default value: False .
     :type is_subject_case_sensitive: bool
-    :param advanced_filters: A list of advanced filters.
+    :param advanced_filters: An array of advanced filters that are used for
+     filtering event subscriptions.
     :type advanced_filters: list[~azure.mgmt.eventgrid.models.AdvancedFilter]
     """
 

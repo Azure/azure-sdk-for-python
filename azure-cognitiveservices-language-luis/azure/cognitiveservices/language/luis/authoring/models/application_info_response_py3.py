@@ -21,12 +21,13 @@ class ApplicationInfoResponse(Model):
     :type name: str
     :param description: The description of the application.
     :type description: str
-    :param culture: The culture of the application. E.g.: en-us.
+    :param culture: The culture of the application. For example, "en-us".
     :type culture: str
     :param usage_scenario: Defines the scenario for the new application.
-     Optional. E.g.: IoT.
+     Optional. For example, IoT.
     :type usage_scenario: str
-    :param domain: The domain for the new application. Optional. E.g.: Comics.
+    :param domain: The domain for the new application. Optional. For example,
+     Comics.
     :type domain: str
     :param versions_count: Amount of model versions within the application.
     :type versions_count: int

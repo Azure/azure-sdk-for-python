@@ -13,17 +13,26 @@ from msrest.serialization import Model
 
 
 class BoundingBox(Model):
-    """BoundingBox.
+    """Bounding box that defines a region of an image.
 
-    :param left:
+    All required parameters must be populated in order to send to Azure.
+
+    :param left: Required. Coordinate of the left boundary.
     :type left: float
-    :param top:
+    :param top: Required. Coordinate of the top boundary.
     :type top: float
-    :param width:
+    :param width: Required. Width.
     :type width: float
-    :param height:
+    :param height: Required. Height.
     :type height: float
     """
+
+    _validation = {
+        'left': {'required': True},
+        'top': {'required': True},
+        'width': {'required': True},
+        'height': {'required': True},
+    }
 
     _attribute_map = {
         'left': {'key': 'left', 'type': 'float'},

@@ -3,6 +3,13 @@
 Release History
 ===============
 
+4.0.0rc2 (2019-01-11)
++++++++++++++++++++++
+
+**Bugfixes**
+
+- Fixed JSON parsing problem that could raise unexpected exceptions
+
 4.0.0rc1 (2018-12-10)
 +++++++++++++++++++++
 

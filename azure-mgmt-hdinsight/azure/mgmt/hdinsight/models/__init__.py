@@ -24,7 +24,10 @@ try:
     from .compute_profile_py3 import ComputeProfile
     from .storage_account_py3 import StorageAccount
     from .storage_profile_py3 import StorageProfile
+    from .disk_encryption_properties_py3 import DiskEncryptionProperties
     from .cluster_create_properties_py3 import ClusterCreateProperties
+    from .cluster_identity_user_assigned_identities_value_py3 import ClusterIdentityUserAssignedIdentitiesValue
+    from .cluster_identity_py3 import ClusterIdentity
     from .cluster_create_parameters_extended_py3 import ClusterCreateParametersExtended
     from .cluster_patch_parameters_py3 import ClusterPatchParameters
     from .quota_info_py3 import QuotaInfo
@@ -39,6 +42,9 @@ try:
     from .runtime_script_action_detail_py3 import RuntimeScriptActionDetail
     from .cluster_list_runtime_script_action_detail_result_py3 import ClusterListRuntimeScriptActionDetailResult
     from .cluster_resize_parameters_py3 import ClusterResizeParameters
+    from .cluster_disk_encryption_parameters_py3 import ClusterDiskEncryptionParameters
+    from .update_gateway_settings_parameters_py3 import UpdateGatewaySettingsParameters
+    from .gateway_settings_py3 import GatewaySettings
     from .operation_resource_py3 import OperationResource
     from .resource_py3 import Resource
     from .tracked_resource_py3 import TrackedResource
@@ -48,17 +54,10 @@ try:
     from .application_get_endpoint_py3 import ApplicationGetEndpoint
     from .application_properties_py3 import ApplicationProperties
     from .application_py3 import Application
-    from .version_spec_py3 import VersionSpec
-    from .versions_capability_py3 import VersionsCapability
-    from .regions_capability_py3 import RegionsCapability
-    from .vm_sizes_capability_py3 import VmSizesCapability
-    from .vm_size_compatibility_filter_py3 import VmSizeCompatibilityFilter
-    from .regional_quota_capability_py3 import RegionalQuotaCapability
-    from .quota_capability_py3 import QuotaCapability
-    from .capabilities_result_py3 import CapabilitiesResult
     from .localized_name_py3 import LocalizedName
     from .usage_py3 import Usage
     from .usages_list_result_py3 import UsagesListResult
+    from .cluster_configurations_py3 import ClusterConfigurations
     from .extension_py3 import Extension
     from .cluster_monitoring_response_py3 import ClusterMonitoringResponse
     from .cluster_monitoring_request_py3 import ClusterMonitoringRequest
@@ -80,7 +79,10 @@ except (SyntaxError, ImportError):
     from .compute_profile import ComputeProfile
     from .storage_account import StorageAccount
     from .storage_profile import StorageProfile
+    from .disk_encryption_properties import DiskEncryptionProperties
     from .cluster_create_properties import ClusterCreateProperties
+    from .cluster_identity_user_assigned_identities_value import ClusterIdentityUserAssignedIdentitiesValue
+    from .cluster_identity import ClusterIdentity
     from .cluster_create_parameters_extended import ClusterCreateParametersExtended
     from .cluster_patch_parameters import ClusterPatchParameters
     from .quota_info import QuotaInfo
@@ -95,6 +97,9 @@ except (SyntaxError, ImportError):
     from .runtime_script_action_detail import RuntimeScriptActionDetail
     from .cluster_list_runtime_script_action_detail_result import ClusterListRuntimeScriptActionDetailResult
     from .cluster_resize_parameters import ClusterResizeParameters
+    from .cluster_disk_encryption_parameters import ClusterDiskEncryptionParameters
+    from .update_gateway_settings_parameters import UpdateGatewaySettingsParameters
+    from .gateway_settings import GatewaySettings
     from .operation_resource import OperationResource
     from .resource import Resource
     from .tracked_resource import TrackedResource
@@ -104,17 +109,10 @@ except (SyntaxError, ImportError):
     from .application_get_endpoint import ApplicationGetEndpoint
     from .application_properties import ApplicationProperties
     from .application import Application
-    from .version_spec import VersionSpec
-    from .versions_capability import VersionsCapability
-    from .regions_capability import RegionsCapability
-    from .vm_sizes_capability import VmSizesCapability
-    from .vm_size_compatibility_filter import VmSizeCompatibilityFilter
-    from .regional_quota_capability import RegionalQuotaCapability
-    from .quota_capability import QuotaCapability
-    from .capabilities_result import CapabilitiesResult
     from .localized_name import LocalizedName
     from .usage import Usage
     from .usages_list_result import UsagesListResult
+    from .cluster_configurations import ClusterConfigurations
     from .extension import Extension
     from .cluster_monitoring_response import ClusterMonitoringResponse
     from .cluster_monitoring_request import ClusterMonitoringRequest
@@ -129,6 +127,8 @@ from .hd_insight_management_client_enums import (
     DirectoryType,
     OSType,
     Tier,
+    JsonWebKeyEncryptionAlgorithm,
+    ResourceIdentityType,
     HDInsightClusterProvisioningState,
     AsyncOperationState,
 )
@@ -148,7 +148,10 @@ __all__ = [
     'ComputeProfile',
     'StorageAccount',
     'StorageProfile',
+    'DiskEncryptionProperties',
     'ClusterCreateProperties',
+    'ClusterIdentityUserAssignedIdentitiesValue',
+    'ClusterIdentity',
     'ClusterCreateParametersExtended',
     'ClusterPatchParameters',
     'QuotaInfo',
@@ -163,6 +166,9 @@ __all__ = [
     'RuntimeScriptActionDetail',
     'ClusterListRuntimeScriptActionDetailResult',
     'ClusterResizeParameters',
+    'ClusterDiskEncryptionParameters',
+    'UpdateGatewaySettingsParameters',
+    'GatewaySettings',
     'OperationResource',
     'Resource',
     'TrackedResource',
@@ -172,17 +178,10 @@ __all__ = [
     'ApplicationGetEndpoint',
     'ApplicationProperties',
     'Application',
-    'VersionSpec',
-    'VersionsCapability',
-    'RegionsCapability',
-    'VmSizesCapability',
-    'VmSizeCompatibilityFilter',
-    'RegionalQuotaCapability',
-    'QuotaCapability',
-    'CapabilitiesResult',
     'LocalizedName',
     'Usage',
     'UsagesListResult',
+    'ClusterConfigurations',
     'Extension',
     'ClusterMonitoringResponse',
     'ClusterMonitoringRequest',
@@ -196,6 +195,8 @@ __all__ = [
     'DirectoryType',
     'OSType',
     'Tier',
+    'JsonWebKeyEncryptionAlgorithm',
+    'ResourceIdentityType',
     'HDInsightClusterProvisioningState',
     'AsyncOperationState',
 ]

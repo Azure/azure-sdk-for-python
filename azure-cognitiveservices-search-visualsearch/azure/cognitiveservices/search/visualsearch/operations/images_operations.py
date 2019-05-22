@@ -36,7 +36,7 @@ class ImagesOperations(object):
         self.x_bing_apis_sdk = "true"
 
     def visual_search(
-            self, accept_language=None, content_type=None, user_agent=None, client_id=None, client_ip=None, location=None, knowledge_request=None, image=None, custom_headers=None, raw=False, **operation_config):
+            self, accept_language=None, content_type=None, user_agent=None, client_id=None, client_ip=None, location=None, market=None, safe_search=None, set_lang=None, knowledge_request=None, image=None, custom_headers=None, raw=False, **operation_config):
         """Visual Search API lets you discover insights about an image such as
         visually similar images, shopping sources, and related searches. The
         API can also perform text recognition, identify entities (people,
@@ -176,6 +176,46 @@ class ImagesOperations(object):
          you should include this header and the X-MSEdge-ClientIP header, but
          at a minimum, you should include this header.
         :type location: str
+        :param market: The market where the results come from. Typically, mkt
+         is the country where the user is making the request from. However, it
+         could be a different country if the user is not located in a country
+         where Bing delivers results. The market must be in the form <language
+         code>-<country code>. For example, en-US. The string is case
+         insensitive. For a list of possible market values, see [Market
+         Codes](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-visual-search/supported-countries-markets).
+         NOTE: If known, you are encouraged to always specify the market.
+         Specifying the market helps Bing route the request and return an
+         appropriate and optimal response. If you specify a market that is not
+         listed in [Market
+         Codes](https://docs.microsoft.com/en-us/azure/cognitive-services/bing-visual-search/supported-countries-markets),
+         Bing uses a best fit market code based on an internal mapping that is
+         subject to change.
+        :type market: str
+        :param safe_search: Filter the image results in actions with type
+         'VisualSearch' for adult content. The following are the possible
+         filter values. Off: May return images with adult content. Moderate: Do
+         not return images with adult content. Strict: Do not return images
+         with adult content. The default is Moderate. If the request comes from
+         a market that Bing's adult policy requires that safeSearch is set to
+         Strict, Bing ignores the safeSearch value and uses Strict. If you use
+         the site: filter in the knowledge request, there is the chance that
+         the response may contain adult content regardless of what the
+         safeSearch query parameter is set to. Use site: only if you are aware
+         of the content on the site and your scenario supports the possibility
+         of adult content. Possible values include: 'Off', 'Moderate', 'Strict'
+        :type safe_search: str or
+         ~azure.cognitiveservices.search.visualsearch.models.SafeSearch
+        :param set_lang: The language to use for user interface strings.
+         Specify the language using the ISO 639-1 2-letter language code. For
+         example, the language code for English is EN. The default is EN
+         (English). Although optional, you should always specify the language.
+         Typically, you set setLang to the same language specified by mkt
+         unless the user wants the user interface strings displayed in a
+         different language. A user interface string is a string that's used as
+         a label in a user interface. There are few user interface strings in
+         the JSON response objects. Also, any links to Bing.com properties in
+         the response objects apply the specified language.
+        :type set_lang: str
         :param knowledge_request: The form data is a JSON object that
          identifies the image using an insights token or URL to the image. The
          object may also include an optional crop area that identifies an area
@@ -186,13 +226,13 @@ class ImagesOperations(object):
          insights token or URL).
         :type knowledge_request: str
         :param image: The form data is an image binary. The
-         Content-Disposition header's filename parameter must be set to
-         "image". You must specify an image binary if you do not use
-         knowledgeRequest form data to specify the image; you may not use both
-         forms to specify an image. You may specify knowledgeRequest form data
-         and image form data in the same request only if knowledgeRequest form
-         data specifies the cropArea field only  (it must not include an
-         insights token or URL).
+         Content-Disposition header's name parameter must be set to "image".
+         You must specify an image binary if you do not use knowledgeRequest
+         form data to specify the image; you may not use both forms to specify
+         an image. You may specify knowledgeRequest form data and image form
+         data in the same request only if knowledgeRequest form data specifies
+         the cropArea field only  (it must not include an insights token or
+         URL).
         :type image: Generator
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -208,12 +248,23 @@ class ImagesOperations(object):
         """
         # Construct URL
         url = self.visual_search.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
+        if market is not None:
+            query_parameters['mkt'] = self._serialize.query("market", market, 'str')
+        if safe_search is not None:
+            query_parameters['safeSearch'] = self._serialize.query("safe_search", safe_search, 'str')
+        if set_lang is not None:
+            query_parameters['setLang'] = self._serialize.query("set_lang", set_lang, 'str')
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'multipart/form-data'
         if custom_headers:
             header_parameters.update(custom_headers)
@@ -238,9 +289,8 @@ class ImagesOperations(object):
         }
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send_formdata(
-            request, header_parameters, form_data_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, form_content=form_data_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)

@@ -9,23 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .update_resource import UpdateResource
 
 
-class ScheduleFragment(Resource):
+class ScheduleFragment(UpdateResource):
     """A schedule.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The identifier of the resource.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource.
-    :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
     :param tags: The tags of the resource.
     :type tags: dict[str, str]
     :param status: The status of the schedule (i.e. Enabled, Disabled).
@@ -52,24 +41,9 @@ class ScheduleFragment(Resource):
      ~azure.mgmt.devtestlabs.models.NotificationSettingsFragment
     :param target_resource_id: The resource ID to which the schedule belongs
     :type target_resource_id: str
-    :param provisioning_state: The provisioning status of the resource.
-    :type provisioning_state: str
-    :param unique_identifier: The unique immutable identifier of a resource
-     (Guid).
-    :type unique_identifier: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'task_type': {'key': 'properties.taskType', 'type': 'str'},
@@ -79,19 +53,15 @@ class ScheduleFragment(Resource):
         'time_zone_id': {'key': 'properties.timeZoneId', 'type': 'str'},
         'notification_settings': {'key': 'properties.notificationSettings', 'type': 'NotificationSettingsFragment'},
         'target_resource_id': {'key': 'properties.targetResourceId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
     }
 
-    def __init__(self, location=None, tags=None, status=None, task_type=None, weekly_recurrence=None, daily_recurrence=None, hourly_recurrence=None, time_zone_id=None, notification_settings=None, target_resource_id=None, provisioning_state=None, unique_identifier=None):
-        super(ScheduleFragment, self).__init__(location=location, tags=tags)
-        self.status = status
-        self.task_type = task_type
-        self.weekly_recurrence = weekly_recurrence
-        self.daily_recurrence = daily_recurrence
-        self.hourly_recurrence = hourly_recurrence
-        self.time_zone_id = time_zone_id
-        self.notification_settings = notification_settings
-        self.target_resource_id = target_resource_id
-        self.provisioning_state = provisioning_state
-        self.unique_identifier = unique_identifier
+    def __init__(self, **kwargs):
+        super(ScheduleFragment, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.task_type = kwargs.get('task_type', None)
+        self.weekly_recurrence = kwargs.get('weekly_recurrence', None)
+        self.daily_recurrence = kwargs.get('daily_recurrence', None)
+        self.hourly_recurrence = kwargs.get('hourly_recurrence', None)
+        self.time_zone_id = kwargs.get('time_zone_id', None)
+        self.notification_settings = kwargs.get('notification_settings', None)
+        self.target_resource_id = kwargs.get('target_resource_id', None)

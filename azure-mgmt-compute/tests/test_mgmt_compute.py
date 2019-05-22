@@ -10,6 +10,7 @@ import unittest
 from collections import namedtuple
 
 import azure.mgmt.compute
+import azure.mgmt.compute.models # Check that models compat still works
 import azure.mgmt.network.models
 import azure.mgmt.storage.models
 from devtools_testutils import (
@@ -541,6 +542,12 @@ class MgmtComputeTest(AzureMgmtTestCase):
                 {'name':"arg1", 'value':"hello world"}
             ]
         }
+
+    def test_resources_skus(self):
+        skus_iterator = self.compute_client.resource_skus.list()
+        for res in skus_iterator:
+            assert res is not None
+            break
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

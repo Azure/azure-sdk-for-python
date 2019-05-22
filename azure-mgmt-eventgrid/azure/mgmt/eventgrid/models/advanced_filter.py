@@ -13,8 +13,12 @@ from msrest.serialization import Model
 
 
 class AdvancedFilter(Model):
-    """Represents an advanced filter that can be used to filter events based on
-    various event envelope/data fields.
+    """This is the base type that represents an advanced filter. To configure an
+    advanced filter, do not directly instantiate an object of this class.
+    Instead, instantiate an object of a derived class such as
+    BoolEqualsAdvancedFilter, NumberInAdvancedFilter,
+    StringEqualsAdvancedFilter etc. depending on the type of the key based on
+    which you want to filter.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: NumberInAdvancedFilter, NumberNotInAdvancedFilter,
@@ -27,8 +31,8 @@ class AdvancedFilter(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key: The filter key. Represents an event property with upto two
-     levels of nesting.
+    :param key: The field/property in the event based on which you want to
+     filter.
     :type key: str
     :param operator_type: Required. Constant filled by server.
     :type operator_type: str
