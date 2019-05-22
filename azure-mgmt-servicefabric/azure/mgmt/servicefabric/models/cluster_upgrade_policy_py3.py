@@ -22,7 +22,7 @@ class ClusterUpgradePolicy(Model):
      only changes configuration or data).
     :type force_restart: bool
     :param upgrade_replica_set_check_timeout: Required. The maximum amount of
-     time to block processing of an upgrade domain and revent loss of
+     time to block processing of an upgrade domain and prevent loss of
      availability when there are unexpected issues. When this timeout expires,
      processing of the upgrade domain will proceed regardless of availability
      loss issues. The timeout is reset at the start of each upgrade domain. The
