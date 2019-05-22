@@ -5,6 +5,9 @@
 ```python
 azure.storage.blob.BlobServiceClient(uri, credentials=None, configuration=None)
 
+# Instantiate from a connection string
+azure.storage.blob.BlobServiceClient.from_connection_string(connection_str, configuration=None)
+
 BlobServiceClient.make_url(protocol=None, sas_token=None)
 
 BlobServiceClient.generate_shared_access_signature(
@@ -16,7 +19,7 @@ BlobServiceClient.get_account_information(timeout=None)
 # Returns ServiceStats 
 BlobServiceClient.get_service_stats(timeout=None)
 
-# Returns ServiceProperties (or dict?)
+# Returns ServiceProperties
 BlobServiceClient.get_service_properties(timeout=None)
 
 # Returns None
@@ -28,7 +31,10 @@ BlobServiceClient.list_container_properties(
     prefix=None, num_results=None, include_metadata=False, marker=None, timeout=None)
 
 # Returns a ContainerClient
-BlobServiceClient.get_container_client(container, snaphot=None)
+BlobServiceClient.get_container_client(container)
+
+# Returns a BlobClient
+BlobServiceClient.get_blob_client(container, blob)
 ```
 
 ## ContainerClient API
@@ -37,6 +43,8 @@ azure.storage.blob.ContainerClient(
     uri, credentials=None, container_name=None, configuration=None,
     protocol=DEFAULT_PROTOCOL, endpoint_suffix=SERVICE_HOST_BASE, custom_domain=None)
 
+# Instantiate from a connection string
+azure.storage.blob.ContainerClient.from_connection_string(connection_str, container, configuration=None)
 
 ContainerClient.make_url(protocol=None, sas_token=None)
 
@@ -90,9 +98,6 @@ ContainerClient.set_container_acl(
 # Returns a iterable (auto-paging) response of BlobProperties
 ContainerClient.list_blob_properties(prefix=None, include=None, timeout=None)
 
-# Returns a generator that honors directory hierarchy 
-ContainerClient.walk_blob_propertes(prefix=None, include=None, delimiter="/", timeout=None)
-
 # Blob type enum
 azure.storage.blob.BlobType.BlockBlob
 azure.storage.blob.BlobType.PageBlob
@@ -107,6 +112,8 @@ ContainerClient.get_blob_client(blob, blob_type=BlobType.BlockBlob, snapshot=Non
 azure.storage.blob.BlobClient(
     uri, blob_type=BlobType.BlockBlob, credentials=None, container_name=None, blob_name=None, snapshot=None, configuration=None)
 
+# Instantiate from a connection string
+azure.storage.blob.BlobClient.from_connection_string(connection_str, container, blob, configuration=None)
 
 BlobClient.make_url(protocol=None, sas_token=None)
 
@@ -118,7 +125,6 @@ BlobClient.generate_shared_access_signature(
 BlobClient.upload_blob(
     data,
     length=None,
-    blob_type=BlobType.BlockBlob,
     metadata=None,
     content_settings=None,
     validate_content=False,

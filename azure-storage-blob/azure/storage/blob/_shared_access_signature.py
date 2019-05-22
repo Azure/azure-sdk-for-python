@@ -350,7 +350,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
             to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
         :type start: datetime or str
-        :param str id:
+        :param str policy_id:
             A unique value up to 64 characters in length that correlates to a
             stored access policy. To create a stored access policy, use
             set_blob_service_properties.
