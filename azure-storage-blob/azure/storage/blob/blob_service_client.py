@@ -73,9 +73,20 @@ class BlobServiceClient(object):
         self._client = create_client(url, self._pipeline)
 
     @classmethod
-    def from_connection_string(cls, conn_str, credentials=None, configuration=None, **kwargs):
+    def from_connection_string(
+            cls, conn_str,  # type: str
+            credentials=None,  # type: Optional[HTTPPolicy]
+            configuration=None, # type: Optional[Configuration]
+            **kwargs  # type: Any
+        ):
         """
         Create BlobServiceClient from a Connection String.
+
+        :param str conn_str: A connection string to an Azure Storage account.
+        :param credentials: Optional credentials object to override the SAS key as provided
+         in the connection string.
+        :param configuration: Optional pipeline configuration settings.
+        :type configuration: ~azure.core.configuration.Configuration
         """
         account_url, creds = parse_connection_str(conn_str, credentials)
         return cls(account_url, credentials=creds, configuration=configuration, **kwargs)
@@ -86,13 +97,15 @@ class BlobServiceClient(object):
         """
         Get an HTTP Pipeline Configuration with all default policies for the Blob
         Storage service.
+
+        :rtype: ~azure.core.configuration.Configuration
         """
         return create_configuration(**kwargs)
 
     def make_url(self, protocol=None, sas_token=None):
         # type: (Optional[str], Optional[str]) -> str
         """
-        Creates the url to access this blob.
+        Creates the url to access this account.
 
         :param str protocol:
             Protocol to use: 'http' or 'https'. If not specified, uses the
@@ -104,14 +117,13 @@ class BlobServiceClient(object):
         :rtype: str
         """
         parsed_url = urlparse(self.url)
-        new_scheme = protocol or parsed_url.scheme
+        new_scheme = protocol or self.scheme
         query = []
         if sas_token:
             query.append(sas_token)
-        new_url = "{}://{}{}".format(
+        new_url = "{}://{}".format(
             new_scheme,
-            parsed_url.netloc,
-            parsed_url.path)
+            parsed_url.netloc)
         if query:
             new_url += "?{}".format('&'.join(query))
         return new_url
@@ -172,7 +184,11 @@ class BlobServiceClient(object):
     def get_account_information(self, timeout=None):
         # type: (Optional[int]) -> Dict[str, str]
         """
+        Gets information related to the storage account.
+        The information can also be retrieved if the user has a SAS to a container or blob.
+
         :returns: A dict of account information (SKU and account type).
+        :rtype: dict(str, str)
         """
         response = self._client.service.get_account_info(cls=return_response_headers)
         return {
@@ -203,14 +219,19 @@ class BlobServiceClient(object):
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :return: The blob service stats.
-        :rtype: Dict[str, Any]
+        :rtype: ~azure.storage.blob._generated.models.StorageServiceStats
         """
         return self._client.service.get_statistics(timeout=timeout, secondary_storage=True, **kwargs)
 
     def get_service_properties(self, timeout=None, **kwargs):
         # type(Optional[int]) -> Dict[str, Any]
         """
-        :returns: A dict of service properties.
+        Gets the properties of a storage account's Blob service, including
+        Azure Storage Analytics.
+
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: ~azure.storage.blob._generated.models.StorageServiceProperties
         """
         try:
             return self._client.service.get_properties(
@@ -233,7 +254,45 @@ class BlobServiceClient(object):
         ):
         # type: (...) -> None
         """
-        :returns: None
+        Sets the properties of a storage account's Blob service, including
+        Azure Storage Analytics. If an element (e.g. Logging) is left as None, the 
+        existing settings on the service for that functionality are preserved.
+
+        :param logging:
+            Groups the Azure Analytics Logging settings.
+        :type logging:
+            :class:`~azure.storage.blob.models.Logging`
+        :param hour_metrics:
+            The hour metrics settings provide a summary of request 
+            statistics grouped by API in hourly aggregates for blobs.
+        :type hour_metrics:
+            :class:`~azure.storage.blob.models.Metrics`
+        :param minute_metrics:
+            The minute metrics settings provide request statistics 
+            for each minute for blobs.
+        :type minute_metrics:
+            :class:`~azure.storage.blob.models.Metrics`
+        :param cors:
+            You can include up to five CorsRule elements in the 
+            list. If an empty list is specified, all CORS rules will be deleted, 
+            and CORS will be disabled for the service.
+        :type cors: list(:class:`~azure.storage.blob.models.CorsRule`)
+        :param str target_version:
+            Indicates the default version to use for requests if an incoming 
+            request's version is not specified. 
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :param delete_retention_policy:
+            The delete retention policy specifies whether to retain deleted blobs.
+            It also specifies the number of days and versions of blob to keep.
+        :type delete_retention_policy:
+            :class:`~azure.storage.blob..models.RetentionPolicy`
+        :param static_website:
+            Specifies whether the static website feature is enabled,
+            and if yes, indicates the index document and 404 error document to use.
+        :type static_website:
+            :class:`~azure.storage.blob.models.StaticWebsite`
+        :rtype: None
         """
         props = StorageServiceProperties(
             logging=logging,
@@ -256,12 +315,29 @@ class BlobServiceClient(object):
     def list_container_properties(
             self, prefix=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
+            marker=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> ContainerPropertiesPaged
         """
+        Returns a generator to list the containers under the specified account.
+        The generator will lazily follow the continuation tokens returned by
+        the service and stop when all containers have been returned.
+
+        :param str prefix:
+            Filters the results to return only containers whose names
+            begin with the specified prefix.
+        :param bool include_metadata:
+            Specifies that container metadata be returned in the response.
+        :param str marker:
+            An opaque continuation token. This value can be retrieved from the 
+            next_marker field of a previous generator object. If specified,
+            this generator will begin returning results from this point.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ContainerProperties.
+        :rtype: ~azure.core.blob.models.ContainerPropertiesPaged
         """
         include = 'metadata' if include_metadata else None
         results_per_page = kwargs.pop('results_per_page', None)
@@ -278,8 +354,10 @@ class BlobServiceClient(object):
         # type: (Union[ContainerProperties, str]) -> ContainerClient
         """
         Get a client to interact with the specified container.
+        The container need not already exist.
 
         :returns: A ContainerClient.
+        :rtype: ~azure.core.blob.container_client.ContainerClient
         """
         return ContainerClient(self.url, container=container,
             credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline)
@@ -293,8 +371,10 @@ class BlobServiceClient(object):
         # type: (...) -> BlobClient
         """
         Get a client to interact with the specified blob.
+        The blob need not already exist.
 
         :returns: A BlobClient.
+        :rtype: ~azure.core.blob.blob_client.BlobClient
         """
         return BlobClient(
             self.url, container=container, blob=blob, blob_type=blob_type, snapshot=snapshot,
