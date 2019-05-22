@@ -5,6 +5,9 @@
 ```python
 azure.storage.blob.BlobServiceClient(uri, credentials=None, configuration=None)
 
+# Instantiate from a connection string
+azure.storage.blob.BlobServiceClient.from_connection_string(connection_str, configuration=None)
+
 BlobServiceClient.make_url(protocol=None, sas_token=None)
 
 BlobServiceClient.generate_shared_access_signature(
@@ -40,6 +43,8 @@ azure.storage.blob.ContainerClient(
     uri, credentials=None, container_name=None, configuration=None,
     protocol=DEFAULT_PROTOCOL, endpoint_suffix=SERVICE_HOST_BASE, custom_domain=None)
 
+# Instantiate from a connection string
+azure.storage.blob.ContainerClient.from_connection_string(connection_str, container, configuration=None)
 
 ContainerClient.make_url(protocol=None, sas_token=None)
 
@@ -110,6 +115,8 @@ ContainerClient.get_blob_client(blob, blob_type=BlobType.BlockBlob, snapshot=Non
 azure.storage.blob.BlobClient(
     uri, blob_type=BlobType.BlockBlob, credentials=None, container_name=None, blob_name=None, snapshot=None, configuration=None)
 
+# Instantiate from a connection string
+azure.storage.blob.BlobClient.from_connection_string(connection_str, container, blob, configuration=None)
 
 BlobClient.make_url(protocol=None, sas_token=None)
 
