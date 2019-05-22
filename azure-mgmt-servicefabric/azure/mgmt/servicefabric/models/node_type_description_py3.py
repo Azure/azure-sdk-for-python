@@ -49,7 +49,7 @@ class NodeTypeDescription(Model):
      port to Service Fabric applications.
     :type application_ports:
      ~azure.mgmt.servicefabric.models.EndpointRangeDescription
-    :param ephemeral_ports: The range of empheral ports that nodes in this
+    :param ephemeral_ports: The range of ephemeral ports that nodes in this
      node type should be configured with.
     :type ephemeral_ports:
      ~azure.mgmt.servicefabric.models.EndpointRangeDescription
