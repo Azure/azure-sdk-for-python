@@ -22,6 +22,8 @@ class DeploymentOperationProperties(Model):
     :vartype provisioning_state: str
     :ivar timestamp: The date and time of the operation.
     :vartype timestamp: datetime
+    :ivar duration: The duration of the operation.
+    :vartype duration: str
     :ivar service_request_id: Deployment operation service request id.
     :vartype service_request_id: str
     :ivar status_code: Operation status code.
@@ -42,6 +44,7 @@ class DeploymentOperationProperties(Model):
     _validation = {
         'provisioning_state': {'readonly': True},
         'timestamp': {'readonly': True},
+        'duration': {'readonly': True},
         'service_request_id': {'readonly': True},
         'status_code': {'readonly': True},
         'status_message': {'readonly': True},
@@ -53,6 +56,7 @@ class DeploymentOperationProperties(Model):
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'duration': {'key': 'duration', 'type': 'str'},
         'service_request_id': {'key': 'serviceRequestId', 'type': 'str'},
         'status_code': {'key': 'statusCode', 'type': 'str'},
         'status_message': {'key': 'statusMessage', 'type': 'object'},
@@ -65,6 +69,7 @@ class DeploymentOperationProperties(Model):
         super(DeploymentOperationProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.timestamp = None
+        self.duration = None
         self.service_request_id = None
         self.status_code = None
         self.status_message = None
