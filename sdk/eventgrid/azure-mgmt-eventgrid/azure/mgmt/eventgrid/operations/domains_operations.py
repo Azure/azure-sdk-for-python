@@ -106,7 +106,9 @@ class DomainsOperations(object):
 
 
     def _create_or_update_initial(
-            self, resource_group_name, domain_name, domain_info, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, domain_name, location, tags=None, custom_headers=None, raw=False, **operation_config):
+        domain_info = models.Domain(location=location, tags=tags)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
@@ -155,7 +157,7 @@ class DomainsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, domain_name, domain_info, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, domain_name, location, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Create or update a domain.
 
         Asynchronously creates or updates a new domain with the specified
@@ -166,8 +168,10 @@ class DomainsOperations(object):
         :type resource_group_name: str
         :param domain_name: Name of the domain.
         :type domain_name: str
-        :param domain_info: Domain information.
-        :type domain_info: ~azure.mgmt.eventgrid.models.Domain
+        :param location: Location of the resource.
+        :type location: str
+        :param tags: Tags of the resource.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -184,7 +188,8 @@ class DomainsOperations(object):
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             domain_name=domain_name,
-            domain_info=domain_info,
+            location=location,
+            tags=tags,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
