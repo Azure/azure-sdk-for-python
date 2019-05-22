@@ -98,9 +98,6 @@ ContainerClient.set_container_acl(
 # Returns a iterable (auto-paging) response of BlobProperties
 ContainerClient.list_blob_properties(prefix=None, include=None, timeout=None)
 
-# Returns a generator that honors directory hierarchy 
-ContainerClient.walk_blob_propertes(prefix=None, include=None, delimiter="/", timeout=None)
-
 # Blob type enum
 azure.storage.blob.BlobType.BlockBlob
 azure.storage.blob.BlobType.PageBlob
@@ -128,7 +125,6 @@ BlobClient.generate_shared_access_signature(
 BlobClient.upload_blob(
     data,
     length=None,
-    blob_type=BlobType.BlockBlob,
     metadata=None,
     content_settings=None,
     validate_content=False,
