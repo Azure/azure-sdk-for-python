@@ -3,6 +3,22 @@
 Release History
 ===============
 
+2.1.0 (2019-05-22)
+++++++++++++++++++
+
+Not all preview features of the 2.1.0rc1 were confirmed in this 2.1.0 stable version. In particular, the following features will still be available only in the 2.1.0rc1 for now:
+
+- Input mapping/Delivery Schema.
+- "label" filtering parameter in all operations
+
+All other features are now considerd stable to use in production. This includes:
+
+- Domains, which include all domain related operation including adding/deleting domain topics manually.
+- Pagination/filtering
+- Servicebus queue as destination
+- Advanced filtering, which was introduced in previous preview version.
+- Showing and selecting default event types instead of ‘all’
+
 2.1.0rc1 (2019-03-11)
 +++++++++++++++++++++
 
