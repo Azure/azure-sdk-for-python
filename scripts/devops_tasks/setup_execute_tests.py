@@ -26,11 +26,16 @@ def prep_and_run_tests(targeted_packages, python_version, test_res):
     print('running test setup for {}'.format(targeted_packages))
     run_check_call([python_version, dev_setup_script_location, '-p', ','.join([os.path.basename(p) for p in targeted_packages])], root_dir)
 
+    # if we are targeting a single package, it is a possibility that no tests running is an acceptable 
+    # situation
+    if len(targeted_packages) == 1:
+        allowed_return_code_addition = [ 5 ]
+
     print('Setup complete. Running pytest for {}'.format(targeted_packages))
     command_array = [python_version, '-m', 'pytest']
     command_array.extend(test_res)
     command_array.extend(targeted_packages)
-    run_check_call(command_array, root_dir, ALLOWED_RETURN_CODES)
+    run_check_call(command_array, root_dir, ALLOWED_RETURN_CODES + allowed_return_code_addition)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Install Dependencies, Install Packages, Test Azure Packages, Called from DevOps YAML Pipeline')
