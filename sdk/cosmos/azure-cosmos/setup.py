@@ -4,7 +4,7 @@ from distutils.core import setup
 import setuptools
 
 setup(name='azure-cosmos',
-      version='3.0.3-SNAPSHOT',
+      version='4.0.0a1',
       description='Azure Cosmos Python SDK',
       author="Microsoft",
       author_email="askdocdb@microsoft.com",
@@ -12,7 +12,10 @@ setup(name='azure-cosmos',
       maintainer_email="askdocdb@microsoft.com",
       url="https://github.com/Azure/azure-documentdb-python",
       license='MIT',
-      install_requires=['six >=1.6', 'requests>=2.10.0'],
+      install_requires=['six >=1.6', 'requests>=2.10.0', ],
+      extras_require={
+        ":python_version<'3.5'": ['typing', ],
+      },
       classifiers=[
         'License :: OSI Approved :: MIT License',
         'Intended Audience :: Developers',
