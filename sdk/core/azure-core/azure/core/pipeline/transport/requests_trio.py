@@ -49,7 +49,13 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class TrioStreamDownloadGenerator(AsyncIterator):
-
+    """
+    
+    :param response: The response object.
+    :param int block_size: Number of bytes to read into memory.
+    :param generator iter_content_func:
+    :param int content_length:
+    """
     def __init__(self, response: requests.Response, block_size: int) -> None:
         self.response = response
         self.block_size = block_size
@@ -90,13 +96,15 @@ class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse
         """Generator for streaming request body data.
 
         :param callback: Custom callback for monitoring progress.
-        :param int chunk_size:
+        :param int chunk_size: size in bytes
         """
         return TrioStreamDownloadGenerator(self.internal_response, self.block_size)
 
 
 class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
-
+    """Identical implementation as the synchronous RequestsTrasport wrapped in an asynchronous using the
+     third party trio event loop.
+    """
     async def __aenter__(self):
         return super(TrioRequestsTransport, self).__enter__()
 
@@ -108,6 +116,12 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
 
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
         """Send the request using this HTTP sender.
+
+        :param request: The HttpRequest
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :param kwargs: Any keyword arguments
+        :return: The AsyncHttpResponse
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         self.open()
         trio_limiter = kwargs.get("trio_limiter", None)

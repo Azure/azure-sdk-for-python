@@ -37,6 +37,8 @@ _LOGGER = logging.getLogger(__name__)
 
 class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseType]):
     """Sync implementation of the SansIO policy.
+
+    :param List[SansIOHTTPPolicy] policy: A list of configured policies.
     """
 
     def __init__(self, policy):
@@ -76,9 +78,11 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     """A pipeline implementation.
 
     This is implemented as a context manager, that will activate the context
-    of the HTTP sender.
-    """
+    of the HTTP sender. The transport is the last node in the pipeline.
 
+    :param HttpTransport transport: The HttpTransport type
+    :param List[Union[HTTPPolicy, SansIOHTTPPolicy]] policies: List of configured policies.
+    """
     def __init__(self, transport, policies=None):
         # type: (HttpTransport, List[Union[HTTPPolicy, SansIOHTTPPolicy]]) -> None
         self._impl_policies = []  # type: List[HTTPPolicy]
@@ -104,6 +108,12 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
     def run(self, request, **kwargs):
         # type: (HTTPRequestType, Any) -> PipelineResponse
+        """Runs the HTTP Request through the chained policies.
+
+        :param HTTPRequestType request: The HTTP request object
+        :return: The PipelineResponse object
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context)  # type: PipelineRequest[HTTPRequestType]
         first_node = self._impl_policies[0] if self._impl_policies else _TransportRunner(self._transport)

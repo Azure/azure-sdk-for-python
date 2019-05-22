@@ -50,6 +50,8 @@ except ImportError: # Python <= 3.7
 
 class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]): #pylint: disable=unsubscriptable-object
     """Async implementation of the SansIO policy.
+
+    :param List[SansIOHTTPPolicy] policy: A list of configured policies.
     """
 
     def __init__(self, policy: SansIOHTTPPolicy) -> None:
@@ -83,9 +85,13 @@ class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseTy
 
 
 class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncHTTPResponseType]):
-    """A pipeline implementation.
+    """Async pipeline implementation.
+
     This is implemented as a context manager, that will activate the context
     of the HTTP sender.
+
+    :param HttpTransport transport: The HttpTransport type
+    :param List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] policies: List of configured policies.
     """
 
     def __init__(self, transport, policies: List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = None) -> None:
@@ -117,6 +123,12 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         await self._transport.__aexit__(*exc_details)
 
     async def run(self, request: PipelineRequest, **kwargs: Any):
+        """Runs the HTTP Request through the chained policies.
+
+        :param HTTPRequestType request: The HTTP request object
+        :return: The PipelineResponse object
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context)
         first_node = self._impl_policies[0] if self._impl_policies else _AsyncTransportRunner(self._transport)

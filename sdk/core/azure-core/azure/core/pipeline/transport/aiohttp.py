@@ -47,8 +47,27 @@ _LOGGER = logging.getLogger(__name__)
 
 class AioHttpTransport(AsyncHttpTransport):
     """AioHttp HTTP sender implementation.
-    """
 
+    Fully asynchronous implementation using the aiohttp library.
+
+    .. code-block:: python
+
+        # Example use
+        conf = Configuration()
+        request = HttpRequest("GET", "https://bing.com")
+        policies = [
+            UserAgentPolicy("myuseragent"),
+            AsyncRedirectPolicy()
+        ]
+        async with AsyncPipeline(AioHttpTransport(conf), policies=policies) as pipeline:
+            response = await pipeline.run(request)
+
+    :param configuration: The service configuration.
+    :type configuration: ~azure.core.Configuration
+    :param session: THe client session.
+    :param loop: The event loop.
+    :param bool session_owner: Session owner. Defaults True.
+    """
     def __init__(self, configuration=None, *, session=None, loop=None, session_owner=True):
         self._loop = loop
         self._session_owner = session_owner
@@ -63,12 +82,16 @@ class AioHttpTransport(AsyncHttpTransport):
         await self.close()
 
     async def open(self):
+        """Opens the connection.
+        """
         if not self.session and self._session_owner:
             self.session = aiohttp.ClientSession(loop=self._loop)
         if self.session is not None:
             await self.session.__aenter__()
 
     async def close(self):
+        """Closes the connection.
+        """
         if self._session_owner and self.session:
             await self.session.close()
             self._session_owner = False
@@ -107,6 +130,12 @@ class AioHttpTransport(AsyncHttpTransport):
 
         Will pre-load the body into memory to be available with a sync method.
         pass stream=True to avoid this behavior.
+
+        :param request: The HttpRequest object
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :param config: Any keyword arguments
+        :return: The AsyncHttpResponse
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         await self.open()
         error = None
@@ -135,7 +164,13 @@ class AioHttpTransport(AsyncHttpTransport):
 
 
 class AioHttpStreamDownloadGenerator(AsyncIterator):
+    """Streams the request body data.
 
+    :param response: The client response object.
+    :type response: aiohttp.ClientResponse
+    :param block_size: block size of data sent over connection.
+    :type block_size: int
+    """
     def __init__(self, response: aiohttp.ClientResponse, block_size: int) -> None:
         self.response = response
         self.block_size = block_size
@@ -167,7 +202,15 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 raise
 
 class AioHttpTransportResponse(AsyncHttpResponse):
+    """Methods for accessing response body data.
 
+    :param request: The HttpRequest object
+    :type request: ~azure.core.pipeline.transport.HttpRequest
+    :param aiohttp_response: Returned from ClientSession.request().
+    :type aiohttp_response: aiohttp.ClientResponse object
+    :param block_size: block size of data sent over connection.
+    :type block_size: int
+    """
     def __init__(self, request: HttpRequest, aiohttp_response: aiohttp.ClientResponse, block_size=None) -> None:
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse

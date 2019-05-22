@@ -122,6 +122,12 @@ class RequestsTransport(HttpTransport):
     In this simple implementation:
     - You provide the configured session if you want to, or a basic session is created.
     - All kwargs received by "send" are sent to session.request directly
+
+    :param configuration: The service configuration.
+    :type configuration: azure.core.Configuration
+    :param session: The configured session.
+    :type session: requests.Session
+    :param bool session_owner: Defaults to True.
     """
 
     _protocols = ['http://', 'https://']
@@ -172,7 +178,10 @@ class RequestsTransport(HttpTransport):
         - session : will override the driver session and use yours. Should NOT be done unless really required.
         - anything else is sent straight to requests.
 
-        :param HttpRequest request: The request object to be sent.
+        :param request: The request object to be sent.
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :return: An HTTPResponse object.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         self.open()
         response = None

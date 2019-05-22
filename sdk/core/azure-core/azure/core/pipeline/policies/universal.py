@@ -49,9 +49,22 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class HeadersPolicy(SansIOHTTPPolicy):
-    """A simple policy that sends the given headers
-    with the request.
-    This will overwrite any headers already defined in the request.
+    """A simple policy that sends the given headers with the request.
+
+    This will overwrite any headers already defined in the request. Headers can be
+    configured up front, where any custom headers will be applied to all outgoing
+    operations, and additional headers can also be added dynamically per operation.
+
+    .. code-block:: python
+        config = FooService.create_config()
+        config.headers_policy.headers = {'CustomValue': 'Foo'}
+
+        # Or headers can be added per operation. These headers will supplement existing headers
+        # or those defined in the config headers policy. They will also overwrite existing
+        # identical headers.
+        result = client.get_operation(headers={'CustomValue': 'Bar'})
+
+    :param dict base_headers: Headers to send with the request.
     """
     def __init__(self, base_headers=None, **kwargs):
         # type: (Mapping[str, str]) -> None
@@ -64,11 +77,19 @@ class HeadersPolicy(SansIOHTTPPolicy):
         return self._headers
 
     def add_header(self, key, value):
-        """Add a header to the configuration to be applied to all requests."""
+        """Add a header to the configuration to be applied to all requests.
+
+        :param str key: The header.
+        :param str value: The header's value.
+        """
         self._headers[key] = value
 
     def on_request(self, request, **kwargs):
-        # type: (PipelineRequest, Any) -> None
+        """Updates with the given headers before sending the request to the next policy.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
         request.http_request.headers.update(self.headers)
         additional_headers = request.context.options.pop('headers', {})
         if additional_headers:
@@ -76,6 +97,22 @@ class HeadersPolicy(SansIOHTTPPolicy):
 
 
 class UserAgentPolicy(SansIOHTTPPolicy):
+    """User-Agent Policy. Allows custom values to be added to the User-Agent header.
+
+    .. code-block:: python
+        config = FooService.create_config()
+
+        # The user-agent policy allows you to append a custom value to the header.
+        config.user_agent_policy.add_user_agent("CustomValue")
+
+        # You can also pass in a custom value per operation to append to the end of the user-agent.
+        # This can be used together with the policy configuration to append multiple values.
+        result = client.get_operation(user_agent="AnotherValue")
+
+    :param str base_user_agent: Sets the base user agent value.
+    :param bool user_agent_overwrite: Overwrites User-Agent when True. Defaults to False.
+    :param bool user_agent_use_env: Gets user-agent from environment. Defaults to True.
+    """
     _USERAGENT = "User-Agent"
     _ENV_ADDITIONAL_USER_AGENT = 'AZURE_HTTP_USER_AGENT'
 
@@ -111,7 +148,11 @@ class UserAgentPolicy(SansIOHTTPPolicy):
         self._user_agent = "{} {}".format(self._user_agent, value)
 
     def on_request(self, request, **kwargs):
-        # type: (PipelineRequest, Any) -> None
+        """Modifies the User-Agent header before the request is sent.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
         http_request = request.http_request
         options = request.context.options
         if 'user_agent' in options:
@@ -127,14 +168,51 @@ class UserAgentPolicy(SansIOHTTPPolicy):
 
 
 class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
-    """A policy that logs HTTP request and response to the DEBUG logger.
+    """The logging policy in the pipeline is used to output HTTP network trace to the configured logger.
+
     This accepts both global configuration, and per-request level with "enable_http_logger"
+
+    .. code-block:: python
+
+        import sys
+        import logging
+
+        # Create a logger for the 'azure' SDK
+        logger = logging.getLogger("azure")
+        logger.set_level(logging.DEBUG)
+
+        # Configure a console output
+        handler = logging.StreamHandler(stream=sys.stdout)
+        logger.addHandler(handler)
+
+        # Configure a file output
+        file_handler = logging.FileHandler(filename)
+        logger.addHandler(file_handler)
+
+        # Enable network trace logging. This will be logged at DEBUG level.
+        # By default, logging is disabled.
+        config = FooService.create_config()
+        config.logging_policy.enable_http_logger = True
+
+    The logger can also be enabled per operation.
+
+    .. code-block:: python
+
+        result = client.get_operation(logging_enable=True)
+
+    :param bool logging_enable: Use to enable per operation. Defaults to False. 
+    :param bool enable_http_logger: Enables network trace logging at DEBUG level.
+     Defaults to False.
     """
     def __init__(self, logging_enable=False, **kwargs): # pylint: disable=unused-argument
         self.enable_http_logger = logging_enable
 
     def on_request(self, request, **kwargs):
-        # type: (PipelineRequest, Any) -> None
+        """Logs HTTP request to the DEBUG logger.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
         http_request = request.http_request
         options = request.context.options
         if options.pop("logging_enable", self.enable_http_logger):
@@ -161,7 +239,13 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                 _LOGGER.debug("Failed to log request: %r", err)
 
     def on_response(self, request, response, **kwargs):
-        # type: (PipelineRequest, PipelineResponse, Any) -> None
+        """Logs HTTP response to the DEBUG logger.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: The PipelineResponse object.
+        :type response: ~azure.core.pipeline.PipelineResponse
+        """
         if response.context.pop("logging_enable", self.enable_http_logger):
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
@@ -194,7 +278,8 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
 
 
 class ContentDecodePolicy(SansIOHTTPPolicy):
-
+    """Policy for decoding unstreamed response content.
+    """
     JSON_MIMETYPES = [
         'application/json',
         'text/json' # Because we're open minded people...
@@ -265,6 +350,9 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         Use bytes and headers to NOT use any requests/aiohttp or whatever
         specific implementation.
         Headers will tested for "content-type"
+
+        :param response: The HTTP response.
+        :type response: ~azure.core.pipeline.transport.HttpResponse
         """
         # Try to use content-type from headers if available
         content_type = None
@@ -300,7 +388,24 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
 
 class ProxyPolicy(SansIOHTTPPolicy):
+    """A proxy policy.
 
+    Dictionary mapping protocol or protocol and host to the URL of the proxy
+    to be used on each Request.
+
+    .. code-block:: python
+
+        config = FooService.create_config()
+
+        # Examples
+        config.proxy_policy.proxies = {'http': 'foo.bar:3128'}
+        config.proxy_policy.proxies= {'http://host.name': 'foo.bar:4012'}
+
+    :param dict proxies: Dictionary mapping protocol or protocol and
+     hostname to the URL of the proxy.
+    :param bool proxies_use_env_settings: Use proxy settings from environment.
+     Defaults to True.
+    """
     def __init__(self, proxies=None, **kwargs):
         self.proxies = proxies
         self.use_env_settings = kwargs.pop('proxies_use_env_settings', True)

@@ -46,7 +46,17 @@ except ImportError: # Python <= 3.5
 
 
 class PipelineContext(dict):
+    """A context object carried by the pipeline request and
+     response containers.
 
+    This is transport specific and can contain data persisted between
+    pipeline requests (for example reusing an open connection pool or "session"),
+    as well as used by the SDK developer to carry arbitrary data through
+    the pipeline.
+
+    :param transport: The HTTP transport type.
+    :param dict options: Keyword arguments.
+    """
     def __init__(self, transport, **kwargs): #pylint: disable=super-init-not-called
         self.transport = transport
         self.options = kwargs
@@ -75,20 +85,14 @@ class PipelineContext(dict):
 
 
 class PipelineRequest(object):
-    """Represents a HTTP request in a Pipeline.
+    """A pipeline request object.
 
-    URL can be given without query parameters, to be added later using "format_parameters".
+    Container for moving the HttpRequest through the pipeline.
 
-    Instance can be created without data, to be added later using "add_content"
-
-    Instance can be created without files, to be added later using "add_formdata"
-
-    :param str method: HTTP method (GET, HEAD, etc.)
-    :param str url: At least complete scheme/host/path
-    :param dict[str,str] headers: HTTP headers
-    :param files: Files list.
-    :param data: Body to be sent.
-    :type data: bytes or str.
+    :param http_request: The request object.
+    :type http_request: ~azure.core.pipeline.transport.HttpRequest[HTTPRequestType]
+    :param context: Contains data persisted between pipeline requests.
+    :type context: dict
     """
     def __init__(self, http_request, context):
         # type: (HTTPRequestType, Optional[Any]) -> None
@@ -102,9 +106,16 @@ class PipelineResponse(object):
     The PipelineResponse interface exposes an HTTP response object as it returns through the pipeline of Policy objects.
     This ensures that Policy objects have access to the HTTP response.
 
-    This also have a "context" object where policy can put additional fields.
+    This also has a "context" object where policy can put additional fields.
     Policy SHOULD update the "context" with additional post-processed field if they create them.
     However, nothing prevents a policy to actually sub-class this class a return it instead of the initial instance.
+
+    :param http_request: The request object.
+    :type http_request: ~azure.core.pipeline.transport.HttpRequest[HTTPRequestType] 
+    :param http_response: The response object.
+    :type http_response: ~azure.core.pipeline.transport.HTTPResponse
+    :param context: Contains data persisted between pipeline requests.
+    :type context: dict
     """
     def __init__(self, http_request, http_response, context):
         # type: (HttpRequest[HTTPRequestType], HTTPResponseType, Optional[Dict[str, Any]]) -> None

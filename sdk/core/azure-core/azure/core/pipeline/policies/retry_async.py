@@ -40,9 +40,17 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):
-
+    """Async flavor of the retry policy.
+    """
+    __doc__ += RetryPolicy.__doc__ # will this work?
 
     async def _sleep_for_retry(self, response, transport):
+        """Sleep based on the Retry-After response header value.
+
+        :param response: The PipelineResponse object.
+        :type response: ~azure.core.pipeline.PipelineResponse
+        :param transport: The HTTP transport type.
+        """
         retry_after = self.get_retry_after(response)
         if retry_after:
             await transport.sleep(retry_after)
@@ -50,18 +58,28 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):
         return False
 
     async def _sleep_backoff(self, settings, transport):
+        """Sleep using exponential backoff. Immediately returns if backoff is 0.
+
+        :param dict settings: The retry settings.
+        :param transport: The HTTP transport type.
+        """
         backoff = self.get_backoff_time(settings)
         if backoff <= 0:
             return
         await transport.sleep(backoff)
 
     async def sleep(self, settings, transport, response=None):
-        """ Sleep between retry attempts.
+        """Sleep between retry attempts.
 
         This method will respect a server's ``Retry-After`` response header
         and sleep the duration of the time requested. If that is not present, it
         will use an exponential backoff. By default, the backoff factor is 0 and
         this method will return immediately.
+
+        :param dict settings: The retry settings.
+        :param transport: The HTTP transport type.
+        :param response: The PipelineResponse object.
+        :type response: ~azure.core.pipeline.PipelineResponse
         """
         if response:
             slept = await self._sleep_for_retry(response, transport)
@@ -70,6 +88,15 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):
         await self._sleep_backoff(settings, transport)
 
     async def send(self, request):
+        """Uses the configured retry policy to send the request
+         to the next policy in the pipeline.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        :raises: ~azure.core.exceptions.AzureError if maximum retries exceeded.
+        """
         retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)

@@ -8,8 +8,10 @@ from typing_extensions import Protocol
 
 
 class SupportsGetToken(Protocol):
-    """Protocol for classes able to provide OAuth tokens"""
+    """Protocol for classes able to provide OAuth tokens.
 
+    :param str scopes: Lets you specify the type of access needed.
+    """
     # pylint:disable=too-few-public-methods
     def get_token(self, scopes):
         # type: (Iterable[str]) -> str

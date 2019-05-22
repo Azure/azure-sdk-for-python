@@ -26,6 +26,39 @@
 
 
 class Configuration(object):
+    """Provides the home for all of the configurable policies in the pipeline.
+
+    A new Configuration object provides no default policies and does not specify in what
+    order the policies will be added to the pipeline. The SDK developer must specify each
+    of the policy defaults as required by the service and use the policies in the
+    Configuration to construct the pipeline correctly, as well as inserting any
+    unexposed/non-configurable policies.
+
+    .. code-block:: python
+
+        # Here the SDK developer would define the default
+        # config to interact with the service
+        config = Configuration(**kwargs)
+        config.headers_policy = HeadersPolicy({"CustomHeader": "Value"}, **kwargs)
+        config.user_agent_policy = UserAgentPolicy("ServiceUserAgentValue", **kwargs)
+        config.retry_policy = RetryPolicy(**kwargs)
+        config.redirect_policy = RedirectPolicy(**kwargs)
+        config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
+        config.proxy_policy = ProxyPolicy(**kwargs)
+        config.custom_hook_policy = CustomHookPolicy(**kwargs)
+        config.transport = kwargs.get('transport', RequestsTransport)
+
+    :param connection: Provides the configuration parameters for the transport.
+    :type connection: ~azure.core.ConnectionConfiguration
+    :param headers_policy: Provides parameters for custom or additional headers to be sent with the request.
+    :param proxy_policy: Provides configuration parameters for proxy.
+    :param redirect_policy: Provides configuration parameters for redirects.
+    :param retry_policy: Provides configuration parameters for retries in the pipeline.
+    :param custom_hook_policy: Provides configuration parameters for a custom hook.
+    :param logging_policy: Provides configuration parameters for logging.
+    :param user_agent_policy: Provides configuration parameters to append custom values to the
+     User-Agent header.
+    """
 
     def __init__(self, transport=None, **kwargs):
         # Communication configuration - applied per transport.
@@ -57,7 +90,36 @@ class Configuration(object):
 
 
 class ConnectionConfiguration(object):
-    """HTTP transport connection configuration settings."""
+    """HTTP transport connection configuration settings.
+
+    Common properies that can be configured on all transports. Found in the
+    Configuration object.
+
+    .. code-block:: python
+
+        config = Configuration(
+            connection_timeout=100,
+            connection_verify=True,
+            connection_cert=None,
+            connection_data_block_size=4096
+            )
+
+    Or can be tweaked later:
+
+    .. code-block:: python
+
+        config.connection.timeout = 100
+        config.connection.verify = True
+        config.connection.cert = None
+        config.connection.data_block_size = 4096
+
+    :param int connection_timeout: The connect and read timeout value, in seconds. Default value is 100.
+    :param bool connection_verify: SSL certificate verification. Enabled by default. Set to False to disable,
+     alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs.
+    :param str connection_cert: Client-side certificates. You can specify a local cert to use as client side certificate,
+     as a single file (containing the private key and the certificate) or as a tuple of both files’ paths.
+    :param int connection_data_block_size: The block size of data sent over the connection. Defaults to 4096.
+    """
 
     def __init__(self, **kwargs):
         self.timeout = kwargs.pop('connection_timeout', 100)

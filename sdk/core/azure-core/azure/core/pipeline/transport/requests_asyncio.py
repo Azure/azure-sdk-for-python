@@ -60,7 +60,9 @@ def _get_running_loop():
 
 #pylint: disable=too-many-ancestors
 class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
-
+    """Identical implementation as the synchronous RequestsTrasport wrapped
+     in an asynchronous using the built-in asyncio event loop.
+    """
     async def __aenter__(self):
         return super(AsyncioRequestsTransport, self).__enter__()
 
@@ -69,6 +71,12 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
 
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
         """Send the request using this HTTP sender.
+
+        :param request: The HttpRequest
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :param kwargs: Any keyword arguments
+        :return: The AsyncHttpResponse
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         self.open()
         loop = kwargs.get("loop", _get_running_loop())
