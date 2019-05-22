@@ -116,11 +116,13 @@ class ContainerOperations(object):
             return cls(response, None, response_headers)
     create.metadata = {'url': '/{containerName}'}
 
-    def get_properties(self, timeout=None, request_id=None, lease_access_conditions=None, cls=None, **kwargs):
+    def get_properties(self, comp=None, timeout=None, request_id=None, lease_access_conditions=None, cls=None, **kwargs):
         """returns all user-defined metadata and system properties for the
         specified container. The data returned does not include the container's
         list of blobs.
 
+        :param comp: Possible values include: 'metadata'
+        :type comp: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -156,6 +158,8 @@ class ContainerOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        if comp is not None:
+            query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         query_parameters['restype'] = self._serialize.query("restype", restype, 'str')
