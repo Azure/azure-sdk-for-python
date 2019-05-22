@@ -21,6 +21,8 @@ class Operation(Model):
     :type name: str
     :param display: Required. The display information of the operation.
     :type display: ~azure.mgmt.containerinstance.models.OperationDisplay
+    :param properties: The additional properties.
+    :type properties: object
     :param origin: The intended executor of the operation. Possible values
      include: 'User', 'System'
     :type origin: str or
@@ -35,6 +37,7 @@ class Operation(Model):
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'properties': {'key': 'properties', 'type': 'object'},
         'origin': {'key': 'origin', 'type': 'str'},
     }
 
@@ -42,4 +45,5 @@ class Operation(Model):
         super(Operation, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
         self.display = kwargs.get('display', None)
+        self.properties = kwargs.get('properties', None)
         self.origin = kwargs.get('origin', None)

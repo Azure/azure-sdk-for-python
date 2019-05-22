@@ -3,6 +3,13 @@
 Release History
 ===============
 
+1.5.0 (2019-05-22)
+++++++++++++++++++
+
+**Features**
+
+- Add client level operations list_cached_images and list_capabilities
+
 1.4.1 (2019-04-01)
 ++++++++++++++++++
 
