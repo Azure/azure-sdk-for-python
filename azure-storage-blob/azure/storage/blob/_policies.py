@@ -31,9 +31,10 @@ class StorageBlobSettings(object):
 
     def __init__(self, **kwargs):
         self.max_single_put_size = kwargs.get('max_single_put_size', 64 * 1024 * 1024)
-        self.max_block_size = kwargs.get('max_block_size', 4 * 1024 * 1024)
+        self.copy_polling_interval = 2
 
         # Block blob uploads
+        self.max_block_size = kwargs.get('max_block_size', 4 * 1024 * 1024)
         self.min_large_block_upload_threshold = kwargs.get('min_large_block_upload_threshold', 4 * 1024 * 1024 + 1)
         self.use_byte_buffer = False
 

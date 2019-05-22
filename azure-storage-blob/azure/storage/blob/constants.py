@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+X_MS_VERSION = '2018-03-28'
+
 # Default credentials for Development Storage Service
 DEV_ACCOUNT_NAME = 'devstoreaccount1'
 DEV_ACCOUNT_SECONDARY_NAME = 'devstoreaccount1-secondary'

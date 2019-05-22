@@ -31,7 +31,8 @@ from ._utils import (
     return_response_headers,
     add_metadata_headers,
     process_storage_error,
-    encode_base64
+    encode_base64,
+    parse_connection_str
 )
 from ._deserialize import (
     deserialize_container_properties,
@@ -70,6 +71,7 @@ class ContainerClient(object):
             self.name = container or unquote(path_container)
 
         self.scheme = parsed_url.scheme
+        self.credentials = credentials
         self.account = parsed_url.hostname.split(".blob.core.")[0]
         self.url = url if parsed_url.path else "{}://{}/{}".format(
             self.scheme,
@@ -83,6 +85,22 @@ class ContainerClient(object):
     def create_configuration(**kwargs):
         # type: (**Any) -> Configuration
         return create_configuration(**kwargs)
+
+    @classmethod
+    def from_connection_string(
+            cls, conn_str,  # type: str
+            container,  # type: Union[str, ContainerProperties]
+            credentials=None,  # type: Optional[HTTPPolicy]
+            configuration=None,  # type: Optional[Configuration]
+            **kwargs  # type: Any
+        ):
+        """
+        Create BlobClient from a Connection String.
+        """
+        account_url, creds = parse_connection_str(conn_str, credentials)
+        return cls(
+            account_url, container=container,
+            credentials=creds, configuration=configuration, **kwargs)
 
     def make_url(self, protocol=None, sas_token=None):
         # type: (Optional[str], Optional[str]) -> str
@@ -338,5 +356,5 @@ class ContainerClient(object):
         :returns: A BlobClient.
         """
         return BlobClient(
-            self.url, container=self.name, blob=blob, blob_type=blob_type,
-            snapshot=snapshot, configuration=self._config, _pipeline=self._pipeline)
+            self.url, container=self.name, blob=blob, blob_type=blob_type, snapshot=snapshot,
+            credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline)

@@ -218,7 +218,7 @@ class ContainerPropertiesPaged(Paged):
         self.prefix = prefix
         self.current_marker = None
         self.results_per_page = results_per_page
-        self.next_marker = ""
+        self.next_marker = kwargs.get('marker', "")
 
     def _advance_page(self):
         # type: () -> List[Model]

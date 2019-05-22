@@ -21,6 +21,8 @@ from azure.core import Configuration, HttpResponseError
 from .common import BlobType
 from .lease import Lease
 from .models import SnapshotProperties, BlobBlock
+from .polling import CopyBlob, CopyStatusPoller
+from ._shared_access_signature import BlobSharedAccessSignature
 from ._utils import (
     create_client,
     create_configuration,
@@ -33,7 +35,8 @@ from ._utils import (
     add_metadata_headers,
     process_storage_error,
     encode_base64,
-    get_length
+    get_length,
+    parse_connection_str
 )
 from ._deserialize import (
     deserialize_blob_properties,
@@ -112,6 +115,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
 
         self.scheme = parsed_url.scheme
         self.account = parsed_url.hostname.split(".blob.core.")[0]
+        self.credentials = credentials
         self.url = "{}://{}/{}/{}".format(
             self.scheme,
             parsed_url.hostname,
@@ -129,6 +133,26 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
     def create_configuration(**kwargs):
         # type: (**Any) -> Configuration
         return create_configuration(**kwargs)
+
+    @classmethod
+    def from_connection_string(
+            cls, conn_str,  # type: str
+            container,  # type: Union[str, ContainerProperties]
+            blob,  # type: Union[str, BlobProperties]
+            snapshot=None,  # type: Optional[str]
+            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
+            credentials=None,  # type: Optional[HTTPPolicy]
+            configuration=None,  # type: Optional[Configuration]
+            **kwargs  # type: Any
+        ):
+        """
+        Create BlobClient from a Connection String.
+        """
+        account_url, creds = parse_connection_str(conn_str, credentials)
+        return cls(
+            account_url, container=container, blob=blob,
+            snapshot=snapshot, blob_type=blob_type,
+            credentials=creds, configuration=configuration, **kwargs)
 
     def make_url(self, protocol=None, sas_token=None):
         # type: (Optional[str], Optional[str]) -> str
@@ -228,6 +252,24 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
+        if not hasattr(self.credentials, 'account_key') and not self.credentials.account_key:
+            raise ValueError("No account SAS key available.")
+        sas = BlobSharedAccessSignature(self.account, self.credentials.account_key)
+        return sas.generate_blob(
+            self.container,
+            self.name,
+            permission,
+            expiry,
+            start=start,
+            policy_id=policy_id,
+            ip=ip,
+            protocol=protocol,
+            cache_control=cache_control,
+            content_disposition=content_disposition,
+            content_encoding=content_encoding,
+            content_language=content_language,
+            content_type=content_type,
+        )
 
     def get_account_information(self, timeout=None):
         # type: (Optional[int]) -> Dict[str, str]
@@ -880,7 +922,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         return snapshot
 
     def copy_blob_from_source(
-            self, copy_source,  # type: Any
+            self, copy_source,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
             source_if_modified_since=None,  # type: Optional[datetime]
             source_if_unmodified_since=None,  # type: Optional[datetime]
@@ -894,13 +936,190 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             source_lease=None,  # type: Optional[Union[Lease, str]]
             timeout=None,  # type: Optional[int]
             premium_page_blob_tier=None,
-            requires_sync=None  # type: Optional[bool]
+            requires_sync=False,  # type: Optional[bool]
+            **kwargs
         ):
         # type: (...) -> Any
         """
-        TODO: Fix type hints
+        Copies a blob asynchronously. This operation returns a copy operation 
+        object that can be used to wait on the completion of the operation,
+        as well as check status or abort the copy operation.
+        The Blob service copies blobs on a best-effort basis.
+
+        The source blob for a copy operation may be a block blob, an append blob, 
+        or a page blob. If the destination blob already exists, it must be of the 
+        same blob type as the source blob. Any existing destination blob will be 
+        overwritten. The destination blob cannot be modified while a copy operation 
+        is in progress.
+
+        When copying from a page blob, the Blob service creates a destination page 
+        blob of the source blob's length, initially containing all zeroes. Then 
+        the source page ranges are enumerated, and non-empty ranges are copied. 
+
+        For a block blob or an append blob, the Blob service creates a committed 
+        blob of zero length before returning from this operation. When copying 
+        from a block blob, all committed blocks and their block IDs are copied. 
+        Uncommitted blocks are not copied. At the end of the copy operation, the 
+        destination blob will have the same committed block count as the source.
+
+        When copying from an append blob, all committed blocks are copied. At the 
+        end of the copy operation, the destination blob will have the same committed 
+        block count as the source.
+
+        For all blob types, you can call status() on the returned polling object 
+        to check the status of the copy operation, or wait() to block until the
+        operation is complete. The final blob will be committed when the copy completes.
+
+        :param str copy_source:
+            A URL of up to 2 KB in length that specifies an Azure file or blob. 
+            The value should be URL-encoded as it would appear in a request URI. 
+            If the source is in another account, the source must either be public 
+            or must be authenticated via a shared access signature. If the source 
+            is public, no authentication is required.
+            Examples:
+            https://myaccount.blob.core.windows.net/mycontainer/myblob
+            https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
+            https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
+        :param metadata:
+            Name-value pairs associated with the blob as metadata. If no name-value 
+            pairs are specified, the operation will copy the metadata from the 
+            source blob or file to the destination blob. If one or more name-value 
+            pairs are specified, the destination blob is created with the specified 
+            metadata, and metadata is not copied from the source blob or file. 
+        :type metadata: dict(str, str)
+        :param datetime source_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.  
+            Specify this conditional header to copy the blob only if the source
+            blob has been modified since the specified date/time.
+        :param datetime source_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this conditional header to copy the blob only if the source blob
+            has not been modified since the specified date/time.
+        :param str source_if_match:
+            An ETag value, or the wildcard character (*). Specify this conditional
+            header to copy the source blob only if its ETag matches the value
+            specified. If the ETag values do not match, the Blob service returns
+            status code 412 (Precondition Failed). This header cannot be specified
+            if the source is an Azure File.
+        :param str source_if_none_match:
+            An ETag value, or the wildcard character (*). Specify this conditional
+            header to copy the blob only if its ETag does not match the value
+            specified. If the values are identical, the Blob service returns status
+            code 412 (Precondition Failed). This header cannot be specified if the
+            source is an Azure File.
+        :param datetime destination_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this conditional header to copy the blob only
+            if the destination blob has been modified since the specified date/time.
+            If the destination blob has not been modified, the Blob service returns
+            status code 412 (Precondition Failed).
+        :param datetime destination_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC. 
+            Specify this conditional header to copy the blob only
+            if the destination blob has not been modified since the specified
+            date/time. If the destination blob has been modified, the Blob service
+            returns status code 412 (Precondition Failed).
+        :param str destination_if_match:
+            An ETag value, or the wildcard character (*). Specify an ETag value for
+            this conditional header to copy the blob only if the specified ETag value
+            matches the ETag value for an existing destination blob. If the ETag for
+            the destination blob does not match the ETag specified for If-Match, the
+            Blob service returns status code 412 (Precondition Failed).
+        :param str destination_if_none_match:
+            An ETag value, or the wildcard character (*). Specify an ETag value for
+            this conditional header to copy the blob only if the specified ETag value
+            does not match the ETag value for the destination blob. Specify the wildcard
+            character (*) to perform the operation only if the destination blob does not
+            exist. If the specified condition isn't met, the Blob service returns status
+            code 412 (Precondition Failed).
+        :param str destination_lease_id:
+            The lease ID specified for this header must match the lease ID of the
+            destination blob. If the request does not include the lease ID or it is not
+            valid, the operation fails with status code 412 (Precondition Failed).
+        :param str source_lease_id:
+            Specify this to perform the Copy Blob operation only if
+            the lease ID given matches the active lease ID of the source blob.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: A pollable object to check copy operation status (and abort).
+        :rtype: :class:`~azure.storage.blob.polling.CopyStatusPoller`
         """
+        #from azure.core.polling import NoPolling  # TODO: Support no polling
+
+        if requires_sync and self.blob_type != BlobType.BlockBlob:
+            raise TypeError("The 'requires_sync' option can only be used with Block Blobs.")
+
+        if copy_source.startswith('/'):
+            # Backwards compatibility for earlier versions of the SDK where
+            # the copy source can be in the following formats:
+            # - Blob in named container:
+            #     /accountName/containerName/blobName
+            # - Snapshot in named container:
+            #     /accountName/containerName/blobName?snapshot=<DateTime>
+            # - Blob in root container:
+            #     /accountName/blobName
+            # - Snapshot in root container:
+            #     /accountName/blobName?snapshot=<DateTime>
+            account, _, source = \
+                copy_source.partition('/')[2].partition('/')
+            parsed_url = urlparse(self.url)
+            copy_source = "{}://{}/{}".format(
+                self.scheme,
+                parsed_url.hostname.replace(self.account, account),
+                source.strip('/')
+            )
+
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+        if source_lease:
+            try:
+                headers['x-ms-source-lease-id'] = source_lease.id
+            except AttributeError:
+                headers['x-ms-source-lease-id'] = source_lease
+
+        dest_access_conditions = get_access_conditions(destination_lease)
+        source_mod_conditions = get_modification_conditions(
+            source_if_modified_since,
+            source_if_unmodified_since,
+            source_if_match,
+            source_if_none_match)
+        dest_mod_conditions = get_modification_conditions(
+            destination_if_modified_since,
+            destination_if_unmodified_since,
+            destination_if_match,
+            destination_if_none_match)
+        start_copy = self._client.blob.start_copy_from_url(
+            copy_source,
+            timeout=timeout,
+            source_modified_access_conditions=source_mod_conditions,
+            modified_access_conditions=dest_mod_conditions,
+            lease_access_conditions=dest_access_conditions,
+            headers=headers,
+            cls=return_response_headers,
+            error_map=basic_error_map(),
+            **kwargs)
+        polling_interval = self._config.blob_settings.copy_polling_interval
+        # if polling is True: 
+        # elif polling is False: polling_method = NoPolling()
+        # else: polling_method = polling
+        polling_method = CopyBlob(
+            polling_interval,
+            timeout=timeout,
+            lease_access_conditions=dest_access_conditions,
+            modified_access_conditions=dest_mod_conditions,
+            **kwargs)
+        poller = CopyStatusPoller(self, start_copy, None, polling_method)
+        if requires_sync:
+            poller.wait()
+        return poller
 
     def acquire_lease(
             self, lease_duration=-1,  # type: int

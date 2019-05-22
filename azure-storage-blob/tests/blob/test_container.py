@@ -199,7 +199,7 @@ class StorageContainerTest(StorageTestCase):
     @record
     def test_list_containers(self):
         # Arrange
-        container_name = self._create_container()
+        container = self._create_container()
 
         # Act
         containers = list(self.bsc.list_container_properties())
@@ -208,56 +208,56 @@ class StorageContainerTest(StorageTestCase):
         self.assertIsNotNone(containers)
         self.assertGreaterEqual(len(containers), 1)
         self.assertIsNotNone(containers[0])
-        self.assertNamedItemInContainer(containers, container_name)
+        self.assertNamedItemInContainer(containers, container.name)
         self.assertIsNotNone(containers[0].has_immutability_policy)
         self.assertIsNotNone(containers[0].has_legal_hold)
 
     @record
     def test_list_containers_with_prefix(self):
         # Arrange
-        container_name = self._create_container()
+        container = self._create_container()
 
         # Act
-        containers = list(self.bs.list_containers(prefix=container_name))
+        containers = list(self.bsc.list_container_properties(prefix=container.name))
 
         # Assert
         self.assertIsNotNone(containers)
         self.assertEqual(len(containers), 1)
         self.assertIsNotNone(containers[0])
-        self.assertEqual(containers[0].name, container_name)
+        self.assertEqual(containers[0].name, container.name)
         self.assertIsNone(containers[0].metadata)
 
     @record
     def test_list_containers_with_include_metadata(self):
         # Arrange
-        container_name = self._create_container()
+        container = self._create_container()
         metadata = {'hello': 'world', 'number': '42'}
-        resp = self.bs.set_container_metadata(container_name, metadata)
+        resp = container.set_container_metadata(metadata)
 
         # Act
-        containers = list(self.bs.list_containers(prefix=container_name, include_metadata=True))
+        containers = list(self.bsc.list_containers(prefix=container.name, include_metadata=True))
 
         # Assert
         self.assertIsNotNone(containers)
         self.assertGreaterEqual(len(containers), 1)
         self.assertIsNotNone(containers[0])
-        self.assertNamedItemInContainer(containers, container_name)
+        self.assertNamedItemInContainer(containers, container.name)
         self.assertDictEqual(containers[0].metadata, metadata)
 
     @record
     def test_list_containers_with_public_access(self):
         # Arrange
-        container_name = self._create_container()
-        resp = self.bs.set_container_acl(container_name, public_access=PublicAccess.Blob)
+        container = self._create_container()
+        resp = container.set_container_acl(public_access=PublicAccess.Blob)
 
         # Act
-        containers = list(self.bs.list_containers(prefix=container_name))
+        containers = list(self.bsc.list_container_properties(prefix=container.name))
 
         # Assert
         self.assertIsNotNone(containers)
         self.assertGreaterEqual(len(containers), 1)
         self.assertIsNotNone(containers[0])
-        self.assertNamedItemInContainer(containers, container_name)
+        self.assertNamedItemInContainer(containers, container.name)
         self.assertEqual(containers[0].properties.public_access, PublicAccess.Blob)
 
     @record
@@ -266,18 +266,19 @@ class StorageContainerTest(StorageTestCase):
         prefix = 'listcontainer'
         container_names = []
         for i in range(0, 4):
-            container_names.append(self._create_container(prefix + str(i)))
+            container_names.append(self._create_container(prefix + str(i)).name)
 
         container_names.sort()
 
         # Act
-        generator1 = self.bs.list_containers(prefix=prefix, num_results=2)
-        generator2 = self.bs.list_containers(prefix=prefix,
-                                             marker=generator1.next_marker,
-                                             num_results=2)
+        generator1 = self.bsc.list_container_properties(prefix=prefix, results_per_page=2)
+        next(generator1)
+        generator2 = self.bsc.list_container_properties(
+            prefix=prefix, marker=generator1.next_marker, results_per_page=2)
+        next(generator2)
 
-        containers1 = generator1.items
-        containers2 = generator2.items
+        containers1 = generator1.current_page
+        containers2 = generator2.current_page
 
         # Assert
         self.assertIsNotNone(containers1)

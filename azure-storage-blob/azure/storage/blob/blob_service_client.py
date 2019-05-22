@@ -14,14 +14,14 @@ try:
 except ImportError:
     from urlparse import urlparse
 
-from azure.storage.common import SharedAccessSignature
-
+from ._shared_access_signature import SharedAccessSignature
 from .container_client import ContainerClient
 from .blob_client import BlobClient
 from .models import (
     ContainerProperties,
     StorageServiceProperties,
-    ContainerPropertiesPaged)
+    ContainerPropertiesPaged
+)
 from ._generated.models import StorageErrorException
 from .common import BlobType
 from ._utils import (
@@ -31,7 +31,9 @@ from ._utils import (
     get_access_conditions,
     process_storage_error,
     basic_error_map,
-    return_response_headers)
+    return_response_headers,
+    parse_connection_str
+)
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -55,19 +57,19 @@ class BlobServiceClient(object):
 
     def __init__(
             self, url,  # type: str
-            account_name, # type: Optional[str]
-            account_key, # type: Optional[str]
             credentials=None,  # type: Optional[HTTPPolicy]
             configuration=None, # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        # TODO: Parse URL
-        # TODO: Alternative constructors
-        self.url = url
-        self.account = None
-        self.account_name = account_name
-        self.account_key = account_key
+        parsed_url = urlparse(url)
+        self.scheme = parsed_url.scheme
+        self.account = parsed_url.hostname.split(".blob.core.")[0]
+        self.credentials = credentials
+        self.url = url if not parsed_url.path else "{}://{}".format(
+            self.scheme,
+            parsed_url.hostname
+        )
         self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
         self._client = create_client(url, self._pipeline)
 
@@ -76,6 +78,8 @@ class BlobServiceClient(object):
         """
         Create BlobServiceClient from a Connection String.
         """
+        account_url, creds = parse_connection_str(conn_str, credentials)
+        return cls(account_url, credentials=creds, configuration=configuration, **kwargs)
 
     @staticmethod
     def create_configuration(**kwargs):
@@ -159,13 +163,11 @@ class BlobServiceClient(object):
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         '''
-        if self.account_name is None:
-            raise ValueError('Account name should not be None')
-        if self.account_key is None:
-            raise ValueError('Account key should not be None')
+        if not hasattr(self.credentials, 'account_key') and not self.credentials.account_key:
+            raise ValueError("No account SAS key available.")
 
-        sas = SharedAccessSignature(self.account_name, self.account_key)
-        return sas.generate_account(Services.BLOB, resource_types, permission,
+        sas = SharedAccessSignature(self.account, self.credentials.account_key)
+        return sas.generate_account(resource_types, permission,
                                     expiry, start=start, ip=ip, protocol=protocol)
 
     def get_account_information(self, timeout=None):
@@ -264,12 +266,14 @@ class BlobServiceClient(object):
         """
         include = 'metadata' if include_metadata else None
         results_per_page = kwargs.pop('results_per_page', None)
+        marker = kwargs.pop('marker', "")
         command = functools.partial(
             self._client.service.list_containers_segment,
             include=include,
             timeout=timeout,
             **kwargs)
-        return ContainerPropertiesPaged(command, prefix=prefix, results_per_page=results_per_page)
+        return ContainerPropertiesPaged(
+            command, prefix=prefix, results_per_page=results_per_page, marker=marker)
 
     def get_container_client(self, container):
         # type: (Union[ContainerProperties, str]) -> ContainerClient
@@ -278,7 +282,8 @@ class BlobServiceClient(object):
 
         :returns: A ContainerClient.
         """
-        return ContainerClient(self.url, container=container, configuration=self._config, _pipeline=self._pipeline)
+        return ContainerClient(self.url, container=container,
+            credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline)
 
     def get_blob_client(
             self, container,  # type: Union[ContainerProperties, str]
@@ -293,5 +298,5 @@ class BlobServiceClient(object):
         :returns: A BlobClient.
         """
         return BlobClient(
-            self.url, container=container, blob=blob, blob_type=blob_type,
-            snapshot=snapshot, configuration=self._config, _pipeline=self._pipeline)
+            self.url, container=container, blob=blob, blob_type=blob_type, snapshot=snapshot,
+            credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline)

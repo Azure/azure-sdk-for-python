@@ -101,15 +101,16 @@ class StorageCommonBlobTest(StorageTestCase):
 
     def _create_remote_container(self):
         self.remote_container_name = self.get_resource_name('remotectnr')
-        self.bs2.create_container(self.remote_container_name)
+        remote_container = self.bsc2.get_container_client(self.remote_container_name)
+        remote_container.create_container()
 
     def _create_remote_block_blob(self, blob_data=None):
         if not blob_data:
             blob_data = b'12345678' * 1024 * 1024
         source_blob_name = self._get_blob_reference()
-        self.bs2.create_blob_from_bytes(
-            self.remote_container_name, source_blob_name, blob_data)
-        return source_blob_name
+        source_blob = self.bsc2.get_blob_client(self.remote_container_name, source_blob_name)
+        source_blob.upload_blob(blob_data)
+        return source_blob
 
     def _wait_for_async_copy(self, container_name, blob_name):
         count = 0
@@ -920,103 +921,101 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_copy_blob_with_existing_blob(self):
-        pytest.skip("copy not yet supported")
+        pytest.skip("in progress")
         # Arrange
-        blob_name = self._create_block_blob()
+        #blob_name = self._create_block_blob()
+        # blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
-        # Act
-        sourceblob = '/{0}/{1}/{2}'.format(self.settings.STORAGE_ACCOUNT_NAME,
-                                           self.container_name,
-                                           blob_name)
-        copy = self.bs.copy_blob(self.container_name, 'blob1copy', sourceblob)
+        # # Act
+        # sourceblob = '/{0}/{1}/{2}'.format(self.settings.STORAGE_ACCOUNT_NAME,
+        #                                    self.container_name,
+        #                                    blob_name)
+        source_blob = "https://amqptest.blob.core.windows.net/utcontainer/test_big"
+        copied_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        copy = copied_blob.copy_blob_from_source(source_blob)
+        self.assertEqual(copy.status(), 'pending')
+        copy.wait()
 
         # Assert
         self.assertIsNotNone(copy)
-        self.assertEqual(copy.status, 'success')
-        self.assertIsNotNone(copy.id)
-        copy_blob = self.bs.get_blob_to_bytes(self.container_name, 'blob1copy')
-        self.assertEqual(copy_blob.content, self.byte_data)
+        self.assertEqual(copy.status(), 'success')
+        self.assertIsNotNone(copy.id())
+        copy_blob = copied_blob.download_blob()
+        self.assertEqual(b"".join(list(copy_blob)), self.byte_data)
 
     @record
     def test_copy_blob_async_private_blob(self):
-        pytest.skip("copy not yet supported")
+        pytest.skip("in progress")
         # Arrange
         self._create_remote_container()
-        source_blob_name = self._create_remote_block_blob()
-        source_blob_url = self.bs2.make_blob_url(self.remote_container_name, source_blob_name)
+        source_blob = self._create_remote_block_blob()
+        source_blob_url = source_blob.make_url()
 
         # Act
         target_blob_name = 'targetblob'
-        with self.assertRaises(AzureMissingResourceHttpError):
-            self.bs.copy_blob(self.container_name, target_blob_name, source_blob_url)
+        with self.assertRaises(ResourceNotFoundError):
+            target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
+            target_blob.copy_blob_from_source(source_blob_url)
 
         # Assert
 
     @record
     def test_copy_blob_async_private_blob_with_sas(self):
-        pytest.skip("copy not yet supported")
+        pytest.skip("in progress")
         # Arrange
         data = b'12345678' * 1024 * 1024
         self._create_remote_container()
-        source_blob_name = self._create_remote_block_blob(blob_data=data)
+        source_blob = self._create_remote_block_blob(blob_data=data)
 
-        sas_token = self.bs2.generate_blob_shared_access_signature(
-            self.remote_container_name,
-            source_blob_name,
+        sas_token = source_blob.generate_shared_access_signature(
             permission=BlobPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
-        source_blob_url = self.bs2.make_blob_url(
-            self.remote_container_name,
-            source_blob_name,
-            sas_token=sas_token,
-        )
+        source_blob_url = source_blob.make_url(sas_token=sas_token)
+        #raise Exception(source_blob_url)
 
         # Act
         target_blob_name = 'targetblob'
-        copy_resp = self.bs.copy_blob(
-            self.container_name, target_blob_name, source_blob_url)
+        target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
+        copy_resp = target_blob.copy_blob_from_source(source_blob_url)
 
         # Assert
-        self.assertEqual(copy_resp.status, 'pending')
-        self._wait_for_async_copy(self.container_name, target_blob_name)
-        actual_data = self.bs.get_blob_to_bytes(self.container_name, target_blob_name)
-        self.assertEqual(actual_data.content, data)
+        #self.assertEqual(copy_resp.status(), 'pending')
+        copy_resp.wait()
+        self.assertEqual(copy_resp.status(), 'success')
+        actual_data = target_blob.download_blob()
+        self.assertEqual(b"".join(list(actual_data)), data)
 
     @record
     def test_abort_copy_blob(self):
-        pytest.skip("copy not yet supported")
+        pytest.skip("in progress")
+        import logging
+        logger = logging.getLogger(__name__)
         # Arrange
         data = b'12345678' * 1024 * 1024
         self._create_remote_container()
-        source_blob_name = self._create_remote_block_blob(blob_data=data)
-
-        sas_token = self.bs2.generate_blob_shared_access_signature(
-            self.remote_container_name,
-            source_blob_name,
+        source_blob = self._create_remote_block_blob(blob_data=data)
+        logger.warning("blob uploaded")
+        sas_token = source_blob.generate_shared_access_signature(
             permission=BlobPermissions.READ,
-            expiry=datetime.utcnow() + timedelta(hours=1),          
+            expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
-        source_blob_url = self.bs2.make_blob_url(
-            self.remote_container_name,
-            source_blob_name,
-            sas_token=sas_token,
-        )
+        source_blob_url = source_blob.make_url(sas_token=sas_token)
 
         # Act
         target_blob_name = 'targetblob'
-        copy_resp = self.bs.copy_blob(
-            self.container_name, target_blob_name, source_blob_url)
-        self.assertEqual(copy_resp.status, 'pending')
-        self.bs.abort_copy_blob(
-            self.container_name, 'targetblob', copy_resp.id)
+        target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
+        copy_resp = target_blob.copy_blob_from_source(source_blob_url)
+
+        #self.assertEqual(copy_resp.status(), 'pending')
+        copy_resp.abort()
 
         # Assert
-        target_blob = self.bs.get_blob_to_bytes(self.container_name, target_blob_name)
-        self.assertEqual(target_blob.content, b'')
-        self.assertEqual(target_blob.properties.copy.status, 'aborted')
+        actual_data = target_blob.download_blob()
+        self.assertEqual(b"".join(list(actual_data)), data)
+        self.assertEqual(actual_data.properties.copy.status, 'aborted')
 
     @record
     def test_abort_copy_blob_with_synchronous_copy_fails(self):
