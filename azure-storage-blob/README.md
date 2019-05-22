@@ -16,7 +16,7 @@ BlobServiceClient.get_account_information(timeout=None)
 # Returns ServiceStats 
 BlobServiceClient.get_service_stats(timeout=None)
 
-# Returns ServiceProperties (or dict?)
+# Returns ServiceProperties
 BlobServiceClient.get_service_properties(timeout=None)
 
 # Returns None
@@ -28,7 +28,10 @@ BlobServiceClient.list_container_properties(
     prefix=None, num_results=None, include_metadata=False, marker=None, timeout=None)
 
 # Returns a ContainerClient
-BlobServiceClient.get_container_client(container, snaphot=None)
+BlobServiceClient.get_container_client(container)
+
+# Returns a BlobClient
+BlobServiceClient.get_blob_client(container, blob)
 ```
 
 ## ContainerClient API
