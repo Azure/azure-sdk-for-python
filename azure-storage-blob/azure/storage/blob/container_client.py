@@ -166,8 +166,8 @@ class ContainerClient(object):
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None  # type: Optional[int]
-        ):
+            timeout=None,  # type: Optional[int]
+            **kwargs):
         # type: (...) -> Lease
         """
         :returns: A Lease object, that can be run in a context manager.
@@ -189,8 +189,8 @@ class ContainerClient(object):
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            timeout=None  # type: Optional[int]
-        ):
+            timeout=None,  # type: Optional[int]
+            **kwargs):
         # type: (...) -> int
         """
         :returns: Approximate time remaining in the lease period, in seconds.
@@ -205,12 +205,12 @@ class ContainerClient(object):
             **kwargs)
         return response.get('x-ms-lease-time')
 
-    def get_account_infomation(self, timeout=None):
+    def get_account_information(self, timeout=None):
         # type: (Optional[int]) -> Dict[str, str]
         """
         :returns: A dict of account information (SKU and account type).
         """
-        response = self._client.service.get_account_info(cls=return_response_headers)
+        response = self._client.container.get_account_info(cls=return_response_headers, timeout=timeout)
         return {
             'SKU': response.get('x-ms-sku-name'),
             'AccountType': response.get('x-ms-account-kind')
@@ -235,23 +235,56 @@ class ContainerClient(object):
         """
         :returns: A dict of metadata.
         """
+        access_conditions = get_access_conditions(lease)
+        try:
+            return self._client.container.get_properties(
+                comp='metadata',
+                timeout=timeout,
+                lease_access_conditions=access_conditions,
+                cls=deserialize_metadata,
+                )
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def set_container_metadata(
             self, metadata=None,  # type: Optional[Dict[str, str]]
             lease=None,  # type: Optional[Union[str, Lease]]
             if_modified_since=None,  # type: Optional[datetime]
-            timeout=None  # type: Optional[int]
-        ):
+            timeout=None,  # type: Optional[int]
+            **kwargs
+    ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
         :returns: Container-updated property dict (Etag and last modified).
         """
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(if_modified_since)
+        return self._client.container.set_metadata(
+            timeout=timeout,
+            lease_access_conditions=access_conditions,
+            modified_access_conditions=mod_conditions,
+            cls=return_response_headers,
+            headers=headers,
+            **kwargs
+        )
 
     def get_container_acl(self, lease=None, timeout=None):
         # type: (Optional[Union[Lease, str]], Optional[int]) -> Dict[str, str]
         """
         :returns: Access policy information in a dict.
         """
+        access_conditions = get_access_conditions(lease)
+        response = self._client.container.get_access_policy(
+            timeout=timeout,
+            lease_access_conditions=access_conditions,
+            cls=return_response_headers,
+        )
+        return {
+            'public-access': response.get('x-ms-blob-public-access'),
+            'signed_identifiers': None
+        }
 
     def set_container_acl(
             self, signed_identifiers=None,  # type: Optional[Dict[str, Optional[Tuple[Any, Any, Any]]]]
@@ -264,6 +297,21 @@ class ContainerClient(object):
         """
         :returns: Container-updated property dict (Etag and last modified).
         """
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since)
+        access_conditions = get_access_conditions(lease)
+        response = self._client.container.set_access_policy(
+            container_acl=signed_identifiers,
+            timeout=timeout,
+            access=public_access,
+            lease_access_conditions=access_conditions,
+            modified_access_conditions=mod_conditions,
+            cls=return_response_headers,
+        )
+        return {
+            'ETag': response.get('ETag'),
+            'Last-Modified': response.get('Last-Modified')
+        }
 
     def list_blob_properties(self, prefix=None, include=None, timeout=None, **kwargs):
         # type: (Optional[str], Optional[str], Optional[int]) -> Iterable[BlobProperties]
@@ -275,16 +323,28 @@ class ContainerClient(object):
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.container.list_blob_flat_segment,
+            prefix=prefix,
             include=include,
             timeout=timeout,
             **kwargs)
         return BlobPropertiesPaged(command, prefix=prefix, results_per_page=results_per_page)
 
-    def walk_blob_propertes(self, prefix=None, include=None, delimiter="/", timeout=None):
+    def walk_blob_propertes(self, prefix=None, include=None, delimiter="/", timeout=None, **kwargs):
         # type: (Optional[str], Optional[str], str, Optional[int]) -> Iterable[BlobProperties]
         """
         :returns: A generator that honors directory hierarchy.
         """
+        if include and not isinstance(include, list):
+            include = [include]
+        results_per_page = kwargs.pop('results_per_page', None)
+        command = functools.partial(
+            self._client.container.list_blob_hierarchy_segment,
+            delimiter=delimiter,
+            prefix=prefix,
+            include=include,
+            timeout=timeout,
+            **kwargs)
+        return BlobPropertiesPaged(command, prefix=prefix, results_per_page=results_per_page)
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]

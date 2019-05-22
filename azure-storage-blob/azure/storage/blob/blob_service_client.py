@@ -31,6 +31,7 @@ from ._utils import (
     get_access_conditions,
     process_storage_error,
     basic_error_map,
+    return_response_headers,
     parse_connection_str
 )
 
