@@ -923,15 +923,18 @@ class StorageCommonBlobTest(StorageTestCase):
     def test_copy_blob_with_existing_blob(self):
         pytest.skip("in progress")
         # Arrange
-        #blob_name = self._create_block_blob()
+        # blob_name = self._create_block_blob()
         # blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
-        # # Act
-        # sourceblob = '/{0}/{1}/{2}'.format(self.settings.STORAGE_ACCOUNT_NAME,
+        # # # Act
+        # source_blob = '/{0}/{1}/{2}'.format(self.settings.STORAGE_ACCOUNT_NAME,
         #                                    self.container_name,
         #                                    blob_name)
-        source_blob = "https://amqptest.blob.core.windows.net/utcontainer/test_big"
-        copied_blob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        import logging
+        logger = logging.getLogger(__name__)
+
+        source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
+        copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
         copy = copied_blob.copy_blob_from_source(source_blob)
         self.assertEqual(copy.status(), 'pending')
         copy.wait()
@@ -940,8 +943,9 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertIsNotNone(copy)
         self.assertEqual(copy.status(), 'success')
         self.assertIsNotNone(copy.id())
-        copy_blob = copied_blob.download_blob()
-        self.assertEqual(b"".join(list(copy_blob)), self.byte_data)
+    
+        #copy_blob = copied_blob.download_blob()
+        #self.assertEqual(b"".join(list(copy_blob)), self.byte_data)
 
     @record
     def test_copy_blob_async_private_blob(self):
