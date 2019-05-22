@@ -312,7 +312,7 @@ class BlobServiceClient(object):
             process_storage_error(error)
 
     def list_container_properties(
-            self, prefix=None,  # type: Optional[str]
+            self, starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
             marker=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
@@ -324,7 +324,7 @@ class BlobServiceClient(object):
         The generator will lazily follow the continuation tokens returned by
         the service and stop when all containers have been returned.
 
-        :param str prefix:
+        :param str starts_with:
             Filters the results to return only containers whose names
             begin with the specified prefix.
         :param bool include_metadata:
@@ -343,11 +343,12 @@ class BlobServiceClient(object):
         marker = kwargs.pop('marker', "")
         command = functools.partial(
             self._client.service.list_containers_segment,
+            prefix=starts_with,
             include=include,
             timeout=timeout,
             **kwargs)
         return ContainerPropertiesPaged(
-            command, prefix=prefix, results_per_page=results_per_page, marker=marker)
+            command, prefix=starts_with, results_per_page=results_per_page, marker=marker)
 
     def get_container_client(self, container):
         # type: (Union[ContainerProperties, str]) -> ContainerClient

@@ -431,14 +431,14 @@ class ContainerClient(object):
             'Last-Modified': response.get('Last-Modified')
         }
 
-    def list_blob_properties(self, prefix=None, include=None, timeout=None, **kwargs):
+    def list_blob_properties(self, starts_with=None, include=None, timeout=None, **kwargs):
         # type: (Optional[str], Optional[str], Optional[int]) -> Iterable[BlobProperties]
         """
         Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service and stop when all blobs have been returned or num_results is reached.
 
-        :param str prefix:
+        :param str starts_with:
             Filters the results to return only blobs whose names
             begin with the specified prefix.
         :param ~azure.storage.blob.models.Include include:
@@ -458,7 +458,7 @@ class ContainerClient(object):
         marker = kwargs.pop('marker', "")
         command = functools.partial(
             self._client.container.list_blob_flat_segment,
-            prefix=prefix,
+            prefix=starts_with,
             include=include,
             timeout=timeout,
             **kwargs)

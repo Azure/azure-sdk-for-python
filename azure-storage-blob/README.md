@@ -27,8 +27,7 @@ BlobServiceClient.set_service_properties(
     logging=None, hour_metrics=None, minute_metrics=None, cors=None, target_version=None, timeout=None, delete_retention_policy=None, static_website=None)
 
 # Returns a generator of container objects - with names, properties, etc
-BlobServiceClient.list_container_properties(
-    prefix=None, num_results=None, include_metadata=False, marker=None, timeout=None)
+BlobServiceClient.list_container_properties(starts_with=None, include_metadata=False, timeout=None)
 
 # Returns a ContainerClient
 BlobServiceClient.get_container_client(container)
@@ -96,7 +95,7 @@ ContainerClient.set_container_acl(
     container, signed_identifiers=None, public_access=None lease=None, if_modified_since=None, if_unmodified_since=None, timeout=None)
 
 # Returns a iterable (auto-paging) response of BlobProperties
-ContainerClient.list_blob_properties(prefix=None, include=None, timeout=None)
+ContainerClient.list_blob_properties(starts_with=None, include=None, timeout=None)
 
 # Blob type enum
 azure.storage.blob.BlobType.BlockBlob

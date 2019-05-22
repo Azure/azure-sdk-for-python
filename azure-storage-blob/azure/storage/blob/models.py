@@ -234,7 +234,6 @@ class ContainerPropertiesPaged(Paged):
             raise StopIteration("End of paging")
         self._current_page_iter_index = 0
         self._response = self._get_next(
-            prefix=self.prefix,
             marker=self.next_marker or None,
             maxresults=self.results_per_page)
 
@@ -394,7 +393,6 @@ class BlobPropertiesPaged(Paged):
             raise StopIteration("End of paging")
         self._current_page_iter_index = 0
         self._response = self._get_next(
-            prefix=self.prefix,
             marker=self.next_marker or None,
             maxresults=self.results_per_page)
 
