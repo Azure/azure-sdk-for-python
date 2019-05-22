@@ -10,11 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .input_schema_mapping_py3 import InputSchemaMapping
     from .resource_py3 import Resource
-    from .json_field_py3 import JsonField
-    from .json_field_with_default_py3 import JsonFieldWithDefault
-    from .json_input_schema_mapping_py3 import JsonInputSchemaMapping
     from .tracked_resource_py3 import TrackedResource
     from .domain_py3 import Domain
     from .domain_update_parameters_py3 import DomainUpdateParameters
@@ -56,11 +52,7 @@ try:
     from .event_type_py3 import EventType
     from .topic_type_info_py3 import TopicTypeInfo
 except (SyntaxError, ImportError):
-    from .input_schema_mapping import InputSchemaMapping
     from .resource import Resource
-    from .json_field import JsonField
-    from .json_field_with_default import JsonFieldWithDefault
-    from .json_input_schema_mapping import JsonInputSchemaMapping
     from .tracked_resource import TrackedResource
     from .domain import Domain
     from .domain_update_parameters import DomainUpdateParameters
@@ -110,21 +102,15 @@ from .event_type_paged import EventTypePaged
 from .topic_type_info_paged import TopicTypeInfoPaged
 from .event_grid_management_client_enums import (
     DomainProvisioningState,
-    InputSchema,
     DomainTopicProvisioningState,
     EventSubscriptionProvisioningState,
-    EventDeliverySchema,
     TopicProvisioningState,
     ResourceRegionType,
     TopicTypeProvisioningState,
 )
 
 __all__ = [
-    'InputSchemaMapping',
     'Resource',
-    'JsonField',
-    'JsonFieldWithDefault',
-    'JsonInputSchemaMapping',
     'TrackedResource',
     'Domain',
     'DomainUpdateParameters',
@@ -173,10 +159,8 @@ __all__ = [
     'EventTypePaged',
     'TopicTypeInfoPaged',
     'DomainProvisioningState',
-    'InputSchema',
     'DomainTopicProvisioningState',
     'EventSubscriptionProvisioningState',
-    'EventDeliverySchema',
     'TopicProvisioningState',
     'ResourceRegionType',
     'TopicTypeProvisioningState',

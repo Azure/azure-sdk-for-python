@@ -18,11 +18,11 @@ class EventSubscription(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified identifier of the resource
+    :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
-    :ivar name: Name of the resource
+    :ivar name: Name of the resource.
     :vartype name: str
-    :ivar type: Type of the resource
+    :ivar type: Type of the resource.
     :vartype type: str
     :ivar topic: Name of the topic of the event subscription.
     :vartype topic: str
@@ -41,11 +41,6 @@ class EventSubscription(Resource):
     :type labels: list[str]
     :param expiration_time_utc: Expiration time of the event subscription.
     :type expiration_time_utc: datetime
-    :param event_delivery_schema: The event delivery schema for the event
-     subscription. Possible values include: 'EventGridSchema',
-     'CloudEventV01Schema', 'CustomInputSchema'
-    :type event_delivery_schema: str or
-     ~azure.mgmt.eventgrid.models.EventDeliverySchema
     :param retry_policy: The retry policy for events. This can be used to
      configure maximum number of delivery attempts and time to live for events.
     :type retry_policy: ~azure.mgmt.eventgrid.models.RetryPolicy
@@ -73,7 +68,6 @@ class EventSubscription(Resource):
         'filter': {'key': 'properties.filter', 'type': 'EventSubscriptionFilter'},
         'labels': {'key': 'properties.labels', 'type': '[str]'},
         'expiration_time_utc': {'key': 'properties.expirationTimeUtc', 'type': 'iso-8601'},
-        'event_delivery_schema': {'key': 'properties.eventDeliverySchema', 'type': 'str'},
         'retry_policy': {'key': 'properties.retryPolicy', 'type': 'RetryPolicy'},
         'dead_letter_destination': {'key': 'properties.deadLetterDestination', 'type': 'DeadLetterDestination'},
     }
@@ -86,6 +80,5 @@ class EventSubscription(Resource):
         self.filter = kwargs.get('filter', None)
         self.labels = kwargs.get('labels', None)
         self.expiration_time_utc = kwargs.get('expiration_time_utc', None)
-        self.event_delivery_schema = kwargs.get('event_delivery_schema', None)
         self.retry_policy = kwargs.get('retry_policy', None)
         self.dead_letter_destination = kwargs.get('dead_letter_destination', None)

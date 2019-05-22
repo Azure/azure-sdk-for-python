@@ -25,7 +25,7 @@ class DomainTopicsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-02-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-06-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class DomainTopicsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-02-01-preview"
+        self.api_version = "2019-06-01"
 
         self.config = config
 
@@ -48,9 +48,9 @@ class DomainTopicsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain
+        :param domain_name: Name of the domain.
         :type domain_name: str
-        :param domain_topic_name: Name of the topic
+        :param domain_topic_name: Name of the topic.
         :type domain_topic_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -164,9 +164,9 @@ class DomainTopicsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain
+        :param domain_name: Name of the domain.
         :type domain_name: str
-        :param domain_topic_name: Name of the domain topic
+        :param domain_topic_name: Name of the domain topic.
         :type domain_topic_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -256,9 +256,9 @@ class DomainTopicsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the domain
+        :param domain_name: Name of the domain.
         :type domain_name: str
-        :param domain_topic_name: Name of the domain topic
+        :param domain_topic_name: Name of the domain topic.
         :type domain_topic_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -305,9 +305,19 @@ class DomainTopicsOperations(object):
         :type resource_group_name: str
         :param domain_name: Domain name.
         :type domain_name: str
-        :param filter: Filter the results using OData syntax.
+        :param filter: The query used to filter the search results using OData
+         syntax. Filtering is permitted on the 'name' property only and with
+         limited number of OData operations. These operations are: the
+         'contains' function as well as the following logical operations: not,
+         and, or, eq (for equal), and ne (for not equal). No arithmetic
+         operations are supported. The following is a valid filter example:
+         $filter=contains(namE, 'PATTERN') and name ne 'PATTERN-1'. The
+         following is not a valid filter example: $filter=location eq 'westus'.
         :type filter: str
-        :param top: The number of results to return.
+        :param top: The number of results to return per page for the list
+         operation. Valid range for top parameter is 1 to 100. If not
+         specified, the default number of results to be returned is 20 items
+         per page.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

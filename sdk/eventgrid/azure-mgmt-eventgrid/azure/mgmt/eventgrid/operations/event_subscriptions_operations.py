@@ -25,7 +25,7 @@ class EventSubscriptionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-02-01-preview".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-06-01".
     """
 
     models = models
@@ -35,7 +35,7 @@ class EventSubscriptionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-02-01-preview"
+        self.api_version = "2019-06-01"
 
         self.config = config
 
@@ -56,7 +56,7 @@ class EventSubscriptionsOperations(object):
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}'
          for an EventGrid topic.
         :type scope: str
-        :param event_subscription_name: Name of the event subscription
+        :param event_subscription_name: Name of the event subscription.
         :type event_subscription_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -184,7 +184,7 @@ class EventSubscriptionsOperations(object):
          should use alphanumeric letters only.
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties
-         containing the destination and filter information
+         containing the destination and filter information.
         :type event_subscription_info:
          ~azure.mgmt.eventgrid.models.EventSubscription
         :param dict custom_headers: headers that will be added to the request
@@ -281,7 +281,7 @@ class EventSubscriptionsOperations(object):
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}'
          for an EventGrid topic.
         :type scope: str
-        :param event_subscription_name: Name of the event subscription
+        :param event_subscription_name: Name of the event subscription.
         :type event_subscription_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -383,10 +383,10 @@ class EventSubscriptionsOperations(object):
          for an EventGrid topic.
         :type scope: str
         :param event_subscription_name: Name of the event subscription to be
-         updated
+         updated.
         :type event_subscription_name: str
         :param event_subscription_update_parameters: Updated event
-         subscription information
+         subscription information.
         :type event_subscription_update_parameters:
          ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters
         :param dict custom_headers: headers that will be added to the request
@@ -446,7 +446,7 @@ class EventSubscriptionsOperations(object):
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topics/{topicName}'
          for an EventGrid topic.
         :type scope: str
-        :param event_subscription_name: Name of the event subscription
+        :param event_subscription_name: Name of the event subscription.
         :type event_subscription_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -502,20 +502,27 @@ class EventSubscriptionsOperations(object):
     get_full_url.metadata = {'url': '/{scope}/providers/Microsoft.EventGrid/eventSubscriptions/{eventSubscriptionName}/getFullUrl'}
 
     def list_global_by_subscription(
-            self, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
+            self, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """Get an aggregated list of all global event subscriptions under an Azure
         subscription.
 
         List all aggregated global event subscriptions under a specific Azure
         subscription.
 
-        :param filter: Filter the results using OData syntax.
+        :param filter: The query used to filter the search results using OData
+         syntax. Filtering is permitted on the 'name' property only and with
+         limited number of OData operations. These operations are: the
+         'contains' function as well as the following logical operations: not,
+         and, or, eq (for equal), and ne (for not equal). No arithmetic
+         operations are supported. The following is a valid filter example:
+         $filter=contains(namE, 'PATTERN') and name ne 'PATTERN-1'. The
+         following is not a valid filter example: $filter=location eq 'westus'.
         :type filter: str
-        :param top: The number of results to return.
+        :param top: The number of results to return per page for the list
+         operation. Valid range for top parameter is 1 to 100. If not
+         specified, the default number of results to be returned is 20 items
+         per page.
         :type top: int
-        :param label: The label used to filter the results for event
-         subscriptions list.
-        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -543,8 +550,6 @@ class EventSubscriptionsOperations(object):
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if label is not None:
-                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -583,21 +588,28 @@ class EventSubscriptionsOperations(object):
     list_global_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/eventSubscriptions'}
 
     def list_global_by_subscription_for_topic_type(
-            self, topic_type_name, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
+            self, topic_type_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List all global event subscriptions for a topic type.
 
         List all global event subscriptions under an Azure subscription for a
         topic type.
 
-        :param topic_type_name: Name of the topic type
+        :param topic_type_name: Name of the topic type.
         :type topic_type_name: str
-        :param filter: Filter the results using OData syntax.
+        :param filter: The query used to filter the search results using OData
+         syntax. Filtering is permitted on the 'name' property only and with
+         limited number of OData operations. These operations are: the
+         'contains' function as well as the following logical operations: not,
+         and, or, eq (for equal), and ne (for not equal). No arithmetic
+         operations are supported. The following is a valid filter example:
+         $filter=contains(namE, 'PATTERN') and name ne 'PATTERN-1'. The
+         following is not a valid filter example: $filter=location eq 'westus'.
         :type filter: str
-        :param top: The number of results to return.
+        :param top: The number of results to return per page for the list
+         operation. Valid range for top parameter is 1 to 100. If not
+         specified, the default number of results to be returned is 20 items
+         per page.
         :type top: int
-        :param label: The label used to filter the results for event
-         subscriptions list.
-        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -626,8 +638,6 @@ class EventSubscriptionsOperations(object):
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if label is not None:
-                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -666,7 +676,7 @@ class EventSubscriptionsOperations(object):
     list_global_by_subscription_for_topic_type.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/topicTypes/{topicTypeName}/eventSubscriptions'}
 
     def list_global_by_resource_group(
-            self, resource_group_name, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List all global event subscriptions under an Azure subscription and
         resource group.
 
@@ -676,13 +686,20 @@ class EventSubscriptionsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param filter: Filter the results using OData syntax.
+        :param filter: The query used to filter the search results using OData
+         syntax. Filtering is permitted on the 'name' property only and with
+         limited number of OData operations. These operations are: the
+         'contains' function as well as the following logical operations: not,
+         and, or, eq (for equal), and ne (for not equal). No arithmetic
+         operations are supported. The following is a valid filter example:
+         $filter=contains(namE, 'PATTERN') and name ne 'PATTERN-1'. The
+         following is not a valid filter example: $filter=location eq 'westus'.
         :type filter: str
-        :param top: The number of results to return.
+        :param top: The number of results to return per page for the list
+         operation. Valid range for top parameter is 1 to 100. If not
+         specified, the default number of results to be returned is 20 items
+         per page.
         :type top: int
-        :param label: The label used to filter the results for event
-         subscriptions list.
-        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -711,8 +728,6 @@ class EventSubscriptionsOperations(object):
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if label is not None:
-                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -751,7 +766,7 @@ class EventSubscriptionsOperations(object):
     list_global_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/eventSubscriptions'}
 
     def list_global_by_resource_group_for_topic_type(
-            self, resource_group_name, topic_type_name, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, topic_type_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List all global event subscriptions under a resource group for a topic
         type.
 
@@ -761,15 +776,22 @@ class EventSubscriptionsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param topic_type_name: Name of the topic type
+        :param topic_type_name: Name of the topic type.
         :type topic_type_name: str
-        :param filter: Filter the results using OData syntax.
+        :param filter: The query used to filter the search results using OData
+         syntax. Filtering is permitted on the 'name' property only and with
+         limited number of OData operations. These operations are: the
+         'contains' function as well as the following logical operations: not,
+         and, or, eq (for equal), and ne (for not equal). No arithmetic
+         operations are supported. The following is a valid filter example:
+         $filter=contains(namE, 'PATTERN') and name ne 'PATTERN-1'. The
+         following is not a valid filter example: $filter=location eq 'westus'.
         :type filter: str
-        :param top: The number of results to return.
+        :param top: The number of results to return per page for the list
+         operation. Valid range for top parameter is 1 to 100. If not
+         specified, the default number of results to be returned is 20 items
+         per page.
         :type top: int
-        :param label: The label used to filter the results for event
-         subscriptions list.
-        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -799,8 +821,6 @@ class EventSubscriptionsOperations(object):
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if label is not None:
-                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -839,21 +859,28 @@ class EventSubscriptionsOperations(object):
     list_global_by_resource_group_for_topic_type.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/topicTypes/{topicTypeName}/eventSubscriptions'}
 
     def list_regional_by_subscription(
-            self, location, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
+            self, location, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List all regional event subscriptions under an Azure subscription.
 
         List all event subscriptions from the given location under a specific
         Azure subscription.
 
-        :param location: Name of the location
+        :param location: Name of the location.
         :type location: str
-        :param filter: Filter the results using OData syntax.
+        :param filter: The query used to filter the search results using OData
+         syntax. Filtering is permitted on the 'name' property only and with
+         limited number of OData operations. These operations are: the
+         'contains' function as well as the following logical operations: not,
+         and, or, eq (for equal), and ne (for not equal). No arithmetic
+         operations are supported. The following is a valid filter example:
+         $filter=contains(namE, 'PATTERN') and name ne 'PATTERN-1'. The
+         following is not a valid filter example: $filter=location eq 'westus'.
         :type filter: str
-        :param top: The number of results to return.
+        :param top: The number of results to return per page for the list
+         operation. Valid range for top parameter is 1 to 100. If not
+         specified, the default number of results to be returned is 20 items
+         per page.
         :type top: int
-        :param label: The label used to filter the results for event
-         subscriptions list.
-        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -882,8 +909,6 @@ class EventSubscriptionsOperations(object):
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if label is not None:
-                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -922,7 +947,7 @@ class EventSubscriptionsOperations(object):
     list_regional_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/locations/{location}/eventSubscriptions'}
 
     def list_regional_by_resource_group(
-            self, resource_group_name, location, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, location, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List all regional event subscriptions under an Azure subscription and
         resource group.
 
@@ -932,15 +957,22 @@ class EventSubscriptionsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param location: Name of the location
+        :param location: Name of the location.
         :type location: str
-        :param filter: Filter the results using OData syntax.
+        :param filter: The query used to filter the search results using OData
+         syntax. Filtering is permitted on the 'name' property only and with
+         limited number of OData operations. These operations are: the
+         'contains' function as well as the following logical operations: not,
+         and, or, eq (for equal), and ne (for not equal). No arithmetic
+         operations are supported. The following is a valid filter example:
+         $filter=contains(namE, 'PATTERN') and name ne 'PATTERN-1'. The
+         following is not a valid filter example: $filter=location eq 'westus'.
         :type filter: str
-        :param top: The number of results to return.
+        :param top: The number of results to return per page for the list
+         operation. Valid range for top parameter is 1 to 100. If not
+         specified, the default number of results to be returned is 20 items
+         per page.
         :type top: int
-        :param label: The label used to filter the results for event
-         subscriptions list.
-        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -970,8 +1002,6 @@ class EventSubscriptionsOperations(object):
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if label is not None:
-                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -1010,24 +1040,31 @@ class EventSubscriptionsOperations(object):
     list_regional_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/locations/{location}/eventSubscriptions'}
 
     def list_regional_by_subscription_for_topic_type(
-            self, location, topic_type_name, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
+            self, location, topic_type_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List all regional event subscriptions under an Azure subscription for a
         topic type.
 
         List all event subscriptions from the given location under a specific
         Azure subscription and topic type.
 
-        :param location: Name of the location
+        :param location: Name of the location.
         :type location: str
-        :param topic_type_name: Name of the topic type
+        :param topic_type_name: Name of the topic type.
         :type topic_type_name: str
-        :param filter: Filter the results using OData syntax.
+        :param filter: The query used to filter the search results using OData
+         syntax. Filtering is permitted on the 'name' property only and with
+         limited number of OData operations. These operations are: the
+         'contains' function as well as the following logical operations: not,
+         and, or, eq (for equal), and ne (for not equal). No arithmetic
+         operations are supported. The following is a valid filter example:
+         $filter=contains(namE, 'PATTERN') and name ne 'PATTERN-1'. The
+         following is not a valid filter example: $filter=location eq 'westus'.
         :type filter: str
-        :param top: The number of results to return.
+        :param top: The number of results to return per page for the list
+         operation. Valid range for top parameter is 1 to 100. If not
+         specified, the default number of results to be returned is 20 items
+         per page.
         :type top: int
-        :param label: The label used to filter the results for event
-         subscriptions list.
-        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1057,8 +1094,6 @@ class EventSubscriptionsOperations(object):
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if label is not None:
-                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -1097,7 +1132,7 @@ class EventSubscriptionsOperations(object):
     list_regional_by_subscription_for_topic_type.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventGrid/locations/{location}/topicTypes/{topicTypeName}/eventSubscriptions'}
 
     def list_regional_by_resource_group_for_topic_type(
-            self, resource_group_name, location, topic_type_name, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, location, topic_type_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List all regional event subscriptions under an Azure subscription and
         resource group for a topic type.
 
@@ -1107,17 +1142,24 @@ class EventSubscriptionsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param location: Name of the location
+        :param location: Name of the location.
         :type location: str
-        :param topic_type_name: Name of the topic type
+        :param topic_type_name: Name of the topic type.
         :type topic_type_name: str
-        :param filter: Filter the results using OData syntax.
+        :param filter: The query used to filter the search results using OData
+         syntax. Filtering is permitted on the 'name' property only and with
+         limited number of OData operations. These operations are: the
+         'contains' function as well as the following logical operations: not,
+         and, or, eq (for equal), and ne (for not equal). No arithmetic
+         operations are supported. The following is a valid filter example:
+         $filter=contains(namE, 'PATTERN') and name ne 'PATTERN-1'. The
+         following is not a valid filter example: $filter=location eq 'westus'.
         :type filter: str
-        :param top: The number of results to return.
+        :param top: The number of results to return per page for the list
+         operation. Valid range for top parameter is 1 to 100. If not
+         specified, the default number of results to be returned is 20 items
+         per page.
         :type top: int
-        :param label: The label used to filter the results for event
-         subscriptions list.
-        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1148,8 +1190,6 @@ class EventSubscriptionsOperations(object):
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if label is not None:
-                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -1188,7 +1228,7 @@ class EventSubscriptionsOperations(object):
     list_regional_by_resource_group_for_topic_type.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/locations/{location}/topicTypes/{topicTypeName}/eventSubscriptions'}
 
     def list_by_resource(
-            self, resource_group_name, provider_namespace, resource_type_name, resource_name, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, provider_namespace, resource_type_name, resource_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List all event subscriptions for a specific topic.
 
         List all event subscriptions that have been created for a specific
@@ -1197,19 +1237,26 @@ class EventSubscriptionsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param provider_namespace: Namespace of the provider of the topic
+        :param provider_namespace: Namespace of the provider of the topic.
         :type provider_namespace: str
-        :param resource_type_name: Name of the resource type
+        :param resource_type_name: Name of the resource type.
         :type resource_type_name: str
-        :param resource_name: Name of the resource
+        :param resource_name: Name of the resource.
         :type resource_name: str
-        :param filter: Filter the results using OData syntax.
+        :param filter: The query used to filter the search results using OData
+         syntax. Filtering is permitted on the 'name' property only and with
+         limited number of OData operations. These operations are: the
+         'contains' function as well as the following logical operations: not,
+         and, or, eq (for equal), and ne (for not equal). No arithmetic
+         operations are supported. The following is a valid filter example:
+         $filter=contains(namE, 'PATTERN') and name ne 'PATTERN-1'. The
+         following is not a valid filter example: $filter=location eq 'westus'.
         :type filter: str
-        :param top: The number of results to return.
+        :param top: The number of results to return per page for the list
+         operation. Valid range for top parameter is 1 to 100. If not
+         specified, the default number of results to be returned is 20 items
+         per page.
         :type top: int
-        :param label: The label used to filter the results for event
-         subscriptions list.
-        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1241,8 +1288,6 @@ class EventSubscriptionsOperations(object):
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if label is not None:
-                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link
@@ -1281,7 +1326,7 @@ class EventSubscriptionsOperations(object):
     list_by_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerNamespace}/{resourceTypeName}/{resourceName}/providers/Microsoft.EventGrid/eventSubscriptions'}
 
     def list_by_domain_topic(
-            self, resource_group_name, domain_name, topic_name, filter=None, top=None, label=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, domain_name, topic_name, filter=None, top=None, custom_headers=None, raw=False, **operation_config):
         """List all event subscriptions for a specific domain topic.
 
         List all event subscriptions that have been created for a specific
@@ -1290,17 +1335,24 @@ class EventSubscriptionsOperations(object):
         :param resource_group_name: The name of the resource group within the
          user's subscription.
         :type resource_group_name: str
-        :param domain_name: Name of the top level domain
+        :param domain_name: Name of the top level domain.
         :type domain_name: str
-        :param topic_name: Name of the domain topic
+        :param topic_name: Name of the domain topic.
         :type topic_name: str
-        :param filter: Filter the results using OData syntax.
+        :param filter: The query used to filter the search results using OData
+         syntax. Filtering is permitted on the 'name' property only and with
+         limited number of OData operations. These operations are: the
+         'contains' function as well as the following logical operations: not,
+         and, or, eq (for equal), and ne (for not equal). No arithmetic
+         operations are supported. The following is a valid filter example:
+         $filter=contains(namE, 'PATTERN') and name ne 'PATTERN-1'. The
+         following is not a valid filter example: $filter=location eq 'westus'.
         :type filter: str
-        :param top: The number of results to return.
+        :param top: The number of results to return per page for the list
+         operation. Valid range for top parameter is 1 to 100. If not
+         specified, the default number of results to be returned is 20 items
+         per page.
         :type top: int
-        :param label: The label used to filter the results for event
-         subscriptions list.
-        :type label: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1331,8 +1383,6 @@ class EventSubscriptionsOperations(object):
                     query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
                 if top is not None:
                     query_parameters['$top'] = self._serialize.query("top", top, 'int')
-                if label is not None:
-                    query_parameters['label'] = self._serialize.query("label", label, 'str')
 
             else:
                 url = next_link

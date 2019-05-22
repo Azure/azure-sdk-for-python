@@ -18,11 +18,11 @@ class DomainTopic(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Fully qualified identifier of the resource
+    :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
-    :ivar name: Name of the resource
+    :ivar name: Name of the resource.
     :vartype name: str
-    :ivar type: Type of the resource
+    :ivar type: Type of the resource.
     :vartype type: str
     :param provisioning_state: Provisioning state of the domain topic.
      Possible values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',

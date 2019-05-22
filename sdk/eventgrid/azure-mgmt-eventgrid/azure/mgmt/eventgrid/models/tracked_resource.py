@@ -20,15 +20,15 @@ class TrackedResource(Resource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified identifier of the resource
+    :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
-    :ivar name: Name of the resource
+    :ivar name: Name of the resource.
     :vartype name: str
-    :ivar type: Type of the resource
+    :ivar type: Type of the resource.
     :vartype type: str
-    :param location: Required. Location of the resource
+    :param location: Required. Location of the resource.
     :type location: str
-    :param tags: Tags of the resource
+    :param tags: Tags of the resource.
     :type tags: dict[str, str]
     """
 

@@ -17,7 +17,7 @@ class DomainRegenerateKeyRequest(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_name: Required. Key name to regenerate key1 or key2
+    :param key_name: Required. Key name to regenerate key1 or key2.
     :type key_name: str
     """
 

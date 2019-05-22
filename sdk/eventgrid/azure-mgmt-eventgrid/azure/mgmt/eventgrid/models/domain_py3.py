@@ -20,15 +20,15 @@ class Domain(TrackedResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified identifier of the resource
+    :ivar id: Fully qualified identifier of the resource.
     :vartype id: str
-    :ivar name: Name of the resource
+    :ivar name: Name of the resource.
     :vartype name: str
-    :ivar type: Type of the resource
+    :ivar type: Type of the resource.
     :vartype type: str
-    :param location: Required. Location of the resource
+    :param location: Required. Location of the resource.
     :type location: str
-    :param tags: Tags of the resource
+    :param tags: Tags of the resource.
     :type tags: dict[str, str]
     :ivar provisioning_state: Provisioning state of the domain. Possible
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
@@ -37,15 +37,6 @@ class Domain(TrackedResource):
      ~azure.mgmt.eventgrid.models.DomainProvisioningState
     :ivar endpoint: Endpoint for the domain.
     :vartype endpoint: str
-    :param input_schema: This determines the format that Event Grid should
-     expect for incoming events published to the domain. Possible values
-     include: 'EventGridSchema', 'CustomEventSchema', 'CloudEventV01Schema'.
-     Default value: "EventGridSchema" .
-    :type input_schema: str or ~azure.mgmt.eventgrid.models.InputSchema
-    :param input_schema_mapping: Information about the InputSchemaMapping
-     which specified the info about mapping event payload.
-    :type input_schema_mapping:
-     ~azure.mgmt.eventgrid.models.InputSchemaMapping
     """
 
     _validation = {
@@ -65,13 +56,9 @@ class Domain(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
-        'input_schema': {'key': 'properties.inputSchema', 'type': 'str'},
-        'input_schema_mapping': {'key': 'properties.inputSchemaMapping', 'type': 'InputSchemaMapping'},
     }
 
-    def __init__(self, *, location: str, tags=None, input_schema="EventGridSchema", input_schema_mapping=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, **kwargs) -> None:
         super(Domain, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.endpoint = None
-        self.input_schema = input_schema
-        self.input_schema_mapping = input_schema_mapping

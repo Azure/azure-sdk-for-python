@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class DomainUpdateParameters(Model):
     """Properties of the Domain update.
 
-    :param tags: Tags of the domains resource
+    :param tags: Tags of the domains resource.
     :type tags: dict[str, str]
     """
 

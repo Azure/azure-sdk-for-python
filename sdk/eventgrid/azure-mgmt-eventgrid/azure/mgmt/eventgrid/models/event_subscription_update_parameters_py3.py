@@ -26,11 +26,6 @@ class EventSubscriptionUpdateParameters(Model):
     :param expiration_time_utc: Information about the expiration time for the
      event subscription.
     :type expiration_time_utc: datetime
-    :param event_delivery_schema: The event delivery schema for the event
-     subscription. Possible values include: 'EventGridSchema',
-     'CloudEventV01Schema', 'CustomInputSchema'
-    :type event_delivery_schema: str or
-     ~azure.mgmt.eventgrid.models.EventDeliverySchema
     :param retry_policy: The retry policy for events. This can be used to
      configure maximum number of delivery attempts and time to live for events.
     :type retry_policy: ~azure.mgmt.eventgrid.models.RetryPolicy
@@ -45,17 +40,15 @@ class EventSubscriptionUpdateParameters(Model):
         'filter': {'key': 'filter', 'type': 'EventSubscriptionFilter'},
         'labels': {'key': 'labels', 'type': '[str]'},
         'expiration_time_utc': {'key': 'expirationTimeUtc', 'type': 'iso-8601'},
-        'event_delivery_schema': {'key': 'eventDeliverySchema', 'type': 'str'},
         'retry_policy': {'key': 'retryPolicy', 'type': 'RetryPolicy'},
         'dead_letter_destination': {'key': 'deadLetterDestination', 'type': 'DeadLetterDestination'},
     }
 
-    def __init__(self, *, destination=None, filter=None, labels=None, expiration_time_utc=None, event_delivery_schema=None, retry_policy=None, dead_letter_destination=None, **kwargs) -> None:
+    def __init__(self, *, destination=None, filter=None, labels=None, expiration_time_utc=None, retry_policy=None, dead_letter_destination=None, **kwargs) -> None:
         super(EventSubscriptionUpdateParameters, self).__init__(**kwargs)
         self.destination = destination
         self.filter = filter
         self.labels = labels
         self.expiration_time_utc = expiration_time_utc
-        self.event_delivery_schema = event_delivery_schema
         self.retry_policy = retry_policy
         self.dead_letter_destination = dead_letter_destination
