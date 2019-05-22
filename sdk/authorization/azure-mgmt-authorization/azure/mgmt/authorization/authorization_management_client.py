@@ -83,6 +83,7 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             'classic_administrators': '2015-06-01',
+            'elevate_access': '2015-07-01',
             'deny_assignments': '2018-07-01-preview',
             'role_assignments': '2018-09-01-preview',
             None: DEFAULT_API_VERSION
