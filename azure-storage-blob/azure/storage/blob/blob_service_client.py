@@ -14,7 +14,7 @@ try:
 except ImportError:
     from urlparse import urlparse
 
-from .shared_access_signature import SharedAccessSignature
+from ._shared_access_signature import SharedAccessSignature
 from .container_client import ContainerClient
 from .blob_client import BlobClient
 from .models import (

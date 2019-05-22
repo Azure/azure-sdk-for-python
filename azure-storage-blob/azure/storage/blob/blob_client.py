@@ -21,6 +21,7 @@ from azure.core import Configuration, HttpResponseError
 from .common import BlobType
 from .lease import Lease
 from .models import SnapshotProperties, BlobBlock
+from .polling import CopyBlob, CopyStatusPoller
 from ._shared_access_signature import BlobSharedAccessSignature
 from ._utils import (
     create_client,
@@ -936,15 +937,122 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             timeout=None,  # type: Optional[int]
             premium_page_blob_tier=None,
             requires_sync=False,  # type: Optional[bool]
-            polling=True,
             **kwargs
         ):
         # type: (...) -> Any
         """
+        Copies a blob asynchronously. This operation returns a copy operation 
+        object that can be used to wait on the completion of the operation,
+        as well as check status or abort the copy operation.
+        The Blob service copies blobs on a best-effort basis.
+
+        The source blob for a copy operation may be a block blob, an append blob, 
+        or a page blob. If the destination blob already exists, it must be of the 
+        same blob type as the source blob. Any existing destination blob will be 
+        overwritten. The destination blob cannot be modified while a copy operation 
+        is in progress.
+
+        When copying from a page blob, the Blob service creates a destination page 
+        blob of the source blob's length, initially containing all zeroes. Then 
+        the source page ranges are enumerated, and non-empty ranges are copied. 
+
+        For a block blob or an append blob, the Blob service creates a committed 
+        blob of zero length before returning from this operation. When copying 
+        from a block blob, all committed blocks and their block IDs are copied. 
+        Uncommitted blocks are not copied. At the end of the copy operation, the 
+        destination blob will have the same committed block count as the source.
+
+        When copying from an append blob, all committed blocks are copied. At the 
+        end of the copy operation, the destination blob will have the same committed 
+        block count as the source.
+
+        For all blob types, you can call status() on the returned polling object 
+        to check the status of the copy operation, or wait() to block until the
+        operation is complete. The final blob will be committed when the copy completes.
+
+        :param str copy_source:
+            A URL of up to 2 KB in length that specifies an Azure file or blob. 
+            The value should be URL-encoded as it would appear in a request URI. 
+            If the source is in another account, the source must either be public 
+            or must be authenticated via a shared access signature. If the source 
+            is public, no authentication is required.
+            Examples:
+            https://myaccount.blob.core.windows.net/mycontainer/myblob
+            https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
+            https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
+        :param metadata:
+            Name-value pairs associated with the blob as metadata. If no name-value 
+            pairs are specified, the operation will copy the metadata from the 
+            source blob or file to the destination blob. If one or more name-value 
+            pairs are specified, the destination blob is created with the specified 
+            metadata, and metadata is not copied from the source blob or file. 
+        :type metadata: dict(str, str)
+        :param datetime source_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.  
+            Specify this conditional header to copy the blob only if the source
+            blob has been modified since the specified date/time.
+        :param datetime source_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this conditional header to copy the blob only if the source blob
+            has not been modified since the specified date/time.
+        :param str source_if_match:
+            An ETag value, or the wildcard character (*). Specify this conditional
+            header to copy the source blob only if its ETag matches the value
+            specified. If the ETag values do not match, the Blob service returns
+            status code 412 (Precondition Failed). This header cannot be specified
+            if the source is an Azure File.
+        :param str source_if_none_match:
+            An ETag value, or the wildcard character (*). Specify this conditional
+            header to copy the blob only if its ETag does not match the value
+            specified. If the values are identical, the Blob service returns status
+            code 412 (Precondition Failed). This header cannot be specified if the
+            source is an Azure File.
+        :param datetime destination_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this conditional header to copy the blob only
+            if the destination blob has been modified since the specified date/time.
+            If the destination blob has not been modified, the Blob service returns
+            status code 412 (Precondition Failed).
+        :param datetime destination_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC. 
+            Specify this conditional header to copy the blob only
+            if the destination blob has not been modified since the specified
+            date/time. If the destination blob has been modified, the Blob service
+            returns status code 412 (Precondition Failed).
+        :param str destination_if_match:
+            An ETag value, or the wildcard character (*). Specify an ETag value for
+            this conditional header to copy the blob only if the specified ETag value
+            matches the ETag value for an existing destination blob. If the ETag for
+            the destination blob does not match the ETag specified for If-Match, the
+            Blob service returns status code 412 (Precondition Failed).
+        :param str destination_if_none_match:
+            An ETag value, or the wildcard character (*). Specify an ETag value for
+            this conditional header to copy the blob only if the specified ETag value
+            does not match the ETag value for the destination blob. Specify the wildcard
+            character (*) to perform the operation only if the destination blob does not
+            exist. If the specified condition isn't met, the Blob service returns status
+            code 412 (Precondition Failed).
+        :param str destination_lease_id:
+            The lease ID specified for this header must match the lease ID of the
+            destination blob. If the request does not include the lease ID or it is not
+            valid, the operation fails with status code 412 (Precondition Failed).
+        :param str source_lease_id:
+            Specify this to perform the Copy Blob operation only if
+            the lease ID given matches the active lease ID of the source blob.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :returns: A pollable object to check copy operation status (and abort).
+        :rtype: :class:`~azure.storage.blob.polling.CopyStatusPoller`
         """
-        from azure.core.polling import NoPolling
-        from ._policies import CopyBlob, CopyStatusPoller
+        #from azure.core.polling import NoPolling  # TODO: Support no polling
 
         if requires_sync and self.blob_type != BlobType.BlockBlob:
             raise TypeError("The 'requires_sync' option can only be used with Block Blobs.")
@@ -999,14 +1107,15 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             error_map=basic_error_map(),
             **kwargs)
         polling_interval = self._config.blob_settings.copy_polling_interval
-        if polling is True: polling_method = CopyBlob(
+        # if polling is True: 
+        # elif polling is False: polling_method = NoPolling()
+        # else: polling_method = polling
+        polling_method = CopyBlob(
             polling_interval,
             timeout=timeout,
             lease_access_conditions=dest_access_conditions,
             modified_access_conditions=dest_mod_conditions,
             **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
         poller = CopyStatusPoller(self, start_copy, None, polling_method)
         if requires_sync:
             poller.wait()
