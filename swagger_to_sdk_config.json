@@ -11,14 +11,5 @@
     },
     "repotag": "azure-sdk-for-python",
     "version": "0.2.0"
-  },
-  "projects": {
-    "batch": {
-      "build_dir": "azure-batch",
-      "markdown": "specification/batch/data-plane/readme.md",
-      "wrapper_filesOrDirs": [
-        "azure-batch/azure/batch/batch_auth.py"
-      ]
-    }
   }
 }
