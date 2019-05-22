@@ -106,15 +106,12 @@ class BlobServiceClient(object):
         """
         parsed_url = urlparse(self.url)
         new_scheme = protocol or parsed_url.scheme
-        query = []
-        if sas_token:
-            query.append(sas_token)
         new_url = "{}://{}{}".format(
             new_scheme,
             parsed_url.netloc,
             parsed_url.path)
-        if query:
-            new_url += "?{}".format('&'.join(query))
+        if sas_token:
+            new_url += "?{}".format(sas_token)
         return new_url
 
     def generate_shared_access_signature(
