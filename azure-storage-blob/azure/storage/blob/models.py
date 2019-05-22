@@ -186,7 +186,7 @@ class ContainerProperties(object):
         Represents whether the container has a legal hold.
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.name = None
         self.last_modified = kwargs.get('Last-Modified')
         self.etag = kwargs.get('ETag')

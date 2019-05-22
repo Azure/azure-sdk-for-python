@@ -21,7 +21,7 @@ from .blob_client import BlobClient
 from .models import (
     ContainerProperties,
     StorageServiceProperties,
-)
+    ContainerPropertiesPaged)
 from ._generated.models import StorageErrorException
 from .common import BlobType
 from ._utils import (
@@ -30,8 +30,8 @@ from ._utils import (
     create_configuration,
     get_access_conditions,
     process_storage_error,
-    basic_error_map
-)
+    basic_error_map,
+    return_response_headers)
 
 if TYPE_CHECKING:
     from datetime import datetime
