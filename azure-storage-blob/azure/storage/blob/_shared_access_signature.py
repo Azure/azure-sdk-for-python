@@ -46,16 +46,13 @@ class SharedAccessSignature(object):
         self.account_key = account_key
         self.x_ms_version = x_ms_version
 
-    def generate_account(self, services, resource_types, permission, expiry, start=None,
+    def generate_account(self, resource_types, permission, expiry, start=None,
                          ip=None, protocol=None):
         '''
         Generates a shared access signature for the account.
         Use the returned signature with the sas_token parameter of the service 
         or to create a new account object.
 
-        :param Services services:
-            Specifies the services accessible with the account SAS. You can 
-            combine values to provide access to more than one service. 
         :param ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account 
             SAS. You can combine values to provide access to more than one 
@@ -94,7 +91,7 @@ class SharedAccessSignature(object):
         '''
         sas = _SharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
-        sas.add_account(services, resource_types)
+        sas.add_account('b', resource_types)
         sas.add_account_signature(self.account_name, self.account_key)
 
         return sas.get_token()
