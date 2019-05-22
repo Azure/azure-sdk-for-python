@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import logging
+import time
 
 from azure.core.exceptions import AzureError
 from azure.core.polling import PollingMethod, LROPoller
@@ -47,7 +48,6 @@ class CopyBlob(PollingMethod):
         self._client = None
         self._initial_response = None
         self._status = 'pending'
-        self._access_conditions = kwargs.pop('modified_access_conditions')
         self.id = None
         self.etag = None
         self.last_modified = None
@@ -63,20 +63,24 @@ class CopyBlob(PollingMethod):
         self.id = initial_response['x-ms-copy-id']
         self.etag = initial_response['ETag']
         self.last_modified = initial_response['Last-Modified']
-        if initial_response.get('x-ms-error-code'):
-            raise Exception(initial_response['x-ms-error-code'])  # TODO
+        # if initial_response.get('x-ms-error-code'):
+        #     raise Exception(initial_response['x-ms-error-code'])  # TODO
 
     def run(self):
         # type: () -> None
         """Empty run, no polling.
         """
-        while not self.finished():
-            self.blob = self._client.get_blob_properties(
-                modified_access_conditions=self._access_conditions, **self.kwargs)
-            self._status = self.blob.copy.status
-            self.etag = self.blob.etag
-            self.last_modified = self.blob.last_modified
-            self.sleep(self.polling_interval)
+        try:
+            while not self.finished():
+                self.blob = self._client.get_blob_properties(**self.kwargs)
+                self._status = self.blob.copy.status
+                self.etag = self.blob.etag
+                self.last_modified = self.blob.last_modified
+                time.sleep(self.polling_interval)
+            if failed(self.status()):
+                raise ValueError("Copy operation failed: {}".format(self.blob.copy.status_description))
+        except Exception as e:
+            logger.warning(str(e))
 
     def abort(self):
         if not self.finished():

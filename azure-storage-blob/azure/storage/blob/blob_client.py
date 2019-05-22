@@ -1113,8 +1113,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         polling_method = CopyBlob(
             polling_interval,
             timeout=timeout,
-            lease_access_conditions=dest_access_conditions,
-            modified_access_conditions=dest_mod_conditions,
+            lease=destination_lease,
             **kwargs)
         poller = CopyStatusPoller(self, start_copy, None, polling_method)
         if requires_sync:

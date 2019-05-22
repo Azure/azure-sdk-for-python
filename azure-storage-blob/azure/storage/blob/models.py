@@ -375,7 +375,7 @@ class BlobPropertiesPaged(Paged):
         self.prefix = prefix
         self.current_marker = None
         self.results_per_page = results_per_page
-        self.next_marker = ""
+        self.next_marker = kwargs.get('marker', "")
         self.container_name = container
         self.delimiter = None
         self.segment = None
@@ -536,8 +536,8 @@ class CopyProperties(object):
 
     def __init__(self, **kwargs):
         self.id = kwargs.get('x-ms-copy-id')
-        self.source = kwargs.get('x-ms-copy-status')
-        self.status = kwargs.get('x-ms-copy-source')
+        self.source = kwargs.get('x-ms-copy-source')
+        self.status = kwargs.get('x-ms-copy-status')
         self.progress = kwargs.get('x-ms-copy-progress')
         self.completion_time = kwargs.get('x-ms-copy-completion_time')
         self.status_description = kwargs.get('x-ms-copy-status-description')

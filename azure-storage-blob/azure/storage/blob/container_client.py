@@ -404,35 +404,52 @@ class ContainerClient(object):
     def list_blob_properties(self, prefix=None, include=None, timeout=None, **kwargs):
         # type: (Optional[str], Optional[str], Optional[int]) -> Iterable[BlobProperties]
         """
+        Returns a generator to list the blobs under the specified container.
+        The generator will lazily follow the continuation tokens returned by
+        the service and stop when all blobs have been returned or num_results is reached.
+
+        :param str prefix:
+            Filters the results to return only blobs whose names
+            begin with the specified prefix.
+        :param ~azure.storage.blob.models.Include include:
+            Specifies one or more additional datasets to include in the response.
+        :param str marker:
+            An opaque continuation token. This value can be retrieved from the 
+            next_marker field of a previous generator object. If specified,
+            this generator will begin returning results from this point.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        '''
         :returns: An iterable (auto-paging) response of BlobProperties.
         """
         if include and not isinstance(include, list):
             include = [include]
         results_per_page = kwargs.pop('results_per_page', None)
+        marker = kwargs.pop('marker', "")
         command = functools.partial(
             self._client.container.list_blob_flat_segment,
             prefix=prefix,
             include=include,
             timeout=timeout,
             **kwargs)
-        return BlobPropertiesPaged(command, prefix=prefix, results_per_page=results_per_page)
+        return BlobPropertiesPaged(command, prefix=prefix, results_per_page=results_per_page,  marker=marker)
 
-    def walk_blob_propertes(self, prefix=None, include=None, delimiter="/", timeout=None, **kwargs):
-        # type: (Optional[str], Optional[str], str, Optional[int]) -> Iterable[BlobProperties]
-        """
-        :returns: A generator that honors directory hierarchy.
-        """
-        if include and not isinstance(include, list):
-            include = [include]
-        results_per_page = kwargs.pop('results_per_page', None)
-        command = functools.partial(
-            self._client.container.list_blob_hierarchy_segment,
-            delimiter=delimiter,
-            prefix=prefix,
-            include=include,
-            timeout=timeout,
-            **kwargs)
-        return BlobPropertiesPaged(command, prefix=prefix, results_per_page=results_per_page)
+    # def walk_blob_propertes(self, prefix=None, include=None, delimiter="/", timeout=None, **kwargs):
+    #     # type: (Optional[str], Optional[str], str, Optional[int]) -> Iterable[BlobProperties]
+    #     """
+    #     :returns: A generator that honors directory hierarchy.
+    #     """
+    #     if include and not isinstance(include, list):
+    #         include = [include]
+    #     results_per_page = kwargs.pop('results_per_page', None)
+    #     command = functools.partial(
+    #         self._client.container.list_blob_hierarchy_segment,
+    #         delimiter=delimiter,
+    #         prefix=prefix,
+    #         include=include,
+    #         timeout=timeout,
+    #         **kwargs)
+    #     return BlobPropertiesPaged(command, prefix=prefix, results_per_page=results_per_page)
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]
@@ -441,7 +458,14 @@ class ContainerClient(object):
         ):
         # type: (...) -> BlobClient
         """
+        Get a client to interact with the specified blob.
+        The blob need not already exist.
+
+        :param ~azure.storage.blob.common.BlobType blob_type: The type of Blob. Default
+         vale is BlobType.BlockBlob
+        :param str snapshot: The optional blob snapshot on which to operate.
         :returns: A BlobClient.
+        :rtype: ~azure.core.blob.blob_client.BlobClient
         """
         return BlobClient(
             self.url, container=self.name, blob=blob, blob_type=blob_type, snapshot=snapshot,
