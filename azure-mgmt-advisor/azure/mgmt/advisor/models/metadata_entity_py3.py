@@ -25,6 +25,9 @@ class MetadataEntity(Model):
     :type display_name: str
     :param depends_on: The list of keys on which this entity depends on.
     :type depends_on: list[str]
+    :param is_alertable: The flag to know if metadata entity can be used in
+     alert condition.
+    :type is_alertable: bool
     :param supported_values: The list of supported values.
     :type supported_values:
      list[~azure.mgmt.advisor.models.MetadataSupportedValueDetail]
@@ -36,14 +39,16 @@ class MetadataEntity(Model):
         'name': {'key': 'name', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'depends_on': {'key': 'properties.dependsOn', 'type': '[str]'},
+        'is_alertable': {'key': 'properties.isAlertable', 'type': 'bool'},
         'supported_values': {'key': 'properties.supportedValues', 'type': '[MetadataSupportedValueDetail]'},
     }
 
-    def __init__(self, *, id: str=None, type: str=None, name: str=None, display_name: str=None, depends_on=None, supported_values=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, type: str=None, name: str=None, display_name: str=None, depends_on=None, is_alertable: bool=None, supported_values=None, **kwargs) -> None:
         super(MetadataEntity, self).__init__(**kwargs)
         self.id = id
         self.type = type
         self.name = name
         self.display_name = display_name
         self.depends_on = depends_on
+        self.is_alertable = is_alertable
         self.supported_values = supported_values
