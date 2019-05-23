@@ -12,8 +12,22 @@
 from enum import Enum
 
 
+class InAvailabilityReasonType(str, Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
+
+
+class CheckNameResourceTypes(str, Enum):
+
+    microsoft_net_appnet_app_account = "Microsoft.NetApp/netAppAccount"
+    microsoft_net_appnet_app_accountcapacity_pools = "Microsoft.NetApp/netAppAccount/capacityPools"
+    microsoft_net_appnet_app_accountcapacity_poolsvolumes = "Microsoft.NetApp/netAppAccount/capacityPools/volumes"
+    microsoft_net_appnet_app_accountcapacity_poolsvolumessnapshots = "Microsoft.NetApp/netAppAccount/capacityPools/volumes/snapshots"
+
+
 class ServiceLevel(str, Enum):
 
     standard = "Standard"  #: Standard service level
     premium = "Premium"  #: Premium service level
-    extreme = "Extreme"  #: Extreme service level
+    ultra = "Ultra"  #: Ultra service level

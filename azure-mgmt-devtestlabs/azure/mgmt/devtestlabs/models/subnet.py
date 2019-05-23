@@ -32,8 +32,8 @@ class Subnet(Model):
         'allow_public_ip': {'key': 'allowPublicIp', 'type': 'str'},
     }
 
-    def __init__(self, resource_id=None, lab_subnet_name=None, allow_public_ip=None):
-        super(Subnet, self).__init__()
-        self.resource_id = resource_id
-        self.lab_subnet_name = lab_subnet_name
-        self.allow_public_ip = allow_public_ip
+    def __init__(self, **kwargs):
+        super(Subnet, self).__init__(**kwargs)
+        self.resource_id = kwargs.get('resource_id', None)
+        self.lab_subnet_name = kwargs.get('lab_subnet_name', None)
+        self.allow_public_ip = kwargs.get('allow_public_ip', None)

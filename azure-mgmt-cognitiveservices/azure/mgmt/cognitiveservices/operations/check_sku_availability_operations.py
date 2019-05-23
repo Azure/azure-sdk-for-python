@@ -44,15 +44,9 @@ class CheckSkuAvailabilityOperations(object):
         :param location: Resource location.
         :type location: str
         :param skus: The SKU of the resource.
-        :type skus: list[str or ~azure.mgmt.cognitiveservices.models.SkuName]
-        :param kind: The Kind of the resource. Possible values include:
-         'Bing.Autosuggest.v7', 'Bing.CustomSearch', 'Bing.Search.v7',
-         'Bing.Speech', 'Bing.SpellCheck.v7', 'ComputerVision',
-         'ContentModerator', 'CustomSpeech', 'CustomVision.Prediction',
-         'CustomVision.Training', 'Emotion', 'Face', 'LUIS', 'QnAMaker',
-         'SpeakerRecognition', 'SpeechTranslation', 'TextAnalytics',
-         'TextTranslation', 'WebLM'
-        :type kind: str or ~azure.mgmt.cognitiveservices.models.Kind
+        :type skus: list[str]
+        :param kind: The Kind of the resource.
+        :type kind: str
         :param type: The Type of the resource.
         :type type: str
         :param dict custom_headers: headers that will be added to the request
@@ -83,6 +77,7 @@ class CheckSkuAvailabilityOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
@@ -95,9 +90,8 @@ class CheckSkuAvailabilityOperations(object):
         body_content = self._serialize.body(parameters, 'CheckSkuAvailabilityParameter')
 
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send(
-            request, header_parameters, body_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             exp = CloudError(response)

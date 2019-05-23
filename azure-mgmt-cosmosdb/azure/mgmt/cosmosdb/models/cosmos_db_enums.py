@@ -33,6 +33,42 @@ class DefaultConsistencyLevel(str, Enum):
     consistent_prefix = "ConsistentPrefix"
 
 
+class IndexingMode(str, Enum):
+
+    consistent = "Consistent"
+    lazy = "Lazy"
+    none = "None"
+
+
+class DataType(str, Enum):
+
+    string = "String"
+    number = "Number"
+    point = "Point"
+    polygon = "Polygon"
+    line_string = "LineString"
+    multi_polygon = "MultiPolygon"
+
+
+class IndexKind(str, Enum):
+
+    hash = "Hash"
+    range = "Range"
+    spatial = "Spatial"
+
+
+class PartitionKind(str, Enum):
+
+    hash = "Hash"
+    range = "Range"
+
+
+class ConflictResolutionMode(str, Enum):
+
+    last_writer_wins = "LastWriterWins"
+    custom = "Custom"
+
+
 class KeyKind(str, Enum):
 
     primary = "primary"

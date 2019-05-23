@@ -3,6 +3,36 @@
 Release History
 ===============
 
+2.8.0 (2019-04-30)
+++++++++++++++++++
+
+**Features**
+
+- Model CustomRegistryCredentials has a new parameter identity
+- Model Run has a new parameter run_error_message
+- Model Task has a new parameter identity
+- Model TaskUpdateParameters has a new parameter identity
+- Model Target has a new parameter name
+- Model Target has a new parameter version
+- Model TriggerProperties has a new parameter timer_triggers
+- Model TriggerUpdateParameters has a new parameter timer_triggers
+
+2.7.0 (2019-01-25)
+++++++++++++++++++
+
+**Features**
+
+- Model Run has a new parameter custom_registries
+- Model Run has a new parameter source_registry_auth
+- Model DockerBuildStepUpdateParameters has a new parameter target
+- Model FileTaskRunRequest has a new parameter credentials
+- Model DockerBuildRequest has a new parameter credentials
+- Model DockerBuildRequest has a new parameter target
+- Model TaskUpdateParameters has a new parameter credentials
+- Model Task has a new parameter credentials
+- Model EncodedTaskRunRequest has a new parameter credentials
+- Model DockerBuildStep has a new parameter target
+
 2.6.0 (2019-01-02)
 ++++++++++++++++++
 

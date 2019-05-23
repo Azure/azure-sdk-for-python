@@ -32,8 +32,8 @@ class Snapshot(Model):
     :type tags: object
     :ivar snapshot_id: snapshotId. UUID v4 used to identify the Snapshot
     :vartype snapshot_id: str
-    :param file_system_id: Required. fileSystemId. UUID v4 used to identify
-     the FileSystem
+    :param file_system_id: fileSystemId. UUID v4 used to identify the
+     FileSystem
     :type file_system_id: str
     :ivar creation_date: name. The creation date of the snapshot
     :vartype creation_date: datetime
@@ -47,7 +47,7 @@ class Snapshot(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'snapshot_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
-        'file_system_id': {'required': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
+        'file_system_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'creation_date': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }

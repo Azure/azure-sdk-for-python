@@ -15,19 +15,30 @@ from msrest.serialization import Model
 class ImageRegionCreateEntry(Model):
     """Entry associating a region to an image.
 
-    :param image_id: Id of the image.
+    All required parameters must be populated in order to send to Azure.
+
+    :param image_id: Required. Id of the image.
     :type image_id: str
-    :param tag_id: Id of the tag associated with this region.
+    :param tag_id: Required. Id of the tag associated with this region.
     :type tag_id: str
-    :param left:
+    :param left: Required. Coordinate of the left boundary.
     :type left: float
-    :param top:
+    :param top: Required. Coordinate of the top boundary.
     :type top: float
-    :param width:
+    :param width: Required. Width.
     :type width: float
-    :param height:
+    :param height: Required. Height.
     :type height: float
     """
+
+    _validation = {
+        'image_id': {'required': True},
+        'tag_id': {'required': True},
+        'left': {'required': True},
+        'top': {'required': True},
+        'width': {'required': True},
+        'height': {'required': True},
+    }
 
     _attribute_map = {
         'image_id': {'key': 'imageId', 'type': 'str'},
@@ -38,7 +49,7 @@ class ImageRegionCreateEntry(Model):
         'height': {'key': 'height', 'type': 'float'},
     }
 
-    def __init__(self, *, image_id: str=None, tag_id: str=None, left: float=None, top: float=None, width: float=None, height: float=None, **kwargs) -> None:
+    def __init__(self, *, image_id: str, tag_id: str, left: float, top: float, width: float, height: float, **kwargs) -> None:
         super(ImageRegionCreateEntry, self).__init__(**kwargs)
         self.image_id = image_id
         self.tag_id = tag_id
