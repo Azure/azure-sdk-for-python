@@ -61,6 +61,20 @@ class ContainerClient(object):
             **kwargs  # type: Any
         ):
         # type: (...) -> None
+        """Creates a new ContainerClient. This client represents interaction with a specific
+        container, although that container may not yet exist.
+
+        :param str url: The full URI to the container. This can also be a URL to the storage
+         account, in which case the blob container must also be specified.
+        :param container: The container for the blob. If specified, this value will override
+         a container value specified in the blob URL.
+        :type container: str or ~azure.storage.blob.models.ContainerProperties
+        :param ~azure.storage.blob.authentication.SharedKeyCredentials credentials: Optional shared
+         key credentials. This is not necessary if the URL contains a SAS token, or if the blob is
+         publicly available.
+        :param configuration: A optional pipeline configuration.
+         This can be retrieved with :func:`ContainerClient.create_configuration()`
+        """
         parsed_url = urlparse(url)
 
         if not parsed_url.path and not container:
@@ -155,7 +169,18 @@ class ContainerClient(object):
     def create_container(self, metadata=None, public_access=None, timeout=None, **kwargs):
         # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], Optional[int]) -> None
         """
-        :returns: None
+        Creates a new container under the specified account. If the container
+        with the same name already exists, the operation fails.
+
+        :param metadata:
+            A dict with name_value pairs to associate with the
+            container as metadata. Example:{'Category':'test'}
+        :type metadata: dict(str, str)
+        :param ~azure.storage.blob.models.PublicAccess public_access:
+            Possible values include: container, blob.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -436,7 +461,7 @@ class ContainerClient(object):
         """
         Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
-        the service and stop when all blobs have been returned or num_results is reached.
+        the service.
 
         :param str starts_with:
             Filters the results to return only blobs whose names
@@ -449,7 +474,6 @@ class ContainerClient(object):
             this generator will begin returning results from this point.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        '''
         :returns: An iterable (auto-paging) response of BlobProperties.
         """
         if include and not isinstance(include, list):
@@ -491,6 +515,9 @@ class ContainerClient(object):
         Get a client to interact with the specified blob.
         The blob need not already exist.
 
+        :param blob: The blob with which to interact. If specified, this value will override
+         a blob value specified in the blob URL.
+        :type blob: str or ~azure.storage.blob.models.BlobProperties
         :param ~azure.storage.blob.common.BlobType blob_type: The type of Blob. Default
          vale is BlobType.BlockBlob
         :param str snapshot: The optional blob snapshot on which to operate.

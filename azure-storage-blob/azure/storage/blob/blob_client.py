@@ -81,6 +81,25 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             **kwargs  # type: Any
         ):
         # type: (...) -> None
+        """Creates a new BlobClient. This client represents interaction with a specific
+        blob, although that blob may not yet exist.
+
+        :param str url: The full URI to the blob. This can also be a URL to the storage account
+         or container, in which case the blob and/or container must also be specified.
+        :param container: The container for the blob. If specified, this value will override
+         a container value specified in the blob URL.
+        :type container: str or ~azure.storage.blob.models.ContainerProperties
+        :param blob: The blob with which to interact. If specified, this value will override
+         a blob value specified in the blob URL.
+        :type blob: str or ~azure.storage.blob.models.BlobProperties
+        :param ~azure.storage.blob.common.BlobType blob_type: The type of the blob. This can be
+         either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
+        :param ~azure.storage.blob.authentication.SharedKeyCredentials credentials: Optional shared
+         key credentials. This is not necessary if the URL contains a SAS token, or if the blob is
+         publicly available.
+        :param configuration: A optional pipeline configuration.
+         This can be retrieved with :func:`BlobClient.create_configuration()`
+        """
         parsed_url = urlparse(url)
 
         if not parsed_url.path and not (container and blob):
@@ -833,7 +852,53 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
+        Creates a new Page or Append Blob depending on the current blob type
+        of the client.
+
+        :param int content_length:
+            Required only for Page blobs. This header specifies the maximum size
+            for the page blob, up to 1 TB. The page blob size must be aligned
+            to a 512-byte boundary.
+        :param ~azure.storage.blob.models.ContentSettings content_settings:
+            ContentSettings object used to set properties on the blob.
+        :param int sequence_number:
+            Only for Page blobs. The sequence number is a user-controlled value that you can use to
+            track requests. The value of the sequence number must be between 0
+            and 2^63 - 1.The default value is 0.
+        :param metadata:
+            Name-value pairs associated with the blob as metadata.
+        :type metadata: dict(str, str)
+        :param ~azure.storage.blob.lease.Lease lease:
+            Required if the blob has an active lease.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC. 
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :param ~azure.storage.blob.common.PremiumPageBlobTier premium_page_blob_tier:
+            Only for Page blobs. A page blob tier value to set the blob to. The tier correlates to the size of the
+            blob and number of allowed IOPS. This is only applicable to page blobs on
+            premium storage accounts.
         :returns: Blob-updated property dict (Etag and last modified).
+        :rtype: dict(str, Any)
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
@@ -1585,6 +1650,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         Resizes a page blob to the specified size. If the specified value is less
         than the current size of the blob, then all pages above the specified value
         are cleared.
+
         :param int content_length:
             Size to resize blob to.
         :param str lease:

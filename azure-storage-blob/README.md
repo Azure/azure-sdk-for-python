@@ -160,6 +160,11 @@ BlobClient.get_blob_metadata(
 BlobClient.set_blob_metadata(
     metadata=None, lease=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)
 
+# Only works where type is PageBlob or AppendBlob, otherwise raises TypeError
+# Returns blob-updated property dict (Etag and last modified)
+BlobClient.create_blob(
+    content_length=None, content_settings=None, sequence_number=None, metadata=None, lease=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None, premium_page_blob_tier=None)
+
 # Returns snapshot properties
 BlobClient.create_snapshot(
     metadata=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, lease=None, timeout=None)
@@ -228,11 +233,6 @@ BlobClient.commit_block_list(
 BlobClient.set_premium_page_blob_tier(premium_page_blob_tier, timeout=None)
 
 # Only works where type is PageBlob, otherwise raises TypeError
-# Returns blob-updated property dict (Etag and last modified)
-BlobClient.create_pageblob(
-    content_length, content_settings=None, sequence_number=None, metadata=None, lease_id=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None, premium_page_blob_tier=None)
-
-# Only works where type is PageBlob, otherwise raises TypeError
 # Returns a list of page ranges
 BlobClient.get_page_ranges(
     start_range=None, end_range=None, snapshot=None, lease=None, previous_snapshot_diff=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)
@@ -261,11 +261,6 @@ BlobClient.clear_page(
 # Returns a pollable object to check operation status and abort
 BlobClient.incremental_copy(
     copy_source, metadata=None, destination_if_modified_since=None, destination_if_unmodified_since=None, destination_if_match=None, destination_if_none_match=None, destination_lease=None, source_lease=None, timeout=None):
-
-# Only works where type is AppendBlob, otherwise raises TypeError
-# Returns blob-updated property dict (Etag and last modified)
-BlobClient.create_appendblob(
-    content_settings=None, metadata=None, lease=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)
 
 # Only works where type is AppendBlob, otherwise raises TypeError
 # Returns blob-updated property dict (Etag, last modified, append offset, committed block count)

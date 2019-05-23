@@ -138,6 +138,7 @@ class BlobServiceClient(object):
         '''
         Generates a shared access signature for the blob service.
         Use the returned signature with the sas_token parameter of any BlobService.
+
         :param ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account SAS.
         :param AccountPermissions permission:
@@ -356,6 +357,9 @@ class BlobServiceClient(object):
         Get a client to interact with the specified container.
         The container need not already exist.
 
+        :param container: The container for the blob. If specified, this value will override
+         a container value specified in the blob URL.
+        :type container: str or ~azure.storage.blob.models.ContainerProperties
         :returns: A ContainerClient.
         :rtype: ~azure.core.blob.container_client.ContainerClient
         """
@@ -373,6 +377,15 @@ class BlobServiceClient(object):
         Get a client to interact with the specified blob.
         The blob need not already exist.
 
+        :param container: The container for the blob. If specified, this value will override
+         a container value specified in the blob URL.
+        :type container: str or ~azure.storage.blob.models.ContainerProperties
+        :param blob: The blob with which to interact. If specified, this value will override
+         a blob value specified in the blob URL.
+        :type blob: str or ~azure.storage.blob.models.BlobProperties
+        :param ~azure.storage.blob.common.BlobType blob_type: The type of Blob. Default
+         vale is BlobType.BlockBlob
+        :param str snapshot: The optional blob snapshot on which to operate.
         :returns: A BlobClient.
         :rtype: ~azure.core.blob.blob_client.BlobClient
         """
