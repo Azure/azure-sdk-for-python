@@ -65,21 +65,29 @@ class TrioStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
-        try:
-            chunk = await trio.run_sync_in_worker_thread(
-                _iterate_response_content,
-                self.iter_content_func,
-            )
-            if not chunk:
-                raise _ResponseStopIteration()
-            return chunk
-        except _ResponseStopIteration:
-            self.response.close()
-            raise StopAsyncIteration()
-        except Exception as err:
-            _LOGGER.warning("Unable to stream download: %s", err)
-            self.response.close()
-            raise
+        retry_active = True
+        retry_total = 3
+        while retry_active:
+            try:
+                chunk = await trio.run_sync_in_worker_thread(
+                    _iterate_response_content,
+                    self.iter_content_func,
+                )
+                if not chunk:
+                    raise _ResponseStopIteration()
+                return chunk
+            except _ResponseStopIteration:
+                self.response.close()
+                raise StopAsyncIteration()
+            except ServiceResponseError:
+                retry_total -= 1
+                if retry_total <= 0:
+                    retry_active = False
+                continue
+            except Exception as err:
+                _LOGGER.warning("Unable to stream download: %s", err)
+                self.response.close()
+                raise
 
 class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):
 
