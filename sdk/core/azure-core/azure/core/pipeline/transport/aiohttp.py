@@ -146,16 +146,26 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
-        try:
-            chunk = await self.response.content.read(self.block_size)
-            if not chunk:
+        retry_active = True
+        retry_total = 3
+        while retry_active:
+            try:
+                chunk = await self.response.content.read(self.block_size)
+                if not chunk:
+                    raise _ResponseStopIteration()
+                return chunk
+            except _ResponseStopIteration:
                 self.response.close()
                 raise StopAsyncIteration()
-            return chunk
-        except Exception as err:
-            _LOGGER.warning("Unable to stream download: %s", err)
-            self.response.close()
-            raise
+            except ServiceResponseError:
+                retry_total -= 1
+                if retry_total <= 0:
+                    retry_active = False
+                continue
+            except Exception as err:
+                _LOGGER.warning("Unable to stream download: %s", err)
+                self.response.close()
+                raise
 
 class AioHttpTransportResponse(AsyncHttpResponse):
 
