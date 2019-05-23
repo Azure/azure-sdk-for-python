@@ -1,0 +1,413 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [KeyClient]
+    method: GET
+    uri: https://vaultcc230cbc.vault.azure.net/keys?api-version=7.0
+  response:
+    body: {string: '{"value":[],"nextLink":null}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['28']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Mar 2019 20:58:30 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000;includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-network-info: [addr=131.107.160.175;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-region: [eastus]
+      x-ms-keyvault-service-version: [1.1.0.862]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['14']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [KeyClient]
+    method: POST
+    uri: https://vaultcc230cbc.vault.azure.net/keys/crud-test-key/create?api-version=7.0
+  response:
+    body: {string: '{"key":{"kid":"https://vaultcc230cbc.vault.azure.net/keys/crud-test-key/330373d826c3419fbe0672a8e7dd8bff","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"i7m_8wAHcWspzixoAPAUUax3bp7rlkdS9ty-P-GYBzQyXh2geTc-Z-C-NJx-zGbFtp4jJCJfFyy2vGNJNn-uxNa4jvJr8GJpocr33vI1JyXcszkbfnnzgYSJUXsHPta2GFvSFMu8DZYBvqoJ-q0wHx5qWtWDXAvs1x4J54WSrSltH-zeUgpF9b-bp01oJYfmziWjN3dOYq5TpUSbAoz9L7t4bG34S4nOFarq8p5RcOvrn1KisiHN_mt8OL7AW7gzqsBy139-sKdSyZSTJAyKL6Sq4_GTl2SM2ARsmNrZhhaRQyfjlQWCduUqDRmzxLZUFbpYaK4i5APuhZp1smTUTQ","e":"AQAB"},"attributes":{"enabled":true,"created":1552683510,"updated":1552683510,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['662']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Mar 2019 20:58:30 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000;includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-network-info: [addr=131.107.160.175;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-region: [eastus]
+      x-ms-keyvault-service-version: [1.1.0.862]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [KeyClient]
+    method: GET
+    uri: https://vaultcc230cbc.vault.azure.net/keys/crud-test-key/?api-version=7.0
+  response:
+    body: {string: '{"key":{"kid":"https://vaultcc230cbc.vault.azure.net/keys/crud-test-key/330373d826c3419fbe0672a8e7dd8bff","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"i7m_8wAHcWspzixoAPAUUax3bp7rlkdS9ty-P-GYBzQyXh2geTc-Z-C-NJx-zGbFtp4jJCJfFyy2vGNJNn-uxNa4jvJr8GJpocr33vI1JyXcszkbfnnzgYSJUXsHPta2GFvSFMu8DZYBvqoJ-q0wHx5qWtWDXAvs1x4J54WSrSltH-zeUgpF9b-bp01oJYfmziWjN3dOYq5TpUSbAoz9L7t4bG34S4nOFarq8p5RcOvrn1KisiHN_mt8OL7AW7gzqsBy139-sKdSyZSTJAyKL6Sq4_GTl2SM2ARsmNrZhhaRQyfjlQWCduUqDRmzxLZUFbpYaK4i5APuhZp1smTUTQ","e":"AQAB"},"attributes":{"enabled":true,"created":1552683510,"updated":1552683510,"recoveryLevel":"Recoverable+Purgeable"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['662']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Mar 2019 20:58:30 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000;includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-network-info: [addr=131.107.160.175;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-region: [eastus]
+      x-ms-keyvault-service-version: [1.1.0.862]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [KeyClient]
+    method: GET
+    uri: https://vaultcc230cbc.vault.azure.net/keys/crud-test-key/versions?api-version=7.0
+  response:
+    body: {string: '{"value":[{"kid":"https://vaultcc230cbc.vault.azure.net/keys/crud-test-key/330373d826c3419fbe0672a8e7dd8bff","attributes":{"enabled":true,"created":1552683510,"updated":1552683510,"recoveryLevel":"Recoverable+Purgeable"}}],"nextLink":null}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['240']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Mar 2019 20:58:30 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000;includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-network-info: [addr=131.107.160.175;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-region: [eastus]
+      x-ms-keyvault-service-version: [1.1.0.862]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [KeyClient]
+    method: GET
+    uri: https://vaultcc230cbc.vault.azure.net/keys?api-version=7.0
+  response:
+    body: {string: '{"value":[{"kid":"https://vaultcc230cbc.vault.azure.net/keys/crud-test-key","attributes":{"enabled":true,"created":1552683510,"updated":1552683510,"recoveryLevel":"Recoverable+Purgeable"}}],"nextLink":null}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['207']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Mar 2019 20:58:31 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000;includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-network-info: [addr=131.107.160.175;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-region: [eastus]
+      x-ms-keyvault-service-version: [1.1.0.862]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: '{"key_ops": ["decrypt"], "tags": {"spam": "eggs"}}'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['50']
+      Content-Type: [application/json; charset=utf-8]
+      User-Agent: [KeyClient]
+    method: PATCH
+    uri: https://vaultcc230cbc.vault.azure.net/keys/crud-test-key/?api-version=7.0
+  response:
+    body: {string: '{"key":{"kid":"https://vaultcc230cbc.vault.azure.net/keys/crud-test-key/330373d826c3419fbe0672a8e7dd8bff","kty":"RSA","key_ops":["decrypt"],"n":"i7m_8wAHcWspzixoAPAUUax3bp7rlkdS9ty-P-GYBzQyXh2geTc-Z-C-NJx-zGbFtp4jJCJfFyy2vGNJNn-uxNa4jvJr8GJpocr33vI1JyXcszkbfnnzgYSJUXsHPta2GFvSFMu8DZYBvqoJ-q0wHx5qWtWDXAvs1x4J54WSrSltH-zeUgpF9b-bp01oJYfmziWjN3dOYq5TpUSbAoz9L7t4bG34S4nOFarq8p5RcOvrn1KisiHN_mt8OL7AW7gzqsBy139-sKdSyZSTJAyKL6Sq4_GTl2SM2ARsmNrZhhaRQyfjlQWCduUqDRmzxLZUFbpYaK4i5APuhZp1smTUTQ","e":"AQAB"},"attributes":{"enabled":true,"created":1552683510,"updated":1552683511,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"spam":"eggs"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['637']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Mar 2019 20:58:31 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000;includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-network-info: [addr=131.107.160.175;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-region: [eastus]
+      x-ms-keyvault-service-version: [1.1.0.862]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [KeyClient]
+    method: GET
+    uri: https://vaultcc230cbc.vault.azure.net/keys/crud-test-key/?api-version=7.0
+  response:
+    body: {string: '{"key":{"kid":"https://vaultcc230cbc.vault.azure.net/keys/crud-test-key/330373d826c3419fbe0672a8e7dd8bff","kty":"RSA","key_ops":["decrypt"],"n":"i7m_8wAHcWspzixoAPAUUax3bp7rlkdS9ty-P-GYBzQyXh2geTc-Z-C-NJx-zGbFtp4jJCJfFyy2vGNJNn-uxNa4jvJr8GJpocr33vI1JyXcszkbfnnzgYSJUXsHPta2GFvSFMu8DZYBvqoJ-q0wHx5qWtWDXAvs1x4J54WSrSltH-zeUgpF9b-bp01oJYfmziWjN3dOYq5TpUSbAoz9L7t4bG34S4nOFarq8p5RcOvrn1KisiHN_mt8OL7AW7gzqsBy139-sKdSyZSTJAyKL6Sq4_GTl2SM2ARsmNrZhhaRQyfjlQWCduUqDRmzxLZUFbpYaK4i5APuhZp1smTUTQ","e":"AQAB"},"attributes":{"enabled":true,"created":1552683510,"updated":1552683511,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"spam":"eggs"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['637']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Mar 2019 20:58:31 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000;includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-network-info: [addr=131.107.160.175;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-region: [eastus]
+      x-ms-keyvault-service-version: [1.1.0.862]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [KeyClient]
+    method: DELETE
+    uri: https://vaultcc230cbc.vault.azure.net/keys/crud-test-key?api-version=7.0
+  response:
+    body: {string: '{"recoveryId":"https://vaultcc230cbc.vault.azure.net/deletedkeys/crud-test-key","deletedDate":1552683511,"scheduledPurgeDate":1560459511,"key":{"kid":"https://vaultcc230cbc.vault.azure.net/keys/crud-test-key/330373d826c3419fbe0672a8e7dd8bff","kty":"RSA","key_ops":["decrypt"],"n":"i7m_8wAHcWspzixoAPAUUax3bp7rlkdS9ty-P-GYBzQyXh2geTc-Z-C-NJx-zGbFtp4jJCJfFyy2vGNJNn-uxNa4jvJr8GJpocr33vI1JyXcszkbfnnzgYSJUXsHPta2GFvSFMu8DZYBvqoJ-q0wHx5qWtWDXAvs1x4J54WSrSltH-zeUgpF9b-bp01oJYfmziWjN3dOYq5TpUSbAoz9L7t4bG34S4nOFarq8p5RcOvrn1KisiHN_mt8OL7AW7gzqsBy139-sKdSyZSTJAyKL6Sq4_GTl2SM2ARsmNrZhhaRQyfjlQWCduUqDRmzxLZUFbpYaK4i5APuhZp1smTUTQ","e":"AQAB"},"attributes":{"enabled":true,"created":1552683510,"updated":1552683511,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"spam":"eggs"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['774']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Mar 2019 20:58:31 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000;includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-network-info: [addr=131.107.160.175;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-region: [eastus]
+      x-ms-keyvault-service-version: [1.1.0.862]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [KeyClient]
+    method: GET
+    uri: https://vaultcc230cbc.vault.azure.net/deletedkeys/crud-test-key?api-version=7.0
+  response:
+    body: {string: '{"recoveryId":"https://vaultcc230cbc.vault.azure.net/deletedkeys/crud-test-key","deletedDate":1552683511,"scheduledPurgeDate":1560459511,"key":{"kid":"https://vaultcc230cbc.vault.azure.net/keys/crud-test-key/330373d826c3419fbe0672a8e7dd8bff","kty":"RSA","key_ops":["decrypt"],"n":"i7m_8wAHcWspzixoAPAUUax3bp7rlkdS9ty-P-GYBzQyXh2geTc-Z-C-NJx-zGbFtp4jJCJfFyy2vGNJNn-uxNa4jvJr8GJpocr33vI1JyXcszkbfnnzgYSJUXsHPta2GFvSFMu8DZYBvqoJ-q0wHx5qWtWDXAvs1x4J54WSrSltH-zeUgpF9b-bp01oJYfmziWjN3dOYq5TpUSbAoz9L7t4bG34S4nOFarq8p5RcOvrn1KisiHN_mt8OL7AW7gzqsBy139-sKdSyZSTJAyKL6Sq4_GTl2SM2ARsmNrZhhaRQyfjlQWCduUqDRmzxLZUFbpYaK4i5APuhZp1smTUTQ","e":"AQAB"},"attributes":{"enabled":true,"created":1552683510,"updated":1552683511,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"spam":"eggs"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['774']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Mar 2019 20:59:01 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000;includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-network-info: [addr=131.107.160.175;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-region: [eastus]
+      x-ms-keyvault-service-version: [1.1.0.862]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [KeyClient]
+    method: GET
+    uri: https://vaultcc230cbc.vault.azure.net/keys?api-version=7.0
+  response:
+    body: {string: '{"value":[],"nextLink":null}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['28']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Mar 2019 20:59:01 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000;includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-network-info: [addr=131.107.160.175;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-region: [eastus]
+      x-ms-keyvault-service-version: [1.1.0.862]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [KeyClient]
+    method: GET
+    uri: https://vaultcc230cbc.vault.azure.net/deletedkeys?api-version=7.0
+  response:
+    body: {string: '{"value":[{"recoveryId":"https://vaultcc230cbc.vault.azure.net/deletedkeys/crud-test-key","deletedDate":1552683511,"scheduledPurgeDate":1560459511,"kid":"https://vaultcc230cbc.vault.azure.net/keys/crud-test-key","attributes":{"enabled":true,"created":1552683510,"updated":1552683511,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"spam":"eggs"}}],"nextLink":null}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['1022']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Mar 2019 20:59:01 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000;includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-network-info: [addr=131.107.160.175;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-region: [eastus]
+      x-ms-keyvault-service-version: [1.1.0.862]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [KeyClient]
+    method: POST
+    uri: https://vaultcc230cbc.vault.azure.net/deletedkeys/crud-test-key/recover?api-version=7.0
+  response:
+    body: {string: '{"key":{"kid":"https://vaultcc230cbc.vault.azure.net/keys/crud-test-key/330373d826c3419fbe0672a8e7dd8bff","kty":"RSA","key_ops":["decrypt"],"n":"i7m_8wAHcWspzixoAPAUUax3bp7rlkdS9ty-P-GYBzQyXh2geTc-Z-C-NJx-zGbFtp4jJCJfFyy2vGNJNn-uxNa4jvJr8GJpocr33vI1JyXcszkbfnnzgYSJUXsHPta2GFvSFMu8DZYBvqoJ-q0wHx5qWtWDXAvs1x4J54WSrSltH-zeUgpF9b-bp01oJYfmziWjN3dOYq5TpUSbAoz9L7t4bG34S4nOFarq8p5RcOvrn1KisiHN_mt8OL7AW7gzqsBy139-sKdSyZSTJAyKL6Sq4_GTl2SM2ARsmNrZhhaRQyfjlQWCduUqDRmzxLZUFbpYaK4i5APuhZp1smTUTQ","e":"AQAB"},"attributes":{"enabled":true,"created":1552683510,"updated":1552683511,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"spam":"eggs"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['637']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Mar 2019 20:59:01 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000;includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-network-info: [addr=131.107.160.175;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-region: [eastus]
+      x-ms-keyvault-service-version: [1.1.0.862]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [KeyClient]
+    method: DELETE
+    uri: https://vaultcc230cbc.vault.azure.net/keys/crud-test-key?api-version=7.0
+  response:
+    body: {string: '{"recoveryId":"https://vaultcc230cbc.vault.azure.net/deletedkeys/crud-test-key","deletedDate":1552683603,"scheduledPurgeDate":1560459603,"key":{"kid":"https://vaultcc230cbc.vault.azure.net/keys/crud-test-key/330373d826c3419fbe0672a8e7dd8bff","kty":"RSA","key_ops":["decrypt"],"n":"i7m_8wAHcWspzixoAPAUUax3bp7rlkdS9ty-P-GYBzQyXh2geTc-Z-C-NJx-zGbFtp4jJCJfFyy2vGNJNn-uxNa4jvJr8GJpocr33vI1JyXcszkbfnnzgYSJUXsHPta2GFvSFMu8DZYBvqoJ-q0wHx5qWtWDXAvs1x4J54WSrSltH-zeUgpF9b-bp01oJYfmziWjN3dOYq5TpUSbAoz9L7t4bG34S4nOFarq8p5RcOvrn1KisiHN_mt8OL7AW7gzqsBy139-sKdSyZSTJAyKL6Sq4_GTl2SM2ARsmNrZhhaRQyfjlQWCduUqDRmzxLZUFbpYaK4i5APuhZp1smTUTQ","e":"AQAB"},"attributes":{"enabled":true,"created":1552683510,"updated":1552683511,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"spam":"eggs"}}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['774']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Mar 2019 21:00:02 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000;includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-network-info: [addr=131.107.160.175;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-region: [eastus]
+      x-ms-keyvault-service-version: [1.1.0.862]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['0']
+      User-Agent: [KeyClient]
+    method: DELETE
+    uri: https://vaultcc230cbc.vault.azure.net/deletedkeys/crud-test-key?api-version=7.0
+  response:
+    body: {string: ''}
+    headers:
+      cache-control: [no-cache]
+      date: ['Fri, 15 Mar 2019 21:01:03 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000;includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-network-info: [addr=131.107.160.175;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-region: [eastus]
+      x-ms-keyvault-service-version: [1.1.0.862]
+      x-powered-by: [ASP.NET]
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [KeyClient]
+    method: GET
+    uri: https://vaultcc230cbc.vault.azure.net/deletedkeys?api-version=7.0
+  response:
+    body: {string: '{"value":[],"nextLink":null}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['682']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 15 Mar 2019 21:02:03 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-IIS/10.0]
+      strict-transport-security: [max-age=31536000;includeSubDomains]
+      x-aspnet-version: [4.0.30319]
+      x-content-type-options: [nosniff]
+      x-ms-keyvault-network-info: [addr=131.107.160.175;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-region: [eastus]
+      x-ms-keyvault-service-version: [1.1.0.862]
+      x-powered-by: [ASP.NET]
+    status: {code: 200, message: OK}
+version: 1
