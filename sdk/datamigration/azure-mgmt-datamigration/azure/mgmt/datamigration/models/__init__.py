@@ -28,12 +28,17 @@ try:
     from .file_share_py3 import FileShare
     from .mi_sql_connection_info_py3 import MiSqlConnectionInfo
     from .postgre_sql_connection_info_py3 import PostgreSqlConnectionInfo
+    from .oracle_connection_info_py3 import OracleConnectionInfo
     from .my_sql_connection_info_py3 import MySqlConnectionInfo
     from .mongo_db_connection_info_py3 import MongoDbConnectionInfo
     from .connection_info_py3 import ConnectionInfo
     from .sql_connection_info_py3 import SqlConnectionInfo
     from .get_tde_certificates_sql_task_input_py3 import GetTdeCertificatesSqlTaskInput
     from .get_tde_certificates_sql_task_properties_py3 import GetTdeCertificatesSqlTaskProperties
+    from .validate_oracle_azure_db_postgre_sql_sync_task_output_py3 import ValidateOracleAzureDbPostgreSqlSyncTaskOutput
+    from .migrate_oracle_azure_db_postgre_sql_sync_database_input_py3 import MigrateOracleAzureDbPostgreSqlSyncDatabaseInput
+    from .migrate_oracle_azure_db_postgre_sql_sync_task_input_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskInput
+    from .validate_oracle_azure_db_for_postgre_sql_sync_task_properties_py3 import ValidateOracleAzureDbForPostgreSqlSyncTaskProperties
     from .mongo_db_error_py3 import MongoDbError
     from .mongo_db_collection_progress_py3 import MongoDbCollectionProgress
     from .mongo_db_database_progress_py3 import MongoDbDatabaseProgress
@@ -62,6 +67,13 @@ try:
     from .validate_sync_migration_input_sql_server_task_input_py3 import ValidateSyncMigrationInputSqlServerTaskInput
     from .validate_migration_input_sql_server_sql_db_sync_task_properties_py3 import ValidateMigrationInputSqlServerSqlDbSyncTaskProperties
     from .sync_migration_database_error_event_py3 import SyncMigrationDatabaseErrorEvent
+    from .migrate_oracle_azure_db_postgre_sql_sync_task_output_database_error_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskOutputDatabaseError
+    from .migrate_oracle_azure_db_postgre_sql_sync_task_output_error_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskOutputError
+    from .migrate_oracle_azure_db_postgre_sql_sync_task_output_table_level_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskOutputTableLevel
+    from .migrate_oracle_azure_db_postgre_sql_sync_task_output_database_level_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskOutputDatabaseLevel
+    from .migrate_oracle_azure_db_postgre_sql_sync_task_output_migration_level_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskOutputMigrationLevel
+    from .migrate_oracle_azure_db_postgre_sql_sync_task_output_py3 import MigrateOracleAzureDbPostgreSqlSyncTaskOutput
+    from .migrate_oracle_azure_db_for_postgre_sql_sync_task_properties_py3 import MigrateOracleAzureDbForPostgreSqlSyncTaskProperties
     from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_database_error_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError
     from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_error_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError
     from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_table_level_py3 import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputTableLevel
@@ -147,6 +159,9 @@ try:
     from .get_user_tables_sql_task_output_py3 import GetUserTablesSqlTaskOutput
     from .get_user_tables_sql_task_input_py3 import GetUserTablesSqlTaskInput
     from .get_user_tables_sql_task_properties_py3 import GetUserTablesSqlTaskProperties
+    from .connect_to_target_oracle_azure_db_for_postgre_sql_sync_task_output_py3 import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput
+    from .connect_to_target_oracle_azure_db_for_postgre_sql_sync_task_input_py3 import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskInput
+    from .connect_to_target_oracle_azure_db_for_postgre_sql_sync_task_properties_py3 import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties
     from .connect_to_target_azure_db_for_postgre_sql_sync_task_output_py3 import ConnectToTargetAzureDbForPostgreSqlSyncTaskOutput
     from .connect_to_target_azure_db_for_postgre_sql_sync_task_input_py3 import ConnectToTargetAzureDbForPostgreSqlSyncTaskInput
     from .connect_to_target_azure_db_for_postgre_sql_sync_task_properties_py3 import ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties
@@ -155,6 +170,9 @@ try:
     from .connect_to_target_sql_sql_db_sync_task_properties_py3 import ConnectToTargetSqlSqlDbSyncTaskProperties
     from .connect_to_target_sql_db_task_input_py3 import ConnectToTargetSqlDbTaskInput
     from .connect_to_target_sql_db_task_properties_py3 import ConnectToTargetSqlDbTaskProperties
+    from .connect_to_source_oracle_sync_task_output_py3 import ConnectToSourceOracleSyncTaskOutput
+    from .connect_to_source_oracle_sync_task_input_py3 import ConnectToSourceOracleSyncTaskInput
+    from .connect_to_source_oracle_sync_task_properties_py3 import ConnectToSourceOracleSyncTaskProperties
     from .connect_to_source_postgre_sql_sync_task_output_py3 import ConnectToSourcePostgreSqlSyncTaskOutput
     from .connect_to_source_postgre_sql_sync_task_input_py3 import ConnectToSourcePostgreSqlSyncTaskInput
     from .connect_to_source_postgre_sql_sync_task_properties_py3 import ConnectToSourcePostgreSqlSyncTaskProperties
@@ -215,6 +233,16 @@ try:
     from .mongo_db_finish_command_input_py3 import MongoDbFinishCommandInput
     from .mongo_db_finish_command_py3 import MongoDbFinishCommand
     from .mongo_db_restart_command_py3 import MongoDbRestartCommand
+    from .oracle_oci_driver_info_py3 import OracleOCIDriverInfo
+    from .check_oci_driver_task_input_py3 import CheckOCIDriverTaskInput
+    from .check_oci_driver_task_output_py3 import CheckOCIDriverTaskOutput
+    from .upload_oci_driver_task_input_py3 import UploadOCIDriverTaskInput
+    from .upload_oci_driver_task_output_py3 import UploadOCIDriverTaskOutput
+    from .install_oci_driver_task_input_py3 import InstallOCIDriverTaskInput
+    from .install_oci_driver_task_output_py3 import InstallOCIDriverTaskOutput
+    from .check_oci_driver_task_properties_py3 import CheckOCIDriverTaskProperties
+    from .upload_oci_driver_task_properties_py3 import UploadOCIDriverTaskProperties
+    from .install_oci_driver_task_properties_py3 import InstallOCIDriverTaskProperties
     from .database_py3 import Database
     from .database_object_name_py3 import DatabaseObjectName
     from .migration_table_metadata_py3 import MigrationTableMetadata
@@ -246,12 +274,17 @@ except (SyntaxError, ImportError):
     from .file_share import FileShare
     from .mi_sql_connection_info import MiSqlConnectionInfo
     from .postgre_sql_connection_info import PostgreSqlConnectionInfo
+    from .oracle_connection_info import OracleConnectionInfo
     from .my_sql_connection_info import MySqlConnectionInfo
     from .mongo_db_connection_info import MongoDbConnectionInfo
     from .connection_info import ConnectionInfo
     from .sql_connection_info import SqlConnectionInfo
     from .get_tde_certificates_sql_task_input import GetTdeCertificatesSqlTaskInput
     from .get_tde_certificates_sql_task_properties import GetTdeCertificatesSqlTaskProperties
+    from .validate_oracle_azure_db_postgre_sql_sync_task_output import ValidateOracleAzureDbPostgreSqlSyncTaskOutput
+    from .migrate_oracle_azure_db_postgre_sql_sync_database_input import MigrateOracleAzureDbPostgreSqlSyncDatabaseInput
+    from .migrate_oracle_azure_db_postgre_sql_sync_task_input import MigrateOracleAzureDbPostgreSqlSyncTaskInput
+    from .validate_oracle_azure_db_for_postgre_sql_sync_task_properties import ValidateOracleAzureDbForPostgreSqlSyncTaskProperties
     from .mongo_db_error import MongoDbError
     from .mongo_db_collection_progress import MongoDbCollectionProgress
     from .mongo_db_database_progress import MongoDbDatabaseProgress
@@ -280,6 +313,13 @@ except (SyntaxError, ImportError):
     from .validate_sync_migration_input_sql_server_task_input import ValidateSyncMigrationInputSqlServerTaskInput
     from .validate_migration_input_sql_server_sql_db_sync_task_properties import ValidateMigrationInputSqlServerSqlDbSyncTaskProperties
     from .sync_migration_database_error_event import SyncMigrationDatabaseErrorEvent
+    from .migrate_oracle_azure_db_postgre_sql_sync_task_output_database_error import MigrateOracleAzureDbPostgreSqlSyncTaskOutputDatabaseError
+    from .migrate_oracle_azure_db_postgre_sql_sync_task_output_error import MigrateOracleAzureDbPostgreSqlSyncTaskOutputError
+    from .migrate_oracle_azure_db_postgre_sql_sync_task_output_table_level import MigrateOracleAzureDbPostgreSqlSyncTaskOutputTableLevel
+    from .migrate_oracle_azure_db_postgre_sql_sync_task_output_database_level import MigrateOracleAzureDbPostgreSqlSyncTaskOutputDatabaseLevel
+    from .migrate_oracle_azure_db_postgre_sql_sync_task_output_migration_level import MigrateOracleAzureDbPostgreSqlSyncTaskOutputMigrationLevel
+    from .migrate_oracle_azure_db_postgre_sql_sync_task_output import MigrateOracleAzureDbPostgreSqlSyncTaskOutput
+    from .migrate_oracle_azure_db_for_postgre_sql_sync_task_properties import MigrateOracleAzureDbForPostgreSqlSyncTaskProperties
     from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_database_error import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError
     from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_error import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError
     from .migrate_postgre_sql_azure_db_for_postgre_sql_sync_task_output_table_level import MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputTableLevel
@@ -365,6 +405,9 @@ except (SyntaxError, ImportError):
     from .get_user_tables_sql_task_output import GetUserTablesSqlTaskOutput
     from .get_user_tables_sql_task_input import GetUserTablesSqlTaskInput
     from .get_user_tables_sql_task_properties import GetUserTablesSqlTaskProperties
+    from .connect_to_target_oracle_azure_db_for_postgre_sql_sync_task_output import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput
+    from .connect_to_target_oracle_azure_db_for_postgre_sql_sync_task_input import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskInput
+    from .connect_to_target_oracle_azure_db_for_postgre_sql_sync_task_properties import ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties
     from .connect_to_target_azure_db_for_postgre_sql_sync_task_output import ConnectToTargetAzureDbForPostgreSqlSyncTaskOutput
     from .connect_to_target_azure_db_for_postgre_sql_sync_task_input import ConnectToTargetAzureDbForPostgreSqlSyncTaskInput
     from .connect_to_target_azure_db_for_postgre_sql_sync_task_properties import ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties
@@ -373,6 +416,9 @@ except (SyntaxError, ImportError):
     from .connect_to_target_sql_sql_db_sync_task_properties import ConnectToTargetSqlSqlDbSyncTaskProperties
     from .connect_to_target_sql_db_task_input import ConnectToTargetSqlDbTaskInput
     from .connect_to_target_sql_db_task_properties import ConnectToTargetSqlDbTaskProperties
+    from .connect_to_source_oracle_sync_task_output import ConnectToSourceOracleSyncTaskOutput
+    from .connect_to_source_oracle_sync_task_input import ConnectToSourceOracleSyncTaskInput
+    from .connect_to_source_oracle_sync_task_properties import ConnectToSourceOracleSyncTaskProperties
     from .connect_to_source_postgre_sql_sync_task_output import ConnectToSourcePostgreSqlSyncTaskOutput
     from .connect_to_source_postgre_sql_sync_task_input import ConnectToSourcePostgreSqlSyncTaskInput
     from .connect_to_source_postgre_sql_sync_task_properties import ConnectToSourcePostgreSqlSyncTaskProperties
@@ -433,6 +479,16 @@ except (SyntaxError, ImportError):
     from .mongo_db_finish_command_input import MongoDbFinishCommandInput
     from .mongo_db_finish_command import MongoDbFinishCommand
     from .mongo_db_restart_command import MongoDbRestartCommand
+    from .oracle_oci_driver_info import OracleOCIDriverInfo
+    from .check_oci_driver_task_input import CheckOCIDriverTaskInput
+    from .check_oci_driver_task_output import CheckOCIDriverTaskOutput
+    from .upload_oci_driver_task_input import UploadOCIDriverTaskInput
+    from .upload_oci_driver_task_output import UploadOCIDriverTaskOutput
+    from .install_oci_driver_task_input import InstallOCIDriverTaskInput
+    from .install_oci_driver_task_output import InstallOCIDriverTaskOutput
+    from .check_oci_driver_task_properties import CheckOCIDriverTaskProperties
+    from .upload_oci_driver_task_properties import UploadOCIDriverTaskProperties
+    from .install_oci_driver_task_properties import InstallOCIDriverTaskProperties
     from .database import Database
     from .database_object_name import DatabaseObjectName
     from .migration_table_metadata import MigrationTableMetadata
@@ -517,12 +573,17 @@ __all__ = [
     'FileShare',
     'MiSqlConnectionInfo',
     'PostgreSqlConnectionInfo',
+    'OracleConnectionInfo',
     'MySqlConnectionInfo',
     'MongoDbConnectionInfo',
     'ConnectionInfo',
     'SqlConnectionInfo',
     'GetTdeCertificatesSqlTaskInput',
     'GetTdeCertificatesSqlTaskProperties',
+    'ValidateOracleAzureDbPostgreSqlSyncTaskOutput',
+    'MigrateOracleAzureDbPostgreSqlSyncDatabaseInput',
+    'MigrateOracleAzureDbPostgreSqlSyncTaskInput',
+    'ValidateOracleAzureDbForPostgreSqlSyncTaskProperties',
     'MongoDbError',
     'MongoDbCollectionProgress',
     'MongoDbDatabaseProgress',
@@ -551,6 +612,13 @@ __all__ = [
     'ValidateSyncMigrationInputSqlServerTaskInput',
     'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties',
     'SyncMigrationDatabaseErrorEvent',
+    'MigrateOracleAzureDbPostgreSqlSyncTaskOutputDatabaseError',
+    'MigrateOracleAzureDbPostgreSqlSyncTaskOutputError',
+    'MigrateOracleAzureDbPostgreSqlSyncTaskOutputTableLevel',
+    'MigrateOracleAzureDbPostgreSqlSyncTaskOutputDatabaseLevel',
+    'MigrateOracleAzureDbPostgreSqlSyncTaskOutputMigrationLevel',
+    'MigrateOracleAzureDbPostgreSqlSyncTaskOutput',
+    'MigrateOracleAzureDbForPostgreSqlSyncTaskProperties',
     'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputDatabaseError',
     'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError',
     'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputTableLevel',
@@ -636,6 +704,9 @@ __all__ = [
     'GetUserTablesSqlTaskOutput',
     'GetUserTablesSqlTaskInput',
     'GetUserTablesSqlTaskProperties',
+    'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskOutput',
+    'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskInput',
+    'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties',
     'ConnectToTargetAzureDbForPostgreSqlSyncTaskOutput',
     'ConnectToTargetAzureDbForPostgreSqlSyncTaskInput',
     'ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties',
@@ -644,6 +715,9 @@ __all__ = [
     'ConnectToTargetSqlSqlDbSyncTaskProperties',
     'ConnectToTargetSqlDbTaskInput',
     'ConnectToTargetSqlDbTaskProperties',
+    'ConnectToSourceOracleSyncTaskOutput',
+    'ConnectToSourceOracleSyncTaskInput',
+    'ConnectToSourceOracleSyncTaskProperties',
     'ConnectToSourcePostgreSqlSyncTaskOutput',
     'ConnectToSourcePostgreSqlSyncTaskInput',
     'ConnectToSourcePostgreSqlSyncTaskProperties',
@@ -704,6 +778,16 @@ __all__ = [
     'MongoDbFinishCommandInput',
     'MongoDbFinishCommand',
     'MongoDbRestartCommand',
+    'OracleOCIDriverInfo',
+    'CheckOCIDriverTaskInput',
+    'CheckOCIDriverTaskOutput',
+    'UploadOCIDriverTaskInput',
+    'UploadOCIDriverTaskOutput',
+    'InstallOCIDriverTaskInput',
+    'InstallOCIDriverTaskOutput',
+    'CheckOCIDriverTaskProperties',
+    'UploadOCIDriverTaskProperties',
+    'InstallOCIDriverTaskProperties',
     'Database',
     'DatabaseObjectName',
     'MigrationTableMetadata',

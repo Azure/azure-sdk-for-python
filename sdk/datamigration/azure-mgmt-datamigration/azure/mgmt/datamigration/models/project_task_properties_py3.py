@@ -18,10 +18,12 @@ class ProjectTaskProperties(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: GetTdeCertificatesSqlTaskProperties,
+    ValidateOracleAzureDbForPostgreSqlSyncTaskProperties,
     ValidateMongoDbTaskProperties,
     ValidateMigrationInputSqlServerSqlMISyncTaskProperties,
     ValidateMigrationInputSqlServerSqlMITaskProperties,
     ValidateMigrationInputSqlServerSqlDbSyncTaskProperties,
+    MigrateOracleAzureDbForPostgreSqlSyncTaskProperties,
     MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties,
     MigrateMySqlAzureDbForMySqlSyncTaskProperties,
     MigrateSqlServerSqlDbSyncTaskProperties,
@@ -31,14 +33,17 @@ class ProjectTaskProperties(Model):
     ConnectToTargetAzureDbForMySqlTaskProperties,
     ConnectToTargetSqlMISyncTaskProperties, ConnectToTargetSqlMITaskProperties,
     GetUserTablesSqlSyncTaskProperties, GetUserTablesSqlTaskProperties,
+    ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties,
     ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties,
     ConnectToTargetSqlSqlDbSyncTaskProperties,
     ConnectToTargetSqlDbTaskProperties,
+    ConnectToSourceOracleSyncTaskProperties,
     ConnectToSourcePostgreSqlSyncTaskProperties,
     ConnectToSourceSqlServerSyncTaskProperties,
     ConnectToSourceSqlServerTaskProperties, ConnectToMongoDbTaskProperties,
     ConnectToSourceMySqlTaskProperties,
-    MigrateSchemaSqlServerSqlDbTaskProperties
+    MigrateSchemaSqlServerSqlDbTaskProperties, CheckOCIDriverTaskProperties,
+    UploadOCIDriverTaskProperties, InstallOCIDriverTaskProperties
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -77,7 +82,7 @@ class ProjectTaskProperties(Model):
     }
 
     _subtype_map = {
-        'task_type': {'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'Validate.MongoDb': 'ValidateMongoDbTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI.Sync.LRS': 'ValidateMigrationInputSqlServerSqlMISyncTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.PostgreSql.AzureDbForPostgreSql.Sync': 'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI.Sync.LRS': 'MigrateSqlServerSqlMISyncTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'Migrate.MongoDb': 'MigrateMongoDbTaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI.Sync.LRS': 'ConnectToTargetSqlMISyncTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.AzureDbForPostgreSql.Sync': 'ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.PostgreSql.Sync': 'ConnectToSourcePostgreSqlSyncTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'Connect.MongoDb': 'ConnectToMongoDbTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties', 'MigrateSchemaSqlServerSqlDb': 'MigrateSchemaSqlServerSqlDbTaskProperties'}
+        'task_type': {'GetTDECertificates.Sql': 'GetTdeCertificatesSqlTaskProperties', 'Validate.Oracle.AzureDbPostgreSql.Sync': 'ValidateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Validate.MongoDb': 'ValidateMongoDbTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI.Sync.LRS': 'ValidateMigrationInputSqlServerSqlMISyncTaskProperties', 'ValidateMigrationInput.SqlServer.AzureSqlDbMI': 'ValidateMigrationInputSqlServerSqlMITaskProperties', 'ValidateMigrationInput.SqlServer.SqlDb.Sync': 'ValidateMigrationInputSqlServerSqlDbSyncTaskProperties', 'Migrate.Oracle.Sql.Sync': 'MigrateOracleAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.PostgreSql.AzureDbForPostgreSql.Sync': 'MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties', 'Migrate.MySql.AzureDbForMySql.Sync': 'MigrateMySqlAzureDbForMySqlSyncTaskProperties', 'Migrate.SqlServer.AzureSqlDb.Sync': 'MigrateSqlServerSqlDbSyncTaskProperties', 'Migrate.SqlServer.SqlDb': 'MigrateSqlServerSqlDbTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI.Sync.LRS': 'MigrateSqlServerSqlMISyncTaskProperties', 'Migrate.SqlServer.AzureSqlDbMI': 'MigrateSqlServerSqlMITaskProperties', 'Migrate.MongoDb': 'MigrateMongoDbTaskProperties', 'ConnectToTarget.AzureDbForMySql': 'ConnectToTargetAzureDbForMySqlTaskProperties', 'ConnectToTarget.AzureSqlDbMI.Sync.LRS': 'ConnectToTargetSqlMISyncTaskProperties', 'ConnectToTarget.AzureSqlDbMI': 'ConnectToTargetSqlMITaskProperties', 'GetUserTables.AzureSqlDb.Sync': 'GetUserTablesSqlSyncTaskProperties', 'GetUserTables.Sql': 'GetUserTablesSqlTaskProperties', 'ConnectToTarget.Oracle.AzureDbForPostgreSql.Sync': 'ConnectToTargetOracleAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.AzureDbForPostgreSql.Sync': 'ConnectToTargetAzureDbForPostgreSqlSyncTaskProperties', 'ConnectToTarget.SqlDb.Sync': 'ConnectToTargetSqlSqlDbSyncTaskProperties', 'ConnectToTarget.SqlDb': 'ConnectToTargetSqlDbTaskProperties', 'ConnectToSource.Oracle.Sync': 'ConnectToSourceOracleSyncTaskProperties', 'ConnectToSource.PostgreSql.Sync': 'ConnectToSourcePostgreSqlSyncTaskProperties', 'ConnectToSource.SqlServer.Sync': 'ConnectToSourceSqlServerSyncTaskProperties', 'ConnectToSource.SqlServer': 'ConnectToSourceSqlServerTaskProperties', 'Connect.MongoDb': 'ConnectToMongoDbTaskProperties', 'ConnectToSource.MySql': 'ConnectToSourceMySqlTaskProperties', 'MigrateSchemaSqlServerSqlDb': 'MigrateSchemaSqlServerSqlDbTaskProperties', 'Service.Check.OCI': 'CheckOCIDriverTaskProperties', 'Service.Upload.OCI': 'UploadOCIDriverTaskProperties', 'Service.Install.OCI': 'InstallOCIDriverTaskProperties'}
     }
 
     def __init__(self, *, client_data=None, **kwargs) -> None:
