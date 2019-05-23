@@ -23,16 +23,11 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import asyncio
-from collections.abc import AsyncIterator
-import functools
-import logging
-from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
-
-from . import AsyncHTTPPolicy
-from .redirect import RedirectPolicy
+from typing import Any, Callable, Optional
 
 from azure.core.exceptions import TooManyRedirectsError
+from . import AsyncHTTPPolicy
+from .redirect import RedirectPolicy
 
 
 class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):
