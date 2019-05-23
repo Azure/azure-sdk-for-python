@@ -5,30 +5,23 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.3
-          msrest_azure/0.4.2 subscriptionclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.18362-SP0) msrest/0.6.4 msrest_azure/0.6.0
+          subscriptionclient/2.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [06876d2c-709a-11e6-b0fb-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions?api-version=2016-06-01
+    uri: https://management.azure.com/subscriptions?api-version=2018-06-01
   response:
-    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","subscriptionId":"00000000-0000-0000-0000-000000000000","displayName":"3-Month
-        Free Trial","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Public_2014-09-01","quotaId":"PayAsYouGo_2014-09-01"},"authorizationSource":"Legacy"}]}'}
+    body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","displayName":"node","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"},"authorizationSource":"RoleBased"}],"count":{"type":"Total","value":1}}'}
     headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 01 Sep 2016 23:15:51 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Transfer-Encoding: [chunked]
-      Vary: [Accept-Encoding]
-      content-length: ['313']
-      x-ms-correlation-request-id: [d611a503-56c2-44ba-9570-254397828d7a]
-      x-ms-ratelimit-remaining-tenant-reads: ['14999']
-      x-ms-request-id: [d611a503-56c2-44ba-9570-254397828d7a]
-      x-ms-routing-request-id: ['WESTUS2:20160901T231551Z:d611a503-56c2-44ba-9570-254397828d7a']
+      cache-control: [no-cache]
+      content-length: ['409']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 23 May 2019 19:02:11 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -36,13 +29,11 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.3
-          msrest_azure/0.4.2 subscriptionclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.18362-SP0) msrest/0.6.4 msrest_azure/0.6.0
+          subscriptionclient/2.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [06a64aa8-709a-11e6-8659-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/locations?api-version=2016-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/locations?api-version=2018-06-01
   response:
     body: {string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/eastasia","name":"eastasia","displayName":"East
         Asia","longitude":"114.188","latitude":"22.267"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southeastasia","name":"southeastasia","displayName":"Southeast
@@ -64,22 +55,29 @@ interactions:
         India","longitude":"73.9197","latitude":"18.5822"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westindia","name":"westindia","displayName":"West
         India","longitude":"72.868","latitude":"19.088"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/canadacentral","name":"canadacentral","displayName":"Canada
         Central","longitude":"-79.383","latitude":"43.653"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/canadaeast","name":"canadaeast","displayName":"Canada
-        East","longitude":"-71.217","latitude":"46.817"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westcentralus","name":"westcentralus","displayName":"West
+        East","longitude":"-71.217","latitude":"46.817"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/uksouth","name":"uksouth","displayName":"UK
+        South","longitude":"-0.799","latitude":"50.941"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/ukwest","name":"ukwest","displayName":"UK
+        West","longitude":"-3.084","latitude":"53.427"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westcentralus","name":"westcentralus","displayName":"West
         Central US","longitude":"-110.234","latitude":"40.890"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/westus2","name":"westus2","displayName":"West
-        US 2","longitude":"-119.852","latitude":"47.233"}]}'}
+        US 2","longitude":"-119.852","latitude":"47.233"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/koreacentral","name":"koreacentral","displayName":"Korea
+        Central","longitude":"126.9780","latitude":"37.5665"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/koreasouth","name":"koreasouth","displayName":"Korea
+        South","longitude":"129.0756","latitude":"35.1796"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/francecentral","name":"francecentral","displayName":"France
+        Central","longitude":"2.3730","latitude":"46.3772"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/francesouth","name":"francesouth","displayName":"France
+        South","longitude":"2.1972","latitude":"43.8345"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/australiacentral","name":"australiacentral","displayName":"Australia
+        Central","longitude":"149.1244","latitude":"-35.3075"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/australiacentral2","name":"australiacentral2","displayName":"Australia
+        Central 2","longitude":"149.1244","latitude":"-35.3075"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southafricanorth","name":"southafricanorth","displayName":"South
+        Africa North","longitude":"28.218370","latitude":"-25.731340"},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/locations/southafricawest","name":"southafricawest","displayName":"South
+        Africa West","longitude":"18.843266","latitude":"-34.075691"}]}'}
     headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 01 Sep 2016 23:15:51 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Vary: [Accept-Encoding]
-      content-length: ['3848']
-      x-ms-correlation-request-id: [8af3634e-2c68-475f-b32d-a6cc0b1da146]
-      x-ms-ratelimit-remaining-subscription-reads: ['14999']
-      x-ms-request-id: [8af3634e-2c68-475f-b32d-a6cc0b1da146]
-      x-ms-routing-request-id: ['WESTUS2:20160901T231551Z:8af3634e-2c68-475f-b32d-a6cc0b1da146']
+      cache-control: [no-cache]
+      content-length: ['5660']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 23 May 2019 19:02:12 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 - request:
     body: null
@@ -87,28 +85,22 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.5.1 (Windows-10-10.0.14393-SP0) requests/2.11.0 msrest/0.4.3
-          msrest_azure/0.4.2 subscriptionclient/0.30.0rc6 Azure-SDK-For-Python]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.18362-SP0) msrest/0.6.4 msrest_azure/0.6.0
+          subscriptionclient/2.2.0 Azure-SDK-For-Python]
       accept-language: [en-US]
-      x-ms-client-request-id: [06b6b18a-709a-11e6-8186-ecb1d756380e]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000?api-version=2016-06-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000?api-version=2018-06-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","subscriptionId":"00000000-0000-0000-0000-000000000000","displayName":"3-Month
-        Free Trial","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Public_2014-09-01","quotaId":"PayAsYouGo_2014-09-01"},"authorizationSource":"Legacy"}'}
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000","subscriptionId":"00000000-0000-0000-0000-000000000000","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47","displayName":"node","state":"Enabled","subscriptionPolicies":{"locationPlacementId":"Internal_2014-09-01","quotaId":"Internal_2014-09-01","spendingLimit":"Off"},"authorizationSource":"RoleBased"}'}
     headers:
-      Cache-Control: [no-cache]
-      Content-Type: [application/json; charset=utf-8]
-      Date: ['Thu, 01 Sep 2016 23:15:51 GMT']
-      Expires: ['-1']
-      Pragma: [no-cache]
-      Strict-Transport-Security: [max-age=31536000; includeSubDomains]
-      Vary: [Accept-Encoding]
-      content-length: ['301']
-      x-ms-correlation-request-id: [6c708fa3-fff5-4155-8e99-aacabf571463]
-      x-ms-ratelimit-remaining-subscription-reads: ['14999']
-      x-ms-request-id: [6c708fa3-fff5-4155-8e99-aacabf571463]
-      x-ms-routing-request-id: ['WESTUS2:20160901T231551Z:6c708fa3-fff5-4155-8e99-aacabf571463']
+      cache-control: [no-cache]
+      content-length: ['362']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 23 May 2019 19:02:11 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
     status: {code: 200, message: OK}
 version: 1
