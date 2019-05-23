@@ -133,7 +133,7 @@ BlobClient.upload_blob(
     if_none_match=None,
     timeout=None,
     premium_page_blob_tier=None,  # Page only
-    sequence_number=None  # Page only
+    sequence_number=None,  # Page only
     maxsize_condition=None,  # Append only
     appendpos_condition=None)  # Append only
 
