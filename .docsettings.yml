@@ -42,7 +42,7 @@ known_content_issues:
   - ['sdk/eventgrid/azure-eventgrid/README.rst', '#4554']
   - ['azure-graphrbac/README.rst', '#4554']
   - ['sdk/keyvault/azure-keyvault/README.rst', '#4554']
-  - ['sdk/loganalytics/azure-loganalytics/README.rst', '#4554']
+  - ['sdk/operationalinsights/azure-loganalytics/README.rst', '#4554']
   - ['azure-servicefabric/README.rst', '#4554']
   - ['azure-servicemanagement-legacy/README.rst', '#4554']
   - ['azure-cognitiveservices-anomalydetector/README.rst', '#4554']
