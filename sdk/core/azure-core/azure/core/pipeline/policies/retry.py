@@ -246,22 +246,22 @@ class RetryPolicy(HTTPPolicy):
             context['history'] = retry_settings['history']
 
     def send(self, request):
-        retries_remaining = True
+        retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)
-        while retries_remaining:
+        while retry_active:
             try:
                 response = self.next.send(request)
                 if self.is_retry(retry_settings, response):
-                    retries_remaining = self.increment(retry_settings, response=response)
-                    if retries_remaining:
+                    retry_active = self.increment(retry_settings, response=response)
+                    if retry_active:
                         self.sleep(retry_settings, request.context.transport, response=response)
                         continue
                 break
             except AzureError as err:
                 if self._is_method_retryable(retry_settings, request.http_request):
-                    retries_remaining = self.increment(retry_settings, response=request, error=err)
-                    if retries_remaining:
+                    retry_active = self.increment(retry_settings, response=request, error=err)
+                    if retry_active:
                         self.sleep(retry_settings, request.context.transport)
                         continue
                 raise err

@@ -1,49 +1,41 @@
-# --------------------------------------------------------------------------
-#
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-#
-# The MIT License (MIT)
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the ""Software""), to
-# deal in the Software without restriction, including without limitation the
-# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-# sell copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-# IN THE SOFTWARE.
-#
+# Licensed under the MIT License. See LICENSE.txt in the project root for
+# license information.
 # --------------------------------------------------------------------------
-"""
-This module is the requests implementation of Pipeline ABC
-"""
-from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
-import contextlib
-import logging
-import threading
-from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
-import warnings
+from . import HTTPPolicy
 
-import requests
-from requests.models import CONTENT_CHUNK_SIZE
+try:
+    from typing import TYPE_CHECKING  # pylint:disable=unused-import
+except ImportError:
+    TYPE_CHECKING = False
 
-from urllib3 import Retry  # Needs requests 2.16 at least to be safe
-
-from .base import HTTPPolicy
+if TYPE_CHECKING:
+    # pylint:disable=unused-import
+    from typing import Any, Dict, Iterable, Mapping
+    from azure.core.credentials import SupportsGetToken
+    from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
-_LOGGER = logging.getLogger(__name__)
+# pylint:disable=too-few-public-methods
+class _BearerTokenCredentialPolicyBase(object):
+    def __init__(self, credential, scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (SupportsGetToken, Iterable[str], Mapping[str, Any]) -> None
+        super(_BearerTokenCredentialPolicyBase, self).__init__()
+        self._scopes = scopes
+        self._credential = credential
+
+    @staticmethod
+    def _update_headers(headers, token):
+        # type: (Dict[str, str], str) -> None
+        headers["Authorization"] = "Bearer {}".format(token)
 
 
-class CredentialsPolicy(HTTPPolicy):
-    # TODO: This is deprecated: Need to remove
-    pass
+class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
+    """Adds a bearer token Authorization header to requests."""
+
+    def send(self, request):
+        # type: (PipelineRequest) -> PipelineResponse
+        token = self._credential.get_token(self._scopes)
+        self._update_headers(request.http_request.headers, token)
+        return self.next.send(request)

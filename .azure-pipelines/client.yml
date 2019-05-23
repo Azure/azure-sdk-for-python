@@ -1,5 +1,6 @@
 # Variables:
 #  'BuildTargetingString' comma separated glob strings selecting the packages that should be built. EG: "azure-keyvault,azure-mgmt-batch" or "azure-*"
+#  'CandidateForRelease' Boolean indicating whether or not a release should be automatically queued after successful build.
 #  'codecov-python-repository-token' Is the codecov.io repository token.
 
 trigger:
@@ -7,6 +8,7 @@ trigger:
 
 variables:
   PythonVersion: '3.6'
+  ReleaseTag: 'RELEASE_CANDIDATE'
 
 jobs:
   - job: 'Build'
@@ -33,6 +35,10 @@ jobs:
       - script: |
           twine check $(Build.ArtifactStagingDirectory)/*
         displayName: 'Verify Readme'
+
+      - script: 'echo "##vso[build.addbuildtag]$(ReleaseTag)"'
+        displayName: 'Tag The Build'
+        condition: eq(variables['CandidateForRelease'], True)
 
       - task: PublishBuildArtifacts@1
         condition: succeededOrFailed()
@@ -123,14 +129,17 @@ jobs:
       - script: |
           coverage xml
         displayName: 'Generate Coverage XML'
+        continueOnError: true
 
       - script: |
           codecov -t $(codecov-python-repository-token)
         displayName: 'Publish Code Cov'
         condition: ne(variables['codecov-python-repository-token'], '')
+        continueOnError: true
 
       - task: PublishCodeCoverageResults@1
         displayName: 'Publish Code Coverage to DevOps'
+        continueOnError: true
         inputs:
           codeCoverageTool: Cobertura
           summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
