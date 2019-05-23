@@ -12,7 +12,6 @@
 from .resource_skus_operations import ResourceSkusOperations
 from .services_operations import ServicesOperations
 from .tasks_operations import TasksOperations
-from .service_tasks_operations import ServiceTasksOperations
 from .projects_operations import ProjectsOperations
 from .usages_operations import UsagesOperations
 from .operations import Operations
@@ -22,7 +21,6 @@ __all__ = [
     'ResourceSkusOperations',
     'ServicesOperations',
     'TasksOperations',
-    'ServiceTasksOperations',
     'ProjectsOperations',
     'UsagesOperations',
     'Operations',
