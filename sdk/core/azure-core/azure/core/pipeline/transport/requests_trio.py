@@ -23,16 +23,19 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
-import urllib3
 from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
+import trio
+import urllib3
 
 import requests
-from requests.models import CONTENT_CHUNK_SIZE
 
+from azure.core.exceptions import (
+    ServiceRequestError,
+    ServiceResponseError
+)
 from .base import HttpRequest
 from .base_async import (
     AsyncHttpTransport,
@@ -40,17 +43,9 @@ from .base_async import (
     _ResponseStopIteration,
     _iterate_response_content)
 from .requests_basic import RequestsTransport, RequestsTransportResponse
-from azure.core.exceptions import (
-    ServiceRequestError,
-    ServiceResponseError,
-    raise_with_traceback
-)
 
 
 _LOGGER = logging.getLogger(__name__)
-
-
-import trio
 
 
 class TrioStreamDownloadGenerator(AsyncIterator):
@@ -65,21 +60,29 @@ class TrioStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
-        try:
-            chunk = await trio.run_sync_in_worker_thread(
-                _iterate_response_content,
-                self.iter_content_func,
-            )
-            if not chunk:
-                raise _ResponseStopIteration()
-            return chunk
-        except _ResponseStopIteration:
-            self.response.close()
-            raise StopAsyncIteration()
-        except Exception as err:
-            _LOGGER.warning("Unable to stream download: %s", err)
-            self.response.close()
-            raise
+        retry_active = True
+        retry_total = 3
+        while retry_active:
+            try:
+                chunk = await trio.run_sync_in_worker_thread(
+                    _iterate_response_content,
+                    self.iter_content_func,
+                )
+                if not chunk:
+                    raise _ResponseStopIteration()
+                return chunk
+            except _ResponseStopIteration:
+                self.response.close()
+                raise StopAsyncIteration()
+            except ServiceResponseError:
+                retry_total -= 1
+                if retry_total <= 0:
+                    retry_active = False
+                continue
+            except Exception as err:
+                _LOGGER.warning("Unable to stream download: %s", err)
+                self.response.close()
+                raise
 
 class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):
 

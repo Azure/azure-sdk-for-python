@@ -24,10 +24,9 @@
 #
 # --------------------------------------------------------------------------
 import threading
-import time
 import uuid
 try:
-    from urlparse import urlparse
+    from urlparse import urlparse # pylint: disable=unused-import
 except ImportError:
     from urllib.parse import urlparse
 
@@ -35,7 +34,6 @@ from typing import Any, Callable, Union, List, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     import requests
-    from .pipeline import HttpResponse  # pylint: disable=unused-import
     from msrest.serialization import Model # pylint: disable=unused-import
 
 class PollingMethod(object):
@@ -77,7 +75,6 @@ class NoPolling(PollingMethod):
         # type: () -> None
         """Empty run, no polling.
         """
-        pass
 
     def status(self):
         # type: () -> str
@@ -100,12 +97,12 @@ class NoPolling(PollingMethod):
 
 class LROPoller(object):
     """Poller for long running operations.
-
     :param client: A pipeline service client
     :type client: azure.core.pipeline.PipelineClient
     :param initial_response: The initial call response
     :type initial_response: azure.core.pipeline.HttpResponse
-    :param deserialization_callback: A callback that takes a Response and return a deserialized object. If a subclass of Model is given, this passes "deserialize" as callback.
+    :param deserialization_callback: A callback that takes a Response and return a deserialized object.
+                                     If a subclass of Model is given, this passes "deserialize" as callback.
     :type deserialization_callback: callable or msrest.serialization.Model
     :param polling_method: The polling strategy to adopt
     :type polling_method: msrest.polling.PollingMethod
@@ -113,12 +110,12 @@ class LROPoller(object):
 
     def __init__(self, client, initial_response, deserialization_callback, polling_method):
         # type: (Any, HttpResponse, Union[Model, Callable[[requests.Response], Model]], PollingMethod) -> None
-        self._client = client 
+        self._client = client
         self._response = initial_response
         self._callbacks = []  # type: List[Callable]
         self._polling_method = polling_method
 
-        # This implicit test avoids bringing in an explicit dependency on Model directly 
+        # This implicit test avoids bringing in an explicit dependency on Model directly
         try:
             deserialization_callback = deserialization_callback.deserialize
         except AttributeError:
@@ -142,13 +139,12 @@ class LROPoller(object):
     def _start(self):
         """Start the long running operation.
         On completion, runs any callbacks.
-
         :param callable update_cmd: The API reuqest to check the status of
          the operation.
         """
         try:
             self._polling_method.run()
-        except Exception as err:
+        except Exception as err: #pylint: disable=broad-except
             self._exception = err
 
         finally:
@@ -163,7 +159,6 @@ class LROPoller(object):
     def status(self):
         # type: () -> str
         """Returns the current status string.
-
         :returns: The current status string
         :rtype: str
         """
@@ -173,7 +168,6 @@ class LROPoller(object):
         # type: (Optional[int]) -> Model
         """Return the result of the long running operation, or
         the result available after the specified timeout.
-
         :returns: The deserialized resource of the long running operation,
          if one is available.
         :raises CloudError: Server problem with the query.
@@ -186,7 +180,6 @@ class LROPoller(object):
         """Wait on the long running operation for a specified length
         of time. You can check if this call as ended with timeout with the
         "done()" method.
-
         :param int timeout: Period of time to wait for the long running
          operation to complete (in seconds).
         :raises CloudError: Server problem with the query.
@@ -203,7 +196,6 @@ class LROPoller(object):
     def done(self):
         # type: () -> bool
         """Check status of the long running operation.
-
         :returns: 'True' if the process has completed, else 'False'.
         """
         return self._thread is None or not self._thread.is_alive()
@@ -212,7 +204,6 @@ class LROPoller(object):
         # type: (Callable) -> None
         """Add callback function to be run once the long running operation
         has completed - regardless of the status of the operation.
-
         :param callable func: Callback function that takes at least one
          argument, a completed LongRunningOperation.
         """
@@ -225,7 +216,6 @@ class LROPoller(object):
     def remove_done_callback(self, func):
         # type: (Callable) -> None
         """Remove a callback from the long running operation.
-
         :param callable func: The function to be removed from the callbacks.
         :raises: ValueError if the long running operation has already
          completed.

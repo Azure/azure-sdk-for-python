@@ -24,10 +24,17 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
+import logging
 import requests
-import threading
 import urllib3
 from urllib3.util.retry import Retry
+
+
+from azure.core.configuration import Configuration
+from azure.core.exceptions import (
+    ServiceRequestError,
+    ServiceResponseError
+)
 
 from .base import (
     HttpTransport,
@@ -35,12 +42,8 @@ from .base import (
     _HttpResponseBase
 )
 
-from azure.core.configuration import Configuration
-from azure.core.exceptions import (
-    ServiceRequestError,
-    ServiceResponseError,
-    raise_with_traceback
-)
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
@@ -78,19 +81,26 @@ class StreamDownloadGenerator(object):
         return self
 
     def __next__(self):
-        try:
-            chunk = next(self.iter_content_func)
-            if not chunk:
+        retry_active = True
+        retry_total = 3
+        while retry_active:
+            try:
+                chunk = next(self.iter_content_func)
+                if not chunk:
+                    raise StopIteration()
+                return chunk
+            except StopIteration:
+                self.response.close()
                 raise StopIteration()
-            return chunk
-        except StopIteration:
-            self.response.close()
-            raise StopIteration()
-        except Exception as err:
-            _LOGGER.warning("Unable to stream download: %s", err)
-            self.response.close()
-            raise
-            
+            except ServiceResponseError:
+                retry_total -= 1
+                if retry_total <= 0:
+                    retry_active = False
+                continue
+            except Exception as err:
+                _LOGGER.warning("Unable to stream download: %s", err)
+                self.response.close()
+                raise
     next = __next__  # Python 2 compatibility.
 
 
