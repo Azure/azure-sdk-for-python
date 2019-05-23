@@ -80,7 +80,7 @@ class KeyClient:
         the key is returned
         :type version
         :returns: Key
-        :rtype: ~azure.keyvault.keys._models.Key
+        :rtype: ~azure.security.keyvault.keys._models.Key
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
         
         Example:
@@ -157,7 +157,7 @@ class KeyClient:
         pairs.
         :type tags: Dict[str, str]
         :returns: The created key
-        :rtype: ~azure.keyvault.keys._models.Key
+        :rtype: ~azure.security.keyvault.keys._models.Key
         
         Example:
         .. literalinclude:: ../tests/test_examples_keys_async.py
@@ -211,7 +211,7 @@ class KeyClient:
         pairs.
         :type tags: Dict[str, str]
         :returns: The created key
-        :rtype: ~azure.keyvault.keys._models.Key
+        :rtype: ~azure.security.keyvault.keys._models.Key
         
         Example:
         .. literalinclude:: ../tests/test_examples_keys_async.py
@@ -275,7 +275,7 @@ class KeyClient:
         pairs.
         :type tags: Dict[str, str]
         :returns: The created key
-        :rtype: ~azure.keyvault.keys._models.Key
+        :rtype: ~azure.security.keyvault.keys._models.Key
 
         Example:
         .. literalinclude:: ../tests/test_examples_keys_async.py
@@ -364,7 +364,7 @@ class KeyClient:
         
         :returns: An iterator like instance of Key
         :rtype:
-        typing.AsyncIterable[~azure.keyvault.keys._models.KeyBase]
+        typing.AsyncIterable[~azure.security.keyvault.keys._models.KeyBase]
         
         Example:
         .. literalinclude:: ../tests/test_examples_keys_async.py
@@ -388,7 +388,7 @@ class KeyClient:
         :type name
         :returns: An iterator like instance of Key
         :rtype:
-        typing.AsyncIterable[~azure.keyvault.keys._models.KeyBase]
+        typing.AsyncIterable[~azure.security.keyvault.keys._models.KeyBase]
         
         Example:
         .. literalinclude:: ../tests/test_examples_keys_async.py
@@ -460,8 +460,8 @@ class KeyClient:
         :param backup: The raw bytes of the key backup
         :type backup: bytes
         :returns: The restored key
-        :rtype: ~azure.keyvault.keys._models.Key
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
+        :rtype: ~azure.security.keyvault.keys._models.Key
+        :raises: ~azure.core.exceptions.ResourceExistsError if the client failed to retrieve the key
         
         Example:
         .. literalinclude:: ../tests/test_examples_keys_async.py
@@ -486,7 +486,7 @@ class KeyClient:
         :param name: The name of the key to delete.
         :type name
         :returns: The deleted key
-        :rtype: ~azure.keyvault.keys._models.DeletedKey
+        :rtype: ~azure.security.keyvault.keys._models.DeletedKey
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to delete the key
         
         Example:
@@ -511,7 +511,7 @@ class KeyClient:
         :param name: The name of the key.
         :type name
         :returns: The deleted key
-        :rtype: ~azure.keyvault.keys._models.DeletedKey
+        :rtype: ~azure.security.keyvault.keys._models.DeletedKey
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
         
         Example:
@@ -538,7 +538,7 @@ class KeyClient:
         
         :returns: An iterator like instance of DeletedKey
         :rtype:
-        typing.AsyncIterable[~azure.keyvault.keys._models.DeletedKey]
+        typing.AsyncIterable[~azure.security.keyvault.keys._models.DeletedKey]
         
         Example:
         .. literalinclude:: ../tests/test_examples_keys_async.py
@@ -589,7 +589,7 @@ class KeyClient:
         :param name: The name of the deleted key.
         :type name: str
         :returns: The recovered deleted key
-        :rtype: ~azure.keyvault.keys._models.Key
+        :rtype: ~azure.security.keyvault.keys._models.Key
         
         Example:
         .. literalinclude:: ../tests/test_examples_keys_async.py

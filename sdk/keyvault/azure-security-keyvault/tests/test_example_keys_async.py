@@ -232,7 +232,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(restored_key.version)
 
             # [END restore_key]
-        except ResourceNotFoundError:
+        except ResourceExistsError:
             pass
 
     @ResourceGroupPreparer()
