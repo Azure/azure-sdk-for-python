@@ -10,6 +10,10 @@ Release History
 
 - tenant_id is now returned part of the subscription information
 
+**Features on Locks**
+
+- Add list_by_scope
+
 2.1.0 (2019-02-01)
 ++++++++++++++++++
 
