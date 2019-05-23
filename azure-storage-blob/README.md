@@ -44,7 +44,7 @@ BlobServiceClient.get_blob_client(container, blob, blob_type=BlobType.BlockBlob)
 ## ContainerClient API
 ```python
 azure.storage.blob.ContainerClient(
-    uri, container=None, credentials=None, configuration=None)
+    url, container=None, credentials=None, configuration=None)
 
 # Instantiate from a connection string
 azure.storage.blob.ContainerClient.from_connection_string(connection_str, container, configuration=None)
@@ -108,7 +108,7 @@ ContainerClient.get_blob_client(blob, blob_type=BlobType.BlockBlob, snapshot=Non
 ## BlobClient API
 ```python
 azure.storage.blob.BlobClient(
-    uri, container=None, blob=None, snapshot=None, blob_type=BlobType.BlockBlob, credentials=None configuration=None)
+    url, container=None, blob=None, snapshot=None, blob_type=BlobType.BlockBlob, credentials=None configuration=None)
 
 # Instantiate from a connection string
 azure.storage.blob.BlobClient.from_connection_string(connection_str, container, blob, configuration=None)
@@ -175,7 +175,7 @@ BlobClient.create_snapshot(
 
 # Returns a CopyStatusPoller object to wait on the operation, check operation status and abort
 BlobClient.copy_blob_from_source(
-    copy_source,
+    source_url,
     metadata=None,
     source_if_modified_since=None,
     source_if_unmodified_since=None,
