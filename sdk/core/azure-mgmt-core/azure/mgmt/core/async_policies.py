@@ -56,7 +56,7 @@ class AsyncARMAutoResourceProviderRegistrationPolicy(
                     request, url_prefix, rp_name
                 )
                 if not register_rp_status:
-                    return
+                    return response
                 # Change the 'x-ms-client-request-id' otherwise the Azure endpoint
                 # just returns the same 409 payload without looking at the actual query
                 if "x-ms-client-request-id" in http_request.headers:

@@ -50,7 +50,7 @@ class ARMAutoResourceProviderRegistrationPolicy(HTTPPolicy):
             if rp_name:
                 url_prefix = self._extract_subscription_url(http_request.url)
                 if not self._register_rp(request, url_prefix, rp_name):
-                    return
+                    return response
                 # Change the 'x-ms-client-request-id' otherwise the Azure endpoint
                 # just returns the same 409 payload without looking at the actual query
                 if "x-ms-client-request-id" in http_request.headers:
