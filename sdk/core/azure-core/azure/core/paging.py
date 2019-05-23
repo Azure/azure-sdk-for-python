@@ -33,6 +33,7 @@ except ImportError:
 from typing import Dict, Any, List, Callable, Optional, TYPE_CHECKING  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
+    from .pipeline.transport.base import HttpResponse
     from msrest.serialization import Deserializer, Model  # pylint: disable=unused-import
 
 if sys.version_info >= (3, 5, 2):
