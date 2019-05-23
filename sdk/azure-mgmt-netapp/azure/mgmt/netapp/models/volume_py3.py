@@ -35,9 +35,9 @@ class Volume(Model):
     :param creation_token: Required. Creation Token or File Path. A unique
      file path for the volume. Used when creating mount targets
     :type creation_token: str
-    :param service_level: Required. serviceLevel. The service level of the
-     file system. Possible values include: 'Standard', 'Premium', 'Ultra'.
-     Default value: "Premium" .
+    :param service_level: serviceLevel. The service level of the file system.
+     Possible values include: 'Standard', 'Premium', 'Ultra'. Default value:
+     "Premium" .
     :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :param usage_threshold: Required. usageThreshold. Maximum storage quota
      allowed for a file system in bytes. This is a soft quota used for alerting
@@ -70,7 +70,6 @@ class Volume(Model):
         'type': {'readonly': True},
         'file_system_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'creation_token': {'required': True},
-        'service_level': {'required': True},
         'usage_threshold': {'required': True, 'maximum': 109951162777600, 'minimum': 107374182400},
         'provisioning_state': {'readonly': True},
         'snapshot_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},

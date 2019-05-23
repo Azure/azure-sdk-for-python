@@ -32,9 +32,9 @@ class CapacityPool(Model):
     :type tags: object
     :ivar pool_id: poolId. UUID v4 used to identify the Pool
     :vartype pool_id: str
-    :param size: Required. size. Provisioned size of the pool (in bytes).
-     Allowed values are in 4TiB chunks (value must be multiply of
-     4398046511104). Default value: 4398046511104 .
+    :param size: size. Provisioned size of the pool (in bytes). Allowed values
+     are in 4TiB chunks (value must be multiply of 4398046511104). Default
+     value: 4398046511104 .
     :type size: long
     :param service_level: Required. serviceLevel. The service level of the
      file system. Possible values include: 'Standard', 'Premium', 'Ultra'.
@@ -50,7 +50,7 @@ class CapacityPool(Model):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'pool_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
-        'size': {'required': True, 'maximum': 549755813888000, 'minimum': 4398046511104},
+        'size': {'maximum': 549755813888000, 'minimum': 4398046511104},
         'service_level': {'required': True},
         'provisioning_state': {'readonly': True},
     }
