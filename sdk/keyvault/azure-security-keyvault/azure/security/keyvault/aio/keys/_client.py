@@ -158,7 +158,6 @@ class KeyClient:
         :type tags: Dict[str, str]
         :returns: The created key
         :rtype: ~azure.security.keyvault.keys._models.Key
-
         Example:
             .. literalinclude:: ../tests/test_examples_keys_async.py
                 :start-after: [START create_key]
@@ -210,7 +209,6 @@ class KeyClient:
         :type tags: Dict[str, str]
         :returns: The created key
         :rtype: ~azure.security.keyvault.keys._models.Key
-
         Example:
             .. literalinclude:: ../tests/test_examples_keys_async.py
                 :start-after: [START create_rsa_key]
@@ -372,7 +370,6 @@ class KeyClient:
         :returns: An iterator like instance of KeyBase
         :rtype:
         typing.AsyncIterable[~azure.security.keyvault.keys._models.KeyBase]
-
         Example:
             .. literalinclude:: ../tests/test_examples_keys_async.py
                 :start-after: [START list_keys]
@@ -396,7 +393,6 @@ class KeyClient:
         :returns: An iterator like instance of KeyBase
         :rtype:
         typing.AsyncIterable[~azure.security.keyvault.keys._models.KeyBase]
-
         Example:
             .. literalinclude:: ../tests/test_examples_keys_async.py
                 :start-after: [START list_key_versions]
@@ -466,7 +462,6 @@ class KeyClient:
         :returns: The restored key
         :rtype: ~azure.security.keyvault.keys._models.Key
         :raises: ~azure.core.exceptions.ResourceExistsError if the client failed to retrieve the key
-
         Example:
             .. literalinclude:: ../tests/test_examples_keys_async.py
                 :start-after: [START restore_key]
@@ -541,7 +536,6 @@ class KeyClient:
         :returns: An iterator like instance of DeletedKey
         :rtype:
         typing.AsyncIterable[~azure.security.keyvault.keys._models.DeletedKey]
-
         Example:
             .. literalinclude:: ../tests/test_examples_keys_async.py
                 :start-after: [START list_deleted_keys]
@@ -589,7 +583,6 @@ class KeyClient:
         :type name: str
         :returns: The recovered deleted key
         :rtype: ~azure.security.keyvault.keys._models.Key
-
         Example:
             .. literalinclude:: ../tests/test_examples_keys_async.py
                 :start-after: [START recover_deleted_key]
