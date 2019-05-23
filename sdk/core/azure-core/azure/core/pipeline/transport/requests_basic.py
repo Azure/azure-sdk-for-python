@@ -78,9 +78,9 @@ class StreamDownloadGenerator(object):
         return self
 
     def __next__(self):
-        retries_remaining = True
+        retry_active = True
         retry_total = 3
-        while retries_remaining:
+        while retry_active:
             try:
                 chunk = next(self.iter_content_func)
                 if not chunk:
@@ -92,7 +92,7 @@ class StreamDownloadGenerator(object):
             except ServiceResponseError:
                 retry_total -= 1
                 if retry_total <= 0:
-                    retries_remaining = False
+                    retry_active = False
                 continue
             except Exception as err:
                 _LOGGER.warning("Unable to stream download: %s", err)

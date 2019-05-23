@@ -65,9 +65,9 @@ class TrioStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
-        retries_remaining = True
+        retry_active = True
         retry_total = 3
-        while retries_remaining:
+        while retry_active:
             try:
                 chunk = await trio.run_sync_in_worker_thread(
                     _iterate_response_content,
@@ -82,7 +82,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
             except ServiceResponseError:
                 retry_total -= 1
                 if retry_total <= 0:
-                    retries_remaining = False
+                    retry_active = False
                 continue
             except Exception as err:
                 _LOGGER.warning("Unable to stream download: %s", err)
