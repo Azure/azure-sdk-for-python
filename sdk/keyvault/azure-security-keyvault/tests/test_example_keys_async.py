@@ -17,6 +17,7 @@ from test_case import KeyVaultTestCase
 from azure.security.keyvault.aio import VaultClient
 
 
+
 def await_prepared_test(test_fn):
     """Synchronous wrapper for async test methods. Used to avoid making changes
        upstream to AbstractPreparer (which doesn't await the functions it wraps)
