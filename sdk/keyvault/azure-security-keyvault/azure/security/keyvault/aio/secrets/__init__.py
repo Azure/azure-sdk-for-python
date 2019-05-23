@@ -3,8 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 from ._client import SecretClient
-from ._models import Secret, SecretAttributes, DeletedSecret
+from ...secrets._models import Secret, SecretAttributes, DeletedSecret
 
 __all__ = ["SecretClient", "SecretAttributes", "Secret", "DeletedSecret"]
