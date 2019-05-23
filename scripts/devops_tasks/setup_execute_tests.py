@@ -29,7 +29,7 @@ def prep_and_run_tests(targeted_packages, python_version, test_res):
     # if we are targeting a single package and that package is management plane, it is a possibility 
     # that no tests running is an acceptable situation
     # we explicitly handle this here.
-    if len(targeted_packages) == 1 and (len(filter (lambda x : x.contains('mgmt'), targeted_packages)) > 0):
+    if len(targeted_packages) == 1 and (len(filter (lambda x : 'mgmt' in x, targeted_packages)) > 0):
         ALLOWED_RETURN_CODES.add(5)
 
     print('Setup complete. Running pytest for {}'.format(targeted_packages))
