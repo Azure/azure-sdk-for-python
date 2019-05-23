@@ -558,7 +558,6 @@ class KeyClient:
         :returns: The raw bytes of the key backup.
         :rtype: bytes
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
-
         Example:
             .. literalinclude:: ../tests/test_examples_keys.py
                 :start-after: [START backup_key]
