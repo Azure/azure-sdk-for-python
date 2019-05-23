@@ -31,7 +31,7 @@ BlobServiceClient.get_service_properties(timeout=None)
 BlobServiceClient.set_service_properties(
     logging=None, hour_metrics=None, minute_metrics=None, cors=None, target_version=None, timeout=None, delete_retention_policy=None, static_website=None)
 
-# Returns a generator of container objects - with names, properties, etc
+# Returns a iterable generator of container objects - with names, properties, etc
 BlobServiceClient.list_container_properties(starts_with=None, include_metadata=False, timeout=None)
 
 # Returns a ContainerClient
@@ -137,7 +137,7 @@ BlobClient.upload_blob(
     maxsize_condition=None,  # Append only
     appendpos_condition=None)  # Append only
 
-# Returns a data generator (stream)
+# Returns an iterable data generator (stream)
 BlobClient.download_blob(
     offset=None, length=None, validate_content=False, lease=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)
 
