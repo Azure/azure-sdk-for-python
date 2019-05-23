@@ -72,7 +72,7 @@ class SubscriptionClient(SDKClient):
         super(SubscriptionClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2016-06-01'
+        self.api_version = '2018-06-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
