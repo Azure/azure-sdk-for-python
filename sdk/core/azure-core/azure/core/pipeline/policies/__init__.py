@@ -51,6 +51,8 @@ __all__ = [
     'CustomHookPolicy'
 ]
 
+#pylint: disable=unused-import
+
 try:
     from .base_async import AsyncHTTPPolicy
     from .credentials_async import AsyncBearerTokenCredentialPolicy
