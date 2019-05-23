@@ -61,7 +61,7 @@ class SubscriptionClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION='2016-06-01'
+    DEFAULT_API_VERSION='2018-06-01'
     _PROFILE_TAG = "azure.mgmt.resource.subscriptions.SubscriptionClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {

@@ -3,6 +3,13 @@
 Release History
 ===============
 
+2.2.0 (2019-05-23)
+++++++++++++++++++
+
+**Features on Subscriptions**
+
+- tenant_id is now returned part of the subscription information
+
 2.1.0 (2019-02-01)
 ++++++++++++++++++
 
