@@ -29,7 +29,7 @@ __version__ = "0.0.1"
 from .configuration import Configuration
 from .pipeline_client import PipelineClient
 from .pipeline.transport import HttpRequest
-from .exceptions import *
+from .exceptions import HttpResponseError
 
 
 __all__ = [
@@ -39,7 +39,7 @@ __all__ = [
 ]
 
 try:
-    from .pipeline_client_async import AsyncPipelineClient
+    from .pipeline_client_async import AsyncPipelineClient #pylint: disable=unused-import
     __all__.extend(["AsyncPipelineClient"])
 except (ImportError, SyntaxError): # Python <= 3.5
     pass
