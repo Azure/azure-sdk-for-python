@@ -30,6 +30,9 @@ class NatGateway(Resource):
     :type tags: dict[str, str]
     :param sku: The nat gateway SKU.
     :type sku: ~azure.mgmt.network.v2019_02_01.models.NatGatewaySku
+    :param zones: A list of availability zones denoting the zone in which Nat
+     Gateway should be deployed.
+    :type zones: list[str]
     :param idle_timeout_in_minutes: The idle timeout of the nat gateway.
     :type idle_timeout_in_minutes: int
     :param public_ip_addresses: An array of public ip addresses associated
@@ -67,6 +70,7 @@ class NatGateway(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'NatGatewaySku'},
+        'zones': {'key': 'zones', 'type': '[str]'},
         'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
         'public_ip_addresses': {'key': 'properties.publicIpAddresses', 'type': '[SubResource]'},
         'public_ip_prefixes': {'key': 'properties.publicIpPrefixes', 'type': '[SubResource]'},
@@ -79,6 +83,7 @@ class NatGateway(Resource):
     def __init__(self, **kwargs):
         super(NatGateway, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
+        self.zones = kwargs.get('zones', None)
         self.idle_timeout_in_minutes = kwargs.get('idle_timeout_in_minutes', None)
         self.public_ip_addresses = kwargs.get('public_ip_addresses', None)
         self.public_ip_prefixes = kwargs.get('public_ip_prefixes', None)

@@ -30,6 +30,9 @@ class NatGateway(Resource):
     :type tags: dict[str, str]
     :param sku: The nat gateway SKU.
     :type sku: ~azure.mgmt.network.v2019_02_01.models.NatGatewaySku
+    :param zones: A list of availability zones denoting the zone in which Nat
+     Gateway should be deployed.
+    :type zones: list[str]
     :param idle_timeout_in_minutes: The idle timeout of the nat gateway.
     :type idle_timeout_in_minutes: int
     :param public_ip_addresses: An array of public ip addresses associated
@@ -67,6 +70,7 @@ class NatGateway(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'NatGatewaySku'},
+        'zones': {'key': 'zones', 'type': '[str]'},
         'idle_timeout_in_minutes': {'key': 'properties.idleTimeoutInMinutes', 'type': 'int'},
         'public_ip_addresses': {'key': 'properties.publicIpAddresses', 'type': '[SubResource]'},
         'public_ip_prefixes': {'key': 'properties.publicIpPrefixes', 'type': '[SubResource]'},
@@ -76,9 +80,10 @@ class NatGateway(Resource):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, idle_timeout_in_minutes: int=None, public_ip_addresses=None, public_ip_prefixes=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, location: str=None, tags=None, sku=None, zones=None, idle_timeout_in_minutes: int=None, public_ip_addresses=None, public_ip_prefixes=None, resource_guid: str=None, provisioning_state: str=None, etag: str=None, **kwargs) -> None:
         super(NatGateway, self).__init__(id=id, location=location, tags=tags, **kwargs)
         self.sku = sku
+        self.zones = zones
         self.idle_timeout_in_minutes = idle_timeout_in_minutes
         self.public_ip_addresses = public_ip_addresses
         self.public_ip_prefixes = public_ip_prefixes
