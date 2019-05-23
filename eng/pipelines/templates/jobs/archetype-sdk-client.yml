@@ -166,42 +166,6 @@ jobs:
           codeCoverageTool: Cobertura
           summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
 
-  - job: Test_Alpha_Python
-    variables:
-    - template: ../variables/globals.yml
-
-    timeoutInMinutes: 90
-    
-    condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
-
-    dependsOn:
-      - 'Build'
-
-    pool:
-      vmImage: 'ubuntu-16.04'
-
-    steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python 3.7 For Build Tools'
-        inputs:
-          versionSpec: '3.7'
-
-      - script: |
-          sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
-          cd ~/
-          git clone https://github.com/python/cpython.git
-          cd cpython
-          mkdir debug
-          cd debug
-          ../configure --enable-optimizations --prefix=$HOME
-          make install
-          cd $(Build.SourcesDirectory)
-          PATH=/home/vsts/bin:$PATH
-          python3 -m ensurepip
-          python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(build_targeting_string)"
-        displayName: 'Setup - Run Filtered Tests "Nightly" Python'
-        continueOnError: true
-
   - job: Test_PyPy
     variables:
     - template: ../variables/globals.yml
@@ -211,7 +175,7 @@ jobs:
     condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
     
     dependsOn:
-      - 'Test_Alpha_Python'
+      - 'Build'
 
     pool:
       vmImage: 'ubuntu-16.04'
