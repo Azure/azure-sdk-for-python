@@ -142,7 +142,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         self._assert_key_attributes_equal(created_rsa_key, key)
 
         # get key without version
-        self._assert_key_attributes_equal(created_rsa_key, await client.get_key(created_rsa_key.name, ""))
+        self._assert_key_attributes_equal(created_rsa_key, await client.get_key(created_rsa_key.name))
 
         # update key with version
         if self.is_live:

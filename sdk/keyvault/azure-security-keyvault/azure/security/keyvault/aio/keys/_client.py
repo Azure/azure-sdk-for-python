@@ -7,7 +7,6 @@ from typing import Any, AsyncIterable, Mapping, Optional, Dict, List
 
 from azure.core.configuration import Configuration
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.core.pipeline.policies import UserAgentPolicy, AsyncRetryPolicy, AsyncRedirectPolicy
 from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.pipeline import AsyncPipeline
 
@@ -68,7 +67,7 @@ class KeyClient:
     def vault_url(self) -> str:
         return self._vault_url
 
-    async def get_key(self, name: str, version: str, **kwargs: Mapping[str, Any]) -> Key:
+    async def get_key(self, name: str, version: Optional[str] = None, **kwargs: Mapping[str, Any]) -> Key:
         """Gets the public part of a stored key.
         
         The get key operation is applicable to all key types. If the requested
@@ -92,6 +91,9 @@ class KeyClient:
         :dedent: 4
         :caption: Retrieves a key from the key vault
         """
+        if version is None:
+            version = ""
+
         bundle = await self._client.get_key(self.vault_url, name, version, error_map={404: ResourceNotFoundError})
         return Key._from_key_bundle(bundle)
 
