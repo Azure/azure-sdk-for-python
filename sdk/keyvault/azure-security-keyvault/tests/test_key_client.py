@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from .preparer import VaultClientPreparer
-from .test_case import KeyVaultTestCase
+from preparer import VaultClientPreparer
+from test_case import KeyVaultTestCase
 from azure.security.keyvault.keys import KeyClient
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 from time import sleep, time

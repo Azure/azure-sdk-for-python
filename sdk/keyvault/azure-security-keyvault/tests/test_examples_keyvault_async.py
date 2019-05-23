@@ -9,8 +9,8 @@ import asyncio
 import functools
 
 from devtools_testutils import ResourceGroupPreparer
-from .preparer import VaultClientPreparer
-from .test_case import KeyVaultTestCase
+from preparer import VaultClientPreparer
+from test_case import KeyVaultTestCase
 from azure.security.keyvault._generated.v7_0.models import KeyVaultErrorException
 from azure.security.keyvault.aio.vault_client import VaultClient
 

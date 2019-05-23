@@ -7,8 +7,8 @@ import time
 
 from azure.core.exceptions import HttpResponseError
 from devtools_testutils import ResourceGroupPreparer
-from .preparer import VaultClientPreparer
-from .test_case import KeyVaultTestCase
+from preparer import VaultClientPreparer
+from test_case import KeyVaultTestCase
 
 
 def create_vault_client():
