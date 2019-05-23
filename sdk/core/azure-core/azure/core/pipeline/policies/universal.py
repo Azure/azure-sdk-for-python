@@ -27,26 +27,22 @@
 This module is the requests implementation of Pipeline ABC
 """
 from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
-import contextlib
 import json
 import logging
 import os
 import platform
-import threading
-from typing import TYPE_CHECKING, cast, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 import xml.etree.ElementTree as ET
-import warnings
 import types
 import re
+from typing import cast, IO
 
 from azure.core import __version__  as azcore_version
-from .base import HTTPPolicy, SansIOHTTPPolicy
-from urllib3 import Retry  # Needs requests 2.16 at least to be safe
-
 from azure.core.exceptions import (
     DecodeError,
     raise_with_traceback
 )
+
+from .base import SansIOHTTPPolicy
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -55,7 +51,6 @@ _LOGGER = logging.getLogger(__name__)
 class HeadersPolicy(SansIOHTTPPolicy):
     """A simple policy that sends the given headers
     with the request.
-
     This will overwrite any headers already defined in the request.
     """
     def __init__(self, base_headers=None, **kwargs):
@@ -72,7 +67,7 @@ class HeadersPolicy(SansIOHTTPPolicy):
         """Add a header to the configuration to be applied to all requests."""
         self._headers[key] = value
 
-    def on_request(self, request):
+    def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
         request.http_request.headers.update(self.headers)
         additional_headers = request.context.options.pop('headers', {})
@@ -111,12 +106,11 @@ class UserAgentPolicy(SansIOHTTPPolicy):
     def add_user_agent(self, value):
         # type: (str) -> None
         """Add value to current user agent with a space.
-
         :param str value: value to add to user agent.
         """
         self._user_agent = "{} {}".format(self._user_agent, value)
 
-    def on_request(self, request):
+    def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
         options = request.context.options
@@ -134,13 +128,12 @@ class UserAgentPolicy(SansIOHTTPPolicy):
 
 class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
     """A policy that logs HTTP request and response to the DEBUG logger.
-
     This accepts both global configuration, and per-request level with "enable_http_logger"
     """
-    def __init__(self, logging_enable=False, **kwargs):
+    def __init__(self, logging_enable=False, **kwargs): # pylint: disable=unused-argument
         self.enable_http_logger = logging_enable
 
-    def on_request(self, request):
+    def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
         options = request.context.options
@@ -167,7 +160,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
-    def on_response(self, request, response):
+    def on_response(self, request, response, **kwargs):
         # type: (PipelineRequest, PipelineResponse, Any) -> None
         if response.context.pop("logging_enable", self.enable_http_logger):
             if not _LOGGER.isEnabledFor(logging.DEBUG):
@@ -213,11 +206,8 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
     def deserialize_from_text(cls, response, content_type=None):
         # type: (Optional[Union[AnyStr, IO]], Optional[str]) -> Any
         """Decode response data according to content-type.
-
         Accept a stream of data as well, but will be load at once in memory for now.
-
         If no content-type, will return the string version (not bytes, not stream)
-
         :param response: The HTTP response.
         :type response: ~azure.core.pipeline.transport.HttpResponse
         :param str content_type: The content type.
@@ -272,7 +262,6 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
     def deserialize_from_http_generics(cls, response):
         # type: (Optional[Union[AnyStr, IO]], Mapping) -> Any
         """Deserialize from HTTP response.
-
         Use bytes and headers to NOT use any requests/aiohttp or whatever
         specific implementation.
         Headers will tested for "content-type"
@@ -291,15 +280,12 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
         return cls.deserialize_from_text(response, content_type)
 
-    def on_response(self, request, response):
+    def on_response(self, request, response, **kwargs):
         # type: (PipelineRequest, PipelineResponse, Any) -> None
         """Extract data from the body of a REST response object.
-
         This will load the entire payload in memory.
-
         Will follow Content-Type to parse.
         We assume everything is UTF8 (BOM acceptable).
-
         :param raw_data: Data to be processed.
         :param content_type: How to parse if raw_data is a string/bytes.
         :raises JSONDecodeError: If JSON is requested and parsing is impossible.
@@ -318,4 +304,3 @@ class ProxyPolicy(SansIOHTTPPolicy):
     def __init__(self, proxies=None, **kwargs):
         self.proxies = proxies
         self.use_env_settings = kwargs.pop('proxies_use_env_settings', True)
-
