@@ -254,7 +254,7 @@ BlobClient.resize_blob(
 
 # Only works where type is PageBlob, otherwise raises TypeError
 # Returns blob-updated property dict (Etag and last modified)
-BlobClient.update_page(
+BlobClient.upload_page(
     page, start_range, end_range, lease=None, validate_content=False, if_sequence_number_lte=None, if_sequence_number_lt=None, if_sequence_number_eq=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)
 
 # Only works where type is PageBlob, otherwise raises TypeError
