@@ -8,7 +8,7 @@ azure.storage.blob.SharedKeyCredentials(account_name, account_key)
 
 ## BlobServiceClient API
 ```python
-azure.storage.blob.BlobServiceClient(uri, credentials=None, configuration=None)
+azure.storage.blob.BlobServiceClient(account_url, credentials=None, configuration=None)
 
 # Instantiate from a connection string
 azure.storage.blob.BlobServiceClient.from_connection_string(connection_str, configuration=None)
