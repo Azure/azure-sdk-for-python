@@ -277,7 +277,6 @@ class KeyClient:
     def delete_key(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> DeletedKey
         """Deletes a key of any type from storage in Azure Key Vault.
-
         The delete key operation cannot be used to remove individual versions
         of a key. This operation removes the cryptographic material associated
         with the key, which means the key is not usable for Sign/Verify,
@@ -303,11 +302,11 @@ class KeyClient:
     def get_key(self, name, version=None, **kwargs):
         # type: (str, Optional[str], Mapping[str, Any]) -> Key
         """Gets the public part of a stored key.
-
+        
         The get key operation is applicable to all key types. If the requested
         key is symmetric, then no key material is released in the response.
         This operation requires the keys/get permission.
-
+        
         :param name: The name of the key to get.
         :type name
         :param version: Retrieves a specific version of a key. If the version is None or an empty string,
@@ -333,7 +332,6 @@ class KeyClient:
     def get_deleted_key(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> DeletedKey
         """Gets the public part of a deleted key.
-
         The Get Deleted Key operation is applicable for soft-delete enabled
         vaults. While the operation can be invoked on any vault, it will return
         an error if invoked on a non soft-delete enabled vault. This operation
@@ -358,7 +356,6 @@ class KeyClient:
     def list_deleted_keys(self, **kwargs):
         # type: (Mapping[str, Any]) -> Generator[DeletedKey]
         """Lists the deleted keys in the specified vault.
-
         Retrieves a list of the keys in the Key Vault as JSON Web Key
         structures that contain the public part of a deleted key. This
         operation includes deletion-specific information. The Get Deleted Keys
@@ -386,7 +383,6 @@ class KeyClient:
     def list_keys(self, **kwargs):
         # type: (Mapping[str, Any]) -> Generator[KeyBase]
         """List keys in the specified vault.
-
         Retrieves a list of the keys in the Key Vault as JSON Web Key
         structures that contain the public part of a stored key. The LIST
         operation is applicable to all key types, however only the base key
@@ -437,17 +433,14 @@ class KeyClient:
     def purge_deleted_key(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> None
         """Permanently deletes the specified key.
-
         The Purge Deleted Key operation is applicable for soft-delete enabled
         vaults. While the operation can be invoked on any vault, it will return
         an error if invoked on a non soft-delete enabled vault. This operation
         requires the keys/purge permission.
-
         :param name: The name of the key
         :type name
         :returns: None
         :rtype: None
-
         Example:
             .. literalinclude:: ../tests/test_examples_keys.py
                 :start-after: [START purge_deleted_key]
@@ -461,7 +454,6 @@ class KeyClient:
     def recover_deleted_key(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> Key
         """Recovers the deleted key to its latest version.
-
         The Recover Deleted Key operation is applicable for deleted keys in
         soft-delete enabled vaults. It recovers the deleted key back to its
         latest version under /keys. An attempt to recover an non-deleted key
