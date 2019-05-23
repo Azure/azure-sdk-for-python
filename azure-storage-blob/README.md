@@ -1,6 +1,11 @@
 # Azure Storage Python SDK
 
 
+## Shared Key Credentials
+```python
+azure.storage.blob.SharedKeyCredentials(account_name, account_key)
+```
+
 ## BlobServiceClient API
 ```python
 azure.storage.blob.BlobServiceClient(uri, credentials=None, configuration=None)
