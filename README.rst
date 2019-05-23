@@ -1,6 +1,8 @@
 Microsoft Azure SDK for Python
 ==============================
 
+<<<<<<<<< I LOVE UNCLE CHIPS >>>>>>>>>>
+
 .. image:: https://img.shields.io/pypi/v/azure.svg?maxAge=2592000
     :target: https://pypi.python.org/pypi/azure/
 
