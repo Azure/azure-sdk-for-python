@@ -120,7 +120,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 
     def __len__(self):
         return self.content_length
-    
+
     async def __anext__(self):
         loop = _get_running_loop()
         retry_active = True

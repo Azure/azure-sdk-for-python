@@ -31,12 +31,14 @@ import aiohttp
 
 from azure.core.configuration import Configuration
 from azure.core.exceptions import (
-    ServiceRequestError)
+    ServiceRequestError,
+    ServiceResponseError)
 
 from .base import HttpRequest
 from .base_async import (
     AsyncHttpTransport,
-    AsyncHttpResponse)
+    AsyncHttpResponse,
+    _ResponseStopIteration)
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
