@@ -111,7 +111,7 @@ azure.storage.blob.BlobClient(
     url, container=None, blob=None, snapshot=None, blob_type=BlobType.BlockBlob, credentials=None configuration=None)
 
 # Instantiate from a connection string
-azure.storage.blob.BlobClient.from_connection_string(connection_str, container, blob, configuration=None)
+azure.storage.blob.BlobClient.from_connection_string(connection_str, container, blob, blob_type=BlobType.BlockBlob, configuration=None)
 
 BlobClient.make_url(protocol=None, sas_token=None)
 
