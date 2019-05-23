@@ -127,16 +127,18 @@ jobs:
       - template: templates/steps/archetype-sdk-client.yml
 
       - script: |
-          coverage xml
+          coverage xml --ignore-errors
         displayName: 'Generate Coverage XML'
 
       - script: |
           codecov -t $(codecov-python-repository-token)
         displayName: 'Publish Code Cov'
         condition: ne(variables['codecov-python-repository-token'], '')
+        continueOnError: true
 
       - task: PublishCodeCoverageResults@1
         displayName: 'Publish Code Coverage to DevOps'
+        continueOnError: true
         inputs:
           codeCoverageTool: Cobertura
           summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
