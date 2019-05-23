@@ -5,13 +5,9 @@
 # --------------------------------------------------------------------------
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
-from azure.security.keyvault.keys import KeyClient
-from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
-from time import sleep, time
-import copy
+from devtools_testutils import ResourceGroupPreparer
+from time import time
 from dateutil import parser as date_parse
-from azure.security.keyvault._internal import _VaultId as KeyVaultId
-import time
 
 
 class KeyClientTests(KeyVaultTestCase):

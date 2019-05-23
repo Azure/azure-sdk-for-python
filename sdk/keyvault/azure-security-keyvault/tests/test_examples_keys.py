@@ -6,7 +6,7 @@
 
 import time
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
@@ -18,7 +18,7 @@ def create_vault_client():
     tenant_id = ""
     vault_url = ""
 
-    # [START create_vault_client
+    # [START create_vault_client]
     from azure.security.keyvault.vault_client import VaultClient
     from azure.common.credentials import ServicePrincipalCredentials
 
@@ -40,7 +40,7 @@ def create_key_client():
 
     # [START create_key_client]
     from azure.common.credentials import ServicePrincipalCredentials
-    from azure.keyvault.keys._client import KeyClient
+    from azure.security.keyvault.keys._client import KeyClient
 
     credentials = ServicePrincipalCredentials(
         client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
@@ -82,7 +82,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
 
             # create an rsa key with size specification
-            key = key_client.create_rsa_key("key-name", "RSA", key_size=key_size, enabled=True, key_ops=key_ops)
+            # RSA key can be created with default size of '2048'
+            key = key_client.create_rsa_key("key-name", "RSA", size=key_size, enabled=True, key_ops=key_ops)
 
             print(key.id)
             print(key.version)
@@ -97,6 +98,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_curve = "P-256"
 
             # create an ec (Elliptic curve) key with curve specification
+            # EC key can be created with default curve of 'P-256'
             key = key_client.create_rsa_key("key-name", "EC", curve=key_curve)
 
             print(key.id)
@@ -106,13 +108,13 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
             # [END create_ec_key]
 
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
         try:
             # [START get_key]
 
-            # if the version argument is the empty string or None, the latest
+            # if no version is specified the latest
             # version of the key will be returned
             key = key_client.get_key("key-name")
 
@@ -142,7 +144,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(key.key_material.kty)
 
             # [END update_key]
-        except ClientRequestError:
+        except ResourceNotFoundError:
             pass
 
         try:
@@ -159,7 +161,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(deleted_key.scheduled_purge_date)
 
             # [END delete_key]
-        except ClientRequestError:
+        except ResourceNotFoundError:
             pass
 
     @ResourceGroupPreparer()
@@ -178,7 +180,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                 print(key.key_material.kty)
 
             # [END list_keys]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
         try:
@@ -192,7 +194,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                 print(key.key_material.kty)
 
             # [END list_key_versions]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
         try:
@@ -206,7 +208,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                 print(key.name)
 
             # [END list_deleted_keys]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
     @ResourceGroupPreparer()
@@ -237,7 +239,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(restored_key.version)
 
             # [END restore_key]
-        except ClientRequestError:
+        except ResourceExistsError:
             pass
 
     @ResourceGroupPreparer()
@@ -260,7 +262,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(deleted_key.name)
 
             # [END get_deleted_key]
-        except ClientRequestError:
+        except ResourceNotFoundError:
             pass
 
         try:
@@ -272,7 +274,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(recover_deleted_key.name)
 
             # [END recover_deleted_key]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
 
         try:
@@ -291,5 +293,5 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             key_client.purge_deleted_key("key-name")
 
             # [END purge_deleted_key]
-        except ClientRequestError:
+        except HttpResponseError:
             pass
