@@ -82,7 +82,7 @@ class RetryPolicy(HTTPPolicy):
         self._retry_on_status_codes = set(status_codes + retry_codes)
         self._method_whitelist = frozenset(['HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'])
         self._respect_retry_after_header = True
-        super(RetryPolicy, self).__init__(**kwargs)
+        super(RetryPolicy, self).__init__()
 
     @classmethod
     def no_retries(cls):
