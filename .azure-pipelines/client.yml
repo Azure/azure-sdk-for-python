@@ -127,8 +127,9 @@ jobs:
       - template: templates/steps/archetype-sdk-client.yml
 
       - script: |
-          coverage xml --ignore-errors
+          coverage xml
         displayName: 'Generate Coverage XML'
+        continueOnError: true
 
       - script: |
           codecov -t $(codecov-python-repository-token)
