@@ -275,7 +275,7 @@ class HanaInstancesOperations(object):
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201, 204]:
+        if response.status_code not in [200, 201]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
@@ -376,7 +376,7 @@ class HanaInstancesOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200, 202, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
