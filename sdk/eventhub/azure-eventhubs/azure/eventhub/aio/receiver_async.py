@@ -54,6 +54,7 @@ class Receiver(object):
         self.client = client
         self.source = source
         self.offset = offset
+        self.iter_started = False
         self.prefetch = prefetch
         self.epoch = epoch
         self.keep_alive = keep_alive
@@ -346,6 +347,8 @@ class Receiver(object):
         return self
 
     async def __anext__(self):
+        if not self.running:
+            await self.open()
         while True:
             try:
                 message = await self.messages_iter.__anext__()
@@ -371,6 +374,11 @@ class Receiver(object):
                 error = EventHubError(str(shutdown), shutdown)
                 await self.close(exception=error)
                 raise error
+            except StopAsyncIteration:
+                raise
+            except asyncio.CancelledError:
+                # TODO: stop self.message_iter
+                raise
             except Exception as e:
                 log.info("Unexpected error occurred (%r). Shutting down.", e)
                 error = EventHubError("Receive failed: {}".format(e))

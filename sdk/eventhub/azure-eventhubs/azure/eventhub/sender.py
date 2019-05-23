@@ -31,7 +31,7 @@ class Sender(object):
 
     """
 
-    def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True):
+    def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=False):
         """
         Instantiate an EventHub event Sender handler.
 
@@ -178,16 +178,6 @@ class Sender(object):
         while not self._reconnect():
             time.sleep(self.reconnect_backoff)
 
-    def get_handler_state(self):
-        """
-        Get the state of the underlying handler with regards to start
-        up processes.
-
-        :rtype: ~uamqp.constants.MessageSenderState
-        """
-        # pylint: disable=protected-access
-        return self._handler._message_sender.get_state()
-
     def close(self, exception=None):
         """
         Close down the handler. If the handler has already closed,
@@ -259,7 +249,7 @@ class Sender(object):
             raise error
         else:
             return self._outcome
-
+    '''
     def send(self, event_data):
         """
         Sends an event data and blocks until acknowledgement is
@@ -286,9 +276,10 @@ class Sender(object):
         if event_data.partition_key and self.partition:
             raise ValueError("EventData partition key cannot be used with a partition sender.")
         event_data.message.on_send_complete = self._on_outcome
-        return self._send_event_data(event_data)
+        self._send_event_data(event_data)
+        '''
 
-    def send_batch(self, batch_event_data):
+    def send(self, batch_event_data):
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
@@ -327,7 +318,7 @@ class Sender(object):
 
         wrapper_event_data = _BatchSendEventData(verify_partition(batch_event_data))
         wrapper_event_data.message.on_send_complete = self._on_outcome
-        return self._send_event_data(wrapper_event_data)
+        self._send_event_data(wrapper_event_data)
 
     def queue_message(self, event_data, callback=None):
         """

@@ -143,8 +143,8 @@ class EventHubClientAbstract(object):
         username = username or url_username
         url_password = unquote_plus(self.address.password) if self.address.password else None
         password = password or url_password
-        if (not username or not password) and not sas_token:
-            raise ValueError("Please supply either username and password, or a SAS token")
+        if (not username or not password) and not sas_token and not aad_credential:
+            raise ValueError("Please supply any of username and password, or a SAS token, or an AAD credential")
         self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
         self._auth_config = {'username': username, 'password': password}
         self.get_auth = functools.partial(self._create_auth)
@@ -266,7 +266,7 @@ class EventHubClientAbstract(object):
         return client
 
     @classmethod
-    def from_aad_credential(cls, address, aad_credential, eventhub=None, **kwargs):
+    def from_azure_identity(cls, address, aad_credential, eventhub=None, **kwargs):
         address = _build_uri(address, eventhub)
         return cls(address, aad_credential=aad_credential, **kwargs)
 

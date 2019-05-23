@@ -33,7 +33,7 @@ class Receiver(object):
     timeout = 0
     _epoch = b'com.microsoft:epoch'
 
-    def __init__(self, client, source, offset=None, prefetch=300, epoch=None, keep_alive=None, auto_reconnect=True):
+    def __init__(self, client, source, event_position=None, prefetch=300, epoch=None, keep_alive=None, auto_reconnect=False):
         """
         Instantiate a receiver.
 
@@ -50,7 +50,7 @@ class Receiver(object):
         self.running = False
         self.client = client
         self.source = source
-        self.offset = offset
+        self.offset = event_position
         self.iter_started = False
         self.prefetch = prefetch
         self.epoch = epoch
@@ -120,6 +120,8 @@ class Receiver(object):
                 error = EventHubError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
+            except StopIteration:
+                raise
             except Exception as e:
                 log.info("Unexpected error occurred (%r). Shutting down.", e)
                 error = EventHubError("Receive failed: {}".format(e))
@@ -234,38 +236,6 @@ class Receiver(object):
         a retryable error - attempt to reconnect."""
         while not self._reconnect():
             time.sleep(self.reconnect_backoff)
-
-    def get_handler_state(self):
-        """
-        Get the state of the underlying handler with regards to start
-        up processes.
-
-        :rtype: ~uamqp.constants.MessageReceiverState
-        """
-        # pylint: disable=protected-access
-        return self._handler._message_receiver.get_state()
-
-    def has_started(self):
-        """
-        Whether the handler has completed all start up processes such as
-        establishing the connection, session, link and authentication, and
-        is not ready to process messages.
-        **This function is now deprecated and will be removed in v2.0+.**
-
-        :rtype: bool
-        """
-        # pylint: disable=protected-access
-        timeout = False
-        auth_in_progress = False
-        if self._handler._connection.cbs:
-            timeout, auth_in_progress = self._handler._auth.handle_token()
-        if timeout:
-            raise EventHubError("Authorization timeout.")
-        if auth_in_progress:
-            return False
-        if not self._handler._client_ready():
-            return False
-        return True
 
     def close(self, exception=None):
         """

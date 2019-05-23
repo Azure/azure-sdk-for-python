@@ -17,7 +17,7 @@ except ImportError:
     from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
 
 import uamqp
-from uamqp import Message
+from uamqp import Message, AMQPClient
 from uamqp import authentication
 from uamqp import constants
 
@@ -88,7 +88,7 @@ class EventHubClient(EventHubClientAbstract):
         return authentication.SASTokenAuth.from_shared_access_key(
             self.auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy, transport_type=transport_type)
 
-    def get_eventhub_information(self):
+    def get_properties(self):
         """
         Get details on the specified EventHub.
         Keys in the details dictionary include:
@@ -118,8 +118,8 @@ class EventHubClient(EventHubClientAbstract):
             eh_info = response.get_data()
             output = {}
             if eh_info:
-                output['name'] = eh_info[b'name'].decode('utf-8')
-                output['type'] = eh_info[b'type'].decode('utf-8')
+                output['path'] = eh_info[b'name'].decode('utf-8')
+                # output['type'] = eh_info[b'type'].decode('utf-8')
                 output['created_at'] = datetime.datetime.fromtimestamp(float(eh_info[b'created_at'])/1000)
                 output['partition_count'] = eh_info[b'partition_count']
                 output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
@@ -127,8 +127,57 @@ class EventHubClient(EventHubClientAbstract):
         finally:
             mgmt_client.close()
 
+    def get_partition_properties(self, partition):
+        """
+        Get information on the specified partition async.
+        Keys in the details dictionary include:
+
+            -'name'
+            -'type'
+            -'partition'
+            -'begin_sequence_number'
+            -'last_enqueued_sequence_number'
+            -'last_enqueued_offset'
+            -'last_enqueued_time_utc'
+            -'is_partition_empty'
+
+        :param partition: The target partition id.
+        :type partition: str
+        :rtype: dict
+        """
+        alt_creds = {
+            "username": self._auth_config.get("iot_username"),
+            "password": self._auth_config.get("iot_password")}
+        try:
+            mgmt_auth = self._create_auth(**alt_creds)
+            mgmt_client = AMQPClient(self.mgmt_target, auth=mgmt_auth, debug=self.debug)
+            mgmt_client.open()
+            mgmt_msg = Message(application_properties={'name': self.eh_name,
+                                                       'partition': partition})
+            response = mgmt_client.mgmt_request(
+                mgmt_msg,
+                constants.READ_OPERATION,
+                op_type=b'com.microsoft:partition',
+                status_code_field=b'status-code',
+                description_fields=b'status-description')
+            partition_info = response.get_data()
+            output = {}
+            if partition_info:
+                output['event_hub_path'] = partition_info[b'name'].decode('utf-8')
+                # output['type'] = partition_info[b'type'].decode('utf-8')
+                output['id'] = partition_info[b'partition'].decode('utf-8')
+                output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
+                output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']
+                output['last_enqueued_offset'] = partition_info[b'last_enqueued_offset'].decode('utf-8')
+                output['last_enqueued_time_utc'] = datetime.datetime.utcfromtimestamp(
+                    float(partition_info[b'last_enqueued_time_utc'] / 1000))
+                output['is_empty'] = partition_info[b'is_partition_empty']
+            return output
+        finally:
+            mgmt_client.close()
+
     def create_receiver(
-            self, consumer_group, partition, offset=None, epoch=None, operation=None,
+            self, consumer_group, partition, event_position=None, epoch=None, operation=None,
             prefetch=None,
             keep_alive=None,
             auto_reconnect=None,
@@ -166,13 +215,17 @@ class EventHubClient(EventHubClientAbstract):
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
         handler = Receiver(
-            self, source_url, offset=offset, epoch=epoch, prefetch=prefetch, keep_alive=keep_alive, auto_reconnect=auto_reconnect)
+            self, source_url, event_position=event_position, epoch=epoch, prefetch=prefetch, keep_alive=keep_alive, auto_reconnect=auto_reconnect)
         return handler
 
     def create_epoch_receiver(
             self, consumer_group, partition, epoch, prefetch=300,
-            operation=None):
-        return self.create_receiver(consumer_group, partition, epoch=epoch, prefetch=prefetch, operation=operation)
+            keep_alive=None,
+            auto_reconnect=None,
+            operation=None
+    ):
+        return self.create_receiver(consumer_group, partition, epoch=epoch, prefetch=prefetch,
+                                    keep_alive=keep_alive, auto_reconnect=auto_reconnect, operation=operation)
 
     def create_sender(self, partition=None, operation=None, send_timeout=None, keep_alive=None, auto_reconnect=None):
         """

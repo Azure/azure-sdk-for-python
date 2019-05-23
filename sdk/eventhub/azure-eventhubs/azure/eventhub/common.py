@@ -294,7 +294,7 @@ class EventPosition(object):
         :param inclusive: Whether to include the supplied value as the start point.
         :type inclusive: bool
         """
-        self.value = value
+        self.value = value if value else "-1"
         self.inclusive = inclusive
 
     def selector(self):
