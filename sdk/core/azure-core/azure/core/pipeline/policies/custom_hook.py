@@ -32,14 +32,14 @@ class CustomHookPolicy(SansIOHTTPPolicy):
     """A simple policy that enable the given callback
     with the response.
     """
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs): # pylint: disable=unused-argument
         self._callback = None
-    
-    def on_request(self, request):
+
+    def on_request(self, request): # pylint: disable=arguments-differ
         # type: (PipelineRequest) -> None
         self._callback = request.context.options.pop('raw_response_hook', None)
 
-    def on_response(self, request, response):
+    def on_response(self, request, response): # pylint: disable=arguments-differ
         # type: (PipelineRequest, PipelineResponse) -> None
         if self._callback:
             self._callback(response)

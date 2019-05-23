@@ -27,11 +27,15 @@ import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
+from typing import Any, AsyncIterator as AsyncIteratorType
 import urllib3
-from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
 
 import requests
 
+from azure.core.exceptions import (
+    ServiceRequestError,
+    ServiceResponseError
+)
 from .base import HttpRequest
 from .base_async import (
     AsyncHttpTransport,
@@ -39,11 +43,6 @@ from .base_async import (
     _ResponseStopIteration,
     _iterate_response_content)
 from .requests_basic import RequestsTransport, RequestsTransportResponse
-from azure.core.exceptions import (
-    ServiceRequestError,
-    ServiceResponseError,
-    raise_with_traceback
-)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -53,12 +52,13 @@ def _get_running_loop():
     try:
         return asyncio.get_running_loop()
     except AttributeError:  # 3.5 / 3.6
-        loop = asyncio._get_running_loop()  # pylint: disable=protected-access
+        loop = asyncio._get_running_loop()  # pylint: disable=protected-access, no-member
         if loop is None:
             raise RuntimeError('No running event loop')
         return loop
 
 
+#pylint: disable=too-many-ancestors
 class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
 
     async def __aenter__(self):

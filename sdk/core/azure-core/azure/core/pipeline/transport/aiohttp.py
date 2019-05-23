@@ -23,23 +23,20 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Callable, AsyncIterator, Optional
+from typing import Any, AsyncIterator as AsyncIteratorType
+from collections.abc import AsyncIterator
 
-import aiohttp
 import logging
+import aiohttp
+
+from azure.core.configuration import Configuration
+from azure.core.exceptions import (
+    ServiceRequestError)
 
 from .base import HttpRequest
 from .base_async import (
     AsyncHttpTransport,
-    AsyncHttpResponse,
-    _ResponseStopIteration,
-    _iterate_response_content)
-
-from azure.core.configuration import Configuration
-from azure.core.exceptions import (
-    ServiceRequestError,
-    ServiceResponseError,
-    raise_with_traceback)
+    AsyncHttpResponse)
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -62,7 +59,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
     async def __aexit__(self, *args):  # pylint: disable=arguments-differ
         await self.close()
-    
+
     async def open(self):
         if not self.session and self._session_owner:
             self.session = aiohttp.ClientSession(loop=self._loop)
@@ -91,7 +88,7 @@ class AioHttpTransport(AsyncHttpTransport):
             return ssl_ctx
         return verify
 
-    def _get_request_data(self, request):
+    def _get_request_data(self, request): #pylint: disable=no-self-use
         if request.files:
             form_data = aiohttp.FormData()
             for form_file, data in request.files.items():
@@ -189,7 +186,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         """Load in memory the body, so it could be accessible from sync methods."""
         self._body = await self.internal_response.read()
 
-    def stream_download(self) -> AsyncIterator[bytes]:
+    def stream_download(self) -> AsyncIteratorType[bytes]:
         """Generator for streaming request body data.
         """
         return AioHttpStreamDownloadGenerator(self.internal_response, self.block_size)
