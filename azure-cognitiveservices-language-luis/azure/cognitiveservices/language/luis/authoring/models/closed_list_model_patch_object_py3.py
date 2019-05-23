@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ClosedListModelPatchObject(Model):
-    """Object model for adding a batch of sublists to an existing closedlist.
+    """Object model for adding a batch of sublists to an existing list entity.
 
     :param sub_lists: Sublists to add.
     :type sub_lists:

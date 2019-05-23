@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class WordListBaseUpdateObject(Model):
-    """Object model for updating one of the closed list's sublists.
+    """Object model for updating one of the list entity's sublists.
 
     :param canonical_form: The standard form that the list represents.
     :type canonical_form: str

@@ -46,7 +46,7 @@ class ProcessThreadInfo(ProxyOnlyResource):
     :type total_processor_time: str
     :param user_processor_time: User processor time.
     :type user_processor_time: str
-    :param priviledged_processor_time: Priviledged processor time.
+    :param priviledged_processor_time: Privileged processor time.
     :type priviledged_processor_time: str
     :param state: Thread state.
     :type state: str

@@ -20,7 +20,13 @@ try:
     from .reservation_properties_py3 import ReservationProperties
     from .reservation_response_py3 import ReservationResponse
     from .reservation_order_response_py3 import ReservationOrderResponse
+    from .calculate_price_response_properties_billing_currency_total_py3 import CalculatePriceResponsePropertiesBillingCurrencyTotal
+    from .calculate_price_response_properties_pricing_currency_total_py3 import CalculatePriceResponsePropertiesPricingCurrencyTotal
+    from .calculate_price_response_properties_py3 import CalculatePriceResponseProperties
+    from .calculate_price_response_py3 import CalculatePriceResponse
+    from .purchase_request_properties_reserved_resource_properties_py3 import PurchaseRequestPropertiesReservedResourceProperties
     from .merge_request_py3 import MergeRequest
+    from .purchase_request_py3 import PurchaseRequest
     from .patch_py3 import Patch
     from .split_request_py3 import SplitRequest
     from .extended_error_info_py3 import ExtendedErrorInfo
@@ -40,7 +46,13 @@ except (SyntaxError, ImportError):
     from .reservation_properties import ReservationProperties
     from .reservation_response import ReservationResponse
     from .reservation_order_response import ReservationOrderResponse
+    from .calculate_price_response_properties_billing_currency_total import CalculatePriceResponsePropertiesBillingCurrencyTotal
+    from .calculate_price_response_properties_pricing_currency_total import CalculatePriceResponsePropertiesPricingCurrencyTotal
+    from .calculate_price_response_properties import CalculatePriceResponseProperties
+    from .calculate_price_response import CalculatePriceResponse
+    from .purchase_request_properties_reserved_resource_properties import PurchaseRequestPropertiesReservedResourceProperties
     from .merge_request import MergeRequest
+    from .purchase_request import PurchaseRequest
     from .patch import Patch
     from .split_request import SplitRequest
     from .extended_error_info import ExtendedErrorInfo
@@ -72,7 +84,13 @@ __all__ = [
     'ReservationProperties',
     'ReservationResponse',
     'ReservationOrderResponse',
+    'CalculatePriceResponsePropertiesBillingCurrencyTotal',
+    'CalculatePriceResponsePropertiesPricingCurrencyTotal',
+    'CalculatePriceResponseProperties',
+    'CalculatePriceResponse',
+    'PurchaseRequestPropertiesReservedResourceProperties',
     'MergeRequest',
+    'PurchaseRequest',
     'Patch',
     'SplitRequest',
     'ExtendedErrorInfo',

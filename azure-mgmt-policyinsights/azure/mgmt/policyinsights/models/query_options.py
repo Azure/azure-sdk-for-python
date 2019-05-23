@@ -36,6 +36,9 @@ class QueryOptions(Model):
     :type to: datetime
     :param apply: OData apply expression for aggregations.
     :type apply: str
+    :param expand: The $expand query parameter. For example, to expand
+     policyEvaluationDetails, use $expand=policyEvaluationDetails
+    :type expand: str
     """
 
     _attribute_map = {
@@ -46,6 +49,7 @@ class QueryOptions(Model):
         'from_property': {'key': '', 'type': 'iso-8601'},
         'to': {'key': '', 'type': 'iso-8601'},
         'apply': {'key': '', 'type': 'str'},
+        'expand': {'key': '', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -57,3 +61,4 @@ class QueryOptions(Model):
         self.from_property = kwargs.get('from_property', None)
         self.to = kwargs.get('to', None)
         self.apply = kwargs.get('apply', None)
+        self.expand = kwargs.get('expand', None)

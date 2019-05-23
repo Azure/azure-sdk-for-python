@@ -56,7 +56,7 @@ class Server(TrackedResource):
     :type storage_profile: ~azure.mgmt.rdbms.mysql.models.StorageProfile
     :param replication_role: The replication role of the server.
     :type replication_role: str
-    :param master_server_id: The master server id of a relica server.
+    :param master_server_id: The master server id of a replica server.
     :type master_server_id: str
     :param replica_capacity: The maximum number of replicas that a master
      server can have.

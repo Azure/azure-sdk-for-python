@@ -41,6 +41,8 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
      executing this build step.
     :type arguments:
      list[~azure.mgmt.containerregistry.v2018_09_01.models.Argument]
+    :param target: The name of the target build stage for the docker build.
+    :type target: str
     """
 
     _validation = {
@@ -56,13 +58,15 @@ class DockerBuildStepUpdateParameters(TaskStepUpdateParameters):
         'no_cache': {'key': 'noCache', 'type': 'bool'},
         'docker_file_path': {'key': 'dockerFilePath', 'type': 'str'},
         'arguments': {'key': 'arguments', 'type': '[Argument]'},
+        'target': {'key': 'target', 'type': 'str'},
     }
 
-    def __init__(self, *, context_path: str=None, context_access_token: str=None, image_names=None, is_push_enabled: bool=None, no_cache: bool=None, docker_file_path: str=None, arguments=None, **kwargs) -> None:
+    def __init__(self, *, context_path: str=None, context_access_token: str=None, image_names=None, is_push_enabled: bool=None, no_cache: bool=None, docker_file_path: str=None, arguments=None, target: str=None, **kwargs) -> None:
         super(DockerBuildStepUpdateParameters, self).__init__(context_path=context_path, context_access_token=context_access_token, **kwargs)
         self.image_names = image_names
         self.is_push_enabled = is_push_enabled
         self.no_cache = no_cache
         self.docker_file_path = docker_file_path
         self.arguments = arguments
+        self.target = target
         self.type = 'Docker'

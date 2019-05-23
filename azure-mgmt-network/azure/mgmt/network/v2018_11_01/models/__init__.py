@@ -102,6 +102,8 @@ try:
     from .azure_firewall_py3 import AzureFirewall
     from .azure_firewall_fqdn_tag_py3 import AzureFirewallFqdnTag
     from .dns_name_availability_result_py3 import DnsNameAvailabilityResult
+    from .protocol_custom_settings_format_py3 import ProtocolCustomSettingsFormat
+    from .ddos_custom_policy_py3 import DdosCustomPolicy
     from .ddos_protection_plan_py3 import DdosProtectionPlan
     from .endpoint_service_result_py3 import EndpointServiceResult
     from .express_route_circuit_authorization_py3 import ExpressRouteCircuitAuthorization
@@ -386,6 +388,8 @@ except (SyntaxError, ImportError):
     from .azure_firewall import AzureFirewall
     from .azure_firewall_fqdn_tag import AzureFirewallFqdnTag
     from .dns_name_availability_result import DnsNameAvailabilityResult
+    from .protocol_custom_settings_format import ProtocolCustomSettingsFormat
+    from .ddos_custom_policy import DdosCustomPolicy
     from .ddos_protection_plan import DdosProtectionPlan
     from .endpoint_service_result import EndpointServiceResult
     from .express_route_circuit_authorization import ExpressRouteCircuitAuthorization
@@ -669,6 +673,8 @@ from .network_management_client_enums import (
     AzureFirewallApplicationRuleProtocolType,
     AzureFirewallNatRCActionType,
     AzureFirewallNetworkRuleProtocol,
+    DdosCustomPolicyProtocol,
+    DdosCustomPolicyTriggerSensitivityOverride,
     AuthorizationUseStatus,
     ExpressRouteCircuitPeeringAdvertisedPublicPrefixState,
     Access,
@@ -827,6 +833,8 @@ __all__ = [
     'AzureFirewall',
     'AzureFirewallFqdnTag',
     'DnsNameAvailabilityResult',
+    'ProtocolCustomSettingsFormat',
+    'DdosCustomPolicy',
     'DdosProtectionPlan',
     'EndpointServiceResult',
     'ExpressRouteCircuitAuthorization',
@@ -1109,6 +1117,8 @@ __all__ = [
     'AzureFirewallApplicationRuleProtocolType',
     'AzureFirewallNatRCActionType',
     'AzureFirewallNetworkRuleProtocol',
+    'DdosCustomPolicyProtocol',
+    'DdosCustomPolicyTriggerSensitivityOverride',
     'AuthorizationUseStatus',
     'ExpressRouteCircuitPeeringAdvertisedPublicPrefixState',
     'Access',

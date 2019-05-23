@@ -3,6 +3,48 @@
 Release History
 ===============
 
+0.6.0 (2019-05-03)
+++++++++++++++++++
+
+**Features**
+
+- Added operation DatabaseAccountsOperations.list_sql_databases
+- Added operation DatabaseAccountsOperations.delete_gremlin_graph
+- Added operation DatabaseAccountsOperations.get_sql_database
+- Added operation DatabaseAccountsOperations.delete_table
+- Added operation DatabaseAccountsOperations.get_cassandra_keyspace
+- Added operation DatabaseAccountsOperations.list_sql_containers
+- Added operation DatabaseAccountsOperations.create_update_sql_container
+- Added operation DatabaseAccountsOperations.get_table
+- Added operation DatabaseAccountsOperations.list_cassandra_tables
+- Added operation DatabaseAccountsOperations.create_update_table
+- Added operation DatabaseAccountsOperations.delete_mongo_db_collection
+- Added operation DatabaseAccountsOperations.get_gremlin_graph
+- Added operation DatabaseAccountsOperations.get_gremlin_database
+- Added operation DatabaseAccountsOperations.list_cassandra_keyspaces
+- Added operation DatabaseAccountsOperations.create_update_mongo_db_collection
+- Added operation DatabaseAccountsOperations.create_update_cassandra_keyspace
+- Added operation DatabaseAccountsOperations.create_update_cassandra_table
+- Added operation DatabaseAccountsOperations.get_mongo_db_database
+- Added operation DatabaseAccountsOperations.list_gremlin_databases
+- Added operation DatabaseAccountsOperations.create_update_sql_database
+- Added operation DatabaseAccountsOperations.get_mongo_db_collection
+- Added operation DatabaseAccountsOperations.list_mongo_db_collections
+- Added operation DatabaseAccountsOperations.get_sql_container
+- Added operation DatabaseAccountsOperations.delete_cassandra_keyspace
+- Added operation DatabaseAccountsOperations.delete_mongo_db_database
+- Added operation DatabaseAccountsOperations.get_cassandra_table
+- Added operation DatabaseAccountsOperations.delete_cassandra_table
+- Added operation DatabaseAccountsOperations.list_mongo_db_databases
+- Added operation DatabaseAccountsOperations.list_gremlin_graphs
+- Added operation DatabaseAccountsOperations.create_update_mongo_db_database
+- Added operation DatabaseAccountsOperations.delete_sql_container
+- Added operation DatabaseAccountsOperations.create_update_gremlin_graph
+- Added operation DatabaseAccountsOperations.create_update_gremlin_database
+- Added operation DatabaseAccountsOperations.list_tables
+- Added operation DatabaseAccountsOperations.delete_gremlin_database
+- Added operation DatabaseAccountsOperations.delete_sql_database
+
 0.5.2 (2018-11-05)
 ++++++++++++++++++
 

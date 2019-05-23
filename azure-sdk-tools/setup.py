@@ -17,9 +17,9 @@ DEPENDENCIES = [
     'pytest>=3.5.1',
     # 'azure-devtools>=0.4.1' override by packaging needs
     'readme_renderer',
-    'azure-storage-blob',
-    'azure-storage-file',
-    'azure-storage-common',
+    'azure-storage-blob<2.0',
+    'azure-storage-file<2.0',
+    'azure-storage-common<1.4.1',
     'pyopenssl',
     'azure-mgmt-resource',
     'azure-mgmt-storage'
@@ -38,5 +38,8 @@ setup(
         'console_scripts': [
             'generate_package=packaging_tools.generate_package:generate_main',
         ],
+    },
+    extras_require={
+        ":python_version>='3.5'": ['pytest-asyncio>=0.9.0']
     }
 )

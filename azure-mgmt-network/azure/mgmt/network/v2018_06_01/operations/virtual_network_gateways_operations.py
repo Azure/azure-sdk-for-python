@@ -746,7 +746,7 @@ class VirtualNetworkGatewaysOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -808,15 +808,36 @@ class VirtualNetworkGatewaysOperations(object):
         lro_delay = operation_config.get(
             'long_running_operation_timeout',
             self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **operation_config)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     generatevpnclientpackage.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/generatevpnclientpackage'}
 
-
-    def _generate_vpn_profile_initial(
+    def generate_vpn_profile(
             self, resource_group_name, virtual_network_gateway_name, parameters, custom_headers=None, raw=False, **operation_config):
+        """Generates VPN profile for P2S client of the virtual network gateway in
+        the specified resource group. Used for IKEV2 and radius based
+        authentication.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param virtual_network_gateway_name: The name of the virtual network
+         gateway.
+        :type virtual_network_gateway_name: str
+        :param parameters: Parameters supplied to the generate virtual network
+         gateway VPN client package operation.
+        :type parameters:
+         ~azure.mgmt.network.v2018_06_01.models.VpnClientParameters
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: str or ClientRawResponse if raw=true
+        :rtype: str or ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
         # Construct URL
         url = self.generate_vpn_profile.metadata['url']
         path_format_arguments = {
@@ -863,58 +884,6 @@ class VirtualNetworkGatewaysOperations(object):
             return client_raw_response
 
         return deserialized
-
-    def generate_vpn_profile(
-            self, resource_group_name, virtual_network_gateway_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Generates VPN profile for P2S client of the virtual network gateway in
-        the specified resource group. Used for IKEV2 and radius based
-        authentication.
-
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param virtual_network_gateway_name: The name of the virtual network
-         gateway.
-        :type virtual_network_gateway_name: str
-        :param parameters: Parameters supplied to the generate virtual network
-         gateway VPN client package operation.
-        :type parameters:
-         ~azure.mgmt.network.v2018_06_01.models.VpnClientParameters
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: The poller return type is ClientRawResponse, the
-         direct response alongside the deserialized response
-        :param polling: True for ARMPolling, False for no polling, or a
-         polling object for personal polling strategy
-        :return: An instance of LROPoller that returns str or
-         ClientRawResponse<str> if raw==True
-        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[str] or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[str]]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        raw_result = self._generate_vpn_profile_initial(
-            resource_group_name=resource_group_name,
-            virtual_network_gateway_name=virtual_network_gateway_name,
-            parameters=parameters,
-            custom_headers=custom_headers,
-            raw=True,
-            **operation_config
-        )
-
-        def get_long_running_output(response):
-            deserialized = self._deserialize('str', response)
-
-            if raw:
-                client_raw_response = ClientRawResponse(deserialized, response)
-                return client_raw_response
-
-            return deserialized
-
-        lro_delay = operation_config.get(
-            'long_running_operation_timeout',
-            self.config.long_running_operation_timeout)
-        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     generate_vpn_profile.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworkGateways/{virtualNetworkGatewayName}/generatevpnprofile'}
 
 
