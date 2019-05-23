@@ -44,7 +44,7 @@ BlobServiceClient.get_blob_client(container, blob, blob_type=BlobType.BlockBlob)
 ## ContainerClient API
 ```python
 azure.storage.blob.ContainerClient(
-    uri, credentials=None, container=None, configuration=None)
+    uri, container=None, credentials=None, configuration=None)
 
 # Instantiate from a connection string
 azure.storage.blob.ContainerClient.from_connection_string(connection_str, container, configuration=None)
@@ -108,7 +108,7 @@ ContainerClient.get_blob_client(blob, blob_type=BlobType.BlockBlob, snapshot=Non
 ## BlobClient API
 ```python
 azure.storage.blob.BlobClient(
-    uri, blob_type=BlobType.BlockBlob, credentials=None, container_name=None, blob_name=None, snapshot=None, configuration=None)
+    uri, container=None, blob=None, snapshot=None, blob_type=BlobType.BlockBlob, credentials=None configuration=None)
 
 # Instantiate from a connection string
 azure.storage.blob.BlobClient.from_connection_string(connection_str, container, blob, configuration=None)
