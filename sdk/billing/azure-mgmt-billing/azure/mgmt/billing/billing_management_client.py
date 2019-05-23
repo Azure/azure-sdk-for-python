@@ -15,7 +15,7 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.billing_accounts_operations import BillingAccountsOperations
 from .operations.payment_methods_operations import PaymentMethodsOperations
-from .operations.address_operations import AddressOperations
+from .operations.addresses_operations import AddressesOperations
 from .operations.available_balances_operations import AvailableBalancesOperations
 from .operations.billing_profiles_operations import BillingProfilesOperations
 from .operations.invoice_sections_operations import InvoiceSectionsOperations
@@ -80,8 +80,8 @@ class BillingManagementClient(SDKClient):
     :vartype billing_accounts: azure.mgmt.billing.operations.BillingAccountsOperations
     :ivar payment_methods: PaymentMethods operations
     :vartype payment_methods: azure.mgmt.billing.operations.PaymentMethodsOperations
-    :ivar address: Address operations
-    :vartype address: azure.mgmt.billing.operations.AddressOperations
+    :ivar addresses: Addresses operations
+    :vartype addresses: azure.mgmt.billing.operations.AddressesOperations
     :ivar available_balances: AvailableBalances operations
     :vartype available_balances: azure.mgmt.billing.operations.AvailableBalancesOperations
     :ivar billing_profiles: BillingProfiles operations
@@ -144,7 +144,7 @@ class BillingManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.payment_methods = PaymentMethodsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.address = AddressOperations(
+        self.addresses = AddressesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.available_balances = AvailableBalancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
