@@ -174,7 +174,7 @@ BlobClient.create_blob(
 BlobClient.create_snapshot(
     metadata=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, lease=None, timeout=None)
 
-# Returns a pollable object to wait on the operation, check operation status and abort
+# Returns a CopyStatusPoller object to wait on the operation, check operation status and abort
 BlobClient.copy_blob_from_source(
     copy_source,
     metadata=None,
@@ -271,6 +271,21 @@ BlobClient.incremental_copy(
 # Returns blob-updated property dict (Etag, last modified, append offset, committed block count)
 BlobClient.append_block(
     data, validate_content=False, maxsize_condition=None, appendpos_condition=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)
+```
+
+## CopyStatusPoller
+```python
+# Returns operation status
+CopyStatusPoller.status()
+
+# Blocks until operation completes
+CopyStatusPoller.wait()
+
+# Blocks until operation completes, then returns BlobProperties of copied blob.
+CopyStatusPoller.result()
+
+# Aborts the copy operation if in progress.
+CopyStatusPoller.abort()
 ```
 
 ## Lease
