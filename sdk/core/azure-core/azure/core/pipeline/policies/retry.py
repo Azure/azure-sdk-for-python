@@ -239,6 +239,10 @@ class RetryPolicy(HTTPPolicy):
 
         return not self.is_exhausted(settings)
 
+    def update_context(self, context, retry_settings):
+        if retry_settings['history']:
+            context['history'] = retry_settings['history']
+
     def send(self, request):
         retry_active = True
         response = None
@@ -259,6 +263,6 @@ class RetryPolicy(HTTPPolicy):
                         self.sleep(retry_settings, request.context.transport)
                         continue
                 raise err
-        if retry_settings['history']:
-            response.context['history'] = retry_settings['history']
+
+        self.update_context(response.context, retry_settings)
         return response

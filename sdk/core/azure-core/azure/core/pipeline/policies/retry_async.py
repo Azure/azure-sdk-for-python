@@ -89,6 +89,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):
                         await self.sleep(retry_settings, request.context.transport)
                         continue
                 raise err
-        if retry_settings['history']:
-            response.context['history'] = retry_settings['history']
+
+        self.update_context(response.context, retry_settings)
         return response
+
