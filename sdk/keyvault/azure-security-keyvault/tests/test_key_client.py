@@ -71,10 +71,12 @@ class KeyClientTests(KeyVaultTestCase):
     def _update_key(self, client, key):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        key_bundle = client.update_key(key.name, key.version, expires=expires, tags=tags)
+        key_ops = ["decrypt", "encrypt"]
+        key_bundle = client.update_key(key.name, key.version, key_ops=key_ops, expires=expires, tags=tags)
         self.assertEqual(tags, key_bundle.tags)
         self.assertEqual(key.id, key_bundle.id)
         self.assertNotEqual(key.updated, key_bundle.updated)
+        self.assertEqual(key_ops, key_bundle.key_material.key_ops)
         return key_bundle
 
     def _validate_key_list(self, keys, expected):
@@ -92,6 +94,9 @@ class KeyClientTests(KeyVaultTestCase):
 
         # create ec key
         created_ec_key = self._create_ec_key(client, key_name="crud-ec-key", key_type="EC")
+        # create ec with curve
+        created_ec_key_curve = client.create_ec_key(name="crud-P-256-ec-key", key_type="EC", curve="P-256")
+        self.assertEqual("P-256", created_ec_key_curve.key_material.crv)
 
         # create rsa key
         created_rsa_key = self._create_rsa_key(client, key_name="crud-rsa-key", key_type="RSA")
@@ -102,7 +107,7 @@ class KeyClientTests(KeyVaultTestCase):
         self._assert_key_attributes_equal(created_rsa_key, key)
 
         # get key without version
-        self._assert_key_attributes_equal(created_rsa_key, client.get_key(created_rsa_key.name, ""))
+        self._assert_key_attributes_equal(created_rsa_key, client.get_key(created_rsa_key.name))
 
         # update key with version
         if self.is_live:
@@ -113,7 +118,7 @@ class KeyClientTests(KeyVaultTestCase):
         # delete the new key
         deleted_key = client.delete_key(created_rsa_key.name)
         self.assertIsNotNone(deleted_key)
-        self.assertEqual(created_rsa_key.key_material, deleted_key.key_material)
+        self.assertEqual(created_rsa_key.key_material.kty, deleted_key.key_material.kty)
         self.assertEqual(deleted_key.id, created_rsa_key.id)
         self.assertTrue(
             deleted_key.recovery_id and deleted_key.deleted_date and deleted_key.scheduled_purge_date,
@@ -139,6 +144,7 @@ class KeyClientTests(KeyVaultTestCase):
 
         # create key
         created_bundle = client.create_key(key_name, key_type)
+        self.assertEqual(key_type, created_bundle.key_material.kty)
 
         # backup key
         key_backup = client.backup_key(created_bundle.name)

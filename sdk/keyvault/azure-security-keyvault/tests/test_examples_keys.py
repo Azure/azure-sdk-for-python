@@ -63,14 +63,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # [START create_key]
             from dateutil import parser as date_parse
 
-            key_size = 2048
-            key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
             expires = date_parse.parse("2050-02-02T08:00:00.000Z")
 
             # create a key with optional arguments
-            key = key_client.create_key(
-                "key-name", "RSA", size=key_size, key_ops=key_ops, enabled=True, expires=expires
-            )
+            key = key_client.create_key("key-name", "RSA-HSM", enabled=True, expires=expires)
 
             print(key.id)
             print(key.version)
@@ -79,6 +75,37 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(key.expires)
 
             # [END create_key]
+
+            # [START create_rsa_key]
+
+            key_size = 2048
+            key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
+
+            # create an rsa key with size specification
+            key = key_client.create_rsa_key("key-name", "RSA", key_size=key_size, enabled=True, key_ops=key_ops)
+
+            print(key.id)
+            print(key.version)
+            print(key.key_material.kty)
+            print(key.key_material.key_ops)
+
+            # [END create_rsa_key]
+
+            # [START create_ec_key]
+            from dateutil import parser as date_parse
+
+            key_curve = "P-256"
+
+            # create an ec (Elliptic curve) key with curve specification
+            key = key_client.create_rsa_key("key-name", "EC", curve=key_curve)
+
+            print(key.id)
+            print(key.version)
+            print(key.key_material.kty)
+            print(key.key_material.crv)
+
+            # [END create_ec_key]
+
         except ClientRequestError:
             pass
 
@@ -87,7 +114,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
             # if the version argument is the empty string or None, the latest
             # version of the key will be returned
-            key = key_client.get_key("key-name", "")
+            key = key_client.get_key("key-name")
 
             # get key with version
             key_version = key.version
