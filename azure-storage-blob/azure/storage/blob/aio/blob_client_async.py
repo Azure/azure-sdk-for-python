@@ -140,13 +140,13 @@ class BlobClient:  # pylint: disable=too-many-public-methods
 
     async def set_standard_blob_tier(self, standard_blob_tier, timeout=None):
         """
-        :raises: InvalidOperation when blob client type is not BlockBlob.
+        :raises: TypeError when blob client type is not BlockBlob.
         :returns: None
         """
 
     async def stage_block(self, block_id, data, validate_content=False, lease=None, timeout=None):
         """
-        :raises: InvalidOperation when blob client type is not BlockBlob.
+        :raises: TypeError when blob client type is not BlockBlob.
         :returns: None
         """
 
@@ -154,13 +154,13 @@ class BlobClient:  # pylint: disable=too-many-public-methods
             self, block_id, copy_source_url, source_range_start, source_range_end,
             source_content_md5=None, lease=None, timeout=None):
         """
-        :raises: InvalidOperation when blob client type is not BlockBlob.
+        :raises: TypeError when blob client type is not BlockBlob.
         :returns: None
         """
 
     async def get_block_list(self, block_list_type=None, snapshot=None, lease=None, timeout=None):
         """
-        :raises: InvalidOperation when blob client type is not BlockBlob.
+        :raises: TypeError when blob client type is not BlockBlob.
         :returns: A tuple of two sets - committed and uncommitted blocks
         """
 
@@ -169,13 +169,13 @@ class BlobClient:  # pylint: disable=too-many-public-methods
             validate_content=False, if_modified_since=None, if_unmodified_since=None,
             if_match=None, if_none_match=None, timeout=None):
         """
-        :raises: InvalidOperation when blob client type is not BlockBlob.
+        :raises: TypeError when blob client type is not BlockBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
 
     async def set_premium_page_blob_tier(self, premium_page_blob_tier, timeout=None):
         """
-        :raises: InvalidOperation when blob client type is not PageBlob.
+        :raises: TypeError when blob client type is not PageBlob.
         :returns: None
         """
 
@@ -184,7 +184,7 @@ class BlobClient:  # pylint: disable=too-many-public-methods
             previous_snapshot_diff=None, if_modified_since=None, if_unmodified_since=None,
             if_match=None, if_none_match=None, timeout=None):
         """
-        :raises: InvalidOperation when blob client type is not PageBlob.
+        :raises: TypeError when blob client type is not PageBlob.
         :returns: A list of page ranges.
         """
 
@@ -192,7 +192,7 @@ class BlobClient:  # pylint: disable=too-many-public-methods
             self, sequence_number_action, sequence_number=None, lease=None, if_modified_since=None,
             if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None):
         """
-        :raises: InvalidOperation when blob client type is not PageBlob.
+        :raises: TypeError when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
 
@@ -200,7 +200,7 @@ class BlobClient:  # pylint: disable=too-many-public-methods
             self, content_length, lease=None, if_modified_since=None, if_unmodified_since=None,
             if_match=None, if_none_match=None, timeout=None):
         """
-        :raises: InvalidOperation when blob client type is not PageBlob.
+        :raises: TypeError when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
 
@@ -209,7 +209,7 @@ class BlobClient:  # pylint: disable=too-many-public-methods
             if_sequence_number_lte=None, if_sequence_number_lt=None, if_sequence_number_eq=None,
             if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None):
         """
-        :raises: InvalidOperation when blob client type is not PageBlob.
+        :raises: TypeError when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
 
@@ -218,7 +218,7 @@ class BlobClient:  # pylint: disable=too-many-public-methods
             if_sequence_number_lt=None, if_sequence_number_eq=None, if_modified_since=None,
             if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None):
         """
-        :raises: InvalidOperation when blob client type is not PageBlob.
+        :raises: TypeError when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
 
@@ -227,7 +227,7 @@ class BlobClient:  # pylint: disable=too-many-public-methods
             destination_if_unmodified_since=None, destination_if_match=None, destination_if_none_match=None,
             destination_lease=None, source_lease=None, timeout=None):
         """
-        :raises: InvalidOperation when blob client type is not PageBlob.
+        :raises: TypeError when blob client type is not PageBlob.
         :returns: A pollable object to check copy operation status (and abort).
         """
 
@@ -235,6 +235,6 @@ class BlobClient:  # pylint: disable=too-many-public-methods
             self, data, validate_content=False, maxsize_condition=None, appendpos_condition=None,
             if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None):
         """
-        :raises: InvalidOperation when blob client type is not AppendBlob.
+        :raises: TypeError when blob client type is not AppendBlob.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         """

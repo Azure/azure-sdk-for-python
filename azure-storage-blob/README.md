@@ -33,7 +33,7 @@ BlobServiceClient.list_container_properties(starts_with=None, include_metadata=F
 BlobServiceClient.get_container_client(container)
 
 # Returns a BlobClient
-BlobServiceClient.get_blob_client(container, blob)
+BlobServiceClient.get_blob_client(container, blob, blob_type=BlobType.BlockBlob)
 ```
 
 ## ContainerClient API
@@ -96,11 +96,6 @@ ContainerClient.set_container_acl(
 
 # Returns a iterable (auto-paging) response of BlobProperties
 ContainerClient.list_blob_properties(starts_with=None, include=None, timeout=None)
-
-# Blob type enum
-azure.storage.blob.BlobType.BlockBlob
-azure.storage.blob.BlobType.PageBlob
-azure.storage.blob.BlobType.AppendBlob
 
 # Returns a BlobClient
 ContainerClient.get_blob_client(blob, blob_type=BlobType.BlockBlob, snapshot=None)
@@ -169,7 +164,7 @@ BlobClient.set_blob_metadata(
 BlobClient.create_snapshot(
     metadata=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, lease=None, timeout=None)
 
-# Returns a pollable object to check operation status and abort
+# Returns a pollable object to wait on the operation, check operation status and abort
 BlobClient.copy_blob_from_source(
     copy_source,
     metadata=None,
@@ -204,75 +199,75 @@ BlobClient.break_lease(
     if_match=None,
     if_none_match=None, timeout=None)
 
-# Only works where type is BlockBlob, otherwise raises InvalidOperation
+# Only works where type is BlockBlob, otherwise raises TypeError
 # Returns None
 BlobClient.set_standard_blob_tier(standard_blob_tier, timeout=None)
 
-# Only works where type is BlockBlob, otherwise raises InvalidOperation
+# Only works where type is BlockBlob, otherwise raises TypeError
 # Returns None
 BlobClient.stage_block(
     block_id, data, validate_content=False, lease=None, timeout=None)
 
-# Only works where type is BlockBlob, otherwise raises InvalidOperation
+# Only works where type is BlockBlob, otherwise raises TypeError
 # Returns None
 BlobClient.stage_block_from_url(
     block_id, copy_source_url, source_range_start, source_range_end, source_content_md5=None, lease=None, timeout=None)
 
-# Only works where type is BlockBlob, otherwise raises InvalidOperation
+# Only works where type is BlockBlob, otherwise raises TypeError
 # Returns a tuple of two sets - committed and uncommitted blocks
 BlobClient.get_block_list(
     block_list_type=None, snapshot=None, lease=None, timeout=None)
 
-# Only works where type is BlockBlob, otherwise raises InvalidOperation
+# Only works where type is BlockBlob, otherwise raises TypeError
 # Returns blob-updated property dict (Etag and last modified)
 BlobClient.commit_block_list(
     block_list, lease=None, content_settings=None, metadata=None, validate_content=False, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)
 
-# Only works where type is PageBlob, otherwise raises InvalidOperation
+# Only works where type is PageBlob, otherwise raises TypeError
 # Returns None
 BlobClient.set_premium_page_blob_tier(premium_page_blob_tier, timeout=None)
 
-# Only works where type is PageBlob, otherwise raises InvalidOperation
+# Only works where type is PageBlob, otherwise raises TypeError
 # Returns blob-updated property dict (Etag and last modified)
 BlobClient.create_pageblob(
     content_length, content_settings=None, sequence_number=None, metadata=None, lease_id=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None, premium_page_blob_tier=None)
 
-# Only works where type is PageBlob, otherwise raises InvalidOperation
+# Only works where type is PageBlob, otherwise raises TypeError
 # Returns a list of page ranges
 BlobClient.get_page_ranges(
     start_range=None, end_range=None, snapshot=None, lease=None, previous_snapshot_diff=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)
 
-# Only works where type is PageBlob, otherwise raises InvalidOperation
+# Only works where type is PageBlob, otherwise raises TypeError
 # Returns blob-updated property dict (Etag and last modified)
 BlobClient.set_sequence_number(
     sequence_number_action, sequence_number=None, lease=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)
 
-# Only works where type is PageBlob, otherwise raises InvalidOperation
+# Only works where type is PageBlob, otherwise raises TypeError
 # Returns blob-updated property dict (Etag and last modified)
 BlobClient.resize_blob(
     content_length, lease=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)
 
-# Only works where type is PageBlob, otherwise raises InvalidOperation
+# Only works where type is PageBlob, otherwise raises TypeError
 # Returns blob-updated property dict (Etag and last modified)
 BlobClient.update_page(
     page, start_range, end_range, lease=None, validate_content=False, if_sequence_number_lte=None, if_sequence_number_lt=None, if_sequence_number_eq=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)
 
-# Only works where type is PageBlob, otherwise raises InvalidOperation
+# Only works where type is PageBlob, otherwise raises TypeError
 # Returns blob-updated property dict (Etag and last modified)
 BlobClient.clear_page(
     start_range, end_range, lease=None, if_sequence_number_lte=None, if_sequence_number_lt=None, if_sequence_number_eq=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)
 
-# Only works where type is PageBlob, otherwise raises InvalidOperation
+# Only works where type is PageBlob, otherwise raises TypeError
 # Returns a pollable object to check operation status and abort
 BlobClient.incremental_copy(
     copy_source, metadata=None, destination_if_modified_since=None, destination_if_unmodified_since=None, destination_if_match=None, destination_if_none_match=None, destination_lease=None, source_lease=None, timeout=None):
 
-# Only works where type is AppendBlob, otherwise raises InvalidOperation
+# Only works where type is AppendBlob, otherwise raises TypeError
 # Returns blob-updated property dict (Etag and last modified)
 BlobClient.create_appendblob(
     content_settings=None, metadata=None, lease=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)
 
-# Only works where type is AppendBlob, otherwise raises InvalidOperation
+# Only works where type is AppendBlob, otherwise raises TypeError
 # Returns blob-updated property dict (Etag, last modified, append offset, committed block count)
 BlobClient.append_block(
     data, validate_content=False, maxsize_condition=None, appendpos_condition=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)

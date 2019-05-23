@@ -1171,9 +1171,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
     def set_standard_blob_tier(self, standard_blob_tier, timeout=None, lease=None):
         # type: (Union[str, StandardBlobTier], Optional[int], Optional[Union[Lease, str]]) -> None
         """
-        :raises: InvalidOperation when blob client type is not BlockBlob.
+        :raises: TypeError when blob client type is not BlockBlob.
         :returns: None
         """
+        if self.blob_type != BlobType.BlockBlob:
+            raise TypeError("This operation is only available for BlockBlob type blobs.")
         access_conditions = get_access_conditions(lease)
         if standard_blob_tier is None:
             raise ValueError("A StandardBlobTier must be specified")
@@ -1194,9 +1196,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         ):
         # type: (...) -> None
         """
-        :raises: InvalidOperation when blob client type is not BlockBlob.
+        :raises: TypeError when blob client type is not BlockBlob.
         :returns: None
         """
+        if self.blob_type != BlobType.BlockBlob:
+            raise TypeError("This operation is only available for BlockBlob type blobs.")
         block_id = encode_base64(str(block_id))
         access_conditions = get_access_conditions(lease)
         if not length:
@@ -1225,9 +1229,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         ):
         # type: (...) -> None
         """
-        :raises: InvalidOperation when blob client type is not BlockBlob.
+        :raises: TypeError when blob client type is not BlockBlob.
         :returns: None
         """
+        if self.blob_type != BlobType.BlockBlob:
+            raise TypeError("This operation is only available for BlockBlob type blobs.")
 
     def get_block_list(
             self, block_list_type="committed",  # type: Optional[str]
@@ -1248,9 +1254,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             Required if the blob has an active lease.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :raises: InvalidOperation when blob client type is not BlockBlob.
+        :raises: TypeError when blob client type is not BlockBlob.
         :returns: A tuple of two sets - committed and uncommitted blocks
         """
+        if self.blob_type != BlobType.BlockBlob:
+            raise TypeError("This operation is only available for BlockBlob type blobs.")
         access_conditions = get_access_conditions(lease)
         blocks= self._client.block_blob.get_block_list(
             list_type=block_list_type,
@@ -1323,9 +1331,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :raises: InvalidOperation when blob client type is not BlockBlob.
+        :raises: TypeError when blob client type is not BlockBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
+        if self.blob_type != BlobType.BlockBlob:
+            raise TypeError("This operation is only available for BlockBlob type blobs.")
         block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
         for block in block_list:
             if block.state.value == 'committed':
@@ -1374,9 +1384,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             each call individually.
         :param str lease:
             Required if the blob has an active lease.
-        :raises: InvalidOperation when blob client type is not PageBlob.
+        :raises: TypeError when blob client type is not PageBlob.
         :returns: None
         """
+        if self.blob_type != BlobType.PageBlob:
+            raise TypeError("This operation is only available for PageBlob type blobs.")
         access_conditions = get_access_conditions(lease)
         if premium_page_blob_tier is None:
             raise ValueError("A PremiumPageBlobTiermust be specified")
@@ -1447,9 +1459,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :raises: InvalidOperation when blob client type is not PageBlob.
+        :raises: TypeError when blob client type is not PageBlob.
         :returns: A list of page ranges.
         """
+        if self.blob_type != BlobType.PageBlob:
+            raise TypeError("This operation is only available for PageBlob type blobs.")
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
@@ -1536,9 +1550,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :raises: InvalidOperation when blob client type is not PageBlob.
+        :raises: TypeError when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
+        if self.blob_type != BlobType.PageBlob:
+            raise TypeError("This operation is only available for PageBlob type blobs.")
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
@@ -1596,9 +1612,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :raises: InvalidOperation when blob client type is not PageBlob.
+        :raises: TypeError when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
+        if self.blob_type != BlobType.PageBlob:
+            raise TypeError("This operation is only available for PageBlob type blobs.")
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
@@ -1690,9 +1708,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :param int timeout:
             The timeout parameter is expressed in seconds.
 
-        :raises: InvalidOperation when blob client type is not PageBlob.
+        :raises: TypeError when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
+        if self.blob_type != BlobType.PageBlob:
+            raise TypeError("This operation is only available for PageBlob type blobs.")
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
         cek, iv, encryption_data = None, None, None
@@ -1759,9 +1779,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
-        :raises: InvalidOperation when blob client type is not PageBlob.
+        :raises: TypeError when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
+        if self.blob_type != BlobType.PageBlob:
+            raise TypeError("This operation is only available for PageBlob type blobs.")
         access_conditions = get_access_conditions(lease)
         seq_conditions = get_sequence_conditions(
             if_sequence_number_lte=if_sequence_number_lte,
@@ -1856,9 +1878,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             the lease ID given matches the active lease ID of the source blob.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :raises: InvalidOperation when blob client type is not PageBlob.
+        :raises: TypeError when blob client type is not PageBlob.
         :returns: A pollable object to check copy operation status (and abort).
         """
+        if self.blob_type != BlobType.PageBlob:
+            raise TypeError("This operation is only available for PageBlob type blobs.")
 
     def append_block(
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
@@ -1873,6 +1897,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         ):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
         """
-        :raises: InvalidOperation when blob client type is not AppendBlob.
+        :raises: TypeError when blob client type is not AppendBlob.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         """
+        if self.blob_type != BlobType.AppendBlob:
+            raise TypeError("This operation is only available for AppendBlob type blobs.")
