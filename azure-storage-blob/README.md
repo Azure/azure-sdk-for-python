@@ -119,7 +119,6 @@ BlobClient.generate_shared_access_signature(
     resource_types, permission, expiry, start=None, ip=None, protocol=None)
 
 # By default, uploads as a BlockBlob, unless alternative blob_type is specified.
-# Returns a BlobClient
 BlobClient.upload_blob(
     data,
     length=None,
