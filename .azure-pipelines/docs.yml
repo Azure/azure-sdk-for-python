@@ -29,8 +29,7 @@ jobs:
           Copy-Item -Path $(Build.SourcesDirectory)/doc/_build/html/* -Destination $(Build.ArtifactStagingDirectory)/sphinx -Recurse -Force
         displayName: 'Generate Sphinx Docs'
 
-      - task: PublishBuildArtifacts@1
+      - upload: $(Build.ArtifactStagingDirectory)
+        artifact: docfolder
         condition: succeededOrFailed()
         displayName: 'Publish Artifacts'
-        inputs:
-          artifactName: docfolder
