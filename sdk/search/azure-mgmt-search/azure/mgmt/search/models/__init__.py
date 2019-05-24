@@ -16,6 +16,7 @@ try:
     from .query_key_py3 import QueryKey
     from .sku_py3 import Sku
     from .search_service_py3 import SearchService
+    from .identity_py3 import Identity
     from .resource_py3 import Resource
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
@@ -27,6 +28,7 @@ except (SyntaxError, ImportError):
     from .query_key import QueryKey
     from .sku import Sku
     from .search_service import SearchService
+    from .identity import Identity
     from .resource import Resource
     from .operation_display import OperationDisplay
     from .operation import Operation
@@ -40,6 +42,7 @@ from .search_management_client_enums import (
     HostingMode,
     SearchServiceStatus,
     ProvisioningState,
+    IdentityType,
     AdminKeyKind,
 )
 
@@ -50,6 +53,7 @@ __all__ = [
     'QueryKey',
     'Sku',
     'SearchService',
+    'Identity',
     'Resource',
     'OperationDisplay',
     'Operation',
@@ -62,5 +66,6 @@ __all__ = [
     'HostingMode',
     'SearchServiceStatus',
     'ProvisioningState',
+    'IdentityType',
     'AdminKeyKind',
 ]
