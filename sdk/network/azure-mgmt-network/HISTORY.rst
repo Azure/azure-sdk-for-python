@@ -49,13 +49,14 @@ Release History
 **General Breaking changes**
 
 This version uses a next-generation code generator that *might* introduce breaking changes if you were importing from the v20xx_yy_zz API folders.
-At a glance, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
 
 - NetworkManagementClient cannot be imported from `azure.mgmt.network.v20xx_yy_zz.network_management_client` anymore (import from `azure.mgmt.network.v20xx_yy_zz` works like before)
 - NetworkManagementClientConfiguration import has been moved from `azure.mgmt.network.v20xx_yy_zz.network_management_client` to `azure.mgmt.network.v20xx_yy_zz`
 - A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.network.v20xx_yy_zz.models.my_class` (import from `azure.mgmt.network.v20xx_yy_zz.models` works like before)
 - An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.network.v20xx_yy_zz.operations.my_class_operations` (import from `azure.mgmt.network.v20xx_yy_zz.operations` works like before)
 
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
 
 2.7.0 (2019-04-25)
 ++++++++++++++++++
