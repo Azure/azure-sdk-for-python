@@ -317,7 +317,7 @@ class ContainerClient(object):
         }
 
     def set_container_acl(
-            self, signed_identifiers=None,  # type: Optional[Dict[str, Optional[Tuple[Any, Any, Any]]]]
+            self, signed_identifiers=None,  # type: Optional[list[SignedIdentifier]]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
             lease=None,  # type: Optional[Union[str, Lease]]
             if_modified_since=None,  # type: Optional[datetime]

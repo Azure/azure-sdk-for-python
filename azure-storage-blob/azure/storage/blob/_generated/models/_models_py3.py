@@ -19,8 +19,10 @@ class AccessPolicy(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param start: Required. the date-time the policy is active
+                  The date should be exactly in this 019-05-23T21:21:28Z format
     :type start: datetime
     :param expiry: Required. the date-time the policy expires
+                   The date should be exactly in this 019-05-23T21:21:28Z format
     :type expiry: datetime
     :param permission: Required. the permissions for the acl policy
     :type permission: str
