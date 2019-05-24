@@ -25,6 +25,10 @@ class MetadataEntity(Model):
     :type display_name: str
     :param depends_on: The list of keys on which this entity depends on.
     :type depends_on: list[str]
+    :param applicable_scenarios: The list of scenarios applicable to this
+     metadata entity.
+    :type applicable_scenarios: list[str or
+     ~azure.mgmt.advisor.models.Scenario]
     :param supported_values: The list of supported values.
     :type supported_values:
      list[~azure.mgmt.advisor.models.MetadataSupportedValueDetail]
@@ -36,6 +40,7 @@ class MetadataEntity(Model):
         'name': {'key': 'name', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'depends_on': {'key': 'properties.dependsOn', 'type': '[str]'},
+        'applicable_scenarios': {'key': 'properties.applicableScenarios', 'type': '[str]'},
         'supported_values': {'key': 'properties.supportedValues', 'type': '[MetadataSupportedValueDetail]'},
     }
 
@@ -46,4 +51,5 @@ class MetadataEntity(Model):
         self.name = kwargs.get('name', None)
         self.display_name = kwargs.get('display_name', None)
         self.depends_on = kwargs.get('depends_on', None)
+        self.applicable_scenarios = kwargs.get('applicable_scenarios', None)
         self.supported_values = kwargs.get('supported_values', None)

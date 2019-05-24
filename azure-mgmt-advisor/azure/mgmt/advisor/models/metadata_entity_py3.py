@@ -25,6 +25,10 @@ class MetadataEntity(Model):
     :type display_name: str
     :param depends_on: The list of keys on which this entity depends on.
     :type depends_on: list[str]
+    :param applicable_scenarios: The list of scenarios applicable to this
+     metadata entity.
+    :type applicable_scenarios: list[str or
+     ~azure.mgmt.advisor.models.Scenario]
     :param supported_values: The list of supported values.
     :type supported_values:
      list[~azure.mgmt.advisor.models.MetadataSupportedValueDetail]
@@ -36,14 +40,16 @@ class MetadataEntity(Model):
         'name': {'key': 'name', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'depends_on': {'key': 'properties.dependsOn', 'type': '[str]'},
+        'applicable_scenarios': {'key': 'properties.applicableScenarios', 'type': '[str]'},
         'supported_values': {'key': 'properties.supportedValues', 'type': '[MetadataSupportedValueDetail]'},
     }
 
-    def __init__(self, *, id: str=None, type: str=None, name: str=None, display_name: str=None, depends_on=None, supported_values=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, type: str=None, name: str=None, display_name: str=None, depends_on=None, applicable_scenarios=None, supported_values=None, **kwargs) -> None:
         super(MetadataEntity, self).__init__(**kwargs)
         self.id = id
         self.type = type
         self.name = name
         self.display_name = display_name
         self.depends_on = depends_on
+        self.applicable_scenarios = applicable_scenarios
         self.supported_values = supported_values
