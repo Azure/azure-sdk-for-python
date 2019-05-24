@@ -16,9 +16,6 @@ class TriggerChangeDetectionParameters(Model):
     """The parameters used when calling trigger change detection action on cloud
     endpoint.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param directory_path: Relative path to a directory Azure File share for
      which change detection is to be performed.
     :type directory_path: str
@@ -27,14 +24,10 @@ class TriggerChangeDetectionParameters(Model):
      'Default', 'Recursive'
     :type change_detection_mode: str or
      ~azure.mgmt.storagesync.models.ChangeDetectionMode
-    :ivar paths: Array of relative paths on the Azure File share to be
+    :param paths: Array of relative paths on the Azure File share to be
      included in the change detection. Can be files and directories.
-    :vartype paths: list[str]
+    :type paths: list[str]
     """
-
-    _validation = {
-        'paths': {'readonly': True},
-    }
 
     _attribute_map = {
         'directory_path': {'key': 'directoryPath', 'type': 'str'},
@@ -42,8 +35,8 @@ class TriggerChangeDetectionParameters(Model):
         'paths': {'key': 'paths', 'type': '[str]'},
     }
 
-    def __init__(self, *, directory_path: str=None, change_detection_mode=None, **kwargs) -> None:
+    def __init__(self, *, directory_path: str=None, change_detection_mode=None, paths=None, **kwargs) -> None:
         super(TriggerChangeDetectionParameters, self).__init__(**kwargs)
         self.directory_path = directory_path
         self.change_detection_mode = change_detection_mode
-        self.paths = None
+        self.paths = paths

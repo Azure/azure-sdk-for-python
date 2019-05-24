@@ -927,9 +927,7 @@ class CloudEndpointsOperations(object):
 
 
     def _trigger_change_detection_initial(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, directory_path=None, change_detection_mode=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.TriggerChangeDetectionParameters(directory_path=directory_path, change_detection_mode=change_detection_mode)
-
+            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.trigger_change_detection.metadata['url']
         path_format_arguments = {
@@ -976,7 +974,7 @@ class CloudEndpointsOperations(object):
             return client_raw_response
 
     def trigger_change_detection(
-            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, directory_path=None, change_detection_mode=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Triggers detection of changes performed on Azure File share connected
         to the specified Azure File Sync Cloud Endpoint.
 
@@ -990,14 +988,9 @@ class CloudEndpointsOperations(object):
         :type sync_group_name: str
         :param cloud_endpoint_name: Name of Cloud Endpoint object.
         :type cloud_endpoint_name: str
-        :param directory_path: Relative path to a directory Azure File share
-         for which change detection is to be performed.
-        :type directory_path: str
-        :param change_detection_mode: Change Detection Mode. Applies to a
-         directory specified in directoryPath parameter. Possible values
-         include: 'Default', 'Recursive'
-        :type change_detection_mode: str or
-         ~azure.mgmt.storagesync.models.ChangeDetectionMode
+        :param parameters: Trigger Change Detection Action parameters.
+        :type parameters:
+         ~azure.mgmt.storagesync.models.TriggerChangeDetectionParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -1015,8 +1008,7 @@ class CloudEndpointsOperations(object):
             storage_sync_service_name=storage_sync_service_name,
             sync_group_name=sync_group_name,
             cloud_endpoint_name=cloud_endpoint_name,
-            directory_path=directory_path,
-            change_detection_mode=change_detection_mode,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
