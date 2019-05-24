@@ -7,7 +7,7 @@ trigger:
     - master
   paths:
     include:
-    - sdk/eventhub/
+    - sdk/keyvault/
 
 pr:
   branches:
@@ -15,9 +15,9 @@ pr:
     - master
   paths:
     include:
-    - sdk/eventhub/
+    - sdk/keyvault/
 
 jobs:
 - template: ../../eng/pipelines/templates/jobs/archetype-sdk-client.yml
   parameters:
-    BuildTargettingString: azure-eventhubs
+    BuildTargettingString: azure-keyvault,azure-mgmt-keyvault,azure-security-keyvault,azure-security-nspkg
