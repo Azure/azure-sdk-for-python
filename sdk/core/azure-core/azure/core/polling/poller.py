@@ -36,9 +36,7 @@ from azure.core.pipeline.transport.base import HttpResponse  # type: ignore
 if TYPE_CHECKING:
     import requests
     from msrest.serialization import Model # type: ignore # pylint: disable=unused-import
-
-
-DeserializationCallbackType = Union[Model, Callable[[requests.Response], Model]]
+    DeserializationCallbackType = Union[Model, Callable[[requests.Response], Model]]
 
 
 class PollingMethod(object):
