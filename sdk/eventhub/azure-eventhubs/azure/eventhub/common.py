@@ -130,9 +130,9 @@ class EventData(object):
     @property
     def offset(self):
         """
-        The offset of the event data object.
+        The position of the event data object.
 
-        :rtype: ~azure.eventhub.common.Offset
+        :rtype: ~azure.eventhub.common.EventPosition
         """
         try:
             return EventPosition(self._annotations[EventData.PROP_OFFSET].decode('UTF-8'))

@@ -33,7 +33,7 @@ class Receiver(object):
     timeout = 0
     _epoch = b'com.microsoft:epoch'
 
-    def __init__(self, client, source, event_position=None, prefetch=300, epoch=None, keep_alive=None, auto_reconnect=False):
+    def __init__(self, client, source, event_position=None, prefetch=300, exclusive_receiver_priority=None, keep_alive=None, auto_reconnect=False):
         """
         Instantiate a receiver.
 
@@ -53,7 +53,7 @@ class Receiver(object):
         self.offset = event_position
         self.iter_started = False
         self.prefetch = prefetch
-        self.epoch = epoch
+        self.exclusive_receiver_priority = exclusive_receiver_priority
         self.keep_alive = keep_alive
         self.auto_reconnect = auto_reconnect
         self.retry_policy = errors.ErrorPolicy(max_retries=self.client.config.max_retries, on_error=_error_handler)
@@ -66,8 +66,8 @@ class Receiver(object):
         source = Source(self.source)
         if self.offset is not None:
             source.set_filter(self.offset.selector())
-        if epoch:
-            self.properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(epoch))}
+        if exclusive_receiver_priority:
+            self.properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(exclusive_receiver_priority))}
         self._handler = ReceiveClient(
             source,
             auth=self.client.get_auth(),
