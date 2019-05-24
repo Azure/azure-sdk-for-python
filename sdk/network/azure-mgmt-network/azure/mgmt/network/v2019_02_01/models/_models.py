@@ -10133,6 +10133,27 @@ class ResourceNavigationLink(SubResource):
         self.etag = None
 
 
+class ResourceNavigationLinksListResult(Model):
+    """Response for ResourceNavigationLinks_Get operation.
+
+    :param value: The resource navigation links in a subnet.
+    :type value:
+     list[~azure.mgmt.network.v2019_02_01.models.ResourceNavigationLink]
+    :param next_link: The URL to get the next set of results.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ResourceNavigationLink]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceNavigationLinksListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
 class RetentionPolicyParameters(Model):
     """Parameters that define the retention policy for flow log.
 
@@ -10648,6 +10669,27 @@ class ServiceAssociationLink(SubResource):
         self.provisioning_state = None
         self.name = kwargs.get('name', None)
         self.etag = None
+
+
+class ServiceAssociationLinksListResult(Model):
+    """Response for ServiceAssociationLinks_Get operation.
+
+    :param value: The service association links in a subnet.
+    :type value:
+     list[~azure.mgmt.network.v2019_02_01.models.ServiceAssociationLink]
+    :param next_link: The URL to get the next set of results.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ServiceAssociationLink]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServiceAssociationLinksListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
 class ServiceEndpointPolicy(Resource):

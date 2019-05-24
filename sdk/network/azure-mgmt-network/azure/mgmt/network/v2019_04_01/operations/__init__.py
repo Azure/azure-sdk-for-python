@@ -13,8 +13,11 @@ from ._application_gateways_operations import ApplicationGatewaysOperations
 from ._application_security_groups_operations import ApplicationSecurityGroupsOperations
 from ._available_delegations_operations import AvailableDelegationsOperations
 from ._available_resource_group_delegations_operations import AvailableResourceGroupDelegationsOperations
+from ._available_private_endpoint_types_operations import AvailablePrivateEndpointTypesOperations
+from ._available_resource_group_private_endpoint_types_operations import AvailableResourceGroupPrivateEndpointTypesOperations
 from ._azure_firewalls_operations import AzureFirewallsOperations
 from ._azure_firewall_fqdn_tags_operations import AzureFirewallFqdnTagsOperations
+from ._bastion_hosts_operations import BastionHostsOperations
 from ._ddos_custom_policies_operations import DdosCustomPoliciesOperations
 from ._ddos_protection_plans_operations import DdosProtectionPlansOperations
 from ._available_endpoint_services_operations import AvailableEndpointServicesOperations
@@ -31,7 +34,8 @@ from ._express_route_connections_operations import ExpressRouteConnectionsOperat
 from ._express_route_ports_locations_operations import ExpressRoutePortsLocationsOperations
 from ._express_route_ports_operations import ExpressRoutePortsOperations
 from ._express_route_links_operations import ExpressRouteLinksOperations
-from ._interface_endpoints_operations import InterfaceEndpointsOperations
+from ._private_endpoints_operations import PrivateEndpointsOperations
+from ._private_link_services_operations import PrivateLinkServicesOperations
 from ._load_balancers_operations import LoadBalancersOperations
 from ._load_balancer_backend_address_pools_operations import LoadBalancerBackendAddressPoolsOperations
 from ._load_balancer_frontend_ip_configurations_operations import LoadBalancerFrontendIPConfigurationsOperations
@@ -62,6 +66,7 @@ from ._routes_operations import RoutesOperations
 from ._bgp_service_communities_operations import BgpServiceCommunitiesOperations
 from ._service_endpoint_policies_operations import ServiceEndpointPoliciesOperations
 from ._service_endpoint_policy_definitions_operations import ServiceEndpointPolicyDefinitionsOperations
+from ._service_tags_operations import ServiceTagsOperations
 from ._usages_operations import UsagesOperations
 from ._virtual_networks_operations import VirtualNetworksOperations
 from ._subnets_operations import SubnetsOperations
@@ -89,8 +94,11 @@ __all__ = [
     'ApplicationSecurityGroupsOperations',
     'AvailableDelegationsOperations',
     'AvailableResourceGroupDelegationsOperations',
+    'AvailablePrivateEndpointTypesOperations',
+    'AvailableResourceGroupPrivateEndpointTypesOperations',
     'AzureFirewallsOperations',
     'AzureFirewallFqdnTagsOperations',
+    'BastionHostsOperations',
     'DdosCustomPoliciesOperations',
     'DdosProtectionPlansOperations',
     'AvailableEndpointServicesOperations',
@@ -107,7 +115,8 @@ __all__ = [
     'ExpressRoutePortsLocationsOperations',
     'ExpressRoutePortsOperations',
     'ExpressRouteLinksOperations',
-    'InterfaceEndpointsOperations',
+    'PrivateEndpointsOperations',
+    'PrivateLinkServicesOperations',
     'LoadBalancersOperations',
     'LoadBalancerBackendAddressPoolsOperations',
     'LoadBalancerFrontendIPConfigurationsOperations',
@@ -138,6 +147,7 @@ __all__ = [
     'BgpServiceCommunitiesOperations',
     'ServiceEndpointPoliciesOperations',
     'ServiceEndpointPolicyDefinitionsOperations',
+    'ServiceTagsOperations',
     'UsagesOperations',
     'VirtualNetworksOperations',
     'SubnetsOperations',

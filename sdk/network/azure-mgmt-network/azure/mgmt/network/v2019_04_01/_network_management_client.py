@@ -18,8 +18,11 @@ from .operations import ApplicationGatewaysOperations
 from .operations import ApplicationSecurityGroupsOperations
 from .operations import AvailableDelegationsOperations
 from .operations import AvailableResourceGroupDelegationsOperations
+from .operations import AvailablePrivateEndpointTypesOperations
+from .operations import AvailableResourceGroupPrivateEndpointTypesOperations
 from .operations import AzureFirewallsOperations
 from .operations import AzureFirewallFqdnTagsOperations
+from .operations import BastionHostsOperations
 from .operations import DdosCustomPoliciesOperations
 from .operations import DdosProtectionPlansOperations
 from .operations import AvailableEndpointServicesOperations
@@ -36,7 +39,8 @@ from .operations import ExpressRouteConnectionsOperations
 from .operations import ExpressRoutePortsLocationsOperations
 from .operations import ExpressRoutePortsOperations
 from .operations import ExpressRouteLinksOperations
-from .operations import InterfaceEndpointsOperations
+from .operations import PrivateEndpointsOperations
+from .operations import PrivateLinkServicesOperations
 from .operations import LoadBalancersOperations
 from .operations import LoadBalancerBackendAddressPoolsOperations
 from .operations import LoadBalancerFrontendIPConfigurationsOperations
@@ -67,6 +71,7 @@ from .operations import RoutesOperations
 from .operations import BgpServiceCommunitiesOperations
 from .operations import ServiceEndpointPoliciesOperations
 from .operations import ServiceEndpointPolicyDefinitionsOperations
+from .operations import ServiceTagsOperations
 from .operations import UsagesOperations
 from .operations import VirtualNetworksOperations
 from .operations import SubnetsOperations
@@ -97,151 +102,161 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, SDKClient)
     :vartype config: NetworkManagementClientConfiguration
 
     :ivar application_gateways: ApplicationGateways operations
-    :vartype application_gateways: azure.mgmt.network.v2019_02_01.operations.ApplicationGatewaysOperations
+    :vartype application_gateways: azure.mgmt.network.v2019_04_01.operations.ApplicationGatewaysOperations
     :ivar application_security_groups: ApplicationSecurityGroups operations
-    :vartype application_security_groups: azure.mgmt.network.v2019_02_01.operations.ApplicationSecurityGroupsOperations
+    :vartype application_security_groups: azure.mgmt.network.v2019_04_01.operations.ApplicationSecurityGroupsOperations
     :ivar available_delegations: AvailableDelegations operations
-    :vartype available_delegations: azure.mgmt.network.v2019_02_01.operations.AvailableDelegationsOperations
+    :vartype available_delegations: azure.mgmt.network.v2019_04_01.operations.AvailableDelegationsOperations
     :ivar available_resource_group_delegations: AvailableResourceGroupDelegations operations
-    :vartype available_resource_group_delegations: azure.mgmt.network.v2019_02_01.operations.AvailableResourceGroupDelegationsOperations
+    :vartype available_resource_group_delegations: azure.mgmt.network.v2019_04_01.operations.AvailableResourceGroupDelegationsOperations
+    :ivar available_private_endpoint_types: AvailablePrivateEndpointTypes operations
+    :vartype available_private_endpoint_types: azure.mgmt.network.v2019_04_01.operations.AvailablePrivateEndpointTypesOperations
+    :ivar available_resource_group_private_endpoint_types: AvailableResourceGroupPrivateEndpointTypes operations
+    :vartype available_resource_group_private_endpoint_types: azure.mgmt.network.v2019_04_01.operations.AvailableResourceGroupPrivateEndpointTypesOperations
     :ivar azure_firewalls: AzureFirewalls operations
-    :vartype azure_firewalls: azure.mgmt.network.v2019_02_01.operations.AzureFirewallsOperations
+    :vartype azure_firewalls: azure.mgmt.network.v2019_04_01.operations.AzureFirewallsOperations
     :ivar azure_firewall_fqdn_tags: AzureFirewallFqdnTags operations
-    :vartype azure_firewall_fqdn_tags: azure.mgmt.network.v2019_02_01.operations.AzureFirewallFqdnTagsOperations
+    :vartype azure_firewall_fqdn_tags: azure.mgmt.network.v2019_04_01.operations.AzureFirewallFqdnTagsOperations
+    :ivar bastion_hosts: BastionHosts operations
+    :vartype bastion_hosts: azure.mgmt.network.v2019_04_01.operations.BastionHostsOperations
     :ivar ddos_custom_policies: DdosCustomPolicies operations
-    :vartype ddos_custom_policies: azure.mgmt.network.v2019_02_01.operations.DdosCustomPoliciesOperations
+    :vartype ddos_custom_policies: azure.mgmt.network.v2019_04_01.operations.DdosCustomPoliciesOperations
     :ivar ddos_protection_plans: DdosProtectionPlans operations
-    :vartype ddos_protection_plans: azure.mgmt.network.v2019_02_01.operations.DdosProtectionPlansOperations
+    :vartype ddos_protection_plans: azure.mgmt.network.v2019_04_01.operations.DdosProtectionPlansOperations
     :ivar available_endpoint_services: AvailableEndpointServices operations
-    :vartype available_endpoint_services: azure.mgmt.network.v2019_02_01.operations.AvailableEndpointServicesOperations
+    :vartype available_endpoint_services: azure.mgmt.network.v2019_04_01.operations.AvailableEndpointServicesOperations
     :ivar express_route_circuit_authorizations: ExpressRouteCircuitAuthorizations operations
-    :vartype express_route_circuit_authorizations: azure.mgmt.network.v2019_02_01.operations.ExpressRouteCircuitAuthorizationsOperations
+    :vartype express_route_circuit_authorizations: azure.mgmt.network.v2019_04_01.operations.ExpressRouteCircuitAuthorizationsOperations
     :ivar express_route_circuit_peerings: ExpressRouteCircuitPeerings operations
-    :vartype express_route_circuit_peerings: azure.mgmt.network.v2019_02_01.operations.ExpressRouteCircuitPeeringsOperations
+    :vartype express_route_circuit_peerings: azure.mgmt.network.v2019_04_01.operations.ExpressRouteCircuitPeeringsOperations
     :ivar express_route_circuit_connections: ExpressRouteCircuitConnections operations
-    :vartype express_route_circuit_connections: azure.mgmt.network.v2019_02_01.operations.ExpressRouteCircuitConnectionsOperations
+    :vartype express_route_circuit_connections: azure.mgmt.network.v2019_04_01.operations.ExpressRouteCircuitConnectionsOperations
     :ivar peer_express_route_circuit_connections: PeerExpressRouteCircuitConnections operations
-    :vartype peer_express_route_circuit_connections: azure.mgmt.network.v2019_02_01.operations.PeerExpressRouteCircuitConnectionsOperations
+    :vartype peer_express_route_circuit_connections: azure.mgmt.network.v2019_04_01.operations.PeerExpressRouteCircuitConnectionsOperations
     :ivar express_route_circuits: ExpressRouteCircuits operations
-    :vartype express_route_circuits: azure.mgmt.network.v2019_02_01.operations.ExpressRouteCircuitsOperations
+    :vartype express_route_circuits: azure.mgmt.network.v2019_04_01.operations.ExpressRouteCircuitsOperations
     :ivar express_route_service_providers: ExpressRouteServiceProviders operations
-    :vartype express_route_service_providers: azure.mgmt.network.v2019_02_01.operations.ExpressRouteServiceProvidersOperations
+    :vartype express_route_service_providers: azure.mgmt.network.v2019_04_01.operations.ExpressRouteServiceProvidersOperations
     :ivar express_route_cross_connections: ExpressRouteCrossConnections operations
-    :vartype express_route_cross_connections: azure.mgmt.network.v2019_02_01.operations.ExpressRouteCrossConnectionsOperations
+    :vartype express_route_cross_connections: azure.mgmt.network.v2019_04_01.operations.ExpressRouteCrossConnectionsOperations
     :ivar express_route_cross_connection_peerings: ExpressRouteCrossConnectionPeerings operations
-    :vartype express_route_cross_connection_peerings: azure.mgmt.network.v2019_02_01.operations.ExpressRouteCrossConnectionPeeringsOperations
+    :vartype express_route_cross_connection_peerings: azure.mgmt.network.v2019_04_01.operations.ExpressRouteCrossConnectionPeeringsOperations
     :ivar express_route_gateways: ExpressRouteGateways operations
-    :vartype express_route_gateways: azure.mgmt.network.v2019_02_01.operations.ExpressRouteGatewaysOperations
+    :vartype express_route_gateways: azure.mgmt.network.v2019_04_01.operations.ExpressRouteGatewaysOperations
     :ivar express_route_connections: ExpressRouteConnections operations
-    :vartype express_route_connections: azure.mgmt.network.v2019_02_01.operations.ExpressRouteConnectionsOperations
+    :vartype express_route_connections: azure.mgmt.network.v2019_04_01.operations.ExpressRouteConnectionsOperations
     :ivar express_route_ports_locations: ExpressRoutePortsLocations operations
-    :vartype express_route_ports_locations: azure.mgmt.network.v2019_02_01.operations.ExpressRoutePortsLocationsOperations
+    :vartype express_route_ports_locations: azure.mgmt.network.v2019_04_01.operations.ExpressRoutePortsLocationsOperations
     :ivar express_route_ports: ExpressRoutePorts operations
-    :vartype express_route_ports: azure.mgmt.network.v2019_02_01.operations.ExpressRoutePortsOperations
+    :vartype express_route_ports: azure.mgmt.network.v2019_04_01.operations.ExpressRoutePortsOperations
     :ivar express_route_links: ExpressRouteLinks operations
-    :vartype express_route_links: azure.mgmt.network.v2019_02_01.operations.ExpressRouteLinksOperations
-    :ivar interface_endpoints: InterfaceEndpoints operations
-    :vartype interface_endpoints: azure.mgmt.network.v2019_02_01.operations.InterfaceEndpointsOperations
+    :vartype express_route_links: azure.mgmt.network.v2019_04_01.operations.ExpressRouteLinksOperations
+    :ivar private_endpoints: PrivateEndpoints operations
+    :vartype private_endpoints: azure.mgmt.network.v2019_04_01.operations.PrivateEndpointsOperations
+    :ivar private_link_services: PrivateLinkServices operations
+    :vartype private_link_services: azure.mgmt.network.v2019_04_01.operations.PrivateLinkServicesOperations
     :ivar load_balancers: LoadBalancers operations
-    :vartype load_balancers: azure.mgmt.network.v2019_02_01.operations.LoadBalancersOperations
+    :vartype load_balancers: azure.mgmt.network.v2019_04_01.operations.LoadBalancersOperations
     :ivar load_balancer_backend_address_pools: LoadBalancerBackendAddressPools operations
-    :vartype load_balancer_backend_address_pools: azure.mgmt.network.v2019_02_01.operations.LoadBalancerBackendAddressPoolsOperations
+    :vartype load_balancer_backend_address_pools: azure.mgmt.network.v2019_04_01.operations.LoadBalancerBackendAddressPoolsOperations
     :ivar load_balancer_frontend_ip_configurations: LoadBalancerFrontendIPConfigurations operations
-    :vartype load_balancer_frontend_ip_configurations: azure.mgmt.network.v2019_02_01.operations.LoadBalancerFrontendIPConfigurationsOperations
+    :vartype load_balancer_frontend_ip_configurations: azure.mgmt.network.v2019_04_01.operations.LoadBalancerFrontendIPConfigurationsOperations
     :ivar inbound_nat_rules: InboundNatRules operations
-    :vartype inbound_nat_rules: azure.mgmt.network.v2019_02_01.operations.InboundNatRulesOperations
+    :vartype inbound_nat_rules: azure.mgmt.network.v2019_04_01.operations.InboundNatRulesOperations
     :ivar load_balancer_load_balancing_rules: LoadBalancerLoadBalancingRules operations
-    :vartype load_balancer_load_balancing_rules: azure.mgmt.network.v2019_02_01.operations.LoadBalancerLoadBalancingRulesOperations
+    :vartype load_balancer_load_balancing_rules: azure.mgmt.network.v2019_04_01.operations.LoadBalancerLoadBalancingRulesOperations
     :ivar load_balancer_outbound_rules: LoadBalancerOutboundRules operations
-    :vartype load_balancer_outbound_rules: azure.mgmt.network.v2019_02_01.operations.LoadBalancerOutboundRulesOperations
+    :vartype load_balancer_outbound_rules: azure.mgmt.network.v2019_04_01.operations.LoadBalancerOutboundRulesOperations
     :ivar load_balancer_network_interfaces: LoadBalancerNetworkInterfaces operations
-    :vartype load_balancer_network_interfaces: azure.mgmt.network.v2019_02_01.operations.LoadBalancerNetworkInterfacesOperations
+    :vartype load_balancer_network_interfaces: azure.mgmt.network.v2019_04_01.operations.LoadBalancerNetworkInterfacesOperations
     :ivar load_balancer_probes: LoadBalancerProbes operations
-    :vartype load_balancer_probes: azure.mgmt.network.v2019_02_01.operations.LoadBalancerProbesOperations
+    :vartype load_balancer_probes: azure.mgmt.network.v2019_04_01.operations.LoadBalancerProbesOperations
     :ivar nat_gateways: NatGateways operations
-    :vartype nat_gateways: azure.mgmt.network.v2019_02_01.operations.NatGatewaysOperations
+    :vartype nat_gateways: azure.mgmt.network.v2019_04_01.operations.NatGatewaysOperations
     :ivar network_interfaces: NetworkInterfaces operations
-    :vartype network_interfaces: azure.mgmt.network.v2019_02_01.operations.NetworkInterfacesOperations
+    :vartype network_interfaces: azure.mgmt.network.v2019_04_01.operations.NetworkInterfacesOperations
     :ivar network_interface_ip_configurations: NetworkInterfaceIPConfigurations operations
-    :vartype network_interface_ip_configurations: azure.mgmt.network.v2019_02_01.operations.NetworkInterfaceIPConfigurationsOperations
+    :vartype network_interface_ip_configurations: azure.mgmt.network.v2019_04_01.operations.NetworkInterfaceIPConfigurationsOperations
     :ivar network_interface_load_balancers: NetworkInterfaceLoadBalancers operations
-    :vartype network_interface_load_balancers: azure.mgmt.network.v2019_02_01.operations.NetworkInterfaceLoadBalancersOperations
+    :vartype network_interface_load_balancers: azure.mgmt.network.v2019_04_01.operations.NetworkInterfaceLoadBalancersOperations
     :ivar network_interface_tap_configurations: NetworkInterfaceTapConfigurations operations
-    :vartype network_interface_tap_configurations: azure.mgmt.network.v2019_02_01.operations.NetworkInterfaceTapConfigurationsOperations
+    :vartype network_interface_tap_configurations: azure.mgmt.network.v2019_04_01.operations.NetworkInterfaceTapConfigurationsOperations
     :ivar network_profiles: NetworkProfiles operations
-    :vartype network_profiles: azure.mgmt.network.v2019_02_01.operations.NetworkProfilesOperations
+    :vartype network_profiles: azure.mgmt.network.v2019_04_01.operations.NetworkProfilesOperations
     :ivar network_security_groups: NetworkSecurityGroups operations
-    :vartype network_security_groups: azure.mgmt.network.v2019_02_01.operations.NetworkSecurityGroupsOperations
+    :vartype network_security_groups: azure.mgmt.network.v2019_04_01.operations.NetworkSecurityGroupsOperations
     :ivar security_rules: SecurityRules operations
-    :vartype security_rules: azure.mgmt.network.v2019_02_01.operations.SecurityRulesOperations
+    :vartype security_rules: azure.mgmt.network.v2019_04_01.operations.SecurityRulesOperations
     :ivar default_security_rules: DefaultSecurityRules operations
-    :vartype default_security_rules: azure.mgmt.network.v2019_02_01.operations.DefaultSecurityRulesOperations
+    :vartype default_security_rules: azure.mgmt.network.v2019_04_01.operations.DefaultSecurityRulesOperations
     :ivar network_watchers: NetworkWatchers operations
-    :vartype network_watchers: azure.mgmt.network.v2019_02_01.operations.NetworkWatchersOperations
+    :vartype network_watchers: azure.mgmt.network.v2019_04_01.operations.NetworkWatchersOperations
     :ivar packet_captures: PacketCaptures operations
-    :vartype packet_captures: azure.mgmt.network.v2019_02_01.operations.PacketCapturesOperations
+    :vartype packet_captures: azure.mgmt.network.v2019_04_01.operations.PacketCapturesOperations
     :ivar connection_monitors: ConnectionMonitors operations
-    :vartype connection_monitors: azure.mgmt.network.v2019_02_01.operations.ConnectionMonitorsOperations
+    :vartype connection_monitors: azure.mgmt.network.v2019_04_01.operations.ConnectionMonitorsOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.network.v2019_02_01.operations.Operations
+    :vartype operations: azure.mgmt.network.v2019_04_01.operations.Operations
     :ivar public_ip_addresses: PublicIPAddresses operations
-    :vartype public_ip_addresses: azure.mgmt.network.v2019_02_01.operations.PublicIPAddressesOperations
+    :vartype public_ip_addresses: azure.mgmt.network.v2019_04_01.operations.PublicIPAddressesOperations
     :ivar public_ip_prefixes: PublicIPPrefixes operations
-    :vartype public_ip_prefixes: azure.mgmt.network.v2019_02_01.operations.PublicIPPrefixesOperations
+    :vartype public_ip_prefixes: azure.mgmt.network.v2019_04_01.operations.PublicIPPrefixesOperations
     :ivar route_filters: RouteFilters operations
-    :vartype route_filters: azure.mgmt.network.v2019_02_01.operations.RouteFiltersOperations
+    :vartype route_filters: azure.mgmt.network.v2019_04_01.operations.RouteFiltersOperations
     :ivar route_filter_rules: RouteFilterRules operations
-    :vartype route_filter_rules: azure.mgmt.network.v2019_02_01.operations.RouteFilterRulesOperations
+    :vartype route_filter_rules: azure.mgmt.network.v2019_04_01.operations.RouteFilterRulesOperations
     :ivar route_tables: RouteTables operations
-    :vartype route_tables: azure.mgmt.network.v2019_02_01.operations.RouteTablesOperations
+    :vartype route_tables: azure.mgmt.network.v2019_04_01.operations.RouteTablesOperations
     :ivar routes: Routes operations
-    :vartype routes: azure.mgmt.network.v2019_02_01.operations.RoutesOperations
+    :vartype routes: azure.mgmt.network.v2019_04_01.operations.RoutesOperations
     :ivar bgp_service_communities: BgpServiceCommunities operations
-    :vartype bgp_service_communities: azure.mgmt.network.v2019_02_01.operations.BgpServiceCommunitiesOperations
+    :vartype bgp_service_communities: azure.mgmt.network.v2019_04_01.operations.BgpServiceCommunitiesOperations
     :ivar service_endpoint_policies: ServiceEndpointPolicies operations
-    :vartype service_endpoint_policies: azure.mgmt.network.v2019_02_01.operations.ServiceEndpointPoliciesOperations
+    :vartype service_endpoint_policies: azure.mgmt.network.v2019_04_01.operations.ServiceEndpointPoliciesOperations
     :ivar service_endpoint_policy_definitions: ServiceEndpointPolicyDefinitions operations
-    :vartype service_endpoint_policy_definitions: azure.mgmt.network.v2019_02_01.operations.ServiceEndpointPolicyDefinitionsOperations
+    :vartype service_endpoint_policy_definitions: azure.mgmt.network.v2019_04_01.operations.ServiceEndpointPolicyDefinitionsOperations
+    :ivar service_tags: ServiceTags operations
+    :vartype service_tags: azure.mgmt.network.v2019_04_01.operations.ServiceTagsOperations
     :ivar usages: Usages operations
-    :vartype usages: azure.mgmt.network.v2019_02_01.operations.UsagesOperations
+    :vartype usages: azure.mgmt.network.v2019_04_01.operations.UsagesOperations
     :ivar virtual_networks: VirtualNetworks operations
-    :vartype virtual_networks: azure.mgmt.network.v2019_02_01.operations.VirtualNetworksOperations
+    :vartype virtual_networks: azure.mgmt.network.v2019_04_01.operations.VirtualNetworksOperations
     :ivar subnets: Subnets operations
-    :vartype subnets: azure.mgmt.network.v2019_02_01.operations.SubnetsOperations
+    :vartype subnets: azure.mgmt.network.v2019_04_01.operations.SubnetsOperations
     :ivar resource_navigation_links: ResourceNavigationLinks operations
-    :vartype resource_navigation_links: azure.mgmt.network.v2019_02_01.operations.ResourceNavigationLinksOperations
+    :vartype resource_navigation_links: azure.mgmt.network.v2019_04_01.operations.ResourceNavigationLinksOperations
     :ivar service_association_links: ServiceAssociationLinks operations
-    :vartype service_association_links: azure.mgmt.network.v2019_02_01.operations.ServiceAssociationLinksOperations
+    :vartype service_association_links: azure.mgmt.network.v2019_04_01.operations.ServiceAssociationLinksOperations
     :ivar virtual_network_peerings: VirtualNetworkPeerings operations
-    :vartype virtual_network_peerings: azure.mgmt.network.v2019_02_01.operations.VirtualNetworkPeeringsOperations
+    :vartype virtual_network_peerings: azure.mgmt.network.v2019_04_01.operations.VirtualNetworkPeeringsOperations
     :ivar virtual_network_gateways: VirtualNetworkGateways operations
-    :vartype virtual_network_gateways: azure.mgmt.network.v2019_02_01.operations.VirtualNetworkGatewaysOperations
+    :vartype virtual_network_gateways: azure.mgmt.network.v2019_04_01.operations.VirtualNetworkGatewaysOperations
     :ivar virtual_network_gateway_connections: VirtualNetworkGatewayConnections operations
-    :vartype virtual_network_gateway_connections: azure.mgmt.network.v2019_02_01.operations.VirtualNetworkGatewayConnectionsOperations
+    :vartype virtual_network_gateway_connections: azure.mgmt.network.v2019_04_01.operations.VirtualNetworkGatewayConnectionsOperations
     :ivar local_network_gateways: LocalNetworkGateways operations
-    :vartype local_network_gateways: azure.mgmt.network.v2019_02_01.operations.LocalNetworkGatewaysOperations
+    :vartype local_network_gateways: azure.mgmt.network.v2019_04_01.operations.LocalNetworkGatewaysOperations
     :ivar virtual_network_taps: VirtualNetworkTaps operations
-    :vartype virtual_network_taps: azure.mgmt.network.v2019_02_01.operations.VirtualNetworkTapsOperations
+    :vartype virtual_network_taps: azure.mgmt.network.v2019_04_01.operations.VirtualNetworkTapsOperations
     :ivar virtual_wans: VirtualWans operations
-    :vartype virtual_wans: azure.mgmt.network.v2019_02_01.operations.VirtualWansOperations
+    :vartype virtual_wans: azure.mgmt.network.v2019_04_01.operations.VirtualWansOperations
     :ivar vpn_sites: VpnSites operations
-    :vartype vpn_sites: azure.mgmt.network.v2019_02_01.operations.VpnSitesOperations
+    :vartype vpn_sites: azure.mgmt.network.v2019_04_01.operations.VpnSitesOperations
     :ivar vpn_sites_configuration: VpnSitesConfiguration operations
-    :vartype vpn_sites_configuration: azure.mgmt.network.v2019_02_01.operations.VpnSitesConfigurationOperations
+    :vartype vpn_sites_configuration: azure.mgmt.network.v2019_04_01.operations.VpnSitesConfigurationOperations
     :ivar virtual_hubs: VirtualHubs operations
-    :vartype virtual_hubs: azure.mgmt.network.v2019_02_01.operations.VirtualHubsOperations
+    :vartype virtual_hubs: azure.mgmt.network.v2019_04_01.operations.VirtualHubsOperations
     :ivar hub_virtual_network_connections: HubVirtualNetworkConnections operations
-    :vartype hub_virtual_network_connections: azure.mgmt.network.v2019_02_01.operations.HubVirtualNetworkConnectionsOperations
+    :vartype hub_virtual_network_connections: azure.mgmt.network.v2019_04_01.operations.HubVirtualNetworkConnectionsOperations
     :ivar vpn_gateways: VpnGateways operations
-    :vartype vpn_gateways: azure.mgmt.network.v2019_02_01.operations.VpnGatewaysOperations
+    :vartype vpn_gateways: azure.mgmt.network.v2019_04_01.operations.VpnGatewaysOperations
     :ivar vpn_connections: VpnConnections operations
-    :vartype vpn_connections: azure.mgmt.network.v2019_02_01.operations.VpnConnectionsOperations
+    :vartype vpn_connections: azure.mgmt.network.v2019_04_01.operations.VpnConnectionsOperations
     :ivar p2s_vpn_server_configurations: P2sVpnServerConfigurations operations
-    :vartype p2s_vpn_server_configurations: azure.mgmt.network.v2019_02_01.operations.P2sVpnServerConfigurationsOperations
+    :vartype p2s_vpn_server_configurations: azure.mgmt.network.v2019_04_01.operations.P2sVpnServerConfigurationsOperations
     :ivar p2s_vpn_gateways: P2sVpnGateways operations
-    :vartype p2s_vpn_gateways: azure.mgmt.network.v2019_02_01.operations.P2sVpnGatewaysOperations
+    :vartype p2s_vpn_gateways: azure.mgmt.network.v2019_04_01.operations.P2sVpnGatewaysOperations
     :ivar web_application_firewall_policies: WebApplicationFirewallPolicies operations
-    :vartype web_application_firewall_policies: azure.mgmt.network.v2019_02_01.operations.WebApplicationFirewallPoliciesOperations
+    :vartype web_application_firewall_policies: azure.mgmt.network.v2019_04_01.operations.WebApplicationFirewallPoliciesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -271,9 +286,15 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, SDKClient)
             self._client, self.config, self._serialize, self._deserialize)
         self.available_resource_group_delegations = AvailableResourceGroupDelegationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.available_private_endpoint_types = AvailablePrivateEndpointTypesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.available_resource_group_private_endpoint_types = AvailableResourceGroupPrivateEndpointTypesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.azure_firewalls = AzureFirewallsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.azure_firewall_fqdn_tags = AzureFirewallFqdnTagsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.bastion_hosts = BastionHostsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.ddos_custom_policies = DdosCustomPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -307,7 +328,9 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, SDKClient)
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_links = ExpressRouteLinksOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.interface_endpoints = InterfaceEndpointsOperations(
+        self.private_endpoints = PrivateEndpointsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_services = PrivateLinkServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.load_balancers = LoadBalancersOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -368,6 +391,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, SDKClient)
         self.service_endpoint_policies = ServiceEndpointPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.service_endpoint_policy_definitions = ServiceEndpointPolicyDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.service_tags = ServiceTagsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)

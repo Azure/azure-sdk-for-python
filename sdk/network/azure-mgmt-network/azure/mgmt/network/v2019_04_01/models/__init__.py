@@ -56,6 +56,7 @@ try:
     from ._models_py3 import ApplicationSecurityGroup
     from ._models_py3 import Availability
     from ._models_py3 import AvailableDelegation
+    from ._models_py3 import AvailablePrivateEndpointType
     from ._models_py3 import AvailableProvidersList
     from ._models_py3 import AvailableProvidersListCity
     from ._models_py3 import AvailableProvidersListCountry
@@ -80,6 +81,8 @@ try:
     from ._models_py3 import AzureReachabilityReportLocation
     from ._models_py3 import AzureReachabilityReportParameters
     from ._models_py3 import BackendAddressPool
+    from ._models_py3 import BastionHost
+    from ._models_py3 import BastionHostIPConfiguration
     from ._models_py3 import BGPCommunity
     from ._models_py3 import BgpPeerStatus
     from ._models_py3 import BgpPeerStatusListResult
@@ -118,7 +121,6 @@ try:
     from ._models_py3 import EffectiveNetworkSecurityRule
     from ._models_py3 import EffectiveRoute
     from ._models_py3 import EffectiveRouteListResult
-    from ._models_py3 import EndpointService
     from ._models_py3 import EndpointServiceResult
     from ._models_py3 import Error, ErrorException
     from ._models_py3 import ErrorDetails
@@ -169,7 +171,6 @@ try:
     from ._models_py3 import HubVirtualNetworkConnection
     from ._models_py3 import InboundNatPool
     from ._models_py3 import InboundNatRule
-    from ._models_py3 import InterfaceEndpoint
     from ._models_py3 import IPAddressAvailabilityResult
     from ._models_py3 import IPConfiguration
     from ._models_py3 import IPConfigurationProfile
@@ -229,6 +230,14 @@ try:
     from ._models_py3 import PeerExpressRouteCircuitConnection
     from ._models_py3 import PolicySettings
     from ._models_py3 import PrepareNetworkPoliciesRequest
+    from ._models_py3 import PrivateEndpoint
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateLinkService
+    from ._models_py3 import PrivateLinkServiceConnection
+    from ._models_py3 import PrivateLinkServiceConnectionState
+    from ._models_py3 import PrivateLinkServiceIpConfiguration
+    from ._models_py3 import PrivateLinkServicePropertiesAutoApproval
+    from ._models_py3 import PrivateLinkServicePropertiesVisibility
     from ._models_py3 import Probe
     from ._models_py3 import ProtocolConfiguration
     from ._models_py3 import ProtocolCustomSettingsFormat
@@ -242,6 +251,7 @@ try:
     from ._models_py3 import Resource
     from ._models_py3 import ResourceNavigationLink
     from ._models_py3 import ResourceNavigationLinksListResult
+    from ._models_py3 import ResourceSet
     from ._models_py3 import RetentionPolicyParameters
     from ._models_py3 import Route
     from ._models_py3 import RouteFilter
@@ -257,6 +267,9 @@ try:
     from ._models_py3 import ServiceEndpointPolicy
     from ._models_py3 import ServiceEndpointPolicyDefinition
     from ._models_py3 import ServiceEndpointPropertiesFormat
+    from ._models_py3 import ServiceTagInformation
+    from ._models_py3 import ServiceTagInformationPropertiesFormat
+    from ._models_py3 import ServiceTagsListResult
     from ._models_py3 import Subnet
     from ._models_py3 import SubnetAssociation
     from ._models_py3 import SubResource
@@ -296,6 +309,8 @@ try:
     from ._models_py3 import VirtualWanSecurityProviders
     from ._models_py3 import VpnClientConfiguration
     from ._models_py3 import VpnClientConnectionHealth
+    from ._models_py3 import VpnClientConnectionHealthDetail
+    from ._models_py3 import VpnClientConnectionHealthDetailListResult
     from ._models_py3 import VpnClientIPsecParameters
     from ._models_py3 import VpnClientParameters
     from ._models_py3 import VpnClientRevokedCertificate
@@ -355,6 +370,7 @@ except (SyntaxError, ImportError):
     from ._models import ApplicationSecurityGroup
     from ._models import Availability
     from ._models import AvailableDelegation
+    from ._models import AvailablePrivateEndpointType
     from ._models import AvailableProvidersList
     from ._models import AvailableProvidersListCity
     from ._models import AvailableProvidersListCountry
@@ -379,6 +395,8 @@ except (SyntaxError, ImportError):
     from ._models import AzureReachabilityReportLocation
     from ._models import AzureReachabilityReportParameters
     from ._models import BackendAddressPool
+    from ._models import BastionHost
+    from ._models import BastionHostIPConfiguration
     from ._models import BGPCommunity
     from ._models import BgpPeerStatus
     from ._models import BgpPeerStatusListResult
@@ -417,7 +435,6 @@ except (SyntaxError, ImportError):
     from ._models import EffectiveNetworkSecurityRule
     from ._models import EffectiveRoute
     from ._models import EffectiveRouteListResult
-    from ._models import EndpointService
     from ._models import EndpointServiceResult
     from ._models import Error, ErrorException
     from ._models import ErrorDetails
@@ -468,7 +485,6 @@ except (SyntaxError, ImportError):
     from ._models import HubVirtualNetworkConnection
     from ._models import InboundNatPool
     from ._models import InboundNatRule
-    from ._models import InterfaceEndpoint
     from ._models import IPAddressAvailabilityResult
     from ._models import IPConfiguration
     from ._models import IPConfigurationProfile
@@ -528,6 +544,14 @@ except (SyntaxError, ImportError):
     from ._models import PeerExpressRouteCircuitConnection
     from ._models import PolicySettings
     from ._models import PrepareNetworkPoliciesRequest
+    from ._models import PrivateEndpoint
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateLinkService
+    from ._models import PrivateLinkServiceConnection
+    from ._models import PrivateLinkServiceConnectionState
+    from ._models import PrivateLinkServiceIpConfiguration
+    from ._models import PrivateLinkServicePropertiesAutoApproval
+    from ._models import PrivateLinkServicePropertiesVisibility
     from ._models import Probe
     from ._models import ProtocolConfiguration
     from ._models import ProtocolCustomSettingsFormat
@@ -541,6 +565,7 @@ except (SyntaxError, ImportError):
     from ._models import Resource
     from ._models import ResourceNavigationLink
     from ._models import ResourceNavigationLinksListResult
+    from ._models import ResourceSet
     from ._models import RetentionPolicyParameters
     from ._models import Route
     from ._models import RouteFilter
@@ -556,6 +581,9 @@ except (SyntaxError, ImportError):
     from ._models import ServiceEndpointPolicy
     from ._models import ServiceEndpointPolicyDefinition
     from ._models import ServiceEndpointPropertiesFormat
+    from ._models import ServiceTagInformation
+    from ._models import ServiceTagInformationPropertiesFormat
+    from ._models import ServiceTagsListResult
     from ._models import Subnet
     from ._models import SubnetAssociation
     from ._models import SubResource
@@ -595,6 +623,8 @@ except (SyntaxError, ImportError):
     from ._models import VirtualWanSecurityProviders
     from ._models import VpnClientConfiguration
     from ._models import VpnClientConnectionHealth
+    from ._models import VpnClientConnectionHealthDetail
+    from ._models import VpnClientConnectionHealthDetailListResult
     from ._models import VpnClientIPsecParameters
     from ._models import VpnClientParameters
     from ._models import VpnClientRevokedCertificate
@@ -611,9 +641,11 @@ from ._paged_models import ApplicationGatewayPaged
 from ._paged_models import ApplicationGatewaySslPredefinedPolicyPaged
 from ._paged_models import ApplicationSecurityGroupPaged
 from ._paged_models import AvailableDelegationPaged
+from ._paged_models import AvailablePrivateEndpointTypePaged
 from ._paged_models import AzureFirewallFqdnTagPaged
 from ._paged_models import AzureFirewallPaged
 from ._paged_models import BackendAddressPoolPaged
+from ._paged_models import BastionHostPaged
 from ._paged_models import BgpServiceCommunityPaged
 from ._paged_models import ConnectionMonitorResultPaged
 from ._paged_models import DdosProtectionPlanPaged
@@ -631,7 +663,6 @@ from ._paged_models import ExpressRouteServiceProviderPaged
 from ._paged_models import FrontendIPConfigurationPaged
 from ._paged_models import HubVirtualNetworkConnectionPaged
 from ._paged_models import InboundNatRulePaged
-from ._paged_models import InterfaceEndpointPaged
 from ._paged_models import LoadBalancerPaged
 from ._paged_models import LoadBalancingRulePaged
 from ._paged_models import LocalNetworkGatewayPaged
@@ -648,6 +679,8 @@ from ._paged_models import P2SVpnGatewayPaged
 from ._paged_models import P2SVpnServerConfigurationPaged
 from ._paged_models import PacketCaptureResultPaged
 from ._paged_models import PeerExpressRouteCircuitConnectionPaged
+from ._paged_models import PrivateEndpointPaged
+from ._paged_models import PrivateLinkServicePaged
 from ._paged_models import ProbePaged
 from ._paged_models import PublicIPAddressPaged
 from ._paged_models import PublicIPPrefixPaged
@@ -708,11 +741,10 @@ from ._network_management_client_enums import (
     DdosCustomPolicyTriggerSensitivityOverride,
     AuthorizationUseStatus,
     ExpressRouteCircuitPeeringAdvertisedPublicPrefixState,
-    Access,
+    ExpressRouteCircuitPeeringState,
     ExpressRoutePeeringType,
     ExpressRoutePeeringState,
     CircuitConnectionStatus,
-    ExpressRouteCircuitPeeringState,
     ExpressRouteCircuitSkuTier,
     ExpressRouteCircuitSkuFamily,
     ServiceProviderProvisioningState,
@@ -725,6 +757,7 @@ from ._network_management_client_enums import (
     LoadBalancerOutboundRuleProtocol,
     NatGatewaySkuName,
     NetworkOperationStatus,
+    Access,
     AuthenticationMethod,
     EffectiveSecurityRuleProtocol,
     EffectiveRouteSource,
@@ -828,6 +861,7 @@ __all__ = [
     'ApplicationSecurityGroup',
     'Availability',
     'AvailableDelegation',
+    'AvailablePrivateEndpointType',
     'AvailableProvidersList',
     'AvailableProvidersListCity',
     'AvailableProvidersListCountry',
@@ -852,6 +886,8 @@ __all__ = [
     'AzureReachabilityReportLocation',
     'AzureReachabilityReportParameters',
     'BackendAddressPool',
+    'BastionHost',
+    'BastionHostIPConfiguration',
     'BGPCommunity',
     'BgpPeerStatus',
     'BgpPeerStatusListResult',
@@ -890,7 +926,6 @@ __all__ = [
     'EffectiveNetworkSecurityRule',
     'EffectiveRoute',
     'EffectiveRouteListResult',
-    'EndpointService',
     'EndpointServiceResult',
     'Error', 'ErrorException',
     'ErrorDetails',
@@ -941,7 +976,6 @@ __all__ = [
     'HubVirtualNetworkConnection',
     'InboundNatPool',
     'InboundNatRule',
-    'InterfaceEndpoint',
     'IPAddressAvailabilityResult',
     'IPConfiguration',
     'IPConfigurationProfile',
@@ -1001,6 +1035,14 @@ __all__ = [
     'PeerExpressRouteCircuitConnection',
     'PolicySettings',
     'PrepareNetworkPoliciesRequest',
+    'PrivateEndpoint',
+    'PrivateEndpointConnection',
+    'PrivateLinkService',
+    'PrivateLinkServiceConnection',
+    'PrivateLinkServiceConnectionState',
+    'PrivateLinkServiceIpConfiguration',
+    'PrivateLinkServicePropertiesAutoApproval',
+    'PrivateLinkServicePropertiesVisibility',
     'Probe',
     'ProtocolConfiguration',
     'ProtocolCustomSettingsFormat',
@@ -1014,6 +1056,7 @@ __all__ = [
     'Resource',
     'ResourceNavigationLink',
     'ResourceNavigationLinksListResult',
+    'ResourceSet',
     'RetentionPolicyParameters',
     'Route',
     'RouteFilter',
@@ -1029,6 +1072,9 @@ __all__ = [
     'ServiceEndpointPolicy',
     'ServiceEndpointPolicyDefinition',
     'ServiceEndpointPropertiesFormat',
+    'ServiceTagInformation',
+    'ServiceTagInformationPropertiesFormat',
+    'ServiceTagsListResult',
     'Subnet',
     'SubnetAssociation',
     'SubResource',
@@ -1068,6 +1114,8 @@ __all__ = [
     'VirtualWanSecurityProviders',
     'VpnClientConfiguration',
     'VpnClientConnectionHealth',
+    'VpnClientConnectionHealthDetail',
+    'VpnClientConnectionHealthDetailListResult',
     'VpnClientIPsecParameters',
     'VpnClientParameters',
     'VpnClientRevokedCertificate',
@@ -1084,8 +1132,10 @@ __all__ = [
     'ApplicationGatewaySslPredefinedPolicyPaged',
     'ApplicationSecurityGroupPaged',
     'AvailableDelegationPaged',
+    'AvailablePrivateEndpointTypePaged',
     'AzureFirewallPaged',
     'AzureFirewallFqdnTagPaged',
+    'BastionHostPaged',
     'DdosProtectionPlanPaged',
     'EndpointServiceResultPaged',
     'ExpressRouteCircuitAuthorizationPaged',
@@ -1099,7 +1149,8 @@ __all__ = [
     'ExpressRoutePortsLocationPaged',
     'ExpressRoutePortPaged',
     'ExpressRouteLinkPaged',
-    'InterfaceEndpointPaged',
+    'PrivateEndpointPaged',
+    'PrivateLinkServicePaged',
     'LoadBalancerPaged',
     'BackendAddressPoolPaged',
     'FrontendIPConfigurationPaged',
@@ -1180,11 +1231,10 @@ __all__ = [
     'DdosCustomPolicyTriggerSensitivityOverride',
     'AuthorizationUseStatus',
     'ExpressRouteCircuitPeeringAdvertisedPublicPrefixState',
-    'Access',
+    'ExpressRouteCircuitPeeringState',
     'ExpressRoutePeeringType',
     'ExpressRoutePeeringState',
     'CircuitConnectionStatus',
-    'ExpressRouteCircuitPeeringState',
     'ExpressRouteCircuitSkuTier',
     'ExpressRouteCircuitSkuFamily',
     'ServiceProviderProvisioningState',
@@ -1197,6 +1247,7 @@ __all__ = [
     'LoadBalancerOutboundRuleProtocol',
     'NatGatewaySkuName',
     'NetworkOperationStatus',
+    'Access',
     'AuthenticationMethod',
     'EffectiveSecurityRuleProtocol',
     'EffectiveRouteSource',
