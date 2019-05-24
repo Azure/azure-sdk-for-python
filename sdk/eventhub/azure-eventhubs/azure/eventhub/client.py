@@ -218,7 +218,8 @@ class EventHubClient(EventHubClientAbstract):
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
         handler = Receiver(
-            self, source_url, event_position=event_position, epoch=epoch, prefetch=prefetch, keep_alive=keep_alive, auto_reconnect=auto_reconnect)
+            self, source_url, event_position=event_position, exclusive_receiver_priority=exclusive_receiver_priority,
+            prefetch=prefetch, keep_alive=keep_alive, auto_reconnect=auto_reconnect)
         return handler
 
     def create_sender(self, partition=None, operation=None, send_timeout=None, keep_alive=None, auto_reconnect=None):
