@@ -19,6 +19,7 @@ except ImportError:
 
 from azure.eventhub import __version__
 from azure.eventhub.configuration import Configuration
+from azure.eventhub import constants
 
 log = logging.getLogger(__name__)
 
@@ -266,7 +267,7 @@ class EventHubClientAbstract(object):
     def _create_auth(self, username=None, password=None):
         pass
 
-    def create_properties(self):  # pylint: disable=no-self-use
+    def create_properties(self, user_agent=None):  # pylint: disable=no-self-use
         """
         Format the properties with which to instantiate the connection.
         This acts like a user agent over HTTP.
@@ -278,6 +279,18 @@ class EventHubClientAbstract(object):
         properties["version"] = __version__
         properties["framework"] = "Python {}.{}.{}".format(*sys.version_info[0:3])
         properties["platform"] = sys.platform
+
+        final_user_agent = 'azsdk-python-eventhub/{} ({}; {})'.format(
+            __version__, properties["framework"], sys.platform)
+        if user_agent:
+            final_user_agent = '{}, {}'.format(final_user_agent, user_agent)
+
+        if len(final_user_agent) > constants.MAX_USER_AGENT_LENGTH:
+            raise ValueError("The user-agent string cannot be more than {} in length."
+                             "Current user_agent string is: {} with length: {}".format(
+                                constants.MAX_USER_AGENT_LENGTH, final_user_agent, len(final_user_agent)))
+
+        properties["user-agent"] = final_user_agent
         return properties
 
     def _process_redirect_uri(self, redirect):

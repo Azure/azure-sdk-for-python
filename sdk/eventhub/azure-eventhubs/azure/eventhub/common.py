@@ -264,7 +264,7 @@ class EventData(object):
 class _BatchSendEventData(EventData):
     def __init__(self, batch_event_data):
         # TODO: rethink if to_device should be included in
-        self.message = BatchMessage(data=batch_event_data, multi_messages=True, properties=None)
+        self.message = BatchMessage(data=batch_event_data, multi_messages=False, properties=None)
 
 
 class EventPosition(object):
