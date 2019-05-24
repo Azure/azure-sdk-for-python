@@ -81,7 +81,7 @@ class Receiver(object):
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
-            properties=self.client.create_properties(),
+            properties=self.client.create_properties(self.client.config.user_agent),
             loop=self.loop)
 
     async def __aenter__(self):
@@ -164,7 +164,7 @@ class Receiver(object):
                 error_policy=self.retry_policy,
                 keep_alive_interval=self.keep_alive,
                 client_name=self.name,
-                properties=self.client.create_properties(),
+                properties=self.client.create_properties(self.client.config.user_agent),
                 loop=self.loop)
         await self._handler.open_async()
         while not await self._handler.client_ready_async():
@@ -189,7 +189,7 @@ class Receiver(object):
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
-            properties=self.client.create_properties(),
+            properties=self.client.create_properties(self.client.config.user_agent),
             loop=self.loop)
         try:
             await self._handler.open_async()

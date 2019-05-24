@@ -117,6 +117,55 @@ class EventHubClient(EventHubClientAbstract):
         finally:
             await mgmt_client.close_async()
 
+    async def get_partition_information(self, partition):
+        """
+        Get information on the specified partition async.
+        Keys in the details dictionary include:
+
+            -'name'
+            -'type'
+            -'partition'
+            -'begin_sequence_number'
+            -'last_enqueued_sequence_number'
+            -'last_enqueued_offset'
+            -'last_enqueued_time_utc'
+            -'is_partition_empty'
+
+        :param partition: The target partition id.
+        :type partition: str
+        :rtype: dict
+        """
+        alt_creds = {
+            "username": self._auth_config.get("iot_username"),
+            "password": self._auth_config.get("iot_password")}
+        try:
+            mgmt_auth = self._create_auth(**alt_creds)
+            mgmt_client = AMQPClientAsync(self.mgmt_target, auth=mgmt_auth, debug=self.debug)
+            await mgmt_client.open_async()
+            mgmt_msg = Message(application_properties={'name': self.eh_name,
+                                                       'partition': partition})
+            response = await mgmt_client.mgmt_request_async(
+                mgmt_msg,
+                constants.READ_OPERATION,
+                op_type=b'com.microsoft:partition',
+                status_code_field=b'status-code',
+                description_fields=b'status-description')
+            partition_info = response.get_data()
+            output = {}
+            if partition_info:
+                output['name'] = partition_info[b'name'].decode('utf-8')
+                output['type'] = partition_info[b'type'].decode('utf-8')
+                output['partition'] = partition_info[b'partition'].decode('utf-8')
+                output['begin_sequence_number'] = partition_info[b'begin_sequence_number']
+                output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']
+                output['last_enqueued_offset'] = partition_info[b'last_enqueued_offset'].decode('utf-8')
+                output['last_enqueued_time_utc'] = datetime.datetime.utcfromtimestamp(
+                    float(partition_info[b'last_enqueued_time_utc'] / 1000))
+                output['is_partition_empty'] = partition_info[b'is_partition_empty']
+            return output
+        finally:
+            await mgmt_client.close_async()
+
     def create_receiver(
             self, consumer_group, partition, offset=None, epoch=None, operation=None,
             prefetch=None, keep_alive=None, auto_reconnect=None, loop=None):

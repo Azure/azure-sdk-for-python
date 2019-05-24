@@ -75,7 +75,7 @@ class Sender(object):
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
-            properties=self.client.create_properties())
+            properties=self.client.create_properties(self.client.config.user_agent))
         self._outcome = None
         self._condition = None
 
@@ -114,7 +114,7 @@ class Sender(object):
                 error_policy=self.retry_policy,
                 keep_alive_interval=self.keep_alive,
                 client_name=self.name,
-                properties=self.client.create_properties())
+                properties=self.client.create_properties(self.client.config.user_agent))
         self._handler.open()
         while not self._handler.client_ready():
             time.sleep(0.05)
@@ -131,7 +131,7 @@ class Sender(object):
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
-            properties=self.client.create_properties())
+            properties=self.client.create_properties(self.client.config.user_agent))
         try:
             self._handler.open()
             self._handler.queue_message(*unsent_events)
