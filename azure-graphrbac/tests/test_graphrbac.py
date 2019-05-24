@@ -193,6 +193,10 @@ class GraphRbacTest(AzureMgmtTestCase):
             'account_enabled': False
         })
 
+        # Testing getting SP id by app ID
+        result = self.graphrbac_client.applications.get_service_principals_id_by_app_id(app.app_id)
+        assert result.value == sp.object_id
+
         self.graphrbac_client.service_principals.update(
             sp.object_id,
             {

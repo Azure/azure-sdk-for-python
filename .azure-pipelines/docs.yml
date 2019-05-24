@@ -1,0 +1,35 @@
+trigger:
+  - master
+
+variables:
+  PythonVersion: '3.6'
+
+jobs:
+  - job: 'DocGen'
+    timeoutInMinutes: 120
+    pool:
+      vmImage: 'vs2017-win2016'
+
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python $(PythonVersion)'
+        inputs:
+          versionSpec: $(PythonVersion)
+
+      - task: PythonScript@0
+        displayName: 'Install All Packages'
+        inputs:
+          scriptPath: 'scripts/dev_setup.py'
+
+      - powershell: |
+          cd $(Build.SourcesDirectory)/doc/
+          pip install -r requirements.txt
+          ./make.bat html
+          mkdir $(Build.ArtifactStagingDirectory)/sphinx
+          Copy-Item -Path $(Build.SourcesDirectory)/doc/_build/html/* -Destination $(Build.ArtifactStagingDirectory)/sphinx -Recurse -Force
+        displayName: 'Generate Sphinx Docs'
+
+      - upload: $(Build.ArtifactStagingDirectory)
+        artifact: docfolder
+        condition: succeededOrFailed()
+        displayName: 'Publish Artifacts'

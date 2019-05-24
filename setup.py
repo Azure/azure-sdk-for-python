@@ -15,7 +15,7 @@ import runpy
 
 root_folder = os.path.abspath(os.path.dirname(__file__))
 
-packages = [os.path.dirname(p) for p in glob.glob('azure*/setup.py')]
+packages = [os.path.dirname(p) for p in (glob.glob('azure*/setup.py') + glob.glob('sdk/*/azure*/setup.py'))]
 
 # "install" is used by ReadTheDocs, do not install "nspkg"
 
@@ -35,9 +35,6 @@ content_package.insert(0, "azure-common")
 # Package final:
 if "install" in sys.argv:
     packages = content_package
-elif "travis_deploy" in sys.argv:
-    from build_package import travis_build_package
-    sys.exit(travis_build_package())
 else:
     packages = nspkg_packages + content_package + meta_package
 

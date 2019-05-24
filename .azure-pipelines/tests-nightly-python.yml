@@ -1,0 +1,39 @@
+trigger:
+  - master
+
+jobs:
+
+  - job: Validate_Nightly_Python_Build
+
+    timeoutInMinutes: 90
+
+    pool:
+      vmImage: 'ubuntu-16.04'
+
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Use Python 3.7 For Build Tools'
+        inputs:
+          versionSpec: '3.7'
+
+      - script: |
+          sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
+          cd ~/
+          git clone https://github.com/python/cpython.git
+          cd cpython
+          mkdir debug
+          cd debug
+          ../configure --enable-optimizations --prefix=$HOME
+          make install
+          cd $(Build.SourcesDirectory)
+          PATH=/home/vsts/bin:$PATH
+          python3 -m ensurepip
+          python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(BuildTargetingString)" --junitxml="junit/test-results.xml"
+        displayName: 'Setup - Run Filtered Tests "Nightly" Python'
+        continueOnError: true
+
+      - task: PublishTestResults@2
+        condition: succeededOrFailed()
+        inputs:
+          testResultsFiles: 'junit/test-results.xml'
+          testRunTitle: '$(OSName) Python $(PythonVersion)'
