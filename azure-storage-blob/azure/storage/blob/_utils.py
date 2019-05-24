@@ -149,6 +149,10 @@ def return_response_headers(response, deserialized, response_headers):
     return response_headers
 
 
+def return_response_and_deserialized(response, deserialized, response_headers):
+    return {'header': response_headers, 'deserialized': deserialized}
+
+
 def create_client(url, pipeline):
     # type: (str, Pipeline) -> AzureBlobStorage
     return AzureBlobStorage(url, pipeline=pipeline)

@@ -35,13 +35,13 @@ from ._utils import (
     add_metadata_headers,
     process_storage_error,
     encode_base64,
-    parse_connection_str
-)
+    parse_connection_str,
+    return_response_and_deserialized)
 from ._deserialize import (
     deserialize_container_properties,
     deserialize_metadata
 )
-from ._generated.models import BlobHTTPHeaders, StorageErrorException
+from ._generated.models import BlobHTTPHeaders, StorageErrorException, SignedIdentifier
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
@@ -112,7 +112,7 @@ class ContainerClient(object):
             **kwargs  # type: Any
         ):
         """
-        Create BlobClient from a Connection String.
+        Create ContainerClient from a Connection String.
         """
         account_url, creds = parse_connection_str(conn_str, credentials)
         return cls(
@@ -422,11 +422,11 @@ class ContainerClient(object):
         response = self._client.container.get_access_policy(
             timeout=timeout,
             lease_access_conditions=access_conditions,
-            cls=return_response_headers,
+            cls=return_response_and_deserialized,
         )
         return {
-            'public-access': response.get('x-ms-blob-public-access'),
-            'signed_identifiers': None
+            'public_access': response.get('header').get('x-ms-blob-public-access'),
+            'signed_identifiers': response.get('deserialized')
         }
 
     def set_container_acl(
