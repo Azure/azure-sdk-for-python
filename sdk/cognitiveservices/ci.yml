@@ -7,7 +7,7 @@ trigger:
     - master
   paths:
     include:
-    - sdk/eventhub/
+    - sdk/cognitiveservices/
 
 pr:
   branches:
@@ -15,9 +15,9 @@ pr:
     - master
   paths:
     include:
-    - sdk/eventhub/
+    - sdk/cognitiveservices/
 
 jobs:
 - template: ../../eng/pipelines/templates/jobs/archetype-sdk-client.yml
   parameters:
-    BuildTargettingString: azure-eventhubs
+    BuildTargettingString: azure-cognitiveservices-formrecognizer,azure-cognitiveservices-knowledge-nspkg,azure-cognitiveservices-language-nspkg,azure-cognitiveservices-nspkg,azure-cognitiveservices-search-nspkg,azure-cognitiveservices-vision-nspkg
