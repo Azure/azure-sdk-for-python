@@ -5,7 +5,6 @@
 from __future__ import unicode_literals
 
 import logging
-import datetime
 import sys
 import uuid
 import time
@@ -17,15 +16,8 @@ try:
 except ImportError:
     from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
 
-import uamqp
-from uamqp import Message
-from uamqp import authentication
-from uamqp import constants
 
 from azure.eventhub import __version__
-from azure.eventhub.sender import Sender
-from azure.eventhub.receiver import Receiver
-from azure.eventhub.common import EventHubError, parse_sas_token
 from azure.eventhub.configuration import Configuration
 
 log = logging.getLogger(__name__)

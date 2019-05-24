@@ -127,6 +127,9 @@ class EventHubClient(EventHubClientAbstract):
         finally:
             mgmt_client.close()
 
+    def get_partition_ids(self):
+        return self.get_properties()['partition_ids']
+
     def get_partition_properties(self, partition):
         """
         Get information on the specified partition async.
@@ -177,7 +180,7 @@ class EventHubClient(EventHubClientAbstract):
             mgmt_client.close()
 
     def create_receiver(
-            self, consumer_group, partition, event_position=None, epoch=None, operation=None,
+            self, consumer_group, partition, event_position=None, exclusive_receiver_priority=None, operation=None,
             prefetch=None,
             keep_alive=None,
             auto_reconnect=None,
@@ -217,15 +220,6 @@ class EventHubClient(EventHubClientAbstract):
         handler = Receiver(
             self, source_url, event_position=event_position, epoch=epoch, prefetch=prefetch, keep_alive=keep_alive, auto_reconnect=auto_reconnect)
         return handler
-
-    def create_epoch_receiver(
-            self, consumer_group, partition, epoch, prefetch=300,
-            keep_alive=None,
-            auto_reconnect=None,
-            operation=None
-    ):
-        return self.create_receiver(consumer_group, partition, epoch=epoch, prefetch=prefetch,
-                                    keep_alive=keep_alive, auto_reconnect=auto_reconnect, operation=operation)
 
     def create_sender(self, partition=None, operation=None, send_timeout=None, keep_alive=None, auto_reconnect=None):
         """

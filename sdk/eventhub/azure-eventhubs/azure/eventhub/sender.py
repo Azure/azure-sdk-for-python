@@ -279,7 +279,21 @@ class Sender(object):
         self._send_event_data(event_data)
         '''
 
-    def send(self, batch_event_data):
+    @staticmethod
+    def _verify_partition(event_datas):
+        ed_iter = iter(event_datas)
+        try:
+            ed = next(ed_iter)
+            partition_key = ed.partition_key
+            yield ed
+        except StopIteration:
+            raise ValueError("batch_event_data must not be empty")
+        for ed in ed_iter:
+            if ed.partition_key != partition_key:
+                raise ValueError("partition key of all EventData must be the same if being sent in a batch")
+            yield ed
+
+    def send(self, event_data):
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
@@ -302,21 +316,10 @@ class Sender(object):
         """
         if self.error:
             raise self.error
-
-        def verify_partition(event_datas):
-            ed_iter = iter(event_datas)
-            try:
-                ed = next(ed_iter)
-                partition_key = ed.partition_key
-                yield ed
-            except StopIteration:
-                raise ValueError("batch_event_data must not be empty")
-            for ed in ed_iter:
-                if ed.partition_key != partition_key:
-                    raise ValueError("partition key of all EventData must be the same if being sent in a batch")
-                yield ed
-
-        wrapper_event_data = _BatchSendEventData(verify_partition(batch_event_data))
+        if isinstance(event_data, EventData):
+            wrapper_event_data = event_data
+        else:
+            wrapper_event_data = _BatchSendEventData(self._verify_partition(event_data))
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self._send_event_data(wrapper_event_data)
 

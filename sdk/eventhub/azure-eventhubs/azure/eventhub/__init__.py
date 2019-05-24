@@ -13,6 +13,7 @@ from uamqp.constants import MessageSendResult
 from uamqp.constants import TransportType
 
 __all__ = [
+    __version__,
     "EventData",
     "EventHubError",
     "EventPosition",
