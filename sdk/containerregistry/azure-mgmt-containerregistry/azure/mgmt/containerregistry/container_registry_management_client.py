@@ -68,11 +68,16 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
     :type profile: dict[str, str]
     """
 
-    DEFAULT_API_VERSION = '2019-04-01'
+    DEFAULT_API_VERSION = '2019-05-01'
     _PROFILE_TAG = "azure.mgmt.containerregistry.ContainerRegistryManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
-            None: DEFAULT_API_VERSION
+            None: DEFAULT_API_VERSION,
+            'scope_maps': '2019-05-01-preview',
+            'tokens': '2019-05-01-preview',
+            'build_steps': '2018-02-01-preview',
+            'build_taks': '2018-02-01-preview',
+            'builds': '2018-02-01-preview',
         }},
         _PROFILE_TAG + " latest"
     )
