@@ -66,7 +66,7 @@ class TokensOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
-            'tokenName': self._serialize.url("token_name", token_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z][a-zA-Z0-9-]*$')
+            'tokenName': self._serialize.url("token_name", token_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -114,7 +114,7 @@ class TokensOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
-            'tokenName': self._serialize.url("token_name", token_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z][a-zA-Z0-9-]*$')
+            'tokenName': self._serialize.url("token_name", token_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -222,7 +222,7 @@ class TokensOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
-            'tokenName': self._serialize.url("token_name", token_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z][a-zA-Z0-9-]*$')
+            'tokenName': self._serialize.url("token_name", token_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -306,7 +306,7 @@ class TokensOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
             'registryName': self._serialize.url("registry_name", registry_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9]*$'),
-            'tokenName': self._serialize.url("token_name", token_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z][a-zA-Z0-9-]*$')
+            'tokenName': self._serialize.url("token_name", token_name, 'str', max_length=50, min_length=5, pattern=r'^[a-zA-Z0-9-]*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
