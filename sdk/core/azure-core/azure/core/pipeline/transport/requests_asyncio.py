@@ -27,11 +27,15 @@ import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
+from typing import Any, AsyncIterator as AsyncIteratorType
 import urllib3
-from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
 
 import requests
 
+from azure.core.exceptions import (
+    ServiceRequestError,
+    ServiceResponseError
+)
 from .base import HttpRequest
 from .base_async import (
     AsyncHttpTransport,
@@ -39,11 +43,6 @@ from .base_async import (
     _ResponseStopIteration,
     _iterate_response_content)
 from .requests_basic import RequestsTransport, RequestsTransportResponse
-from azure.core.exceptions import (
-    ServiceRequestError,
-    ServiceResponseError,
-    raise_with_traceback
-)
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -53,12 +52,13 @@ def _get_running_loop():
     try:
         return asyncio.get_running_loop()
     except AttributeError:  # 3.5 / 3.6
-        loop = asyncio._get_running_loop()  # pylint: disable=protected-access
+        loop = asyncio._get_running_loop()  # pylint: disable=protected-access, no-member
         if loop is None:
             raise RuntimeError('No running event loop')
         return loop
 
 
+#pylint: disable=too-many-ancestors
 class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
 
     async def __aenter__(self):
@@ -123,22 +123,30 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 
     async def __anext__(self):
         loop = _get_running_loop()
-        try:
-            chunk = await loop.run_in_executor(
-                None,
-                _iterate_response_content,
-                self.iter_content_func,
-            )
-            if not chunk:
-                raise _ResponseStopIteration()
-            return chunk
-        except _ResponseStopIteration:
-            self.response.close()
-            raise StopAsyncIteration()
-        except Exception as err:
-            _LOGGER.warning("Unable to stream download: %s", err)
-            self.response.close()
-            raise
+        retry_active = True
+        retry_total = 3
+        while retry_active:
+            try:
+                chunk = await loop.run_in_executor(
+                    None,
+                    _iterate_response_content,
+                    self.iter_content_func,
+                )
+                if not chunk:
+                    raise _ResponseStopIteration()
+                return chunk
+            except _ResponseStopIteration:
+                self.response.close()
+                raise StopAsyncIteration()
+            except ServiceResponseError:
+                retry_total -= 1
+                if retry_total <= 0:
+                    retry_active = False
+                continue
+            except Exception as err:
+                _LOGGER.warning("Unable to stream download: %s", err)
+                self.response.close()
+                raise
 
 
 class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):

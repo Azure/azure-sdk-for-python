@@ -26,6 +26,7 @@
 
 from .base import HTTPPolicy, SansIOHTTPPolicy
 from .credentials import BearerTokenCredentialPolicy
+from .custom_hook import CustomHookPolicy
 from .redirect import RedirectPolicy
 from .retry import RetryPolicy
 from .universal import (
@@ -49,6 +50,8 @@ __all__ = [
     'ProxyPolicy',
     'CustomHookPolicy'
 ]
+
+#pylint: disable=unused-import
 
 try:
     from .base_async import AsyncHTTPPolicy
