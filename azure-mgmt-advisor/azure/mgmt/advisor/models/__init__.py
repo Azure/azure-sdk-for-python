@@ -39,6 +39,7 @@ from .resource_recommendation_base_paged import ResourceRecommendationBasePaged
 from .operation_entity_paged import OperationEntityPaged
 from .suppression_contract_paged import SuppressionContractPaged
 from .advisor_management_client_enums import (
+    Scenario,
     Category,
     Impact,
     Risk,
@@ -61,6 +62,7 @@ __all__ = [
     'ResourceRecommendationBasePaged',
     'OperationEntityPaged',
     'SuppressionContractPaged',
+    'Scenario',
     'Category',
     'Impact',
     'Risk',
