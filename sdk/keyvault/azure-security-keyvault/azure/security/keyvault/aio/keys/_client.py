@@ -472,7 +472,7 @@ class KeyClient:
         :caption: Restores a backed up key to the vault
         """
         bundle = await self._client.restore_key(self.vault_url, backup, error_map={409: ResourceExistsError})
-        return KeyBase._from_key_bundle(bundle)
+        return Key._from_key_bundle(bundle)
 
     async def delete_key(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedKey:
         """Deletes a key of any type from storage in Azure Key Vault.
@@ -600,4 +600,4 @@ class KeyClient:
         :caption: Recovers the specified soft-deleted key
         """
         bundle = await self._client.recover_deleted_key(self.vault_url, name)
-        return KeyBase._from_key_bundle(bundle)
+        return Key._from_key_bundle(bundle)
