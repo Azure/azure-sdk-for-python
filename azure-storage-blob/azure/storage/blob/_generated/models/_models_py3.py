@@ -1138,32 +1138,6 @@ class SignedIdentifier(Model):
         self.access_policy = access_policy
 
 
-class SignedIdentifiers(Model):
-    """signed identifier.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param id: Required. a unique id
-    :type id: str
-    :param access_policy: Required.
-    :type access_policy: ~blob.models.AccessPolicy
-    """
-
-    _validation = {
-        'identifiers': {'required': True},
-    }
-
-    _attribute_map = {
-        'identifiers': {'key': 'identifiers', 'type': 'list', 'xml': {'name': 'SignedIdentifier'}},
-    }
-    _xml_map = {
-    }
-
-    def __init__(self, *, identifiers: list, **kwargs) -> None:
-        super(SignedIdentifiers, self).__init__(**kwargs)
-        self.identifiers = identifiers
-
-
 class SourceModifiedAccessConditions(Model):
     """Additional parameters for start_copy_from_url operation.
 
