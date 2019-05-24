@@ -31,10 +31,11 @@ except ImportError:
     from urllib.parse import urlparse
 
 from typing import Any, Callable, Union, List, Optional, TYPE_CHECKING
+from azure.core.common import DeserializationCallbackType
+from azure.core.pipeline.transport.base import HttpResponse  # type: ignore
 
 if TYPE_CHECKING:
     import requests
-    from azure.core.pipeline.transport.base import HttpResponse  # type: ignore
     from msrest.serialization import Model # type: ignore # pylint: disable=unused-import
 
 class PollingMethod(object):
@@ -110,7 +111,7 @@ class LROPoller(object):
     """
 
     def __init__(self, client, initial_response, deserialization_callback, polling_method):
-        # type: (Any, HttpResponse, Union[Model, Callable[[requests.Response], Model]], PollingMethod) -> None
+        # type: (Any, HttpResponse, DeserializationCallbackType, PollingMethod) -> None
         self._client = client
         self._response = initial_response
         self._callbacks = []  # type: List[Callable]
