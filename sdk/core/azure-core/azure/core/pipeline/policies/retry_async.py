@@ -92,4 +92,3 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
 
         self.update_context(response.context, retry_settings)
         return response
-

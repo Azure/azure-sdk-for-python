@@ -34,7 +34,7 @@ import platform
 import xml.etree.ElementTree as ET
 import types
 import re
-from typing import (Mapping, IO, TypeVar, TYPE_CHECKING, cast, List, Callable, Iterator, # pylint: disable=unused-import
+from typing import (Mapping, IO, TypeVar, TYPE_CHECKING, Type, cast, List, Callable, Iterator, # pylint: disable=unused-import
                     Any, Union, Dict, Optional)
 
 from azure.core import __version__  as azcore_version
@@ -48,6 +48,7 @@ from .base import SansIOHTTPPolicy
 
 
 _LOGGER = logging.getLogger(__name__)
+ContentDecodePolicyType = TypeVar('ContentDecodePolicyType', bound='ContentDecodePolicy')
 
 
 class HeadersPolicy(SansIOHTTPPolicy):
@@ -206,7 +207,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
     @classmethod
     def deserialize_from_text(cls, response, content_type=None):
-        # type: (Optional[PipelineResponse], Optional[str]) -> Any
+        # type: (Type[ContentDecodePolicyType], PipelineResponse, Optional[str]) -> Any
         """Decode response data according to content-type.
         Accept a stream of data as well, but will be load at once in memory for now.
         If no content-type, will return the string version (not bytes, not stream)
@@ -262,7 +263,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
     @classmethod
     def deserialize_from_http_generics(cls, response):
-        # type: (PipelineResponse) -> Any
+        # type: (Type[ContentDecodePolicyType], PipelineResponse) -> Any
         """Deserialize from HTTP response.
         Use bytes and headers to NOT use any requests/aiohttp or whatever
         specific implementation.

@@ -31,12 +31,15 @@ except ImportError:
     from urllib.parse import urlparse
 
 from typing import Any, Callable, Union, List, Optional, TYPE_CHECKING
-from azure.core.common import DeserializationCallbackType
 from azure.core.pipeline.transport.base import HttpResponse  # type: ignore
 
 if TYPE_CHECKING:
     import requests
     from msrest.serialization import Model # type: ignore # pylint: disable=unused-import
+
+
+DeserializationCallbackType = Union[Model, Callable[[requests.Response], Model]]
+
 
 class PollingMethod(object):
     """ABC class for polling method.

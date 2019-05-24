@@ -29,10 +29,12 @@ from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any,
                     Tuple, Callable, Iterator)
 from azure.core.pipeline import AbstractContextManager, PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
+from azure.core.pipeline.transport import HttpTransport
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
+PoliciesType = List[Union[HTTPPolicy, SansIOHTTPPolicy]]
 
 
 class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseType]):
@@ -60,7 +62,7 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseT
 class _TransportRunner(HTTPPolicy):
 
     def __init__(self, sender):
-        # type: (Any) -> None
+        # type: (HttpTransport) -> None
         super(_TransportRunner, self).__init__()
         self._sender = sender
 
@@ -80,7 +82,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     """
 
     def __init__(self, transport, policies=None):
-        # type: (Any, List[Union[HTTPPolicy, SansIOHTTPPolicy]]) -> None
+        # type: (HttpTransport, PoliciesType) -> None
         self._impl_policies = []  # type: List[HTTPPolicy]
         self._transport = transport  # type: HTTPPolicy
 

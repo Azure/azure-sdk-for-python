@@ -23,19 +23,10 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TypeVar, Callable
-from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
+from typing import Union, Optional
 from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError
 )
-import requests
-from msrest.serialization import Model # type: ignore # pylint: disable=unused-import
-
-AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
-HTTPRequestType = TypeVar("HTTPRequestType")
 
 ErrorType = Optional[Union[ServiceRequestError, ServiceResponseError]]
-ImplPoliciesType = List[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]] #pylint: disable=unsubscriptable-object
-PoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
-DeserializationCallbackType = Union[Model, Callable[[requests.Response], Model]]
