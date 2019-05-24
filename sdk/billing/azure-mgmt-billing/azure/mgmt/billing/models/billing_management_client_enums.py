@@ -100,3 +100,9 @@ class UpdateAutoRenew(str, Enum):
 
     true = "true"
     false = "false"
+
+
+class Status(str, Enum):
+
+    approved = "Approved"
+    rejected = "Rejected"

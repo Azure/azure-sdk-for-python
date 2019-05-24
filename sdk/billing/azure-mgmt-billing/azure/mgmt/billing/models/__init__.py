@@ -159,6 +159,7 @@ from .billing_management_client_enums import (
     ReservationType,
     PaymentMethodType,
     UpdateAutoRenew,
+    Status,
 )
 
 __all__ = [
@@ -245,4 +246,5 @@ __all__ = [
     'ReservationType',
     'PaymentMethodType',
     'UpdateAutoRenew',
+    'Status',
 ]

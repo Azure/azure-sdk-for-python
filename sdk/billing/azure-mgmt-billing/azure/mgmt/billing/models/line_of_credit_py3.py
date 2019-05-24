@@ -30,8 +30,9 @@ class LineOfCredit(Resource):
     :vartype reason: str
     :ivar remaining_balance: Remaining balance.
     :vartype remaining_balance: ~azure.mgmt.billing.models.Amount
-    :ivar status: The line of credit status.
-    :vartype status: str
+    :param status: The line of credit status. Possible values include:
+     'Approved', 'Rejected'
+    :type status: str or ~azure.mgmt.billing.models.Status
     """
 
     _validation = {
@@ -41,7 +42,6 @@ class LineOfCredit(Resource):
         'credit_limit': {'readonly': True},
         'reason': {'readonly': True},
         'remaining_balance': {'readonly': True},
-        'status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -54,9 +54,9 @@ class LineOfCredit(Resource):
         'status': {'key': 'properties.status', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, status=None, **kwargs) -> None:
         super(LineOfCredit, self).__init__(**kwargs)
         self.credit_limit = None
         self.reason = None
         self.remaining_balance = None
-        self.status = None
+        self.status = status
