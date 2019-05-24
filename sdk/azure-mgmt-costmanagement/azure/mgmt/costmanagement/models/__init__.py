@@ -29,8 +29,6 @@ try:
     from .kpi_properties_py3 import KpiProperties
     from .pivot_properties_py3 import PivotProperties
     from .view_py3 import View
-    from .check_name_availability_request_body_py3 import CheckNameAvailabilityRequestBody
-    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
     from .budget_time_period_py3 import BudgetTimePeriod
     from .current_spend_py3 import CurrentSpend
     from .notification_py3 import Notification
@@ -55,8 +53,6 @@ except (SyntaxError, ImportError):
     from .kpi_properties import KpiProperties
     from .pivot_properties import PivotProperties
     from .view import View
-    from .check_name_availability_request_body import CheckNameAvailabilityRequestBody
-    from .check_name_availability_result import CheckNameAvailabilityResult
     from .budget_time_period import BudgetTimePeriod
     from .current_spend import CurrentSpend
     from .notification import Notification
@@ -98,8 +94,6 @@ __all__ = [
     'KpiProperties',
     'PivotProperties',
     'View',
-    'CheckNameAvailabilityRequestBody',
-    'CheckNameAvailabilityResult',
     'BudgetTimePeriod',
     'CurrentSpend',
     'Notification',

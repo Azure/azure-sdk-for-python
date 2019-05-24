@@ -95,48 +95,6 @@ class ViewsOperations(object):
         return deserialized
     list.metadata = {'url': '/providers/Microsoft.CostManagement/views'}
 
-    def delete_all(
-            self, custom_headers=None, raw=False, **operation_config):
-        """The operation to delete all private views.
-
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.delete_all.metadata['url']
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_all.metadata = {'url': '/providers/Microsoft.CostManagement/views'}
-
     def list_by_scope(
             self, scope, custom_headers=None, raw=False, **operation_config):
         """Lists all views at the given scope.
@@ -217,69 +175,6 @@ class ViewsOperations(object):
         return deserialized
     list_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/views'}
 
-    def delete_all_by_scope(
-            self, scope, custom_headers=None, raw=False, **operation_config):
-        """The operation to delete all views by scope.
-
-        :param scope: The scope associated with view operations. This includes
-         'subscriptions/{subscriptionId}' for subscription scope,
-         'subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}'
-         for resourceGroup scope,
-         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}' for
-         Billing Account scope,
-         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/departments/{departmentId}'
-         for Department scope,
-         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/enrollmentAccounts/{enrollmentAccountId}'
-         for EnrollmentAccount scope,
-         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/billingProfiles/{billingProfileId}'
-         for BillingProfile scope,
-         'providers/Microsoft.Billing/billingAccounts/{billingAccountId}/invoiceSections/{invoiceSectionId}'
-         for InvoiceSection scope and
-         'providers/Microsoft.Management/managementGroups/{managementGroupId}'
-         for Management Group scope.
-        :type scope: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.delete_all_by_scope.metadata['url']
-        path_format_arguments = {
-            'scope': self._serialize.url("scope", scope, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_all_by_scope.metadata = {'url': '/{scope}/providers/Microsoft.CostManagement/views'}
-
     def list_by_external_billing_account(
             self, external_billing_account_name, custom_headers=None, raw=False, **operation_config):
         """List all views by external billing account.
@@ -346,55 +241,6 @@ class ViewsOperations(object):
         return deserialized
     list_by_external_billing_account.metadata = {'url': '/providers/Microsoft.CostManagement/externalBillingAccounts/{externalBillingAccountName}/views'}
 
-    def delete_all_by_external_billing_account(
-            self, external_billing_account_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to delete all views by external billing account.
-
-        :param external_billing_account_name: External Billing Account Name.
-         (eg 'aws-{PayerAccountId}')
-        :type external_billing_account_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.delete_all_by_external_billing_account.metadata['url']
-        path_format_arguments = {
-            'externalBillingAccountName': self._serialize.url("external_billing_account_name", external_billing_account_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_all_by_external_billing_account.metadata = {'url': '/providers/Microsoft.CostManagement/externalBillingAccounts/{externalBillingAccountName}/views'}
-
     def list_by_external_subscription(
             self, external_subscription_name, custom_headers=None, raw=False, **operation_config):
         """List all views by external subscription.
@@ -460,55 +306,6 @@ class ViewsOperations(object):
 
         return deserialized
     list_by_external_subscription.metadata = {'url': '/providers/Microsoft.CostManagement/externalSubscriptions/{externalSubscriptionName}/views'}
-
-    def delete_all_by_external_subscription(
-            self, external_subscription_name, custom_headers=None, raw=False, **operation_config):
-        """The operation to delete all views by external subscription.
-
-        :param external_subscription_name: External Subscription Name. (eg
-         'aws-{UsageAccountId}')
-        :type external_subscription_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.costmanagement.models.ErrorResponseException>`
-        """
-        # Construct URL
-        url = self.delete_all_by_external_subscription.metadata['url']
-        path_format_arguments = {
-            'externalSubscriptionName': self._serialize.url("external_subscription_name", external_subscription_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.delete(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(None, response)
-            return client_raw_response
-    delete_all_by_external_subscription.metadata = {'url': '/providers/Microsoft.CostManagement/externalSubscriptions/{externalSubscriptionName}/views'}
 
     def get(
             self, view_name, custom_headers=None, raw=False, **operation_config):

@@ -30,10 +30,6 @@ class View(ProxyResource):
      this field will be used to determine whether the user is updating the
      latest version or not.
     :type e_tag: str
-    :param version: View API version used to create the view.
-    :type version: str
-    :param query_version: Query API version to use.
-    :type query_version: str
     :param display_name: User input name of the view. Required.
     :type display_name: str
     :param scope: Cost Management scope to save the view on. This includes
@@ -106,8 +102,6 @@ class View(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'query_version': {'key': 'properties.queryVersion', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'scope': {'key': 'properties.scope', 'type': 'str'},
         'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
@@ -127,8 +121,6 @@ class View(ProxyResource):
 
     def __init__(self, **kwargs):
         super(View, self).__init__(**kwargs)
-        self.version = kwargs.get('version', None)
-        self.query_version = kwargs.get('query_version', None)
         self.display_name = kwargs.get('display_name', None)
         self.scope = kwargs.get('scope', None)
         self.created_on = None

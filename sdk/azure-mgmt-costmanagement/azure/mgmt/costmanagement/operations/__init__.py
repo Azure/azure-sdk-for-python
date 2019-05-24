@@ -10,14 +10,12 @@
 # --------------------------------------------------------------------------
 
 from .views_operations import ViewsOperations
-from .cost_management_operations import CostManagementOperations
 from .budgets_operations import BudgetsOperations
 from .budget_operations import BudgetOperations
 from .operations import Operations
 
 __all__ = [
     'ViewsOperations',
-    'CostManagementOperations',
     'BudgetsOperations',
     'BudgetOperations',
     'Operations',

@@ -30,10 +30,6 @@ class View(ProxyResource):
      this field will be used to determine whether the user is updating the
      latest version or not.
     :type e_tag: str
-    :param version: View API version used to create the view.
-    :type version: str
-    :param query_version: Query API version to use.
-    :type query_version: str
     :param display_name: User input name of the view. Required.
     :type display_name: str
     :param scope: Cost Management scope to save the view on. This includes
@@ -106,8 +102,6 @@ class View(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'e_tag': {'key': 'eTag', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'query_version': {'key': 'properties.queryVersion', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'scope': {'key': 'properties.scope', 'type': 'str'},
         'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
@@ -125,10 +119,8 @@ class View(ProxyResource):
 
     view_type = "Usage"
 
-    def __init__(self, *, timeframe, e_tag: str=None, version: str=None, query_version: str=None, display_name: str=None, scope: str=None, time_period=None, dataset=None, chart=None, accumulated=None, metric=None, kpis=None, pivots=None, **kwargs) -> None:
+    def __init__(self, *, timeframe, e_tag: str=None, display_name: str=None, scope: str=None, time_period=None, dataset=None, chart=None, accumulated=None, metric=None, kpis=None, pivots=None, **kwargs) -> None:
         super(View, self).__init__(e_tag=e_tag, **kwargs)
-        self.version = version
-        self.query_version = query_version
         self.display_name = display_name
         self.scope = scope
         self.created_on = None

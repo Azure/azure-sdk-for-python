@@ -14,7 +14,6 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.views_operations import ViewsOperations
-from .operations.cost_management_operations import CostManagementOperations
 from .operations.budgets_operations import BudgetsOperations
 from .operations.budget_operations import BudgetOperations
 from .operations.operations import Operations
@@ -61,8 +60,6 @@ class CostManagementClient(SDKClient):
 
     :ivar views: Views operations
     :vartype views: azure.mgmt.costmanagement.operations.ViewsOperations
-    :ivar cost_management: CostManagement operations
-    :vartype cost_management: azure.mgmt.costmanagement.operations.CostManagementOperations
     :ivar budgets: Budgets operations
     :vartype budgets: azure.mgmt.costmanagement.operations.BudgetsOperations
     :ivar budget: Budget operations
@@ -90,8 +87,6 @@ class CostManagementClient(SDKClient):
         self._deserialize = Deserializer(client_models)
 
         self.views = ViewsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.cost_management = CostManagementOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.budgets = BudgetsOperations(
             self._client, self.config, self._serialize, self._deserialize)
