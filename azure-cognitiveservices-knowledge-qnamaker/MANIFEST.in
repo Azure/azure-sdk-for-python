@@ -1,5 +1,0 @@
-include *.rst
-include azure/__init__.py
-include azure/cognitiveservices/__init__.py
-include azure/cognitiveservices/knowledge/__init__.py
-

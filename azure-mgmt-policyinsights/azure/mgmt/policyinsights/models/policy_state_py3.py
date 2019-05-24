@@ -85,6 +85,11 @@ class PolicyState(Model):
      definition inside the policy set, if the policy assignment is for a policy
      set.
     :type policy_definition_reference_id: str
+    :param compliance_state: Compliance state of the resource.
+    :type compliance_state: str
+    :param policy_evaluation_details: Policy evaluation details.
+    :type policy_evaluation_details:
+     ~azure.mgmt.policyinsights.models.PolicyEvaluationDetails
     """
 
     _attribute_map = {
@@ -116,9 +121,11 @@ class PolicyState(Model):
         'policy_set_definition_parameters': {'key': 'policySetDefinitionParameters', 'type': 'str'},
         'management_group_ids': {'key': 'managementGroupIds', 'type': 'str'},
         'policy_definition_reference_id': {'key': 'policyDefinitionReferenceId', 'type': 'str'},
+        'compliance_state': {'key': 'complianceState', 'type': 'str'},
+        'policy_evaluation_details': {'key': 'policyEvaluationDetails', 'type': 'PolicyEvaluationDetails'},
     }
 
-    def __init__(self, *, additional_properties=None, odataid: str=None, odatacontext: str=None, timestamp=None, resource_id: str=None, policy_assignment_id: str=None, policy_definition_id: str=None, effective_parameters: str=None, is_compliant: bool=None, subscription_id: str=None, resource_type: str=None, resource_location: str=None, resource_group: str=None, resource_tags: str=None, policy_assignment_name: str=None, policy_assignment_owner: str=None, policy_assignment_parameters: str=None, policy_assignment_scope: str=None, policy_definition_name: str=None, policy_definition_action: str=None, policy_definition_category: str=None, policy_set_definition_id: str=None, policy_set_definition_name: str=None, policy_set_definition_owner: str=None, policy_set_definition_category: str=None, policy_set_definition_parameters: str=None, management_group_ids: str=None, policy_definition_reference_id: str=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, odataid: str=None, odatacontext: str=None, timestamp=None, resource_id: str=None, policy_assignment_id: str=None, policy_definition_id: str=None, effective_parameters: str=None, is_compliant: bool=None, subscription_id: str=None, resource_type: str=None, resource_location: str=None, resource_group: str=None, resource_tags: str=None, policy_assignment_name: str=None, policy_assignment_owner: str=None, policy_assignment_parameters: str=None, policy_assignment_scope: str=None, policy_definition_name: str=None, policy_definition_action: str=None, policy_definition_category: str=None, policy_set_definition_id: str=None, policy_set_definition_name: str=None, policy_set_definition_owner: str=None, policy_set_definition_category: str=None, policy_set_definition_parameters: str=None, management_group_ids: str=None, policy_definition_reference_id: str=None, compliance_state: str=None, policy_evaluation_details=None, **kwargs) -> None:
         super(PolicyState, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.odataid = odataid
@@ -148,3 +155,5 @@ class PolicyState(Model):
         self.policy_set_definition_parameters = policy_set_definition_parameters
         self.management_group_ids = management_group_ids
         self.policy_definition_reference_id = policy_definition_reference_id
+        self.compliance_state = compliance_state
+        self.policy_evaluation_details = policy_evaluation_details

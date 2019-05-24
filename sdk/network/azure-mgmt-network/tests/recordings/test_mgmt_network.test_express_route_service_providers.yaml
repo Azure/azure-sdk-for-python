@@ -1,0 +1,455 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.17763-SP0) msrest/0.6.4 msrest_azure/0.6.0
+          networkmanagementclient/2.6.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/expressRouteServiceProviders?api-version=2018-12-01
+  response:
+    body: {string: "{\r\n  \"value\": [\r\n    {\r\n      \"name\": \"ARM Test Provider\",\r\n
+        \     \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\",\r\n          \"Denver Test\",\r\n          \"EUAP
+        Test\"\r\n        ],\r\n        \"bandwidthsOffered\": [\r\n          {\r\n
+        \           \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\": 50\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"AT&T Netbond Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\",\r\n          \"ASCVA001\",\r\n          \"SN1CA001\"\r\n
+        \       ],\r\n        \"bandwidthsOffered\": [\r\n          {\r\n            \"offerName\":
+        \"50Mbps\",\r\n            \"valueInMbps\": 50\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"100Mbps\",\r\n            \"valueInMbps\": 100\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"200Mbps\",\r\n
+        \           \"valueInMbps\": 200\r\n          },\r\n          {\r\n            \"offerName\":
+        \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\": 1000\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n            \"valueInMbps\":
+        2000\r\n          },\r\n          {\r\n            \"offerName\": \"5Gbps\",\r\n
+        \           \"valueInMbps\": 5000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n          }\r\n        ]\r\n
+        \     }\r\n    },\r\n    {\r\n      \"name\": \"BT Test\",\r\n      \"id\":
+        \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"CenturyLink\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Silicon Valley\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"CenturyLink Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Silicon Valley Test\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"CloudSimple Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Cologix Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Denver Test\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Console Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Silicon Valley Test\",\r\n          \"Toronto Test\"\r\n
+        \       ],\r\n        \"bandwidthsOffered\": [\r\n          {\r\n            \"offerName\":
+        \"50Mbps\",\r\n            \"valueInMbps\": 50\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"100Mbps\",\r\n            \"valueInMbps\": 100\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"200Mbps\",\r\n
+        \           \"valueInMbps\": 200\r\n          },\r\n          {\r\n            \"offerName\":
+        \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\": 1000\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n            \"valueInMbps\":
+        2000\r\n          },\r\n          {\r\n            \"offerName\": \"5Gbps\",\r\n
+        \           \"valueInMbps\": 5000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n          }\r\n        ]\r\n
+        \     }\r\n    },\r\n    {\r\n      \"name\": \"Coresite Test\",\r\n      \"id\":
+        \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"EQIX Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\",\r\n          \"London Test\",\r\n          \"Silicon
+        Valley Test\",\r\n          \"Singapore Test\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Equinix Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\",\r\n          \"Denver Test\",\r\n          \"London
+        Test\",\r\n          \"Silicon Valley Test\",\r\n          \"Singapore Test\"\r\n
+        \       ],\r\n        \"bandwidthsOffered\": [\r\n          {\r\n            \"offerName\":
+        \"50Mbps\",\r\n            \"valueInMbps\": 50\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"100Mbps\",\r\n            \"valueInMbps\": 100\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"200Mbps\",\r\n
+        \           \"valueInMbps\": 200\r\n          },\r\n          {\r\n            \"offerName\":
+        \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\": 1000\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n            \"valueInMbps\":
+        2000\r\n          },\r\n          {\r\n            \"offerName\": \"5Gbps\",\r\n
+        \           \"valueInMbps\": 5000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"100Gbps\",\r\n            \"valueInMbps\": 100000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"EquinixTest\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"eunetworks Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Silicon Valley Test\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Ibiza Test Provider\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Internet Solutions Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Denver Test\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Internet2 Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Silicon Valley Test\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Interxion Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Megaport Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Denver Test\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"NTT Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Packet Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Denver Test\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"PCCW Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Tata Communications Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Telstra Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Denver Test\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"TelstraCloudGatewayTest\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Test Provider NW\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Denver Test\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Test Provider With Charges\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Washington DC\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"VerizonTest\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"name\":
+        \"Virtustream Test\",\r\n      \"id\": \"/subscriptions//resourceGroups//providers/Microsoft.Network/expressRouteServiceProviders/\",\r\n
+        \     \"type\": \"Microsoft.Network/expressRouteServiceProviders\",\r\n      \"properties\":
+        {\r\n        \"provisioningState\": \"Succeeded\",\r\n        \"peeringLocations\":
+        [\r\n          \"Area51\"\r\n        ],\r\n        \"bandwidthsOffered\":
+        [\r\n          {\r\n            \"offerName\": \"50Mbps\",\r\n            \"valueInMbps\":
+        50\r\n          },\r\n          {\r\n            \"offerName\": \"100Mbps\",\r\n
+        \           \"valueInMbps\": 100\r\n          },\r\n          {\r\n            \"offerName\":
+        \"200Mbps\",\r\n            \"valueInMbps\": 200\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"500Mbps\",\r\n            \"valueInMbps\": 500\r\n
+        \         },\r\n          {\r\n            \"offerName\": \"1Gbps\",\r\n            \"valueInMbps\":
+        1000\r\n          },\r\n          {\r\n            \"offerName\": \"2Gbps\",\r\n
+        \           \"valueInMbps\": 2000\r\n          },\r\n          {\r\n            \"offerName\":
+        \"5Gbps\",\r\n            \"valueInMbps\": 5000\r\n          },\r\n          {\r\n
+        \           \"offerName\": \"10Gbps\",\r\n            \"valueInMbps\": 10000\r\n
+        \         }\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}"}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['33124']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 22 Mar 2019 16:23:40 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      server: [Microsoft-HTTPAPI/2.0, Microsoft-HTTPAPI/2.0]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      transfer-encoding: [chunked]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1

@@ -14,7 +14,7 @@ from msrest.exceptions import HttpOperationError
 
 
 class ErrorResponse(Model):
-    """Error reponse indicates CDN service is not able to process the incoming
+    """Error response indicates CDN service is not able to process the incoming
     request. The reason is provided in the error message.
 
     Variables are only populated by the server, and will be ignored when

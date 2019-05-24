@@ -68,6 +68,10 @@ class ActionGroupResource(Resource):
      are part of this action group.
     :type azure_function_receivers:
      list[~azure.mgmt.monitor.models.AzureFunctionReceiver]
+    :param arm_role_receivers: The list of ARM role receivers that are part of
+     this action group. Roles are Azure RBAC roles and only built-in roles are
+     supported.
+    :type arm_role_receivers: list[~azure.mgmt.monitor.models.ArmRoleReceiver]
     """
 
     _validation = {
@@ -96,6 +100,7 @@ class ActionGroupResource(Resource):
         'voice_receivers': {'key': 'properties.voiceReceivers', 'type': '[VoiceReceiver]'},
         'logic_app_receivers': {'key': 'properties.logicAppReceivers', 'type': '[LogicAppReceiver]'},
         'azure_function_receivers': {'key': 'properties.azureFunctionReceivers', 'type': '[AzureFunctionReceiver]'},
+        'arm_role_receivers': {'key': 'properties.armRoleReceivers', 'type': '[ArmRoleReceiver]'},
     }
 
     def __init__(self, **kwargs):
@@ -111,3 +116,4 @@ class ActionGroupResource(Resource):
         self.voice_receivers = kwargs.get('voice_receivers', None)
         self.logic_app_receivers = kwargs.get('logic_app_receivers', None)
         self.azure_function_receivers = kwargs.get('azure_function_receivers', None)
+        self.arm_role_receivers = kwargs.get('arm_role_receivers', None)
