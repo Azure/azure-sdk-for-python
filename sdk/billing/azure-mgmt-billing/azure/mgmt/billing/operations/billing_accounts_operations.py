@@ -194,18 +194,12 @@ class BillingAccountsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-        header_dict = {}
 
         if response.status_code == 200:
             deserialized = self._deserialize('BillingAccount', response)
-            header_dict = {
-                'Location': 'str',
-                'Retry-After': 'str',
-            }
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
-            client_raw_response.add_headers(header_dict)
             return client_raw_response
 
         return deserialized
@@ -241,15 +235,10 @@ class BillingAccountsOperations(object):
         )
 
         def get_long_running_output(response):
-            header_dict = {
-                'Location': 'str',
-                'Retry-After': 'str',
-            }
             deserialized = self._deserialize('BillingAccount', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
-                client_raw_response.add_headers(header_dict)
                 return client_raw_response
 
             return deserialized
