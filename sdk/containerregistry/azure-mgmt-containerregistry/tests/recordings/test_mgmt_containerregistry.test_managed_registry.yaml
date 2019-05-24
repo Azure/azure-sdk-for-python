@@ -11,7 +11,7 @@ interactions:
           msrest_azure/0.4.34 containerregistrymanagementclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/checkNameAvailability?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.ContainerRegistry/checkNameAvailability?api-version=2019-05-01
   response:
     body: {string: '{"nameAvailable":true}'}
     headers:
@@ -40,7 +40,7 @@ interactions:
           msrest_azure/0.4.34 containerregistrymanagementclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PUT
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462?api-version=2019-05-01
   response:
     body: {string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462","name":"pyacrfe331462","location":"westcentralus","tags":{},"properties":{"loginServer":"pyacrfe331462.azurecr.io","creationDate":"2018-09-11T16:36:48.0738284Z","provisioningState":"Succeeded","adminUserEnabled":false,"firewallRulesEnabled":false,"firewallRules":[]}}'}
     headers:
@@ -67,7 +67,7 @@ interactions:
           msrest_azure/0.4.34 containerregistrymanagementclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries?api-version=2019-05-01
   response:
     body: {string: '{"value":[{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462","name":"pyacrfe331462","location":"westcentralus","tags":{},"properties":{"loginServer":"pyacrfe331462.azurecr.io","creationDate":"2018-09-11T16:36:48.0738284Z","provisioningState":"Succeeded","adminUserEnabled":false,"firewallRulesEnabled":false,"firewallRules":[]}}]}'}
     headers:
@@ -95,7 +95,7 @@ interactions:
           msrest_azure/0.4.34 containerregistrymanagementclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: PATCH
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462?api-version=2019-05-01
   response:
     body: {string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462","name":"pyacrfe331462","location":"westcentralus","tags":{"key":"value"},"properties":{"loginServer":"pyacrfe331462.azurecr.io","creationDate":"2018-09-11T16:36:48.0738284Z","provisioningState":"Succeeded","adminUserEnabled":true,"firewallRulesEnabled":false,"firewallRules":[]}}'}
     headers:
@@ -122,7 +122,7 @@ interactions:
           msrest_azure/0.4.34 containerregistrymanagementclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462?api-version=2019-05-01
   response:
     body: {string: '{"sku":{"name":"Premium","tier":"Premium"},"type":"Microsoft.ContainerRegistry/registries","id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462","name":"pyacrfe331462","location":"westcentralus","tags":{"key":"value"},"properties":{"loginServer":"pyacrfe331462.azurecr.io","creationDate":"2018-09-11T16:36:48.0738284Z","provisioningState":"Succeeded","adminUserEnabled":true,"firewallRulesEnabled":false,"firewallRules":[]}}'}
     headers:
@@ -149,7 +149,7 @@ interactions:
           msrest_azure/0.4.34 containerregistrymanagementclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462/listCredentials?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462/listCredentials?api-version=2019-05-01
   response:
     body: {string: '{"username":"pyacrfe331462","passwords":[{"name":"password","value":"3WMODMj0sSD0azNxg01U8Fo02/MYAMSK"},{"name":"password2","value":"zJLdrI8YdaD+hus5DExiJN1AWtWBqmt4"}]}'}
     headers:
@@ -178,7 +178,7 @@ interactions:
           msrest_azure/0.4.34 containerregistrymanagementclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: POST
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462/regenerateCredential?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462/regenerateCredential?api-version=2019-05-01
   response:
     body: {string: '{"username":"pyacrfe331462","passwords":[{"name":"password","value":"f7xq0ZLz4eTaxQaMkk/SuEqSqq642xm4"},{"name":"password2","value":"zJLdrI8YdaD+hus5DExiJN1AWtWBqmt4"}]}'}
     headers:
@@ -205,7 +205,7 @@ interactions:
           msrest_azure/0.4.34 containerregistrymanagementclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462/listUsages?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462/listUsages?api-version=2019-05-01
   response:
     body: {string: '{"value":[{"name":"Size","limit":536870912000,"currentValue":0,"unit":"Bytes"},{"name":"Webhooks","limit":100,"currentValue":0,"unit":"Count"}]}'}
     headers:
@@ -232,7 +232,7 @@ interactions:
           msrest_azure/0.4.34 containerregistrymanagementclient/2.1.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: DELETE
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462?api-version=2017-10-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_containerregistry_test_managed_registryfe331462/providers/Microsoft.ContainerRegistry/registries/pyacrfe331462?api-version=2019-05-01
   response:
     body: {string: ''}
     headers:
