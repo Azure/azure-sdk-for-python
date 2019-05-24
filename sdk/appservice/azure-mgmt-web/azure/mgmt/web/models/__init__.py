@@ -35,6 +35,7 @@ try:
     from .hybrid_connection_py3 import HybridConnection
     from .deleted_site_py3 import DeletedSite
     from .proxy_only_resource_py3 import ProxyOnlyResource
+    from .managed_service_identity_user_assigned_identities_value_py3 import ManagedServiceIdentityUserAssignedIdentitiesValue
     from .managed_service_identity_py3 import ManagedServiceIdentity
     from .geo_distribution_py3 import GeoDistribution
     from .slot_swap_status_py3 import SlotSwapStatus
@@ -224,9 +225,13 @@ try:
     from .address_response_py3 import AddressResponse
     from .app_service_environment_resource_py3 import AppServiceEnvironmentResource
     from .app_service_environment_patch_resource_py3 import AppServiceEnvironmentPatchResource
+    from .endpoint_detail_py3 import EndpointDetail
+    from .endpoint_dependency_py3 import EndpointDependency
     from .hosting_environment_diagnostics_py3 import HostingEnvironmentDiagnostics
+    from .inbound_environment_endpoint_py3 import InboundEnvironmentEndpoint
     from .metric_availabilily_py3 import MetricAvailabilily
     from .metric_definition_py3 import MetricDefinition
+    from .outbound_environment_endpoint_py3 import OutboundEnvironmentEndpoint
     from .sku_info_py3 import SkuInfo
     from .usage_py3 import Usage
     from .worker_pool_resource_py3 import WorkerPoolResource
@@ -259,6 +264,7 @@ except (SyntaxError, ImportError):
     from .hybrid_connection import HybridConnection
     from .deleted_site import DeletedSite
     from .proxy_only_resource import ProxyOnlyResource
+    from .managed_service_identity_user_assigned_identities_value import ManagedServiceIdentityUserAssignedIdentitiesValue
     from .managed_service_identity import ManagedServiceIdentity
     from .geo_distribution import GeoDistribution
     from .slot_swap_status import SlotSwapStatus
@@ -448,9 +454,13 @@ except (SyntaxError, ImportError):
     from .address_response import AddressResponse
     from .app_service_environment_resource import AppServiceEnvironmentResource
     from .app_service_environment_patch_resource import AppServiceEnvironmentPatchResource
+    from .endpoint_detail import EndpointDetail
+    from .endpoint_dependency import EndpointDependency
     from .hosting_environment_diagnostics import HostingEnvironmentDiagnostics
+    from .inbound_environment_endpoint import InboundEnvironmentEndpoint
     from .metric_availabilily import MetricAvailabilily
     from .metric_definition import MetricDefinition
+    from .outbound_environment_endpoint import OutboundEnvironmentEndpoint
     from .sku_info import SkuInfo
     from .usage import Usage
     from .worker_pool_resource import WorkerPoolResource
@@ -503,9 +513,11 @@ from .csm_usage_quota_paged import CsmUsageQuotaPaged
 from .web_job_paged import WebJobPaged
 from .app_service_environment_resource_paged import AppServiceEnvironmentResourcePaged
 from .stamp_capacity_paged import StampCapacityPaged
+from .inbound_environment_endpoint_paged import InboundEnvironmentEndpointPaged
 from .worker_pool_resource_paged import WorkerPoolResourcePaged
 from .sku_info_paged import SkuInfoPaged
 from .usage_paged import UsagePaged
+from .outbound_environment_endpoint_paged import OutboundEnvironmentEndpointPaged
 from .app_service_plan_paged import AppServicePlanPaged
 from .str_paged import StrPaged
 from .hybrid_connection_paged import HybridConnectionPaged
@@ -603,6 +615,7 @@ __all__ = [
     'HybridConnection',
     'DeletedSite',
     'ProxyOnlyResource',
+    'ManagedServiceIdentityUserAssignedIdentitiesValue',
     'ManagedServiceIdentity',
     'GeoDistribution',
     'SlotSwapStatus',
@@ -792,9 +805,13 @@ __all__ = [
     'AddressResponse',
     'AppServiceEnvironmentResource',
     'AppServiceEnvironmentPatchResource',
+    'EndpointDetail',
+    'EndpointDependency',
     'HostingEnvironmentDiagnostics',
+    'InboundEnvironmentEndpoint',
     'MetricAvailabilily',
     'MetricDefinition',
+    'OutboundEnvironmentEndpoint',
     'SkuInfo',
     'Usage',
     'WorkerPoolResource',
@@ -847,9 +864,11 @@ __all__ = [
     'WebJobPaged',
     'AppServiceEnvironmentResourcePaged',
     'StampCapacityPaged',
+    'InboundEnvironmentEndpointPaged',
     'WorkerPoolResourcePaged',
     'SkuInfoPaged',
     'UsagePaged',
+    'OutboundEnvironmentEndpointPaged',
     'AppServicePlanPaged',
     'StrPaged',
     'HybridConnectionPaged',

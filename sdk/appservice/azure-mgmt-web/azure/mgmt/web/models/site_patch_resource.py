@@ -142,6 +142,8 @@ class SitePatchResource(ProxyOnlyResource):
     :vartype in_progress_operation_id: str
     :param geo_distributions: GeoDistributions for this site
     :type geo_distributions: list[~azure.mgmt.web.models.GeoDistribution]
+    :param identity:
+    :type identity: ~azure.mgmt.web.models.ManagedServiceIdentity
     """
 
     _validation = {
@@ -210,6 +212,7 @@ class SitePatchResource(ProxyOnlyResource):
         'redundancy_mode': {'key': 'properties.redundancyMode', 'type': 'RedundancyMode'},
         'in_progress_operation_id': {'key': 'properties.inProgressOperationId', 'type': 'str'},
         'geo_distributions': {'key': 'properties.geoDistributions', 'type': '[GeoDistribution]'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
     def __init__(self, **kwargs):
@@ -251,3 +254,4 @@ class SitePatchResource(ProxyOnlyResource):
         self.redundancy_mode = kwargs.get('redundancy_mode', None)
         self.in_progress_operation_id = None
         self.geo_distributions = kwargs.get('geo_distributions', None)
+        self.identity = kwargs.get('identity', None)

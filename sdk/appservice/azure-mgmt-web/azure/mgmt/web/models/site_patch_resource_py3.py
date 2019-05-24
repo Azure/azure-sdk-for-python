@@ -142,6 +142,8 @@ class SitePatchResource(ProxyOnlyResource):
     :vartype in_progress_operation_id: str
     :param geo_distributions: GeoDistributions for this site
     :type geo_distributions: list[~azure.mgmt.web.models.GeoDistribution]
+    :param identity:
+    :type identity: ~azure.mgmt.web.models.ManagedServiceIdentity
     """
 
     _validation = {
@@ -210,9 +212,10 @@ class SitePatchResource(ProxyOnlyResource):
         'redundancy_mode': {'key': 'properties.redundancyMode', 'type': 'RedundancyMode'},
         'in_progress_operation_id': {'key': 'properties.inProgressOperationId', 'type': 'str'},
         'geo_distributions': {'key': 'properties.geoDistributions', 'type': '[GeoDistribution]'},
+        'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
     }
 
-    def __init__(self, *, kind: str=None, enabled: bool=None, host_name_ssl_states=None, server_farm_id: str=None, reserved: bool=False, is_xenon: bool=False, hyper_v: bool=False, site_config=None, scm_site_also_stopped: bool=False, hosting_environment_profile=None, client_affinity_enabled: bool=None, client_cert_enabled: bool=None, client_cert_exclusion_paths: str=None, host_names_disabled: bool=None, container_size: int=None, daily_memory_time_quota: int=None, cloning_info=None, https_only: bool=None, redundancy_mode=None, geo_distributions=None, **kwargs) -> None:
+    def __init__(self, *, kind: str=None, enabled: bool=None, host_name_ssl_states=None, server_farm_id: str=None, reserved: bool=False, is_xenon: bool=False, hyper_v: bool=False, site_config=None, scm_site_also_stopped: bool=False, hosting_environment_profile=None, client_affinity_enabled: bool=None, client_cert_enabled: bool=None, client_cert_exclusion_paths: str=None, host_names_disabled: bool=None, container_size: int=None, daily_memory_time_quota: int=None, cloning_info=None, https_only: bool=None, redundancy_mode=None, geo_distributions=None, identity=None, **kwargs) -> None:
         super(SitePatchResource, self).__init__(kind=kind, **kwargs)
         self.state = None
         self.host_names = None
@@ -251,3 +254,4 @@ class SitePatchResource(ProxyOnlyResource):
         self.redundancy_mode = redundancy_mode
         self.in_progress_operation_id = None
         self.geo_distributions = geo_distributions
+        self.identity = identity
