@@ -37,6 +37,9 @@ class CloningInfo(Model):
      /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slotName}
      for other slots.
     :type source_web_app_id: str
+    :param source_web_app_location: Location of source app ex: West US or
+     North Europe
+    :type source_web_app_location: str
     :param hosting_environment: App Service Environment.
     :type hosting_environment: str
     :param app_settings_overrides: Application setting overrides for cloned
@@ -67,6 +70,7 @@ class CloningInfo(Model):
         'clone_custom_host_names': {'key': 'cloneCustomHostNames', 'type': 'bool'},
         'clone_source_control': {'key': 'cloneSourceControl', 'type': 'bool'},
         'source_web_app_id': {'key': 'sourceWebAppId', 'type': 'str'},
+        'source_web_app_location': {'key': 'sourceWebAppLocation', 'type': 'str'},
         'hosting_environment': {'key': 'hostingEnvironment', 'type': 'str'},
         'app_settings_overrides': {'key': 'appSettingsOverrides', 'type': '{str}'},
         'configure_load_balancing': {'key': 'configureLoadBalancing', 'type': 'bool'},
@@ -81,6 +85,7 @@ class CloningInfo(Model):
         self.clone_custom_host_names = kwargs.get('clone_custom_host_names', None)
         self.clone_source_control = kwargs.get('clone_source_control', None)
         self.source_web_app_id = kwargs.get('source_web_app_id', None)
+        self.source_web_app_location = kwargs.get('source_web_app_location', None)
         self.hosting_environment = kwargs.get('hosting_environment', None)
         self.app_settings_overrides = kwargs.get('app_settings_overrides', None)
         self.configure_load_balancing = kwargs.get('configure_load_balancing', None)
