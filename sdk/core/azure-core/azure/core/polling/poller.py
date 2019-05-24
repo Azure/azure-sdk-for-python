@@ -26,7 +26,7 @@
 import threading
 import uuid
 try:
-    from urlparse import urlparse # pylint: disable=unused-import
+    from urlparse import urlparse # type: ignore # pylint: disable=unused-import
 except ImportError:
     from urllib.parse import urlparse
 
@@ -34,7 +34,8 @@ from typing import Any, Callable, Union, List, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     import requests
-    from msrest.serialization import Model # pylint: disable=unused-import
+    from azure.core.pipeline.transport.base import HttpResponse  # type: ignore
+    from msrest.serialization import Model # type: ignore # pylint: disable=unused-import
 
 class PollingMethod(object):
     """ABC class for polling method.
@@ -117,7 +118,7 @@ class LROPoller(object):
 
         # This implicit test avoids bringing in an explicit dependency on Model directly
         try:
-            deserialization_callback = deserialization_callback.deserialize
+            deserialization_callback = deserialization_callback.deserialize # type: ignore
         except AttributeError:
             pass
 

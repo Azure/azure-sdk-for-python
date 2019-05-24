@@ -30,7 +30,7 @@ from . import AsyncHTTPPolicy
 from .redirect import RedirectPolicy
 
 
-class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):
+class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):  # type: ignore
     """An async redirect policy."""
 
     async def send(self, request):
