@@ -3,6 +3,23 @@
 Release History
 ===============
 
+0.42.0 (2019-05-24)
++++++++++++++++++++
+
+**Features**
+
+- Model SitePatchResource has a new parameter identity
+- Model ManagedServiceIdentity has a new parameter user_assigned_identities
+- Model CloningInfo has a new parameter source_web_app_location
+- Added operation AppServiceEnvironmentsOperations.get_inbound_network_dependencies_endpoints
+- Added operation AppServiceEnvironmentsOperations.get_outbound_network_dependencies_endpoints
+- Added operation DeletedWebAppsOperations.list_by_location
+- Added operation DeletedWebAppsOperations.get_deleted_web_app_by_location
+
+**Breaking changes**
+
+- Model ManagedServiceIdentity has a new parameter user_assigned_identities (renamed from identity_ids)
+
 0.41.0 (2019-02-13)
 +++++++++++++++++++
 

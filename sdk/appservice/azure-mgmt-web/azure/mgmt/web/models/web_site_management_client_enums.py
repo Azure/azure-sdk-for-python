@@ -85,6 +85,8 @@ class ManagedServiceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
     user_assigned = "UserAssigned"
+    system_assigned_user_assigned = "SystemAssigned, UserAssigned"
+    none = "None"
 
 
 class IpFilterTag(str, Enum):
