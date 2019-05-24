@@ -1,0 +1,26 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept: [application/json]
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.18362-SP0) msrest/0.6.4 msrest_azure/0.6.0
+          subscriptionclient/2.2.0 Azure-SDK-For-Python]
+      accept-language: [en-US]
+    method: GET
+    uri: https://management.azure.com/tenants?api-version=2018-06-01
+  response:
+    body: {string: '{"value":[{"id":"/tenants/72f988bf-86f1-41af-91ab-2d7cd011db47","tenantId":"72f988bf-86f1-41af-91ab-2d7cd011db47"}]}'}
+    headers:
+      cache-control: [no-cache]
+      content-length: ['116']
+      content-type: [application/json; charset=utf-8]
+      date: ['Thu, 23 May 2019 19:02:12 GMT']
+      expires: ['-1']
+      pragma: [no-cache]
+      strict-transport-security: [max-age=31536000; includeSubDomains]
+      vary: [Accept-Encoding]
+      x-content-type-options: [nosniff]
+    status: {code: 200, message: OK}
+version: 1
