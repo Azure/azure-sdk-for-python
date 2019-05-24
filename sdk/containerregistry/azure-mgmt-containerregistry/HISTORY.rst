@@ -3,6 +3,21 @@
 Release History
 ===============
 
+3.0.0rc1 (2019-05-24)
++++++++++++++++++++++
+
+**Features**
+
+- Model Registry has a new parameter policies
+- Model RegistryUpdateParameters has a new parameter policies
+- Add preview ScopeMaps (2019-05-01-preview API version)
+
+**Breaking changes**
+
+- Model RegistryUpdateParameters no longer has parameter storage_account
+- Removed operation RegistriesOperations.update_policies
+- Removed operation RegistriesOperations.list_policies
+
 2.8.0 (2019-04-30)
 ++++++++++++++++++
 
