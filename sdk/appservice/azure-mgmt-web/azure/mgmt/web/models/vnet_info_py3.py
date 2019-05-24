@@ -33,7 +33,7 @@ class VnetInfo(ProxyOnlyResource):
     :param cert_blob: A certificate file (.cer) blob containing the public key
      of the private key used to authenticate a
      Point-To-Site VPN connection.
-    :type cert_blob: bytearray
+    :type cert_blob: str
     :ivar routes: The routes that this Virtual Network connection uses.
     :vartype routes: list[~azure.mgmt.web.models.VnetRoute]
     :ivar resync_required: <code>true</code> if a resync is required;
@@ -62,14 +62,14 @@ class VnetInfo(ProxyOnlyResource):
         'type': {'key': 'type', 'type': 'str'},
         'vnet_resource_id': {'key': 'properties.vnetResourceId', 'type': 'str'},
         'cert_thumbprint': {'key': 'properties.certThumbprint', 'type': 'str'},
-        'cert_blob': {'key': 'properties.certBlob', 'type': 'bytearray'},
+        'cert_blob': {'key': 'properties.certBlob', 'type': 'str'},
         'routes': {'key': 'properties.routes', 'type': '[VnetRoute]'},
         'resync_required': {'key': 'properties.resyncRequired', 'type': 'bool'},
         'dns_servers': {'key': 'properties.dnsServers', 'type': 'str'},
         'is_swift': {'key': 'properties.isSwift', 'type': 'bool'},
     }
 
-    def __init__(self, *, kind: str=None, vnet_resource_id: str=None, cert_blob: bytearray=None, dns_servers: str=None, is_swift: bool=None, **kwargs) -> None:
+    def __init__(self, *, kind: str=None, vnet_resource_id: str=None, cert_blob: str=None, dns_servers: str=None, is_swift: bool=None, **kwargs) -> None:
         super(VnetInfo, self).__init__(kind=kind, **kwargs)
         self.vnet_resource_id = vnet_resource_id
         self.cert_thumbprint = None

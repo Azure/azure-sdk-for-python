@@ -37,6 +37,9 @@ class CloningInfo(Model):
      /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slotName}
      for other slots.
     :type source_web_app_id: str
+    :param source_web_app_location: Location of source app ex: West US or
+     North Europe
+    :type source_web_app_location: str
     :param hosting_environment: App Service Environment.
     :type hosting_environment: str
     :param app_settings_overrides: Application setting overrides for cloned
@@ -67,6 +70,7 @@ class CloningInfo(Model):
         'clone_custom_host_names': {'key': 'cloneCustomHostNames', 'type': 'bool'},
         'clone_source_control': {'key': 'cloneSourceControl', 'type': 'bool'},
         'source_web_app_id': {'key': 'sourceWebAppId', 'type': 'str'},
+        'source_web_app_location': {'key': 'sourceWebAppLocation', 'type': 'str'},
         'hosting_environment': {'key': 'hostingEnvironment', 'type': 'str'},
         'app_settings_overrides': {'key': 'appSettingsOverrides', 'type': '{str}'},
         'configure_load_balancing': {'key': 'configureLoadBalancing', 'type': 'bool'},
@@ -74,13 +78,14 @@ class CloningInfo(Model):
         'traffic_manager_profile_name': {'key': 'trafficManagerProfileName', 'type': 'str'},
     }
 
-    def __init__(self, *, source_web_app_id: str, correlation_id: str=None, overwrite: bool=None, clone_custom_host_names: bool=None, clone_source_control: bool=None, hosting_environment: str=None, app_settings_overrides=None, configure_load_balancing: bool=None, traffic_manager_profile_id: str=None, traffic_manager_profile_name: str=None, **kwargs) -> None:
+    def __init__(self, *, source_web_app_id: str, correlation_id: str=None, overwrite: bool=None, clone_custom_host_names: bool=None, clone_source_control: bool=None, source_web_app_location: str=None, hosting_environment: str=None, app_settings_overrides=None, configure_load_balancing: bool=None, traffic_manager_profile_id: str=None, traffic_manager_profile_name: str=None, **kwargs) -> None:
         super(CloningInfo, self).__init__(**kwargs)
         self.correlation_id = correlation_id
         self.overwrite = overwrite
         self.clone_custom_host_names = clone_custom_host_names
         self.clone_source_control = clone_source_control
         self.source_web_app_id = source_web_app_id
+        self.source_web_app_location = source_web_app_location
         self.hosting_environment = hosting_environment
         self.app_settings_overrides = app_settings_overrides
         self.configure_load_balancing = configure_load_balancing
