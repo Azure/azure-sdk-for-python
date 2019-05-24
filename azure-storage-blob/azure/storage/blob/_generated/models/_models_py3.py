@@ -33,8 +33,8 @@ class AccessPolicy(Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'iso-8601', 'xml': {'name': 'Start'}},
-        'expiry': {'key': 'Expiry', 'type': 'iso-8601', 'xml': {'name': 'Expiry'}},
+        'start': {'key': 'Start', 'type': 'str', 'xml': {'name': 'Start'}},
+        'expiry': {'key': 'Expiry', 'type': 'str', 'xml': {'name': 'Expiry'}},
         'permission': {'key': 'Permission', 'type': 'str', 'xml': {'name': 'Permission'}},
     }
     _xml_map = {
@@ -1136,6 +1136,32 @@ class SignedIdentifier(Model):
         super(SignedIdentifier, self).__init__(**kwargs)
         self.id = id
         self.access_policy = access_policy
+
+
+class SignedIdentifiers(Model):
+    """signed identifier.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. a unique id
+    :type id: str
+    :param access_policy: Required.
+    :type access_policy: ~blob.models.AccessPolicy
+    """
+
+    _validation = {
+        'identifiers': {'required': True},
+    }
+
+    _attribute_map = {
+        'identifiers': {'key': 'identifiers', 'type': 'list', 'xml': {'name': 'SignedIdentifier'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, *, identifiers: list, **kwargs) -> None:
+        super(SignedIdentifiers, self).__init__(**kwargs)
+        self.identifiers = identifiers
 
 
 class SourceModifiedAccessConditions(Model):

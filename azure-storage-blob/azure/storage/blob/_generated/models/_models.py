@@ -33,8 +33,8 @@ class AccessPolicy(Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'iso-8601', 'xml': {'name': 'Start'}},
-        'expiry': {'key': 'Expiry', 'type': 'iso-8601', 'xml': {'name': 'Expiry'}},
+        'start': {'key': 'Start', 'type': 'str', 'xml': {'name': 'Start'}},
+        'expiry': {'key': 'Expiry', 'type': 'str', 'xml': {'name': 'Expiry'}},
         'permission': {'key': 'Permission', 'type': 'str', 'xml': {'name': 'Permission'}},
     }
     _xml_map = {
