@@ -158,9 +158,7 @@ class BillingAccountsOperations(object):
 
 
     def _update_initial(
-            self, billing_account_name, address=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.BillingAccountUpdateProperties(address=address)
-
+            self, billing_account_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -205,13 +203,15 @@ class BillingAccountsOperations(object):
         return deserialized
 
     def update(
-            self, billing_account_name, address=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, billing_account_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """The operation to update a billing account.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
-        :param address: The address associated with billing account.
-        :type address: ~azure.mgmt.billing.models.Address
+        :param parameters: Parameters supplied to the update billing account
+         operation.
+        :type parameters:
+         ~azure.mgmt.billing.models.BillingAccountUpdateProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -228,7 +228,7 @@ class BillingAccountsOperations(object):
         """
         raw_result = self._update_initial(
             billing_account_name=billing_account_name,
-            address=address,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
