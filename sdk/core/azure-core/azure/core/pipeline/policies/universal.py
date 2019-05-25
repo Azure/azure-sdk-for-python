@@ -85,6 +85,7 @@ class HeadersPolicy(SansIOHTTPPolicy):
         self._headers[key] = value
 
     def on_request(self, request, **kwargs):
+        # type: (PipelineRequest, Any) -> None
         """Updates with the given headers before sending the request to the next policy.
 
         :param request: The PipelineRequest object
@@ -148,6 +149,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
         self._user_agent = "{} {}".format(self._user_agent, value)
 
     def on_request(self, request, **kwargs):
+        # type: (PipelineRequest, Any) -> None
         """Modifies the User-Agent header before the request is sent.
 
         :param request: The PipelineRequest object
@@ -208,6 +210,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
         self.enable_http_logger = logging_enable
 
     def on_request(self, request, **kwargs):
+        # type: (PipelineRequest, Any) -> None
         """Logs HTTP request to the DEBUG logger.
 
         :param request: The PipelineRequest object.
@@ -239,6 +242,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
                 _LOGGER.debug("Failed to log request: %r", err)
 
     def on_response(self, request, response, **kwargs):
+        # type: (PipelineRequest, PipelineResponse, Any) -> None
         """Logs HTTP response to the DEBUG logger.
 
         :param request: The PipelineRequest object.

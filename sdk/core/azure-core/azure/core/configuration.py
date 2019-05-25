@@ -58,6 +58,7 @@ class Configuration(object):
     :param logging_policy: Provides configuration parameters for logging.
     :param user_agent_policy: Provides configuration parameters to append custom values to the
      User-Agent header.
+    :param transport: The HttpTransport type.
     """
 
     def __init__(self, transport=None, **kwargs):

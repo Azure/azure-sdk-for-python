@@ -42,7 +42,7 @@ _LOGGER = logging.getLogger(__name__)
 class AsyncPipelineClient(object):
     """Service client core methods.
 
-    Builds a client AsyncPipeline.
+    Builds an AsyncPipeline client.
 
     :param str base_url: URL for the request.
     :param config: Service configuration. This is a required parameter.
@@ -50,7 +50,8 @@ class AsyncPipelineClient(object):
     :param kwargs: keyword arguments
 
     Keyword arguments:
-    pipeline - A Pipeline object. If omitted, an AsyncPipeline is created.
+    pipeline - A Pipeline object. If omitted, an AsyncPipeline is created
+     and returned.
     transport - The HTTPTransport type. If omitted, an AioHttpTransport is used
      for asynchronous transport.
     """
@@ -96,7 +97,7 @@ class AsyncPipelineClient(object):
         :param dict params: URL query parameters.
         :param dict headers: Headers
         :param dict form_content: Form content
-        :return: An HTTPRequest object
+        :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = HttpRequest(method, self.format_url(url))
@@ -146,7 +147,7 @@ class AsyncPipelineClient(object):
         :param dict params: Request URL parameters.
         :param dict headers: Headers.
         :param dict form_content: Form content.
-        :return: An HTTPRequest object
+        :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = self._request('GET', url, params, headers, content, form_content, None)
@@ -161,7 +162,7 @@ class AsyncPipelineClient(object):
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param dict form_content: Form content
-        :return: An HTTPRequest object
+        :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = self._request('PUT', url, params, headers, content, form_content, stream_content)
@@ -175,7 +176,7 @@ class AsyncPipelineClient(object):
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param dict form_content: Form content
-        :return: An HTTPRequest object
+        :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = self._request('POST', url, params, headers, content, form_content, stream_content)
@@ -189,7 +190,7 @@ class AsyncPipelineClient(object):
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param dict form_content: Form content
-        :return: An HTTPRequest object
+        :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = self._request('HEAD', url, params, headers, content, form_content, stream_content)
@@ -203,7 +204,7 @@ class AsyncPipelineClient(object):
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param dict form_content: Form content
-        :return: An HTTPRequest object
+        :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = self._request('PATCH', url, params, headers, content, form_content, stream_content)
@@ -217,7 +218,7 @@ class AsyncPipelineClient(object):
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param dict form_content: Form content
-        :return: An HTTPRequest object
+        :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = self._request('DELETE', url, params, headers, content, form_content, None)
@@ -231,7 +232,7 @@ class AsyncPipelineClient(object):
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param dict form_content: Form content
-        :return: An HTTPRequest object
+        :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = self._request('MERGE', url, params, headers, content, form_content, None)

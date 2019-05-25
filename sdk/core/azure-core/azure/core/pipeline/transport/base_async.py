@@ -66,7 +66,8 @@ def _iterate_response_content(iterator):
 
 
 class AsyncHttpResponse(_HttpResponseBase):
-
+    """An AsyncHttpResponse ABC.
+    """
     def stream_download(self) -> AsyncIterator[bytes]:
         """Generator for streaming request body data.
 
@@ -74,7 +75,7 @@ class AsyncHttpResponse(_HttpResponseBase):
         is supported.
 
         :param callback: Custom callback for monitoring progress.
-        :param int chunk_size:
+        :param int chunk_size: data chunk size
         """
 
 

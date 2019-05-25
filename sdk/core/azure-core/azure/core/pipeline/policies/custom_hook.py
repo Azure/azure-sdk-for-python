@@ -47,6 +47,7 @@ class CustomHookPolicy(SansIOHTTPPolicy):
         self._callback = request.context.options.pop('raw_response_hook', None)
 
     def on_response(self, request, response): # pylint: disable=arguments-differ
+        # type: (PipelineRequest, PipelineResponse) -> None
         """This is executed after the request comes back from the policy.
 
         :param request: The PipelineRequest object.

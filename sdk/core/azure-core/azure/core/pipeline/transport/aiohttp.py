@@ -64,7 +64,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
     :param configuration: The service configuration.
     :type configuration: ~azure.core.Configuration
-    :param session: THe client session.
+    :param session: The client session.
     :param loop: The event loop.
     :param bool session_owner: Session owner. Defaults True.
     """

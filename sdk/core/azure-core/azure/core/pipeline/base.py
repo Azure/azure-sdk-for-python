@@ -80,8 +80,10 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     This is implemented as a context manager, that will activate the context
     of the HTTP sender. The transport is the last node in the pipeline.
 
-    :param HttpTransport transport: The HttpTransport type
-    :param List[Union[HTTPPolicy, SansIOHTTPPolicy]] policies: List of configured policies.
+    :param transport: The HttpTransport type
+    :type transport: ~azure.core.pipeline.transport.HttpTransport
+    :param policies: List of configured policies.
+    :type policies: list
     """
     def __init__(self, transport, policies=None):
         # type: (HttpTransport, List[Union[HTTPPolicy, SansIOHTTPPolicy]]) -> None

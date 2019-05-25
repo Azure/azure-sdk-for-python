@@ -45,7 +45,7 @@ _LOGGER = logging.getLogger(__name__)
 class RedirectPolicy(HTTPPolicy):
     """A redirect policy.
 
-    The redirect policy in the pipeline can be configured directly or per operation.
+    A redirect policy in the pipeline can be configured directly or per operation.
 
     .. code-block:: python
         config = FooService.create_config()
@@ -64,7 +64,7 @@ class RedirectPolicy(HTTPPolicy):
         config.redirect_policy = RedirectPolicy.no_redirects()
 
     :param redirects_allow: Whether the client allows redirects. Defaults to True.
-    :param redirect_max : The maximum allowed redirects. Defaults to 30.
+    :param redirect_max: The maximum allowed redirects. Defaults to 30.
     """
 
     REDIRECT_STATUSES = frozenset([300, 301, 302, 303, 307, 308])

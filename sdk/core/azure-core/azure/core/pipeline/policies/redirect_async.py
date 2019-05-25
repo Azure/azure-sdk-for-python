@@ -32,6 +32,28 @@ from .redirect import RedirectPolicy
 
 class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):
     """An async redirect policy.
+
+    An async redirect policy in the pipeline can be configured directly or per operation.
+
+    .. code-block:: python
+
+        config = FooService.create_config()
+
+        # Client allows redirects. Defaults to True.
+        config.redirect_policy.allow = True
+
+        # The maximum allowed redirects. The default value is 30
+        config.redirect_policy.max_redirects = 10
+
+        # It can also be overridden per operation.
+        result = client.get_operation(redirects_allow=True, redirect_max=5)
+
+        # Alternatively you can disable redirects entirely
+        from azure.core.pipeline.policies import AsyncRedirectPolicy
+        config.redirect_policy = AsyncRedirectPolicy.no_redirects()
+
+    :param redirects_allow: Whether the client allows redirects. Defaults to True.
+    :param redirect_max: The maximum allowed redirects. Defaults to 30.
     """
 
     async def send(self, request):
