@@ -25,11 +25,15 @@
 # --------------------------------------------------------------------------
 
 import abc
+from typing import (TypeVar, Any, Dict, Optional)
 
 try:
     ABC = abc.ABC
 except AttributeError: # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})  # type: ignore
+
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 try:
     from contextlib import AbstractContextManager  # type: ignore #pylint: disable=unused-import
@@ -107,7 +111,7 @@ class PipelineResponse(object):
     However, nothing prevents a policy to actually sub-class this class a return it instead of the initial instance.
     """
     def __init__(self, http_request, http_response, context):
-        # type: (HttpRequest[HTTPRequestType], HTTPResponseType, Optional[Dict[str, Any]]) -> None
+        # type: (HTTPRequestType, HTTPResponseType, Optional[Dict[str, Any]]) -> None
         self.http_request = http_request
         self.http_response = http_response
         self.context = context

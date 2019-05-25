@@ -25,14 +25,15 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Any, List, Union, Generic, TypeVar
+from typing import Any, Union, List, Generic, TypeVar
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-
+ImplPoliciesType = List[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]] #pylint: disable=unsubscriptable-object
+AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore
@@ -88,8 +89,8 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
     of the HTTP sender.
     """
 
-    def __init__(self, transport, policies: List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = None) -> None:
-        self._impl_policies = []  # type: List[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]]
+    def __init__(self, transport, policies: AsyncPoliciesType = None) -> None:
+        self._impl_policies = []  # type: ImplPoliciesType
         self._transport = transport
 
         for policy in (policies or []):
