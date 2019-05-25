@@ -84,7 +84,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     def __init__(self, transport, policies=None):
         # type: (HttpTransportType, PoliciesType) -> None
         self._impl_policies = []  # type: List[HTTPPolicy]
-        self._transport = transport  # type: HTTPPolicy
+        self._transport = transport  # type: ignore
 
         for policy in (policies or []):
             if isinstance(policy, SansIOHTTPPolicy):
@@ -98,7 +98,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
 
     def __enter__(self):
         # type: () -> Pipeline
-        self._transport.__enter__()
+        self._transport.__enter__() # type: ignore
         return self
 
     def __exit__(self, *exc_details):  # pylint: disable=arguments-differ
