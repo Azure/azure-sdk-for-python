@@ -11,7 +11,8 @@ import json
 
 import six
 
-from uamqp import Message, BatchMessage
+import uamqp
+from uamqp import BatchMessage
 from uamqp import types, constants, errors
 from uamqp.message import MessageHeader, MessageProperties
 
@@ -61,6 +62,9 @@ def parse_sas_token(sas_token):
         key, value = field.split('=', 1)
         sas_data[key.lower()] = value
     return sas_data
+
+
+Message = uamqp.Message
 
 
 class EventData(object):
@@ -312,12 +316,12 @@ class EventPosition(object):
         return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
 
     @staticmethod
-    def from_start_of_stream():
-        return EventPosition("-1")
+    def first_available():
+        return FIRST_AVAILABLE
 
-    @staticmethod
-    def from_end_of_stream():
-        return EventPosition("@latest")
+    @classmethod
+    def new_events_only(cls):
+        return NEW_EVENTS_ONLY
 
     @staticmethod
     def from_offset(offset, inclusive=False):
@@ -330,6 +334,10 @@ class EventPosition(object):
     @staticmethod
     def from_enqueued_time(enqueued_time, inclusive=False):
         return EventPosition(enqueued_time, inclusive)
+
+
+FIRST_AVAILABLE = EventPosition("-1")
+NEW_EVENTS_ONLY = EventPosition("latest")
 
 
 class EventHubError(Exception):

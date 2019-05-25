@@ -9,11 +9,12 @@ from azure.eventhub.common import EventData, EventHubError, EventPosition
 from azure.eventhub.client import EventHubClient
 from azure.eventhub.sender import Sender
 from azure.eventhub.receiver import Receiver
-from uamqp.constants import MessageSendResult
-from uamqp.constants import TransportType
+from .constants import MessageSendResult
+from .constants import TransportType
+from .common import FIRST_AVAILABLE, NEW_EVENTS_ONLY
 
 __all__ = [
-    __version__,
+    "__version__",
     "EventData",
     "EventHubError",
     "EventPosition",
@@ -22,5 +23,5 @@ __all__ = [
     "Receiver",
     "MessageSendResult",
     "TransportType",
+    "FIRST_AVAILABLE", "NEW_EVENTS_ONLY",
 ]
-
