@@ -12,7 +12,7 @@ from uamqp import SendClientAsync
 
 from azure.eventhub import MessageSendResult
 from azure.eventhub import EventHubError
-from azure.eventhub.common import _error_handler, _BatchSendEventData
+from azure.eventhub.common import _error_handler, EventData, _BatchSendEventData
 
 log = logging.getLogger(__name__)
 
@@ -258,6 +258,21 @@ class Sender(object):
         else:
             return self._outcome
 
+    @staticmethod
+    def _verify_partition(event_datas):
+        ed_iter = iter(event_datas)
+        try:
+            ed = next(ed_iter)
+            partition_key = ed.partition_key
+            yield ed
+        except StopIteration:
+            raise ValueError("batch_event_data must not be empty")
+        for ed in ed_iter:
+            if ed.partition_key != partition_key:
+                raise ValueError("partition key of all EventData must be the same if being sent in a batch")
+            yield ed
+
+    '''
     async def send(self, event_data):
         """
         Sends an event data and asynchronously waits until
@@ -284,6 +299,37 @@ class Sender(object):
             raise ValueError("EventData partition key cannot be used with a partition sender.")
         event_data.message.on_send_complete = self._on_outcome
         await self._send_event_data(event_data)
+    '''
+
+    async def send(self, event_data):
+        """
+        Sends an event data and blocks until acknowledgement is
+        received or operation times out.
+
+        :param event_data: The event to be sent.
+        :type event_data: ~azure.eventhub.common.EventData
+        :raises: ~azure.eventhub.common.EventHubError if the message fails to
+         send.
+        :return: The outcome of the message send.
+        :rtype: ~uamqp.constants.MessageSendResult
+
+        Example:
+            .. literalinclude:: ../examples/test_examples_eventhub.py
+                :start-after: [START eventhub_client_sync_send]
+                :end-before: [END eventhub_client_sync_send]
+                :language: python
+                :dedent: 4
+                :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
+
+        """
+        if self.error:
+            raise self.error
+        if isinstance(event_data, EventData):
+            wrapper_event_data = event_data
+        else:
+            wrapper_event_data = _BatchSendEventData(self._verify_partition(event_data))
+        wrapper_event_data.message.on_send_complete = self._on_outcome
+        await self._send_event_data(wrapper_event_data)
 
     async def send_batch(self, batch_event_data):
         """

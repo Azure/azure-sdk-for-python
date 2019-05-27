@@ -11,7 +11,7 @@ import pytest
 import time
 import json
 
-from azure.eventhub import EventData
+from azure.eventhub import EventData, TransportType
 from azure.eventhub.aio import EventHubClient
 
 
@@ -219,3 +219,25 @@ async def test_send_batch_with_app_prop_async(connstr_receivers):
         assert list(message.body)[0] == "Event number {}".format(index).encode('utf-8')
         assert (app_prop_key.encode('utf-8') in message.application_properties) \
             and (dict(message.application_properties)[app_prop_key.encode('utf-8')] == app_prop_value.encode('utf-8'))
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_send_over_websocket_async(connstr_receivers):
+    connection_str, receivers = connstr_receivers
+    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket, debug=False)
+    sender = client.create_sender()
+
+    event_list = []
+    for i in range(20):
+        event_list.append(EventData("Event Number {}".format(i)))
+
+    async with sender:
+        await sender.send(event_list)
+
+    time.sleep(1)
+    received = []
+    for r in receivers:
+        received.extend(r.receive(timeout=3))
+
+    assert len(received) == 20

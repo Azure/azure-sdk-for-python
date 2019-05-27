@@ -302,10 +302,6 @@ class EventHubClientAbstract(object):
         self.mgmt_target = redirect_uri
 
     @abstractmethod
-    def get_eventhub_information(self):
-        pass
-
-    @abstractmethod
     def create_receiver(
             self, consumer_group, partition, epoch=None, offset=None, prefetch=300,
             operation=None):

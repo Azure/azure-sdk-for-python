@@ -192,8 +192,8 @@ class EventHubClient(EventHubClientAbstract):
         :type consumer_group: str
         :param partition: The ID of the partition.
         :type partition: str
-        :param offset: The offset from which to start receiving.
-        :type offset: ~azure.eventhub.common.Offset
+        :param event_position: The position from which to start receiving.
+        :type event_position: ~azure.eventhub.common.EventPosition
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
         :operation: An optional operation to be appended to the hostname in the source URL.

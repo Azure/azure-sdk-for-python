@@ -167,7 +167,7 @@ class EventHubClient(EventHubClientAbstract):
             await mgmt_client.close_async()
 
     def create_receiver(
-            self, consumer_group, partition, offset=None, epoch=None, operation=None,
+            self, consumer_group, partition, event_position=None, exclusive_receiver_priority=None, operation=None,
             prefetch=None, keep_alive=None, auto_reconnect=None, loop=None):
         """
         Add an async receiver to the client for a particular consumer group and partition.
@@ -176,8 +176,8 @@ class EventHubClient(EventHubClientAbstract):
         :type consumer_group: str
         :param partition: The ID of the partition.
         :type partition: str
-        :param offset: The offset from which to start receiving.
-        :type offset: ~azure.eventhub.common.Offset
+        :param event_position: The position from which to start receiving.
+        :type event_position: ~azure.eventhub.common.EventPosition
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
         :operation: An optional operation to be appended to the hostname in the source URL.
@@ -202,7 +202,7 @@ class EventHubClient(EventHubClientAbstract):
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
         handler = Receiver(
-            self, source_url, offset=offset, epoch=epoch, prefetch=prefetch, keep_alive=keep_alive,
+            self, source_url, offset=event_position, epoch=exclusive_receiver_priority, prefetch=prefetch, keep_alive=keep_alive,
             auto_reconnect=auto_reconnect, loop=loop)
         return handler
 
