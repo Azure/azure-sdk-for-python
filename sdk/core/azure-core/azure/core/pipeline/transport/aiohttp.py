@@ -50,18 +50,6 @@ class AioHttpTransport(AsyncHttpTransport):
 
     Fully asynchronous implementation using the aiohttp library.
 
-    .. code-block:: python
-
-        # Example use
-        conf = Configuration()
-        request = HttpRequest("GET", "https://bing.com")
-        policies = [
-            UserAgentPolicy("myuseragent"),
-            AsyncRedirectPolicy()
-        ]
-        async with AsyncPipeline(AioHttpTransport(conf), policies=policies) as pipeline:
-            response = await pipeline.run(request)
-
     :param configuration: The service configuration.
     :type configuration: ~azure.core.Configuration
     :param session: The client session.
@@ -136,6 +124,9 @@ class AioHttpTransport(AsyncHttpTransport):
         :param config: Any keyword arguments
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+
+        Keyword arguments:
+        stream - Defaults to False.
         """
         await self.open()
         error = None
@@ -164,7 +155,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
 
 class AioHttpStreamDownloadGenerator(AsyncIterator):
-    """Streams the request body data.
+    """Streams the response body data.
 
     :param response: The client response object.
     :type response: aiohttp.ClientResponse
@@ -232,6 +223,6 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         self._body = await self.internal_response.read()
 
     def stream_download(self) -> AsyncIteratorType[bytes]:
-        """Generator for streaming request body data.
+        """Generator for streaming response body data.
         """
         return AioHttpStreamDownloadGenerator(self.internal_response, self.block_size)

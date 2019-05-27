@@ -77,6 +77,7 @@ class HttpRequest(object):
     """Represents a HTTP request.
 
     URL can be given without query parameters, to be added later using "format_parameters".
+
     :param str method: HTTP method (GET, HEAD, etc.)
     :param str url: At least complete scheme/host/path
     :param dict[str,str] headers: HTTP headers
@@ -162,7 +163,7 @@ class HttpRequest(object):
 
     def set_xml_body(self, data):
         """Set an XML element tree as the body of the request.
-        
+
         :param data: The request field data.
         """
         if data is None:

@@ -12,12 +12,6 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, AsyncHT
     # pylint:disable=too-few-public-methods
     """Adds a bearer token Authorization header to requests.
 
-    .. code-block:: python
-
-        policies = [
-            AsyncBearerTokenCredentialPolicy(credential=my_credential, scopes=("",))
-        ]
-
     :param credential: The credential.
     :type credential: ~azure.core.SupportsGetToken
     :param str scopes: Lets you specify the type of access needed.

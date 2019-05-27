@@ -51,7 +51,10 @@ except ImportError: # Python <= 3.7
 class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]): #pylint: disable=unsubscriptable-object
     """Async implementation of the SansIO policy.
 
-    :param List[SansIOHTTPPolicy] policy: A list of configured policies.
+    Modifies the request and sends to the next policy in the chain.
+
+    :param policy: A SansIO policy.
+    :type policy: ~azure.core.pipeline.policies.SansIOHTTPPolicy
     """
 
     def __init__(self, policy: SansIOHTTPPolicy) -> None:
@@ -59,6 +62,13 @@ class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPRes
         self._policy = policy
 
     async def send(self, request: PipelineRequest):
+        """Modifies the request and sends to the next policy in the chain.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The PipelineResponse object.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
         self._policy.on_request(request)
         try:
             response = await self.next.send(request)  # type: ignore
@@ -71,12 +81,24 @@ class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPRes
 
 
 class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]): #pylint: disable=unsubscriptable-object
+    """Async Transport runner.
 
+    Uses specified HTTP transport type to send request and returns response.
+
+    :param sender: The async Http Transport type.
+    """
     def __init__(self, sender) -> None:
         super(_AsyncTransportRunner, self).__init__()
         self._sender = sender
 
     async def send(self, request):
+        """Async HTTP transport send method.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The PipelineResponse object.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
         return PipelineResponse(
             request.http_request,
             await self._sender.send(request.http_request, **request.context.options),
@@ -90,8 +112,8 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
     This is implemented as a context manager, that will activate the context
     of the HTTP sender.
 
-    :param HttpTransport transport: The HttpTransport type
-    :param List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] policies: List of configured policies.
+    :param transport: The async Http Transport type.
+    :param list policies: List of configured policies.
     """
 
     def __init__(self, transport, policies: List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = None) -> None:
@@ -125,8 +147,9 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
     async def run(self, request: PipelineRequest, **kwargs: Any):
         """Runs the HTTP Request through the chained policies.
 
-        :param HTTPRequestType request: The HTTP request object
-        :return: The PipelineResponse object
+        :param request: The HTTP request object.
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
         context = PipelineContext(self._transport, **kwargs)

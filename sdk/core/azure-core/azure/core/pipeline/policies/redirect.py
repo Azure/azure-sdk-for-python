@@ -90,9 +90,8 @@ class RedirectPolicy(HTTPPolicy):
     def configure_redirects(self, options):
         """Configures the redirect settings.
 
-        :param options: keyword arguments from context.
-        :return: A dict containing settings for redirects allowed,
-         the maximum allowable redirects, and a history of redirects.
+        :param options: Keyword arguments from context.
+        :return: A dict containing redirect settings and a history of redirects.
         :rtype: dict
         """
         return {
@@ -125,7 +124,7 @@ class RedirectPolicy(HTTPPolicy):
         :param dict settings: The redirect settings
         :param response: A pipeline response object.
         :type response: ~azure.core.pipeline.PipelineResponse
-        :param redirect_location: The redirected endpoint.
+        :param str redirect_location: The redirected endpoint.
         :return: Whether further redirect attempts are remaining.
          False if exhausted; True if more redirect attempts available.
         :rtype: bool

@@ -38,7 +38,10 @@ _LOGGER = logging.getLogger(__name__)
 class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseType]):
     """Sync implementation of the SansIO policy.
 
-    :param List[SansIOHTTPPolicy] policy: A list of configured policies.
+    Modifies the request and sends to the next policy in the chain.
+
+    :param policy: A SansIO policy.
+    :type policy: ~azure.core.pipeline.policies.SansIOHTTPPolicy
     """
 
     def __init__(self, policy):
@@ -48,6 +51,13 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseT
 
     def send(self, request):
         # type: (PipelineRequest[HTTPRequestType], Any) -> PipelineResponse[HTTPRequestType, HTTPResponseType]
+        """Modifies the request and sends to the next policy in the chain.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The PipelineResponse object.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
         self._policy.on_request(request)
         try:
             response = self.next.send(request)
@@ -60,13 +70,25 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy, Generic[HTTPRequestType, HTTPResponseT
 
 
 class _TransportRunner(HTTPPolicy):
+    """Transport runner.
 
+    Uses specified HTTP transport type to send request and returns response.
+
+    :param sender: The Http Transport type.
+    """
     def __init__(self, sender):
         # type: (HttpTransport) -> None
         super(_TransportRunner, self).__init__()
         self._sender = sender
 
     def send(self, request):
+        """HTTP transport send method.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The PipelineResponse object.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
         return PipelineResponse(
             request.http_request,
             self._sender.send(request.http_request, **request.context.options),
@@ -80,10 +102,8 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
     This is implemented as a context manager, that will activate the context
     of the HTTP sender. The transport is the last node in the pipeline.
 
-    :param transport: The HttpTransport type
-    :type transport: ~azure.core.pipeline.transport.HttpTransport
-    :param policies: List of configured policies.
-    :type policies: list
+    :param transport: The Http Transport type
+    :param list policies: List of configured policies.
     """
     def __init__(self, transport, policies=None):
         # type: (HttpTransport, List[Union[HTTPPolicy, SansIOHTTPPolicy]]) -> None
@@ -112,7 +132,8 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         # type: (HTTPRequestType, Any) -> PipelineResponse
         """Runs the HTTP Request through the chained policies.
 
-        :param HTTPRequestType request: The HTTP request object
+        :param request: The HTTP request object.
+        :type request: ~azure.core.pipeline.transport.HttpRequest
         :return: The PipelineResponse object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """

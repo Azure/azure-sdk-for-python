@@ -55,7 +55,7 @@ class PipelineContext(dict):
     the pipeline.
 
     :param transport: The HTTP transport type.
-    :param dict options: Keyword arguments.
+    :param dict options: Developer-defined keyword arguments.
     """
     def __init__(self, transport, **kwargs): #pylint: disable=super-init-not-called
         self.transport = transport
@@ -88,11 +88,12 @@ class PipelineRequest(object):
     """A pipeline request object.
 
     Container for moving the HttpRequest through the pipeline.
+    Universal for all transports, both synchronous and asynchronous.
 
     :param http_request: The request object.
-    :type http_request: ~azure.core.pipeline.transport.HttpRequest[HTTPRequestType]
-    :param context: Contains data persisted between pipeline requests.
-    :type context: dict
+    :type http_request: ~azure.core.pipeline.transport.HttpRequest
+    :param context: Contains the context - data persisted between pipeline requests.
+    :type context: ~azure.core.pipeline.PipelineContext
     """
     def __init__(self, http_request, context):
         # type: (HTTPRequestType, Optional[Any]) -> None
@@ -111,11 +112,11 @@ class PipelineResponse(object):
     However, nothing prevents a policy to actually sub-class this class a return it instead of the initial instance.
 
     :param http_request: The request object.
-    :type http_request: ~azure.core.pipeline.transport.HttpRequest[HTTPRequestType] 
+    :type http_request: ~azure.core.pipeline.transport.HttpRequest
     :param http_response: The response object.
-    :type http_response: ~azure.core.pipeline.transport.HTTPResponse
-    :param context: Contains data persisted between pipeline requests.
-    :type context: dict
+    :type http_response: ~azure.core.pipeline.transport.HttpResponse
+    :param context: Contains the context - data persisted between pipeline requests.
+    :type context: ~azure.core.pipeline.PipelineContext
     """
     def __init__(self, http_request, http_response, context):
         # type: (HttpRequest[HTTPRequestType], HTTPResponseType, Optional[Dict[str, Any]]) -> None

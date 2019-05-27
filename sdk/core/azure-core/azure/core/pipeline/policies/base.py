@@ -42,12 +42,11 @@ _LOGGER = logging.getLogger(__name__)
 class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An HTTP policy ABC.
 
-    Can only be used with synchronous pipeline type.
+    Used with a synchronous pipeline.
 
     :param next: Use to process the next policy in the pipeline. Set when pipeline is
      instantiated and all policies chained.
-    :type next: Optional[Union[HTTPPolicy[HTTPRequestType, HTTPResponseType],
-     HttpTransport[HTTPRequestType, HTTPResponseType]]]
+    :type next: HTTPPolicy or HTTPTransport
     """
     def __init__(self):
         self.next = None
@@ -60,9 +59,9 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
         Context content is dependent on the HttpTransport.
 
         :param request: The pipeline request object
-        :type request: ~azure.core.pipeline.PipelineRequest[HTTPRequestType]
+        :type request: ~azure.core.pipeline.PipelineRequest
         :return: The pipeline response object.
-        :rtype: ~azure.core.pipeline.PipelineResponse[HTTPRequestType, HTTPResponseType]
+        :rtype: ~azure.core.pipeline.PipelineResponse
         """
 
 class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
@@ -79,17 +78,17 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         """Is executed before sending the request to next policy.
 
         :param request: Request to be modified before sent to next policy.
-        :type request: ~azure.core.pipeline.PipelineRequest[HTTPRequestType]
+        :type request: ~azure.core.pipeline.PipelineRequest
         """
 
     def on_response(self, request, response, **kwargs):
         # type: (PipelineRequest[HTTPRequestType], PipelineResponse[HTTPRequestType, HTTPResponseType], Any) -> None
         """Is executed after the request comes back from the policy.
 
-        :param request: Pipeline request to be modified after returning from the policy.
-        :type request: ~azure.core.pipeline.PipelineRequest[HTTPRequestType]
+        :param request: Request to be modified after returning from the policy.
+        :type request: ~azure.core.pipeline.PipelineRequest
         :param response: Pipeline response object
-        :type response: ~azure.core.pipeline.PipelineResponse[HTTPRequestType, HTTPResponseType]
+        :type response: ~azure.core.pipeline.PipelineResponse
         """
 
     #pylint: disable=no-self-use
@@ -117,7 +116,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
             exc_type, exc_value, exc_traceback = sys.exc_info()
 
         :param request: The Pipeline request object
-        :type request: ~azure.core.pipeline.PipelineRequest[HTTPRequestType]
+        :type request: ~azure.core.pipeline.PipelineRequest
         :return: True if exception has been handled. False if exception is
          forwarded to the caller.
         :rtype: bool
@@ -131,7 +130,7 @@ class RequestHistory(object):
     This is used to document requests/responses that resulted in redirected/retried requests.
 
     :param http_request: The request.
-    :type http_request: ~azure.core.pipeline.PipelineRequest[HTTPRequestType]
+    :type http_request: ~azure.core.pipeline.PipelineRequest
     :param http_response: The HTTP response.
     :type http_response: ~azure.core.pipeline.transport.HTTPResponse
     :param Exception error: An error encountered during the request, or None if the response was received successfully.

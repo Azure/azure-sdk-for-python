@@ -202,7 +202,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
 
         result = client.get_operation(logging_enable=True)
 
-    :param bool logging_enable: Use to enable per operation. Defaults to False. 
+    :param bool logging_enable: Use to enable per operation. Defaults to False.
     :param bool enable_http_logger: Enables network trace logging at DEBUG level.
      Defaults to False.
     """
@@ -378,6 +378,11 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         This will load the entire payload in memory.
         Will follow Content-Type to parse.
         We assume everything is UTF8 (BOM acceptable).
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: The PipelineResponse object.
+        :type response: ~azure.core.pipeline.PipelineResponse
         :param raw_data: Data to be processed.
         :param content_type: How to parse if raw_data is a string/bytes.
         :raises JSONDecodeError: If JSON is requested and parsing is impossible.
@@ -405,8 +410,8 @@ class ProxyPolicy(SansIOHTTPPolicy):
         config.proxy_policy.proxies = {'http': 'foo.bar:3128'}
         config.proxy_policy.proxies= {'http://host.name': 'foo.bar:4012'}
 
-    :param dict proxies: Dictionary mapping protocol or protocol and
-     hostname to the URL of the proxy.
+    :param dict proxies: Maps protocol or protocol and hostname to the URL
+     of the proxy.
     :param bool proxies_use_env_settings: Use proxy settings from environment.
      Defaults to True.
     """

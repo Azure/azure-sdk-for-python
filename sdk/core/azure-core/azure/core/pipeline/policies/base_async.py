@@ -52,12 +52,11 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
     """An async HTTP policy ABC.
 
-    Can only be used with asynchronous pipeline type.
+    Used with an asynchronous pipeline.
 
     :param next: Use to process the next policy in the pipeline. Set when pipeline
      is instantiated and all policies chained.
-    :type next: Optional[Union[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType],
-     AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]]]
+    :type next: AsyncHTTPPolicy or AsyncHttpTransport
     """
     def __init__(self) -> None:
         # next will be set once in the pipeline
@@ -72,5 +71,5 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
         :param request: The pipeline request object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :return: The pipeline response object.
-        :rtype: ~azure.core.pipeline.PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
+        :rtype: ~azure.core.pipeline.PipelineResponse
         """

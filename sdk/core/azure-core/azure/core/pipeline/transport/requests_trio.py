@@ -49,12 +49,12 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class TrioStreamDownloadGenerator(AsyncIterator):
-    """
-    
+    """Generator for streaming response data.
+
     :param response: The response object.
     :param int block_size: Number of bytes to read into memory.
-    :param generator iter_content_func:
-    :param int content_length:
+    :param generator iter_content_func: Iterator for response data.
+    :param int content_length: size of body in bytes.
     """
     def __init__(self, response: requests.Response, block_size: int) -> None:
         self.response = response
@@ -91,12 +91,10 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                 raise
 
 class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):
-
+    """Asynchronous streaming of data from the response.
+    """
     def stream_download(self) -> AsyncIteratorType[bytes]:
-        """Generator for streaming request body data.
-
-        :param callback: Custom callback for monitoring progress.
-        :param int chunk_size: size in bytes
+        """Generator for streaming response data.
         """
         return TrioStreamDownloadGenerator(self.internal_response, self.block_size)
 

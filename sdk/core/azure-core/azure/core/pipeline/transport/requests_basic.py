@@ -47,7 +47,16 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
+    """Base class for accessing response data.
 
+    :param HttpRequest request: The request.
+    :param requests_response: The object returned from the HTTP library.
+    :param int block_size: Size in bytes. 
+    :param int status_code: The status code of the response
+    :param dict headers: The request headers.
+    :param str reason: Status reason of response.
+    :param str content_type: The content type.
+    """
     def __init__(self, request, requests_response, block_size=None):
         super(_RequestsTransportResponseBase, self).__init__(request, requests_response, block_size=block_size)
         self.status_code = requests_response.status_code
@@ -67,7 +76,13 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
 
 
 class StreamDownloadGenerator(object):
+    """Generator for streaming response data.
 
+    :param response: The response object.
+    :param int block_size: Number of bytes to read into memory.
+    :param generator iter_content_func: Iterator for response data.
+    :param int content_length: size of body in bytes.
+    """
     def __init__(self, response, block_size):
         self.response = response
         self.block_size = block_size
@@ -105,10 +120,11 @@ class StreamDownloadGenerator(object):
 
 
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
-
+    """Streaming of data from the response.
+    """
     def stream_download(self):
         # type: (Optional[int], Optional[Callable]) -> Iterator[bytes]
-        """Generator for streaming request body data."""
+        """Generator for streaming response body data."""
         return StreamDownloadGenerator(self.internal_response, self.block_size)
 
 
@@ -124,8 +140,8 @@ class RequestsTransport(HttpTransport):
     - All kwargs received by "send" are sent to session.request directly
 
     :param configuration: The service configuration.
-    :type configuration: azure.core.Configuration
-    :param session: The configured session.
+    :type configuration: ~azure.core.Configuration
+    :param session: The session.
     :type session: requests.Session
     :param bool session_owner: Defaults to True.
     """

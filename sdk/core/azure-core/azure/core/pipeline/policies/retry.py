@@ -352,6 +352,13 @@ class RetryPolicy(HTTPPolicy):
         return not self.is_exhausted(settings)
 
     def update_context(self, context, retry_settings):
+        """Updates retry history in pipeline context.
+
+        :param context: The pipeline context.
+        :type context: ~azure.core.pipeline.PipelineContext
+        :param retry_settings: The retry settings.
+        :type retry_settings: dict
+        """
         if retry_settings['history']:
             context['history'] = retry_settings['history']
 

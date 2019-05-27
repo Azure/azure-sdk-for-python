@@ -46,12 +46,6 @@ class _BearerTokenCredentialPolicyBase(object):
 class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
     """Adds a bearer token Authorization header to requests.
 
-    .. code-block:: python
-
-        policies = [
-            BearerTokenCredentialPolicy(credential=my_credential, scopes=("",))
-        ]
-
     :param credential: The credential.
     :type credential: ~azure.core.SupportsGetToken
     :param str scopes: Lets you specify the type of access needed.

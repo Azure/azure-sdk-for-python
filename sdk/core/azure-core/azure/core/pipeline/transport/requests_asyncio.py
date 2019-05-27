@@ -119,7 +119,13 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
 
 
 class AsyncioStreamDownloadGenerator(AsyncIterator):
+    """Streams the response body data.
 
+    :param response: The response object.
+    :param int block_size: block size of data sent over connection.
+    :param generator iter_content_func: Iterator for response data.
+    :param int content_length: size of body in bytes.
+    """
     def __init__(self, response: requests.Response, block_size: int) -> None:
         self.response = response
         self.block_size = block_size
@@ -158,7 +164,8 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 
 
 class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):
-
+    """Asynchronous streaming of data from the response.
+    """
     def stream_download(self) -> AsyncIteratorType[bytes]:
-        """Generator for streaming request body data."""
+        """Generator for streaming response body data."""
         return AsyncioStreamDownloadGenerator(self.internal_response, self.block_size)
