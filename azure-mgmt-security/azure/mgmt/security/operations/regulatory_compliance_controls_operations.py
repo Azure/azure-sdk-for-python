@@ -38,13 +38,10 @@ class RegulatoryComplianceControlsOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, regulatory_compliance_standard_name, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, regulatory_compliance_standard_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """All supported regulatory compliance controls details and state for
         selected standard.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
-        :type resource_group_name: str
         :param regulatory_compliance_standard_name: Name of the regulatory
          compliance standard object
         :type regulatory_compliance_standard_name: str
@@ -67,7 +64,6 @@ class RegulatoryComplianceControlsOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
                     'regulatoryComplianceStandardName': self._serialize.url("regulatory_compliance_standard_name", regulatory_compliance_standard_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
@@ -115,12 +111,9 @@ class RegulatoryComplianceControlsOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/regulatoryComplianceStandards/{regulatoryComplianceStandardName}/regulatoryComplianceControls'}
 
     def get(
-            self, resource_group_name, regulatory_compliance_standard_name, regulatory_compliance_control_name, custom_headers=None, raw=False, **operation_config):
+            self, regulatory_compliance_standard_name, regulatory_compliance_control_name, custom_headers=None, raw=False, **operation_config):
         """Selected regulatory compliance control details and state.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
-        :type resource_group_name: str
         :param regulatory_compliance_standard_name: Name of the regulatory
          compliance standard object
         :type regulatory_compliance_standard_name: str
@@ -141,7 +134,6 @@ class RegulatoryComplianceControlsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'regulatoryComplianceStandardName': self._serialize.url("regulatory_compliance_standard_name", regulatory_compliance_standard_name, 'str'),
             'regulatoryComplianceControlName': self._serialize.url("regulatory_compliance_control_name", regulatory_compliance_control_name, 'str')
         }
