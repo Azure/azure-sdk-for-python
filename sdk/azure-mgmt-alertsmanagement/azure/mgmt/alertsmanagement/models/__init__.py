@@ -28,6 +28,12 @@ try:
     from .smart_group_aggregated_property_py3 import SmartGroupAggregatedProperty
     from .smart_group_py3 import SmartGroup
     from .smart_groups_list_py3 import SmartGroupsList
+    from .error_response1_py3 import ErrorResponse1, ErrorResponse1Exception
+    from .action_groups_information_py3 import ActionGroupsInformation
+    from .throttling_information_py3 import ThrottlingInformation
+    from .azure_resource_py3 import AzureResource
+    from .detector_py3 import Detector
+    from .alert_rule_py3 import AlertRule
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .operation import Operation
@@ -47,8 +53,15 @@ except (SyntaxError, ImportError):
     from .smart_group_aggregated_property import SmartGroupAggregatedProperty
     from .smart_group import SmartGroup
     from .smart_groups_list import SmartGroupsList
+    from .error_response1 import ErrorResponse1, ErrorResponse1Exception
+    from .action_groups_information import ActionGroupsInformation
+    from .throttling_information import ThrottlingInformation
+    from .azure_resource import AzureResource
+    from .detector import Detector
+    from .alert_rule import AlertRule
 from .operation_paged import OperationPaged
 from .alert_paged import AlertPaged
+from .alert_rule_paged import AlertRulePaged
 from .alerts_management_client_enums import (
     Severity,
     SignalType,
@@ -58,6 +71,7 @@ from .alerts_management_client_enums import (
     AlertModificationEvent,
     SmartGroupModificationEvent,
     State,
+    AlertRuleState,
     TimeRange,
     AlertsSortByFields,
     AlertsSummaryGroupByFields,
@@ -83,8 +97,15 @@ __all__ = [
     'SmartGroupAggregatedProperty',
     'SmartGroup',
     'SmartGroupsList',
+    'ErrorResponse1', 'ErrorResponse1Exception',
+    'ActionGroupsInformation',
+    'ThrottlingInformation',
+    'AzureResource',
+    'Detector',
+    'AlertRule',
     'OperationPaged',
     'AlertPaged',
+    'AlertRulePaged',
     'Severity',
     'SignalType',
     'AlertState',
@@ -93,6 +114,7 @@ __all__ = [
     'AlertModificationEvent',
     'SmartGroupModificationEvent',
     'State',
+    'AlertRuleState',
     'TimeRange',
     'AlertsSortByFields',
     'AlertsSummaryGroupByFields',

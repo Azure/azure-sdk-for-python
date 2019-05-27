@@ -82,6 +82,12 @@ class State(str, Enum):
     closed = "Closed"
 
 
+class AlertRuleState(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class TimeRange(str, Enum):
 
     oneh = "1h"
