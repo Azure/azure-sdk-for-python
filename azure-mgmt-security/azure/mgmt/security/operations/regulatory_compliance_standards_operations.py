@@ -107,7 +107,7 @@ class RegulatoryComplianceStandardsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/regulatoryComplianceStandards'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/regulatoryComplianceStandards'}
 
     def get(
             self, resource_group_name, regulatory_compliance_standard_name, custom_headers=None, raw=False, **operation_config):
@@ -171,4 +171,4 @@ class RegulatoryComplianceStandardsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/regulatoryComplianceStandards/{regulatoryComplianceStandardName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/regulatoryComplianceStandards/{regulatoryComplianceStandardName}'}
