@@ -27,23 +27,19 @@
 This module is the requests implementation of Pipeline ABC
 """
 from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
-import contextlib
 import logging
-import threading
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
-import warnings
 
+from azure.core.exceptions import AzureError
 from .base import HTTPPolicy
 from .base_async import AsyncHTTPPolicy
 from .retry import RetryPolicy
-
-from azure.core.exceptions import AzureError
 
 _LOGGER = logging.getLogger(__name__)
 
 
 
-class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):
+class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
 
 
     async def _sleep_for_retry(self, response, transport):
@@ -74,25 +70,25 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):
         await self._sleep_backoff(settings, transport)
 
     async def send(self, request):
-        retries_remaining = True
+        retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)
-        while retries_remaining:
+        while retry_active:
             try:
                 response = await self.next.send(request)
                 if self.is_retry(retry_settings, response):
-                    retries_remaining = self.increment(retry_settings, response=response)
-                    if retries_remaining:
+                    retry_active = self.increment(retry_settings, response=response)
+                    if retry_active:
                         await self.sleep(retry_settings, request.context.transport, response=response)
                         continue
                 break
             except AzureError as err:
                 if self._is_method_retryable(retry_settings, request.http_request):
-                    retries_remaining = self.increment(retry_settings, response=request, error=err)
-                    if retries_remaining:
+                    retry_active = self.increment(retry_settings, response=request, error=err)
+                    if retry_active:
                         await self.sleep(retry_settings, request.context.transport)
                         continue
                 raise err
-        if retry_settings['history']:
-            response.context['history'] = retry_settings['history']
+
+        self.update_context(response.context, retry_settings)
         return response

@@ -25,14 +25,18 @@
 # --------------------------------------------------------------------------
 
 import abc
+from typing import (TypeVar, Any, Dict, Optional)
 
 try:
     ABC = abc.ABC
 except AttributeError: # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})  # type: ignore
 
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
+
 try:
-    from contextlib import AbstractContextManager  # type: ignore
+    from contextlib import AbstractContextManager  # type: ignore #pylint: disable=unused-import
 except ImportError: # Python <= 3.5
     class AbstractContextManager(object):  # type: ignore
         def __enter__(self):
@@ -47,7 +51,7 @@ except ImportError: # Python <= 3.5
 
 class PipelineContext(dict):
 
-    def __init__(self, transport, **kwargs):
+    def __init__(self, transport, **kwargs): #pylint: disable=super-init-not-called
         self.transport = transport
         self.options = kwargs
         self._protected = ['transport', 'options']
@@ -107,13 +111,13 @@ class PipelineResponse(object):
     However, nothing prevents a policy to actually sub-class this class a return it instead of the initial instance.
     """
     def __init__(self, http_request, http_response, context):
-        # type: (HttpRequest[HTTPRequestType], HTTPResponseType, Optional[Dict[str, Any]]) -> None
+        # type: (HTTPRequestType, HTTPResponseType, Optional[Dict[str, Any]]) -> None
         self.http_request = http_request
         self.http_response = http_response
         self.context = context
 
 
-from .base import Pipeline
+from .base import Pipeline #pylint: disable=wrong-import-position
 
 __all__ = [
     'Pipeline',
@@ -123,9 +127,7 @@ __all__ = [
 ]
 
 try:
-    from .base_async import AsyncPipeline
+    from .base_async import AsyncPipeline #pylint: disable=unused-import
     __all__.append('AsyncPipeline')
 except (SyntaxError, ImportError):
     pass  # Asynchronous pipelines not supported.
-
-

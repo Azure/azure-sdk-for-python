@@ -37,5 +37,5 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
     def send(self, request):
         # type: (PipelineRequest) -> PipelineResponse
         token = self._credential.get_token(self._scopes)
-        self._update_headers(request.http_request.headers, token)
+        self._update_headers(request.http_request.headers, token) # type: ignore
         return self.next.send(request)

@@ -27,13 +27,10 @@
 This module is the requests implementation of Pipeline ABC
 """
 from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
-import contextlib
 import logging
-import threading
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
-import warnings
 try:
-    from urlparse import urlparse
+    from urlparse import urlparse  # type: ignore
 except ImportError:
     from urllib.parse import urlparse
 
@@ -60,6 +57,7 @@ class RedirectPolicy(HTTPPolicy):
         self._remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
         redirect_status = set(kwargs.get('redirect_on_status_codes', []))
         self._redirect_on_status_codes = redirect_status.union(self.REDIRECT_STATUSES)
+        super(RedirectPolicy, self).__init__()
 
     @classmethod
     def no_redirects(cls):
@@ -83,8 +81,7 @@ class RedirectPolicy(HTTPPolicy):
             if response.http_request.method in ['GET', 'HEAD', ]:
                 return response.http_response.headers.get('location')
             return False
-
-        elif response.http_response.status_code in self._redirect_on_status_codes:
+        if response.http_response.status_code in self._redirect_on_status_codes:
             return response.http_response.headers.get('location')
 
         return False
@@ -100,7 +97,7 @@ class RedirectPolicy(HTTPPolicy):
         # TODO: Revise some of the logic here.
         settings['redirects'] -= 1
         settings['history'].append(RequestHistory(response.http_request, http_response=response.http_response))
-        
+
         redirected = urlparse(redirect_location)
         if not redirected.netloc:
             base_url = urlparse(response.http_request.url)

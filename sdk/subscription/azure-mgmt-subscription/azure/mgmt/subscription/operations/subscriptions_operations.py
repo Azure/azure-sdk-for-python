@@ -36,9 +36,11 @@ class SubscriptionsOperations(object):
         self.config = config
 
     def cancel(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, custom_headers=None, raw=False, **operation_config):
         """Cancels the subscription.
 
+        :param subscription_id: Subscription Id.
+        :type subscription_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -55,7 +57,7 @@ class SubscriptionsOperations(object):
         # Construct URL
         url = self.cancel.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -93,9 +95,11 @@ class SubscriptionsOperations(object):
     cancel.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Subscription/cancel'}
 
     def rename(
-            self, subscription_name=None, custom_headers=None, raw=False, **operation_config):
+            self, subscription_id, subscription_name=None, custom_headers=None, raw=False, **operation_config):
         """Renames the subscription.
 
+        :param subscription_id: Subscription Id.
+        :type subscription_id: str
         :param subscription_name: New subscription name
         :type subscription_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -116,7 +120,7 @@ class SubscriptionsOperations(object):
         # Construct URL
         url = self.rename.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

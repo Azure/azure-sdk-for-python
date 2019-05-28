@@ -26,12 +26,12 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Generic, TypeVar, Any, List, Union, Callable, AsyncIterator, Optional
+from typing import Generic, TypeVar, Optional, Any
 
-from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline import PipelineRequest
 
 try:
-    from contextlib import AbstractAsyncContextManager  # type: ignore
+    from contextlib import AbstractAsyncContextManager  # type: ignore #pylint: disable=unused-import
 except ImportError: # Python <= 3.7
     class AbstractAsyncContextManager(object):  # type: ignore
         async def __aenter__(self):
@@ -54,12 +54,10 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
     """
     def __init__(self) -> None:
         # next will be set once in the pipeline
-        self.next = None  # type: Optional[Union[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType], AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]]]
+        self.next = None # type: Optional[Any]
 
     @abc.abstractmethod
     async def send(self, request: PipelineRequest):
         """Mutate the request.
-
         Context content is dependent on the HttpTransport.
         """
-        pass

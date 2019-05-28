@@ -49,26 +49,24 @@ class AsyncNoPolling(_NoPolling):
     """
     async def run(self):
         """Empty run, no polling.
-
         Just override initial run to add "async"
         """
-        pass
 
 
 async def async_poller(client, initial_response, deserialization_callback, polling_method):
     """Async Poller for long running operations.
-
-    :param client: A pipeline service client. 
+    :param client: A pipeline service client.
     :type client: azure.core.pipeline.PipelineClient
     :param initial_response: The initial call response
     :type initial_response: azure.core.pipeline.HttpResponse
-    :param deserialization_callback: A callback that takes a Response and return a deserialized object. If a subclass of Model is given, this passes "deserialize" as callback.
+    :param deserialization_callback: A callback that takes a Response and return a deserialized object.
+                                     If a subclass of Model is given, this passes "deserialize" as callback.
     :type deserialization_callback: callable or msrest.serialization.Model
     :param polling_method: The polling strategy to adopt
     :type polling_method: msrest.polling.PollingMethod
     """
 
-    # This implicit test avoids bringing in an explicit dependency on Model directly 
+    # This implicit test avoids bringing in an explicit dependency on Model directly
     try:
         deserialization_callback = deserialization_callback.deserialize
     except AttributeError:

@@ -26,21 +26,22 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from .base import SansIOHTTPPolicy
 
 class CustomHookPolicy(SansIOHTTPPolicy):
     """A simple policy that enable the given callback
     with the response.
     """
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs): # pylint: disable=unused-argument
         self._callback = None
-    
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
-        self._callback = request.context.options.pop('raw_response_hook', None)
 
-    def on_response(self, request, response):
+    def on_request(self, request): # type: ignore # pylint: disable=arguments-differ
+        # type: (PipelineRequest) -> None
+        self._callback = request.context.options.pop('raw_response_hook', None) # type: ignore
+
+    def on_response(self, request, response): # type: ignore # pylint: disable=arguments-differ
         # type: (PipelineRequest, PipelineResponse) -> None
         if self._callback:
             self._callback(response)
-            request.context.options.update({'raw_response_hook': self._callback})
+            request.context.options.update({'raw_response_hook': self._callback}) # type: ignore

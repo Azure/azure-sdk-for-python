@@ -33,8 +33,8 @@ except ImportError:
 from typing import Dict, Any, List, Callable, Optional, TYPE_CHECKING  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
-    from .pipeline import HttpResponse  # pylint: disable=unused-import
-    from msrest.serialization import Deserializer, Model  # pylint: disable=unused-import
+    from .pipeline.transport.base import HttpResponse
+    from msrest.serialization import Deserializer, Model  # type: ignore # pylint: disable=unused-import
 
 if sys.version_info >= (3, 5, 2):
     # Not executed on old Python, no syntax error
@@ -101,8 +101,7 @@ class Paged(AsyncPagedMixin, Iterator):
             response = self.current_page[self._current_page_iter_index]
             self._current_page_iter_index += 1
             return response
-        else:
-            self._advance_page()
-            return self.__next__()
+        self._advance_page()
+        return self.__next__()
 
     next = __next__  # Python 2 compatibility.

@@ -23,23 +23,22 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Callable, AsyncIterator, Optional
+from typing import Any, Optional, AsyncIterator as AsyncIteratorType
+from collections.abc import AsyncIterator
 
-import aiohttp
 import logging
+import aiohttp
+
+from azure.core.configuration import Configuration
+from azure.core.exceptions import (
+    ServiceRequestError,
+    ServiceResponseError)
 
 from .base import HttpRequest
 from .base_async import (
     AsyncHttpTransport,
     AsyncHttpResponse,
-    _ResponseStopIteration,
-    _iterate_response_content)
-
-from azure.core.configuration import Configuration
-from azure.core.exceptions import (
-    ServiceRequestError,
-    ServiceResponseError,
-    raise_with_traceback)
+    _ResponseStopIteration)
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -62,7 +61,7 @@ class AioHttpTransport(AsyncHttpTransport):
 
     async def __aexit__(self, *args):  # pylint: disable=arguments-differ
         await self.close()
-    
+
     async def open(self):
         if not self.session and self._session_owner:
             self.session = aiohttp.ClientSession(loop=self._loop)
@@ -91,7 +90,7 @@ class AioHttpTransport(AsyncHttpTransport):
             return ssl_ctx
         return verify
 
-    def _get_request_data(self, request):
+    def _get_request_data(self, request): #pylint: disable=no-self-use
         if request.files:
             form_data = aiohttp.FormData()
             for form_file, data in request.files.items():
@@ -103,7 +102,7 @@ class AioHttpTransport(AsyncHttpTransport):
             return form_data
         return request.data
 
-    async def send(self, request: HttpRequest, **config: Any) -> AsyncHttpResponse:
+    async def send(self, request: HttpRequest, **config: Any) -> Optional[AsyncHttpResponse]:
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -146,16 +145,26 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         return self.content_length
 
     async def __anext__(self):
-        try:
-            chunk = await self.response.content.read(self.block_size)
-            if not chunk:
+        retry_active = True
+        retry_total = 3
+        while retry_active:
+            try:
+                chunk = await self.response.content.read(self.block_size)
+                if not chunk:
+                    raise _ResponseStopIteration()
+                return chunk
+            except _ResponseStopIteration:
                 self.response.close()
                 raise StopAsyncIteration()
-            return chunk
-        except Exception as err:
-            _LOGGER.warning("Unable to stream download: %s", err)
-            self.response.close()
-            raise
+            except ServiceResponseError:
+                retry_total -= 1
+                if retry_total <= 0:
+                    retry_active = False
+                continue
+            except Exception as err:
+                _LOGGER.warning("Unable to stream download: %s", err)
+                self.response.close()
+                raise
 
 class AioHttpTransportResponse(AsyncHttpResponse):
 
@@ -179,7 +188,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         """Load in memory the body, so it could be accessible from sync methods."""
         self._body = await self.internal_response.read()
 
-    def stream_download(self) -> AsyncIterator[bytes]:
+    def stream_download(self) -> AsyncIteratorType[bytes]:
         """Generator for streaming request body data.
         """
         return AioHttpStreamDownloadGenerator(self.internal_response, self.block_size)

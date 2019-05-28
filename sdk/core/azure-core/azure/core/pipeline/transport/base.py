@@ -30,20 +30,21 @@ import logging
 import os
 import time
 try:
-    from urlparse import urlparse
+    from urlparse import urlparse # type: ignore
 except ImportError:
     from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
+
+from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, # pylint: disable=unused-import
+                    Optional, Tuple, Callable, Iterator)
 
 # This file is NOT using any "requests" HTTP implementation
 # However, the CaseInsensitiveDict is handy.
 # If one day we reach the point where "requests" can be skip totally,
 # might provide our own implementation
 from requests.structures import CaseInsensitiveDict
+from azure.core.pipeline import ABC, AbstractContextManager, PipelineRequest, PipelineResponse
 
-from typing import TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional, Tuple, Callable, Iterator  # pylint: disable=unused-import
-from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline import ABC, AbstractContextManager
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -51,28 +52,25 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 _LOGGER = logging.getLogger(__name__)
 
 
-class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]):
+class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]): # type: ignore
     """An http sender ABC.
     """
 
     @abc.abstractmethod
     def send(self, request, **kwargs):
-        # type: (PipelineRequest[HTTPRequestType], Any) -> PipelineResponse[HTTPRequestType, HTTPResponseType]
+        # type: (PipelineRequest, Any) -> PipelineResponse
         """Send the request using this HTTP sender.
         """
-        pass
 
     @abc.abstractmethod
     def open(self):
         """Assign new session if one does not already exist."""
-        pass
 
     @abc.abstractmethod
     def close(self):
         """Close the session if it is not externally owned."""
-        pass
 
-    def sleep(self, duration):
+    def sleep(self, duration): #pylint: disable=no-self-use
         time.sleep(duration)
 
 
@@ -208,7 +206,7 @@ class _HttpResponseBase(object):
     Full in-memory using "body" as bytes.
     """
     def __init__(self, request, internal_response, block_size=None):
-        # type: (HttpRequest, Any) -> None
+        # type: (HttpRequest, Any, Optional[int]) -> None
         self.request = request
         self.internal_response = internal_response
         self.status_code = None  # type: Optional[int]
@@ -222,7 +220,6 @@ class _HttpResponseBase(object):
         # type: () -> bytes
         """Return the whole body as bytes in memory.
         """
-        pass
 
     def text(self, encoding=None):
         # type: (str) -> str
@@ -243,4 +240,3 @@ class HttpResponse(_HttpResponseBase):
         Should be implemented by sub-classes if streaming download
         is supported.
         """
-        pass

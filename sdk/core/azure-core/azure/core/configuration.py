@@ -36,7 +36,7 @@ class Configuration(object):
 
         # Proxy settings (Currently used to configure transport, could be pipeline policy instead)
         self.proxy_policy = None
- 
+
         # Redirect configuration
         self.redirect_policy = None
 
@@ -51,6 +51,12 @@ class Configuration(object):
 
         # User Agent configuration
         self.user_agent_policy = None
+
+        # Authentication configuration
+        self.authentication_policy = None
+
+        # HTTP Transport
+        self.transport = transport
 
 
 class ConnectionConfiguration(object):

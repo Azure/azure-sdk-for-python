@@ -1,4 +1,3 @@
-
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -26,14 +25,15 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Any, List, Union, Callable, AsyncIterator, Optional, Generic, TypeVar
+from typing import Any, Union, List, Generic, TypeVar
 
-from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext, Pipeline
+from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-
+ImplPoliciesType = List[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]] #pylint: disable=unsubscriptable-object
+AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore
@@ -49,7 +49,7 @@ except ImportError: # Python <= 3.7
             return None
 
 
-class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
+class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]): #pylint: disable=unsubscriptable-object
     """Async implementation of the SansIO policy.
     """
 
@@ -61,7 +61,7 @@ class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPRes
         self._policy.on_request(request)
         try:
             response = await self.next.send(request)  # type: ignore
-        except Exception:
+        except Exception: #pylint: disable=broad-except
             if not self._policy.on_exception(request):
                 raise
         else:
@@ -69,7 +69,7 @@ class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPRes
         return response
 
 
-class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
+class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]): #pylint: disable=unsubscriptable-object
 
     def __init__(self, sender) -> None:
         super(_AsyncTransportRunner, self).__init__()
@@ -85,13 +85,12 @@ class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseTy
 
 class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncHTTPResponseType]):
     """A pipeline implementation.
-
     This is implemented as a context manager, that will activate the context
     of the HTTP sender.
     """
 
-    def __init__(self, transport, policies: List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = None) -> None:
-        self._impl_policies = []  # type: List[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]]
+    def __init__(self, transport, policies: AsyncPoliciesType = None) -> None:
+        self._impl_policies = []  # type: ImplPoliciesType
         self._transport = transport
 
         for policy in (policies or []):
@@ -123,4 +122,3 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         pipeline_request = PipelineRequest(request, context)
         first_node = self._impl_policies[0] if self._impl_policies else _AsyncTransportRunner(self._transport)
         return await first_node.send(pipeline_request)  # type: ignore
-

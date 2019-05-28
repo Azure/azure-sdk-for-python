@@ -21,7 +21,7 @@ jobs:
         displayName: 'Generate Packages'
         inputs:
           scriptPath: 'scripts/devops_tasks/build_packages.py'
-          arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(build_targeting_string)"'
+          arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{parameters.BuildTargettingString}}"'
 
       - script: |
           twine check $(Build.ArtifactStagingDirectory)/*
@@ -143,7 +143,7 @@ jobs:
         displayName: 'Setup and Run Tests'
         inputs:
           scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-          arguments: '"$(build_targeting_string)" --junitxml="junit/test-results.xml"'
+          arguments: '"${{parameters.BuildTargettingString}}" --junitxml="junit/test-results.xml"'
 
       - task: PublishTestResults@2
         condition: succeededOrFailed()
@@ -154,14 +154,17 @@ jobs:
       - script: |
           coverage xml
         displayName: 'Generate Coverage XML'
+        continueOnError: true
 
       - script: |
           codecov -t $(codecov-python-repository-token)
         displayName: 'Publish Code Cov'
+        continueOnError: true
         condition: ne(variables['codecov-python-repository-token'], '')
 
       - task: PublishCodeCoverageResults@1
         displayName: 'Publish Code Coverage to DevOps'
+        continueOnError: true
         inputs:
           codeCoverageTool: Cobertura
           summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
@@ -197,6 +200,6 @@ jobs:
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
           pypy3 -m ensurepip
-          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)" --disablecov
+          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "${{parameters.BuildTargettingString}}" --disablecov
         displayName: 'Setup and Run Filtered Tests PyPy3'
         continueOnError: true

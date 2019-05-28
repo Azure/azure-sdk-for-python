@@ -24,10 +24,19 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
+import logging
+from typing import Iterator, Optional, Any, Union
+import urllib3 # type: ignore
+from urllib3.util.retry import Retry # type: ignore
 import requests
-import threading
-import urllib3
-from urllib3.util.retry import Retry
+
+
+from azure.core.configuration import Configuration
+from azure.core.exceptions import (
+    ServiceRequestError,
+    ServiceResponseError
+)
+from . import HttpRequest # pylint: disable=unused-import
 
 from .base import (
     HttpTransport,
@@ -35,12 +44,8 @@ from .base import (
     _HttpResponseBase
 )
 
-from azure.core.configuration import Configuration
-from azure.core.exceptions import (
-    ServiceRequestError,
-    ServiceResponseError,
-    raise_with_traceback
-)
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class _RequestsTransportResponseBase(_HttpResponseBase):
@@ -78,26 +83,33 @@ class StreamDownloadGenerator(object):
         return self
 
     def __next__(self):
-        try:
-            chunk = next(self.iter_content_func)
-            if not chunk:
+        retry_active = True
+        retry_total = 3
+        while retry_active:
+            try:
+                chunk = next(self.iter_content_func)
+                if not chunk:
+                    raise StopIteration()
+                return chunk
+            except StopIteration:
+                self.response.close()
                 raise StopIteration()
-            return chunk
-        except StopIteration:
-            self.response.close()
-            raise StopIteration()
-        except Exception as err:
-            _LOGGER.warning("Unable to stream download: %s", err)
-            self.response.close()
-            raise
-            
+            except ServiceResponseError:
+                retry_total -= 1
+                if retry_total <= 0:
+                    retry_active = False
+                continue
+            except Exception as err:
+                _LOGGER.warning("Unable to stream download: %s", err)
+                self.response.close()
+                raise
     next = __next__  # Python 2 compatibility.
 
 
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
 
     def stream_download(self):
-        # type: (Optional[int], Optional[Callable]) -> Iterator[bytes]
+        # type: () -> Iterator[bytes]
         """Generator for streaming request body data."""
         return StreamDownloadGenerator(self.internal_response, self.block_size)
 
@@ -117,7 +129,7 @@ class RequestsTransport(HttpTransport):
     _protocols = ['http://', 'https://']
 
     def __init__(self, configuration=None, session=None, session_owner=True):
-        # type: (Optional[requests.Session]) -> None
+        # type: (Optional[Configuration], Optional[requests.Session], bool) -> None
         self._session_owner = session_owner
         self.config = configuration or Configuration()
         self.session = session
@@ -154,7 +166,7 @@ class RequestsTransport(HttpTransport):
             self._session_owner = False
             self.session = None
 
-    def send(self, request, **kwargs):
+    def send(self, request, **kwargs): # type: ignore
         # type: (HttpRequest, Any) -> HttpResponse
         """Send request object according to configuration.
 
@@ -166,12 +178,12 @@ class RequestsTransport(HttpTransport):
         """
         self.open()
         response = None
-        error = None
+        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
         if self.config.proxy_policy and 'proxies' not in kwargs:
             kwargs['proxies'] = self.config.proxy_policy.proxies
 
         try:
-            response = self.session.request(
+            response = self.session.request(  # type: ignore
                 request.method,
                 request.url,
                 headers=request.headers,

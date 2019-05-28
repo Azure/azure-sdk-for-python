@@ -27,41 +27,39 @@
 This module is the requests implementation of Pipeline ABC
 """
 from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
-import contextlib
 import json
 import logging
 import os
 import platform
-import threading
-from typing import TYPE_CHECKING, cast, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 import xml.etree.ElementTree as ET
-import warnings
 import types
 import re
+from typing import (Mapping, IO, TypeVar, TYPE_CHECKING, Type, cast, List, Callable, Iterator, # pylint: disable=unused-import
+                    Any, Union, Dict, Optional)
 
 from azure.core import __version__  as azcore_version
-from .base import HTTPPolicy, SansIOHTTPPolicy
-from urllib3 import Retry  # Needs requests 2.16 at least to be safe
-
 from azure.core.exceptions import (
     DecodeError,
     raise_with_traceback
 )
 
+from azure.core.pipeline import PipelineRequest, PipelineResponse
+from .base import SansIOHTTPPolicy
+
 
 _LOGGER = logging.getLogger(__name__)
+ContentDecodePolicyType = TypeVar('ContentDecodePolicyType', bound='ContentDecodePolicy')
 
 
 class HeadersPolicy(SansIOHTTPPolicy):
     """A simple policy that sends the given headers
     with the request.
-
     This will overwrite any headers already defined in the request.
     """
     def __init__(self, base_headers=None, **kwargs):
-        # type: (Mapping[str, str]) -> None
+        # type: (Mapping[str, str], Any) -> None
         self._headers = base_headers or {}
-        self._headers.update(kwargs.pop('headers', {}))
+        self._headers.update(kwargs.pop('headers', {})) # type: ignore
 
     @property
     def headers(self):
@@ -72,12 +70,12 @@ class HeadersPolicy(SansIOHTTPPolicy):
         """Add a header to the configuration to be applied to all requests."""
         self._headers[key] = value
 
-    def on_request(self, request):
+    def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
-        request.http_request.headers.update(self.headers)
-        additional_headers = request.context.options.pop('headers', {})
+        request.http_request.headers.update(self.headers) # type: ignore
+        additional_headers = request.context.options.pop('headers', {}) # type: ignore
         if additional_headers:
-            request.http_request.headers.update(additional_headers)
+            request.http_request.headers.update(additional_headers) # type: ignore
 
 
 class UserAgentPolicy(SansIOHTTPPolicy):
@@ -111,91 +109,89 @@ class UserAgentPolicy(SansIOHTTPPolicy):
     def add_user_agent(self, value):
         # type: (str) -> None
         """Add value to current user agent with a space.
-
         :param str value: value to add to user agent.
         """
         self._user_agent = "{} {}".format(self._user_agent, value)
 
-    def on_request(self, request):
+    def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
-        options = request.context.options
+        options = request.context.options # type: ignore
         if 'user_agent' in options:
             user_agent = options.pop('user_agent')
             if options.pop('user_agent_overwrite', self.overwrite):
-                http_request.headers[self._USERAGENT] = user_agent
+                http_request.headers[self._USERAGENT] = user_agent # type: ignore
             else:
                 user_agent = "{} {}".format(self.user_agent, user_agent)
-                http_request.headers[self._USERAGENT] = user_agent
+                http_request.headers[self._USERAGENT] = user_agent # type: ignore
 
-        elif self.overwrite or self._USERAGENT not in http_request.headers:
-            http_request.headers[self._USERAGENT] = self.user_agent
+        elif self.overwrite or self._USERAGENT not in http_request.headers: # type: ignore
+            http_request.headers[self._USERAGENT] = self.user_agent # type: ignore
 
 
 class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
     """A policy that logs HTTP request and response to the DEBUG logger.
-
     This accepts both global configuration, and per-request level with "enable_http_logger"
     """
-    def __init__(self, logging_enable=False, **kwargs):
+    def __init__(self, logging_enable=False, **kwargs): # pylint: disable=unused-argument
         self.enable_http_logger = logging_enable
 
-    def on_request(self, request):
+    def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
-        options = request.context.options
+        options = request.context.options # type: ignore
         if options.pop("logging_enable", self.enable_http_logger):
-            request.context["logging_enable"] = True
+            request.context["logging_enable"] = True # type: ignore
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 
             try:
-                _LOGGER.debug("Request URL: %r", http_request.url)
-                _LOGGER.debug("Request method: %r", http_request.method)
+                _LOGGER.debug("Request URL: %r", http_request.url) # type: ignore
+                _LOGGER.debug("Request method: %r", http_request.method) # type: ignore
                 _LOGGER.debug("Request headers:")
-                for header, value in http_request.headers.items():
+                for header, value in http_request.headers.items(): # type: ignore
                     if header.lower() == 'authorization':
                         value = '*****'
                     _LOGGER.debug("    %r: %r", header, value)
                 _LOGGER.debug("Request body:")
 
                 # We don't want to log the binary data of a file upload.
-                if isinstance(http_request.body, types.GeneratorType):
+                if isinstance(http_request.body, types.GeneratorType): # type: ignore
                     _LOGGER.debug("File upload")
                 else:
-                    _LOGGER.debug(str(http_request.body))
+                    _LOGGER.debug(str(http_request.body)) # type: ignore
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
-    def on_response(self, request, response):
+    def on_response(self, request, response, **kwargs):
         # type: (PipelineRequest, PipelineResponse, Any) -> None
-        if response.context.pop("logging_enable", self.enable_http_logger):
+        if response.context.pop("logging_enable", self.enable_http_logger): # type: ignore
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 
             try:
-                _LOGGER.debug("Response status: %r", response.http_response.status_code)
+                _LOGGER.debug("Response status: %r", response.http_response.status_code) # type: ignore
                 _LOGGER.debug("Response headers:")
-                for res_header, value in response.http_response.headers.items():
+                for res_header, value in response.http_response.headers.items(): # type: ignore
                     _LOGGER.debug("    %r: %r", res_header, value)
 
                 # We don't want to log binary data if the response is a file.
                 _LOGGER.debug("Response content:")
                 pattern = re.compile(r'attachment; ?filename=["\w.]+', re.IGNORECASE)
-                header = response.http_response.headers.get('content-disposition')
+                header = response.http_response.headers.get('content-disposition') # type: ignore
 
                 if header and pattern.match(header):
                     filename = header.partition('=')[2]
                     _LOGGER.debug("File attachments: %s", filename)
-                elif response.http_response.headers.get("content-type", "").endswith("octet-stream"):
+                elif response.http_response.headers.get("content-type", "").endswith("octet-stream"): # type: ignore
                     _LOGGER.debug("Body contains binary data.")
-                elif response.http_response.headers.get("content-type", "").startswith("image"):
+                elif response.http_response.headers.get("content-type", "").startswith("image"): # type: ignore
                     _LOGGER.debug("Body contains image data.")
                 else:
-                    if response.context.options.get('stream', False):
+                    if response.context.options.get('stream', False): # type: ignore
                         _LOGGER.debug("Body is streamable")
                     else:
-                        _LOGGER.debug(response.http_response.text())
+                        _LOGGER.debug(response.http_response.text()) # type: ignore
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log response: %s", repr(err))
 
@@ -211,18 +207,15 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
     @classmethod
     def deserialize_from_text(cls, response, content_type=None):
-        # type: (Optional[Union[AnyStr, IO]], Optional[str]) -> Any
+        # type: (Type[ContentDecodePolicyType], PipelineResponse, Optional[str]) -> Any
         """Decode response data according to content-type.
-
         Accept a stream of data as well, but will be load at once in memory for now.
-
         If no content-type, will return the string version (not bytes, not stream)
-
         :param response: The HTTP response.
         :type response: ~azure.core.pipeline.transport.HttpResponse
         :param str content_type: The content type.
         """
-        data = response.text()
+        data = response.text() # type: ignore
         if not data:
             return None
 
@@ -270,17 +263,16 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
     @classmethod
     def deserialize_from_http_generics(cls, response):
-        # type: (Optional[Union[AnyStr, IO]], Mapping) -> Any
+        # type: (Type[ContentDecodePolicyType], PipelineResponse) -> Any
         """Deserialize from HTTP response.
-
         Use bytes and headers to NOT use any requests/aiohttp or whatever
         specific implementation.
         Headers will tested for "content-type"
         """
         # Try to use content-type from headers if available
         content_type = None
-        if response.content_type:
-            content_type = response.content_type[0].strip().lower()
+        if response.content_type: # type: ignore
+            content_type = response.content_type[0].strip().lower() # type: ignore
 
         # Ouch, this server did not declare what it sent...
         # Let's guess it's JSON...
@@ -291,15 +283,12 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
         return cls.deserialize_from_text(response, content_type)
 
-    def on_response(self, request, response):
+    def on_response(self, request, response, **kwargs):
         # type: (PipelineRequest, PipelineResponse, Any) -> None
         """Extract data from the body of a REST response object.
-
         This will load the entire payload in memory.
-
         Will follow Content-Type to parse.
         We assume everything is UTF8 (BOM acceptable).
-
         :param raw_data: Data to be processed.
         :param content_type: How to parse if raw_data is a string/bytes.
         :raises JSONDecodeError: If JSON is requested and parsing is impossible.
@@ -307,10 +296,10 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         :raises xml.etree.ElementTree.ParseError: If bytes is not valid XML
         """
         # If response was asked as stream, do NOT read anything and quit now
-        if response.context.options.get("stream", True):
+        if response.context.options.get("stream", True): # type: ignore
             return
 
-        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(response.http_response)
+        response.context[self.CONTEXT_NAME] = self.deserialize_from_http_generics(response.http_response) # type: ignore
 
 
 class ProxyPolicy(SansIOHTTPPolicy):
@@ -318,4 +307,3 @@ class ProxyPolicy(SansIOHTTPPolicy):
     def __init__(self, proxies=None, **kwargs):
         self.proxies = proxies
         self.use_env_settings = kwargs.pop('proxies_use_env_settings', True)
-
