@@ -20,12 +20,14 @@ from datetime import datetime
 
 class KeyClient:
     """The KeyClient class defines a high level interface for managing keys in the specified vault.
+
     :param credentials: A credential or credential provider which can be used to authenticate to the vault,
     a ValueError will be raised if the entity is not provided
     :type credentials: azure.authentication.Credential or azure.authentication.CredentialProvider
     :param str vault_url: The url of the vault to which the client will connect,
     a ValueError will be raised if the entity is not provided
     :param ~azure.core.configuration.Configuration config: The configuration for the KeyClient
+    
     Example:
     .. literalinclude:: ../tests/test_examples_keys_async.py
     :start-after: [START create_key_client]
@@ -84,12 +86,12 @@ class KeyClient:
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
         
         Example:
-        .. literalinclude:: ../tests/test_examples_keys_async.py
-        :start-after: [START get_key]
-        :end-before: [END get_key]
-        :language: python
-        :dedent: 4
-        :caption: Retrieves a key from the key vault
+            .. literalinclude:: ../tests/test_examples_keys_async.py
+                :start-after: [START get_key]
+                :end-before: [END get_key]
+                :language: python
+                :dedent: 4
+                :caption: Retrieves a key from the key vault
         """
         if version is None:
             version = ""
@@ -146,7 +148,7 @@ class KeyClient:
         :type key_type: str or ~azure.keyvault._generated.v7_0.models.JsonWebKeyType
         :param key_ops: Supported key operations.
         :type key_ops: list[str or
-        ~~azure.keyvault._generated.v7_0.models.JsonWebKeyOperation]
+        ~azure.keyvault._generated.v7_0.models.JsonWebKeyOperation]
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :param expires: Expiry date of the key in UTC.
@@ -160,12 +162,12 @@ class KeyClient:
         :rtype: ~azure.security.keyvault.keys._models.Key
         
         Example:
-        .. literalinclude:: ../tests/test_examples_keys_async.py
-        :start-after: [START create_key]
-        :end-before: [END create_key]
-        :language: python
-        :dedent: 4
-        :caption: Creates a key in the key vault
+            .. literalinclude:: ../tests/test_examples_keys_async.py
+                :start-after: [START create_key]
+                :end-before: [END create_key]
+                :language: python
+                :dedent: 4
+                :caption: Creates a key in the key vault
         """
         return await self._create_key(
             name, key_type=key_type, key_ops=key_ops, enabled=enabled, expires=expires, not_before=not_before, tags=tags
@@ -178,8 +180,8 @@ class KeyClient:
         size: Optional[int] = None,
         key_ops: Optional[List[str]] = None,
         enabled: Optional[bool] = None,
-        expires: Optional[bool] = None,
-        not_before: Optional[bool] = None,
+        expires: Optional[datetime] = None,
+        not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs: Mapping[str, Any]
     ) -> Key:
@@ -200,7 +202,7 @@ class KeyClient:
         :type size: int
         :param key_ops: Supported key operations.
         :type key_ops: list[str or
-        ~~azure.keyvault._generated.v7_0.models.JsonWebKeyOperation]
+        ~azure.keyvault._generated.v7_0.models.JsonWebKeyOperation]
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :param expires: Expiry date of the key in UTC.
@@ -214,12 +216,12 @@ class KeyClient:
         :rtype: ~azure.security.keyvault.keys._models.Key
         
         Example:
-        .. literalinclude:: ../tests/test_examples_keys_async.py
-        :start-after: [START create_rsa_key]
-        :end-before: [END create_rsa_key]
-        :language: python
-        :dedent: 4
-        :caption: Creates a key in the key vault
+            .. literalinclude:: ../tests/test_examples_keys_async.py
+                :start-after: [START create_rsa_key]
+                :end-before: [END create_rsa_key]
+                :language: python
+                :dedent: 4
+                :caption: Creates a key in the key vault
         """
         return await self._create_key(
             name,
@@ -236,7 +238,7 @@ class KeyClient:
         self,
         name: str,
         key_type: str,
-        curve: Optional[List[str]] = None,
+        curve: Optional[str] = None,
         key_ops: Optional[List[str]] = None,
         enabled: Optional[bool] = None,
         expires: Optional[datetime] = None,
@@ -261,10 +263,10 @@ class KeyClient:
         JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384',
         'P-521', 'SECP256K1'
         :type curve: str or
-        ~~azure.keyvault._generated.v7_0.models.JsonWebKeyCurveName
+        ~azure.keyvault._generated.v7_0.models.JsonWebKeyCurveName
         :param key_ops: Supported key operations.
         :type key_ops: list[str or
-        ~~azure.keyvault._generated.v7_0.models.JsonWebKeyOperation]
+        ~azure.keyvault._generated.v7_0.models.JsonWebKeyOperation]
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :param expires: Expiry date of the key in UTC.
@@ -278,12 +280,12 @@ class KeyClient:
         :rtype: ~azure.security.keyvault.keys._models.Key
 
         Example:
-        .. literalinclude:: ../tests/test_examples_keys_async.py
-        :start-after: [START create_ec_key]
-        :end-before: [END create_ec_key]
-        :language: python
-        :dedent: 4
-        :caption: Creates a key in the key vault
+            .. literalinclude:: ../tests/test_examples_keys_async.py
+                :start-after: [START create_ec_key]
+                :end-before: [END create_ec_key]
+                :language: python
+                :dedent: 4
+                :caption: Creates a key in the key vault
         """
         return await self._create_key(
             name, key_type, curve, key_ops=key_ops, enabled=enabled, expires=expires, not_before=not_before, tags=tags
@@ -315,7 +317,7 @@ class KeyClient:
         :param key_ops: Json web key operations. For more information on
         possible key operations, see JsonWebKeyOperation.
         :type key_ops: list[str or
-        ~~azure.keyvault._generated.v7_0.models.JsonWebKeyOperation]
+        ~azure.keyvault._generated.v7_0.models.JsonWebKeyOperation]
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :param expires: Expiry date of the key in UTC.
@@ -330,12 +332,12 @@ class KeyClient:
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
         
         Example:
-        .. literalinclude:: ../tests/test_examples_keys_async.py
-        :start-after: [START update_key]
-        :end-before: [END update_key]
-        :language: python
-        :dedent: 4
-        :caption: Updates a key in the key vault
+            .. literalinclude:: ../tests/test_examples_keys_async.py
+                :start-after: [START update_key]
+                :end-before: [END update_key]
+                :language: python
+                :dedent: 4
+                :caption: Updates a key in the key vault
         """
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
@@ -367,12 +369,12 @@ class KeyClient:
         typing.AsyncIterable[~azure.security.keyvault.keys._models.KeyBase]
         
         Example:
-        .. literalinclude:: ../tests/test_examples_keys_async.py
-        :start-after: [START list_keys]
-        :end-before: [END list_keys]
-        :language: python
-        :dedent: 4
-        :caption: List all keys in the vault
+            .. literalinclude:: ../tests/test_examples_keys_async.py
+                :start-after: [START list_keys]
+                :end-before: [END list_keys]
+                :language: python
+                :dedent: 4
+                :caption: List all keys in the vault
         """
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_keys(self.vault_url, maxresults=max_results)
@@ -391,12 +393,12 @@ class KeyClient:
         typing.AsyncIterable[~azure.security.keyvault.keys._models.KeyBase]
         
         Example:
-        .. literalinclude:: ../tests/test_examples_keys_async.py
-        :start-after: [START list_key_versions]
-        :end-before: [END list_key_versions]
-        :language: python
-        :dedent: 4
-        :caption: List all versions of the specified key
+            .. literalinclude:: ../tests/test_examples_keys_async.py
+                :start-after: [START list_key_versions]
+                :end-before: [END list_key_versions]
+                :language: python
+                :dedent: 4
+                :caption: List all versions of the specified key
         """
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_key_versions(self.vault_url, name, maxresults=max_results)
@@ -429,12 +431,12 @@ class KeyClient:
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
         
         Example:
-        .. literalinclude:: ../tests/test_examples_keys_async.py
-        :start-after: [START backup_key]
-        :end-before: [END backup_key]
-        :language: python
-        :dedent: 4
-        :caption: Backs up the specified key to the key vault
+            .. literalinclude:: ../tests/test_examples_keys_async.py
+                :start-after: [START backup_key]
+                :end-before: [END backup_key]
+                :language: python
+                :dedent: 4
+                :caption: Backs up the specified key to the key vault
         """
         backup_result = await self._client.backup_key(self.vault_url, name, error_map={404: ResourceNotFoundError})
         return backup_result.value
@@ -464,12 +466,12 @@ class KeyClient:
         :raises: ~azure.core.exceptions.ResourceExistsError if the client failed to retrieve the key
         
         Example:
-        .. literalinclude:: ../tests/test_examples_keys_async.py
-        :start-after: [START restore_key]
-        :end-before: [END restore_key]
-        :language: python
-        :dedent: 4
-        :caption: Restores a backed up key to the vault
+            .. literalinclude:: ../tests/test_examples_keys_async.py
+                :start-after: [START restore_key]
+                :end-before: [END restore_key]
+                :language: python
+                :dedent: 4
+                :caption: Restores a backed up key to the vault
         """
         bundle = await self._client.restore_key(self.vault_url, backup, error_map={409: ResourceExistsError})
         return Key._from_key_bundle(bundle)
@@ -490,12 +492,12 @@ class KeyClient:
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to delete the key
         
         Example:
-        .. literalinclude:: ../tests/test_examples_keys_async.py
-        :start-after: [START delete_key]
-        :end-before: [END delete_key]
-        :language: python
-        :dedent: 4
-        :caption: Deletes a key in the key vault
+            .. literalinclude:: ../tests/test_examples_keys_async.py
+                :start-after: [START delete_key]
+                :end-before: [END delete_key]
+                :language: python
+                :dedent: 4
+                :caption: Deletes a key in the key vault
         """
         bundle = await self._client.delete_key(self.vault_url, name, error_map={404: ResourceNotFoundError})
         return DeletedKey._from_deleted_key_bundle(bundle)
@@ -515,12 +517,12 @@ class KeyClient:
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the client failed to retrieve the key
         
         Example:
-        .. literalinclude:: ../tests/test_examples_keys_async.py
-        :start-after: [START get_deleted_key]
-        :end-before: [END get_deleted_key]
-        :language: python
-        :dedent: 4
-        :caption: Retrieves a deleted key from the key vault
+            .. literalinclude:: ../tests/test_examples_keys_async.py
+                :start-after: [START get_deleted_key]
+                :end-before: [END get_deleted_key]
+                :language: python
+                :dedent: 4
+                :caption: Retrieves a deleted key from the key vault
         """
         bundle = await self._client.get_deleted_key(self.vault_url, name, error_map={404: ResourceNotFoundError})
         return DeletedKey._from_deleted_key_bundle(bundle)
@@ -541,12 +543,12 @@ class KeyClient:
         typing.AsyncIterable[~azure.security.keyvault.keys._models.DeletedKey]
         
         Example:
-        .. literalinclude:: ../tests/test_examples_keys_async.py
-        :start-after: [START list_deleted_keys]
-        :end-before: [END list_deleted_keys]
-        :language: python
-        :dedent: 4
-        :caption: List all the deleted keys in the vault
+            .. literalinclude:: ../tests/test_examples_keys_async.py
+                :start-after: [START list_deleted_keys]
+                :end-before: [END list_deleted_keys]
+                :language: python
+                :dedent: 4
+                :caption: List all the deleted keys in the vault
         """
         max_results = kwargs.get("max_page_size")
         pages = self._client.get_deleted_keys(self.vault_url, maxresults=max_results)
@@ -567,12 +569,12 @@ class KeyClient:
         :rtype: None
         
         Example:
-        .. literalinclude:: ../tests/test_examples_keys_async.py
-        :start-after: [START purge_deleted_key]
-        :end-before: [END purge_deleted_key]
-        :language: python
-        :dedent: 4
-        :caption: Permanently deletes the specified key
+            .. literalinclude:: ../tests/test_examples_keys_async.py
+                :start-after: [START purge_deleted_key]
+                :end-before: [END purge_deleted_key]
+                :language: python
+                :dedent: 4
+                :caption: Permanently deletes the specified key
         """
         await self._client.purge_deleted_key(self.vault_url, name)
 
@@ -592,12 +594,12 @@ class KeyClient:
         :rtype: ~azure.security.keyvault.keys._models.Key
         
         Example:
-        .. literalinclude:: ../tests/test_examples_keys_async.py
-        :start-after: [START recover_deleted_key]
-        :end-before: [END recover_deleted_key]
-        :language: python
-        :dedent: 4
-        :caption: Recovers the specified soft-deleted key
+            .. literalinclude:: ../tests/test_examples_keys_async.py
+                :start-after: [START recover_deleted_key]
+                :end-before: [END recover_deleted_key]
+                :language: python
+                :dedent: 4
+                :caption: Recovers the specified soft-deleted key
         """
         bundle = await self._client.recover_deleted_key(self.vault_url, name)
         return Key._from_key_bundle(bundle)

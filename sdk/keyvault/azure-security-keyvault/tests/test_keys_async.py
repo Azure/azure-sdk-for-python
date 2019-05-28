@@ -179,7 +179,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         expected = {}
 
         # create many keys
-        for x in range(0, max_keys):
+        for x in range(max_keys):
             key_name = "key{}".format(x)
             key = await client.create_key(key_name, "RSA")
             expected[key.name] = key
@@ -200,7 +200,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         expected = {}
 
         # create many key versions
-        for _ in range(0, max_keys):
+        for _ in range(max_keys):
             key = await client.create_key(key_name, "RSA")
             expected[key.id] = key
 
@@ -225,7 +225,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         expected = {}
 
         # create keys to delete
-        for _ in range(0, self.list_test_size):
+        for _ in range(self.list_test_size):
             expected[key_name] = await client.create_key(key_name, key_type)
 
         # delete all keys
@@ -272,13 +272,13 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         keys = {}
 
         # create keys to recover
-        for i in range(0, self.list_test_size):
-            key_name = self.get_resource_name("keyrec{}".format(str(i)))
+        for i in range(self.list_test_size):
+            key_name = self.get_resource_name("keyrec")
             keys[key_name] = await client.create_key(key_name, "RSA")
 
         # create keys to purge
-        for i in range(0, self.list_test_size):
-            key_name = self.get_resource_name("keyprg{}".format(str(i)))
+        for i in range(self.list_test_size):
+            key_name = self.get_resource_name("keyprg")
             keys[key_name] = await client.create_key(key_name, "RSA")
 
         # delete all keys

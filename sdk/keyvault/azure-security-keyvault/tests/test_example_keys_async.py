@@ -31,6 +31,7 @@ def await_prepared_test(test_fn):
 
     return run
 
+
 def create_vault_client():
     client_id = ""
     client_secret = ""
@@ -38,7 +39,7 @@ def create_vault_client():
     vault_url = ""
 
     # [START create_vault_client]
-    from azure.security.keyvault.vault_client import VaultClient
+    from azure.security.keyvault.aio.vault_client import VaultClient
     from azure.common.credentials import ServicePrincipalCredentials
 
     credentials = ServicePrincipalCredentials(
@@ -59,7 +60,7 @@ def create_key_client():
 
     # [START create_key_client]
     from azure.common.credentials import ServicePrincipalCredentials
-    from azure.keyvault.keys._client import KeyClient
+    from azure.security.keyvault.keys._client import KeyClient
 
     credentials = ServicePrincipalCredentials(
         client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
@@ -105,7 +106,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         try:
             # [START get_key]
 
-            # if the version argument is the empty string or None, the latest
+            # if no version is specified the latest
             # version of the key will be returned
             key = await key_client.get_key("key-name")
 
@@ -192,7 +193,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         try:
             # [START list_deleted_keys]
 
-            # get a list of deleted keys (requires soft-delete enabled for the vault)
+            # get an iterator like instance of DeletedKey (requires soft-delete enabled for the vault)
             deleted_keys = await key_client.list_deleted_keys()
 
             async for key in deleted_keys:
