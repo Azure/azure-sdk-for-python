@@ -32,7 +32,7 @@ class _AsyncClientCredentialBase(object):
         if not tenant_id:
             raise ValueError("tenant_id")
         self._client = AsyncAuthnClient(self._OAUTH_ENDPOINT.format(tenant_id), config, policies, **kwargs)
-        self._form_data: Dict[str, str] = {}
+        self._form_data = {}  # type: Dict[str, str]
 
     async def get_token(self, scopes: Iterable[str]) -> str:
         data = self._form_data.copy()
