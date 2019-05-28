@@ -137,7 +137,7 @@ class ConnectionConfiguration(object):
     :param bool connection_verify: SSL certificate verification. Enabled by default. Set to False to disable,
      alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs.
     :param str connection_cert: Client-side certificates. You can specify a local cert to use as client side
-     certificate, as a single file (containing the private key and the certificate) or as a tuple of both files’ paths.
+     certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths.
     :param int connection_data_block_size: The block size of data sent over the connection. Defaults to 4096.
     """
 
