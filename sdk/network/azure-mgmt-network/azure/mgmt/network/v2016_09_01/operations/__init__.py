@@ -9,27 +9,28 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_interfaces_operations import NetworkInterfacesOperations
-from .application_gateways_operations import ApplicationGatewaysOperations
-from .express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
-from .express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
-from .express_route_circuits_operations import ExpressRouteCircuitsOperations
-from .express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
-from .load_balancers_operations import LoadBalancersOperations
-from .network_security_groups_operations import NetworkSecurityGroupsOperations
-from .security_rules_operations import SecurityRulesOperations
-from .network_watchers_operations import NetworkWatchersOperations
-from .packet_captures_operations import PacketCapturesOperations
-from .public_ip_addresses_operations import PublicIPAddressesOperations
-from .route_tables_operations import RouteTablesOperations
-from .routes_operations import RoutesOperations
-from .usages_operations import UsagesOperations
-from .virtual_networks_operations import VirtualNetworksOperations
-from .subnets_operations import SubnetsOperations
-from .virtual_network_peerings_operations import VirtualNetworkPeeringsOperations
-from .virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
-from .virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
-from .local_network_gateways_operations import LocalNetworkGatewaysOperations
+from ._network_interfaces_operations import NetworkInterfacesOperations
+from ._application_gateways_operations import ApplicationGatewaysOperations
+from ._express_route_circuit_authorizations_operations import ExpressRouteCircuitAuthorizationsOperations
+from ._express_route_circuit_peerings_operations import ExpressRouteCircuitPeeringsOperations
+from ._express_route_circuits_operations import ExpressRouteCircuitsOperations
+from ._express_route_service_providers_operations import ExpressRouteServiceProvidersOperations
+from ._load_balancers_operations import LoadBalancersOperations
+from ._network_security_groups_operations import NetworkSecurityGroupsOperations
+from ._security_rules_operations import SecurityRulesOperations
+from ._network_watchers_operations import NetworkWatchersOperations
+from ._packet_captures_operations import PacketCapturesOperations
+from ._public_ip_addresses_operations import PublicIPAddressesOperations
+from ._route_tables_operations import RouteTablesOperations
+from ._routes_operations import RoutesOperations
+from ._usages_operations import UsagesOperations
+from ._virtual_networks_operations import VirtualNetworksOperations
+from ._subnets_operations import SubnetsOperations
+from ._virtual_network_peerings_operations import VirtualNetworkPeeringsOperations
+from ._virtual_network_gateways_operations import VirtualNetworkGatewaysOperations
+from ._virtual_network_gateway_connections_operations import VirtualNetworkGatewayConnectionsOperations
+from ._local_network_gateways_operations import LocalNetworkGatewaysOperations
+from ._network_management_client_operations import NetworkManagementClientOperationsMixin
 
 __all__ = [
     'NetworkInterfacesOperations',
@@ -53,4 +54,5 @@ __all__ = [
     'VirtualNetworkGatewaysOperations',
     'VirtualNetworkGatewayConnectionsOperations',
     'LocalNetworkGatewaysOperations',
+    'NetworkManagementClientOperationsMixin',
 ]

@@ -9,7 +9,7 @@
 import re
 import os.path
 from io import open
-from setuptools import find_packages, setup
+from setuptools import find_packages, setup  # type: ignore
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-core"
@@ -25,7 +25,7 @@ namespace_name = PACKAGE_NAME.replace('-', '.')
 try:
     import azure
     try:
-        ver = azure.__version__
+        ver = azure.__version__  # type: ignore
         raise Exception(
             'This package is incompatible with azure=={}. '.format(ver) +
             'Uninstall it with "pip uninstall azure".'
@@ -37,7 +37,7 @@ except ImportError:
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, 'version.py'), 'r') as fd:
-    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',  # type: ignore
                         fd.read(), re.MULTILINE).group(1)
 
 if not version:
