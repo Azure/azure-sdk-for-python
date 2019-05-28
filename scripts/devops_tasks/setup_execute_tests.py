@@ -66,16 +66,17 @@ if __name__ == '__main__':
         action='store_true')
 
     parser.add_argument(
-        '--servicedir',
-        help=('Service directory to process from'
-              'Example: --servicedir sdk/applicationinsights/'))
+        '--service',
+        help=('Name of service directory (under sdk/) to test.'
+              'Example: --service applicationinsights'))
 
     args = parser.parse_args()
 
     # We need to support both CI builds of everything and individual service
     # folders. This logic allows us to do both.
-    if args.servicedir:
-        target_dir = os.path.join(root_dir, args.servicedir)
+    if args.service:
+        service_dir = os.path.join('sdk', args.service)
+        target_dir = os.path.join(root_dir, service_dir)
     else:
         target_dir = root_dir
 

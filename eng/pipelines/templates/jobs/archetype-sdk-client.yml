@@ -21,7 +21,7 @@ jobs:
         displayName: 'Generate Packages'
         inputs:
           scriptPath: 'scripts/devops_tasks/build_packages.py'
-          arguments: '-d "$(Build.ArtifactStagingDirectory)" "azure-*" --servicedir=${{parameters.ServiceDirectory}}'
+          arguments: '-d "$(Build.ArtifactStagingDirectory)" "azure-*" --service=${{parameters.ServiceDirectory}}'
 
       - script: |
           twine check $(Build.ArtifactStagingDirectory)/*
@@ -143,7 +143,7 @@ jobs:
         displayName: 'Setup and Run Tests'
         inputs:
           scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-          arguments: '"azure-*" --junitxml="junit/test-results.xml" --servicedir="${{parameters.ServiceDirectory}}"'
+          arguments: '"azure-*" --junitxml="junit/test-results.xml" --service="${{parameters.ServiceDirectory}}"'
 
       - task: PublishTestResults@2
         condition: succeededOrFailed()
@@ -197,6 +197,6 @@ jobs:
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
           pypy3 -m ensurepip
-          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "azure-*" --disablecov --servicedir=${{parameters.ServiceDirectory}}
+          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "azure-*" --disablecov --service=${{parameters.ServiceDirectory}}
         displayName: 'Setup and Run Filtered Tests PyPy3'
         continueOnError: true
