@@ -51,7 +51,6 @@ class Receiver(object):
         self.client = client
         self.source = source
         self.offset = event_position
-        self.iter_started = False
         self.prefetch = prefetch
         self.exclusive_receiver_priority = exclusive_receiver_priority
         self.keep_alive = keep_alive
@@ -71,7 +70,7 @@ class Receiver(object):
         self._handler = ReceiveClient(
             source,
             auth=self.client.get_auth(),
-            debug=self.client.debug,
+            debug=self.client.config.network_tracing,
             prefetch=self.prefetch,
             link_properties=self.properties,
             timeout=self.timeout,
@@ -89,44 +88,41 @@ class Receiver(object):
     def __iter__(self):
         if not self.running:
             self.open()
-        if not self.iter_started:
-            self.iter_started = True
-            self.messages_iter = self._handler.receive_messages_iter()
+        self.messages_iter = self._handler.receive_messages_iter()
         return self
 
     def __next__(self):
-        while True:
-            try:
-                message = next(self.messages_iter)
-                event_data = EventData(message=message)
-                self.offset = event_data.offset
-                return event_data
-            except (errors.TokenExpired, errors.AuthenticationException):
-                log.info("Receiver disconnected due to token error. Attempting reconnect.")
+        try:
+            message = next(self.messages_iter)
+            event_data = EventData(message=message)
+            self.offset = event_data.offset
+            return event_data
+        except (errors.TokenExpired, errors.AuthenticationException):
+            log.info("Receiver disconnected due to token error. Attempting reconnect.")
+            self.reconnect()
+        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+            if shutdown.action.retry and self.auto_reconnect:
+                log.info("Receiver detached. Attempting reconnect.")
                 self.reconnect()
-            except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-                if shutdown.action.retry and self.auto_reconnect:
-                    log.info("Receiver detached. Attempting reconnect.")
-                    self.reconnect()
-                log.info("Receiver detached. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
-            except errors.MessageHandlerError as shutdown:
-                if self.auto_reconnect:
-                    log.info("Receiver detached. Attempting reconnect.")
-                    self.reconnect()
-                log.info("Receiver detached. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                self.close(exception=error)
-                raise error
-            except StopIteration:
-                raise
-            except Exception as e:
-                log.info("Unexpected error occurred (%r). Shutting down.", e)
-                error = EventHubError("Receive failed: {}".format(e))
-                self.close(exception=error)
-                raise error
+            log.info("Receiver detached. Shutting down.")
+            error = EventHubError(str(shutdown), shutdown)
+            self.close(exception=error)
+            raise error
+        except errors.MessageHandlerError as shutdown:
+            if self.auto_reconnect:
+                log.info("Receiver detached. Attempting reconnect.")
+                self.reconnect()
+            log.info("Receiver detached. Shutting down.")
+            error = EventHubError(str(shutdown), shutdown)
+            self.close(exception=error)
+            raise error
+        except StopIteration:
+            raise
+        except Exception as e:
+            log.info("Unexpected error occurred (%r). Shutting down.", e)
+            error = EventHubError("Receive failed: {}".format(e))
+            self.close(exception=error)
+            raise error
 
     def open(self):
         """
@@ -159,7 +155,7 @@ class Receiver(object):
             self._handler = ReceiveClient(
                 source,
                 auth=self.client.get_auth(**alt_creds),
-                debug=self.client.debug,
+                debug=self.client.config.network_tracing,
                 prefetch=self.prefetch,
                 link_properties=self.properties,
                 timeout=self.timeout,
@@ -183,7 +179,7 @@ class Receiver(object):
         self._handler = ReceiveClient(
             source,
             auth=self.client.get_auth(**alt_creds),
-            debug=self.client.debug,
+            debug=self.client.config.network_tracing,
             prefetch=self.prefetch,
             link_properties=self.properties,
             timeout=self.timeout,

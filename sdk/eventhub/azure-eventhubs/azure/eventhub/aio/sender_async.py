@@ -74,7 +74,7 @@ class Sender(object):
         self._handler = SendClientAsync(
             self.target,
             auth=self.client.get_auth(),
-            debug=self.client.debug,
+            debug=self.client.config.network_tracing,
             msg_timeout=self.timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
@@ -272,35 +272,6 @@ class Sender(object):
                 raise ValueError("partition key of all EventData must be the same if being sent in a batch")
             yield ed
 
-    '''
-    async def send(self, event_data):
-        """
-        Sends an event data and asynchronously waits until
-        acknowledgement is received or operation times out.
-
-        :param event_data: The event to be sent.
-        :type event_data: ~azure.eventhub.common.EventData
-        :raises: ~azure.eventhub.common.EventHubError if the message fails to
-         send.
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START eventhub_client_async_send]
-                :end-before: [END eventhub_client_async_send]
-                :language: python
-                :dedent: 4
-                :caption: Sends an event data and asynchronously waits
-                 until acknowledgement is received or operation times out.
-
-        """
-        if self.error:
-            raise self.error
-        if event_data.partition_key and self.partition:
-            raise ValueError("EventData partition key cannot be used with a partition sender.")
-        event_data.message.on_send_complete = self._on_outcome
-        await self._send_event_data(event_data)
-    '''
-
     async def send(self, event_data):
         """
         Sends an event data and blocks until acknowledgement is
@@ -330,47 +301,6 @@ class Sender(object):
             wrapper_event_data = _BatchSendEventData(self._verify_partition(event_data))
         wrapper_event_data.message.on_send_complete = self._on_outcome
         await self._send_event_data(wrapper_event_data)
-
-    async def send_batch(self, batch_event_data):
-        """
-        Sends an event data and blocks until acknowledgement is
-        received or operation times out.
-
-        :param event_data: The event to be sent.
-        :type event_data: ~azure.eventhub.common.EventData
-        :raises: ~azure.eventhub.common.EventHubError if the message fails to
-         send.
-        :return: The outcome of the message send.
-        :rtype: ~uamqp.constants.MessageSendResult
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START eventhub_client_sync_send]
-                :end-before: [END eventhub_client_sync_send]
-                :language: python
-                :dedent: 4
-                :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
-
-        """
-        if self.error:
-            raise self.error
-
-        def verify_partition(event_datas):
-            ed_iter = iter(event_datas)
-            try:
-                ed = next(ed_iter)
-                partition_key = ed.partition_key
-                yield ed
-            except StopIteration:
-                raise ValueError("batch_event_data must not be empty")
-            for ed in ed_iter:
-                if ed.partition_key != partition_key:
-                    raise ValueError("partition key of all EventData must be the same if being sent in a batch")
-                yield ed
-
-        wrapper_event_data = _BatchSendEventData(verify_partition(batch_event_data))
-        wrapper_event_data.message.on_send_complete = self._on_outcome
-        return await self._send_event_data(wrapper_event_data)
 
     def queue_message(self, event_data, callback=None):
         """

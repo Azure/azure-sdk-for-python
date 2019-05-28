@@ -70,7 +70,7 @@ class Sender(object):
         self._handler = SendClient(
             self.target,
             auth=self.client.get_auth(),
-            debug=self.client.debug,
+            debug=self.client.config.network_tracing,
             msg_timeout=self.timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
@@ -249,35 +249,6 @@ class Sender(object):
             raise error
         else:
             return self._outcome
-    '''
-    def send(self, event_data):
-        """
-        Sends an event data and blocks until acknowledgement is
-        received or operation times out.
-
-        :param event_data: The event to be sent.
-        :type event_data: ~azure.eventhub.common.EventData
-        :raises: ~azure.eventhub.common.EventHubError if the message fails to
-         send.
-        :return: The outcome of the message send.
-        :rtype: ~uamqp.constants.MessageSendResult
-
-        Example:
-            .. literalinclude:: ../examples/test_examples_eventhub.py
-                :start-after: [START eventhub_client_sync_send]
-                :end-before: [END eventhub_client_sync_send]
-                :language: python
-                :dedent: 4
-                :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
-
-        """
-        if self.error:
-            raise self.error
-        if event_data.partition_key and self.partition:
-            raise ValueError("EventData partition key cannot be used with a partition sender.")
-        event_data.message.on_send_complete = self._on_outcome
-        self._send_event_data(event_data)
-        '''
 
     @staticmethod
     def _verify_partition(event_datas):
@@ -346,8 +317,10 @@ class Sender(object):
             raise self.error
         if not self.running:
             self.open()
+
         if event_data.partition_key and self.partition:
-            raise ValueError("EventData partition key cannot be used with a partition sender.")
+            # raise ValueError("EventData partition key cannot be used with a partition sender.")
+            log.warning("EventData partition key should not be used with a partition sender.")
         if callback:
             event_data.message.on_send_complete = lambda o, c: callback(o, Sender._error(o, c))
         self._handler.queue_message(event_data.message)

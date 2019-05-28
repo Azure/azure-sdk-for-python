@@ -85,7 +85,7 @@ class EventHubClient(EventHubClientAbstract):
         return authentication.SASTokenAsync.from_shared_access_key(
             self.auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy, transport_type=transport_type)
 
-    async def get_eventhub_information(self):
+    async def get_properties(self):
         """
         Get details on the specified EventHub async.
 
@@ -116,8 +116,11 @@ class EventHubClient(EventHubClientAbstract):
             return output
         finally:
             await mgmt_client.close_async()
+    
+    async def get_partition_ids(self):
+        return await self.get_properties()['partition_ids']
 
-    async def get_partition_information(self, partition):
+    async def get_partition_properties(self, partition):
         """
         Get information on the specified partition async.
         Keys in the details dictionary include:
@@ -202,42 +205,9 @@ class EventHubClient(EventHubClientAbstract):
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
         handler = Receiver(
-            self, source_url, offset=event_position, epoch=exclusive_receiver_priority, prefetch=prefetch, keep_alive=keep_alive,
+            self, source_url, offset=event_position, exclusive_receiver_priority=exclusive_receiver_priority, prefetch=prefetch, keep_alive=keep_alive,
             auto_reconnect=auto_reconnect, loop=loop)
         return handler
-
-    def create_epoch_receiver(
-            self, consumer_group, partition, epoch, prefetch=300, operation=None, loop=None):
-        """
-        Add an async receiver to the client with an epoch value. Only a single epoch receiver
-        can connect to a partition at any given time - additional epoch receivers must have
-        a higher epoch value or they will be rejected. If a 2nd epoch receiver has
-        connected, the first will be closed.
-
-        :param consumer_group: The name of the consumer group.
-        :type consumer_group: str
-        :param partition: The ID of the partition.
-        :type partition: str
-        :param epoch: The epoch value for the receiver.
-        :type epoch: int
-        :param prefetch: The message prefetch count of the receiver. Default is 300.
-        :type prefetch: int
-        :operation: An optional operation to be appended to the hostname in the source URL.
-         The value must start with `/` character.
-        :type operation: str
-        :rtype: ~azure.eventhub.aio.receiver_async.ReceiverAsync
-
-        Example:
-            .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
-                :start-after: [START create_eventhub_client_async_epoch_receiver]
-                :end-before: [END create_eventhub_client_async_epoch_receiver]
-                :language: python
-                :dedent: 4
-                :caption: Add an async receiver to the client with an epoch value.
-
-        """
-        return self.create_receiver(consumer_group, partition, epoch=epoch, prefetch=prefetch,
-                                          operation=operation, loop=loop)
 
     def create_sender(
             self, partition=None, operation=None, send_timeout=None, keep_alive=None, auto_reconnect=None, loop=None):
