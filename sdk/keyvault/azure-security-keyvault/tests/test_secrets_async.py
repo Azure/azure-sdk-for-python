@@ -11,7 +11,7 @@ from devtools_testutils import ResourceGroupPreparer
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
 
-from azure.security.keyvault.aio.vault_client import VaultClient
+from azure.security.keyvault.aio import VaultClient
 
 from dateutil import parser as date_parse
 import time

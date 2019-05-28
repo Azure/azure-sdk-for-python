@@ -12,7 +12,7 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError, Ht
 from devtools_testutils import ResourceGroupPreparer
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
-from azure.security.keyvault.aio.vault_client import VaultClient
+from azure.security.keyvault.aio import VaultClient
 
 
 def await_prepared_test(test_fn):
@@ -39,7 +39,7 @@ def create_vault_client():
     vault_url = ""
 
     # [START create_vault_client]
-    from azure.security.keyvault.aio.vault_client import VaultClient
+    from azure.security.keyvault.aio import VaultClient
     from azure.common.credentials import ServicePrincipalCredentials
 
     credentials = ServicePrincipalCredentials(
@@ -60,7 +60,7 @@ def create_key_client():
 
     # [START create_key_client]
     from azure.common.credentials import ServicePrincipalCredentials
-    from azure.security.keyvault.keys._client import KeyClient
+    from azure.security.keyvault.aio.keys import KeyClient
 
     credentials = ServicePrincipalCredentials(
         client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"

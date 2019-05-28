@@ -12,7 +12,7 @@ from devtools_testutils import ResourceGroupPreparer
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
 from azure.security.keyvault._generated.v7_0.models import KeyVaultErrorException
-from azure.security.keyvault.aio.vault_client import VaultClient
+from azure.security.keyvault.aio import VaultClient
 
 
 # TODO: Remove, later?
@@ -132,7 +132,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         try:
             # [START list_secret_versions]
-            from azure.security.keyvault.vault_client import VaultClient
 
             # gets a list of all versions of a secret
             secret_versions = secret_client.list_secret_versions("secret-name")

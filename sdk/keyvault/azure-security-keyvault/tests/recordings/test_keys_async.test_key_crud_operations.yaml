@@ -18,7 +18,7 @@ interactions:
     uri: https://vault5416109f.vault.azure.net/keys/crud-ec-key/create?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-ec-key/fbcfa9a712fb45a7af6f9049b4d4e547","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"FOzWzqDOA0g3mAM7rVmRlba359aHNomEj4ahxc4uJfI","y":"AJziXmU0vLkRnZM3gJGarzD2-vHtZd7sJ7D1n2gRO3I"},"attributes":{"enabled":true,"created":1558641644,"updated":1558641644,"recoveryLevel":"Recoverable+Purgeable"}}'
+      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-ec-key/77a2260d1b744670a4e574e6c3a123bf","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"CO8wQ4QSEID1HmczTXJgKMhVDdikQMtIn4DhgFKrxBc","y":"3HnHC6vs3TUK8H9gaPYodZX4u_dd3UjZnIcbpL4Af6s"},"attributes":{"enabled":true,"created":1559085856,"updated":1559085856,"recoveryLevel":"Recoverable+Purgeable"}}'
     headers:
       cache-control:
       - no-cache
@@ -27,7 +27,59 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 May 2019 20:00:43 GMT
+      - Tue, 28 May 2019 23:24:16 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.147.26;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.866
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"kty": "EC", "crv": "P-256"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '29'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+    method: POST
+    uri: https://vault5416109f.vault.azure.net/keys/crud-P-256-ec-key/create?api-version=7.0
+  response:
+    body:
+      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-P-256-ec-key/217a77a78c8045709867a6996deb426d","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"U0296Oui1qxRQNCwmZdw8oOFcJNCBLFmgYNC3cjMrDk","y":"6pOG9SbW-KnXT6q8Gj097gNBWyuAu6bYIgsWOpkjMT0"},"attributes":{"enabled":true,"created":1559085857,"updated":1559085857,"recoveryLevel":"Recoverable+Purgeable"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '376'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 28 May 2019 23:24:16 GMT
       expires:
       - '-1'
       pragma:
@@ -72,7 +124,7 @@ interactions:
     uri: https://vault5416109f.vault.azure.net/keys/crud-rsa-key/create?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/519a61a1eb7f41d8b2a9d3304639b41f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"8RjGo-e2OvOelTjrQ3fDCvD_icnPzSe-3QdQUyeho8tiWzLldCyUc1zzysrw9Wvdey7MPZNV0gLNAqTgmYz2hDkdHD4aNaVZx3V3Txigb3szMQUdyaEztDSpU-CAB6puwi4GD6WQ3MclXwTAazeOtTEFGjuULDZS7wY1TLjPfbh2D-4dY4H3uXufw-h0857lM4g-Yh-C1Tvo9znFLDgS5-MtCmK_FOuSFzLc9GgEl_qi3exe_JSedxGriXn5pSHW7DIbNAWbzjjUCbdAQ0x3e8o4-dWtr6rJ3nnhUxJ6PkisJameiqRCkjobbFIQ523UtuZqEb85pYrIvEl2WpC7Iw","e":"AQAB"},"attributes":{"enabled":true,"created":1558641644,"updated":1558641644,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
+      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/991fefb75f5941d18774d2f74f1a0219","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"w0foeqSSnfS8A0FyXAhAQm-WDDL-enx0NSsoVt7xQ4vFJHak1dx69lGn4tX1wlKBgOtzQXdqc8ihuLQBQzcaZk4ZDyaKB1o99JJYbCj-bcCTb10h430ivdiWZenThABS1X_Pba-AVdMmNgHxt7R6WonPeGkVS6AWirQfwhWwizE7fHgaitnhRpgOC_Y28cu6jdl7S-pY8_nU7qRnJsSVFNoKxOATaQKTLhrvK0SQ4ZGt9DZl694snVCikcUK2GKu28Xp-wjhZPQ94QLI7PSVUOMg20ipAUD2kx0XLiGgGHbI3u-oH54Vq0hm6SrAq7s2pdUHOpPIwsC6bSjrgPWXQQ","e":"AQAB"},"attributes":{"enabled":true,"created":1559085857,"updated":1559085857,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
         test","test name ":"CreateRSAKeyTest"}}'
     headers:
       cache-control:
@@ -82,7 +134,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 May 2019 20:00:43 GMT
+      - Tue, 28 May 2019 23:24:16 GMT
       expires:
       - '-1'
       pragma:
@@ -118,10 +170,10 @@ interactions:
       User-Agent:
       - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: GET
-    uri: https://vault5416109f.vault.azure.net/keys/crud-rsa-key/519a61a1eb7f41d8b2a9d3304639b41f?api-version=7.0
+    uri: https://vault5416109f.vault.azure.net/keys/crud-rsa-key/991fefb75f5941d18774d2f74f1a0219?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/519a61a1eb7f41d8b2a9d3304639b41f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"8RjGo-e2OvOelTjrQ3fDCvD_icnPzSe-3QdQUyeho8tiWzLldCyUc1zzysrw9Wvdey7MPZNV0gLNAqTgmYz2hDkdHD4aNaVZx3V3Txigb3szMQUdyaEztDSpU-CAB6puwi4GD6WQ3MclXwTAazeOtTEFGjuULDZS7wY1TLjPfbh2D-4dY4H3uXufw-h0857lM4g-Yh-C1Tvo9znFLDgS5-MtCmK_FOuSFzLc9GgEl_qi3exe_JSedxGriXn5pSHW7DIbNAWbzjjUCbdAQ0x3e8o4-dWtr6rJ3nnhUxJ6PkisJameiqRCkjobbFIQ523UtuZqEb85pYrIvEl2WpC7Iw","e":"AQAB"},"attributes":{"enabled":true,"created":1558641644,"updated":1558641644,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
+      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/991fefb75f5941d18774d2f74f1a0219","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"w0foeqSSnfS8A0FyXAhAQm-WDDL-enx0NSsoVt7xQ4vFJHak1dx69lGn4tX1wlKBgOtzQXdqc8ihuLQBQzcaZk4ZDyaKB1o99JJYbCj-bcCTb10h430ivdiWZenThABS1X_Pba-AVdMmNgHxt7R6WonPeGkVS6AWirQfwhWwizE7fHgaitnhRpgOC_Y28cu6jdl7S-pY8_nU7qRnJsSVFNoKxOATaQKTLhrvK0SQ4ZGt9DZl694snVCikcUK2GKu28Xp-wjhZPQ94QLI7PSVUOMg20ipAUD2kx0XLiGgGHbI3u-oH54Vq0hm6SrAq7s2pdUHOpPIwsC6bSjrgPWXQQ","e":"AQAB"},"attributes":{"enabled":true,"created":1559085857,"updated":1559085857,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
         test","test name ":"CreateRSAKeyTest"}}'
     headers:
       cache-control:
@@ -131,7 +183,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 May 2019 20:00:44 GMT
+      - Tue, 28 May 2019 23:24:16 GMT
       expires:
       - '-1'
       pragma:
@@ -170,7 +222,7 @@ interactions:
     uri: https://vault5416109f.vault.azure.net/keys/crud-rsa-key/?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/519a61a1eb7f41d8b2a9d3304639b41f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"8RjGo-e2OvOelTjrQ3fDCvD_icnPzSe-3QdQUyeho8tiWzLldCyUc1zzysrw9Wvdey7MPZNV0gLNAqTgmYz2hDkdHD4aNaVZx3V3Txigb3szMQUdyaEztDSpU-CAB6puwi4GD6WQ3MclXwTAazeOtTEFGjuULDZS7wY1TLjPfbh2D-4dY4H3uXufw-h0857lM4g-Yh-C1Tvo9znFLDgS5-MtCmK_FOuSFzLc9GgEl_qi3exe_JSedxGriXn5pSHW7DIbNAWbzjjUCbdAQ0x3e8o4-dWtr6rJ3nnhUxJ6PkisJameiqRCkjobbFIQ523UtuZqEb85pYrIvEl2WpC7Iw","e":"AQAB"},"attributes":{"enabled":true,"created":1558641644,"updated":1558641644,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
+      string: '{"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/991fefb75f5941d18774d2f74f1a0219","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"w0foeqSSnfS8A0FyXAhAQm-WDDL-enx0NSsoVt7xQ4vFJHak1dx69lGn4tX1wlKBgOtzQXdqc8ihuLQBQzcaZk4ZDyaKB1o99JJYbCj-bcCTb10h430ivdiWZenThABS1X_Pba-AVdMmNgHxt7R6WonPeGkVS6AWirQfwhWwizE7fHgaitnhRpgOC_Y28cu6jdl7S-pY8_nU7qRnJsSVFNoKxOATaQKTLhrvK0SQ4ZGt9DZl694snVCikcUK2GKu28Xp-wjhZPQ94QLI7PSVUOMg20ipAUD2kx0XLiGgGHbI3u-oH54Vq0hm6SrAq7s2pdUHOpPIwsC6bSjrgPWXQQ","e":"AQAB"},"attributes":{"enabled":true,"created":1559085857,"updated":1559085857,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
         test","test name ":"CreateRSAKeyTest"}}'
     headers:
       cache-control:
@@ -180,7 +232,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 May 2019 20:00:44 GMT
+      - Tue, 28 May 2019 23:24:16 GMT
       expires:
       - '-1'
       pragma:
@@ -221,7 +273,7 @@ interactions:
     uri: https://vault5416109f.vault.azure.net/keys/crud-rsa-key?api-version=7.0
   response:
     body:
-      string: '{"recoveryId":"https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key","deletedDate":1558641646,"scheduledPurgeDate":1566417646,"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/519a61a1eb7f41d8b2a9d3304639b41f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"8RjGo-e2OvOelTjrQ3fDCvD_icnPzSe-3QdQUyeho8tiWzLldCyUc1zzysrw9Wvdey7MPZNV0gLNAqTgmYz2hDkdHD4aNaVZx3V3Txigb3szMQUdyaEztDSpU-CAB6puwi4GD6WQ3MclXwTAazeOtTEFGjuULDZS7wY1TLjPfbh2D-4dY4H3uXufw-h0857lM4g-Yh-C1Tvo9znFLDgS5-MtCmK_FOuSFzLc9GgEl_qi3exe_JSedxGriXn5pSHW7DIbNAWbzjjUCbdAQ0x3e8o4-dWtr6rJ3nnhUxJ6PkisJameiqRCkjobbFIQ523UtuZqEb85pYrIvEl2WpC7Iw","e":"AQAB"},"attributes":{"enabled":true,"created":1558641644,"updated":1558641644,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
+      string: '{"recoveryId":"https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key","deletedDate":1559085858,"scheduledPurgeDate":1566861858,"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/991fefb75f5941d18774d2f74f1a0219","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"w0foeqSSnfS8A0FyXAhAQm-WDDL-enx0NSsoVt7xQ4vFJHak1dx69lGn4tX1wlKBgOtzQXdqc8ihuLQBQzcaZk4ZDyaKB1o99JJYbCj-bcCTb10h430ivdiWZenThABS1X_Pba-AVdMmNgHxt7R6WonPeGkVS6AWirQfwhWwizE7fHgaitnhRpgOC_Y28cu6jdl7S-pY8_nU7qRnJsSVFNoKxOATaQKTLhrvK0SQ4ZGt9DZl694snVCikcUK2GKu28Xp-wjhZPQ94QLI7PSVUOMg20ipAUD2kx0XLiGgGHbI3u-oH54Vq0hm6SrAq7s2pdUHOpPIwsC6bSjrgPWXQQ","e":"AQAB"},"attributes":{"enabled":true,"created":1559085857,"updated":1559085857,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
         test","test name ":"CreateRSAKeyTest"}}'
     headers:
       cache-control:
@@ -231,7 +283,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 May 2019 20:00:45 GMT
+      - Tue, 28 May 2019 23:24:17 GMT
       expires:
       - '-1'
       pragma:
@@ -270,7 +322,7 @@ interactions:
     uri: https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key?api-version=7.0
   response:
     body:
-      string: '{"recoveryId":"https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key","deletedDate":1558641646,"scheduledPurgeDate":1566417646,"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/519a61a1eb7f41d8b2a9d3304639b41f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"8RjGo-e2OvOelTjrQ3fDCvD_icnPzSe-3QdQUyeho8tiWzLldCyUc1zzysrw9Wvdey7MPZNV0gLNAqTgmYz2hDkdHD4aNaVZx3V3Txigb3szMQUdyaEztDSpU-CAB6puwi4GD6WQ3MclXwTAazeOtTEFGjuULDZS7wY1TLjPfbh2D-4dY4H3uXufw-h0857lM4g-Yh-C1Tvo9znFLDgS5-MtCmK_FOuSFzLc9GgEl_qi3exe_JSedxGriXn5pSHW7DIbNAWbzjjUCbdAQ0x3e8o4-dWtr6rJ3nnhUxJ6PkisJameiqRCkjobbFIQ523UtuZqEb85pYrIvEl2WpC7Iw","e":"AQAB"},"attributes":{"enabled":true,"created":1558641644,"updated":1558641644,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
+      string: '{"recoveryId":"https://vault5416109f.vault.azure.net/deletedkeys/crud-rsa-key","deletedDate":1559085858,"scheduledPurgeDate":1566861858,"key":{"kid":"https://vault5416109f.vault.azure.net/keys/crud-rsa-key/991fefb75f5941d18774d2f74f1a0219","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"w0foeqSSnfS8A0FyXAhAQm-WDDL-enx0NSsoVt7xQ4vFJHak1dx69lGn4tX1wlKBgOtzQXdqc8ihuLQBQzcaZk4ZDyaKB1o99JJYbCj-bcCTb10h430ivdiWZenThABS1X_Pba-AVdMmNgHxt7R6WonPeGkVS6AWirQfwhWwizE7fHgaitnhRpgOC_Y28cu6jdl7S-pY8_nU7qRnJsSVFNoKxOATaQKTLhrvK0SQ4ZGt9DZl694snVCikcUK2GKu28Xp-wjhZPQ94QLI7PSVUOMg20ipAUD2kx0XLiGgGHbI3u-oH54Vq0hm6SrAq7s2pdUHOpPIwsC6bSjrgPWXQQ","e":"AQAB"},"attributes":{"enabled":true,"created":1559085857,"updated":1559085857,"recoveryLevel":"Recoverable+Purgeable"},"tags":{"purpose":"unit
         test","test name ":"CreateRSAKeyTest"}}'
     headers:
       cache-control:
@@ -280,7 +332,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 May 2019 20:01:15 GMT
+      - Tue, 28 May 2019 23:24:48 GMT
       expires:
       - '-1'
       pragma:
