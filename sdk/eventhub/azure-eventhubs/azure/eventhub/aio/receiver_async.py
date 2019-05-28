@@ -163,7 +163,7 @@ class Receiver(object):
             self._handler = ReceiveClientAsync(
                 source,
                 auth=self.client.get_auth(**alt_creds),
-                debug=self.client.debug,
+                debug=self.client.config.network_tracing,
                 prefetch=self.prefetch,
                 link_properties=self.properties,
                 timeout=self.timeout,
@@ -188,7 +188,7 @@ class Receiver(object):
         self._handler = ReceiveClientAsync(
             source,
             auth=self.client.get_auth(**alt_creds),
-            debug=self.client.debug,
+            debug=self.client.config.network_tracing,
             prefetch=self.prefetch,
             link_properties=self.properties,
             timeout=self.timeout,

@@ -109,7 +109,7 @@ class Sender(object):
             self._handler = SendClient(
                 self.target,
                 auth=self.client.get_auth(),
-                debug=self.client.debug,
+                debug=self.client.config.network_tracing,
                 msg_timeout=self.timeout,
                 error_policy=self.retry_policy,
                 keep_alive_interval=self.keep_alive,
@@ -126,7 +126,7 @@ class Sender(object):
         self._handler = SendClient(
             self.target,
             auth=self.client.get_auth(),
-            debug=self.client.debug,
+            debug=self.client.config.network_tracing,
             msg_timeout=self.timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
