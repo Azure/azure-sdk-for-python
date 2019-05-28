@@ -26,7 +26,7 @@ class X509CertificateProperties(Model):
     :param key_usage: List of key usages.
     :type key_usage: list[str or
      ~azure.keyvault.v2016_10_01.models.KeyUsageType]
-    :param validity_in_months: The duration that the ceritifcate is valid in
+    :param validity_in_months: The duration that the certificate is valid in
      months.
     :type validity_in_months: int
     """
