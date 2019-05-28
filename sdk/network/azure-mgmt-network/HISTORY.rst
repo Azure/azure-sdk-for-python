@@ -3,6 +3,61 @@
 Release History
 ===============
 
+3.0.0 (2019-05-24)
+++++++++++++++++++
+
+**Features**
+
+- Model NetworkInterface has a new parameter private_endpoint
+- Model ServiceAssociationLink has a new parameter type
+- Model ServiceAssociationLink has a new parameter allow_delete
+- Model ServiceAssociationLink has a new parameter locations
+- Model Subnet has a new parameter private_endpoints
+- Model PatchRouteFilter has a new parameter ipv6_peerings
+- Model ExpressRouteCircuitPeering has a new parameter type
+- Model ApplicationGatewayProbe has a new parameter port
+- Model RouteFilter has a new parameter ipv6_peerings
+- Model ExpressRouteCircuitAuthorization has a new parameter type
+- Model PeerExpressRouteCircuitConnection has a new parameter type
+- Model AzureFirewall has a new parameter zones
+- Model ResourceNavigationLink has a new parameter type
+- Model ExpressRouteCircuitConnection has a new parameter type
+- Model VpnConnection has a new parameter use_policy_based_traffic_selectors
+- Model NatGateway has a new parameter zones
+- Model VpnClientConfiguration has a new parameter aad_audience
+- Model VpnClientConfiguration has a new parameter aad_issuer
+- Model VpnClientConfiguration has a new parameter aad_tenant
+- Added operation VirtualNetworkGatewaysOperations.get_vpnclient_connection_health
+- Added operation P2sVpnGatewaysOperations.get_p2s_vpn_connection_health
+- Added operation VpnGatewaysOperations.reset
+- Added operation group BastionHostsOperations
+- Added operation group NetworkManagementClientOperationsMixin
+- Added operation group PrivateLinkServicesOperations
+- Added operation group AvailableResourceGroupPrivateEndpointTypesOperations
+- Added operation group ServiceAssociationLinksOperations
+- Added operation group ResourceNavigationLinksOperations
+- Added operation group ServiceTagsOperations
+- Added operation group PrivateEndpointsOperations
+- Added operation group AvailablePrivateEndpointTypesOperations
+
+**Breaking changes**
+
+- Model NetworkInterface no longer has parameter interface_endpoint
+- Model Subnet no longer has parameter interface_endpoints
+- Removed operation group InterfaceEndpointsOperations
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes if you were importing from the v20xx_yy_zz API folders.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- NetworkManagementClient cannot be imported from `azure.mgmt.network.v20xx_yy_zz.network_management_client` anymore (import from `azure.mgmt.network.v20xx_yy_zz` works like before)
+- NetworkManagementClientConfiguration import has been moved from `azure.mgmt.network.v20xx_yy_zz.network_management_client` to `azure.mgmt.network.v20xx_yy_zz`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.network.v20xx_yy_zz.models.my_class` (import from `azure.mgmt.network.v20xx_yy_zz.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.network.v20xx_yy_zz.operations.my_class_operations` (import from `azure.mgmt.network.v20xx_yy_zz.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
 2.7.0 (2019-04-25)
 ++++++++++++++++++
 
