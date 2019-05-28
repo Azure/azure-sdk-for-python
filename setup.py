@@ -30,7 +30,7 @@ nspkg_packages.sort(key = lambda x: len([c for c in x if c == '-']))
 meta_package = ['azure-mgmt', 'azure']
 
 # content packages are packages that are not meta nor nspkg
-content_package = [p for p in packages.keys() if p not in meta_package+nspkg_packages]
+content_package = sorted([p for p in packages.keys() if p not in meta_package+nspkg_packages])
 
 # Move azure-common at the beginning, it's important this goes first
 content_package.remove("azure-common")
