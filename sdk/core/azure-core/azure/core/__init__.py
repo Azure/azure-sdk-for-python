@@ -38,8 +38,5 @@ __all__ = [
     "HttpResponseError",
 ]
 
-try:
-    from .pipeline_client_async import AsyncPipelineClient #pylint: disable=unused-import
-    __all__.extend(["AsyncPipelineClient"])
-except (ImportError, SyntaxError): # Python <= 3.5
-    pass
+from .pipeline_client_async import AsyncPipelineClient #pylint: disable=unused-import
+__all__.extend(["AsyncPipelineClient"])
