@@ -1,0 +1,158 @@
+interactions:
+- request:
+    body: '{"kty": "RSA"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '14'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+    method: POST
+    uri: https://vault51cf1084.vault.azure.net/keys/keywrap51cf1084/create?api-version=7.0
+  response:
+    body:
+      string: '{"key":{"kid":"https://vault51cf1084.vault.azure.net/keys/keywrap51cf1084/4bbe1b1a004340d9bb8b90800b80a918","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"oxFL6xw--pzKnvevDOQ14Y0U2oUg7wuhZ50hpBnnmyc0BTRr3rkIOL-YfwxEAUJ0pgEPAAp7Kw7LDRilUhZPuC2yUDbK9SwkTk8LEPxxIXX1lmgHO0yeVQa-VmSNiSn0J89I4qFASuU6TEOLNr-5bYZmIrR-SjlvERCokSn0vg2ohrxmlPH_D-oE5_BWn4-ZwlvhnZeT9jsH7yq2slCm6UkPL23Bpya4VPfWjyrB7v432ACWLov2Ly8mtL9NoqJwnckD5OpRRVNgtmxflqc2MF6cPfMwkZDMf6UuqzXtKziwYm9RxqQsIUcOmB3kqGbHblvUhl887fVEaQRZdwYRHQ","e":"AQAB"},"attributes":{"enabled":true,"created":1559081566,"updated":1559081566,"recoveryLevel":"Recoverable+Purgeable"}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '663'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 28 May 2019 22:12:46 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.147.26;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.866
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"alg": "RSA-OAEP", "value": "NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '299'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+    method: POST
+    uri: https://vault51cf1084.vault.azure.net/keys/keywrap51cf1084/4bbe1b1a004340d9bb8b90800b80a918/wrapkey?api-version=7.0
+  response:
+    body:
+      string: '{"kid":"https://vault51cf1084.vault.azure.net/keys/keywrap51cf1084/4bbe1b1a004340d9bb8b90800b80a918","value":"RxUFo7BuUYoyc6hTWBEoztwOBOnb0xcjz9iK-SkdNA0Am9HHcrR6uKirciFAQfrV4YVoxQdI1n3-55W-kcZ0hVXjI7xVefk1DmhyBaL-QigWaU9of2Yu80auK53hQKROz63NvZinKUBkewJyH0pSBqyoPbF6VS_F3hVq3fzIsO_iwoAi61KThVrmIBhV3-GuyXfgvZe5gzADlm2j-jtUKtbXsH3R6vDF53GyAtVq1CMbGotJnS0H6CB4EOxaZt0QJhrdqvqm4Ieq3riKkmifEoMWA0E0hxrKk8SPfgfEaJSWA3TF6kZJMJyenRMlGZb4ILVSkiOUILhWa-XnnFrdTg"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '454'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 28 May 2019 22:12:46 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.147.26;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.866
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"alg": "RSA-OAEP", "value": "RxUFo7BuUYoyc6hTWBEoztwOBOnb0xcjz9iK-SkdNA0Am9HHcrR6uKirciFAQfrV4YVoxQdI1n3-55W-kcZ0hVXjI7xVefk1DmhyBaL-QigWaU9of2Yu80auK53hQKROz63NvZinKUBkewJyH0pSBqyoPbF6VS_F3hVq3fzIsO_iwoAi61KThVrmIBhV3-GuyXfgvZe5gzADlm2j-jtUKtbXsH3R6vDF53GyAtVq1CMbGotJnS0H6CB4EOxaZt0QJhrdqvqm4Ieq3riKkmifEoMWA0E0hxrKk8SPfgfEaJSWA3TF6kZJMJyenRMlGZb4ILVSkiOUILhWa-XnnFrdTg"}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '374'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
+    method: POST
+    uri: https://vault51cf1084.vault.azure.net/keys/keywrap51cf1084/4bbe1b1a004340d9bb8b90800b80a918/unwrapkey?api-version=7.0
+  response:
+    body:
+      string: '{"kid":"https://vault51cf1084.vault.azure.net/keys/keywrap51cf1084/4bbe1b1a004340d9bb8b90800b80a918","value":"NTA2M2U2YWFhODQ1ZjE1MDIwMDU0Nzk0NGZkMTk5Njc5Yzk4ZWQ2Zjk5ZGEwYTBiMmRhZmVhZjFmNDY4NDQ5NmZkNTMyYzFjMjI5OTY4Y2I5ZGVlNDQ5NTdmY2VmN2NjZWY1OWNlZGEwYjM2MmU1NmJjZDc4ZmQzZmFlZTU3ODFjNjIzYzBiYjIyYjM1YmVhYmRlMDY2NGZkMzBlMGU4MjRhYmEzZGQxYjBhZmZmYzRhM2Q5NTVlZGUyMGNmNmE4NTRkNTJjZmQ"}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '379'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 28 May 2019 22:12:46 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Microsoft-IIS/10.0
+      strict-transport-security:
+      - max-age=31536000;includeSubDomains
+      x-aspnet-version:
+      - 4.0.30319
+      x-content-type-options:
+      - nosniff
+      x-ms-keyvault-network-info:
+      - addr=131.107.147.26;act_addr_fam=InterNetwork;
+      x-ms-keyvault-region:
+      - westus
+      x-ms-keyvault-service-version:
+      - 1.1.0.866
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+version: 1
