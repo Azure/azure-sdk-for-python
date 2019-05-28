@@ -6,7 +6,7 @@
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
 from devtools_testutils import ResourceGroupPreparer
-from time import time
+import time
 from dateutil import parser as date_parse
 
 
@@ -164,7 +164,7 @@ class KeyClientTests(KeyVaultTestCase):
         expected = {}
 
         # create many keys
-        for x in range(0, max_keys):
+        for x in range(max_keys):
             key_name = "key{}".format(x)
             key = client.create_key(key_name, "RSA")
             expected[key.name] = key
@@ -186,7 +186,7 @@ class KeyClientTests(KeyVaultTestCase):
         expected = {}
 
         # create many key versions
-        for _ in range(0, max_keys):
+        for _ in range(max_keys):
             key = client.create_key(key_name, "RSA")
             expected[key.id] = key
 
@@ -210,12 +210,12 @@ class KeyClientTests(KeyVaultTestCase):
 
         # create keys to recover
         for i in range(0, self.list_test_size):
-            key_name = self.get_resource_name("keyrec{}".format(str(i)))
+            key_name = self.get_resource_name("keyrec")
             keys[key_name] = client.create_key(key_name, "RSA")
 
         # create keys to purge
         for i in range(0, self.list_test_size):
-            key_name = self.get_resource_name("keyprg{}".format(str(i)))
+            key_name = self.get_resource_name("keyprg")
             keys[key_name] = client.create_key(key_name, "RSA")
 
         # delete all keys

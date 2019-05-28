@@ -6,7 +6,7 @@
 
 import time
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from devtools_testutils import ResourceGroupPreparer
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
@@ -247,9 +247,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     def test_example_keys_recover_purge(self, vault_client, **kwargs):
         key_client = vault_client.keys
         created_key = key_client.create_key("key-name", "RSA")
-        if self.is_live:
-            # wait a second to ensure the key has been created
-            time.sleep(20)
         key_client.delete_key(created_key.name)
         if self.is_live:
             # wait a second to ensure the key has been deleted
@@ -278,9 +275,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             pass
 
         try:
-            if self.is_live:
-                # wait a second to ensure the key has been recovered
-                time.sleep(20)
             key_client.delete_key("key-name")
             if self.is_live:
                 # wait a second to ensure the key has been deleted
