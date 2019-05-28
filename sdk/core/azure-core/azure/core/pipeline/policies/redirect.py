@@ -30,7 +30,7 @@ from __future__ import absolute_import  # we have a "requests" module that confl
 import logging
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 try:
-    from urlparse import urlparse
+    from urlparse import urlparse  # type: ignore
 except ImportError:
     from urllib.parse import urlparse
 

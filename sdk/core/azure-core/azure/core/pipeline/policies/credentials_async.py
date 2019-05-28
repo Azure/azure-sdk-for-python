@@ -25,6 +25,6 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, AsyncHT
         :return: The pipeline response object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        token = await self._credential.get_token(self._scopes)
-        self._update_headers(request.http_request.headers, token)
-        return await self.next.send(request)
+        token = await self._credential.get_token(self._scopes) # type: ignore
+        self._update_headers(request.http_request.headers, token) # type: ignore
+        return await self.next.send(request) # type: ignore

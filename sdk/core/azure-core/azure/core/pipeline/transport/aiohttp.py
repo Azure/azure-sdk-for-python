@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, AsyncIterator as AsyncIteratorType
+from typing import Any, Optional, AsyncIterator as AsyncIteratorType
 from collections.abc import AsyncIterator
 
 import logging
@@ -113,7 +113,7 @@ class AioHttpTransport(AsyncHttpTransport):
             return form_data
         return request.data
 
-    async def send(self, request: HttpRequest, **config: Any) -> AsyncHttpResponse:
+    async def send(self, request: HttpRequest, **config: Any) -> Optional[AsyncHttpResponse]:
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.

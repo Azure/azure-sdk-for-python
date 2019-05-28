@@ -39,7 +39,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 
-class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):
+class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
     """Async flavor of the retry policy.
 
     The async retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
@@ -188,4 +188,3 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):
 
         self.update_context(response.context, retry_settings)
         return response
-
