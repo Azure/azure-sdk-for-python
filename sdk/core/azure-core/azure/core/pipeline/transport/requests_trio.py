@@ -26,9 +26,9 @@
 from collections.abc import AsyncIterator
 import functools
 import logging
-from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
-import trio
-import urllib3
+from typing import Any, Callable, Union, Optional, AsyncIterator as AsyncIteratorType
+import trio  # type: ignore
+import urllib3  # type: ignore
 
 import requests
 
@@ -90,13 +90,13 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                 self.response.close()
                 raise
 
-class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):
+class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):  # type: ignore
     """Asynchronous streaming of data from the response.
     """
-    def stream_download(self) -> AsyncIteratorType[bytes]:
+    def stream_download(self) -> AsyncIteratorType[bytes]:  # type: ignore
         """Generator for streaming response data.
         """
-        return TrioStreamDownloadGenerator(self.internal_response, self.block_size)
+        return TrioStreamDownloadGenerator(self.internal_response, self.block_size) # type: ignore
 
 
 class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
@@ -124,13 +124,13 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
         self.open()
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None
-        error = None
+        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
         if self.config.proxy_policy and 'proxies' not in kwargs:
             kwargs['proxies'] = self.config.proxy_policy.proxies
         try:
             response = await trio.run_sync_in_worker_thread(
                 functools.partial(
-                    self.session.request,
+                    self.session.request, # type: ignore
                     request.method,
                     request.url,
                     headers=request.headers,
