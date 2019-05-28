@@ -168,13 +168,16 @@ class SmartDetectorAlertRulesOperations(object):
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.alertsManagement/smartDetectorAlertRules'}
 
     def get(
-            self, resource_group_name, alert_rule_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, alert_rule_name, expand_detector, custom_headers=None, raw=False, **operation_config):
         """Get a specific Smart Detector alert rule.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param alert_rule_name: The name of the alert rule.
         :type alert_rule_name: str
+        :param expand_detector: Indicates if Smart Detector should be
+         expanded.
+        :type expand_detector: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -198,7 +201,7 @@ class SmartDetectorAlertRulesOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        query_parameters['expandDetector'] = self._serialize.query("self.config.expand_detector", self.config.expand_detector, 'bool')
+        query_parameters['expandDetector'] = self._serialize.query("expand_detector", expand_detector, 'bool')
 
         # Construct headers
         header_parameters = {}

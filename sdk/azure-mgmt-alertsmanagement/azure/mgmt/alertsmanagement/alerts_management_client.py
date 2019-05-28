@@ -38,13 +38,11 @@ class AlertsManagementClientConfiguration(AzureConfiguration):
     :type subscription_id1: str
     :param api_version1: Client Api Version.
     :type api_version1: str
-    :param expand_detector: Indicates if Smart Detector should be expanded.
-    :type expand_detector: bool
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, scope, subscription_id, subscription_id1, api_version1, expand_detector, base_url=None):
+            self, credentials, scope, subscription_id, subscription_id1, api_version1, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -56,8 +54,6 @@ class AlertsManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'subscription_id1' must not be None.")
         if api_version1 is None:
             raise ValueError("Parameter 'api_version1' must not be None.")
-        if expand_detector is None:
-            raise ValueError("Parameter 'expand_detector' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -71,7 +67,6 @@ class AlertsManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
         self.subscription_id1 = subscription_id1
         self.api_version1 = api_version1
-        self.expand_detector = expand_detector
 
 
 class AlertsManagementClient(SDKClient):
@@ -102,15 +97,13 @@ class AlertsManagementClient(SDKClient):
     :type subscription_id1: str
     :param api_version1: Client Api Version.
     :type api_version1: str
-    :param expand_detector: Indicates if Smart Detector should be expanded.
-    :type expand_detector: bool
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, scope, subscription_id, subscription_id1, api_version1, expand_detector, base_url=None):
+            self, credentials, scope, subscription_id, subscription_id1, api_version1, base_url=None):
 
-        self.config = AlertsManagementClientConfiguration(credentials, scope, subscription_id, subscription_id1, api_version1, expand_detector, base_url)
+        self.config = AlertsManagementClientConfiguration(credentials, scope, subscription_id, subscription_id1, api_version1, base_url)
         super(AlertsManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
