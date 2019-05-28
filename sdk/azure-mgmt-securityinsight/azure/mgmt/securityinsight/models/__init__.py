@@ -29,7 +29,6 @@ try:
     from .ti_data_connector_data_types_indicators_py3 import TIDataConnectorDataTypesIndicators
     from .ti_data_connector_data_types_py3 import TIDataConnectorDataTypes
     from .ti_data_connector_py3 import TIDataConnector
-    from .data_connector_aws_role_arn_py3 import DataConnectorAwsRoleArn
     from .aws_cloud_trail_data_connector_data_types_logs_py3 import AwsCloudTrailDataConnectorDataTypesLogs
     from .aws_cloud_trail_data_connector_data_types_py3 import AwsCloudTrailDataConnectorDataTypes
     from .aws_cloud_trail_data_connector_py3 import AwsCloudTrailDataConnector
@@ -73,7 +72,6 @@ except (SyntaxError, ImportError):
     from .ti_data_connector_data_types_indicators import TIDataConnectorDataTypesIndicators
     from .ti_data_connector_data_types import TIDataConnectorDataTypes
     from .ti_data_connector import TIDataConnector
-    from .data_connector_aws_role_arn import DataConnectorAwsRoleArn
     from .aws_cloud_trail_data_connector_data_types_logs import AwsCloudTrailDataConnectorDataTypesLogs
     from .aws_cloud_trail_data_connector_data_types import AwsCloudTrailDataConnectorDataTypes
     from .aws_cloud_trail_data_connector import AwsCloudTrailDataConnector
@@ -141,7 +139,6 @@ __all__ = [
     'TIDataConnectorDataTypesIndicators',
     'TIDataConnectorDataTypes',
     'TIDataConnector',
-    'DataConnectorAwsRoleArn',
     'AwsCloudTrailDataConnectorDataTypesLogs',
     'AwsCloudTrailDataConnectorDataTypes',
     'AwsCloudTrailDataConnector',
