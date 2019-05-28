@@ -344,8 +344,6 @@ class KeyVaultKeyTest(KeyVaultTestCase):
 
         # validate the recovered keys
         expected = {k: v for k, v in keys.items() if k.startswith("keyrec")}
-        await self._poll_until_resource_found(client.get_key, expected.keys())
-
         actual = {}
         for k in expected.keys():
             actual[k] = await client.get_key(k)
