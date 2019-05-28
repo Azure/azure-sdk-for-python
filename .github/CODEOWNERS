@@ -1,6 +1,7 @@
 # See for instructions on this file https://help.github.com/articles/about-codeowners/
 
 /sdk/core/ @lmazuel
+/sdk/core/azure-core/ @xiangyan99 @bryevdv
 
 # Service team
 /sdk/applicationinsights/ @alexeldeib
