@@ -1,18 +1,17 @@
 # Variables:
-#  'build_targeting_string' comma separated glob strings selecting the packages that should be built. EG: "azure-keyvault,azure-mgmt-batch" or "azure-*"
+#  'BuildTargetingString' comma separated glob strings selecting the packages that should be built. EG: "azure-keyvault,azure-mgmt-batch" or "azure-*"
+#  'CandidateForRelease' Boolean indicating whether or not a release should be automatically queued after successful build.
 #  'codecov-python-repository-token' Is the codecov.io repository token.
-#  'long_running_tests' Is a boolean indicating that the long-running tests should be executed.
 
 trigger:
   - master
 
 variables:
   PythonVersion: '3.6'
+  ReleaseTag: 'RELEASE_CANDIDATE'
 
 jobs:
   - job: 'Build'
-
-    condition: or(eq(variables['long_running_tests'], False), eq(variables['long_running_tests'], ''))
 
     pool:
       vmImage: 'ubuntu-16.04'
@@ -31,11 +30,15 @@ jobs:
         displayName: 'Generate Packages'
         inputs:
           scriptPath: 'scripts/devops_tasks/build_packages.py'
-          arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(build_targeting_string)"'
+          arguments: '-d "$(Build.ArtifactStagingDirectory)" "$(BuildTargetingString)"'
 
       - script: |
           twine check $(Build.ArtifactStagingDirectory)/*
         displayName: 'Verify Readme'
+
+      - script: 'echo "##vso[build.addbuildtag]$(ReleaseTag)"'
+        displayName: 'Tag The Build'
+        condition: eq(variables['CandidateForRelease'], True)
 
       - task: PublishBuildArtifacts@1
         condition: succeededOrFailed()
@@ -44,8 +47,6 @@ jobs:
           artifactName: packages
 
   - job: 'Analyze'
-  
-    condition: or(eq(variables['long_running_tests'], False), eq(variables['long_running_tests'], ''))
 
     dependsOn:
       - 'Build'
@@ -61,7 +62,7 @@ jobs:
 
       - script: |
           pip install setuptools wheel Jinja2
-          pip install doc-warden
+          pip install doc-warden==0.3.0
           ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
         displayName: 'Verify Readmes'
 
@@ -83,9 +84,7 @@ jobs:
         inputs:
           artifactName: reports
 
-  - job: 'Generic_Tests'
-  
-    condition: or(eq(variables['long_running_tests'], False), eq(variables['long_running_tests'], ''))
+  - job: 'Test'
 
     dependsOn:
       - 'Build'
@@ -125,54 +124,32 @@ jobs:
       vmImage: '$(OSVmImage)'
 
     steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python $(PythonVersion)'
-        inputs:
-          versionSpec: '$(PythonVersion)'
-
-      - script: |
-          pip install pathlib twine codecov beautifulsoup4
-        displayName: 'Prep Environment'
-
-      - task: PythonScript@0
-        displayName: 'Setup and Run Tests'
-        inputs:
-          scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-          arguments: '"$(build_targeting_string)" --junitxml="junit/test-results.xml"'
-
-      - task: PublishTestResults@2
-        condition: succeededOrFailed()
-        inputs:
-          testResultsFiles: 'junit/test-results.xml'
-          testRunTitle: '$(OSName) Python $(PythonVersion)'
+      - template: templates/steps/archetype-sdk-client.yml
 
       - script: |
           coverage xml
-          coverage html
         displayName: 'Generate Coverage XML'
+        continueOnError: true
 
       - script: |
           codecov -t $(codecov-python-repository-token)
         displayName: 'Publish Code Cov'
         condition: ne(variables['codecov-python-repository-token'], '')
-
-      - task: PythonScript@0
-        displayName: 'Inline CSS for Cobertura'
-        inputs:
-          scriptPath: 'scripts/devops_tasks/inline_css_for_cobertura.py'
+        continueOnError: true
 
       - task: PublishCodeCoverageResults@1
         displayName: 'Publish Code Coverage to DevOps'
+        continueOnError: true
         inputs:
           codeCoverageTool: Cobertura
           summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
-          reportDirectory: '$(Build.SourcesDirectory)/htmlcov'
 
-  - job: Test_Alpha_Python
+# Run PyPy tests without coverage
+  - job: 'Test_PyPy'
 
-    timeoutInMinutes: 90
-    
-    condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
+    variables:
+      OSName: 'Linux'
+      PythonVersion: 'pypy3'
 
     dependsOn:
       - 'Build'
@@ -181,58 +158,6 @@ jobs:
       vmImage: 'ubuntu-16.04'
 
     steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python 3.7 For Build Tools'
-        inputs:
-          versionSpec: '3.7'
-
-      - script: |
-          sudo apt-get install build-essential libsqlite3-dev sqlite3 bzip2 libbz2-dev zlib1g-dev libssl-dev openssl libgdbm-dev liblzma-dev libreadline-dev libncursesw5-dev libffi-dev uuid-dev
-          cd ~/
-          git clone https://github.com/python/cpython.git
-          cd cpython
-          mkdir debug
-          cd debug
-          ../configure --enable-optimizations --prefix=$HOME
-          make install
-          cd $(Build.SourcesDirectory)
-          PATH=/home/vsts/bin:$PATH
-          python3 -m ensurepip
-          python ./scripts/devops_tasks/setup_execute_tests.py -p python3 "$(build_targeting_string)"
-        displayName: 'Setup - Run Filtered Tests "Nightly" Python'
-        continueOnError: true
-
-  - job: Test_PyPy
-
-    timeoutInMinutes: 90
-
-    condition: or(eq(variables['long_running_tests'], True), eq(variables['long_running_tests'], ''))
-    
-    dependsOn:
-      - 'Test_Alpha_Python'
-
-    pool:
-      vmImage: 'ubuntu-16.04'
-
-    steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python 3.7 For Build Tools'
-        inputs:
-          versionSpec: '3.7'
-
-      - script: |
-          pip install pathlib twine
-        displayName: 'Prep Environment'
-
-      - script: |
-          cd ~/
-          wget https://bitbucket.org/pypy/pypy/downloads/pypy3-v6.0.0-linux64.tar.bz2
-          tar xf pypy3-v6.0.0-linux64.tar.bz2
-          cd $(Build.SourcesDirectory)
-          PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
-          pypy3 -m ensurepip
-          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "$(build_targeting_string)" --disablecov
-        displayName: 'Setup and Run Filtered Tests PyPy3'
-        continueOnError: true
-
-
+      - template: templates/steps/archetype-sdk-client.yml
+        parameters:
+          coverageParam: '--disablecov'

@@ -38,6 +38,6 @@ def run_check_call(command_array, working_directory, acceptable_return_codes = [
     try:
         check_call(command_array, cwd = working_directory)
     except CalledProcessError as err:
-        print(err) #, file = sys.stderr
         if err.returncode not in acceptable_return_codes:
+            print(err) #, file = sys.stderr
             sys.exit(1)

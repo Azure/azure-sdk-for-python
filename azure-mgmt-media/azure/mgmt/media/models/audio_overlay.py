@@ -17,11 +17,11 @@ class AudioOverlay(Overlay):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param input_label: The label of the job input which is to be used as an
-     overlay. The Input must specify exactly one file. You can specify an image
-     file in JPG or PNG formats, or an audio file (such as a WAV, MP3, WMA or
-     M4A file), or a video file. See https://aka.ms/mesformats for the complete
-     list of supported audio and video file formats.
+    :param input_label: Required. The label of the job input which is to be
+     used as an overlay. The Input must specify exactly one file. You can
+     specify an image file in JPG or PNG formats, or an audio file (such as a
+     WAV, MP3, WMA or M4A file), or a video file. See https://aka.ms/mesformats
+     for the complete list of supported audio and video file formats.
     :type input_label: str
     :param start: The start position, with reference to the input video, at
      which the overlay starts. The value should be in ISO 8601 format. For
@@ -51,6 +51,7 @@ class AudioOverlay(Overlay):
     """
 
     _validation = {
+        'input_label': {'required': True},
         'odatatype': {'required': True},
     }
 
