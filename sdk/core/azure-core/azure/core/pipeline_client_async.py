@@ -25,13 +25,10 @@
 # --------------------------------------------------------------------------
 
 import logging
-import os
-import sys
 try:
     from urlparse import urljoin, urlparse
 except ImportError:
     from urllib.parse import urljoin, urlparse
-import warnings
 import xml.etree.ElementTree as ET
 
 from typing import List, Any, Dict, Union, IO, Tuple, Optional, Callable, Iterator, cast, TYPE_CHECKING  # pylint: disable=unused-import
@@ -62,7 +59,7 @@ class AsyncPipelineClient(object):
                 transport = AioHttpTransport(config, **kwargs)
             self._pipeline = self._build_pipeline(config, transport)
 
-    def _build_pipeline(self, config, transport):
+    def _build_pipeline(self, config, transport): # pylint: disable=no-self-use
         policies = [
             config.headers_policy,
             config.user_agent_policy,
@@ -74,8 +71,16 @@ class AsyncPipelineClient(object):
         ]
         return AsyncPipeline(transport, policies)
 
-    def _request(self, method, url, params, headers, content, form_content, stream_content):
-        # type: (str, str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
+    def _request(
+            self, method, # type: str
+            url, # type: str
+            params, # type: Optional[Dict[str, str]]
+            headers, # type: Optional[Dict[str, str]]
+            content, # type: Any
+            form_content, # type: Optional[Dict[str, Any]]
+            stream_content, # type: Any
+        ):
+        # type: (...) -> HttpRequest
         """Create HttpRequest object.
 
         :param str url: URL for the request.
@@ -168,7 +173,7 @@ class AsyncPipelineClient(object):
         :param dict headers: Headers
         :param dict form_content: Form content
         """
-        request = self._request('HEAD', url, params, headers, content, form_content, None)
+        request = self._request('HEAD', url, params, headers, content, form_content, stream_content)
         return request
 
     def patch(self, url, params=None, headers=None, content=None, form_content=None, stream_content=None):

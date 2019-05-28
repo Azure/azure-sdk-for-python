@@ -28,7 +28,8 @@ import abc
 import copy
 import logging
 
-from typing import TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional, Tuple, Callable, Iterator  # pylint: disable=unused-import
+from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional,  # pylint: disable=unused-import
+                    Tuple, Callable, Iterator)
 
 from azure.core.pipeline import ABC
 
@@ -48,21 +49,16 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
     def send(self, request):
         # type: (PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]
         """Mutate the request.
-
         Context content is dependent on the HttpTransport.
         """
-        pass
 
 class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     """Represents a sans I/O policy.
-
     This policy can act before the I/O, and after the I/O.
     Use this policy if the actual I/O in the middle is an implementation
     detail.
-
     Context is not available, since it's implementation dependent.
     if a policy needs a context of the Sender, it can't be universal.
-
     Example: setting a UserAgent does not need to be tied to
     sync or async implementation or specific HTTP lib
     """
@@ -71,32 +67,26 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         # type: (PipelineRequest[HTTPRequestType], Any) -> None
         """Is executed before sending the request to next policy.
         """
-        pass
 
     def on_response(self, request, response, **kwargs):
         # type: (PipelineRequest[HTTPRequestType], PipelineResponse[HTTPRequestType, HTTPResponseType], Any) -> None
         """Is executed after the request comes back from the policy.
         """
-        pass
 
-    def on_exception(self, request, **kwargs):
+    #pylint: disable=no-self-use
+    def on_exception(self, _request, **kwargs):  #pylint: disable=unused-argument
         # type: (PipelineRequest[HTTPRequestType], Any) -> bool
-        """Is executed if an exception comes back fron the following
+        """Is executed if an exception comes back from the following
         policy.
-
         Return True if the exception has been handled and should not
         be forwarded to the caller.
-
         This method is executed inside the exception handler.
         To get the exception, raise and catch it:
-
             try:
                 raise
             except MyError:
                 do_something()
-
         or use
-
             exc_type, exc_value, exc_traceback = sys.exc_info()
         """
         return False
@@ -104,10 +94,9 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
 
 class RequestHistory(object):
     """A container for an attempted request and the applicable response.
-
     This is used to document requests/responses that resulted in redirected requests.
     """
- 
+
     def __init__(self, http_request, http_response=None, error=None, context=None):
         # type: (PipelineRequest[HTTPRequestType], Exception, Optional[Dict[str, Any]]) -> None
         self.http_request = copy.deepcopy(http_request)

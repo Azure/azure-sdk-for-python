@@ -23,16 +23,19 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
-import urllib3
 from typing import Any, Callable, Optional, AsyncIterator as AsyncIteratorType
+import trio
+import urllib3
 
 import requests
-from requests.models import CONTENT_CHUNK_SIZE
 
+from azure.core.exceptions import (
+    ServiceRequestError,
+    ServiceResponseError
+)
 from .base import HttpRequest
 from .base_async import (
     AsyncHttpTransport,
@@ -40,17 +43,9 @@ from .base_async import (
     _ResponseStopIteration,
     _iterate_response_content)
 from .requests_basic import RequestsTransport, RequestsTransportResponse
-from azure.core.exceptions import (
-    ServiceRequestError,
-    ServiceResponseError,
-    raise_with_traceback
-)
 
 
 _LOGGER = logging.getLogger(__name__)
-
-
-import trio
 
 
 class TrioStreamDownloadGenerator(AsyncIterator):
