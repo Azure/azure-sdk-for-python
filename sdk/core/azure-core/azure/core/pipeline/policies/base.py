@@ -42,7 +42,7 @@ _LOGGER = logging.getLogger(__name__)
 class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An HTTP policy ABC.
 
-    Used with a synchronous pipeline.
+    Use with a synchronous pipeline.
 
     :param next: Use to process the next policy in the pipeline. Set when pipeline is
      instantiated and all policies chained.
@@ -132,9 +132,9 @@ class RequestHistory(object):
     :param http_request: The request.
     :type http_request: ~azure.core.pipeline.PipelineRequest
     :param http_response: The HTTP response.
-    :type http_response: ~azure.core.pipeline.transport.HTTPResponse
+    :type http_response: ~azure.core.pipeline.transport.HttpResponse
     :param Exception error: An error encountered during the request, or None if the response was received successfully.
-    :param dict context: A transport specific data container object containing data persisted between pipeline requests.
+    :param dict context: The pipeline context.
     """
     def __init__(self, http_request, http_response=None, error=None, context=None):
         # type: (PipelineRequest[HTTPRequestType], Exception, Optional[Dict[str, Any]]) -> None

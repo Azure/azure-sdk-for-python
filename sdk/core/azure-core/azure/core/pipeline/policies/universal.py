@@ -111,8 +111,8 @@ class UserAgentPolicy(SansIOHTTPPolicy):
         result = client.get_operation(user_agent="AnotherValue")
 
     :param str base_user_agent: Sets the base user agent value.
-    :param bool user_agent_overwrite: Overwrites User-Agent when True. Defaults to False.
-    :param bool user_agent_use_env: Gets user-agent from environment. Defaults to True.
+    :param bool user_agent_overwrite: Keyword argument that overwrites User-Agent when True. Defaults to False.
+    :param bool user_agent_use_env: Keyword argument that gets user-agent from environment. Defaults to True.
     """
     _USERAGENT = "User-Agent"
     _ENV_ADDITIONAL_USER_AGENT = 'AZURE_HTTP_USER_AGENT'
@@ -203,6 +203,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
         result = client.get_operation(logging_enable=True)
 
     :param bool logging_enable: Use to enable per operation. Defaults to False.
+     Keyword argument.
     :param bool enable_http_logger: Enables network trace logging at DEBUG level.
      Defaults to False.
     """
@@ -412,8 +413,8 @@ class ProxyPolicy(SansIOHTTPPolicy):
 
     :param dict proxies: Maps protocol or protocol and hostname to the URL
      of the proxy.
-    :param bool proxies_use_env_settings: Use proxy settings from environment.
-     Defaults to True.
+    :param bool proxies_use_env_settings: Keyword argument that uses proxy settings
+     from environment. Defaults to True.
     """
     def __init__(self, proxies=None, **kwargs):
         self.proxies = proxies

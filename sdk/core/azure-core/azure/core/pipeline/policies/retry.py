@@ -101,6 +101,7 @@ class RetryPolicy(HTTPPolicy):
             retry_on_methods=['GET']
         )
 
+    Keyword arguments:
     :param int retry_total: Total number of retries to allow. Takes precedence over other counts.
      Default value is 10.
     :param int retry_connect: How many connection-related errors to retry on.
@@ -165,6 +166,7 @@ class RetryPolicy(HTTPPolicy):
         """Formula for computing the current backoff.
 
         :param dict settings: The retry settings.
+        :return: The current backoff value.
         :rtype: float
         """
         # We want to consider only the last consecutive errors sequence (Ignore redirects).

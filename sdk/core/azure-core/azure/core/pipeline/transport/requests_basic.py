@@ -51,8 +51,8 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
 
     :param HttpRequest request: The request.
     :param requests_response: The object returned from the HTTP library.
-    :param int block_size: Size in bytes. 
-    :param int status_code: The status code of the response
+    :param int block_size: Size in bytes.
+    :param int status_code: The status code of the response.
     :param dict headers: The request headers.
     :param str reason: Status reason of response.
     :param str content_type: The content type.

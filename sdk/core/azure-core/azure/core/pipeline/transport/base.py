@@ -220,7 +220,8 @@ class _HttpResponseBase(object):
     will provide async ways to access the body
     Full in-memory using "body" as bytes.
 
-    :param HttpRequest request: The request.
+    :param request: The request.
+    :type request: ~azure.core.pipeline.transport.HttpRequest
     :param internal_response: The object returned from the HTTP library.
     :param int status_code: The status code of the response
     :param dict headers: The request headers.

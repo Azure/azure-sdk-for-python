@@ -52,6 +52,7 @@ class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):
         from azure.core.pipeline.policies import AsyncRedirectPolicy
         config.redirect_policy = AsyncRedirectPolicy.no_redirects()
 
+    Keyword arguments:
     :param redirects_allow: Whether the client allows redirects. Defaults to True.
     :param redirect_max: The maximum allowed redirects. Defaults to 30.
     """

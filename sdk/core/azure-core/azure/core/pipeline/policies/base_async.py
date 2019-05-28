@@ -52,7 +52,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
     """An async HTTP policy ABC.
 
-    Used with an asynchronous pipeline.
+    Use with an asynchronous pipeline.
 
     :param next: Use to process the next policy in the pipeline. Set when pipeline
      is instantiated and all policies chained.

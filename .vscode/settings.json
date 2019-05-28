@@ -1,0 +1,5 @@
+{
+    "git.ignoreLimitWarning": true,
+    "python.unitTest.pyTestArgs": [],
+    "python.unitTest.pyTestEnabled": true
+}

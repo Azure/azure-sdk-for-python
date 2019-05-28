@@ -63,6 +63,7 @@ class RedirectPolicy(HTTPPolicy):
         from azure.core.pipeline.policies import RedirectPolicy
         config.redirect_policy = RedirectPolicy.no_redirects()
 
+    Keyword arguments:
     :param redirects_allow: Whether the client allows redirects. Defaults to True.
     :param redirect_max: The maximum allowed redirects. Defaults to 30.
     """

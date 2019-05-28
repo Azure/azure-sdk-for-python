@@ -95,6 +95,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):
             retry_on_methods=['GET']
         )
 
+    Keyword arguments:
     :param int retry_total: Total number of retries to allow. Takes precedence over other counts.
      Default value is 10.
     :param int retry_connect: How many connection-related errors to retry on.
