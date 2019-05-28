@@ -25,9 +25,10 @@
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
 import logging
+from typing import Iterator, Optional, Any, Union
+import urllib3 # type: ignore
+from urllib3.util.retry import Retry # type: ignore
 import requests
-import urllib3
-from urllib3.util.retry import Retry
 
 
 from azure.core.configuration import Configuration
@@ -35,6 +36,7 @@ from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError
 )
+from . import HttpRequest # pylint: disable=unused-import
 
 from .base import (
     HttpTransport,
@@ -107,7 +109,7 @@ class StreamDownloadGenerator(object):
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
 
     def stream_download(self):
-        # type: (Optional[int], Optional[Callable]) -> Iterator[bytes]
+        # type: () -> Iterator[bytes]
         """Generator for streaming request body data."""
         return StreamDownloadGenerator(self.internal_response, self.block_size)
 
@@ -127,7 +129,7 @@ class RequestsTransport(HttpTransport):
     _protocols = ['http://', 'https://']
 
     def __init__(self, configuration=None, session=None, session_owner=True):
-        # type: (Optional[requests.Session]) -> None
+        # type: (Optional[Configuration], Optional[requests.Session], bool) -> None
         self._session_owner = session_owner
         self.config = configuration or Configuration()
         self.session = session
@@ -164,7 +166,7 @@ class RequestsTransport(HttpTransport):
             self._session_owner = False
             self.session = None
 
-    def send(self, request, **kwargs):
+    def send(self, request, **kwargs): # type: ignore
         # type: (HttpRequest, Any) -> HttpResponse
         """Send request object according to configuration.
 
@@ -176,12 +178,12 @@ class RequestsTransport(HttpTransport):
         """
         self.open()
         response = None
-        error = None
+        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
         if self.config.proxy_policy and 'proxies' not in kwargs:
             kwargs['proxies'] = self.config.proxy_policy.proxies
 
         try:
-            response = self.session.request(
+            response = self.session.request(  # type: ignore
                 request.method,
                 request.url,
                 headers=request.headers,

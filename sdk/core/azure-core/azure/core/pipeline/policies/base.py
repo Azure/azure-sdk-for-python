@@ -31,7 +31,7 @@ import logging
 from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional,  # pylint: disable=unused-import
                     Tuple, Callable, Iterator)
 
-from azure.core.pipeline import ABC
+from azure.core.pipeline import ABC, PipelineRequest, PipelineResponse
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -39,7 +39,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 _LOGGER = logging.getLogger(__name__)
 
 
-class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
+class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]): # type: ignore
     """An HTTP policy ABC.
     """
     def __init__(self):
@@ -47,7 +47,7 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):
 
     @abc.abstractmethod
     def send(self, request):
-        # type: (PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]
+        # type: (PipelineRequest) -> PipelineResponse
         """Mutate the request.
         Context content is dependent on the HttpTransport.
         """
@@ -64,18 +64,18 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     """
 
     def on_request(self, request, **kwargs):
-        # type: (PipelineRequest[HTTPRequestType], Any) -> None
+        # type: (PipelineRequest, Any) -> None
         """Is executed before sending the request to next policy.
         """
 
     def on_response(self, request, response, **kwargs):
-        # type: (PipelineRequest[HTTPRequestType], PipelineResponse[HTTPRequestType, HTTPResponseType], Any) -> None
+        # type: (PipelineRequest, PipelineResponse, Any) -> None
         """Is executed after the request comes back from the policy.
         """
 
     #pylint: disable=no-self-use
     def on_exception(self, _request, **kwargs):  #pylint: disable=unused-argument
-        # type: (PipelineRequest[HTTPRequestType], Any) -> bool
+        # type: (PipelineRequest, Any) -> bool
         """Is executed if an exception comes back from the following
         policy.
         Return True if the exception has been handled and should not
@@ -98,7 +98,7 @@ class RequestHistory(object):
     """
 
     def __init__(self, http_request, http_response=None, error=None, context=None):
-        # type: (PipelineRequest[HTTPRequestType], Exception, Optional[Dict[str, Any]]) -> None
+        # type: (PipelineRequest, Optional[PipelineResponse], Exception, Optional[Dict[str, Any]]) -> None
         self.http_request = copy.deepcopy(http_request)
         self.http_response = http_response
         self.error = error

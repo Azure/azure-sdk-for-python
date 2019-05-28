@@ -27,8 +27,8 @@ import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
-from typing import Any, AsyncIterator as AsyncIteratorType
-import urllib3
+from typing import Any, Union, Optional, AsyncIterator as AsyncIteratorType
+import urllib3 # type: ignore
 
 import requests
 
@@ -73,14 +73,14 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
         self.open()
         loop = kwargs.get("loop", _get_running_loop())
         response = None
-        error = None
+        error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
         if self.config.proxy_policy and 'proxies' not in kwargs:
             kwargs['proxies'] = self.config.proxy_policy.proxies
         try:
             response = await loop.run_in_executor(
                 None,
                 functools.partial(
-                    self.session.request,
+                    self.session.request, # type: ignore
                     request.method,
                     request.url,
                     headers=request.headers,
@@ -149,8 +149,8 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
                 raise
 
 
-class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):
+class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse): # type: ignore
 
-    def stream_download(self) -> AsyncIteratorType[bytes]:
+    def stream_download(self) -> AsyncIteratorType[bytes]: # type: ignore
         """Generator for streaming request body data."""
-        return AsyncioStreamDownloadGenerator(self.internal_response, self.block_size)
+        return AsyncioStreamDownloadGenerator(self.internal_response, self.block_size) # type: ignore

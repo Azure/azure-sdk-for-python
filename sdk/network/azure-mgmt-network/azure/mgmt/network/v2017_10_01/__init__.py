@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .network_management_client import NetworkManagementClient
-from .version import VERSION
+from ._configuration import NetworkManagementClientConfiguration
+from ._network_management_client import NetworkManagementClient
+__all__ = ['NetworkManagementClient', 'NetworkManagementClientConfiguration']
 
-__all__ = ['NetworkManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

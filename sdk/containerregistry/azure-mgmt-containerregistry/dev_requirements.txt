@@ -1,0 +1,2 @@
+-e ../../../azure-sdk-tools
+-e ../../../azure-mgmt-storage
