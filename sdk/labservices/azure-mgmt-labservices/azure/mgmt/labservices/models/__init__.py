@@ -68,8 +68,8 @@ try:
     from .register_payload_py3 import RegisterPayload
     from .reset_password_payload_py3 import ResetPasswordPayload
     from .resource_py3 import Resource
-    from .size_configuration_properties_fragment_py3 import SizeConfigurationPropertiesFragment
     from .user_py3 import User
+    from .size_configuration_properties_fragment_py3 import SizeConfigurationPropertiesFragment
     from .user_fragment_py3 import UserFragment
 except (SyntaxError, ImportError):
     from .add_users_payload import AddUsersPayload
@@ -130,8 +130,8 @@ except (SyntaxError, ImportError):
     from .register_payload import RegisterPayload
     from .reset_password_payload import ResetPasswordPayload
     from .resource import Resource
-    from .size_configuration_properties_fragment import SizeConfigurationPropertiesFragment
     from .user import User
+    from .size_configuration_properties_fragment import SizeConfigurationPropertiesFragment
     from .user_fragment import UserFragment
 from .operation_metadata_paged import OperationMetadataPaged
 from .lab_account_paged import LabAccountPaged
@@ -207,8 +207,8 @@ __all__ = [
     'RegisterPayload',
     'ResetPasswordPayload',
     'Resource',
-    'SizeConfigurationPropertiesFragment',
     'User',
+    'SizeConfigurationPropertiesFragment',
     'UserFragment',
     'OperationMetadataPaged',
     'LabAccountPaged',
