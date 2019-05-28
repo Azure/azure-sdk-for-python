@@ -250,12 +250,12 @@ class KeyClientTests(KeyVaultTestCase):
         keys = {}
 
         # create keys to recover
-        for i in range(0, self.list_test_size):
+        for i in range(self.list_test_size):
             key_name = self.get_resource_name("keyrec{}".format((i)))
             keys[key_name] = client.create_key(key_name, "RSA")
 
         # create keys to purge
-        for i in range(0, self.list_test_size):
+        for i in range(self.list_test_size):
             key_name = self.get_resource_name("keyprg{}".format((i)))
             keys[key_name] = client.create_key(key_name, "RSA")
 

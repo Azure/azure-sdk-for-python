@@ -397,7 +397,7 @@ class KeyClient:
         pages = self._client.get_keys(self._vault_url, maxresults=max_page_size)
         return (KeyBase._from_key_item(item) for item in pages)
 
-    def list_versions(self, name, **kwargs):
+    def list_key_versions(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> Generator[KeyBase]
         """Retrieves a list of individual key versions with the same key name.
         The full key identifier, attributes, and tags are provided in the
@@ -411,14 +411,14 @@ class KeyClient:
 
         Example:
             .. literalinclude:: ../tests/test_examples_keys.py
-                :start-after: [START list_versions]
-                :end-before: [END list_versions]
+                :start-after: [START list_key_versions]
+                :end-before: [END list_key_versions]
                 :language: python
                 :dedent: 4
                 :caption: List all versions of the specified key
         """
         max_page_size = kwargs.get("max_page_size", None)
-        pages = self._client.get_versions(self._vault_url, name, maxresults=max_page_size)
+        pages = self._client.get_key_versions(self._vault_url, name, maxresults=max_page_size)
         return (KeyBase._from_key_item(item) for item in pages)
 
     def purge_deleted_key(self, name, **kwargs):
@@ -679,8 +679,7 @@ class KeyClient:
                 :caption: Creates a key in the key vault
         """
         bundle = self._client.wrap_key(self.vault_url, name, key_version=version, algorithm=algorithm, value=value)
-        wrapped_key = self.KeyOperationResult(id=bundle.kid, value=bundle.result)
-        return wrapped_key
+        return self.KeyOperationResult(id=bundle.kid, value=bundle.result)
 
     def unwrap_key(self, name, version, algorithm, value, **kwargs):
         # type: (str, str, str, bytes, Optional[datetime], Mapping[str, Any]) -> Key
@@ -717,5 +716,4 @@ class KeyClient:
                 :caption: Creates a key in the key vault
         """
         bundle = self._client.unwrap_key(self.vault_url, name, key_version=version, algorithm=algorithm, value=value)
-        unwrapped_key = self.KeyOperationResult(id=bundle.kid, value=bundle.result)
-        return unwrapped_key
+        return self.KeyOperationResult(id=bundle.kid, value=bundle.result)
