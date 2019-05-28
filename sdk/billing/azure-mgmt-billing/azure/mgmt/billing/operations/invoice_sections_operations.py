@@ -432,7 +432,7 @@ class InvoiceSectionsOperations(object):
         body_content = self._serialize.body(parameters, 'InvoiceSection')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
