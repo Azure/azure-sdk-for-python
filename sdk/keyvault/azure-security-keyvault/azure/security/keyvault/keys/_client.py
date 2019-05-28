@@ -643,7 +643,7 @@ class KeyClient:
         return Key._from_key_bundle(bundle)
 
     def wrap_key(self, name, version, algorithm, value, **kwargs):
-        # type: (str, str, str, bytes, Optional[datetime], Mapping[str, Any]) -> Key
+        # type: (str, str, str, bytes, Mapping[str, Any]) -> Key
         """Wraps a symmetric key using a specified key.
 
         The WRAP operation supports encryption of a symmetric key using a key
@@ -682,7 +682,7 @@ class KeyClient:
         return self.KeyOperationResult(id=bundle.kid, value=bundle.result)
 
     def unwrap_key(self, name, version, algorithm, value, **kwargs):
-        # type: (str, str, str, bytes, Optional[datetime], Mapping[str, Any]) -> Key
+        # type: (str, str, str, bytes, Mapping[str, Any]) -> Key
         """Unwraps a symmetric key using the specified key that was initially used
         for wrapping that key.
 
