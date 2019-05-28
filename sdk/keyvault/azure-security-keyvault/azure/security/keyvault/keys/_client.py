@@ -41,15 +41,7 @@ class KeyClient:
 
     @staticmethod
     def create_config(**kwargs):
-        # type: (Any) -> Configuration
-        """Creates a default configuration for KeyClient.
-        """
-        config = Configuration(**kwargs)
-        config.user_agent_policy = UserAgentPolicy("KeyClient", **kwargs)
-        config.headers_policy = None
-        config.retry_policy = RetryPolicy(**kwargs)
-        config.redirect_policy = RedirectPolicy(**kwargs)
-        return config
+        pass  # TODO
 
     def __init__(self, vault_url, credentials, config=None, api_version=None, **kwargs):
         # type: (str, Any, Configuration, Optional[str], Mapping[str, Any]) -> None

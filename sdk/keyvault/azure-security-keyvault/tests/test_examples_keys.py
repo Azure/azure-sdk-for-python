@@ -171,7 +171,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         try:
             # [START list_keys]
 
-            # list keys
+            # get an iteratpr of keys
             keys = key_client.list_keys()
 
             for key in keys:
@@ -185,7 +185,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         try:
             # [START list_key_versions]
-            # gets a list of all versions of a key
+            # get an iterator of all versions of a key
             key_versions = key_client.list_key_versions("key-name")
 
             for key in key_versions:
@@ -200,7 +200,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         try:
             # [START list_deleted_keys]
 
-            # get a list of deleted keys (requires soft-delete enabled for the vault)
+            # get an iterator of deleted keys (requires soft-delete enabled for the vault)
             deleted_keys = key_client.list_deleted_keys()
 
             for key in deleted_keys:
