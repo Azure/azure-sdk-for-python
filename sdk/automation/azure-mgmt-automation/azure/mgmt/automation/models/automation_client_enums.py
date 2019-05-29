@@ -99,6 +99,7 @@ class ScheduleFrequency(str, Enum):
     hour = "Hour"
     week = "Week"
     month = "Month"
+    minute = "Minute"  #: The minimum allowed interval for Minute schedules is 15 minutes.
 
 
 class OperatingSystemType(str, Enum):
