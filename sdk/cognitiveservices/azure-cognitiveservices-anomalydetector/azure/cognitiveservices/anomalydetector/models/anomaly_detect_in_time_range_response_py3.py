@@ -12,8 +12,8 @@
 from msrest.serialization import Model
 
 
-class AnomalyDetectInTimeRangeReponse(Model):
-    """AnomalyDetectInTimeRangeReponse.
+class AnomalyDetectInTimeRangeResponse(Model):
+    """AnomalyDetectInTimeRangeResponse.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -85,14 +85,14 @@ class AnomalyDetectInTimeRangeReponse(Model):
         'is_positive_anomaly': {'key': 'isPositiveAnomaly', 'type': '[bool]'},
     }
 
-    def __init__(self, **kwargs):
-        super(AnomalyDetectInTimeRangeReponse, self).__init__(**kwargs)
-        self.period = kwargs.get('period', None)
-        self.timestamps = kwargs.get('timestamps', None)
-        self.values = kwargs.get('values', None)
-        self.expected_values = kwargs.get('expected_values', None)
-        self.upper_margins = kwargs.get('upper_margins', None)
-        self.lower_margins = kwargs.get('lower_margins', None)
-        self.is_anomaly = kwargs.get('is_anomaly', None)
-        self.is_negative_anomaly = kwargs.get('is_negative_anomaly', None)
-        self.is_positive_anomaly = kwargs.get('is_positive_anomaly', None)
+    def __init__(self, *, period: int, timestamps, values, expected_values, upper_margins, lower_margins, is_anomaly, is_negative_anomaly, is_positive_anomaly, **kwargs) -> None:
+        super(AnomalyDetectInTimeRangeResponse, self).__init__(**kwargs)
+        self.period = period
+        self.timestamps = timestamps
+        self.values = values
+        self.expected_values = expected_values
+        self.upper_margins = upper_margins
+        self.lower_margins = lower_margins
+        self.is_anomaly = is_anomaly
+        self.is_negative_anomaly = is_negative_anomaly
+        self.is_positive_anomaly = is_positive_anomaly

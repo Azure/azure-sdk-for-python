@@ -317,10 +317,10 @@ class TimeSeriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AnomalyDetectInTimeRangeReponse or ClientRawResponse if
+        :return: AnomalyDetectInTimeRangeResponse or ClientRawResponse if
          raw=true
         :rtype:
-         ~azure.cognitiveservices.anomalydetector.models.AnomalyDetectInTimeRangeReponse
+         ~azure.cognitiveservices.anomalydetector.models.AnomalyDetectInTimeRangeResponse
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
@@ -356,7 +356,7 @@ class TimeSeriesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AnomalyDetectInTimeRangeReponse', response)
+            deserialized = self._deserialize('AnomalyDetectInTimeRangeResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -387,10 +387,10 @@ class TimeSeriesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AnomalyDetectInTimeRangeReponse or ClientRawResponse if
+        :return: AnomalyDetectInTimeRangeResponse or ClientRawResponse if
          raw=true
         :rtype:
-         ~azure.cognitiveservices.anomalydetector.models.AnomalyDetectInTimeRangeReponse
+         ~azure.cognitiveservices.anomalydetector.models.AnomalyDetectInTimeRangeResponse
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
@@ -426,7 +426,7 @@ class TimeSeriesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AnomalyDetectInTimeRangeReponse', response)
+            deserialized = self._deserialize('AnomalyDetectInTimeRangeResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -624,7 +624,7 @@ class TimeSeriesOperations(object):
         """List TimeSeriesGroups that a TimeSeries belongs to.
 
         List TimeSeriesGroups that a TimeSeries belongs to. One TimeSeries
-        could belong to multiple TimeSereiesGroups.
+        could belong to multiple TimeSeriesGroups.
 
         :param time_series_id: Unique id for time series.
         :type time_series_id: str

@@ -35,9 +35,9 @@ class TimeSeriesGroupOperations(object):
 
     def get(
             self, time_series_group_id, custom_headers=None, raw=False, **operation_config):
-        """Get meta infomation of the specified time series group.
+        """Get meta information of the specified time series group.
 
-        This operation fetches detailed infomation about the specified time
+        This operation fetches detailed information about the specified time
         series group.
 
         :param time_series_group_id: Unique id for time series group.
@@ -251,10 +251,10 @@ class TimeSeriesGroupOperations(object):
 
     def inconsistency_detect(
             self, time_series_group_id, body, custom_headers=None, raw=False, **operation_config):
-        """Detect inconsistent time series from a group of similiar time series.
+        """Detect inconsistent time series from a group of similar time series.
 
         This operation helps detect the inconsistent series among a group
-        series with similiar trend.
+        series with similar trend.
 
         :param time_series_group_id: Unique id for time series group.
         :type time_series_group_id: str
@@ -316,10 +316,10 @@ class TimeSeriesGroupOperations(object):
 
     def inconsistency_query(
             self, time_series_group_id, begin, end, custom_headers=None, raw=False, **operation_config):
-        """Query time series properties from a group of similiar time series.
+        """Query time series properties from a group of similar time series.
 
         This operation helps query properties of one group, for example the
-        inconsistent series among a group series with similiar trend.
+        inconsistent series among a group series with similar trend.
 
         :param time_series_group_id: Unique id for time series group.
         :type time_series_group_id: str

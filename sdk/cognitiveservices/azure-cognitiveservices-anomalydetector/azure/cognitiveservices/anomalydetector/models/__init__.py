@@ -31,7 +31,7 @@ try:
     from .time_series_query_request_py3 import TimeSeriesQueryRequest
     from .time_series_query_response_py3 import TimeSeriesQueryResponse
     from .anomaly_detect_in_time_range_request_py3 import AnomalyDetectInTimeRangeRequest
-    from .anomaly_detect_in_time_range_reponse_py3 import AnomalyDetectInTimeRangeReponse
+    from .anomaly_detect_in_time_range_response_py3 import AnomalyDetectInTimeRangeResponse
     from .label_request_py3 import LabelRequest
 except (SyntaxError, ImportError):
     from .api_error import APIError, APIErrorException
@@ -55,7 +55,7 @@ except (SyntaxError, ImportError):
     from .time_series_query_request import TimeSeriesQueryRequest
     from .time_series_query_response import TimeSeriesQueryResponse
     from .anomaly_detect_in_time_range_request import AnomalyDetectInTimeRangeRequest
-    from .anomaly_detect_in_time_range_reponse import AnomalyDetectInTimeRangeReponse
+    from .anomaly_detect_in_time_range_response import AnomalyDetectInTimeRangeResponse
     from .label_request import LabelRequest
 from .anomaly_detector_client_enums import (
     Granularity,
@@ -86,7 +86,7 @@ __all__ = [
     'TimeSeriesQueryRequest',
     'TimeSeriesQueryResponse',
     'AnomalyDetectInTimeRangeRequest',
-    'AnomalyDetectInTimeRangeReponse',
+    'AnomalyDetectInTimeRangeResponse',
     'LabelRequest',
     'Granularity',
     'TimeSeriesField',
