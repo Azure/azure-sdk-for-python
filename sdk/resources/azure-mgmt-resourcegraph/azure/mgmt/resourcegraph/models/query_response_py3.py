@@ -33,7 +33,7 @@ class QueryResponse(Model):
      current request) to retrieve the next page of data.
     :type skip_token: str
     :param data: Required. Query output in tabular format.
-    :type data: ~azure.mgmt.resourcegraph.models.Table
+    :type data: object
     :param facets: Query facets.
     :type facets: list[~azure.mgmt.resourcegraph.models.Facet]
     """
@@ -50,7 +50,7 @@ class QueryResponse(Model):
         'count': {'key': 'count', 'type': 'long'},
         'result_truncated': {'key': 'resultTruncated', 'type': 'ResultTruncated'},
         'skip_token': {'key': '$skipToken', 'type': 'str'},
-        'data': {'key': 'data', 'type': 'Table'},
+        'data': {'key': 'data', 'type': 'object'},
         'facets': {'key': 'facets', 'type': '[Facet]'},
     }
 

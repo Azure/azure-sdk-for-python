@@ -14,10 +14,10 @@ try:
     from .facet_request_options_py3 import FacetRequestOptions
     from .facet_request_py3 import FacetRequest
     from .query_request_py3 import QueryRequest
-    from .column_py3 import Column
-    from .table_py3 import Table
     from .facet_py3 import Facet
     from .query_response_py3 import QueryResponse
+    from .column_py3 import Column
+    from .table_py3 import Table
     from .facet_result_py3 import FacetResult
     from .error_details_py3 import ErrorDetails
     from .facet_error_py3 import FacetError
@@ -30,10 +30,10 @@ except (SyntaxError, ImportError):
     from .facet_request_options import FacetRequestOptions
     from .facet_request import FacetRequest
     from .query_request import QueryRequest
-    from .column import Column
-    from .table import Table
     from .facet import Facet
     from .query_response import QueryResponse
+    from .column import Column
+    from .table import Table
     from .facet_result import FacetResult
     from .error_details import ErrorDetails
     from .facet_error import FacetError
@@ -43,6 +43,7 @@ except (SyntaxError, ImportError):
     from .operation import Operation
 from .operation_paged import OperationPaged
 from .resource_graph_client_enums import (
+    ResultFormat,
     FacetSortOrder,
     ResultTruncated,
     ColumnDataType,
@@ -53,10 +54,10 @@ __all__ = [
     'FacetRequestOptions',
     'FacetRequest',
     'QueryRequest',
-    'Column',
-    'Table',
     'Facet',
     'QueryResponse',
+    'Column',
+    'Table',
     'FacetResult',
     'ErrorDetails',
     'FacetError',
@@ -65,6 +66,7 @@ __all__ = [
     'OperationDisplay',
     'Operation',
     'OperationPaged',
+    'ResultFormat',
     'FacetSortOrder',
     'ResultTruncated',
     'ColumnDataType',
