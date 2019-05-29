@@ -24,6 +24,22 @@ class EntityQuery(Resource):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
+    :param query_template: The template query string to be parsed and
+     formatted
+    :type query_template: str
+    :param input_entity_type: The type of the query's source entity
+    :type input_entity_type: str
+    :param input_fields: List of the fields of the source entity that are
+     required to run the query
+    :type input_fields: list[str]
+    :param output_entity_types: List of the desired output types to be
+     constructed from the result
+    :type output_entity_types: list[str]
+    :param data_sources: List of the data sources that are required to run the
+     query
+    :type data_sources: list[str]
+    :param display_name: The query display name
+    :type display_name: str
     """
 
     _validation = {
@@ -36,7 +52,19 @@ class EntityQuery(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'query_template': {'key': 'properties.queryTemplate', 'type': 'str'},
+        'input_entity_type': {'key': 'properties.inputEntityType', 'type': 'str'},
+        'input_fields': {'key': 'properties.inputFields', 'type': '[str]'},
+        'output_entity_types': {'key': 'properties.outputEntityTypes', 'type': '[str]'},
+        'data_sources': {'key': 'properties.dataSources', 'type': '[str]'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(EntityQuery, self).__init__(**kwargs)
+        self.query_template = kwargs.get('query_template', None)
+        self.input_entity_type = kwargs.get('input_entity_type', None)
+        self.input_fields = kwargs.get('input_fields', None)
+        self.output_entity_types = kwargs.get('output_entity_types', None)
+        self.data_sources = kwargs.get('data_sources', None)
+        self.display_name = kwargs.get('display_name', None)
