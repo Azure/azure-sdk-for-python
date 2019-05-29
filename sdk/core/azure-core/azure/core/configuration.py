@@ -44,6 +44,7 @@ class Configuration(object):
                 # config to interact with the service
                 config = Configuration(**kwargs)
                 config.headers_policy = HeadersPolicy({"CustomHeader": "Value"}, **kwargs)
+                config.authentication_policy = BearerTokenCredentialPolicy(credential, **kwargs)
                 config.user_agent_policy = UserAgentPolicy("ServiceUserAgentValue", **kwargs)
                 config.retry_policy = RetryPolicy(**kwargs)
                 config.redirect_policy = RedirectPolicy(**kwargs)
@@ -57,7 +58,7 @@ class Configuration(object):
                 policies = [
                     config.user_agent_policy,
                     config.headers_policy,
-                    credentials,
+                    config.authentication_policy,
                     ContentDecodePolicy(),
                     config.redirect_policy,
                     config.retry_policy,
@@ -75,6 +76,8 @@ class Configuration(object):
     :param logging_policy: Provides configuration parameters for logging.
     :param user_agent_policy: Provides configuration parameters to append custom values to the
      User-Agent header.
+    :param authentication_policy: Provides configuration parameters for adding a bearer token Authorization
+     header to requests.
     :param transport: The Http Transport type. E.g. RequestsTransport, AsyncioRequestsTransport,
      TrioRequestsTransport, AioHttpTransport.
     """
@@ -133,12 +136,12 @@ class ConnectionConfiguration(object):
         foo_config.connection.cert = None
         foo_config.connection.data_block_size = 4096
 
-    :param int connection_timeout: The connect and read timeout value, in seconds. Default value is 100.
+    :param int connection_timeout: The connect and read timeout value. Defaults to 100 seconds.
     :param bool connection_verify: SSL certificate verification. Enabled by default. Set to False to disable,
      alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs.
     :param str connection_cert: Client-side certificates. You can specify a local cert to use as client side
      certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths.
-    :param int connection_data_block_size: The block size of data sent over the connection. Defaults to 4096.
+    :param int connection_data_block_size: The block size of data sent over the connection. Defaults to 4096 bytes.
     """
 
     def __init__(self, **kwargs):

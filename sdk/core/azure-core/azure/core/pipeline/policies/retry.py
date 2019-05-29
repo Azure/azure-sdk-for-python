@@ -163,7 +163,7 @@ class RetryPolicy(HTTPPolicy):
         }
 
     def get_backoff_time(self, settings):
-        """Formula for computing the current backoff.
+        """Returns the current backoff time.
 
         :param dict settings: The retry settings.
         :return: The current backoff value.

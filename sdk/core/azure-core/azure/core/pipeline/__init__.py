@@ -59,7 +59,7 @@ class PipelineContext(dict):
     the pipeline.
 
     :param transport: The HTTP transport type.
-    :param dict options: Developer-defined keyword arguments.
+    :param kwargs: Developer-defined keyword arguments.
     """
     def __init__(self, transport, **kwargs): #pylint: disable=super-init-not-called
         self.transport = transport

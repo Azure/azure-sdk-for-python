@@ -60,8 +60,8 @@ def _get_running_loop():
 
 #pylint: disable=too-many-ancestors
 class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
-    """Identical implementation as the synchronous RequestsTrasport wrapped
-     in an asynchronous using the built-in asyncio event loop.
+    """Identical implementation as the synchronous RequestsTransport wrapped in a class with
+     asynchronous methods. Uses the built-in asyncio event loop.
     """
     async def __aenter__(self):
         return super(AsyncioRequestsTransport, self).__enter__()

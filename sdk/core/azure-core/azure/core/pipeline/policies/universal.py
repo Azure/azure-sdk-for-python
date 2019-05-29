@@ -412,7 +412,7 @@ class ProxyPolicy(SansIOHTTPPolicy):
 
         # Examples
         config.proxy_policy.proxies = {'http': 'foo.bar:3128'}
-        config.proxy_policy.proxies= {'http://host.name': 'foo.bar:4012'}
+        config.proxy_policy.proxies = {'http://host.name': 'foo.bar:4012'}
 
     :param dict proxies: Maps protocol or protocol and hostname to the URL
      of the proxy.

@@ -67,17 +67,18 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]): # type: ignor
 class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     """Represents a sans I/O policy.
 
-    If a policy just modifies or annotates the request based on the HTTP
-    specification, it's then a subclass of SansIOHTTPPolicy and will work
-    in either Pipeline or AsyncPipeline context. This is a simple abstract
-    class, that can act before the request is done, or after.
+    SansIOHTTPPolicy is a base class for policies that only modify or
+    mutate a request based on the HTTP specification, and do no depend
+    on the specifics of any particular transport. SansIOHTTPPolicy
+    subclasses will function in either a Pipeline or an AsyncPipeline,
+    and can act either before the request is done, or after.
     """
 
     def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
-        """Is executed before sending the request to next policy.
+        """Is executed before sending the request from next policy.
 
-        :param request: Request to be modified before sent to next policy.
+        :param request: Request to be modified before sent from next policy.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
 
@@ -94,20 +95,20 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     #pylint: disable=no-self-use
     def on_exception(self, _request, **kwargs):  #pylint: disable=unused-argument
         # type: (PipelineRequest, Any) -> bool
-        """Is executed if an exception is raised while executing this policy.
+        """Is executed if an exception is raised while executing the next policy.
 
-        Return True if the exception has been handled and should not
-        be forwarded to the caller.
+        Developer can optionally implement this method to return True
+        if the exception has been handled and should not be forwarded to the caller.
 
         This method is executed inside the exception handler.
-        To get the exception, raise and catch it:
 
         .. code-block:: python
 
             try:
-                raise
-            except MyError:
                 do_something()
+            except MyError:
+                if not policy.on_exception(request):
+                    raise               
 
         or use
 
@@ -117,8 +118,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
 
         :param request: The Pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
-        :return: True if exception has been handled. False if exception is
-         forwarded to the caller.
+        :return: False.
         :rtype: bool
         """
         return False
