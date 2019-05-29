@@ -95,7 +95,7 @@ class EventHubClientAbstract(object):
 
     """
 
-    def __init__(self, host, event_hub_path, credentials, **kwargs):
+    def __init__(self, host, event_hub_path, credential, **kwargs):
         """
         Constructs a new EventHubClient with the given address URL.
 
@@ -128,29 +128,22 @@ class EventHubClientAbstract(object):
         self.address.hostname = host
         self.address.path = "/" + event_hub_path if event_hub_path else ""
         self._auth_config = {}
-        self.credentials = credentials
-        if isinstance(credentials, SASTokenCredentials):
-            self.sas_token = credentials.token
-        elif isinstance(credentials, SharedKeyCredentials):
-            self.username = credentials.policy
-            self.password = credentials.key
+        self.credential = credential
+        if isinstance(credential, SASTokenCredentials):
+            self.sas_token = credential.token
+        elif isinstance(credential, SharedKeyCredentials):
+            self.username = credential.policy
+            self.password = credential.key
             self._auth_config['username'] = self.username
             self._auth_config['password'] = self.password
         else:
-            self.aad_credential = credentials
+            self.aad_credential = credential
 
         self.host = host
-        #self.eh_name = self.address.path.lstrip('/')
         self.eh_name = event_hub_path
-        # self.http_proxy = kwargs.get("http_proxy")
         self.keep_alive = kwargs.get("keep_alive", 30)
         self.auto_reconnect = kwargs.get("auto_reconnect", True)
-        # self.mgmt_target = "amqps://{}/{}".format(self.address.hostname, self.eh_name)
         self.mgmt_target = "amqps://{}/{}".format(self.host, self.eh_name)
-        # url_username = unquote_plus(self.address.username) if self.address.username else None
-        # username = username or url_username
-        # url_password = unquote_plus(self.address.password) if self.address.password else None
-        # password = password or url_password
         self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
         self.get_auth = functools.partial(self._create_auth)
         self.config = Configuration(**kwargs)

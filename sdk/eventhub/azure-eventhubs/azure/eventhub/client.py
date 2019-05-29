@@ -62,7 +62,7 @@ class EventHubClient(EventHubClientAbstract):
         auth_timeout = self.config.auth_timeout
 
         # TODO: the following code can be refactored to create auth from classes directly instead of using if-else
-        if isinstance(self.credentials, SharedKeyCredentials):
+        if isinstance(self.credential, SharedKeyCredentials):
             username = username or self._auth_config['username']
             password = password or self._auth_config['password']
             if "@sas.root" in username:
@@ -72,7 +72,7 @@ class EventHubClient(EventHubClientAbstract):
                 self.auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
                 transport_type=transport_type)
 
-        elif isinstance(self.credentials, SASTokenCredentials):
+        elif isinstance(self.credential, SASTokenCredentials):
             token = self.sas_token() if callable(self.sas_token) else self.sas_token
             try:
                 expiry = int(parse_sas_token(token)['se'])
@@ -86,7 +86,7 @@ class EventHubClient(EventHubClientAbstract):
                 transport_type=transport_type)
 
         else:  # Azure credential
-            get_jwt_token = functools.partial(self.credentials.get_token,
+            get_jwt_token = functools.partial(self.credential.get_token,
                                               ['https://eventhubs.azure.net//.default'])
             return authentication.JWTTokenAuth(self.auth_uri, self.auth_uri,
                                                get_jwt_token, http_proxy=http_proxy,

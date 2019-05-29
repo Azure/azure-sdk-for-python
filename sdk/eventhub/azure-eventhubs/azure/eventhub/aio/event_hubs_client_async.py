@@ -56,7 +56,7 @@ class EventHubClient(EventHubClientAbstract):
         transport_type = self.config.transport_type
         auth_timeout = self.config.auth_timeout
 
-        if isinstance(self.credentials, SharedKeyCredentials):
+        if isinstance(self.credential, SharedKeyCredentials):
             username = username or self._auth_config['username']
             password = password or self._auth_config['password']
             if "@sas.root" in username:
@@ -66,7 +66,7 @@ class EventHubClient(EventHubClientAbstract):
                 self.auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
                 transport_type=transport_type)
 
-        elif isinstance(self.credentials, SASTokenCredentials):
+        elif isinstance(self.credential, SASTokenCredentials):
             token = self.sas_token() if callable(self.sas_token) else self.sas_token
             try:
                 expiry = int(parse_sas_token(token)['se'])
