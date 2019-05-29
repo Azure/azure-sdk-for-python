@@ -168,7 +168,7 @@ class EventHubClient(EventHubClientAbstract):
             await mgmt_client.close_async()
 
     def create_receiver(
-            self, partition, consumer_group="$default", event_position=None, exclusive_receiver_priority=None, operation=None,
+            self, partition_id, consumer_group="$default", event_position=None, exclusive_receiver_priority=None, operation=None,
             prefetch=None, loop=None):
         """
         Add an async receiver to the client for a particular consumer group and partition.
@@ -199,14 +199,14 @@ class EventHubClient(EventHubClientAbstract):
 
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self.address.hostname, path, consumer_group, partition)
+            self.address.hostname, path, consumer_group, partition_id)
         handler = Receiver(
             self, source_url, offset=event_position, exclusive_receiver_priority=exclusive_receiver_priority,
             prefetch=prefetch, loop=loop)
         return handler
 
     def create_sender(
-            self, partition=None, operation=None, send_timeout=None, loop=None):
+            self, partition_id=None, operation=None, send_timeout=None, loop=None):
         """
         Add an async sender to the client to send ~azure.eventhub.common.EventData object
         to an EventHub.
@@ -246,5 +246,5 @@ class EventHubClient(EventHubClientAbstract):
         send_timeout = self.config.send_timeout if send_timeout is None else send_timeout
 
         handler = Sender(
-            self, target, partition=partition, send_timeout=send_timeout, loop=loop)
+            self, target, partition=partition_id, send_timeout=send_timeout, loop=loop)
         return handler

@@ -183,7 +183,7 @@ class EventHubClient(EventHubClientAbstract):
             mgmt_client.close()
 
     def create_receiver(
-            self, partition, consumer_group="$default", event_position=None, exclusive_receiver_priority=None, operation=None,
+            self, partition_id, consumer_group="$default", event_position=None, exclusive_receiver_priority=None, operation=None,
             prefetch=None,
     ):
         """
@@ -215,13 +215,13 @@ class EventHubClient(EventHubClientAbstract):
 
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self.address.hostname, path, consumer_group, partition)
+            self.address.hostname, path, consumer_group, partition_id)
         handler = Receiver(
             self, source_url, event_position=event_position, exclusive_receiver_priority=exclusive_receiver_priority,
             prefetch=prefetch)
         return handler
 
-    def create_sender(self, partition=None, operation=None, send_timeout=None):
+    def create_sender(self, partition_id=None, operation=None, send_timeout=None):
         """
         Add a sender to the client to send EventData object to an EventHub.
 
@@ -256,9 +256,7 @@ class EventHubClient(EventHubClientAbstract):
         if operation:
             target = target + operation
         send_timeout = self.config.send_timeout if send_timeout is None else send_timeout
-        keep_alive = 0
-        auto_reconnect = True
 
         handler = Sender(
-            self, target, partition=partition, send_timeout=send_timeout)
+            self, target, partition=partition_id, send_timeout=send_timeout)
         return handler
