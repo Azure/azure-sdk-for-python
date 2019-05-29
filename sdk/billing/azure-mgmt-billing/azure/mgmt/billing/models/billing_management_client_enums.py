@@ -54,8 +54,8 @@ class SubscriptionTransferValidationErrorCode(str, Enum):
 
     invalid_source = "InvalidSource"
     subscription_not_active = "SubscriptionNotActive"
-    insufficienct_permission_on_source = "InsufficienctPermissionOnSource"
-    insufficienct_permission_on_destination = "InsufficienctPermissionOnDestination"
+    insufficient_permission_on_source = "InsufficientPermissionOnSource"
+    insufficient_permission_on_destination = "InsufficientPermissionOnDestination"
     destination_billing_profile_past_due = "DestinationBillingProfilePastDue"
     subscription_type_not_supported = "SubscriptionTypeNotSupported"
     cross_billing_account_not_allowed = "CrossBillingAccountNotAllowed"

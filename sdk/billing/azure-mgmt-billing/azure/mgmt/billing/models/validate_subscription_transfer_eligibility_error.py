@@ -17,7 +17,7 @@ class ValidateSubscriptionTransferEligibilityError(Model):
 
     :param code: Error code for the product transfer validation. Possible
      values include: 'InvalidSource', 'SubscriptionNotActive',
-     'InsufficienctPermissionOnSource', 'InsufficienctPermissionOnDestination',
+     'InsufficientPermissionOnSource', 'InsufficientPermissionOnDestination',
      'DestinationBillingProfilePastDue', 'SubscriptionTypeNotSupported',
      'CrossBillingAccountNotAllowed', 'NotAvailableForDestinationMarket'
     :type code: str or
