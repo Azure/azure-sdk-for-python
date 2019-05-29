@@ -13,12 +13,12 @@ from msrest.serialization import Model
 
 
 class Word(Model):
-    """Json object representing a recognized word.
+    """An object representing a recognized word.
 
     All required parameters must be populated in order to send to Azure.
 
     :param bounding_box: Required. Bounding box of a recognized word.
-    :type bounding_box: list[int]
+    :type bounding_box: list[float]
     :param text: Required. The text content of the word.
     :type text: str
     :param confidence: Qualitative confidence measure. Possible values
@@ -33,7 +33,7 @@ class Word(Model):
     }
 
     _attribute_map = {
-        'bounding_box': {'key': 'boundingBox', 'type': '[int]'},
+        'bounding_box': {'key': 'boundingBox', 'type': '[float]'},
         'text': {'key': 'text', 'type': 'str'},
         'confidence': {'key': 'confidence', 'type': 'TextRecognitionResultConfidenceClass'},
     }
