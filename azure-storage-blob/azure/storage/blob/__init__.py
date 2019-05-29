@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-__version__ = "3.0.0a6"
+__version__ = "3.0.0a8"
 
 from .common import BlobType
 from .blob_client import BlobClient

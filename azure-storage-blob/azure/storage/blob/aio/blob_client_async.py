@@ -114,8 +114,8 @@ class BlobClient:  # pylint: disable=too-many-public-methods
         :returns: SnapshotProperties
         """
 
-    async def copy_blob_from_source(
-            self, copy_source, metadata=None, source_if_modified_since=None,
+    async def copy_blob_from_url(
+            self, source_url, metadata=None, source_if_modified_since=None,
             source_if_unmodified_since=None, source_if_match=None, source_if_none_match=None,
             destination_if_modified_since=None, destination_if_unmodified_since=None,
             destination_if_match=None, destination_if_none_match=None, destination_lease=None,

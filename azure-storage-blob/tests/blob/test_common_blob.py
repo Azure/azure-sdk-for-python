@@ -935,7 +935,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
         copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
-        copy = copied_blob.copy_blob_from_source(source_blob)
+        copy = copied_blob.copy_blob_from_url(source_blob)
         self.assertEqual(copy.status(), 'pending')
         copy.wait()
 
@@ -959,7 +959,7 @@ class StorageCommonBlobTest(StorageTestCase):
         target_blob_name = 'targetblob'
         with self.assertRaises(ResourceNotFoundError):
             target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
-            target_blob.copy_blob_from_source(source_blob_url)
+            target_blob.copy_blob_from_url(source_blob_url)
 
         # Assert
 
@@ -982,7 +982,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         target_blob_name = 'targetblob'
         target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
-        copy_resp = target_blob.copy_blob_from_source(source_blob_url)
+        copy_resp = target_blob.copy_blob_from_url(source_blob_url)
 
         # Assert
         #self.assertEqual(copy_resp.status(), 'pending')
@@ -1011,7 +1011,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         target_blob_name = 'targetblob'
         target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
-        copy_resp = target_blob.copy_blob_from_source(source_blob_url)
+        copy_resp = target_blob.copy_blob_from_url(source_blob_url)
 
         #self.assertEqual(copy_resp.status(), 'pending')
         copy_resp.abort()

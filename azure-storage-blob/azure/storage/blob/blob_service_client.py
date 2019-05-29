@@ -56,17 +56,17 @@ if TYPE_CHECKING:
 class BlobServiceClient(object):
 
     def __init__(
-            self, url,  # type: str
+            self, account_url,  # type: str
             credentials=None,  # type: Optional[HTTPPolicy]
             configuration=None, # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        parsed_url = urlparse(url)
+        parsed_url = urlparse(account_url.rstrip('/'))
         self.scheme = parsed_url.scheme
         self.account = parsed_url.hostname.split(".blob.core.")[0]
         self.credentials = credentials
-        self.url = url if not parsed_url.path else "{}://{}".format(
+        self.url = account_url if not parsed_url.path else "{}://{}".format(
             self.scheme,
             parsed_url.hostname
         )

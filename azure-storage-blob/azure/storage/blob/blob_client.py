@@ -100,7 +100,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :param configuration: A optional pipeline configuration.
          This can be retrieved with :func:`BlobClient.create_configuration()`
         """
-        parsed_url = urlparse(url)
+        parsed_url = urlparse(url.rstrip('/'))
 
         if not parsed_url.path and not (container and blob):
             raise ValueError("Please specify a container and blob name.")
@@ -497,7 +497,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 raise ValueError("A content length must be specified for a Page Blob.")
             if length % 512 != 0:
                 raise ValueError("Invalid page blob size: {0}. "
-                                 "The size must be aligned to a 512-byte boundary.".format(count))
+                                 "The size must be aligned to a 512-byte boundary.".format(length))
             if premium_page_blob_tier:
                 try:
                     headers['x-ms-access-tier'] = premium_page_blob_tier.value
@@ -554,9 +554,9 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         ):
         # type: (...) -> Iterable[bytes]
         """
-        TODO: Full download chunking needed.
         :returns: A iterable data generator (stream)
         """
+        # TODO: Full download chunking needed.
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
@@ -986,8 +986,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         snapshot.blob_type = self.blob_type
         return snapshot
 
-    def copy_blob_from_source(
-            self, copy_source,  # type: str
+    def copy_blob_from_url(
+            self, source_url,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
             source_if_modified_since=None,  # type: Optional[datetime]
             source_if_unmodified_since=None,  # type: Optional[datetime]
@@ -1035,7 +1035,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         to check the status of the copy operation, or wait() to block until the
         operation is complete. The final blob will be committed when the copy completes.
 
-        :param str copy_source:
+        :param str source_url:
             A URL of up to 2 KB in length that specifies an Azure file or blob. 
             The value should be URL-encoded as it would appear in a request URI. 
             If the source is in another account, the source must either be public 

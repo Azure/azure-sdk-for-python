@@ -113,7 +113,7 @@ class PipelineClient(object):
 
         if form_content:
             request.set_formdata_body(form_content)
-        elif stream_content:
+        elif stream_content is not None:
             request.set_streamed_data_body(stream_content)
 
         return request
