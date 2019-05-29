@@ -35,8 +35,6 @@ class KeyClient:
     :caption: Creates a new instance of the Key client
     """
 
-    KeyOperationResult = collections.namedtuple("KeyOperationResult", "id value")
-
     @staticmethod
     def create_config(**kwargs):
         pass  # TODO
