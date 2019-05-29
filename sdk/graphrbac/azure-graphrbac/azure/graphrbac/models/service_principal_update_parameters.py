@@ -12,14 +12,12 @@
 from .service_principal_base import ServicePrincipalBase
 
 
-class ServicePrincipalCreateParameters(ServicePrincipalBase):
-    """Request parameters for creating a new service principal.
-
-    All required parameters must be populated in order to send to Azure.
+class ServicePrincipalUpdateParameters(ServicePrincipalBase):
+    """Request parameters for update an existing service principal.
 
     :param account_enabled: whether or not the service principal account is
      enabled
-    :type account_enabled: str
+    :type account_enabled: bool
     :param app_role_assignment_required: Specifies whether an
      AppRoleAssignment to a user or group is required before Azure AD will
      issue a user or access token to the application.
@@ -36,24 +34,16 @@ class ServicePrincipalCreateParameters(ServicePrincipalBase):
     :param tags: Optional list of tags that you can apply to your service
      principals. Not nullable.
     :type tags: list[str]
-    :param app_id: Required. The application ID.
-    :type app_id: str
     """
 
-    _validation = {
-        'app_id': {'required': True},
-    }
-
     _attribute_map = {
-        'account_enabled': {'key': 'accountEnabled', 'type': 'str'},
+        'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},
         'app_role_assignment_required': {'key': 'appRoleAssignmentRequired', 'type': 'bool'},
         'key_credentials': {'key': 'keyCredentials', 'type': '[KeyCredential]'},
         'password_credentials': {'key': 'passwordCredentials', 'type': '[PasswordCredential]'},
         'service_principal_type': {'key': 'servicePrincipalType', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '[str]'},
-        'app_id': {'key': 'appId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ServicePrincipalCreateParameters, self).__init__(**kwargs)
-        self.app_id = kwargs.get('app_id', None)
+        super(ServicePrincipalUpdateParameters, self).__init__(**kwargs)
