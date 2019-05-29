@@ -169,7 +169,7 @@ class EventHubClient(EventHubClientAbstract):
 
     def create_receiver(
             self, consumer_group, partition, event_position=None, exclusive_receiver_priority=None, operation=None,
-            prefetch=None, keep_alive=None, auto_reconnect=None, loop=None):
+            prefetch=None, loop=None):
         """
         Add an async receiver to the client for a particular consumer group and partition.
 
@@ -195,20 +195,18 @@ class EventHubClient(EventHubClientAbstract):
                 :caption: Add an async receiver to the client for a particular consumer group and partition.
 
         """
-        keep_alive = self.config.keep_alive if keep_alive is None else keep_alive
-        auto_reconnect = self.config.auto_reconnect if auto_reconnect is None else auto_reconnect
         prefetch = self.config.prefetch if prefetch is None else prefetch
 
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition)
         handler = Receiver(
-            self, source_url, offset=event_position, exclusive_receiver_priority=exclusive_receiver_priority, prefetch=prefetch, keep_alive=keep_alive,
-            auto_reconnect=auto_reconnect, loop=loop)
+            self, source_url, offset=event_position, exclusive_receiver_priority=exclusive_receiver_priority,
+            prefetch=prefetch, loop=loop)
         return handler
 
     def create_sender(
-            self, partition=None, operation=None, send_timeout=None, keep_alive=None, auto_reconnect=None, loop=None):
+            self, partition=None, operation=None, send_timeout=None, loop=None):
         """
         Add an async sender to the client to send ~azure.eventhub.common.EventData object
         to an EventHub.
@@ -246,10 +244,7 @@ class EventHubClient(EventHubClientAbstract):
         if operation:
             target = target + operation
         send_timeout = self.config.send_timeout if send_timeout is None else send_timeout
-        keep_alive = self.config.keep_alive if keep_alive is None else keep_alive
-        auto_reconnect = self.config.auto_reconnect if auto_reconnect is None else auto_reconnect
 
         handler = Sender(
-            self, target, partition=partition, send_timeout=send_timeout,
-            keep_alive=keep_alive, auto_reconnect=auto_reconnect, loop=loop)
+            self, target, partition=partition, send_timeout=send_timeout, loop=loop)
         return handler

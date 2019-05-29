@@ -34,7 +34,7 @@ class Receiver(object):
 
     def __init__(  # pylint: disable=super-init-not-called
             self, client, source, offset=None, prefetch=300, exclusive_receiver_priority=None,
-            keep_alive=None, auto_reconnect=False, loop=None):
+            keep_alive=None, auto_reconnect=True, loop=None):
         """
         Instantiate an async receiver.
 

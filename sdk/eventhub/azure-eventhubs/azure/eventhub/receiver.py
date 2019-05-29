@@ -33,7 +33,7 @@ class Receiver(object):
     timeout = 0
     _epoch = b'com.microsoft:epoch'
 
-    def __init__(self, client, source, event_position=None, prefetch=300, exclusive_receiver_priority=None, keep_alive=None, auto_reconnect=False):
+    def __init__(self, client, source, event_position=None, prefetch=300, exclusive_receiver_priority=None, keep_alive=None, auto_reconnect=True):
         """
         Instantiate a receiver.
 

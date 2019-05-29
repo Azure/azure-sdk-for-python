@@ -12,8 +12,6 @@ class Configuration(object):
         self.max_retries = kwargs.get("max_retries", 3)
         self.network_tracing = kwargs.get("network_tracing", False)
         self.http_proxy = kwargs.get("http_proxy")
-        self.auto_reconnect = kwargs.get("auto_reconnect", False)
-        self.keep_alive = kwargs.get("keep_alive", 0)  # 0 or None means to not keep alive
         self.transport_type = TransportType.AmqpOverWebsocket if self.http_proxy \
             else kwargs.get("transport_type", TransportType.Amqp)
         self.auth_timeout = kwargs.get("auth_timeout", 60)

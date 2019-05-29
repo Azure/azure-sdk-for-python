@@ -33,7 +33,7 @@ class Sender(object):
 
     def __init__(  # pylint: disable=super-init-not-called
             self, client, target, partition=None, send_timeout=60,
-            keep_alive=None, auto_reconnect=False, loop=None):
+            keep_alive=None, auto_reconnect=True, loop=None):
         """
         Instantiate an EventHub event SenderAsync handler.
 

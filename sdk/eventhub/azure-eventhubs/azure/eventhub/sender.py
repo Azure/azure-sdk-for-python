@@ -31,7 +31,7 @@ class Sender(object):
 
     """
 
-    def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=False):
+    def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True):
         """
         Instantiate an EventHub event Sender handler.
 
