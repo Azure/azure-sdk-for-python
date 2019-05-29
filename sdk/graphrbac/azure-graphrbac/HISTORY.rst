@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.61.1 (2019-05-29)
++++++++++++++++++++
+
+**Bugfix**
+
+- account_enabled is now correctly bool (from str)
+
 0.61.0 (2019-03-20)
 +++++++++++++++++++
 

@@ -32,7 +32,7 @@ class ServicePrincipal(DirectoryObject):
     :type object_type: str
     :param account_enabled: whether or not the service principal account is
      enabled
-    :type account_enabled: str
+    :type account_enabled: bool
     :param alternative_names: alternative names
     :type alternative_names: list[str]
     :ivar app_display_name: The display name exposed by the associated
@@ -107,7 +107,7 @@ class ServicePrincipal(DirectoryObject):
         'object_id': {'key': 'objectId', 'type': 'str'},
         'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
         'object_type': {'key': 'objectType', 'type': 'str'},
-        'account_enabled': {'key': 'accountEnabled', 'type': 'str'},
+        'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},
         'alternative_names': {'key': 'alternativeNames', 'type': '[str]'},
         'app_display_name': {'key': 'appDisplayName', 'type': 'str'},
         'app_id': {'key': 'appId', 'type': 'str'},
