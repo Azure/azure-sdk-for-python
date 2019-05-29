@@ -728,13 +728,13 @@ class KeyClient:
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
         :type algorithm: str or
-         ~~azure.security.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
+         ~azure.security.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
         :param value:
         :type value: bytes
         :param callable cls: A custom type or function that will be passed the
          direct response
         :returns: The unwrapped symmetric key.
-        :rtype: ~~azure.security.keyvault.v7_0.models.KeyOperationResult
+        :rtype: ~azure.security.keyvault.v7_0.models.KeyOperationResult
         # TODO update return type to named tuple or keep it as is for now?
 
         Example:

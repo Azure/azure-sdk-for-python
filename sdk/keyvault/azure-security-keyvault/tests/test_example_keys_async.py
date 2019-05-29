@@ -178,7 +178,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         try:
             # [START list_key_versions]
-            # gets a list of all versions of a key
+            # get an iterator of all versions of a key
             key_versions = await key_client.list_key_versions("key-name")
 
             async for key in key_versions:
@@ -193,7 +193,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         try:
             # [START list_deleted_keys]
 
-            # get an iterator like instance of DeletedKey (requires soft-delete enabled for the vault)
+            # get an iterator of DeletedKey (requires soft-delete enabled for the vault)
             deleted_keys = await key_client.list_deleted_keys()
 
             async for key in deleted_keys:
