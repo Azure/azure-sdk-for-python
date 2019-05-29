@@ -108,7 +108,6 @@ class Sender(object):
                 :caption: Open the Sender using the supplied conneciton.
 
         """
-        self.running = True
         if self.redirected:
             self.target = self.redirected.address
             self._handler = SendClientAsync(
@@ -122,6 +121,7 @@ class Sender(object):
                 properties=self.client.create_properties(self.client.config.user_agent),
                 loop=self.loop)
         await self._handler.open_async()
+        self.running = True
         while not await self._handler.client_ready_async():
             await asyncio.sleep(0.05)
 

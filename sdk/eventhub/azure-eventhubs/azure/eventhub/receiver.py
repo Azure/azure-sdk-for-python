@@ -143,7 +143,6 @@ class Receiver(object):
 
         """
         # pylint: disable=protected-access
-        self.running = True
         if self.redirected:
             self.source = self.redirected.address
             source = Source(self.source)
@@ -164,6 +163,7 @@ class Receiver(object):
                 client_name=self.name,
                 properties=self.client.create_properties(self.client.config.user_agent))
         self._handler.open()
+        self.running = True
         while not self._handler.client_ready():
             time.sleep(0.05)
 

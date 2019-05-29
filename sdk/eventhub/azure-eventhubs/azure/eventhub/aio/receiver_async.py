@@ -151,7 +151,6 @@ class Receiver(object):
 
         """
         # pylint: disable=protected-access
-        self.running = True
         if self.redirected:
             self.source = self.redirected.address
             source = Source(self.source)
@@ -173,6 +172,7 @@ class Receiver(object):
                 properties=self.client.create_properties(self.client.config.user_agent),
                 loop=self.loop)
         await self._handler.open_async()
+        self.running = True
         while not await self._handler.client_ready_async():
             await asyncio.sleep(0.05)
 

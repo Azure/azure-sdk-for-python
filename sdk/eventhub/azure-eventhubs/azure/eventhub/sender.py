@@ -103,7 +103,6 @@ class Sender(object):
                 :caption: Open the Sender using the supplied conneciton.
 
         """
-        self.running = True
         if self.redirected:
             self.target = self.redirected.address
             self._handler = SendClient(
@@ -116,6 +115,7 @@ class Sender(object):
                 client_name=self.name,
                 properties=self.client.create_properties(self.client.config.user_agent))
         self._handler.open()
+        self.running = True
         while not self._handler.client_ready():
             time.sleep(0.05)
 
