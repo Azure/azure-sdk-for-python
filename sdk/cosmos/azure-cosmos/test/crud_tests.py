@@ -100,14 +100,22 @@ class CRUDTests(unittest.TestCase):
                                                  self.connectionPolicy)
     def test_database_crud(self):
         # read databases.
+<<<<<<< HEAD
         databases = list(self.client.read_all_databases())
+=======
+        databases = list(self.client.get_all_databases())
+>>>>>>> split get/read database method
         # create a database.
         before_create_databases_count = len(databases)
         database_id = str(uuid.uuid4())
         created_db = self.client.create_database(database_id)
         self.assertEqual(created_db.id, database_id)
         # Read databases after creation.
+<<<<<<< HEAD
         databases = list(self.client.read_all_databases())
+=======
+        databases = list(self.client.get_all_databases())
+>>>>>>> split get/read database method
         self.assertEqual(len(databases),
                          before_create_databases_count + 1,
                          'create should increase the number of databases')
@@ -1341,7 +1349,11 @@ class CRUDTests(unittest.TestCase):
         client = cosmos_client.CosmosClient(CRUDTests.host, {}, "Session", CRUDTests.connectionPolicy)
         self.__AssertHTTPFailureWithStatus(StatusCodes.UNAUTHORIZED,
                                            list,
+<<<<<<< HEAD
                                            client.read_all_databases())
+=======
+                                           client.get_all_databases())
+>>>>>>> split get/read database method
         # Client with master key.
         client = cosmos_client.CosmosClient(CRUDTests.host,
                                             {'masterKey': CRUDTests.masterKey},
