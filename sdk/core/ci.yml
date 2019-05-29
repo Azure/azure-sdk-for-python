@@ -20,4 +20,4 @@ pr:
 jobs:
 - template: ../../eng/pipelines/templates/jobs/archetype-sdk-client.yml
   parameters:
-    BuildTargettingString: azure,azure-common,azure-core,azure-mgmt-datalake-nspkg,azure-mgmt-nspkg,azure-nspkg
+    ServiceDirectory: core
