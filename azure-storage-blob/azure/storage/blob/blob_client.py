@@ -1187,7 +1187,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
 
     def acquire_lease(
             self, lease_duration=-1,  # type: int
-            proposed_lease_id=None,  # type: Optional[str]
+            lease_id=None,  # type: Optional[str]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
@@ -1204,7 +1204,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         response = self._client.blob.acquire_lease(
             timeout=timeout,
             duration=lease_duration,
-            proposed_lease_id=proposed_lease_id,
+            proposed_lease_id=lease_id,
             modified_access_conditions=mod_conditions,
             cls=return_response_headers,
             **kwargs)

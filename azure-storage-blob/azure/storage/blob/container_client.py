@@ -237,7 +237,7 @@ class ContainerClient(object):
 
     def acquire_lease(
             self, lease_duration=-1,  # type: int
-            proposed_lease_id=None,  # type: Optional[str]
+            lease_id=None,  # type: Optional[str]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
@@ -255,7 +255,7 @@ class ContainerClient(object):
             (-1) for a lease that never expires. A non-infinite lease can be
             between 15 and 60 seconds. A lease duration cannot be changed
             using renew or change. Default is -1 (infinite lease).
-        :param str proposed_lease_id:
+        :param str lease_id:
             Proposed lease ID, in a GUID string format. The Blob service returns
             400 (Invalid request) if the proposed lease ID is not in the correct format.
         :param datetime if_modified_since:
@@ -280,7 +280,7 @@ class ContainerClient(object):
         response = self._client.container.acquire_lease(
             timeout=timeout,
             duration=lease_duration,
-            proposed_lease_id=proposed_lease_id,
+            proposed_lease_id=lease_id,
             modified_access_conditions=mod_conditions,
             cls=return_response_headers,
             **kwargs)
@@ -426,7 +426,7 @@ class ContainerClient(object):
         )
         return {
             'public_access': response.get('header').get('x-ms-blob-public-access'),
-            'signed_identifiers': response.get('deserialized')
+            'signed_identifiers': response.get('deserialized', [])
         }
 
     def set_container_acl(
@@ -440,6 +440,10 @@ class ContainerClient(object):
         """
         :returns: Container-updated property dict (Etag and last modified).
         """
+        if signed_identifiers and len(signed_identifiers) > 5:
+            raise ValueError(
+                'Too many access policies provided. The server does not support setting '
+                'more than 5 access policies on a single resource.')
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since)
         access_conditions = get_access_conditions(lease)

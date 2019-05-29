@@ -8,6 +8,7 @@ import base64
 import hashlib
 import hmac
 import sys
+import isodate
 from os import fstat
 from io import (BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation)
 from typing import (  # pylint: disable=unused-import
@@ -21,6 +22,7 @@ except ImportError:
     from urllib2 import quote, unquote
 
 from azure.core import Configuration
+from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies import (
@@ -113,6 +115,35 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
     digest = signed_hmac_sha256.digest()
     encoded_digest = encode_base64(digest)
     return encoded_digest
+
+
+def serialize_iso(attr, **kwargs):
+    """Serialize Datetime object into ISO-8601 formatted string.
+
+    :param Datetime attr: Object to be serialized.
+    :rtype: str
+    :raises: SerializationError if format invalid.
+    """
+    if isinstance(attr, str):
+        attr = isodate.parse_datetime(attr)
+    try:
+        if not attr.tzinfo:
+            _LOGGER.warning(
+                "Datetime with no tzinfo will be considered UTC.")
+        utc = attr.utctimetuple()
+        if utc.tm_year > 9999 or utc.tm_year < 1:
+            raise OverflowError("Hit max or min date")
+
+        date = "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}".format(
+            utc.tm_year, utc.tm_mon, utc.tm_mday,
+            utc.tm_hour, utc.tm_min, utc.tm_sec)
+        return date + 'Z'
+    except (ValueError, OverflowError) as err:
+        msg = "Unable to serialize datetime object."
+        raise_with_traceback(SerializationError, msg, err)
+    except AttributeError as err:
+        msg = "ISO-8601 object must be valid Datetime object."
+        raise_with_traceback(TypeError, msg, err)
 
 
 def get_length(data):

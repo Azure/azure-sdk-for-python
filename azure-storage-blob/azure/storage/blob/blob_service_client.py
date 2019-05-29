@@ -71,7 +71,7 @@ class BlobServiceClient(object):
             parsed_url.hostname
         )
         self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
-        self._client = create_client(url, self._pipeline)
+        self._client = create_client(self.url, self._pipeline)
 
     @classmethod
     def from_connection_string(
