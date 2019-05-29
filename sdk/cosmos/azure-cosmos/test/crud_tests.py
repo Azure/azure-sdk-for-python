@@ -3116,6 +3116,75 @@ class CRUDTests(unittest.TestCase):
         self._check_default_indexing_policy_paths(collection['indexingPolicy'])
         self.client.DeleteContainer(collection['_self'])
 
+    def test_create_indexing_policy_with_composite_and_spatial_indexes_self_link(self):
+        self._test_create_indexing_policy_with_composite_and_spatial_indexes(False)
+
+    def test_create_indexing_policy_with_composite_and_spatial_indexes_name_based(self):
+        self._test_create_indexing_policy_with_composite_and_spatial_indexes(True)
+
+    def _test_create_indexing_policy_with_composite_and_spatial_indexes(self, is_name_based):
+        # create database
+        db = self.databseForTest
+
+        indexing_policy = {
+            "spatialIndexes": [
+                {
+                    "path": "/path0/*",
+                    "types": [
+                        "Point",
+                        "LineString",
+                        "Polygon"
+                    ]
+                },
+                {
+                    "path": "/path1/*",
+                    "types": [
+                        "LineString",
+                        "Polygon",
+                        "MultiPolygon"
+                    ]
+                }
+            ],
+            "compositeIndexes": [
+                [
+                    {
+                        "path": "/path1",
+                        "order": "ascending"
+                    },
+                    {
+                        "path": "/path2",
+                        "order": "descending"
+                    },
+                    {
+                        "path": "/path3",
+                        "order": "ascending"
+                    }
+                ],
+                [
+                    {
+                        "path": "/path4",
+                        "order": "ascending"
+                    },
+                    {
+                        "path": "/path5",
+                        "order": "descending"
+                    },
+                    {
+                        "path": "/path6",
+                        "order": "ascending"
+                    }
+                ]
+            ]
+        }
+
+        container_id = 'composite_index_spatial_index' + str(uuid.uuid4())
+        container_definition = {'id': container_id, 'indexingPolicy': indexing_policy}
+        created_container = self.client.CreateContainer(self.GetDatabaseLink(db, is_name_based), container_definition)
+        read_indexing_policy = created_container['indexingPolicy']
+        self.assertListEqual(indexing_policy['spatialIndexes'], read_indexing_policy['spatialIndexes'])
+        self.assertListEqual(indexing_policy['compositeIndexes'], read_indexing_policy['compositeIndexes'])
+        self.client.DeleteContainer(created_container['_self'])
+
     def _check_default_indexing_policy_paths(self, indexing_policy):
         def __get_first(array):
             if array:
@@ -3135,8 +3204,8 @@ class CRUDTests(unittest.TestCase):
 
     def test_client_request_timeout(self):
         connection_policy = documents.ConnectionPolicy()
-        # making timeout 1 ms to make sure it will throw
-        connection_policy.RequestTimeout = 1
+        # making timeout 0 ms to make sure it will throw
+        connection_policy.RequestTimeout = 0
         with self.assertRaises(Exception):
             # client does a getDatabaseAccount on initialization, which will time out
             cosmos_client.CosmosClient(CRUDTests.host,
