@@ -85,7 +85,7 @@ class Sender(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close(exc_val)
 
-    def open(self):
+    def _open(self):
         """
         Open the Sender using the supplied conneciton.
         If the handler has previously been redirected, the redirect
@@ -212,7 +212,7 @@ class Sender(object):
 
     def _send_event_data(self, event_data):
         if not self.running:
-            self.open()
+            self._open()
         try:
             self._handler.send_message(event_data.message)
             if self._outcome != MessageSendResult.Ok:
@@ -316,7 +316,7 @@ class Sender(object):
         if self.error:
             raise self.error
         if not self.running:
-            self.open()
+            self._open()
 
         if event_data.partition_key and self.partition:
             # raise ValueError("EventData partition key cannot be used with a partition sender.")
@@ -341,7 +341,7 @@ class Sender(object):
         if self.error:
             raise self.error
         if not self.running:
-            self.open()
+            self._open()
         try:
             self._handler.wait()
         except (errors.TokenExpired, errors.AuthenticationException):

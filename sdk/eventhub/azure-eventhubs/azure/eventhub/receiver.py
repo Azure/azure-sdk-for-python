@@ -87,7 +87,7 @@ class Receiver(object):
 
     def __iter__(self):
         if not self.running:
-            self.open()
+            self._open()
         self.messages_iter = self._handler.receive_messages_iter()
         return self
 
@@ -124,7 +124,7 @@ class Receiver(object):
             self.close(exception=error)
             raise error
 
-    def open(self):
+    def _open(self):
         """
         Open the Receiver using the supplied conneciton.
         If the handler has previously been redirected, the redirect
@@ -301,7 +301,7 @@ class Receiver(object):
         if self.error:
             raise self.error
         if not self.running:
-            self.open()
+            self._open()
         data_batch = []
         try:
             timeout_ms = 1000 * timeout if timeout else 0

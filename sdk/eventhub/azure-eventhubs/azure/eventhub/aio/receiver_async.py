@@ -96,7 +96,7 @@ class Receiver(object):
 
     async def __anext__(self):
         if not self.running:
-            await self.open()
+            await self.__open()
         try:
             message = await self.messages_iter.__anext__()
             event_data = EventData(message=message)
@@ -132,7 +132,7 @@ class Receiver(object):
             await self.close(exception=error)
             raise error
 
-    async def open(self):
+    async def _open(self):
         """
         Open the Receiver using the supplied conneciton.
         If the handler has previously been redirected, the redirect
@@ -302,7 +302,7 @@ class Receiver(object):
         if self.error:
             raise self.error
         if not self.running:
-            await self.open()
+            await self._open()
         data_batch = []
         try:
             timeout_ms = 1000 * timeout if timeout else 0
