@@ -104,6 +104,9 @@ class Configuration(object):
         # User Agent configuration
         self.user_agent_policy = None
 
+        # Authentication configuration
+        self.authentication_policy = None
+
         # HTTP Transport
         self.transport = transport
 

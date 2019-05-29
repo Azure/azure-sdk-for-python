@@ -90,6 +90,7 @@ class PipelineClient(object):
         policies = [
             config.headers_policy,
             config.user_agent_policy,
+            config.authentication_policy,
             ContentDecodePolicy(),
             config.redirect_policy,
             config.retry_policy,
