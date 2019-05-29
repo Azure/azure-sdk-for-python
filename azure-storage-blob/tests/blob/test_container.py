@@ -402,7 +402,7 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(acl)
         self.assertIsNone(acl.get('public_access'))
-        self.assertIsNone(acl.get('deserialized'))
+        self.assertIsNone(acl.get('signed_identifiers'))
 
     @record
     def test_get_container_acl_with_lease_id(self):
@@ -475,7 +475,6 @@ class StorageContainerTest(StorageTestCase):
         container = self._create_container()
         identifier = SignedIdentifier(id='empty', access_policy=None)
         identifiers = [identifier]
-        container.set_container_acl(identifiers)
 
         # Act
         container.set_container_acl(identifiers)
