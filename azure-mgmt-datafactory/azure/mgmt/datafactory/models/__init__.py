@@ -397,17 +397,17 @@ try:
     from .document_db_collection_sink_py3 import DocumentDbCollectionSink
     from .file_system_sink_py3 import FileSystemSink
     from .blob_sink_py3 import BlobSink
+    from .file_server_write_setting_py3 import FileServerWriteSetting
+    from .azure_data_lake_store_write_setting_py3 import AzureDataLakeStoreWriteSetting
+    from .azure_blob_fs_write_setting_py3 import AzureBlobFSWriteSetting
+    from .azure_blob_storage_write_setting_py3 import AzureBlobStorageWriteSetting
+    from .connector_write_setting_py3 import ConnectorWriteSetting
     from .parquet_sink_py3 import ParquetSink
     from .azure_table_sink_py3 import AzureTableSink
     from .azure_queue_sink_py3 import AzureQueueSink
     from .sap_cloud_for_customer_sink_py3 import SapCloudForCustomerSink
     from .format_write_setting_py3 import FormatWriteSetting
     from .delimited_text_write_setting_py3 import DelimitedTextWriteSetting
-    from .file_server_write_setting_py3 import FileServerWriteSetting
-    from .azure_data_lake_store_write_setting_py3 import AzureDataLakeStoreWriteSetting
-    from .azure_blob_fs_write_setting_py3 import AzureBlobFSWriteSetting
-    from .azure_blob_storage_write_setting_py3 import AzureBlobStorageWriteSetting
-    from .connector_write_setting_py3 import ConnectorWriteSetting
     from .delimited_text_sink_py3 import DelimitedTextSink
     from .copy_sink_py3 import CopySink
     from .copy_activity_py3 import CopyActivity
@@ -845,17 +845,17 @@ except (SyntaxError, ImportError):
     from .document_db_collection_sink import DocumentDbCollectionSink
     from .file_system_sink import FileSystemSink
     from .blob_sink import BlobSink
+    from .file_server_write_setting import FileServerWriteSetting
+    from .azure_data_lake_store_write_setting import AzureDataLakeStoreWriteSetting
+    from .azure_blob_fs_write_setting import AzureBlobFSWriteSetting
+    from .azure_blob_storage_write_setting import AzureBlobStorageWriteSetting
+    from .connector_write_setting import ConnectorWriteSetting
     from .parquet_sink import ParquetSink
     from .azure_table_sink import AzureTableSink
     from .azure_queue_sink import AzureQueueSink
     from .sap_cloud_for_customer_sink import SapCloudForCustomerSink
     from .format_write_setting import FormatWriteSetting
     from .delimited_text_write_setting import DelimitedTextWriteSetting
-    from .file_server_write_setting import FileServerWriteSetting
-    from .azure_data_lake_store_write_setting import AzureDataLakeStoreWriteSetting
-    from .azure_blob_fs_write_setting import AzureBlobFSWriteSetting
-    from .azure_blob_storage_write_setting import AzureBlobStorageWriteSetting
-    from .connector_write_setting import ConnectorWriteSetting
     from .delimited_text_sink import DelimitedTextSink
     from .copy_sink import CopySink
     from .copy_activity import CopyActivity
@@ -1361,17 +1361,17 @@ __all__ = [
     'DocumentDbCollectionSink',
     'FileSystemSink',
     'BlobSink',
+    'FileServerWriteSetting',
+    'AzureDataLakeStoreWriteSetting',
+    'AzureBlobFSWriteSetting',
+    'AzureBlobStorageWriteSetting',
+    'ConnectorWriteSetting',
     'ParquetSink',
     'AzureTableSink',
     'AzureQueueSink',
     'SapCloudForCustomerSink',
     'FormatWriteSetting',
     'DelimitedTextWriteSetting',
-    'FileServerWriteSetting',
-    'AzureDataLakeStoreWriteSetting',
-    'AzureBlobFSWriteSetting',
-    'AzureBlobStorageWriteSetting',
-    'ConnectorWriteSetting',
     'DelimitedTextSink',
     'CopySink',
     'CopyActivity',

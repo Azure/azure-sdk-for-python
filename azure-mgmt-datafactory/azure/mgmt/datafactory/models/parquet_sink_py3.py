@@ -40,6 +40,8 @@ class ParquetSink(CopySink):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param store_settings: Parquet store settings.
+    :type store_settings: ~azure.mgmt.datafactory.models.ConnectorWriteSetting
     """
 
     _validation = {
@@ -54,8 +56,10 @@ class ParquetSink(CopySink):
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'store_settings': {'key': 'storeSettings', 'type': 'ConnectorWriteSetting'},
     }
 
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, store_settings=None, **kwargs) -> None:
         super(ParquetSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+        self.store_settings = store_settings
         self.type = 'ParquetSink'
