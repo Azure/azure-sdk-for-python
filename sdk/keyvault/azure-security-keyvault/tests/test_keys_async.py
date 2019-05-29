@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import asyncio
 import functools
+import codecs
 
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
@@ -12,6 +13,7 @@ from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
 
 from azure.security.keyvault.aio import VaultClient
+from azure.security.keyvault._generated.v7_0.models import JsonWebKey
 
 from dateutil import parser as date_parse
 import time
@@ -63,26 +65,29 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         self.assertEqual(k1.tags, k2.tags)
         self.assertEqual(k1.recovery_level, k2.recovery_level)
 
-    async def _create_rsa_key(self, client, key_name, key_type):
+    async def _create_rsa_key(self, client, key_name, hsm):
         # create key with optional arguments
         key_size = 2048
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
         created_key = await client.create_rsa_key(
-            key_name, key_type=key_type, size=key_size, key_ops=key_ops, tags=tags
+            key_name, hsm=hsm, size=key_size, key_ops=key_ops, tags=tags
         )
         self.assertTrue(created_key.tags, "Missing the optional key attributes.")
         self.assertEqual(tags, created_key.tags)
-        self._validate_rsa_key_bundle(created_key, client.vault_url, key_name, key_type)
+        key_type = "RSA-HSM" if hsm else "RSA"
+        self._validate_rsa_key_bundle(created_key, client.vault_url, key_name, key_type, key_ops)
         return created_key
 
-    async def _create_ec_key(self, client, key_name, key_type):
+    async def _create_ec_key(self, client, key_name, hsm):
         # create ec key with optional arguments
         enabled = True
         tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
-        created_key = await client.create_ec_key(key_name, key_type=key_type, enabled=enabled)
+        created_key = await client.create_ec_key(key_name, hsm=hsm, enabled=enabled, tags=tags)
         self.assertTrue(created_key.enabled, "Missing the optional key attributes.")
         self.assertEqual(enabled, created_key.enabled)
+        self.assertEqual(tags, created_key.tags)
+        key_type = "EC-HSM" if hsm else "EC"
         self._validate_ec_key_bundle(created_key, client.vault_url, key_name, key_type)
         return created_key
 
@@ -96,9 +101,8 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(key_attributes.created and key_attributes.updated, "Missing required date attributes.")
 
-    def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops=None):
+    def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
-        key_ops = key_ops or ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         key = key_attributes.key_material
         kid = key_attributes.id
         self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
@@ -167,15 +171,15 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         client = vault_client.keys
 
         # create ec key
-        created_ec_key = await self._create_ec_key(client, key_name="crud-ec-key", key_type="EC")
+        await self._create_ec_key(client, key_name="crud-ec-key", hsm=True)
         # create ec with curve
-        created_ec_key_curve = await client.create_ec_key(name="crud-P-256-ec-key", key_type="EC", curve="P-256")
+        created_ec_key_curve = await client.create_ec_key(name="crud-P-256-ec-key", hsm=False, curve="P-256")
         self.assertEqual("P-256", created_ec_key_curve.key_material.crv)
 
         # import key
         self._import_test_key(client, "import-test-key")
         # create rsa key
-        created_rsa_key = await self._create_rsa_key(client, key_name="crud-rsa-key", key_type="RSA")
+        created_rsa_key = await self._create_rsa_key(client, key_name="crud-rsa-key", hsm=False)
 
         # get the created key with version
         key = await client.get_key(created_rsa_key.name, created_rsa_key.version)
@@ -314,12 +318,12 @@ class KeyVaultKeyTest(KeyVaultTestCase):
 
         # create keys to recover
         for i in range(self.list_test_size):
-            key_name = self.get_resource_name("keyrec{}".format((i)))
+            key_name = self.get_resource_name("keyrec{}".format(i))
             keys[key_name] = await client.create_key(key_name, "RSA")
 
         # create keys to purge
         for i in range(self.list_test_size):
-            key_name = self.get_resource_name("keyprg{}".format((i)))
+            key_name = self.get_resource_name("keyprg{}".format(i))
             keys[key_name] = await client.create_key(key_name, "RSA")
 
         # delete all keys

@@ -15,8 +15,7 @@ from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
 from azure.security.keyvault._generated import KeyVaultClient
 from azure.security.keyvault.aio._internal import AsyncPagingAdapter
 
-from ...keys._models import Key, DeletedKey, KeyBase
-import collections
+from ...keys._models import Key, DeletedKey, KeyBase, _KeyOperationResult
 
 
 class KeyClient:
@@ -37,8 +36,6 @@ class KeyClient:
     :dedent: 4
     :caption: Creates a new instance of the Key client
     """
-
-    KeyOperationResult = collections.namedtuple("KeyOperationResult", "id value")
 
     @staticmethod
     def create_config(**kwargs):
@@ -179,7 +176,7 @@ class KeyClient:
     async def create_rsa_key(
         self,
         name: str,
-        key_type: str,
+        hsm: bool,
         size: Optional[int] = None,
         key_ops: Optional[List[str]] = None,
         enabled: Optional[bool] = None,
@@ -196,10 +193,8 @@ class KeyClient:
         :param name: The name for the new key. The system will generate
         the version name for the new key.
         :type name
-        :param key_type: The type of key to create. For valid values, see
-        JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA',
-        'RSA-HSM', 'oct'
-        :type key_type: str or ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyType
+        :param hsm: Whether to import as a hardware key (HSM) or software key.
+        :type hsm: bool
         :param size: The key size in bits. For example: 2048, 3072, or
         4096 for RSA.
         :type size: int
@@ -224,8 +219,10 @@ class KeyClient:
                 :end-before: [END create_rsa_key]
                 :language: python
                 :dedent: 4
-                :caption: Creates a key in the key vault
+                :caption: Creates an RSA key in the key vault
         """
+        key_type = "RSA-HSM" if hsm else "RSA"
+
         return await self._create_key(
             name,
             key_type=key_type,
@@ -240,7 +237,7 @@ class KeyClient:
     async def create_ec_key(
         self,
         name: str,
-        key_type: str,
+        hsm: bool,
         curve: Optional[str] = None,
         key_ops: Optional[List[str]] = None,
         enabled: Optional[bool] = None,
@@ -258,10 +255,8 @@ class KeyClient:
         the version name for the new key.
 
         :type name
-        :param key_type: The type of key to create. For valid values, see
-        JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA',
-        'RSA-HSM', 'oct'
-        :type key_type: str or ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyType
+        :param hsm: Whether to import as a hardware key (HSM) or software key.
+        :type hsm: bool
         :param curve: Elliptic curve name. If none then defaults to 'P-256'. For valid values, see
         JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384',
         'P-521', 'SECP256K1'
@@ -288,11 +283,13 @@ class KeyClient:
                 :end-before: [END create_ec_key]
                 :language: python
                 :dedent: 4
-                :caption: Creates a key in the key vault
+                :caption: Creates an EC key in the key vault
         """
+        key_type = "EC-HSM" if hsm else "EC"
+
         return await self._create_key(
             name,
-            key_type,
+            key_type=key_type,
             curve=curve,
             key_ops=key_ops,
             enabled=enabled,
@@ -374,7 +371,7 @@ class KeyClient:
         Individual versions of a key are not listed in the response. This
         operation requires the keys/list permission.
 
-        :returns: An iterator like instance of Key
+        :returns: An iterator like instance of KeyBase
         :rtype:
         typing.AsyncIterable[~azure.security.keyvault.keys._models.KeyBase]
 
@@ -398,7 +395,7 @@ class KeyClient:
 
         :param name: The name of the key.
         :type name
-        :returns: An iterator like instance of Key
+        :returns: An iterator like instance of KeyBase
         :rtype:
         typing.AsyncIterable[~azure.security.keyvault.keys._models.KeyBase]
 
@@ -669,7 +666,6 @@ class KeyClient:
         return Key._from_key_bundle(bundle)
 
     async def wrap_key(self, name: str, version: str, algorithm: str, value: bytes, **kwargs: Mapping[str, Any]) -> Key:
-        # type: (str, str, str, bytes, Mapping[str, Any]) -> Key
         """Wraps a symmetric key using a specified key.
 
         The WRAP operation supports encryption of a symmetric key using a key
@@ -707,7 +703,7 @@ class KeyClient:
         bundle = await self._client.wrap_key(
             self.vault_url, name, key_version=version, algorithm=algorithm, value=value
         )
-        return self.KeyOperationResult(id=bundle.kid, value=bundle.result)
+        return _KeyOperationResult(id=bundle.kid, value=bundle.result)
 
     async def unwrap_key(
         self, name: str, version: str, algorithm: str, value: bytes, **kwargs: Mapping[str, Any]
@@ -748,4 +744,4 @@ class KeyClient:
         bundle = await self._client.unwrap_key(
             self.vault_url, name, key_version=version, algorithm=algorithm, value=value
         )
-        return self.KeyOperationResult(id=bundle.kid, value=bundle.result)
+        return _KeyOperationResult(id=bundle.kid, value=bundle.result)
