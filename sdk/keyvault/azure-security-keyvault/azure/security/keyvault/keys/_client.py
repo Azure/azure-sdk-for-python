@@ -14,7 +14,6 @@ from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
 
 from .._generated import KeyVaultClient
 from ._models import Key, KeyBase, DeletedKey, _KeyOperationResult
-import collections
 
 
 class KeyClient:
@@ -206,7 +205,7 @@ class KeyClient:
     def create_ec_key(
         self, name, hsm, curve=None, key_ops=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs
     ):
-        # type: (str, bool, Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Key
+        # type: (str, bool, Optional[str],  Optional[List[str]], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Key
         """Creates a new Elliptic curve type key, stores it, then returns key attributes to the client.
 
         The create key operation can be used to create any key type in Azure
@@ -246,7 +245,7 @@ class KeyClient:
                 :dedent: 4
                 :caption: Creates a key in the key vault
         """
-        
+
         key_type = "EC-HSM" if hsm else "EC"
         # TODO: should we use enums here instead of direct strings?
         return self._create_key(

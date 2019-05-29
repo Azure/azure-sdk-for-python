@@ -12,6 +12,7 @@ from .._generated.v7_0 import models
 
 _KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
+
 class KeyBase(object):
     """A key's id and attributes."""
 

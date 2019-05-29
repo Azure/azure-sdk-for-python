@@ -89,7 +89,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(key.id)
             print(key.version)
             # when hsm=True, key_type = RSA-HSM
-            print(key.key_material.kty) 
+            print(key.key_material.kty)
             print(key.key_material.key_ops)
 
             # [END create_rsa_key]
@@ -169,11 +169,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # creates a new version of the key
             imported_key = key_client.import_key("key-name", json_web_key)
 
-            print(key.id)
-            print(key.name)
-            print(key.version)
-            print(key.key_material.kty)
-            print(key.vault_url)
+            print(imported_key.id)
+            print(imported_key.name)
+            print(imported_key.version)
+            print(imported_key.key_material.kty)
+            print(imported_key.vault_url)
             # [END import_key]
 
             # [START update_key]
@@ -350,9 +350,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [START wrap_key]
         # wrap with version
-        plain_text = (
-            plain_text
-        ) = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
+        plain_text = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
         result = client.wrap_key(created_key.name, created_key.version, "RSA-OAEP", plain_text)
         cipher_text = result.value
 
