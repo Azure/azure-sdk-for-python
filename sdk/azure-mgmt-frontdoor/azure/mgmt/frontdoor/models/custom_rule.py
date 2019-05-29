@@ -30,10 +30,11 @@ class CustomRule(Model):
     :param rule_type: Required. Describes type of rule. Possible values
      include: 'MatchRule', 'RateLimitRule'
     :type rule_type: str or ~azure.mgmt.frontdoor.models.RuleType
-    :param rate_limit_duration_in_minutes: Defines rate limit duration.
-     Default is 1 minute.
+    :param rate_limit_duration_in_minutes: Time window for resetting the rate
+     limit count. Default is 1 minute.
     :type rate_limit_duration_in_minutes: int
-    :param rate_limit_threshold: Defines rate limit threshold.
+    :param rate_limit_threshold: Number of allowed requests per client within
+     the time window.
     :type rate_limit_threshold: int
     :param match_conditions: Required. List of match conditions.
     :type match_conditions: list[~azure.mgmt.frontdoor.models.MatchCondition]
@@ -46,6 +47,8 @@ class CustomRule(Model):
         'name': {'max_length': 128},
         'priority': {'required': True},
         'rule_type': {'required': True},
+        'rate_limit_duration_in_minutes': {'maximum': 5, 'minimum': 0},
+        'rate_limit_threshold': {'minimum': 0},
         'match_conditions': {'required': True},
         'action': {'required': True},
     }
