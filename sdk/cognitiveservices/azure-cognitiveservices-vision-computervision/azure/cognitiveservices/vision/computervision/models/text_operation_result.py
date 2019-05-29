@@ -15,8 +15,8 @@ from msrest.serialization import Model
 class TextOperationResult(Model):
     """Result of recognition text operation.
 
-    :param status: Status of the text operation. Possible values include: 'Not
-     Started', 'Running', 'Failed', 'Succeeded'
+    :param status: Status of the text operation. Possible values include:
+     'NotStarted', 'Running', 'Failed', 'Succeeded'
     :type status: str or
      ~azure.cognitiveservices.vision.computervision.models.TextOperationStatusCodes
     :param recognition_result: Text recognition result of the text operation.
