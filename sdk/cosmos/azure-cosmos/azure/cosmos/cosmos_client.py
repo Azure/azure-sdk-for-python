@@ -1,4 +1,4 @@
-#The MIT License (MIT)
+﻿#The MIT License (MIT)
 #Copyright (c) 2014 Microsoft Corporation
 
 #Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,6 +30,7 @@ from .query_iterable import QueryIterable
 from typing import (
     Any,
     Dict,
+    Mapping,
     Union,
     cast
 )
@@ -62,7 +63,7 @@ class CosmosClient:
             :caption: Create a new instance of the Cosmos DB client:
             :name: create_client
 
-        """
+        """ 
         self.client_connection = CosmosClientConnection(
             url,
             auth,
@@ -133,45 +134,29 @@ class CosmosClient:
 
     def get_database(
         self,
-        database,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        request_options=None
+        database
     ):
-        # type: (Union[str, Database, Dict[str, Any]], str, Dict[str, str], bool, Dict[str, Any]) -> Database
+        # type: (Union[str, Database, Dict[str, Any]]) -> Database
         """
         Retrieve an existing database with the ID (name) `id`.
 
         :param database: The ID (name), dict representing the properties or :class:`Database` instance of the database to read.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A :class:`Database` instance representing the retrieved database.
-        :raise `HTTPFailure`: If the given database couldn't be retrieved.
 
         """
-        database_link = self._get_database_link(database)
-        if not request_options:
-            request_options = {} # type: Dict[str, Any]
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if populate_query_metrics is not None:
-            request_options["populateQueryMetrics"] = populate_query_metrics
+        if isinstance(database, Database):
+            id_value = database.id
+        elif isinstance(database, Mapping):
+            id_value = database['id']
+        else:
+            id_value = database
 
-        properties = self.client_connection.ReadDatabase(
-            database_link, options=request_options
-        )
         return Database(
             self.client_connection,
-            properties["id"],
-            properties=properties
+            id_value
         )
 
-    def list_database_properties(
+    def get_all_databases(
         self,
         max_item_count=None,
         session_token=None,

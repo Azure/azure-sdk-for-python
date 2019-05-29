@@ -56,7 +56,7 @@ def Query_Entities(parent, entity_type, id = None):
     try:
         if entity_type == 'database':
             if id == None:
-                entities = list(parent.list_database_properties())
+                entities = list(parent.get_all_databases())
             else:
                 entities = list(parent.query_databases(find_entity_by_id_query))
 

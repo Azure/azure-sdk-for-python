@@ -100,14 +100,14 @@ class CRUDTests(unittest.TestCase):
                                                  self.connectionPolicy)
     def test_database_crud(self):
         # read databases.
-        databases = list(self.client.list_database_properties())
+        databases = list(self.client.get_all_databases())
         # create a database.
         before_create_databases_count = len(databases)
         database_id = str(uuid.uuid4())
         created_db = self.client.create_database(database_id)
         self.assertEqual(created_db.id, database_id)
         # Read databases after creation.
-        databases = list(self.client.list_database_properties())
+        databases = list(self.client.get_all_databases())
         self.assertEqual(len(databases),
                          before_create_databases_count + 1,
                          'create should increase the number of databases')
@@ -127,9 +127,9 @@ class CRUDTests(unittest.TestCase):
         # delete database.
         self.client.delete_database(created_db.id)
         # read database after deletion
+        read_db = self.client.get_database(created_db.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
-                                           self.client.get_database,
-                                           created_db.id)
+                                           read_db.read)
 
     def test_database_level_offer_throughput(self):
         # Create a database with throughput
@@ -1331,7 +1331,7 @@ class CRUDTests(unittest.TestCase):
         client = cosmos_client.CosmosClient(CRUDTests.host, {}, "Session", CRUDTests.connectionPolicy)
         self.__AssertHTTPFailureWithStatus(StatusCodes.UNAUTHORIZED,
                                            list,
-                                           client.list_database_properties())
+                                           client.get_all_databases())
         # Client with master key.
         client = cosmos_client.CosmosClient(CRUDTests.host,
                                             {'masterKey': CRUDTests.masterKey},
@@ -2349,7 +2349,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEquals(read_db.id, created_db.id)
 
         # read database with properties
-        read_db = self.client.get_database(created_db.properties)
+        read_db = self.client.get_database(created_db.read())
         self.assertEquals(read_db.id, created_db.id)
 
         created_container = self.configs.create_multi_partition_collection_if_not_exist(self.client)
