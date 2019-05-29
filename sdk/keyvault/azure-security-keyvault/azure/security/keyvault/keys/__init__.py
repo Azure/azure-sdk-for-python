@@ -4,6 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 from ._client import KeyClient
-from ._models import Key, KeyBase, DeletedKey, _KeyOperationResult
+from ._models import Key, KeyBase, DeletedKey, KeyOperationResult
 
-__all__ = ["DeletedKey", "Key", "KeyBase", "KeyClient", "_KeyOperationResult"]
+__all__ = ["DeletedKey", "Key", "KeyBase", "KeyClient", "KeyOperationResult"]

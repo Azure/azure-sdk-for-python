@@ -84,7 +84,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
             # create an rsa key with size specification
             # RSA key can be created with default size of '2048'
-            key = key_client.create_rsa_key("key-name", hsm=True, size=key_size, enabled=True, key_ops=key_ops)
+            key = key_client.create_rsa_key("key-name", hsm=True, size=key_size, enabled=True, key_operations=key_ops)
 
             print(key.id)
             print(key.version)
@@ -351,17 +351,22 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START wrap_key]
         # wrap with version
         plain_text = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
-        result = client.wrap_key(created_key.name, created_key.version, "RSA-OAEP", plain_text)
+        result = client.wrap_key(created_key.name, "RSA-OAEP", plain_text, version=created_key.version)
         cipher_text = result.value
+
+        # wrap without version
+        # if no version specified returns symmetric key of the latest version
+        result = client.wrap_key(created_key.name, "RSA-OAEP", plain_text)
 
         print(result.id)
         # The wrapped symmetric ciphered key value
         print(result.value)
+
         # [START wrap_key]
         # [START unwrap_key]
 
         # unwrap with version
-        result = client.unwrap_key(created_key.name, created_key.version, "RSA-OAEP", cipher_text)
+        result = client.unwrap_key(created_key.name, "RSA-OAEP", cipher_text, version=created_key.version)
         print(result.id)
         # The unwrapped symmetric key plain text key value
         print(result.value)

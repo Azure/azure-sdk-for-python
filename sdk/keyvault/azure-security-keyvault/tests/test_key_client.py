@@ -29,7 +29,7 @@ class KeyClientTests(KeyVaultTestCase):
         key_size = 2048
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
-        created_key = client.create_rsa_key(key_name, hsm=hsm, size=key_size, key_ops=key_ops, tags=tags)
+        created_key = client.create_rsa_key(key_name, hsm=hsm, size=key_size, key_operations=key_ops, tags=tags)
         self.assertTrue(created_key.tags, "Missing the optional key attributes.")
         self.assertEqual(tags, created_key.tags)
         kty = "RSA-HSM" if hsm else "RSA"
@@ -72,7 +72,7 @@ class KeyClientTests(KeyVaultTestCase):
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
         key_ops = ["decrypt", "encrypt"]
-        key_bundle = client.update_key(key.name, key.version, key_ops=key_ops, expires=expires, tags=tags)
+        key_bundle = client.update_key(key.name, key.version, key_operations=key_ops, expires=expires, tags=tags)
         self.assertEqual(tags, key_bundle.tags)
         self.assertEqual(key.id, key_bundle.id)
         self.assertNotEqual(key.updated, key_bundle.updated)
@@ -307,11 +307,19 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertIsNotNone(created_bundle)
         plain_text = self.plain_text
 
+        # wrap without version
+        result = client.wrap_key(created_bundle.name, "RSA-OAEP", plain_text)
+        cipher_text = result.value
+
+        # unwrap without version
+        result = client.unwrap_key(created_bundle.name, "RSA-OAEP", cipher_text)
+        self.assertEqual(plain_text, result.value)
+
         # wrap with version
-        result = client.wrap_key(created_bundle.name, created_bundle.version, "RSA-OAEP", plain_text)
+        result = client.wrap_key(created_bundle.name, "RSA-OAEP", plain_text, version=created_bundle.version)
         cipher_text = result.value
         self.assertIsNotNone(cipher_text)
 
         # unwrap with version
-        result = client.unwrap_key(created_bundle.name, created_bundle.version, "RSA-OAEP", cipher_text)
+        result = client.unwrap_key(created_bundle.name, "RSA-OAEP", cipher_text, version=created_bundle.version)
         self.assertEqual(plain_text, result.value)

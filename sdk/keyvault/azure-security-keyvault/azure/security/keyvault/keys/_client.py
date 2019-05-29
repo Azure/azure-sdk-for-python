@@ -13,7 +13,7 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
 
 from .._generated import KeyVaultClient
-from ._models import Key, KeyBase, DeletedKey, _KeyOperationResult
+from ._models import Key, KeyBase, DeletedKey, KeyOperationResult
 
 
 class KeyClient:
@@ -105,7 +105,7 @@ class KeyClient:
         return Key._from_key_bundle(bundle)
 
     def create_key(
-        self, name, key_type, key_ops=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs
+        self, name, key_type, key_operations=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs
     ):
         # type: (str, str, Optional[List[str]], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Key
         """Creates a new key, stores it, then returns key attributes to the client.
@@ -121,8 +121,8 @@ class KeyClient:
          JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA',
          'RSA-HSM', 'oct'
         :type key_type: str or ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyType
-        :param key_ops: Supported key operations.
-        :type key_ops: list[str or
+        :param key_operations: Supported key operations.
+        :type key_operations: list[str or
          ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyOperation]
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
@@ -145,11 +145,26 @@ class KeyClient:
                 :caption: Creates a key in the key vault
         """
         return self._create_key(
-            name, key_type=key_type, key_ops=key_ops, enabled=enabled, expires=expires, not_before=not_before, tags=tags
+            name,
+            key_type=key_type,
+            key_ops=key_operations,
+            enabled=enabled,
+            expires=expires,
+            not_before=not_before,
+            tags=tags,
         )
 
     def create_rsa_key(
-        self, name, hsm, size=None, key_ops=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs
+        self,
+        name,
+        hsm,
+        size=None,
+        key_operations=None,
+        enabled=None,
+        expires=None,
+        not_before=None,
+        tags=None,
+        **kwargs
     ):
         # type: (str, bool, Optional[int], Optional[List[str]], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Key
         """Creates a new RSA type key, stores it, then returns key attributes to the client.
@@ -166,8 +181,8 @@ class KeyClient:
         :param size: The key size in bits. For example: 2048, 3072, or
          4096 for RSA.
         :type size: int
-        :param key_ops: Supported key operations.
-        :type key_ops: list[str or
+        :param key_operations: Supported key operations.
+        :type key_operations: list[str or
          ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyOperation]
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
@@ -195,7 +210,7 @@ class KeyClient:
             name,
             key_type=key_type,
             size=size,
-            key_ops=key_ops,
+            key_ops=key_operations,
             enabled=enabled,
             expires=expires,
             not_before=not_before,
@@ -203,7 +218,16 @@ class KeyClient:
         )
 
     def create_ec_key(
-        self, name, hsm, curve=None, key_ops=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs
+        self,
+        name,
+        hsm,
+        curve=None,
+        key_operations=None,
+        enabled=None,
+        expires=None,
+        not_before=None,
+        tags=None,
+        **kwargs
     ):
         # type: (str, bool, Optional[str],  Optional[List[str]], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Key
         """Creates a new Elliptic curve type key, stores it, then returns key attributes to the client.
@@ -222,8 +246,8 @@ class KeyClient:
          'P-521', 'SECP256K1'
         :type curve: str or
          ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyCurveName
-        :param key_ops: Supported key operations.
-        :type key_ops: list[str or
+        :param key_operations: Supported key operations.
+        :type key_operations: list[str or
          ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyOperation]
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
@@ -247,12 +271,12 @@ class KeyClient:
         """
 
         key_type = "EC-HSM" if hsm else "EC"
-        # TODO: should we use enums here instead of direct strings?
+
         return self._create_key(
             name,
             key_type,
             curve=curve,
-            key_ops=key_ops,
+            key_ops=key_operations,
             enabled=enabled,
             expires=expires,
             not_before=not_before,
@@ -470,7 +494,9 @@ class KeyClient:
         bundle = self._client.recover_deleted_key(self.vault_url, name)
         return Key._from_key_bundle(bundle)
 
-    def update_key(self, name, version, key_ops=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs):
+    def update_key(
+        self, name, version, key_operations=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs
+    ):
         # type: (str, str, Optional[List[str]], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Key
         """The update key operation changes specified attributes of a stored key
         and can be applied to any key type and key version stored in Azure Key
@@ -484,9 +510,9 @@ class KeyClient:
         :type name
         :param version: The version of the key to update.
         :type version
-        :param key_ops: Json web key operations. For more information on
+        :param key_operations: Json web key operations. For more information on
          possible key operations, see JsonWebKeyOperation.
-        :type key_ops: list[str or
+        :type key_operations: list[str or
          ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyOperation]
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
@@ -517,7 +543,7 @@ class KeyClient:
             self.vault_url,
             name,
             key_version=version,
-            key_ops=key_ops,
+            key_ops=key_operations,
             tags=tags,
             key_attributes=attributes,
             error_map={404: ResourceNotFoundError},
@@ -587,7 +613,7 @@ class KeyClient:
         :raises: ~azure.core.exceptions.ResourceExistsError if the client failed to retrieve the key
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys.py
+            .. literalinclude:: ../../../tests/test_examples_keys.py
                 :start-after: [START restore_key]
                 :end-before: [END restore_key]
                 :language: python
@@ -640,8 +666,8 @@ class KeyClient:
         bundle = self._client.import_key(self.vault_url, name, key=key, hsm=hsm, key_attributes=attributes, tags=tags)
         return Key._from_key_bundle(bundle)
 
-    def wrap_key(self, name, version, algorithm, value, **kwargs):
-        # type: (str, str, str, bytes, Mapping[str, Any]) -> Key
+    def wrap_key(self, name, algorithm, value, version=None, **kwargs):
+        # type: (str, str, Optional[str], bytes, Mapping[str, Any]) -> Key
         """Wraps a symmetric key using a specified key.
 
         The WRAP operation supports encryption of a symmetric key using a key
@@ -666,7 +692,7 @@ class KeyClient:
         :param callable cls: A custom type or function that will be passed the
          direct response
         :returns: The wrapped symmetric key.
-        :rtype: ~azure.security.keyvault.v7_0.models.KeyOperationResult
+        :rtype: ~azure.security.keyvault.keys._models.KeyOperationResult
 
         Example:
             .. literalinclude:: ../tests/test_examples_keys.py
@@ -674,13 +700,16 @@ class KeyClient:
                 :end-before: [END wrap_key]
                 :language: python
                 :dedent: 4
-                :caption: Creates a key in the key vault
+                :caption: Wraps a symmetric key in the key vault
         """
-        bundle = self._client.wrap_key(self.vault_url, name, key_version=version, algorithm=algorithm, value=value)
-        return _KeyOperationResult(id=bundle.kid, value=bundle.result)
+        if version is None:
+            version = ""
 
-    def unwrap_key(self, name, version, algorithm, value, **kwargs):
-        # type: (str, str, str, bytes, Mapping[str, Any]) -> Key
+        bundle = self._client.wrap_key(self.vault_url, name, key_version=version, algorithm=algorithm, value=value)
+        return KeyOperationResult(id=bundle.kid, value=bundle.result)
+
+    def unwrap_key(self, name, algorithm, value, version=None, **kwargs):
+        # type: (str, str, Optional[str], bytes, Mapping[str, Any]) -> Key
         """Unwraps a symmetric key using the specified key that was initially used
         for wrapping that key.
 
@@ -703,15 +732,18 @@ class KeyClient:
         :param callable cls: A custom type or function that will be passed the
          direct response
         :returns: The unwrapped symmetric key.
-        :rtype: ~azure.security.keyvault.v7_0.models.KeyOperationResult
-        # TODO update return type to named tuple or keep it as is for now?
+        :rtype: ~azure.security.keyvault.keys._models.KeyOperationResult
+
         Example:
             .. literalinclude:: ../tests/test_examples_keys.py
                 :start-after: [START unwrap_key]
                 :end-before: [END unwrap_key]
                 :language: python
                 :dedent: 4
-                :caption: Creates a key in the key vault
+                :caption: Unwraps a symmetric key in the key vault
         """
+        if version is None:
+            version = ""
+
         bundle = self._client.unwrap_key(self.vault_url, name, key_version=version, algorithm=algorithm, value=value)
-        return _KeyOperationResult(id=bundle.kid, value=bundle.result)
+        return KeyOperationResult(id=bundle.kid, value=bundle.result)
