@@ -15,7 +15,7 @@ from uamqp import (
     AMQPClientAsync,
 )
 
-from azure.eventhub.common import parse_sas_token
+from azure.eventhub.common import parse_sas_token, SharedKeyCredentials, SASTokenCredentials
 from azure.eventhub import (
     EventHubError)
 from ..client_abstract import EventHubClientAbstract
@@ -55,16 +55,18 @@ class EventHubClient(EventHubClientAbstract):
         http_proxy = self.config.http_proxy
         transport_type = self.config.transport_type
         auth_timeout = self.config.auth_timeout
-        if self.aad_credential and self.sas_token:
-            raise ValueError("Can't have both sas_token and aad_credential")
 
-        elif self.aad_credential:
-            get_jwt_token = functools.partial(self.aad_credential.get_token, ['https://eventhubs.azure.net//.default'])
-            # TODO: should use async aad_credential.get_token. Check with Charles for async identity api
-            return authentication.JWTTokenAsync(self.auth_uri, self.auth_uri,
-                                                get_jwt_token, http_proxy=http_proxy,
-                                                transport_type=transport_type)
-        elif self.sas_token:
+        if isinstance(self.credentials, SharedKeyCredentials):
+            username = username or self._auth_config['username']
+            password = password or self._auth_config['password']
+            if "@sas.root" in username:
+                return authentication.SASLPlain(
+                    self.host, username, password, http_proxy=http_proxy, transport_type=transport_type)
+            return authentication.SASTokenAsync.from_shared_access_key(
+                self.auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
+                transport_type=transport_type)
+
+        elif isinstance(self.credentials, SASTokenCredentials):
             token = self.sas_token() if callable(self.sas_token) else self.sas_token
             try:
                 expiry = int(parse_sas_token(token)['se'])
@@ -77,13 +79,12 @@ class EventHubClient(EventHubClientAbstract):
                 http_proxy=http_proxy,
                 transport_type=transport_type)
 
-        username = username or self._auth_config['username']
-        password = password or self._auth_config['password']
-        if "@sas.root" in username:
-            return authentication.SASLPlain(
-                self.address.hostname, username, password, http_proxy=http_proxy, transport_type=transport_type)
-        return authentication.SASTokenAsync.from_shared_access_key(
-            self.auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy, transport_type=transport_type)
+        else:
+            get_jwt_token = functools.partial(self.aad_credential.get_token, ['https://eventhubs.azure.net//.default'])
+            return authentication.JWTTokenAsync(self.auth_uri, self.auth_uri,
+                                                get_jwt_token, http_proxy=http_proxy,
+                                                transport_type=transport_type)
+
 
     async def get_properties(self):
         """
@@ -108,10 +109,8 @@ class EventHubClient(EventHubClientAbstract):
             eh_info = response.get_data()
             output = {}
             if eh_info:
-                output['name'] = eh_info[b'name'].decode('utf-8')
-                output['type'] = eh_info[b'type'].decode('utf-8')
-                output['created_at'] = datetime.datetime.fromtimestamp(float(eh_info[b'created_at'])/1000)
-                output['partition_count'] = eh_info[b'partition_count']
+                output['path'] = eh_info[b'name'].decode('utf-8')
+                output['created_at'] = datetime.datetime.utcfromtimestamp(float(eh_info[b'created_at'])/1000)
                 output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
             return output
         finally:
@@ -156,15 +155,14 @@ class EventHubClient(EventHubClientAbstract):
             partition_info = response.get_data()
             output = {}
             if partition_info:
-                output['name'] = partition_info[b'name'].decode('utf-8')
-                output['type'] = partition_info[b'type'].decode('utf-8')
-                output['partition'] = partition_info[b'partition'].decode('utf-8')
+                output['event_hub_path'] = partition_info[b'name'].decode('utf-8')
+                output['id'] = partition_info[b'partition'].decode('utf-8')
                 output['begin_sequence_number'] = partition_info[b'begin_sequence_number']
                 output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']
                 output['last_enqueued_offset'] = partition_info[b'last_enqueued_offset'].decode('utf-8')
                 output['last_enqueued_time_utc'] = datetime.datetime.utcfromtimestamp(
                     float(partition_info[b'last_enqueued_time_utc'] / 1000))
-                output['is_partition_empty'] = partition_info[b'is_partition_empty']
+                output['is_empty'] = partition_info[b'is_partition_empty']
             return output
         finally:
             await mgmt_client.close_async()

@@ -11,7 +11,7 @@ from azure.eventhub.sender import Sender
 from azure.eventhub.receiver import Receiver
 from .constants import MessageSendResult
 from .constants import TransportType
-from .common import FIRST_AVAILABLE, NEW_EVENTS_ONLY
+from .common import FIRST_AVAILABLE, NEW_EVENTS_ONLY, SharedKeyCredentials, SASTokenCredentials
 
 __all__ = [
     "__version__",
@@ -24,4 +24,6 @@ __all__ = [
     "MessageSendResult",
     "TransportType",
     "FIRST_AVAILABLE", "NEW_EVENTS_ONLY",
+    "SharedKeyCredentials",
+    "SASTokenCredentials",
 ]

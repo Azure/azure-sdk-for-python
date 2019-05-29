@@ -26,6 +26,7 @@ from azure.eventhub.sender import Sender
 from azure.eventhub.receiver import Receiver
 from azure.eventhub.common import EventHubError, parse_sas_token
 from .client_abstract import EventHubClientAbstract
+from .common import SASTokenCredentials, SharedKeyCredentials
 
 
 log = logging.getLogger(__name__)
@@ -59,15 +60,19 @@ class EventHubClient(EventHubClientAbstract):
         http_proxy = self.config.http_proxy
         transport_type = self.config.transport_type
         auth_timeout = self.config.auth_timeout
-        if self.aad_credential and self.sas_token:
-            raise ValueError("Can't have both sas_token and aad_credential")
 
-        elif self.aad_credential:
-            get_jwt_token = functools.partial(self.aad_credential.get_token, ['https://eventhubs.azure.net//.default'])
-            return authentication.JWTTokenAuth(self.auth_uri, self.auth_uri,
-                                               get_jwt_token, http_proxy=http_proxy,
-                                               transport_type=transport_type)
-        elif self.sas_token:
+        # TODO: the following code can be refactored to create auth from classes directly instead of using if-else
+        if isinstance(self.credentials, SharedKeyCredentials):
+            username = username or self._auth_config['username']
+            password = password or self._auth_config['password']
+            if "@sas.root" in username:
+                return authentication.SASLPlain(
+                    self.host, username, password, http_proxy=http_proxy, transport_type=transport_type)
+            return authentication.SASTokenAuth.from_shared_access_key(
+                self.auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
+                transport_type=transport_type)
+
+        elif isinstance(self.credentials, SASTokenCredentials):
             token = self.sas_token() if callable(self.sas_token) else self.sas_token
             try:
                 expiry = int(parse_sas_token(token)['se'])
@@ -80,13 +85,13 @@ class EventHubClient(EventHubClientAbstract):
                 http_proxy=http_proxy,
                 transport_type=transport_type)
 
-        username = username or self._auth_config['username']
-        password = password or self._auth_config['password']
-        if "@sas.root" in username:
-            return authentication.SASLPlain(
-                self.address.hostname, username, password, http_proxy=http_proxy, transport_type=transport_type)
-        return authentication.SASTokenAuth.from_shared_access_key(
-            self.auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy, transport_type=transport_type)
+        else:  # Azure credential
+            get_jwt_token = functools.partial(self.credentials.get_token,
+                                              ['https://eventhubs.azure.net//.default'])
+            return authentication.JWTTokenAuth(self.auth_uri, self.auth_uri,
+                                               get_jwt_token, http_proxy=http_proxy,
+                                               transport_type=transport_type)
+
 
     def get_properties(self):
         """
@@ -119,9 +124,7 @@ class EventHubClient(EventHubClientAbstract):
             output = {}
             if eh_info:
                 output['path'] = eh_info[b'name'].decode('utf-8')
-                # output['type'] = eh_info[b'type'].decode('utf-8')
-                output['created_at'] = datetime.datetime.fromtimestamp(float(eh_info[b'created_at'])/1000)
-                output['partition_count'] = eh_info[b'partition_count']
+                output['created_at'] = datetime.datetime.utcfromtimestamp(float(eh_info[b'created_at'])/1000)
                 output['partition_ids'] = [p.decode('utf-8') for p in eh_info[b'partition_ids']]
             return output
         finally:

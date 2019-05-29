@@ -337,7 +337,7 @@ class EventPosition(object):
 
 
 FIRST_AVAILABLE = EventPosition("-1")
-NEW_EVENTS_ONLY = EventPosition("latest")
+NEW_EVENTS_ONLY = EventPosition("@latest")
 
 
 class EventHubError(Exception):
@@ -390,3 +390,21 @@ class EventHubError(Exception):
             details.append(details_msg[system_index + 2: timestamp_index])
             details.append(details_msg[timestamp_index + 2:])
             self.details = details
+
+
+# TODO: move some behaviors to these two classes.
+class SASTokenCredentials(object):
+    def __init__(self, token):
+        self.token = token
+
+
+class SharedKeyCredentials(object):
+    def __init__(self, policy, key):
+        self.policy = policy
+        self.key = key
+
+
+class Address(object):
+    def __init__(self, hostname=None, path=None):
+        self.hostname = hostname
+        self.path = path
