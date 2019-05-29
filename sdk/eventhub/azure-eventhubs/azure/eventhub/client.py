@@ -183,7 +183,7 @@ class EventHubClient(EventHubClientAbstract):
             mgmt_client.close()
 
     def create_receiver(
-            self, consumer_group, partition, event_position=None, exclusive_receiver_priority=None, operation=None,
+            self, partition, consumer_group="$default", event_position=None, exclusive_receiver_priority=None, operation=None,
             prefetch=None,
     ):
         """
