@@ -38,6 +38,15 @@ class SignalRResource(TrackedResource):
      The hostname will be of format:
      &lt;hostNamePrefix&gt;.service.signalr.net.
     :type host_name_prefix: str
+    :param features: List of SignalR featureFlags. e.g. ServiceMode.
+     FeatureFlags that are not included in the parameters for the update
+     operation will not be modified.
+     And the response will only include featureFlags that are explicitly set.
+     When a featureFlag is not explicitly set, SignalR service will use its
+     globally default value.
+     But keep in mind, the default value doesn't mean "false". It varies in
+     terms of different FeatureFlags.
+    :type features: list[~azure.mgmt.signalr.models.SignalRFeature]
     :ivar provisioning_state: Provisioning state of the resource. Possible
      values include: 'Unknown', 'Succeeded', 'Failed', 'Canceled', 'Running',
      'Creating', 'Updating', 'Deleting', 'Moving'
@@ -78,6 +87,7 @@ class SignalRResource(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'ResourceSku'},
         'host_name_prefix': {'key': 'properties.hostNamePrefix', 'type': 'str'},
+        'features': {'key': 'properties.features', 'type': '[SignalRFeature]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'external_ip': {'key': 'properties.externalIP', 'type': 'str'},
         'host_name': {'key': 'properties.hostName', 'type': 'str'},
@@ -90,6 +100,7 @@ class SignalRResource(TrackedResource):
         super(SignalRResource, self).__init__(**kwargs)
         self.sku = kwargs.get('sku', None)
         self.host_name_prefix = kwargs.get('host_name_prefix', None)
+        self.features = kwargs.get('features', None)
         self.provisioning_state = None
         self.external_ip = None
         self.host_name = None
