@@ -24,22 +24,24 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(k1.tags, k2.tags)
         self.assertEqual(k1.recovery_level, k2.recovery_level)
 
-    def _create_rsa_key(self, client, key_name, key_type):
+    def _create_rsa_key(self, client, key_name, hsm):
         # create key with optional arguments
         key_size = 2048
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
-        created_key = client.create_rsa_key(key_name, key_type=key_type, size=key_size, key_ops=key_ops, tags=tags)
+        created_key = client.create_rsa_key(key_name, hsm=hsm, size=key_size, key_ops=key_ops, tags=tags)
         self.assertTrue(created_key.tags, "Missing the optional key attributes.")
         self.assertEqual(tags, created_key.tags)
-        self._validate_rsa_key_bundle(created_key, client.vault_url, key_name, key_type)
+        kty = "RSA-HSM" if hsm else "RSA"
+        self._validate_rsa_key_bundle(created_key, client.vault_url, key_name, kty, key_ops)
         return created_key
 
-    def _create_ec_key(self, client, key_name, key_type):
+    def _create_ec_key(self, client, key_name, hsm):
         # create ec key with optional arguments
         enabled = True
         tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
-        created_key = client.create_ec_key(key_name, key_type=key_type, enabled=enabled)
+        created_key = client.create_ec_key(key_name, hsm=hsm, enabled=enabled)
+        key_type = "EC-HSM" if hsm else "EC"
         self.assertTrue(created_key.enabled, "Missing the optional key attributes.")
         self.assertEqual(enabled, created_key.enabled)
         self._validate_ec_key_bundle(created_key, client.vault_url, key_name, key_type)
@@ -55,9 +57,8 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(key.kty, kty, "kty should by '{}', but is '{}'".format(key, key.kty))
         self.assertTrue(key_attributes.created and key_attributes.updated, "Missing required date attributes.")
 
-    def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops=None):
+    def _validate_rsa_key_bundle(self, key_attributes, vault, key_name, kty, key_ops):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
-        key_ops = key_ops or ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         key = key_attributes.key_material
         kid = key_attributes.id
         self.assertTrue(kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid))
@@ -116,7 +117,7 @@ class KeyClientTests(KeyVaultTestCase):
             ),
         )
         imported_key = client.import_key(name, key)
-        self._validate_rsa_key_bundle(imported_key, client.vault_url, name, "RSA", key.key_ops)
+        self._validate_rsa_key_bundle(imported_key, client.vault_url, name, key.kty, key.key_ops)
         return imported_key
 
     @ResourceGroupPreparer()
@@ -127,16 +128,16 @@ class KeyClientTests(KeyVaultTestCase):
         client = vault_client.keys
 
         # create ec key
-        created_ec_key = self._create_ec_key(client, key_name="crud-ec-key", key_type="EC")
+        created_ec_key = self._create_ec_key(client, key_name="crud-ec-key", hsm=True)
         # create ec with curve
-        created_ec_key_curve = client.create_ec_key(name="crud-P-256-ec-key", key_type="EC", curve="P-256")
+        created_ec_key_curve = client.create_ec_key(name="crud-P-256-ec-key", hsm=False, curve="P-256")
         self.assertEqual("P-256", created_ec_key_curve.key_material.crv)
 
         # import key
         self._import_test_key(client, "import-test-key")
 
         # create rsa key
-        created_rsa_key = self._create_rsa_key(client, key_name="crud-rsa-key", key_type="RSA")
+        created_rsa_key = self._create_rsa_key(client, key_name="crud-rsa-key", hsm=False)
 
         # get the created key with version
         key = client.get_key(created_rsa_key.name, created_rsa_key.version)

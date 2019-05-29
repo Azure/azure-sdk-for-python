@@ -150,9 +150,9 @@ class KeyClient:
         )
 
     def create_rsa_key(
-        self, name, key_type, size=None, key_ops=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs
+        self, name, hsm, size=None, key_ops=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs
     ):
-        # type: (str, str, Optional[int], Optional[List[str]], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Key
+        # type: (str, bool, Optional[int], Optional[List[str]], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Key
         """Creates a new RSA type key, stores it, then returns key attributes to the client.
 
         The create key operation can be used to create any key type in Azure
@@ -162,10 +162,8 @@ class KeyClient:
         :param name: The name for the new key. The system will generate
          the version name for the new key.
         :type name
-        :param key_type: The type of key to create. For valid values, see
-         JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA',
-         'RSA-HSM', 'oct'
-        :type key_type: str or ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyType
+        :param hsm: Whether to import as a hardware key (HSM) or software key.
+        :type hsm: bool
         :param size: The key size in bits. For example: 2048, 3072, or
          4096 for RSA.
         :type size: int
@@ -192,6 +190,8 @@ class KeyClient:
                 :dedent: 4
                 :caption: Creates a key in the key vault
         """
+        key_type = "RSA-HSM" if hsm else "RSA"
+
         return self._create_key(
             name,
             key_type=key_type,
@@ -204,9 +204,9 @@ class KeyClient:
         )
 
     def create_ec_key(
-        self, name, key_type, curve=None, key_ops=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs
+        self, name, hsm, curve=None, key_ops=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs
     ):
-        # type: (str, str, Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Key
+        # type: (str, bool, Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Key
         """Creates a new Elliptic curve type key, stores it, then returns key attributes to the client.
 
         The create key operation can be used to create any key type in Azure
@@ -216,10 +216,8 @@ class KeyClient:
         :param name: The name for the new key. The system will generate
          the version name for the new key.
         :type name
-        :param key_type: The type of key to create. For valid values, see
-         JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA',
-         'RSA-HSM', 'oct'
-        :type key_type: str or ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyType
+        :param hsm: Whether to import as a hardware key (HSM) or software key.
+        :type hsm: bool
         :param curve: Elliptic curve name. If none then defaults to 'P-256'. For valid values, see
          JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384',
          'P-521', 'SECP256K1'
@@ -248,6 +246,9 @@ class KeyClient:
                 :dedent: 4
                 :caption: Creates a key in the key vault
         """
+        
+        key_type = "EC-HSM" if hsm else "EC"
+        # TODO: should we use enums here instead of direct strings?
         return self._create_key(
             name,
             key_type,
