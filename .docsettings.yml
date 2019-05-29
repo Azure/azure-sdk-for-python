@@ -21,6 +21,8 @@ known_content_issues:
   - ['sdk/servicebus/azure-servicebus/README.rst', '#4554']
   - ['sdk/applicationinsights/azure-applicationinsights/README.rst', '#4554']
   - ['sdk/batch/azure-batch/README.rst', '#4554']
+  - ['sdk/cognitiveservices/azure-cognitiveservices-personalizer/README.rst', '#4554']
+  - ['sdk/cognitiveservices/azure-cognitiveservices-anomalydetector/README.rst', '#4554']
   - ['sdk/cognitiveservices/azure-cognitiveservices-formrecognizer/README.rst', '#4554']
   - ['sdk/cognitiveservices/azure-cognitiveservices-knowledge-qnamaker/README.rst', '#4554']
   - ['sdk/cognitiveservices/azure-cognitiveservices-language-luis/README.rst', '#4554']
@@ -45,8 +47,7 @@ known_content_issues:
   - ['sdk/loganalytics/azure-loganalytics/README.rst', '#4554']
   - ['azure-servicefabric/README.rst', '#4554']
   - ['azure-servicemanagement-legacy/README.rst', '#4554']
-  - ['sdk/cognitiveservices/azure-cognitiveservices-anomalydetector/README.rst', '#4554']
-
+  
   # nspckg and common.
   - ['sdk/cognitiveservices/azure-cognitiveservices-nspkg/README.rst', 'nspkg and common']
   - ['sdk/core/azure/README.rst', 'nspkg and common']
