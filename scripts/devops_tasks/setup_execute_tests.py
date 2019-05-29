@@ -55,17 +55,31 @@ if __name__ == '__main__':
 
     parser.add_argument(
         '--junitxml',
-        dest = 'test_results',
-        help = ('The folder where the test results will be stored in xml format.'
-                'Example: --junitxml="junit/test-results.xml"'))
+        dest='test_results',
+        help=('The folder where the test results will be stored in xml format.'
+              'Example: --junitxml="junit/test-results.xml"'))
 
     parser.add_argument(
         '--disablecov',
         help = ('Flag that disables code coverage.'),
         action='store_true')
 
+    parser.add_argument(
+        '--service',
+        help=('Name of service directory (under sdk/) to test.'
+              'Example: --service applicationinsights'))
+
     args = parser.parse_args()
-    targeted_packages = process_glob_string(args.glob_string, root_dir)
+
+    # We need to support both CI builds of everything and individual service
+    # folders. This logic allows us to do both.
+    if args.service:
+        service_dir = os.path.join('sdk', args.service)
+        target_dir = os.path.join(root_dir, service_dir)
+    else:
+        target_dir = root_dir
+
+    targeted_packages = process_glob_string(args.glob_string, target_dir)
     test_results_arg = []
     if args.test_results:
         test_results_arg.extend(['--junitxml', args.test_results])
