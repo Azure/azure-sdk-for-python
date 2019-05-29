@@ -28,7 +28,7 @@ class SoftwareUpdateConfigurationCollectionItem(Model):
      ~azure.mgmt.automation.models.CollectionItemUpdateConfiguration
     :param frequency: execution frequency of the schedule associated with the
      software update configuration. Possible values include: 'OneTime', 'Day',
-     'Hour', 'Week', 'Month'
+     'Hour', 'Week', 'Month', 'Minute'
     :type frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
     :param start_time: the start time of the update.
     :type start_time: datetime

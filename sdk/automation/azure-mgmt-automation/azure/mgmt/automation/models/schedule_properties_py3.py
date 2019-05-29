@@ -38,7 +38,7 @@ class ScheduleProperties(Model):
     :param interval: Gets or sets the interval of the schedule.
     :type interval: int
     :param frequency: Gets or sets the frequency of the schedule. Possible
-     values include: 'OneTime', 'Day', 'Hour', 'Week', 'Month'
+     values include: 'OneTime', 'Day', 'Hour', 'Week', 'Month', 'Minute'
     :type frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
     :param time_zone: Gets or sets the time zone of the schedule.
     :type time_zone: str
