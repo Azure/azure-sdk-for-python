@@ -41,7 +41,7 @@ class CopyActivity(ExecutionActivity):
     :type sink: ~azure.mgmt.datafactory.models.CopySink
     :param translator: Copy activity translator. If not specified, tabular
      translator is used.
-    :type translator: ~azure.mgmt.datafactory.models.CopyTranslator
+    :type translator: object
     :param enable_staging: Specifies whether to copy data via an interim
      staging. Default value is false. Type: boolean (or Expression with
      resultType boolean).
@@ -67,6 +67,8 @@ class CopyActivity(ExecutionActivity):
      ~azure.mgmt.datafactory.models.RedirectIncompatibleRowSettings
     :param preserve_rules: Preserve Rules.
     :type preserve_rules: list[object]
+    :param preserve: Preserve rules.
+    :type preserve: list[object]
     :param inputs: List of inputs for the activity.
     :type inputs: list[~azure.mgmt.datafactory.models.DatasetReference]
     :param outputs: List of outputs for the activity.
@@ -91,7 +93,7 @@ class CopyActivity(ExecutionActivity):
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'source': {'key': 'typeProperties.source', 'type': 'CopySource'},
         'sink': {'key': 'typeProperties.sink', 'type': 'CopySink'},
-        'translator': {'key': 'typeProperties.translator', 'type': 'CopyTranslator'},
+        'translator': {'key': 'typeProperties.translator', 'type': 'object'},
         'enable_staging': {'key': 'typeProperties.enableStaging', 'type': 'object'},
         'staging_settings': {'key': 'typeProperties.stagingSettings', 'type': 'StagingSettings'},
         'parallel_copies': {'key': 'typeProperties.parallelCopies', 'type': 'object'},
@@ -99,6 +101,7 @@ class CopyActivity(ExecutionActivity):
         'enable_skip_incompatible_row': {'key': 'typeProperties.enableSkipIncompatibleRow', 'type': 'object'},
         'redirect_incompatible_row_settings': {'key': 'typeProperties.redirectIncompatibleRowSettings', 'type': 'RedirectIncompatibleRowSettings'},
         'preserve_rules': {'key': 'typeProperties.preserveRules', 'type': '[object]'},
+        'preserve': {'key': 'typeProperties.preserve', 'type': '[object]'},
         'inputs': {'key': 'inputs', 'type': '[DatasetReference]'},
         'outputs': {'key': 'outputs', 'type': '[DatasetReference]'},
     }
@@ -115,6 +118,7 @@ class CopyActivity(ExecutionActivity):
         self.enable_skip_incompatible_row = kwargs.get('enable_skip_incompatible_row', None)
         self.redirect_incompatible_row_settings = kwargs.get('redirect_incompatible_row_settings', None)
         self.preserve_rules = kwargs.get('preserve_rules', None)
+        self.preserve = kwargs.get('preserve', None)
         self.inputs = kwargs.get('inputs', None)
         self.outputs = kwargs.get('outputs', None)
         self.type = 'Copy'

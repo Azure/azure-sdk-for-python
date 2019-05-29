@@ -41,9 +41,8 @@ class SalesforceSink(CopySink):
     :param type: Required. Constant filled by server.
     :type type: str
     :param write_behavior: The write behavior for the operation. Default is
-     Insert. Possible values include: 'Insert', 'Upsert'
-    :type write_behavior: str or
-     ~azure.mgmt.datafactory.models.SalesforceSinkWriteBehavior
+     Insert.
+    :type write_behavior: object
     :param external_id_field_name: The name of the external ID field for
      upsert operation. Default value is 'Id' column. Type: string (or
      Expression with resultType string).
@@ -71,7 +70,7 @@ class SalesforceSink(CopySink):
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'object'},
         'external_id_field_name': {'key': 'externalIdFieldName', 'type': 'object'},
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
     }

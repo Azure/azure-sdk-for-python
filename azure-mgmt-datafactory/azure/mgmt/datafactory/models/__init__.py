@@ -255,6 +255,18 @@ try:
     from .azure_sql_table_dataset_py3 import AzureSqlTableDataset
     from .azure_table_dataset_py3 import AzureTableDataset
     from .azure_blob_dataset_py3 import AzureBlobDataset
+    from .hdfs_location_py3 import HdfsLocation
+    from .http_server_location_py3 import HttpServerLocation
+    from .sftp_location_py3 import SftpLocation
+    from .ftp_server_location_py3 import FtpServerLocation
+    from .file_server_location_py3 import FileServerLocation
+    from .amazon_s3_location_py3 import AmazonS3Location
+    from .azure_data_lake_store_location_py3 import AzureDataLakeStoreLocation
+    from .azure_blob_fs_location_py3 import AzureBlobFSLocation
+    from .azure_blob_storage_location_py3 import AzureBlobStorageLocation
+    from .dataset_location_py3 import DatasetLocation
+    from .delimited_text_dataset_py3 import DelimitedTextDataset
+    from .parquet_dataset_py3 import ParquetDataset
     from .amazon_s3_dataset_py3 import AmazonS3Dataset
     from .activity_policy_py3 import ActivityPolicy
     from .azure_function_activity_py3 import AzureFunctionActivity
@@ -313,6 +325,7 @@ try:
     from .mongo_db_source_py3 import MongoDbSource
     from .cassandra_source_py3 import CassandraSource
     from .web_source_py3 import WebSource
+    from .oracle_partition_settings_py3 import OraclePartitionSettings
     from .oracle_source_py3 import OracleSource
     from .azure_data_explorer_source_py3 import AzureDataExplorerSource
     from .azure_my_sql_source_py3 import AzureMySqlSource
@@ -321,6 +334,8 @@ try:
     from .file_system_source_py3 import FileSystemSource
     from .sql_dw_source_py3 import SqlDWSource
     from .stored_procedure_parameter_py3 import StoredProcedureParameter
+    from .azure_sql_source_py3 import AzureSqlSource
+    from .sql_server_source_py3 import SqlServerSource
     from .sql_source_py3 import SqlSource
     from .rest_source_py3 import RestSource
     from .sap_open_hub_source_py3 import SapOpenHubSource
@@ -332,6 +347,20 @@ try:
     from .document_db_collection_source_py3 import DocumentDbCollectionSource
     from .blob_source_py3 import BlobSource
     from .azure_table_source_py3 import AzureTableSource
+    from .format_read_setting_py3 import FormatReadSetting
+    from .delimited_text_read_setting_py3 import DelimitedTextReadSetting
+    from .hdfs_read_setting_py3 import HdfsReadSetting
+    from .http_read_setting_py3 import HttpReadSetting
+    from .sftp_read_setting_py3 import SftpReadSetting
+    from .ftp_read_setting_py3 import FtpReadSetting
+    from .file_server_read_setting_py3 import FileServerReadSetting
+    from .amazon_s3_read_setting_py3 import AmazonS3ReadSetting
+    from .azure_data_lake_store_read_setting_py3 import AzureDataLakeStoreReadSetting
+    from .azure_blob_fs_read_setting_py3 import AzureBlobFSReadSetting
+    from .azure_blob_storage_read_setting_py3 import AzureBlobStorageReadSetting
+    from .connector_read_setting_py3 import ConnectorReadSetting
+    from .delimited_text_source_py3 import DelimitedTextSource
+    from .parquet_source_py3 import ParquetSource
     from .copy_source_py3 import CopySource
     from .lookup_activity_py3 import LookupActivity
     from .log_storage_settings_py3 import LogStorageSettings
@@ -351,8 +380,6 @@ try:
     from .hd_insight_hive_activity_py3 import HDInsightHiveActivity
     from .redirect_incompatible_row_settings_py3 import RedirectIncompatibleRowSettings
     from .staging_settings_py3 import StagingSettings
-    from .tabular_translator_py3 import TabularTranslator
-    from .copy_translator_py3 import CopyTranslator
     from .cosmos_db_mongo_db_api_sink_py3 import CosmosDbMongoDbApiSink
     from .salesforce_sink_py3 import SalesforceSink
     from .azure_data_explorer_sink_py3 import AzureDataExplorerSink
@@ -364,13 +391,24 @@ try:
     from .oracle_sink_py3 import OracleSink
     from .polybase_settings_py3 import PolybaseSettings
     from .sql_dw_sink_py3 import SqlDWSink
+    from .azure_sql_sink_py3 import AzureSqlSink
+    from .sql_server_sink_py3 import SqlServerSink
     from .sql_sink_py3 import SqlSink
     from .document_db_collection_sink_py3 import DocumentDbCollectionSink
     from .file_system_sink_py3 import FileSystemSink
     from .blob_sink_py3 import BlobSink
+    from .parquet_sink_py3 import ParquetSink
     from .azure_table_sink_py3 import AzureTableSink
     from .azure_queue_sink_py3 import AzureQueueSink
     from .sap_cloud_for_customer_sink_py3 import SapCloudForCustomerSink
+    from .format_write_setting_py3 import FormatWriteSetting
+    from .delimited_text_write_setting_py3 import DelimitedTextWriteSetting
+    from .file_server_write_setting_py3 import FileServerWriteSetting
+    from .azure_data_lake_store_write_setting_py3 import AzureDataLakeStoreWriteSetting
+    from .azure_blob_fs_write_setting_py3 import AzureBlobFSWriteSetting
+    from .azure_blob_storage_write_setting_py3 import AzureBlobStorageWriteSetting
+    from .connector_write_setting_py3 import ConnectorWriteSetting
+    from .delimited_text_sink_py3 import DelimitedTextSink
     from .copy_sink_py3 import CopySink
     from .copy_activity_py3 import CopyActivity
     from .execution_activity_py3 import ExecutionActivity
@@ -396,6 +434,8 @@ try:
     from .linked_integration_runtime_key_authorization_py3 import LinkedIntegrationRuntimeKeyAuthorization
     from .linked_integration_runtime_type_py3 import LinkedIntegrationRuntimeType
     from .self_hosted_integration_runtime_py3 import SelfHostedIntegrationRuntime
+    from .entity_reference_py3 import EntityReference
+    from .integration_runtime_data_proxy_properties_py3 import IntegrationRuntimeDataProxyProperties
     from .integration_runtime_custom_setup_script_properties_py3 import IntegrationRuntimeCustomSetupScriptProperties
     from .integration_runtime_ssis_catalog_info_py3 import IntegrationRuntimeSsisCatalogInfo
     from .integration_runtime_ssis_properties_py3 import IntegrationRuntimeSsisProperties
@@ -663,6 +703,18 @@ except (SyntaxError, ImportError):
     from .azure_sql_table_dataset import AzureSqlTableDataset
     from .azure_table_dataset import AzureTableDataset
     from .azure_blob_dataset import AzureBlobDataset
+    from .hdfs_location import HdfsLocation
+    from .http_server_location import HttpServerLocation
+    from .sftp_location import SftpLocation
+    from .ftp_server_location import FtpServerLocation
+    from .file_server_location import FileServerLocation
+    from .amazon_s3_location import AmazonS3Location
+    from .azure_data_lake_store_location import AzureDataLakeStoreLocation
+    from .azure_blob_fs_location import AzureBlobFSLocation
+    from .azure_blob_storage_location import AzureBlobStorageLocation
+    from .dataset_location import DatasetLocation
+    from .delimited_text_dataset import DelimitedTextDataset
+    from .parquet_dataset import ParquetDataset
     from .amazon_s3_dataset import AmazonS3Dataset
     from .activity_policy import ActivityPolicy
     from .azure_function_activity import AzureFunctionActivity
@@ -721,6 +773,7 @@ except (SyntaxError, ImportError):
     from .mongo_db_source import MongoDbSource
     from .cassandra_source import CassandraSource
     from .web_source import WebSource
+    from .oracle_partition_settings import OraclePartitionSettings
     from .oracle_source import OracleSource
     from .azure_data_explorer_source import AzureDataExplorerSource
     from .azure_my_sql_source import AzureMySqlSource
@@ -729,6 +782,8 @@ except (SyntaxError, ImportError):
     from .file_system_source import FileSystemSource
     from .sql_dw_source import SqlDWSource
     from .stored_procedure_parameter import StoredProcedureParameter
+    from .azure_sql_source import AzureSqlSource
+    from .sql_server_source import SqlServerSource
     from .sql_source import SqlSource
     from .rest_source import RestSource
     from .sap_open_hub_source import SapOpenHubSource
@@ -740,6 +795,20 @@ except (SyntaxError, ImportError):
     from .document_db_collection_source import DocumentDbCollectionSource
     from .blob_source import BlobSource
     from .azure_table_source import AzureTableSource
+    from .format_read_setting import FormatReadSetting
+    from .delimited_text_read_setting import DelimitedTextReadSetting
+    from .hdfs_read_setting import HdfsReadSetting
+    from .http_read_setting import HttpReadSetting
+    from .sftp_read_setting import SftpReadSetting
+    from .ftp_read_setting import FtpReadSetting
+    from .file_server_read_setting import FileServerReadSetting
+    from .amazon_s3_read_setting import AmazonS3ReadSetting
+    from .azure_data_lake_store_read_setting import AzureDataLakeStoreReadSetting
+    from .azure_blob_fs_read_setting import AzureBlobFSReadSetting
+    from .azure_blob_storage_read_setting import AzureBlobStorageReadSetting
+    from .connector_read_setting import ConnectorReadSetting
+    from .delimited_text_source import DelimitedTextSource
+    from .parquet_source import ParquetSource
     from .copy_source import CopySource
     from .lookup_activity import LookupActivity
     from .log_storage_settings import LogStorageSettings
@@ -759,8 +828,6 @@ except (SyntaxError, ImportError):
     from .hd_insight_hive_activity import HDInsightHiveActivity
     from .redirect_incompatible_row_settings import RedirectIncompatibleRowSettings
     from .staging_settings import StagingSettings
-    from .tabular_translator import TabularTranslator
-    from .copy_translator import CopyTranslator
     from .cosmos_db_mongo_db_api_sink import CosmosDbMongoDbApiSink
     from .salesforce_sink import SalesforceSink
     from .azure_data_explorer_sink import AzureDataExplorerSink
@@ -772,13 +839,24 @@ except (SyntaxError, ImportError):
     from .oracle_sink import OracleSink
     from .polybase_settings import PolybaseSettings
     from .sql_dw_sink import SqlDWSink
+    from .azure_sql_sink import AzureSqlSink
+    from .sql_server_sink import SqlServerSink
     from .sql_sink import SqlSink
     from .document_db_collection_sink import DocumentDbCollectionSink
     from .file_system_sink import FileSystemSink
     from .blob_sink import BlobSink
+    from .parquet_sink import ParquetSink
     from .azure_table_sink import AzureTableSink
     from .azure_queue_sink import AzureQueueSink
     from .sap_cloud_for_customer_sink import SapCloudForCustomerSink
+    from .format_write_setting import FormatWriteSetting
+    from .delimited_text_write_setting import DelimitedTextWriteSetting
+    from .file_server_write_setting import FileServerWriteSetting
+    from .azure_data_lake_store_write_setting import AzureDataLakeStoreWriteSetting
+    from .azure_blob_fs_write_setting import AzureBlobFSWriteSetting
+    from .azure_blob_storage_write_setting import AzureBlobStorageWriteSetting
+    from .connector_write_setting import ConnectorWriteSetting
+    from .delimited_text_sink import DelimitedTextSink
     from .copy_sink import CopySink
     from .copy_activity import CopyActivity
     from .execution_activity import ExecutionActivity
@@ -804,6 +882,8 @@ except (SyntaxError, ImportError):
     from .linked_integration_runtime_key_authorization import LinkedIntegrationRuntimeKeyAuthorization
     from .linked_integration_runtime_type import LinkedIntegrationRuntimeType
     from .self_hosted_integration_runtime import SelfHostedIntegrationRuntime
+    from .entity_reference import EntityReference
+    from .integration_runtime_data_proxy_properties import IntegrationRuntimeDataProxyProperties
     from .integration_runtime_custom_setup_script_properties import IntegrationRuntimeCustomSetupScriptProperties
     from .integration_runtime_ssis_catalog_info import IntegrationRuntimeSsisCatalogInfo
     from .integration_runtime_ssis_properties import IntegrationRuntimeSsisProperties
@@ -874,25 +954,18 @@ from .data_factory_management_client_enums import (
     TeradataAuthenticationType,
     Db2AuthenticationType,
     SybaseAuthenticationType,
-    DatasetCompressionLevel,
-    JsonFormatFilePattern,
     AzureFunctionActivityMethod,
     WebActivityMethod,
-    CassandraSourceReadConsistencyLevels,
     StoredProcedureParameterType,
-    SalesforceSourceReadBehavior,
     HDInsightActivityDebugInfoOption,
-    SalesforceSinkWriteBehavior,
-    AzureSearchIndexWriteBehaviorType,
-    CopyBehaviorType,
     PolybaseSettingsRejectType,
-    SapCloudForCustomerSinkWriteBehavior,
     WebHookActivityMethod,
     IntegrationRuntimeType,
     SelfHostedIntegrationRuntimeNodeStatus,
     IntegrationRuntimeUpdateResult,
     IntegrationRuntimeInternalChannelEncryptionMode,
     ManagedIntegrationRuntimeNodeStatus,
+    IntegrationRuntimeEntityReferenceType,
     IntegrationRuntimeSsisCatalogPricingTier,
     IntegrationRuntimeLicenseType,
     IntegrationRuntimeEdition,
@@ -1146,6 +1219,18 @@ __all__ = [
     'AzureSqlTableDataset',
     'AzureTableDataset',
     'AzureBlobDataset',
+    'HdfsLocation',
+    'HttpServerLocation',
+    'SftpLocation',
+    'FtpServerLocation',
+    'FileServerLocation',
+    'AmazonS3Location',
+    'AzureDataLakeStoreLocation',
+    'AzureBlobFSLocation',
+    'AzureBlobStorageLocation',
+    'DatasetLocation',
+    'DelimitedTextDataset',
+    'ParquetDataset',
     'AmazonS3Dataset',
     'ActivityPolicy',
     'AzureFunctionActivity',
@@ -1204,6 +1289,7 @@ __all__ = [
     'MongoDbSource',
     'CassandraSource',
     'WebSource',
+    'OraclePartitionSettings',
     'OracleSource',
     'AzureDataExplorerSource',
     'AzureMySqlSource',
@@ -1212,6 +1298,8 @@ __all__ = [
     'FileSystemSource',
     'SqlDWSource',
     'StoredProcedureParameter',
+    'AzureSqlSource',
+    'SqlServerSource',
     'SqlSource',
     'RestSource',
     'SapOpenHubSource',
@@ -1223,6 +1311,20 @@ __all__ = [
     'DocumentDbCollectionSource',
     'BlobSource',
     'AzureTableSource',
+    'FormatReadSetting',
+    'DelimitedTextReadSetting',
+    'HdfsReadSetting',
+    'HttpReadSetting',
+    'SftpReadSetting',
+    'FtpReadSetting',
+    'FileServerReadSetting',
+    'AmazonS3ReadSetting',
+    'AzureDataLakeStoreReadSetting',
+    'AzureBlobFSReadSetting',
+    'AzureBlobStorageReadSetting',
+    'ConnectorReadSetting',
+    'DelimitedTextSource',
+    'ParquetSource',
     'CopySource',
     'LookupActivity',
     'LogStorageSettings',
@@ -1242,8 +1344,6 @@ __all__ = [
     'HDInsightHiveActivity',
     'RedirectIncompatibleRowSettings',
     'StagingSettings',
-    'TabularTranslator',
-    'CopyTranslator',
     'CosmosDbMongoDbApiSink',
     'SalesforceSink',
     'AzureDataExplorerSink',
@@ -1255,13 +1355,24 @@ __all__ = [
     'OracleSink',
     'PolybaseSettings',
     'SqlDWSink',
+    'AzureSqlSink',
+    'SqlServerSink',
     'SqlSink',
     'DocumentDbCollectionSink',
     'FileSystemSink',
     'BlobSink',
+    'ParquetSink',
     'AzureTableSink',
     'AzureQueueSink',
     'SapCloudForCustomerSink',
+    'FormatWriteSetting',
+    'DelimitedTextWriteSetting',
+    'FileServerWriteSetting',
+    'AzureDataLakeStoreWriteSetting',
+    'AzureBlobFSWriteSetting',
+    'AzureBlobStorageWriteSetting',
+    'ConnectorWriteSetting',
+    'DelimitedTextSink',
     'CopySink',
     'CopyActivity',
     'ExecutionActivity',
@@ -1287,6 +1398,8 @@ __all__ = [
     'LinkedIntegrationRuntimeKeyAuthorization',
     'LinkedIntegrationRuntimeType',
     'SelfHostedIntegrationRuntime',
+    'EntityReference',
+    'IntegrationRuntimeDataProxyProperties',
     'IntegrationRuntimeCustomSetupScriptProperties',
     'IntegrationRuntimeSsisCatalogInfo',
     'IntegrationRuntimeSsisProperties',
@@ -1356,25 +1469,18 @@ __all__ = [
     'TeradataAuthenticationType',
     'Db2AuthenticationType',
     'SybaseAuthenticationType',
-    'DatasetCompressionLevel',
-    'JsonFormatFilePattern',
     'AzureFunctionActivityMethod',
     'WebActivityMethod',
-    'CassandraSourceReadConsistencyLevels',
     'StoredProcedureParameterType',
-    'SalesforceSourceReadBehavior',
     'HDInsightActivityDebugInfoOption',
-    'SalesforceSinkWriteBehavior',
-    'AzureSearchIndexWriteBehaviorType',
-    'CopyBehaviorType',
     'PolybaseSettingsRejectType',
-    'SapCloudForCustomerSinkWriteBehavior',
     'WebHookActivityMethod',
     'IntegrationRuntimeType',
     'SelfHostedIntegrationRuntimeNodeStatus',
     'IntegrationRuntimeUpdateResult',
     'IntegrationRuntimeInternalChannelEncryptionMode',
     'ManagedIntegrationRuntimeNodeStatus',
+    'IntegrationRuntimeEntityReferenceType',
     'IntegrationRuntimeSsisCatalogPricingTier',
     'IntegrationRuntimeLicenseType',
     'IntegrationRuntimeEdition',

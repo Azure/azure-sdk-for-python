@@ -41,9 +41,8 @@ class SapCloudForCustomerSink(CopySink):
     :param type: Required. Constant filled by server.
     :type type: str
     :param write_behavior: The write behavior for the operation. Default is
-     'Insert'. Possible values include: 'Insert', 'Update'
-    :type write_behavior: str or
-     ~azure.mgmt.datafactory.models.SapCloudForCustomerSinkWriteBehavior
+     'Insert'.
+    :type write_behavior: object
     """
 
     _validation = {
@@ -58,7 +57,7 @@ class SapCloudForCustomerSink(CopySink):
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'object'},
     }
 
     def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, write_behavior=None, **kwargs) -> None:
