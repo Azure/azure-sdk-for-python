@@ -34,6 +34,9 @@ class Location(Model):
      priority = (total number of regions - 1). Failover priority values must be
      unique for each of the regions in which the database account exists.
     :type failover_priority: int
+    :param is_zone_redundant: Flag to indicate whether or not this region is
+     an AvailabilityZone region
+    :type is_zone_redundant: bool
     """
 
     _validation = {
@@ -48,12 +51,14 @@ class Location(Model):
         'document_endpoint': {'key': 'documentEndpoint', 'type': 'str'},
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'failover_priority': {'key': 'failoverPriority', 'type': 'int'},
+        'is_zone_redundant': {'key': 'isZoneRedundant', 'type': 'bool'},
     }
 
-    def __init__(self, *, location_name: str=None, provisioning_state: str=None, failover_priority: int=None, **kwargs) -> None:
+    def __init__(self, *, location_name: str=None, provisioning_state: str=None, failover_priority: int=None, is_zone_redundant: bool=None, **kwargs) -> None:
         super(Location, self).__init__(**kwargs)
         self.id = None
         self.location_name = location_name
         self.document_endpoint = None
         self.provisioning_state = provisioning_state
         self.failover_priority = failover_priority
+        self.is_zone_redundant = is_zone_redundant
