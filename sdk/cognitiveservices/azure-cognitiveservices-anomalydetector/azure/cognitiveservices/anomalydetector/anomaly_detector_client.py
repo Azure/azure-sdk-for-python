@@ -13,6 +13,8 @@ from msrest.service_client import SDKClient
 from msrest import Configuration, Serializer, Deserializer
 from .version import VERSION
 from msrest.pipeline import ClientRawResponse
+from .operations.time_series_operations import TimeSeriesOperations
+from .operations.time_series_group_operations import TimeSeriesGroupOperations
 from . import models
 
 
@@ -47,10 +49,15 @@ class AnomalyDetectorClientConfiguration(Configuration):
 
 
 class AnomalyDetectorClient(SDKClient):
-    """The Anomaly Detector API detects anomalies automatically in time series data. It supports two functionalities, one is for detecting the whole series with model trained by the timeseries, another is detecting last point with model trained by points before. By using this service, business customers can discover incidents and establish a logic flow for root cause analysis.
+    """The Anomaly Detector API detects anomalies automatically in time series data. It supports two kinds of mode, one is for stateless using, another is for stateful using. In stateless mode, there are three functionalities. Entire Detect is for detecting the whole series with model trained by the time series, Last Detect is detecting last point with model trained by points before. ChangePoint Detect is for detecting trend changes in time series. In stateful mode, user can store time series, the stored time series will be used for detection anomalies. Under this mode, user can still use the aboving three functionalities by only giving a time range without preparing time series in client side. Besides the above three functionalities, stateful model also provide group based detection and labeling service. By leveraing labeling service user can provide labels for each detection result, these labels will be used for retuning or regenerating detection models. Inconsistency detection is a kind of group based detection, this detection will find inconsistency ones in a set of time series. By using anomaly detector service, business customers can discover incidents and establish a logic flow for root cause analysis.
 
     :ivar config: Configuration for client.
     :vartype config: AnomalyDetectorClientConfiguration
+
+    :ivar time_series: TimeSeries operations
+    :vartype time_series: azure.cognitiveservices.anomalydetector.operations.TimeSeriesOperations
+    :ivar time_series_group: TimeSeriesGroup operations
+    :vartype time_series_group: azure.cognitiveservices.anomalydetector.operations.TimeSeriesGroupOperations
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and
      hostname, for example: https://westus2.api.cognitive.microsoft.com).
@@ -71,6 +78,10 @@ class AnomalyDetectorClient(SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.time_series = TimeSeriesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.time_series_group = TimeSeriesGroupOperations(
+            self._client, self.config, self._serialize, self._deserialize)
 
     def entire_detect(
             self, body, custom_headers=None, raw=False, **operation_config):
@@ -197,3 +208,64 @@ class AnomalyDetectorClient(SDKClient):
 
         return deserialized
     last_detect.metadata = {'url': '/timeseries/last/detect'}
+
+    def change_point_detect(
+            self, body, custom_headers=None, raw=False, **operation_config):
+        """Detect change point for the entire series.
+
+        Evaluate change point score of every series point.
+
+        :param body: Time series points and granularity is needed. Advanced
+         model parameters can also be set in the request if needed.
+        :type body:
+         ~azure.cognitiveservices.anomalydetector.models.ChangePointDetectRequest
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ChangePointDetectResponse or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.anomalydetector.models.ChangePointDetectResponse
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
+        """
+        # Construct URL
+        url = self.change_point_detect.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(body, 'ChangePointDetectRequest')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.APIErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ChangePointDetectResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    change_point_detect.metadata = {'url': '/timeseries/changepoint/detect'}

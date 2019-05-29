@@ -12,18 +12,19 @@
 from msrest.serialization import Model
 
 
-class Request(Model):
-    """Request.
+class ChangePointDetectRequest(Model):
+    """ChangePointDetectRequest.
 
     All required parameters must be populated in order to send to Azure.
 
     :param series: Required. Time series data points. Points should be sorted
-     by timestamp in ascending order to match the anomaly detection result. If
-     the data is not sorted correctly or there is duplicated timestamp, the API
-     will not work. In such case, an error message will be returned.
+     by timestamp in ascending order to match the change point detection
+     result.
     :type series: list[~azure.cognitiveservices.anomalydetector.models.Point]
-    :param granularity: Required. Possible values include: 'yearly',
-     'monthly', 'weekly', 'daily', 'hourly', 'minutely'
+    :param granularity: Required. Can only be one of yearly, monthly, weekly,
+     daily, hourly or minutely. Granularity is used for verify whether input
+     series is valid. Possible values include: 'yearly', 'monthly', 'weekly',
+     'daily', 'hourly', 'minutely'
     :type granularity: str or
      ~azure.cognitiveservices.anomalydetector.models.Granularity
     :param custom_interval: Custom Interval is used to set non-standard time
@@ -34,13 +35,13 @@ class Request(Model):
      value is null or does not present, the API will determine the period
      automatically.
     :type period: int
-    :param max_anomaly_ratio: Optional argument, advanced model parameter, max
-     anomaly ratio in a time series.
-    :type max_anomaly_ratio: float
-    :param sensitivity: Optional argument, advanced model parameter, between
-     0-99, the lower the value is, the larger the margin value will be which
-     means less anomalies will be accepted.
-    :type sensitivity: int
+    :param stable_trend_window: Optional argument, advanced model parameter, a
+     default stableTrendWindow will be used in detection.
+    :type stable_trend_window: int
+    :param threshold: Optional argument, advanced model parameter, between
+     0.0-1.0, the lower the value is, the larger the trend error will be which
+     means less change point will be accepted.
+    :type threshold: float
     """
 
     _validation = {
@@ -53,15 +54,15 @@ class Request(Model):
         'granularity': {'key': 'granularity', 'type': 'Granularity'},
         'custom_interval': {'key': 'customInterval', 'type': 'int'},
         'period': {'key': 'period', 'type': 'int'},
-        'max_anomaly_ratio': {'key': 'maxAnomalyRatio', 'type': 'float'},
-        'sensitivity': {'key': 'sensitivity', 'type': 'int'},
+        'stable_trend_window': {'key': 'stableTrendWindow', 'type': 'int'},
+        'threshold': {'key': 'threshold', 'type': 'float'},
     }
 
-    def __init__(self, **kwargs):
-        super(Request, self).__init__(**kwargs)
-        self.series = kwargs.get('series', None)
-        self.granularity = kwargs.get('granularity', None)
-        self.custom_interval = kwargs.get('custom_interval', None)
-        self.period = kwargs.get('period', None)
-        self.max_anomaly_ratio = kwargs.get('max_anomaly_ratio', None)
-        self.sensitivity = kwargs.get('sensitivity', None)
+    def __init__(self, *, series, granularity, custom_interval: int=None, period: int=None, stable_trend_window: int=None, threshold: float=None, **kwargs) -> None:
+        super(ChangePointDetectRequest, self).__init__(**kwargs)
+        self.series = series
+        self.granularity = granularity
+        self.custom_interval = custom_interval
+        self.period = period
+        self.stable_trend_window = stable_trend_window
+        self.threshold = threshold
