@@ -7,10 +7,10 @@
 import time
 import codecs
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
+from azure.security.keyvault._generated.v7_0.models import JsonWebKey
 from devtools_testutils import ResourceGroupPreparer
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
-from azure.security.keyvault._generated.v7_0.models import JsonWebKey
 
 
 def create_vault_client():
@@ -41,7 +41,7 @@ def create_key_client():
 
     # [START create_key_client]
     from azure.common.credentials import ServicePrincipalCredentials
-    from azure.security.keyvault.keys._client import KeyClient
+    from azure.security.keyvault.keys import KeyClient
 
     credentials = ServicePrincipalCredentials(
         client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"

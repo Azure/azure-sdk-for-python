@@ -3,13 +3,13 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from preparer import VaultClientPreparer
-from test_case import KeyVaultTestCase
-from devtools_testutils import ResourceGroupPreparer
 import time
 import codecs
 from dateutil import parser as date_parse
 from azure.security.keyvault._generated.v7_0.models import JsonWebKey
+from preparer import VaultClientPreparer
+from test_case import KeyVaultTestCase
+from devtools_testutils import ResourceGroupPreparer
 
 
 class KeyClientTests(KeyVaultTestCase):
