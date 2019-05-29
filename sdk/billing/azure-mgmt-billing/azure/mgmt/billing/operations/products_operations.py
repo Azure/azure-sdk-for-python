@@ -321,15 +321,15 @@ class ProductsOperations(object):
     transfer.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/products/{productName}/transfer'}
 
     def validate_transfer(
-            self, billing_account_name, invoice_section_name, billing_subscription_name, destination_invoice_section_id=None, destination_billing_profile_id=None, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, invoice_section_name, product_name, destination_invoice_section_id=None, destination_billing_profile_id=None, custom_headers=None, raw=False, **operation_config):
         """Validates the transfer of products across invoice sections.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
-        :param billing_subscription_name: Billing Subscription Id.
-        :type billing_subscription_name: str
+        :param product_name: Invoice Id.
+        :type product_name: str
         :param destination_invoice_section_id: The destination invoice section
          id.
         :type destination_invoice_section_id: str
@@ -356,7 +356,7 @@ class ProductsOperations(object):
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'invoiceSectionName': self._serialize.url("invoice_section_name", invoice_section_name, 'str'),
-            'billingSubscriptionName': self._serialize.url("billing_subscription_name", billing_subscription_name, 'str')
+            'productName': self._serialize.url("product_name", product_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
