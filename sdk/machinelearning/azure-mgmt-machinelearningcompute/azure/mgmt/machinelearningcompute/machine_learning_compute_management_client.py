@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import ServiceClient
+from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
@@ -50,7 +50,7 @@ class MachineLearningComputeManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class MachineLearningComputeManagementClient(object):
+class MachineLearningComputeManagementClient(SDKClient):
     """These APIs allow end users to operate on Azure Machine Learning Compute resources. They support the following operations:&lt;ul&gt;&lt;li&gt;Create or update a cluster&lt;/li&gt;&lt;li&gt;Get a cluster&lt;/li&gt;&lt;li&gt;Patch a cluster&lt;/li&gt;&lt;li&gt;Delete a cluster&lt;/li&gt;&lt;li&gt;Get keys for a cluster&lt;/li&gt;&lt;li&gt;Check if updates are available for system services in a cluster&lt;/li&gt;&lt;li&gt;Update system services in a cluster&lt;/li&gt;&lt;li&gt;Get all clusters in a resource group&lt;/li&gt;&lt;li&gt;Get all clusters in a subscription&lt;/li&gt;&lt;/ul&gt;
 
     :ivar config: Configuration for client.
@@ -73,7 +73,7 @@ class MachineLearningComputeManagementClient(object):
             self, credentials, subscription_id, base_url=None):
 
         self.config = MachineLearningComputeManagementClientConfiguration(credentials, subscription_id, base_url)
-        self._client = ServiceClient(self.config.credentials, self.config)
+        super(MachineLearningComputeManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2017-08-01-preview'
