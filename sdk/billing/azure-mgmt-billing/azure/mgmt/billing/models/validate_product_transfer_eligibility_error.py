@@ -17,7 +17,7 @@ class ValidateProductTransferEligibilityError(Model):
 
     :param code: Error code for the product transfer validation. Possible
      values include: 'InvalidSource', 'ProductNotActive',
-     'InsufficienctPermissionOnSource', 'InsufficienctPermissionOnDestination',
+     'InsufficientPermissionOnSource', 'InsufficientPermissionOnDestination',
      'DestinationBillingProfilePastDue', 'ProductTypeNotSupported',
      'CrossBillingAccountNotAllowed', 'NotAvailableForDestinationMarket',
      'OneTimePurchaseProductTransferNotAllowed'
