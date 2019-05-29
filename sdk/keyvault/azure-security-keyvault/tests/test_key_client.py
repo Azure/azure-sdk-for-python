@@ -40,10 +40,11 @@ class KeyClientTests(KeyVaultTestCase):
         # create ec key with optional arguments
         enabled = True
         tags = {"purpose": "unit test", "test name": "CreateECKeyTest"}
-        created_key = client.create_ec_key(key_name, hsm=hsm, enabled=enabled)
+        created_key = client.create_ec_key(key_name, hsm=hsm, enabled=enabled, tags=tags)
         key_type = "EC-HSM" if hsm else "EC"
         self.assertTrue(created_key.enabled, "Missing the optional key attributes.")
         self.assertEqual(enabled, created_key.enabled)
+        self.assertEqual(tags, created_key.tags)
         self._validate_ec_key_bundle(created_key, client.vault_url, key_name, key_type)
         return created_key
 
@@ -128,7 +129,7 @@ class KeyClientTests(KeyVaultTestCase):
         client = vault_client.keys
 
         # create ec key
-        created_ec_key = self._create_ec_key(client, key_name="crud-ec-key", hsm=True)
+        self._create_ec_key(client, key_name="crud-ec-key", hsm=True)
         # create ec with curve
         created_ec_key_curve = client.create_ec_key(name="crud-P-256-ec-key", hsm=False, curve="P-256")
         self.assertEqual("P-256", created_ec_key_curve.key_material.crv)
@@ -252,12 +253,12 @@ class KeyClientTests(KeyVaultTestCase):
 
         # create keys to recover
         for i in range(self.list_test_size):
-            key_name = self.get_resource_name("keyrec{}".format((i)))
+            key_name = self.get_resource_name("keyrec{}".format(i))
             keys[key_name] = client.create_key(key_name, "RSA")
 
         # create keys to purge
         for i in range(self.list_test_size):
-            key_name = self.get_resource_name("keyprg{}".format((i)))
+            key_name = self.get_resource_name("keyprg{}".format(i))
             keys[key_name] = client.create_key(key_name, "RSA")
 
         # delete all keys
