@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_principal_base import ServicePrincipalBase
+from .service_principal_base_py3 import ServicePrincipalBase
 
 
 class ServicePrincipalUpdateParameters(ServicePrincipalBase):
@@ -17,7 +17,7 @@ class ServicePrincipalUpdateParameters(ServicePrincipalBase):
 
     :param account_enabled: whether or not the service principal account is
      enabled
-    :type account_enabled: str
+    :type account_enabled: bool
     :param app_role_assignment_required: Specifies whether an
      AppRoleAssignment to a user or group is required before Azure AD will
      issue a user or access token to the application.
@@ -37,7 +37,7 @@ class ServicePrincipalUpdateParameters(ServicePrincipalBase):
     """
 
     _attribute_map = {
-        'account_enabled': {'key': 'accountEnabled', 'type': 'str'},
+        'account_enabled': {'key': 'accountEnabled', 'type': 'bool'},
         'app_role_assignment_required': {'key': 'appRoleAssignmentRequired', 'type': 'bool'},
         'key_credentials': {'key': 'keyCredentials', 'type': '[KeyCredential]'},
         'password_credentials': {'key': 'passwordCredentials', 'type': '[PasswordCredential]'},
@@ -45,5 +45,5 @@ class ServicePrincipalUpdateParameters(ServicePrincipalBase):
         'tags': {'key': 'tags', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(ServicePrincipalUpdateParameters, self).__init__(**kwargs)
+    def __init__(self, *, account_enabled: bool=None, app_role_assignment_required: bool=None, key_credentials=None, password_credentials=None, service_principal_type: str=None, tags=None, **kwargs) -> None:
+        super(ServicePrincipalUpdateParameters, self).__init__(account_enabled=account_enabled, app_role_assignment_required=app_role_assignment_required, key_credentials=key_credentials, password_credentials=password_credentials, service_principal_type=service_principal_type, tags=tags, **kwargs)
