@@ -26,9 +26,6 @@ class DelimitedTextReadSetting(FormatReadSetting):
      when reading data from input files. Type: integer (or Expression with
      resultType integer).
     :type skip_line_count: object
-    :param treat_empty_as_null: Specify whether to treat null or empty string
-     as a null value when reading data from an input file.
-    :type treat_empty_as_null: bool
     """
 
     _validation = {
@@ -39,10 +36,8 @@ class DelimitedTextReadSetting(FormatReadSetting):
         'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
         'skip_line_count': {'key': 'skipLineCount', 'type': 'object'},
-        'treat_empty_as_null': {'key': 'treatEmptyAsNull', 'type': 'bool'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, skip_line_count=None, treat_empty_as_null: bool=None, **kwargs) -> None:
+    def __init__(self, *, type: str, additional_properties=None, skip_line_count=None, **kwargs) -> None:
         super(DelimitedTextReadSetting, self).__init__(additional_properties=additional_properties, type=type, **kwargs)
         self.skip_line_count = skip_line_count
-        self.treat_empty_as_null = treat_empty_as_null
