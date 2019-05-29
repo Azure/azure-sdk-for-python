@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ConnectToSourceNonSqlTaskOutput(Model):
-    """Output for connect to Oracle, MySQL type source.
+    """Output for connect to MySQL type source.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

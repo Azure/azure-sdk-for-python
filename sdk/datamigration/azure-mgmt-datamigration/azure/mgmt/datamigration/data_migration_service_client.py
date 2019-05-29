@@ -16,6 +16,7 @@ from .version import VERSION
 from .operations.resource_skus_operations import ResourceSkusOperations
 from .operations.services_operations import ServicesOperations
 from .operations.tasks_operations import TasksOperations
+from .operations.service_tasks_operations import ServiceTasksOperations
 from .operations.projects_operations import ProjectsOperations
 from .operations.usages_operations import UsagesOperations
 from .operations.operations import Operations
@@ -67,6 +68,8 @@ class DataMigrationServiceClient(SDKClient):
     :vartype services: azure.mgmt.datamigration.operations.ServicesOperations
     :ivar tasks: Tasks operations
     :vartype tasks: azure.mgmt.datamigration.operations.TasksOperations
+    :ivar service_tasks: ServiceTasks operations
+    :vartype service_tasks: azure.mgmt.datamigration.operations.ServiceTasksOperations
     :ivar projects: Projects operations
     :vartype projects: azure.mgmt.datamigration.operations.ProjectsOperations
     :ivar usages: Usages operations
@@ -100,6 +103,8 @@ class DataMigrationServiceClient(SDKClient):
         self.services = ServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.tasks = TasksOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.service_tasks = ServiceTasksOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.projects = ProjectsOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -9,16 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .connection_info import ConnectionInfo
 
 
-class ConnectionInfo(Model):
-    """Defines the connection properties of a server.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MiSqlConnectionInfo, PostgreSqlConnectionInfo,
-    OracleConnectionInfo, MySqlConnectionInfo, MongoDbConnectionInfo,
-    SqlConnectionInfo
+class OracleConnectionInfo(ConnectionInfo):
+    """Information for connecting to Oracle server.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -28,24 +23,23 @@ class ConnectionInfo(Model):
     :type password: str
     :param type: Required. Constant filled by server.
     :type type: str
+    :param data_source: Required. EZConnect or TNSName connection string.
+    :type data_source: str
     """
 
     _validation = {
         'type': {'required': True},
+        'data_source': {'required': True},
     }
 
     _attribute_map = {
         'user_name': {'key': 'userName', 'type': 'str'},
         'password': {'key': 'password', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'data_source': {'key': 'dataSource', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'type': {'MiSqlConnectionInfo': 'MiSqlConnectionInfo', 'PostgreSqlConnectionInfo': 'PostgreSqlConnectionInfo', 'OracleConnectionInfo': 'OracleConnectionInfo', 'MySqlConnectionInfo': 'MySqlConnectionInfo', 'MongoDbConnectionInfo': 'MongoDbConnectionInfo', 'SqlConnectionInfo': 'SqlConnectionInfo'}
-    }
-
-    def __init__(self, *, user_name: str=None, password: str=None, **kwargs) -> None:
-        super(ConnectionInfo, self).__init__(**kwargs)
-        self.user_name = user_name
-        self.password = password
-        self.type = None
+    def __init__(self, **kwargs):
+        super(OracleConnectionInfo, self).__init__(**kwargs)
+        self.data_source = kwargs.get('data_source', None)
+        self.type = 'OracleConnectionInfo'
