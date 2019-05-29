@@ -132,7 +132,7 @@ class KeyClientTests(KeyVaultTestCase):
         created_ec_key_curve = client.create_ec_key(name="crud-P-256-ec-key", key_type="EC", curve="P-256")
         self.assertEqual("P-256", created_ec_key_curve.key_material.crv)
 
-        # import to software
+        # import key
         self._import_test_key(client, "import-test-key")
 
         # create rsa key
@@ -294,7 +294,7 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
     @ResourceGroupPreparer()
-    @VaultClientPreparer(enable_soft_delete=True)
+    @VaultClientPreparer()
     def test_key_wrap_and_unwrap(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
         client = vault_client.keys

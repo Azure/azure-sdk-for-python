@@ -208,7 +208,7 @@ class KeyClient:
     def create_ec_key(
         self, name, key_type, curve=None, key_ops=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs
     ):
-        # type: (str, str, Optional[List[str]], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Optional[str], Mapping[str, Any]) -> Key
+        # type: (str, str, Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Key
         """Creates a new Elliptic curve type key, stores it, then returns key attributes to the client.
 
         The create key operation can be used to create any key type in Azure
@@ -473,7 +473,7 @@ class KeyClient:
         return Key._from_key_bundle(bundle)
 
     def update_key(self, name, version, key_ops=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs):
-        # type: (str, str, Optional[List[str]], Optional[bool], Optional[datetime], Optional[datetime], Optional[str], Mapping[str, Any]) -> Key
+        # type: (str, str, Optional[List[str]], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Key
         """The update key operation changes specified attributes of a stored key
         and can be applied to any key type and key version stored in Azure Key
         Vault.
@@ -600,7 +600,7 @@ class KeyClient:
         return Key._from_key_bundle(bundle)
 
     def import_key(self, name, key, hsm=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
-        # type: (str, List[str], Optional[bool], Optional[bool], Optional[datetime], Optional[datetime], Optional[str], Mapping[str, Any]) -> Key
+        # type: (str, List[str], Optional[bool], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Key
         """Imports an externally created key, stores it, and returns key
         parameters and attributes to the client.
 
