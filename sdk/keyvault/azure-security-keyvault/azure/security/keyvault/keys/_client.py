@@ -379,7 +379,7 @@ class KeyClient:
         Individual versions of a key are not listed in the response. This
         operation requires the keys/list permission.
 
-        :returns: An iterator like instance of Key
+        :returns: An iterator like instance of KeyBase
         :rtype:
          typing.Generator[~azure.security.keyvault.keys._models.KeyBase]
 
@@ -403,7 +403,7 @@ class KeyClient:
 
         :param name: The name of the key.
         :type name
-        :returns: An iterator like instance of Key
+        :returns: An iterator like instance of KeyBase
         :rtype:
          typing.Generator[~azure.security.keyvault.keys._models.KeyBase]
 
