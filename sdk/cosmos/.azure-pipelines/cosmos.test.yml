@@ -26,6 +26,51 @@ jobs:
       vmImage: $(OSVmImage)
 
     steps:
+      - task: PowerShell@1
+        displayName: 'Download Public Cosmos Emulator'
+        inputs:
+          scriptType: inlineScript
+          inlineScript: |
+            Write-Host "Downloading Cosmos Emulator - $(EmulatorMsiUrl)"
+            wget "$(EmulatorMsiUrl)" -outfile "$env:temp\azure-cosmosdb-emulator.msi"
+            Write-Host "Finished Downloading Cosmos Emulator - $env:temp\azure-cosmosdb-emulator.msi"
+            dir "$env:temp"
+
+      - task: CmdLine@2
+        displayName: 'Cleanup already installed Azure Cosmos DB Emulator'
+        inputs:
+          script: |
+            echo "Deleting Azure Cosmos DB Emulator directory"
+            dir "%ProgramFiles%\"
+            rmdir /Q /S "%ProgramFiles%\Azure Cosmos DB Emulator"
+            echo "Directory after deleting"
+            dir "%ProgramFiles%\"
+
+      - task: CmdLine@2
+        displayName: 'Install Public Cosmos DB Emulator'
+        inputs:
+          script: |
+            choco install lessmsi
+            choco upgrade lessmsi
+            echo "Checking directory" 
+            dir "%ProgramFiles%"
+            mkdir "%TEMP%\Azure Cosmos DB Emulator"
+            lessmsi x "%TEMP%\azure-cosmosdb-emulator.msi" "%TEMP%\Azure Cosmos DB Emulator\"
+            dir "%TEMP%"
+            dir "%Temp%\Azure Cosmos DB Emulator\"
+
+      - task: PowerShell@1
+        displayName: 'Run Public Cosmos DB Emulator'
+        inputs:
+          scriptType: inlineScript
+          inlineScript: |
+            dir "$env:Temp\"
+            dir "$env:Temp\Azure Cosmos DB Emulator"
+            dir "$env:Temp\Azure Cosmos DB Emulator\SourceDir\"
+            dir "$env:Temp\Azure Cosmos DB Emulator\SourceDir\Azure Cosmos DB Emulator"
+            Write-Host "Starting Comsos DB Emulator"
+            Start-Process "$env:Temp\Azure Cosmos DB Emulator\SourceDir\Azure Cosmos DB Emulator\CosmosDB.Emulator.exe" "/NoExplorer /NoUI" -Verb RunAs
+                              
       - task: UsePythonVersion@0
         displayName: 'Use Python $(PythonVersion)'
         inputs:
@@ -36,17 +81,12 @@ jobs:
           python scripts/dev_setup.py --packageList azure-cosmos
         displayName: 'Set up Environment'
 
-      - task: azure-cosmosdb.emulator-public-preview.run-cosmosdbemulatorcontainer.CosmosDbEmulator@2
-        displayName: "Run Azure Cosmos DB Emulator container"
-        inputs:
-          defaultPartitionCount: 25
-
       - task: PowerShell@1
         displayName: 'Run Python Tests'
         inputs:
           scriptType: inlineScript
           inlineScript: |
-            $env:ACCOUNT_HOST="$(CosmosDBEmulator.Endpoint)"
+            $env:ACCOUNT_HOST="https://localhost:8081/"
             cmd /c 'pytest --junitxml=sdk/cosmos/azure-cosmos/Test-junit.xml --verbose sdk/cosmos/azure-cosmos/test -k "not globaldb"'
 
         condition: succeededOrFailed()
