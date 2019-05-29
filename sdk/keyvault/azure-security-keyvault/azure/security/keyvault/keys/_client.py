@@ -13,7 +13,7 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
 
 from .._generated import KeyVaultClient
-from ._models import Key, KeyBase, DeletedKey
+from ._models import Key, KeyBase, DeletedKey, _KeyOperationResult
 import collections
 
 
@@ -36,8 +36,6 @@ class KeyClient:
             :dedent: 4
             :caption: Creates a new instance of the Key client
     """
-
-    KeyOperationResult = collections.namedtuple("KeyOperationResult", "id value")
 
     # pylint:disable=protected-access
 
@@ -126,7 +124,7 @@ class KeyClient:
         :type key_type: str or ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyType
         :param key_ops: Supported key operations.
         :type key_ops: list[str or
-         ~~azure.security.keyvault._generated.v7_0.models.JsonWebKeyOperation]
+         ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyOperation]
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :param expires: Expiry date of the key  in UTC.
@@ -173,7 +171,7 @@ class KeyClient:
         :type size: int
         :param key_ops: Supported key operations.
         :type key_ops: list[str or
-         ~~azure.security.keyvault._generated.v7_0.models.JsonWebKeyOperation]
+         ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyOperation]
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :param expires: Expiry date of the key  in UTC.
@@ -226,10 +224,10 @@ class KeyClient:
          JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384',
          'P-521', 'SECP256K1'
         :type curve: str or
-         ~~azure.security.keyvault._generated.v7_0.models.JsonWebKeyCurveName
+         ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyCurveName
         :param key_ops: Supported key operations.
         :type key_ops: list[str or
-         ~~azure.security.keyvault._generated.v7_0.models.JsonWebKeyOperation]
+         ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyOperation]
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :param expires: Expiry date of the key  in UTC.
@@ -489,7 +487,7 @@ class KeyClient:
         :param key_ops: Json web key operations. For more information on
          possible key operations, see JsonWebKeyOperation.
         :type key_ops: list[str or
-         ~~azure.security.keyvault._generated.v7_0.models.JsonWebKeyOperation]
+         ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyOperation]
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :param expires: Expiry date of the key  in UTC.
@@ -679,7 +677,7 @@ class KeyClient:
                 :caption: Creates a key in the key vault
         """
         bundle = self._client.wrap_key(self.vault_url, name, key_version=version, algorithm=algorithm, value=value)
-        return self.KeyOperationResult(id=bundle.kid, value=bundle.result)
+        return _KeyOperationResult(id=bundle.kid, value=bundle.result)
 
     def unwrap_key(self, name, version, algorithm, value, **kwargs):
         # type: (str, str, str, bytes, Mapping[str, Any]) -> Key
@@ -699,13 +697,13 @@ class KeyClient:
         :param algorithm: algorithm identifier. Possible values include:
          'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
         :type algorithm: str or
-         ~~azure.security.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
+         ~azure.security.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
         :param value:
         :type value: bytes
         :param callable cls: A custom type or function that will be passed the
          direct response
         :returns: The unwrapped symmetric key.
-        :rtype: ~~azure.security.keyvault.v7_0.models.KeyOperationResult
+        :rtype: ~azure.security.keyvault.v7_0.models.KeyOperationResult
         # TODO update return type to named tuple or keep it as is for now?
         Example:
             .. literalinclude:: ../tests/test_examples_keys.py
@@ -716,4 +714,4 @@ class KeyClient:
                 :caption: Creates a key in the key vault
         """
         bundle = self._client.unwrap_key(self.vault_url, name, key_version=version, algorithm=algorithm, value=value)
-        return self.KeyOperationResult(id=bundle.kid, value=bundle.result)
+        return _KeyOperationResult(id=bundle.kid, value=bundle.result)

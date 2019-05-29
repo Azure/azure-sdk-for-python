@@ -6,9 +6,11 @@
 
 from datetime import datetime
 from typing import Any, Dict, Mapping, Optional
+from collections import namedtuple
 from .._internal import _parse_vault_id
 from .._generated.v7_0 import models
 
+_KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
 class KeyBase(object):
     """A key's id and attributes."""
