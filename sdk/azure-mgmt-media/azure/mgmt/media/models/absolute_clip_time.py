@@ -22,7 +22,7 @@ class AbsoluteClipTime(ClipTime):
     :param odatatype: Required. Constant filled by server.
     :type odatatype: str
     :param time: Required. The time position on the timeline of the input
-     media. It is usually speicified as an ISO8601 period. e.g PT30S for 30
+     media. It is usually specified as an ISO8601 period. e.g PT30S for 30
      seconds.
     :type time: timedelta
     """

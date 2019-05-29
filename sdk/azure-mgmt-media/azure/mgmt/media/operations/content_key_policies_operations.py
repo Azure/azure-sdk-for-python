@@ -53,7 +53,7 @@ class ContentKeyPoliciesOperations(object):
          of items returned from a collection. The service returns the number of
          available items up to but not greater than the specified value n.
         :type top: int
-        :param orderby: Specifies the the key by which the result collection
+        :param orderby: Specifies the key by which the result collection
          should be ordered.
         :type orderby: str
         :param dict custom_headers: headers that will be added to the request
