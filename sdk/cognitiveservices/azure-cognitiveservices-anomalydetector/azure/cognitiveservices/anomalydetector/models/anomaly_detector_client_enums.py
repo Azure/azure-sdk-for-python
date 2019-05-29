@@ -38,7 +38,7 @@ class TimeSeriesField(str, Enum):
 class LabelType(str, Enum):
 
     change_point = "changePoint"
-    anomaly = "Anomaly"
+    anomaly = "anomaly"
 
 
 class LabelValue(str, Enum):

@@ -21,7 +21,7 @@ class LabelRequest(Model):
     :type begin: datetime
     :param end: Required. end of a detection time range
     :type end: datetime
-    :param type: Required. Possible values include: 'changePoint', 'Anomaly'
+    :param type: Required. Possible values include: 'changePoint', 'anomaly'
     :type type: str or
      ~azure.cognitiveservices.anomalydetector.models.LabelType
     :param value: Required. Possible values include: 'true', 'false'
