@@ -35,7 +35,7 @@ class SqlVirtualMachine(TrackedResource):
     :param virtual_machine_resource_id: ARM Resource id of underlying virtual
      machine created from SQL marketplace image.
     :type virtual_machine_resource_id: str
-    :ivar provisioning_state: Provisioning state to track the aysnc operation
+    :ivar provisioning_state: Provisioning state to track the async operation
      status.
     :vartype provisioning_state: str
     :ivar sql_image_offer: SQL image offer. Examples include SQL2016-WS2016,
