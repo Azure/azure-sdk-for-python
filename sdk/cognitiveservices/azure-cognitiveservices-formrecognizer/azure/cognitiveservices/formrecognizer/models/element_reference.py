@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0-preview"
+from msrest.serialization import Model
 
+
+class ElementReference(Model):
+    """Reference to an OCR word.
+
+    :param ref:
+    :type ref: str
+    """
+
+    _attribute_map = {
+        'ref': {'key': '$ref', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ElementReference, self).__init__(**kwargs)
+        self.ref = kwargs.get('ref', None)

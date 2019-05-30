@@ -421,3 +421,173 @@ class FormRecognizerClient(SDKClient):
 
         return deserialized
     analyze_with_custom_model.metadata = {'url': '/custom/models/{id}/analyze'}
+
+    def batch_read_receipt(
+            self, url, custom_headers=None, raw=False, **operation_config):
+        """Batch Read Receipt operation. The response contains a field called
+        'Operation-Location', which contains the URL that you must use for your
+        'Get Read Receipt Result' operation.
+
+        :param url: Publicly reachable URL of an image.
+        :type url: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ComputerVisionErrorException<azure.cognitiveservices.formrecognizer.models.ComputerVisionErrorException>`
+        """
+        image_url = models.ImageUrl(url=url)
+
+        # Construct URL
+        url = self.batch_read_receipt.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(image_url, 'ImageUrl')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.ComputerVisionErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response.add_headers({
+                'Operation-Location': 'str',
+            })
+            return client_raw_response
+    batch_read_receipt.metadata = {'url': '/prebuilt/receipt/asyncBatchAnalyze'}
+
+    def get_read_receipt_result(
+            self, operation_id, custom_headers=None, raw=False, **operation_config):
+        """This interface is used for getting the analysis results of a 'Batch
+        Read Receipt' operation. The URL to this interface should be retrieved
+        from the 'Operation-Location' field returned from the 'Batch Read
+        Receipt' operation.
+
+        :param operation_id: Id of read operation returned in the response of
+         a 'Batch Read Receipt' operation.
+        :type operation_id: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ReadReceiptResult or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.formrecognizer.models.ReadReceiptResult or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ComputerVisionErrorException<azure.cognitiveservices.formrecognizer.models.ComputerVisionErrorException>`
+        """
+        # Construct URL
+        url = self.get_read_receipt_result.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'operationId': self._serialize.url("operation_id", operation_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ComputerVisionErrorException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ReadReceiptResult', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_read_receipt_result.metadata = {'url': '/prebuilt/receipt/operations/{operationId}'}
+
+    def batch_read_receipt_in_stream(
+            self, image, custom_headers=None, raw=False, callback=None, **operation_config):
+        """Read Receipt operation. When you use the 'Batch Read Receipt'
+        interface, the response contains a field called 'Operation-Location'.
+        The 'Operation-Location' field contains the URL that you must use for
+        your 'Get Read Receipt Result' operation.
+
+        :param image: An image stream.
+        :type image: Generator
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param callback: When specified, will be called with each chunk of
+         data that is streamed. The callback should take two arguments, the
+         bytes of the current chunk of data and the response object. If the
+         data is uploading, response will be None.
+        :type callback: Callable[Bytes, response=None]
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ComputerVisionErrorException<azure.cognitiveservices.formrecognizer.models.ComputerVisionErrorException>`
+        """
+        # Construct URL
+        url = self.batch_read_receipt_in_stream.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/octet-stream'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._client.stream_upload(image, callback)
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [202]:
+            raise models.ComputerVisionErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            client_raw_response.add_headers({
+                'Operation-Location': 'str',
+            })
+            return client_raw_response
+    batch_read_receipt_in_stream.metadata = {'url': '/prebuilt/receipt/asyncBatchAnalyze'}
