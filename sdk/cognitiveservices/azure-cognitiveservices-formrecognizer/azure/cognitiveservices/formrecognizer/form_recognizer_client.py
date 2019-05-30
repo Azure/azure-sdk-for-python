@@ -47,7 +47,7 @@ class FormRecognizerClientConfiguration(Configuration):
 
 
 class FormRecognizerClient(SDKClient):
-    """Extracts information from forms and images into structured data based on a model created by a set of representative training forms.
+    """FormRecognizerClient
 
     :ivar config: Configuration for client.
     :vartype config: FormRecognizerClientConfiguration
