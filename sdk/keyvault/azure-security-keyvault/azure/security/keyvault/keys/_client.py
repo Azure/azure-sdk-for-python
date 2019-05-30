@@ -78,7 +78,7 @@ class KeyClient:
         # type: () -> str
         return self._vault_url
 
-    def _create_key(
+    def create_key(
         self,
         name,
         key_type,
@@ -92,20 +92,6 @@ class KeyClient:
         **kwargs
     ):
         # type: (str, str, Optional[int], Optional[List[str]], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Optional[str], Mapping[str, Any]) -> Key
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
-        else:
-            attributes = None
-
-        bundle = self._client.create_key(
-            self.vault_url, name, key_type, size, key_attributes=attributes, key_ops=key_ops, tags=tags, curve=curve
-        )
-        return Key._from_key_bundle(bundle)
-
-    def create_key(
-        self, name, key_type, key_operations=None, enabled=None, expires=None, not_before=None, tags=None, **kwargs
-    ):
-        # type: (str, str, Optional[List[str]], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Key
         """Creates a new key, stores it, then returns key attributes to the client.
 
         The create key operation can be used to create any key type in Azure
@@ -119,6 +105,9 @@ class KeyClient:
          JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA',
          'RSA-HSM', 'oct'
         :type key_type: str or ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyType
+        :param size: The key size in bits. For example: 2048, 3072, or
+         4096 for RSA.
+        :type size: int
         :param key_operations: Supported key operations.
         :type key_operations: list[str or
          ~azure.security.keyvault._generated.v7_0.models.JsonWebKeyOperation]
@@ -131,6 +120,10 @@ class KeyClient:
         :param tags: Application specific metadata in the form of key-value
          pairs.
         :type tags: Dict[str, str]
+        :param curve: Elliptic curve name. If none then defaults to 'P-256'. For valid values, see
+         JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384',
+         'P-521', 'SECP256K1'
+        :type curve: str or
         :returns: The created key
         :rtype: ~azure.security.keyvault.keys._models.Key
 
@@ -142,15 +135,15 @@ class KeyClient:
                 :dedent: 4
                 :caption: Creates a key in the key vault
         """
-        return self._create_key(
-            name,
-            key_type=key_type,
-            key_ops=key_operations,
-            enabled=enabled,
-            expires=expires,
-            not_before=not_before,
-            tags=tags,
+        if enabled is not None or not_before is not None or expires is not None:
+            attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
+        else:
+            attributes = None
+
+        bundle = self._client.create_key(
+            self.vault_url, name, key_type, size, key_attributes=attributes, key_ops=key_ops, tags=tags, curve=curve
         )
+        return Key._from_key_bundle(bundle)
 
     def create_rsa_key(
         self,
@@ -204,7 +197,7 @@ class KeyClient:
         """
         key_type = "RSA-HSM" if hsm else "RSA"
 
-        return self._create_key(
+        return self.create_key(
             name,
             key_type=key_type,
             size=size,
@@ -270,9 +263,9 @@ class KeyClient:
 
         key_type = "EC-HSM" if hsm else "EC"
 
-        return self._create_key(
+        return self.create_key(
             name,
-            key_type,
+            key_type=key_type,
             curve=curve,
             key_ops=key_operations,
             enabled=enabled,
@@ -649,13 +642,6 @@ class KeyClient:
         :returns: The created key
         :rtype: ~azure.security.keyvault.keys._models.Key
 
-        Example:
-            .. literalinclude:: ../tests/test_examples_keys.py
-                :start-after: [START import_key]
-                :end-before: [END import_key]
-                :language: python
-                :dedent: 4
-                :caption: Imports an externally created key in the key vault
         """
         if enabled is not None or not_before is not None or expires is not None:
             attributes = self._client.models.KeyAttributes(enabled=enabled, not_before=not_before, expires=expires)
@@ -690,13 +676,6 @@ class KeyClient:
         :returns: The wrapped symmetric key.
         :rtype: ~azure.security.keyvault.keys._models.KeyOperationResult
 
-        Example:
-            .. literalinclude:: ../tests/test_examples_keys.py
-                :start-after: [START wrap_key]
-                :end-before: [END wrap_key]
-                :language: python
-                :dedent: 4
-                :caption: Wraps a symmetric key in the key vault
         """
         if version is None:
             version = ""
@@ -728,13 +707,6 @@ class KeyClient:
         :returns: The unwrapped symmetric key.
         :rtype: ~azure.security.keyvault.keys._models.KeyOperationResult
 
-        Example:
-            .. literalinclude:: ../tests/test_examples_keys.py
-                :start-after: [START unwrap_key]
-                :end-before: [END unwrap_key]
-                :language: python
-                :dedent: 4
-                :caption: Unwraps a symmetric key in the key vault
         """
         if version is None:
             version = ""
