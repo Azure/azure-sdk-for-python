@@ -162,6 +162,8 @@ class Sender(object):
             properties=self.client.create_properties(self.client.config.user_agent))
         try:
             self._handler.open()
+            while not self._handler.client_ready():
+                time.sleep(0.05)
             self._handler.queue_message(*unsent_events)
             self._handler.wait()
             return True

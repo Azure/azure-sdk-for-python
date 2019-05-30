@@ -168,6 +168,8 @@ class Sender(object):
             loop=self.loop)
         try:
             await self._handler.open_async()
+            while not await self._handler.client_ready_async():
+                await asyncio.sleep(0.05)
             self._handler.queue_message(*unsent_events)
             await self._handler.wait_async()
             return True
