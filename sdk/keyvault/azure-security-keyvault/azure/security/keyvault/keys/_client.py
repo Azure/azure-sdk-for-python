@@ -167,7 +167,7 @@ class KeyClient:
         :param name: The name for the new key. The system will generate
          the version name for the new key.
         :type name
-        :param hsm: Whether to import as a hardware key (HSM) or software key.
+        :param hsm: Whether to create as a hardware key (HSM) or software key.
         :type hsm: bool
         :param size: The key size in bits. For example: 2048, 3072, or
          4096 for RSA.
@@ -230,7 +230,7 @@ class KeyClient:
         :param name: The name for the new key. The system will generate
          the version name for the new key.
         :type name
-        :param hsm: Whether to import as a hardware key (HSM) or software key.
+        :param hsm: Whether to create as a hardware key (HSM) or software key.
         :type hsm: bool
         :param curve: Elliptic curve name. If none then defaults to 'P-256'. For valid values, see
          JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384',
