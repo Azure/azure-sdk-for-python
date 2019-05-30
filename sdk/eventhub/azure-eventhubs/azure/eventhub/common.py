@@ -122,6 +122,25 @@ class EventData(object):
             else:
                 self.message = Message(body, properties=self.msg_properties)
 
+    def __str__(self):
+        dic = {
+            'body': self.body_as_str(),
+            'application_properties': str(self.application_properties)
+        }
+
+        if self.sequence_number:
+            dic['sequence_number'] = str(self.sequence_number)
+        if self.offset:
+            dic['offset'] = str(self.offset)
+        if self.enqueued_time:
+            dic['enqueued_time'] = str(self.enqueued_time)
+        if self.device_id:
+            dic['device_id'] = str(self.device_id)
+        if self.partition_key:
+            dic['partition_key'] = str(self.partition_key)
+
+        return str(dic)
+
     @property
     def sequence_number(self):
         """
@@ -300,6 +319,9 @@ class EventPosition(object):
         """
         self.value = value if value else "-1"
         self.inclusive = inclusive
+
+    def __str__(self):
+        return str(self.value)
 
     def selector(self):
         """

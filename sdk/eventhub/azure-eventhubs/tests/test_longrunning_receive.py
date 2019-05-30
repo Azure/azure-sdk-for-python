@@ -18,7 +18,7 @@ import pytest
 
 from logging.handlers import RotatingFileHandler
 
-from azure.eventhub import Offset
+from azure.eventhub import EventPosition
 from azure.eventhub import EventHubClient
 
 def get_logger(filename, level=logging.INFO):
@@ -47,7 +47,7 @@ logger = get_logger("recv_test.log", logging.INFO)
 
 
 def get_partitions(args):
-    eh_data = args.get_eventhub_info()
+    eh_data = args.get_properties()
     return eh_data["partition_ids"]
 
 
@@ -117,15 +117,14 @@ def test_long_running_receive(connection_str):
             partitions = args.partitions.split(",")
         pumps = {}
         for pid in partitions:
-            pumps[pid] = client.add_receiver(
-                consumer_group=args.consumer,
-                partition=pid,
-                offset=Offset(args.offset),
+            pumps[pid] = client.create_receiver(
+                partition_id=pid,
+                event_position=EventPosition(args.offset),
                 prefetch=50)
-        client.run()
         pump(pumps, args.duration)
     finally:
-        client.stop()
+        for pid in partitions:
+            pumps[pid].close()
 
 
 if __name__ == '__main__':

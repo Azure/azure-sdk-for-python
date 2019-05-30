@@ -240,7 +240,7 @@ class Receiver(object):
     async def reconnect(self):
         """If the Receiver was disconnected from the service with
         a retryable error - attempt to reconnect."""
-        while not await self._reconnect_async():
+        while not await self._reconnect():
             await asyncio.sleep(self.reconnect_backoff)
 
     async def close(self, exception=None):

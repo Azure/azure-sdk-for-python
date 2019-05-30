@@ -93,6 +93,7 @@ def test_send_single_event(connstr_receivers):
 @pytest.mark.liveTest
 def test_send_batch_sync(connstr_receivers):
     connection_str, receivers = connstr_receivers
+
     def batched():
         for i in range(10):
             yield EventData("Event number {}".format(i))
@@ -100,7 +101,7 @@ def test_send_batch_sync(connstr_receivers):
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     sender = client.create_sender()
     with sender:
-        sender.send_batch(batched())
+        sender.send(batched())
 
     time.sleep(1)
     received = []
@@ -116,7 +117,7 @@ def test_send_batch_sync(connstr_receivers):
 def test_send_partition(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, debug=False)
-    sender = client.create_sender(partition="1")
+    sender = client.create_sender(partition_id="1")
     with sender:
         sender.send(EventData(b"Data"))
 
@@ -130,7 +131,7 @@ def test_send_partition(connstr_receivers):
 def test_send_non_ascii(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, debug=False)
-    sender = client.create_sender(partition="0")
+    sender = client.create_sender(partition_id="0")
     with sender:
         sender.send(EventData(u"é,è,à,ù,â,ê,î,ô,û"))
         sender.send(EventData(json.dumps({"foo": u"漢字"})))
@@ -144,14 +145,15 @@ def test_send_non_ascii(connstr_receivers):
 @pytest.mark.liveTest
 def test_send_partition_batch(connstr_receivers):
     connection_str, receivers = connstr_receivers
+
     def batched():
         for i in range(10):
             yield EventData("Event number {}".format(i))
 
     client = EventHubClient.from_connection_string(connection_str, debug=False)
-    sender = client.create_sender(partition="1")
+    sender = client.create_sender(partition_id="1")
     with sender:
-        sender.send_batch(batched())
+        sender.send(batched())
         time.sleep(1)
 
     partition_0 = receivers[0].receive(timeout=2)
@@ -180,8 +182,8 @@ def test_send_array_sync(connstr_receivers):
 def test_send_multiple_clients(connstr_receivers):
     connection_str, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(connection_str, debug=False)
-    sender_0 = client.create_sender(partition="0")
-    sender_1 = client.create_sender(partition="1")
+    sender_0 = client.create_sender(partition_id="0")
+    sender_1 = client.create_sender(partition_id="1")
     with sender_0:
         sender_0.send(EventData(b"Message 0"))
     with sender_1:
@@ -195,7 +197,6 @@ def test_send_multiple_clients(connstr_receivers):
 
 @pytest.mark.liveTest
 def test_send_batch_with_app_prop_sync(connstr_receivers):
-    #pytest.skip("Waiting on uAMQP release")
     connection_str, receivers = connstr_receivers
     app_prop_key = "raw_prop"
     app_prop_value = "raw_value"
@@ -214,8 +215,10 @@ def test_send_batch_with_app_prop_sync(connstr_receivers):
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     sender = client.create_sender()
     with sender:
-        sender.send_batch(batched())
+        sender.send(batched())
+
     time.sleep(1)
+
     received = []
     for r in receivers:
         received.extend(r.receive(timeout=3))

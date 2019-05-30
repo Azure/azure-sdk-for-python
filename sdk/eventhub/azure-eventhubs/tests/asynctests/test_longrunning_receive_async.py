@@ -18,8 +18,8 @@ import sys
 import pytest
 from logging.handlers import RotatingFileHandler
 
-from azure.eventhub import Offset
-from azure.eventhub import EventHubClientAsync
+from azure.eventhub import EventPosition
+from azure.eventhub.aio import EventHubClient
 
 
 def get_logger(filename, level=logging.INFO):
@@ -48,7 +48,7 @@ logger = get_logger("recv_test_async.log", logging.INFO)
 
 
 async def get_partitions(client):
-    eh_data = await client.get_eventhub_info_async()
+    eh_data = await client.get_properties()
     return eh_data["partition_ids"]
 
 
@@ -56,27 +56,29 @@ async def pump(_pid, receiver, _args, _dl):
     total = 0
     iteration = 0
     deadline = time.time() + _dl
+
     try:
-        while time.time() < deadline:
-            batch = await receiver.receive(timeout=1)
-            size = len(batch)
-            total += size
-            iteration += 1
-            if size == 0:
-                print("{}: No events received, queue size {}, delivered {}".format(
-                    _pid,
-                    receiver.queue_size,
-                    total))
-            elif iteration >= 5:
-                iteration = 0
-                print("{}: total received {}, last sn={}, last offset={}".format(
-                            _pid,
-                            total,
-                            batch[-1].sequence_number,
-                            batch[-1].offset.value))
-        print("{}: total received {}".format(
-            _pid,
-            total))
+        async with receiver:
+            while time.time() < deadline:
+                batch = await receiver.receive(timeout=1)
+                size = len(batch)
+                total += size
+                iteration += 1
+                if size == 0:
+                    print("{}: No events received, queue size {}, delivered {}".format(
+                        _pid,
+                        receiver.queue_size,
+                        total))
+                elif iteration >= 5:
+                    iteration = 0
+                    print("{}: total received {}, last sn={}, last offset={}".format(
+                                _pid,
+                                total,
+                                batch[-1].sequence_number,
+                                batch[-1].offset.value))
+            print("{}: total received {}".format(
+                _pid,
+                total))
     except Exception as e:
         print("Partition {} receiver failed: {}".format(_pid, e))
         raise
@@ -98,11 +100,11 @@ def test_long_running_receive_async(connection_str):
     loop = asyncio.get_event_loop()
     args, _ = parser.parse_known_args()
     if args.conn_str:
-        client = EventHubClientAsync.from_connection_string(
+        client = EventHubClient.from_connection_string(
             args.conn_str,
             eventhub=args.eventhub, auth_timeout=240, debug=False)
     elif args.address:
-        client = EventHubClientAsync(
+        client = EventHubClient(
             args.address,
             auth_timeout=240,
             username=args.sas_policy,
@@ -121,16 +123,14 @@ def test_long_running_receive_async(connection_str):
             partitions = args.partitions.split(",")
         pumps = []
         for pid in partitions:
-            receiver = client.add_async_receiver(
-                consumer_group=args.consumer,
-                partition=pid,
-                offset=Offset(args.offset),
+            receiver = client.create_receiver(
+                partition_id=pid,
+                event_position=EventPosition(args.offset),
                 prefetch=50)
             pumps.append(pump(pid, receiver, args, args.duration))
-        loop.run_until_complete(client.run_async())
         loop.run_until_complete(asyncio.gather(*pumps))
     finally:
-        loop.run_until_complete(client.stop_async())
+        pass
 
 
 if __name__ == '__main__':

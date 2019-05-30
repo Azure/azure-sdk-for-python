@@ -166,11 +166,9 @@ def device_id():
 def connstr_receivers(connection_str):
     client = EventHubClient.from_connection_string(connection_str, debug=False)
     partitions = client.get_partition_ids()
-
-    recv_offset = EventPosition("@latest")
     receivers = []
     for p in partitions:
-        receiver = client.create_receiver("$default", p, prefetch=500, event_position=EventPosition("@latest"))
+        receiver = client.create_receiver(partition_id=p, prefetch=500, event_position=EventPosition("@latest"))
         receivers.append(receiver)
         receiver.receive(timeout=1)
     yield connection_str, receivers
@@ -186,7 +184,7 @@ def connstr_senders(connection_str):
 
     senders = []
     for p in partitions:
-        sender = client.create_sender(partition=p)
+        sender = client.create_sender(partition_id=p)
         senders.append(sender)
     yield connection_str, senders
     for s in senders:
