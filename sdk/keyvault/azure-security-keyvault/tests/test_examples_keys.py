@@ -41,11 +41,7 @@ def create_key_client():
 
     # [START create_key_client]
     from azure.common.credentials import ServicePrincipalCredentials
-<<<<<<< HEAD
     from azure.security.keyvault.keys import KeyClient
-=======
-    from azure.security.keyvault.keys._client import KeyClient
->>>>>>> removing unused imports
 
     credentials = ServicePrincipalCredentials(
         client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
@@ -88,11 +84,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
             # create an rsa key with size specification
             # RSA key can be created with default size of '2048'
-<<<<<<< HEAD
             key = key_client.create_rsa_key("key-name", hsm=True, size=key_size, enabled=True, key_operations=key_ops)
-=======
-            key = key_client.create_rsa_key("key-name", "RSA", size=key_size, enabled=True, key_ops=key_ops)
->>>>>>> removing unused imports
 
             print(key.id)
             print(key.version)
@@ -108,11 +100,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
             # create an ec (Elliptic curve) key with curve specification
             # EC key can be created with default curve of 'P-256'
-<<<<<<< HEAD
             ec_key = key_client.create_ec_key("key-name", hsm=False, curve=key_curve)
-=======
-            key = key_client.create_rsa_key("key-name", "EC", curve=key_curve)
->>>>>>> removing unused imports
 
             print(ec_key.id)
             print(ec_key.version)

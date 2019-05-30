@@ -18,11 +18,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c/create?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c/838715626d2d41c996a3fe711675b403","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1Dkuw42x403fzy985ETll4cRjwTcqTYm7FXWOvbgqWtgT9j7oD-y5KGuBHWNl9WkXuH23qrfAQSJV9GaJDaKuK10_9kwsFPYp1HURhdur6pcnlx4IOU7Q6YCGe-ujpGvGKTwvbI-TD7BBkFmGFBBlFERI8vlg9M7LGJOyoYF3z31_0FPO8TtD8bMGLTndk5L7YAtjvd9Fs3YrtWI3eDuYTF5DDGjy3yMawvuPRzyq3KjTWWycNDJnVl5ySYjisJOUfDGItM4ptuHoIIlfgUCbv0GPABKlJGEqxXMHKTJleOVH2yZMsYBcj50sm5IwJoryClyA7lim7EkM6nBhp3r4w","e":"AQAB"},"attributes":{"enabled":true,"created":1559068714,"updated":1559068714,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c/7f4c97dc2ef14e528187406a51b5be4e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"oy686S3eRFcYp1EjxbBgFR5Zq5Cymz1pdLy2U5ogKRkTwmsiJfP87C_-YpfQW00oKFBj01LgxtQVt-ZkO1BZD925neXPRR25WAB7U2VpxIwxJcQCnmtE3YK9XIv66d9GOko_CTg70L4PDHEQAmjLKIAPW8ET6-uNPSub9g_YKZqwD27Ok71X1hiQdfPMvqVDpDkuHY6lUe6LEffsw4CWb7wcwxD7nIntcH0bHF0buvO8uKnIwpwiWmNiJ2JayMDlqWqZe3cIZRr1W0h0rTSTdhdrkxzKtUtzNbbF5uSGRgRWPdC-wYfs4r0DVwZG_jEVrInL9guyFQhCMgEYLzdtHQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504363,"updated":1558504363,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -31,11 +27,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:34 GMT
-=======
-      - Wed, 22 May 2019 05:52:42 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -78,11 +70,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c/create?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c/5375e3f4f53a4e19881f7037e21fdb58","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"mFj8C2AoGWo8jFalxN_9FfFdhFAihKoF_NWNbpw00o7DKrgXAtfWm0HG3UnkvUU2ByONpgHIUWoDWsL91CnBHobll3X97J7E12BpVpBOzN3Pbeak9l2RNjDpAZ78GPuvAFgYYzHBRpCCYh6ik_Gs4YAx-SUT8Q2dY__EG-awC5WYSjldnvAXZsO-LGAqGEN1c0JFdJwwC6xer_3LvwnsE7vJpci4UQlT9v2xITmX5E427Acxgk4flTU7h4M4gBbPu6gsR8Y-QixlO0uOOgdUoqJaiJTH9QM41JGHuQZnvz71I7gAroGtbmVqJbXjuXOYwlXfPZ5EUpDTlO1xGpAxNQ","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c/05782678681544d9a6d5364591c006ef","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"yOpR1gE_zWyeCUIInjeaDBeBOKVRFWHpcpbPPXA1yjoim2ce0piuQfEF2t8y_SioO4Sfe4UwUkWSTgYvuZzu7R9JrdQVHHRbQ8-StoT_pCZQ4v1UGpbWRHS3WqtK78wyfq26KRPPP3kGu8jrRjfefoxGvJMlavkuruhp0Q5GwBwGXRek2bgUJJDbr7oq6m4r5XcdsCWJrL5TRVhoX4fpuvJ2lchncoczvbNktQ8I-0PwKo5uSJAy6lSuHlsb6xX-Zg2bqa3b6AnHM14sJjSK9MX94tVqSqfMeV0kxl7NOJ0G6aPE0h8kQudHR7oif2C6s1NF7ZLimfj4PcSB6BPZUw","e":"AQAB"},"attributes":{"enabled":true,"created":1558504363,"updated":1558504363,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -91,11 +79,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:34 GMT
-=======
-      - Wed, 22 May 2019 05:52:42 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -138,11 +122,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c/create?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c/e2c360ce95c2427ea668a804625e4306","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"jVzEjjnM7h4H69B6-QD4UOYZagl9RRqpQJOIlwfkxr9wxMuUo-bEpuyj32RSCNWEOMJr-ruB4PBanOcWUFoQgDipPwAObYq8GHK85neBeBhAitm4K0InOg9cMdrHZgkRET9exuWJZWz3eBAXn1DQQfDd3FAr-YqmFqQubkLJfk-5dtwV1eXt9dqNlPhCwZKP4Vv72O98AJNiQB33MphLpGaF9C_H5VGcN1TVxVcJrV4VWukl-co9u0ILkfIh8qtZAdz4GZb8dXeX25Ilpy7JeKqRNa0QeZ1oBUIukkC0iEus-oXFpIsfK7PWDDtn8610Tl56rsaRRFNffnJs2is41w","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c/bfb79093311546f194554788fbbf35eb","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"vm3melVrIIRtlv6ksdEQRKf0S4O_knU7AnvsDWpnMHkdSYo4G2z5wJlkByzt17TV04tpFv3nni6ztB8kohDKqOqnfkhpOYElZLPca4CqtvMM5r83CD7FaDQwUAdOplImU_7ggsER0dcoIBfGWIxBIhYDRZVn-2iVjR3lCSNkPDAeXzqUhuKKlUnqrYw2TQXjUlVfDNHkur-nbbMAMAvTqf-xKtxPmHNuogPZskE6cEB0JCa1z3YcxhcqNc6Y3pnal6NRLen_n57orPdA_wyF1dxCS6SA24DDt1CLKW4XB8GpKczSHoJHo4jSTA1GcJBI1l6KFbFRtKmriceaw0u3wQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504364,"updated":1558504364,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -151,11 +131,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:34 GMT
-=======
-      - Wed, 22 May 2019 05:52:43 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -198,11 +174,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c/create?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c/3f99547af1c94b0dbed23aa6d2bb2520","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"t0aQbuC9f6r969BBpaQhKRj6HDo2w04fgGzPKyZS7dHtahvmxzXOHExMZeaySK0nHsjoT6aAg4bH2T7PR224DImpwOVpa6DWcFwPoIEJUi19lRJO811frzV1IXAcYOkKQRnhoRyFPr-Rzmdla4GR4BGGuv0TOjgb9XsmqQoqu68kw9f2OzJaBnOs8ntxeL9f0Yy5zmyPGRmCL4SADsS0MMqHlNh7UNB8HeWHe7h9sW8uxeG3c4pXOij_98x7m9GUh4c_gDfpCjHC6BeTmDziyUedMxuJ2WKC5cb3UjMKljnm-0uCjfFdmSfCWtEGEz56OxVP6-BL4OtrTOKZG_5g7Q","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c/77ff114c991843e184d666a6a3dfa33b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"3FhRh5WkulnxeK81Z6mUud4SMyNEKf8niwIB7wZs1HR3VbwqkYz5BkPm9a4_bwNivRf_OWGsbzmRo852b6KsxLkhcdyMmM9B0nK0QpEV5OyrywQh42mvok_fi2fXmpyzRbbIMOODAfk_nprXU5Ucn4gvOJfq4XwRTbI_aSqw0NSg0dYkMPgB5QVKLh3MCwSmf0sujFCbqrFKV0Puzp4hk19ICawms6s71r_NTe-wBtwWZvPx-oSnX1Rj6VCZGKTtzZcFgEXQRnL9Y_x8pHOmwQqZBB1YxZg3B6zYLKAHXdi9nAKoInKrZeKvR8l2wxEu26krQNFDKNHOtlHwdpizIQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504366,"updated":1558504366,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -211,11 +183,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:35 GMT
-=======
-      - Wed, 22 May 2019 05:52:46 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -258,11 +226,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c/create?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c/8af3f5ea54034f6f934ce0b763fa79c1","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"znSAVSCQ1RJKwjHoePk8kLRVok3HBOsnhF9bJxmY4gtJEZy9yuWXpocdIo-zTR_S67Qn3U66V2KNde8WiFwy-J8tV5Hmu7n5Ru34iDEi8JBzL3DXlbr7Le__wfgX7J2UM4Vqn1bQDVSw1rKs6c4tWAajOgxcr32H_m_515ZEXyNiZjQs3kppw1Gibq46mnnGv6XHyu01iD6J8zddXYlhsMhMMF_f9keng55XoLWe8AeZ1j8iR8Lk7jDrF0ouDW7tZnIo65ndEpaaNirLVDrlJMcUruUpYWHCcdjXuTM9_GatPGxcnZA0XY3h3yM8gmHlGIJT42x4bLOi8-8N5z44Kw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c/1e3e15595db44ec38e94f7230acedfbc","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"zTwOouKkRLzTRSe9sZ0dWEpBVLOvHTPSGQvHJ3GGU_Edr1JxZkB7EcvP9VlrhfJRKj8RVjPMRKqnm6-YSg0rr1uz__UyzmbWOJUhHmKIWX-phpp0961Y2fxV-RsMTBBoASdX8UMryJ8RsFJtoJwPygBNbe8hMFz3VOw5ncrf44YyBLIN82tE46WWEwpVYAdjQeOrKgac_fuY--jp94amh9JMS38GyP8fFcF4zfA7zLDZi1IlK6VBfS3RDT4_5eUWx-HeMEbXAgwjOtCKTUM8u58VPrVo2aj8g4CcbtqUWzzMayzd1QgmcrVcmYEIwbfv5qcnahbAF81NQprnlf0jXQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504366,"updated":1558504366,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -271,11 +235,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:35 GMT
-=======
-      - Wed, 22 May 2019 05:52:46 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -318,11 +278,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c/create?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c/c9d413333db2492aa5800f0c4935b313","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"wMGIIynZcOERgPXOaVoVvvMsr7yvmqzpEqmDmw6qepmULCAB3853_Dvx-x2dVCWSLOfWDoJiJoOvVla0aI6KKb7SuQYbsP1kDYle8td1SCIBRLa1SIyJsN1si1peh3JZYn8ZOW8IM9gyIK7hyjipUl8gpWCW7vaXSzzn7VPn5Xccl647ZZ5_24uK7z3K9BdvwSjG9o1-1szasax5L3AiNeOJfItUCNSTrcN5M7YEJr9oLa0qkSt0DVnHKQ66BxMfNl-MDagu3TW4omtVMW5sdRnMGobZh-TS8uDtDKGrQ3k0xSEN-m6uz0dgyoE92TGn7ZUCpZCJSB7yoAMZNTROQw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c/d76ffcc245f744899cc71acadefed71b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"x4ur8upkgsvTeR4yQ7ozJoBLzlLBcfJuj7tsaegUEu7jhY_OnJSJiTOqkN6r50yx3i1cOqGpLTGFL3f6foCd_faWQsAzdxRw3I3ltMuxtdtzhbjHw913FkGNUxoPyZPtrrMy-oBYGq37tG1_9yY-w9KnlsTH9VslqS17zNzGD3GLHxVpm1BkQQE2Qvt7DFltAzUIu9sak2e7W1kYU_a5UFb1YaUbIFHZceKK0MTSgNrnjSfCAtYFCmbVAhQxS3zY68YrXeB0GuZW4XmZwTk6jp4sHJEaoD6LtXR7oLVL34SYs-e_HlPZk0fS93C5kAvypgf1qXkwj4d8VrGdxWTMhQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504367,"updated":1558504367,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -331,11 +287,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:35 GMT
-=======
-      - Wed, 22 May 2019 05:52:47 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -378,11 +330,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c/create?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c/fd267a6bb2d34c078f05b25f808f1044","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xXCZAJIou_L0rpNlyK-9UKI9YEkMXG-ocOdL1G-xtBlEHupUNKmwuyz4ifrT5_C9DC7ilpoD_u-Oxd589kWYSxOYen0OOXS9WxL5JP2tqpnoLyaQB8bKDbhhOnH0aisNL6OgcLXOIhShl5LXH9_i3c_l0p_mV-eF6oBWgnKBHoOSgs8lxKpD-XDmNcIl8QXXANjzPSemZ8MbbISnR4vHYOvkbsJRG-58zsm0C8DXGcjE-B9x1xhYsKjGUgGjCEsUuSJUFGxdcerERXEP4vfZLIqkY3k08oz3TK_YINEl-5aXbgivgq0DX1lO90VBnWrd53DLrEcWc1ItbIGYAk9rgw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c/fcefdf349c4f470bb08fe34443662d3e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"6HpglV2_dpmWq0atjyeivYv70WQlFg08VvvFazz-gXdyC2KcRby1iPJ9yozcJ0Iqg8YQUYdAvwLWB9K2b6H8NmKCIf3dwV0WuGr73IJiZhSbYVUxBPK_9mZTIEIvCPVZ6szYEicTyhqmj03BLy7GDVetl3bFdPQ8lYpOZRi54gj3ZHppe2CvCPURHidjQI7dugNBngdZkWDUN0fb9DHQBItsAqfDzN-8MkcGCN8Rq--YRqATYBDMwcFqq4SaMs_0Q1eaIDV7bgvOHYqTOT07uO7Wz2jbYIinyAHPmnYQ3JpYFCYQRg23IvKTcf6wy9xh_xKqi6mogdX6HUuTsgdcDw","e":"AQAB"},"attributes":{"enabled":true,"created":1558504368,"updated":1558504368,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -391,11 +339,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:35 GMT
-=======
-      - Wed, 22 May 2019 05:52:47 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -438,11 +382,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg0f5740e0c/create?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg0f5740e0c/b26a2c83816545eb9906ffade4beff8c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"r1fMzn85wGy8UcW9RuGN0Fpsh_ZtqE0i38F9QgqV_feONcbf5DMfBZ2L0sCuMmR2qI5hzuswgj32Og7SWwHXHJOcZeNZhPwR0KKZLl7TBPG2Jzz1EL3ePt58_XTgQk64Pla6ZUF8ga3oNeQrOhyO_orbUllTJKGlXrX3W28vwrv9v0zMBgHFLHBple0v6zLMN80P_xKzCUF1QV0eokeUTetj5GsdKyGjjh3rRzDPK_E-Lsf1304-trT4UDwjGYZK8MbpVkuLv7n6ygOWyDJHhZdTuJ-hZQwvvor0QMCQn8atmhYKoRGRFBYIQ1pfcbSY0xtSiKbGnQSVIoeLVQ_Vcw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg0f5740e0c/d3e6d6422e344a9f8ee5661cf10a3b48","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"t0hWwmKjTXzFftM-qKPbbIVON8VqmjfJ4F3OybOBu50JqD0-EUWdzpiP5tb8gakZEt6POHSCy3vdOmioYtdPRUNFHzunIUgfjKIpX9e636XV_tbDdi2o3z_t4qAHF688tWvyRwjtyZqBrKVMlOdix8UnxwLIeB1XafEZ0ejosrnRb2NQMCk5IC1FbAXhPe4yK6EIcuxGKRWqXzpQji3QUpkval3cI7yIliwyihtgUUdnbCEjidyMhQ_PVWLtd-ZTgBEIjwRWx2mWNtrvuh5fkNpfxNGskdwj-omFNJgxAaMUd0tbd_9FvyT38DFnKZlWxrlOrd6B-PlLyEZ5ceAtsQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504368,"updated":1558504368,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -451,11 +391,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:35 GMT
-=======
-      - Wed, 22 May 2019 05:52:48 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -498,11 +434,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg1f5740e0c/create?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg1f5740e0c/df887ef7a2ac4bd3ac157ab9d43d9a9f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uPPNua3gnbkx7cN3IlD0w-AWeA5OWk9nhT6nYP7e3lNA5ueWowePrJ13T3TvJlh0jCfRodMXvGU52PsSU09DB1gfHsO61z5z5PnIp4VE8y4dl2azRPRqlcoHR4x66KW9twNc3C9b4B1xdrpDQwGGQwex3Ej2DGrUTpcGaXPpf1C_bfq6Y5Fx0CmYytLLnbBcj5s_NNOhp_PZmETkMJde33gIIszwdktGI4cF5au3SMASaiLYG0UOyn_5EJM3qJviRKQ0eP8DLH8G9rvUtf6xPZ1xklqhncxWDmKmZOJLmKREc_sRKGLeqIYeHfimzhq1pidNq2B_kK93cEqvxLrAZQ","e":"AQAB"},"attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg1f5740e0c/846582fde44443708887faae6c501da6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ob1JyFX_4qShN8n_FkgHoE39cVh2RntevGz0qds_PlX4r69CcGsc2LsFh2HHGJzEieotuMhcuVzcYRd0Qh7towqKZerkLU5oWMCrMRrAfHFkM3wNrAmNuI3lSrnHwe5aN4rp1wLEmK-IcQ1x1YOFKBHld5eX26YrpH7J14ZVUXEzBC39Y6P6UUMuDNAnDs96IyKHT9mAHZTCUOsyEEOq3gGeq4VFjFT-eIqSX9joPQtTnZaGUGRQTEmGR7LuEWTUqrJzb4BMvBa4qJjaa446hknCAOk5I6J183hEGkXC2uuNgbI_hiDH6mI7-SgvnfUdmoqR9_ClU-nJJln5R6fkew","e":"AQAB"},"attributes":{"enabled":true,"created":1558504369,"updated":1558504369,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -511,11 +443,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:36 GMT
-=======
-      - Wed, 22 May 2019 05:52:49 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -558,11 +486,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg2f5740e0c/create?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg2f5740e0c/9c9386239eb6436c9eac1be9cccc2a11","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"43curZLAuO7hk0Onul5yrnY9IJO3_9VwmEtJz6T9P71LJiBe6gAn1BE8fEkkuP87s5cRaw8_DbjopYD4mIeBkjhhh7kUZG9uZcD3ROXgh3dT7tqnZSkg6e91X4VjEB47D0zqCLg-Su8I91NHzdBkbhIto8EPg6J_RB6kffaoaeY3b8QmAHnRguwfaImYc7vvZUJUoHj9rwqGF44_XapSVSOdV8oG8QUFbBu0IG4ferpsKTxA1j8XIZDnpOsmiD41iNOWiJhpkbG_3RoCkfcXDBRMCarDo1aKHHTsRepcpSKrTxk_QvjiY7693X3E6-JovJS4aEnwu_IS9Zu6rmBOxw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068717,"updated":1559068717,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg2f5740e0c/385201ca36cb492a904812a9278d513a","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"r9Sgkf9rO18hAQ6xpzl2S6_7JcE3FVICAq-A200T3O5VAG73IbP2GEGdAFVeE-1uKXMx6Ib3-KNMHY4Z9WYGGkxuuMtStmoJddooql0Mp8oMj8cS2yIABZGhov7XMqL3TP0W52FlrE3NmK-i_04e6PrZ4TFl6Wo2Nou3sRfikXLQ_ts4DJ9D5xDLwojf2zTSO2LzcNlCsP-CX3Ct3N7TeCddb-TLTlsZu3jzhZl4Nif3C_64MZUYTRMk0Fc21bQDrVV8wlcczJBZgCvZS705TZNL1b1l9eT8VlQzTDoyru1NBGF_XPF2rL4m3c6Svsv_iMSnjQ9e2TFk_Kd-FlbFDw","e":"AQAB"},"attributes":{"enabled":true,"created":1558504370,"updated":1558504370,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -571,11 +495,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:36 GMT
-=======
-      - Wed, 22 May 2019 05:52:49 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -618,11 +538,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg3f5740e0c/create?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg3f5740e0c/1ad46bef54ad49299c13c42ad71accf6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"kOQEy4FEfOPXa2BOff-jQUsp0EJyyGSZCKHNHkIkbOoykWGdiHcix1vFBN35qkynAdeQF0BJ91RiYh_62s_SrRqlVBbud19jUHG4wVgoth8qZIBduxqhINUD589wVjuJKS2KFBfjUUkP4qYiCSw4akjHjXwSbMa2-8AuIO8y85cVXJMmHfyFk5cX_GN9QlaVyewnCwaHyrZ5ox03jbERRlgFc0jcEKULUQllvP1hEgqU0qMI_n23aQot1b8I2drlrq0c1ovjckvyVhuOAVEycRywifsPisZJC0uI9ofv4_oLpWGM46NoJ2bUUVRBk1WOds66y8W2W4gOLDKl_zqGUw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068717,"updated":1559068717,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg3f5740e0c/96b46e792d414715a41575e3fc0119bc","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tpbBugzkJ406VZNWS8aH47KLe11a-S6U2Y1JI4TZLJ4fNfhUym2Qd7yy3LSDTmO-40bSq3tWWHjYJDRxeDJO6UQ5Z-1EI3bOsR4p9ETzag8f9_djWvV-p3eJZr99McJEy-JREjkqNvv-J7hdVtrNtRy57risjrRxNpfDhEvmdI_JgPSokRW4JJ3MjaFmH-qlY7ezvoPSbashZuhVoCqxVM-AfJESxZDtPZWexR8Thp-iXhuVTJcDK_CKTVUBH9hf8mW-G0-0zO9YOT2X4BaEdG8OG8Z79wuna5_QbnCnWCilGtz0KirbCnzvioFiMepu9EcCzV-lMGoo3i1ZuDp7xw","e":"AQAB"},"attributes":{"enabled":true,"created":1558504371,"updated":1558504371,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -631,11 +547,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:36 GMT
-=======
-      - Wed, 22 May 2019 05:52:50 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -678,11 +590,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg4f5740e0c/create?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg4f5740e0c/4ca18710848c4733bfa69c935ceea815","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pB3QMVQvtKwlsLjJTvFo8CVlowKhrl2jrvi97T7eZKPdWf8KMweSRBCpbf9MGnCJm6CJdhWYYyQEPWSqL0i136KZ_jIsQihBAtLTcgSApGcoWQ_EFYSabCck-2Nqg24-1Teu4A3Y2mTDvL7La_iM7HsnUumFzBVL8fn3f_wUp0WWdPuh3l2x82aYYSCv2691FY2eVSkPP-qIeCq4ft4oG_6nz7FspI-8Kg-88islhb75nmAVCcV72zdH2ewbk1RM0RKkczjEfQ5f6NJUb4tZaHlHKj37PG8cyvbxouRPbnx35PKK8tQ4Bnsg7GGxIt3BLtKd_KMfEvuY3zgjZT4R5w","e":"AQAB"},"attributes":{"enabled":true,"created":1559068717,"updated":1559068717,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg4f5740e0c/3474833f01dc48ebb60eff71b1d08a7e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"0_i4PIlzvwkJCtUzz3yimeqrVSTz-VqDPJupipNvL4DjH4uUTMTSsykBdzk3tVWy3JpmlsHnGo4qyex0RHSs95zZbOcEP03t604sNjpgX5frpMqNRDhbYxFEaP6eoGKeMn_dqslYOL1w_LVui_F5UGNfLQGYSwBbqfj040XsgBSdR8_gp5EnZNBxyOzRJon9KMMaCH9qAv7fWDAyHrJQMwB7AeHCkbDekxfrVigmHYZo6LBPBe7WQqDXfQVMFFkJRMdqUmawZ80yAHNQiwBKmuEEfQZk2cbb8hX6-zgIsg0KrJMJ8ZgboOQsBRQdJBZKvdoM1ywXGeyoZO6vzcuX5w","e":"AQAB"},"attributes":{"enabled":true,"created":1558504373,"updated":1558504373,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -691,11 +599,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:36 GMT
-=======
-      - Wed, 22 May 2019 05:52:52 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -738,11 +642,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg5f5740e0c/create?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg5f5740e0c/3947a062687b4bdc866df6804aebb113","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pGToRuOG3SNtP_x-z9ERqOBgyM_S5LHwy0jqRRE92TBBijhNl9OwhlwfQCfbQY0Cf-cNys2ek4sLdSJ4S6feuD9l-XY3YONG9Y72vTHIMQZid2xpNzwQBwRHYMHm1p3mJkmoPaobThACCLWjGMO4TYu_DbxDO4Tv7LqSQkZSkqHrOgLRl0Q77MdD7Lihp8qDzkd9IgEvzz_OQjD1yJU--4C59qHjWTPILW_5rsCMc4_EUKQjR3YSPj0DFGptLWAUlQecYOePJGx7_naN3ciIHZp5GDgXjV90jdx-7R4seroTFXtgsYPTtpS6QP6Z6AsMDmDMOLZbNp8ejU_zAoSKMw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068717,"updated":1559068717,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg5f5740e0c/d6a515fa949c4585846e202e737f2cef","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"lpMngRhVwLdhwbIdu5T1IKQnAZquAuE5-OimOgMmuJ65VaIaUgi9uHnY5LIHiexBjmhWTyuTp6iSJFysRPaua2JojQiL18XeakQ7AJPvskb6NJwDdPDZkKSvxN5YSpYfY00JLUg-ZUTOWspUHfzf1sBQW7rJHbqWxg78Mx59Mq9V8EqlBG078D-rc8i6XBVLZjonXxikRJBLGkIYnn1A51Yzq2wxyAwbbltTdZrpZLnv2LTe0NSFPQEdnQbXzYQgkFVz8miopZQ0udI2Q7SWyJ7Pcke2VvnXtX4GxPtY9rJ_0f7ODNln81PYwKG4cjiAq6PMBU-owyZ9T27-bMQrjQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504373,"updated":1558504373,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -751,11 +651,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:37 GMT
-=======
-      - Wed, 22 May 2019 05:52:52 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -798,11 +694,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg6f5740e0c/create?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg6f5740e0c/0e3c41b808f249ed9183d4e7135813e0","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"2Xh4RosIm6RIa6nsaesxDNCafAfWiJTOJde4QFdoNC6rkX0GShd6dhP67pY4f1HisO_oZOsf3s4Xnng8rLmpOA4BuzLuW7UZcmTgQCLApVMzNWS9QDBcAJ6GMwdolrDC0oDtZw5uo99Z-RBll1w2ysOANUDseaTj587Is_Yftsu0lQgrTL6skeSIWdhGsW-x1TTuWOE2CngujQ9guFvXx2eVYiSZTs0JDo9GUk1Q1lkyQz6AZRAbMqs9ZszP5iwUt58beLFdAAZFefydshG0IkgQvi_SAVnhV0CWusL1NOD4F4MRojaHcZd8_DufsJNVq_aGd7sl248bDq8dFdOLpQ","e":"AQAB"},"attributes":{"enabled":true,"created":1559068718,"updated":1559068718,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg6f5740e0c/c9e3238ffb204c0a9f2513a24c69841b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uoT5_Z_v8aAqgrl2EZ-VFG0QsK30ptLRfMWq_7cSHmTpzqw77IEcDQ6M5DlJrjZO8pDxAOID8B7sgROH2M-hYNaIYJNt9U8R2WZX8t-AWSb1NUBPTBlLA87Z0ZwPDw5L-45xiLfX7OXexPsqrhXKOVvMNTzA_ONFSMcqnaEjlw0rYmX7Zi4DXTjjKKRvZ4lwwRcipyvWejb4korh1jijPcKFKvLpbDshaGryEDfanZBpqL-vnfQPap9SlYmZsYZf3rlkNdSx4MvKKgslq7oU9Eb-Ho9U0r8vnBJlidPYS-KxYDsr_pWtvNrxkEUNMzCQ4B3w9wNrg8KA7EsxsRf-CQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504375,"updated":1558504375,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -811,11 +703,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:37 GMT
-=======
-      - Wed, 22 May 2019 05:52:55 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -856,11 +744,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec0f5740e0c","deletedDate":1559068718,"scheduledPurgeDate":1566844718,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c/838715626d2d41c996a3fe711675b403","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1Dkuw42x403fzy985ETll4cRjwTcqTYm7FXWOvbgqWtgT9j7oD-y5KGuBHWNl9WkXuH23qrfAQSJV9GaJDaKuK10_9kwsFPYp1HURhdur6pcnlx4IOU7Q6YCGe-ujpGvGKTwvbI-TD7BBkFmGFBBlFERI8vlg9M7LGJOyoYF3z31_0FPO8TtD8bMGLTndk5L7YAtjvd9Fs3YrtWI3eDuYTF5DDGjy3yMawvuPRzyq3KjTWWycNDJnVl5ySYjisJOUfDGItM4ptuHoIIlfgUCbv0GPABKlJGEqxXMHKTJleOVH2yZMsYBcj50sm5IwJoryClyA7lim7EkM6nBhp3r4w","e":"AQAB"},"attributes":{"enabled":true,"created":1559068714,"updated":1559068714,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec0f5740e0c","deletedDate":1558504376,"scheduledPurgeDate":1566280376,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c/7f4c97dc2ef14e528187406a51b5be4e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"oy686S3eRFcYp1EjxbBgFR5Zq5Cymz1pdLy2U5ogKRkTwmsiJfP87C_-YpfQW00oKFBj01LgxtQVt-ZkO1BZD925neXPRR25WAB7U2VpxIwxJcQCnmtE3YK9XIv66d9GOko_CTg70L4PDHEQAmjLKIAPW8ET6-uNPSub9g_YKZqwD27Ok71X1hiQdfPMvqVDpDkuHY6lUe6LEffsw4CWb7wcwxD7nIntcH0bHF0buvO8uKnIwpwiWmNiJ2JayMDlqWqZe3cIZRr1W0h0rTSTdhdrkxzKtUtzNbbF5uSGRgRWPdC-wYfs4r0DVwZG_jEVrInL9guyFQhCMgEYLzdtHQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504363,"updated":1558504363,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -869,11 +753,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:37 GMT
-=======
-      - Wed, 22 May 2019 05:52:56 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -914,11 +794,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec1f5740e0c","deletedDate":1559068718,"scheduledPurgeDate":1566844718,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c/5375e3f4f53a4e19881f7037e21fdb58","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"mFj8C2AoGWo8jFalxN_9FfFdhFAihKoF_NWNbpw00o7DKrgXAtfWm0HG3UnkvUU2ByONpgHIUWoDWsL91CnBHobll3X97J7E12BpVpBOzN3Pbeak9l2RNjDpAZ78GPuvAFgYYzHBRpCCYh6ik_Gs4YAx-SUT8Q2dY__EG-awC5WYSjldnvAXZsO-LGAqGEN1c0JFdJwwC6xer_3LvwnsE7vJpci4UQlT9v2xITmX5E427Acxgk4flTU7h4M4gBbPu6gsR8Y-QixlO0uOOgdUoqJaiJTH9QM41JGHuQZnvz71I7gAroGtbmVqJbXjuXOYwlXfPZ5EUpDTlO1xGpAxNQ","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec1f5740e0c","deletedDate":1558504377,"scheduledPurgeDate":1566280377,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c/05782678681544d9a6d5364591c006ef","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"yOpR1gE_zWyeCUIInjeaDBeBOKVRFWHpcpbPPXA1yjoim2ce0piuQfEF2t8y_SioO4Sfe4UwUkWSTgYvuZzu7R9JrdQVHHRbQ8-StoT_pCZQ4v1UGpbWRHS3WqtK78wyfq26KRPPP3kGu8jrRjfefoxGvJMlavkuruhp0Q5GwBwGXRek2bgUJJDbr7oq6m4r5XcdsCWJrL5TRVhoX4fpuvJ2lchncoczvbNktQ8I-0PwKo5uSJAy6lSuHlsb6xX-Zg2bqa3b6AnHM14sJjSK9MX94tVqSqfMeV0kxl7NOJ0G6aPE0h8kQudHR7oif2C6s1NF7ZLimfj4PcSB6BPZUw","e":"AQAB"},"attributes":{"enabled":true,"created":1558504363,"updated":1558504363,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -927,11 +803,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:37 GMT
-=======
-      - Wed, 22 May 2019 05:52:56 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -972,11 +844,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec2f5740e0c","deletedDate":1559068719,"scheduledPurgeDate":1566844719,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c/e2c360ce95c2427ea668a804625e4306","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"jVzEjjnM7h4H69B6-QD4UOYZagl9RRqpQJOIlwfkxr9wxMuUo-bEpuyj32RSCNWEOMJr-ruB4PBanOcWUFoQgDipPwAObYq8GHK85neBeBhAitm4K0InOg9cMdrHZgkRET9exuWJZWz3eBAXn1DQQfDd3FAr-YqmFqQubkLJfk-5dtwV1eXt9dqNlPhCwZKP4Vv72O98AJNiQB33MphLpGaF9C_H5VGcN1TVxVcJrV4VWukl-co9u0ILkfIh8qtZAdz4GZb8dXeX25Ilpy7JeKqRNa0QeZ1oBUIukkC0iEus-oXFpIsfK7PWDDtn8610Tl56rsaRRFNffnJs2is41w","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec2f5740e0c","deletedDate":1558504377,"scheduledPurgeDate":1566280377,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c/bfb79093311546f194554788fbbf35eb","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"vm3melVrIIRtlv6ksdEQRKf0S4O_knU7AnvsDWpnMHkdSYo4G2z5wJlkByzt17TV04tpFv3nni6ztB8kohDKqOqnfkhpOYElZLPca4CqtvMM5r83CD7FaDQwUAdOplImU_7ggsER0dcoIBfGWIxBIhYDRZVn-2iVjR3lCSNkPDAeXzqUhuKKlUnqrYw2TQXjUlVfDNHkur-nbbMAMAvTqf-xKtxPmHNuogPZskE6cEB0JCa1z3YcxhcqNc6Y3pnal6NRLen_n57orPdA_wyF1dxCS6SA24DDt1CLKW4XB8GpKczSHoJHo4jSTA1GcJBI1l6KFbFRtKmriceaw0u3wQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504364,"updated":1558504364,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -985,11 +853,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:39 GMT
-=======
-      - Wed, 22 May 2019 05:52:57 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1030,11 +894,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec3f5740e0c","deletedDate":1559068719,"scheduledPurgeDate":1566844719,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c/3f99547af1c94b0dbed23aa6d2bb2520","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"t0aQbuC9f6r969BBpaQhKRj6HDo2w04fgGzPKyZS7dHtahvmxzXOHExMZeaySK0nHsjoT6aAg4bH2T7PR224DImpwOVpa6DWcFwPoIEJUi19lRJO811frzV1IXAcYOkKQRnhoRyFPr-Rzmdla4GR4BGGuv0TOjgb9XsmqQoqu68kw9f2OzJaBnOs8ntxeL9f0Yy5zmyPGRmCL4SADsS0MMqHlNh7UNB8HeWHe7h9sW8uxeG3c4pXOij_98x7m9GUh4c_gDfpCjHC6BeTmDziyUedMxuJ2WKC5cb3UjMKljnm-0uCjfFdmSfCWtEGEz56OxVP6-BL4OtrTOKZG_5g7Q","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec3f5740e0c","deletedDate":1558504378,"scheduledPurgeDate":1566280378,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c/77ff114c991843e184d666a6a3dfa33b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"3FhRh5WkulnxeK81Z6mUud4SMyNEKf8niwIB7wZs1HR3VbwqkYz5BkPm9a4_bwNivRf_OWGsbzmRo852b6KsxLkhcdyMmM9B0nK0QpEV5OyrywQh42mvok_fi2fXmpyzRbbIMOODAfk_nprXU5Ucn4gvOJfq4XwRTbI_aSqw0NSg0dYkMPgB5QVKLh3MCwSmf0sujFCbqrFKV0Puzp4hk19ICawms6s71r_NTe-wBtwWZvPx-oSnX1Rj6VCZGKTtzZcFgEXQRnL9Y_x8pHOmwQqZBB1YxZg3B6zYLKAHXdi9nAKoInKrZeKvR8l2wxEu26krQNFDKNHOtlHwdpizIQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504366,"updated":1558504366,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1043,11 +903,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:39 GMT
-=======
-      - Wed, 22 May 2019 05:52:57 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1088,11 +944,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec4f5740e0c","deletedDate":1559068719,"scheduledPurgeDate":1566844719,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c/8af3f5ea54034f6f934ce0b763fa79c1","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"znSAVSCQ1RJKwjHoePk8kLRVok3HBOsnhF9bJxmY4gtJEZy9yuWXpocdIo-zTR_S67Qn3U66V2KNde8WiFwy-J8tV5Hmu7n5Ru34iDEi8JBzL3DXlbr7Le__wfgX7J2UM4Vqn1bQDVSw1rKs6c4tWAajOgxcr32H_m_515ZEXyNiZjQs3kppw1Gibq46mnnGv6XHyu01iD6J8zddXYlhsMhMMF_f9keng55XoLWe8AeZ1j8iR8Lk7jDrF0ouDW7tZnIo65ndEpaaNirLVDrlJMcUruUpYWHCcdjXuTM9_GatPGxcnZA0XY3h3yM8gmHlGIJT42x4bLOi8-8N5z44Kw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec4f5740e0c","deletedDate":1558504378,"scheduledPurgeDate":1566280378,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c/1e3e15595db44ec38e94f7230acedfbc","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"zTwOouKkRLzTRSe9sZ0dWEpBVLOvHTPSGQvHJ3GGU_Edr1JxZkB7EcvP9VlrhfJRKj8RVjPMRKqnm6-YSg0rr1uz__UyzmbWOJUhHmKIWX-phpp0961Y2fxV-RsMTBBoASdX8UMryJ8RsFJtoJwPygBNbe8hMFz3VOw5ncrf44YyBLIN82tE46WWEwpVYAdjQeOrKgac_fuY--jp94amh9JMS38GyP8fFcF4zfA7zLDZi1IlK6VBfS3RDT4_5eUWx-HeMEbXAgwjOtCKTUM8u58VPrVo2aj8g4CcbtqUWzzMayzd1QgmcrVcmYEIwbfv5qcnahbAF81NQprnlf0jXQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504366,"updated":1558504366,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1101,11 +953,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:39 GMT
-=======
-      - Wed, 22 May 2019 05:52:58 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1146,11 +994,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec5f5740e0c","deletedDate":1559068719,"scheduledPurgeDate":1566844719,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c/c9d413333db2492aa5800f0c4935b313","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"wMGIIynZcOERgPXOaVoVvvMsr7yvmqzpEqmDmw6qepmULCAB3853_Dvx-x2dVCWSLOfWDoJiJoOvVla0aI6KKb7SuQYbsP1kDYle8td1SCIBRLa1SIyJsN1si1peh3JZYn8ZOW8IM9gyIK7hyjipUl8gpWCW7vaXSzzn7VPn5Xccl647ZZ5_24uK7z3K9BdvwSjG9o1-1szasax5L3AiNeOJfItUCNSTrcN5M7YEJr9oLa0qkSt0DVnHKQ66BxMfNl-MDagu3TW4omtVMW5sdRnMGobZh-TS8uDtDKGrQ3k0xSEN-m6uz0dgyoE92TGn7ZUCpZCJSB7yoAMZNTROQw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec5f5740e0c","deletedDate":1558504378,"scheduledPurgeDate":1566280378,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c/d76ffcc245f744899cc71acadefed71b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"x4ur8upkgsvTeR4yQ7ozJoBLzlLBcfJuj7tsaegUEu7jhY_OnJSJiTOqkN6r50yx3i1cOqGpLTGFL3f6foCd_faWQsAzdxRw3I3ltMuxtdtzhbjHw913FkGNUxoPyZPtrrMy-oBYGq37tG1_9yY-w9KnlsTH9VslqS17zNzGD3GLHxVpm1BkQQE2Qvt7DFltAzUIu9sak2e7W1kYU_a5UFb1YaUbIFHZceKK0MTSgNrnjSfCAtYFCmbVAhQxS3zY68YrXeB0GuZW4XmZwTk6jp4sHJEaoD6LtXR7oLVL34SYs-e_HlPZk0fS93C5kAvypgf1qXkwj4d8VrGdxWTMhQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504367,"updated":1558504367,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1159,11 +1003,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:39 GMT
-=======
-      - Wed, 22 May 2019 05:52:58 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1204,11 +1044,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec6f5740e0c","deletedDate":1559068720,"scheduledPurgeDate":1566844720,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c/fd267a6bb2d34c078f05b25f808f1044","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xXCZAJIou_L0rpNlyK-9UKI9YEkMXG-ocOdL1G-xtBlEHupUNKmwuyz4ifrT5_C9DC7ilpoD_u-Oxd589kWYSxOYen0OOXS9WxL5JP2tqpnoLyaQB8bKDbhhOnH0aisNL6OgcLXOIhShl5LXH9_i3c_l0p_mV-eF6oBWgnKBHoOSgs8lxKpD-XDmNcIl8QXXANjzPSemZ8MbbISnR4vHYOvkbsJRG-58zsm0C8DXGcjE-B9x1xhYsKjGUgGjCEsUuSJUFGxdcerERXEP4vfZLIqkY3k08oz3TK_YINEl-5aXbgivgq0DX1lO90VBnWrd53DLrEcWc1ItbIGYAk9rgw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec6f5740e0c","deletedDate":1558504379,"scheduledPurgeDate":1566280379,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c/fcefdf349c4f470bb08fe34443662d3e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"6HpglV2_dpmWq0atjyeivYv70WQlFg08VvvFazz-gXdyC2KcRby1iPJ9yozcJ0Iqg8YQUYdAvwLWB9K2b6H8NmKCIf3dwV0WuGr73IJiZhSbYVUxBPK_9mZTIEIvCPVZ6szYEicTyhqmj03BLy7GDVetl3bFdPQ8lYpOZRi54gj3ZHppe2CvCPURHidjQI7dugNBngdZkWDUN0fb9DHQBItsAqfDzN-8MkcGCN8Rq--YRqATYBDMwcFqq4SaMs_0Q1eaIDV7bgvOHYqTOT07uO7Wz2jbYIinyAHPmnYQ3JpYFCYQRg23IvKTcf6wy9xh_xKqi6mogdX6HUuTsgdcDw","e":"AQAB"},"attributes":{"enabled":true,"created":1558504368,"updated":1558504368,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1217,11 +1053,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:40 GMT
-=======
-      - Wed, 22 May 2019 05:52:58 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1262,11 +1094,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg0f5740e0c?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg0f5740e0c","deletedDate":1559068720,"scheduledPurgeDate":1566844720,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg0f5740e0c/b26a2c83816545eb9906ffade4beff8c","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"r1fMzn85wGy8UcW9RuGN0Fpsh_ZtqE0i38F9QgqV_feONcbf5DMfBZ2L0sCuMmR2qI5hzuswgj32Og7SWwHXHJOcZeNZhPwR0KKZLl7TBPG2Jzz1EL3ePt58_XTgQk64Pla6ZUF8ga3oNeQrOhyO_orbUllTJKGlXrX3W28vwrv9v0zMBgHFLHBple0v6zLMN80P_xKzCUF1QV0eokeUTetj5GsdKyGjjh3rRzDPK_E-Lsf1304-trT4UDwjGYZK8MbpVkuLv7n6ygOWyDJHhZdTuJ-hZQwvvor0QMCQn8atmhYKoRGRFBYIQ1pfcbSY0xtSiKbGnQSVIoeLVQ_Vcw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg0f5740e0c","deletedDate":1558504379,"scheduledPurgeDate":1566280379,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg0f5740e0c/d3e6d6422e344a9f8ee5661cf10a3b48","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"t0hWwmKjTXzFftM-qKPbbIVON8VqmjfJ4F3OybOBu50JqD0-EUWdzpiP5tb8gakZEt6POHSCy3vdOmioYtdPRUNFHzunIUgfjKIpX9e636XV_tbDdi2o3z_t4qAHF688tWvyRwjtyZqBrKVMlOdix8UnxwLIeB1XafEZ0ejosrnRb2NQMCk5IC1FbAXhPe4yK6EIcuxGKRWqXzpQji3QUpkval3cI7yIliwyihtgUUdnbCEjidyMhQ_PVWLtd-ZTgBEIjwRWx2mWNtrvuh5fkNpfxNGskdwj-omFNJgxAaMUd0tbd_9FvyT38DFnKZlWxrlOrd6B-PlLyEZ5ceAtsQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504368,"updated":1558504368,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1275,11 +1103,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:40 GMT
-=======
-      - Wed, 22 May 2019 05:52:59 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1320,11 +1144,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg1f5740e0c?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg1f5740e0c","deletedDate":1559068720,"scheduledPurgeDate":1566844720,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg1f5740e0c/df887ef7a2ac4bd3ac157ab9d43d9a9f","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uPPNua3gnbkx7cN3IlD0w-AWeA5OWk9nhT6nYP7e3lNA5ueWowePrJ13T3TvJlh0jCfRodMXvGU52PsSU09DB1gfHsO61z5z5PnIp4VE8y4dl2azRPRqlcoHR4x66KW9twNc3C9b4B1xdrpDQwGGQwex3Ej2DGrUTpcGaXPpf1C_bfq6Y5Fx0CmYytLLnbBcj5s_NNOhp_PZmETkMJde33gIIszwdktGI4cF5au3SMASaiLYG0UOyn_5EJM3qJviRKQ0eP8DLH8G9rvUtf6xPZ1xklqhncxWDmKmZOJLmKREc_sRKGLeqIYeHfimzhq1pidNq2B_kK93cEqvxLrAZQ","e":"AQAB"},"attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg1f5740e0c","deletedDate":1558504379,"scheduledPurgeDate":1566280379,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg1f5740e0c/846582fde44443708887faae6c501da6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"ob1JyFX_4qShN8n_FkgHoE39cVh2RntevGz0qds_PlX4r69CcGsc2LsFh2HHGJzEieotuMhcuVzcYRd0Qh7towqKZerkLU5oWMCrMRrAfHFkM3wNrAmNuI3lSrnHwe5aN4rp1wLEmK-IcQ1x1YOFKBHld5eX26YrpH7J14ZVUXEzBC39Y6P6UUMuDNAnDs96IyKHT9mAHZTCUOsyEEOq3gGeq4VFjFT-eIqSX9joPQtTnZaGUGRQTEmGR7LuEWTUqrJzb4BMvBa4qJjaa446hknCAOk5I6J183hEGkXC2uuNgbI_hiDH6mI7-SgvnfUdmoqR9_ClU-nJJln5R6fkew","e":"AQAB"},"attributes":{"enabled":true,"created":1558504369,"updated":1558504369,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1333,11 +1153,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:40 GMT
-=======
-      - Wed, 22 May 2019 05:52:59 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1378,11 +1194,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg2f5740e0c?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg2f5740e0c","deletedDate":1559068720,"scheduledPurgeDate":1566844720,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg2f5740e0c/9c9386239eb6436c9eac1be9cccc2a11","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"43curZLAuO7hk0Onul5yrnY9IJO3_9VwmEtJz6T9P71LJiBe6gAn1BE8fEkkuP87s5cRaw8_DbjopYD4mIeBkjhhh7kUZG9uZcD3ROXgh3dT7tqnZSkg6e91X4VjEB47D0zqCLg-Su8I91NHzdBkbhIto8EPg6J_RB6kffaoaeY3b8QmAHnRguwfaImYc7vvZUJUoHj9rwqGF44_XapSVSOdV8oG8QUFbBu0IG4ferpsKTxA1j8XIZDnpOsmiD41iNOWiJhpkbG_3RoCkfcXDBRMCarDo1aKHHTsRepcpSKrTxk_QvjiY7693X3E6-JovJS4aEnwu_IS9Zu6rmBOxw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068717,"updated":1559068717,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg2f5740e0c","deletedDate":1558504380,"scheduledPurgeDate":1566280380,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg2f5740e0c/385201ca36cb492a904812a9278d513a","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"r9Sgkf9rO18hAQ6xpzl2S6_7JcE3FVICAq-A200T3O5VAG73IbP2GEGdAFVeE-1uKXMx6Ib3-KNMHY4Z9WYGGkxuuMtStmoJddooql0Mp8oMj8cS2yIABZGhov7XMqL3TP0W52FlrE3NmK-i_04e6PrZ4TFl6Wo2Nou3sRfikXLQ_ts4DJ9D5xDLwojf2zTSO2LzcNlCsP-CX3Ct3N7TeCddb-TLTlsZu3jzhZl4Nif3C_64MZUYTRMk0Fc21bQDrVV8wlcczJBZgCvZS705TZNL1b1l9eT8VlQzTDoyru1NBGF_XPF2rL4m3c6Svsv_iMSnjQ9e2TFk_Kd-FlbFDw","e":"AQAB"},"attributes":{"enabled":true,"created":1558504370,"updated":1558504370,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1391,11 +1203,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:40 GMT
-=======
-      - Wed, 22 May 2019 05:52:59 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1436,11 +1244,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg3f5740e0c?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg3f5740e0c","deletedDate":1559068720,"scheduledPurgeDate":1566844720,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg3f5740e0c/1ad46bef54ad49299c13c42ad71accf6","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"kOQEy4FEfOPXa2BOff-jQUsp0EJyyGSZCKHNHkIkbOoykWGdiHcix1vFBN35qkynAdeQF0BJ91RiYh_62s_SrRqlVBbud19jUHG4wVgoth8qZIBduxqhINUD589wVjuJKS2KFBfjUUkP4qYiCSw4akjHjXwSbMa2-8AuIO8y85cVXJMmHfyFk5cX_GN9QlaVyewnCwaHyrZ5ox03jbERRlgFc0jcEKULUQllvP1hEgqU0qMI_n23aQot1b8I2drlrq0c1ovjckvyVhuOAVEycRywifsPisZJC0uI9ofv4_oLpWGM46NoJ2bUUVRBk1WOds66y8W2W4gOLDKl_zqGUw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068717,"updated":1559068717,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg3f5740e0c","deletedDate":1558504380,"scheduledPurgeDate":1566280380,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg3f5740e0c/96b46e792d414715a41575e3fc0119bc","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"tpbBugzkJ406VZNWS8aH47KLe11a-S6U2Y1JI4TZLJ4fNfhUym2Qd7yy3LSDTmO-40bSq3tWWHjYJDRxeDJO6UQ5Z-1EI3bOsR4p9ETzag8f9_djWvV-p3eJZr99McJEy-JREjkqNvv-J7hdVtrNtRy57risjrRxNpfDhEvmdI_JgPSokRW4JJ3MjaFmH-qlY7ezvoPSbashZuhVoCqxVM-AfJESxZDtPZWexR8Thp-iXhuVTJcDK_CKTVUBH9hf8mW-G0-0zO9YOT2X4BaEdG8OG8Z79wuna5_QbnCnWCilGtz0KirbCnzvioFiMepu9EcCzV-lMGoo3i1ZuDp7xw","e":"AQAB"},"attributes":{"enabled":true,"created":1558504371,"updated":1558504371,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1449,11 +1253,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:40 GMT
-=======
-      - Wed, 22 May 2019 05:53:00 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1494,11 +1294,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg4f5740e0c?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg4f5740e0c","deletedDate":1559068720,"scheduledPurgeDate":1566844720,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg4f5740e0c/4ca18710848c4733bfa69c935ceea815","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pB3QMVQvtKwlsLjJTvFo8CVlowKhrl2jrvi97T7eZKPdWf8KMweSRBCpbf9MGnCJm6CJdhWYYyQEPWSqL0i136KZ_jIsQihBAtLTcgSApGcoWQ_EFYSabCck-2Nqg24-1Teu4A3Y2mTDvL7La_iM7HsnUumFzBVL8fn3f_wUp0WWdPuh3l2x82aYYSCv2691FY2eVSkPP-qIeCq4ft4oG_6nz7FspI-8Kg-88islhb75nmAVCcV72zdH2ewbk1RM0RKkczjEfQ5f6NJUb4tZaHlHKj37PG8cyvbxouRPbnx35PKK8tQ4Bnsg7GGxIt3BLtKd_KMfEvuY3zgjZT4R5w","e":"AQAB"},"attributes":{"enabled":true,"created":1559068717,"updated":1559068717,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg4f5740e0c","deletedDate":1558504381,"scheduledPurgeDate":1566280381,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg4f5740e0c/3474833f01dc48ebb60eff71b1d08a7e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"0_i4PIlzvwkJCtUzz3yimeqrVSTz-VqDPJupipNvL4DjH4uUTMTSsykBdzk3tVWy3JpmlsHnGo4qyex0RHSs95zZbOcEP03t604sNjpgX5frpMqNRDhbYxFEaP6eoGKeMn_dqslYOL1w_LVui_F5UGNfLQGYSwBbqfj040XsgBSdR8_gp5EnZNBxyOzRJon9KMMaCH9qAv7fWDAyHrJQMwB7AeHCkbDekxfrVigmHYZo6LBPBe7WQqDXfQVMFFkJRMdqUmawZ80yAHNQiwBKmuEEfQZk2cbb8hX6-zgIsg0KrJMJ8ZgboOQsBRQdJBZKvdoM1ywXGeyoZO6vzcuX5w","e":"AQAB"},"attributes":{"enabled":true,"created":1558504373,"updated":1558504373,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1507,11 +1303,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:40 GMT
-=======
-      - Wed, 22 May 2019 05:53:00 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1552,11 +1344,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg5f5740e0c?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg5f5740e0c","deletedDate":1559068721,"scheduledPurgeDate":1566844721,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg5f5740e0c/3947a062687b4bdc866df6804aebb113","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"pGToRuOG3SNtP_x-z9ERqOBgyM_S5LHwy0jqRRE92TBBijhNl9OwhlwfQCfbQY0Cf-cNys2ek4sLdSJ4S6feuD9l-XY3YONG9Y72vTHIMQZid2xpNzwQBwRHYMHm1p3mJkmoPaobThACCLWjGMO4TYu_DbxDO4Tv7LqSQkZSkqHrOgLRl0Q77MdD7Lihp8qDzkd9IgEvzz_OQjD1yJU--4C59qHjWTPILW_5rsCMc4_EUKQjR3YSPj0DFGptLWAUlQecYOePJGx7_naN3ciIHZp5GDgXjV90jdx-7R4seroTFXtgsYPTtpS6QP6Z6AsMDmDMOLZbNp8ejU_zAoSKMw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068717,"updated":1559068717,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg5f5740e0c","deletedDate":1558504381,"scheduledPurgeDate":1566280381,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg5f5740e0c/d6a515fa949c4585846e202e737f2cef","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"lpMngRhVwLdhwbIdu5T1IKQnAZquAuE5-OimOgMmuJ65VaIaUgi9uHnY5LIHiexBjmhWTyuTp6iSJFysRPaua2JojQiL18XeakQ7AJPvskb6NJwDdPDZkKSvxN5YSpYfY00JLUg-ZUTOWspUHfzf1sBQW7rJHbqWxg78Mx59Mq9V8EqlBG078D-rc8i6XBVLZjonXxikRJBLGkIYnn1A51Yzq2wxyAwbbltTdZrpZLnv2LTe0NSFPQEdnQbXzYQgkFVz8miopZQ0udI2Q7SWyJ7Pcke2VvnXtX4GxPtY9rJ_0f7ODNln81PYwKG4cjiAq6PMBU-owyZ9T27-bMQrjQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504373,"updated":1558504373,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1565,11 +1353,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:41 GMT
-=======
-      - Wed, 22 May 2019 05:53:00 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1610,11 +1394,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg6f5740e0c?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg6f5740e0c","deletedDate":1559068721,"scheduledPurgeDate":1566844721,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg6f5740e0c/0e3c41b808f249ed9183d4e7135813e0","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"2Xh4RosIm6RIa6nsaesxDNCafAfWiJTOJde4QFdoNC6rkX0GShd6dhP67pY4f1HisO_oZOsf3s4Xnng8rLmpOA4BuzLuW7UZcmTgQCLApVMzNWS9QDBcAJ6GMwdolrDC0oDtZw5uo99Z-RBll1w2ysOANUDseaTj587Is_Yftsu0lQgrTL6skeSIWdhGsW-x1TTuWOE2CngujQ9guFvXx2eVYiSZTs0JDo9GUk1Q1lkyQz6AZRAbMqs9ZszP5iwUt58beLFdAAZFefydshG0IkgQvi_SAVnhV0CWusL1NOD4F4MRojaHcZd8_DufsJNVq_aGd7sl248bDq8dFdOLpQ","e":"AQAB"},"attributes":{"enabled":true,"created":1559068718,"updated":1559068718,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg6f5740e0c","deletedDate":1558504382,"scheduledPurgeDate":1566280382,"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg6f5740e0c/c9e3238ffb204c0a9f2513a24c69841b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"uoT5_Z_v8aAqgrl2EZ-VFG0QsK30ptLRfMWq_7cSHmTpzqw77IEcDQ6M5DlJrjZO8pDxAOID8B7sgROH2M-hYNaIYJNt9U8R2WZX8t-AWSb1NUBPTBlLA87Z0ZwPDw5L-45xiLfX7OXexPsqrhXKOVvMNTzA_ONFSMcqnaEjlw0rYmX7Zi4DXTjjKKRvZ4lwwRcipyvWejb4korh1jijPcKFKvLpbDshaGryEDfanZBpqL-vnfQPap9SlYmZsYZf3rlkNdSx4MvKKgslq7oU9Eb-Ho9U0r8vnBJlidPYS-KxYDsr_pWtvNrxkEUNMzCQ4B3w9wNrg8KA7EsxsRf-CQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504375,"updated":1558504375,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1623,11 +1403,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:38:41 GMT
-=======
-      - Wed, 22 May 2019 05:53:01 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1666,11 +1442,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"value":[{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg0f5740e0c","deletedDate":1559068720,"scheduledPurgeDate":1566844720,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg0f5740e0c","attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg1f5740e0c","deletedDate":1559068720,"scheduledPurgeDate":1566844720,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg1f5740e0c","attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg2f5740e0c","deletedDate":1559068720,"scheduledPurgeDate":1566844720,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg2f5740e0c","attributes":{"enabled":true,"created":1559068717,"updated":1559068717,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg3f5740e0c","deletedDate":1559068720,"scheduledPurgeDate":1566844720,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg3f5740e0c","attributes":{"enabled":true,"created":1559068717,"updated":1559068717,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg4f5740e0c","deletedDate":1559068720,"scheduledPurgeDate":1566844720,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg4f5740e0c","attributes":{"enabled":true,"created":1559068717,"updated":1559068717,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg5f5740e0c","deletedDate":1559068721,"scheduledPurgeDate":1566844721,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg5f5740e0c","attributes":{"enabled":true,"created":1559068717,"updated":1559068717,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg6f5740e0c","deletedDate":1559068721,"scheduledPurgeDate":1566844721,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg6f5740e0c","attributes":{"enabled":true,"created":1559068718,"updated":1559068718,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec0f5740e0c","deletedDate":1559068718,"scheduledPurgeDate":1566844718,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c","attributes":{"enabled":true,"created":1559068714,"updated":1559068714,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec1f5740e0c","deletedDate":1559068718,"scheduledPurgeDate":1566844718,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c","attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec2f5740e0c","deletedDate":1559068719,"scheduledPurgeDate":1566844719,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c","attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec3f5740e0c","deletedDate":1559068719,"scheduledPurgeDate":1566844719,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c","attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec4f5740e0c","deletedDate":1559068719,"scheduledPurgeDate":1566844719,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c","attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec5f5740e0c","deletedDate":1559068719,"scheduledPurgeDate":1566844719,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c","attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}}],"nextLink":"https://vaultf5740e0c.vault.azure.net:443/deletedkeys?api-version=7.0&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjghTURBd01EVXlJV3RsZVM5TFJWbFNSVU0xUmpVM05EQkZNRU12UXpsRU5ERXpNek16UkVJeU5Ea3lRVUUxT0RBd1JqQkRORGt6TlVJek1UTWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
-=======
-      string: '{"value":[{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg0f5740e0c","deletedDate":1558504379,"scheduledPurgeDate":1566280379,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg0f5740e0c","attributes":{"enabled":true,"created":1558504368,"updated":1558504368,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg1f5740e0c","deletedDate":1558504379,"scheduledPurgeDate":1566280379,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg1f5740e0c","attributes":{"enabled":true,"created":1558504369,"updated":1558504369,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg2f5740e0c","deletedDate":1558504380,"scheduledPurgeDate":1566280380,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg2f5740e0c","attributes":{"enabled":true,"created":1558504370,"updated":1558504370,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg3f5740e0c","deletedDate":1558504380,"scheduledPurgeDate":1566280380,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg3f5740e0c","attributes":{"enabled":true,"created":1558504371,"updated":1558504371,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg4f5740e0c","deletedDate":1558504381,"scheduledPurgeDate":1566280381,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg4f5740e0c","attributes":{"enabled":true,"created":1558504373,"updated":1558504373,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg5f5740e0c","deletedDate":1558504381,"scheduledPurgeDate":1566280381,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg5f5740e0c","attributes":{"enabled":true,"created":1558504373,"updated":1558504373,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg6f5740e0c","deletedDate":1558504382,"scheduledPurgeDate":1566280382,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyprg6f5740e0c","attributes":{"enabled":true,"created":1558504375,"updated":1558504375,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec0f5740e0c","deletedDate":1558504376,"scheduledPurgeDate":1566280376,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c","attributes":{"enabled":true,"created":1558504363,"updated":1558504363,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec1f5740e0c","deletedDate":1558504377,"scheduledPurgeDate":1566280377,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c","attributes":{"enabled":true,"created":1558504363,"updated":1558504363,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec2f5740e0c","deletedDate":1558504377,"scheduledPurgeDate":1566280377,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c","attributes":{"enabled":true,"created":1558504364,"updated":1558504364,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec3f5740e0c","deletedDate":1558504378,"scheduledPurgeDate":1566280378,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c","attributes":{"enabled":true,"created":1558504366,"updated":1558504366,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec4f5740e0c","deletedDate":1558504378,"scheduledPurgeDate":1566280378,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c","attributes":{"enabled":true,"created":1558504366,"updated":1558504366,"recoveryLevel":"Recoverable+Purgeable"}},{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec5f5740e0c","deletedDate":1558504378,"scheduledPurgeDate":1566280378,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c","attributes":{"enabled":true,"created":1558504367,"updated":1558504367,"recoveryLevel":"Recoverable+Purgeable"}}],"nextLink":"https://vaultf5740e0c.vault.azure.net:443/deletedkeys?api-version=7.0&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjghTURBd01EVXlJV3RsZVM5TFJWbFNSVU0xUmpVM05EQkZNRU12UkRjMlJrWkRRekkwTlVZM05EUTRPVGxEUXpjeFFVTkJSRVZHUlVRM01VSWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0"}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1679,11 +1451,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:01 GMT
-=======
-      - Wed, 22 May 2019 05:53:21 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1719,17 +1487,10 @@ interactions:
       User-Agent:
       - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: GET
-<<<<<<< HEAD
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys?api-version=7.0&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjghTURBd01EVXlJV3RsZVM5TFJWbFNSVU0xUmpVM05EQkZNRU12UXpsRU5ERXpNek16UkVJeU5Ea3lRVUUxT0RBd1JqQkRORGt6TlVJek1UTWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0
   response:
     body:
       string: '{"value":[{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec6f5740e0c","deletedDate":1559068720,"scheduledPurgeDate":1566844720,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c","attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}}],"nextLink":null}'
-=======
-    uri: https://vaultf5740e0c.vault.azure.net/deletedkeys?api-version=7.0&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjghTURBd01EVXlJV3RsZVM5TFJWbFNSVU0xUmpVM05EQkZNRU12UkRjMlJrWkRRekkwTlVZM05EUTRPVGxEUXpjeFFVTkJSRVZHUlVRM01VSWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0
-  response:
-    body:
-      string: '{"value":[{"recoveryId":"https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec6f5740e0c","deletedDate":1558504379,"scheduledPurgeDate":1566280379,"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c","attributes":{"enabled":true,"created":1558504368,"updated":1558504368,"recoveryLevel":"Recoverable+Purgeable"}}],"nextLink":null}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1738,11 +1499,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:01 GMT
-=======
-      - Wed, 22 May 2019 05:53:21 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1783,11 +1540,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec0f5740e0c/recover?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c/838715626d2d41c996a3fe711675b403","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1Dkuw42x403fzy985ETll4cRjwTcqTYm7FXWOvbgqWtgT9j7oD-y5KGuBHWNl9WkXuH23qrfAQSJV9GaJDaKuK10_9kwsFPYp1HURhdur6pcnlx4IOU7Q6YCGe-ujpGvGKTwvbI-TD7BBkFmGFBBlFERI8vlg9M7LGJOyoYF3z31_0FPO8TtD8bMGLTndk5L7YAtjvd9Fs3YrtWI3eDuYTF5DDGjy3yMawvuPRzyq3KjTWWycNDJnVl5ySYjisJOUfDGItM4ptuHoIIlfgUCbv0GPABKlJGEqxXMHKTJleOVH2yZMsYBcj50sm5IwJoryClyA7lim7EkM6nBhp3r4w","e":"AQAB"},"attributes":{"enabled":true,"created":1559068714,"updated":1559068714,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c/7f4c97dc2ef14e528187406a51b5be4e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"oy686S3eRFcYp1EjxbBgFR5Zq5Cymz1pdLy2U5ogKRkTwmsiJfP87C_-YpfQW00oKFBj01LgxtQVt-ZkO1BZD925neXPRR25WAB7U2VpxIwxJcQCnmtE3YK9XIv66d9GOko_CTg70L4PDHEQAmjLKIAPW8ET6-uNPSub9g_YKZqwD27Ok71X1hiQdfPMvqVDpDkuHY6lUe6LEffsw4CWb7wcwxD7nIntcH0bHF0buvO8uKnIwpwiWmNiJ2JayMDlqWqZe3cIZRr1W0h0rTSTdhdrkxzKtUtzNbbF5uSGRgRWPdC-wYfs4r0DVwZG_jEVrInL9guyFQhCMgEYLzdtHQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504363,"updated":1558504363,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1796,11 +1549,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:01 GMT
-=======
-      - Wed, 22 May 2019 05:53:22 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1841,11 +1590,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec1f5740e0c/recover?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c/5375e3f4f53a4e19881f7037e21fdb58","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"mFj8C2AoGWo8jFalxN_9FfFdhFAihKoF_NWNbpw00o7DKrgXAtfWm0HG3UnkvUU2ByONpgHIUWoDWsL91CnBHobll3X97J7E12BpVpBOzN3Pbeak9l2RNjDpAZ78GPuvAFgYYzHBRpCCYh6ik_Gs4YAx-SUT8Q2dY__EG-awC5WYSjldnvAXZsO-LGAqGEN1c0JFdJwwC6xer_3LvwnsE7vJpci4UQlT9v2xITmX5E427Acxgk4flTU7h4M4gBbPu6gsR8Y-QixlO0uOOgdUoqJaiJTH9QM41JGHuQZnvz71I7gAroGtbmVqJbXjuXOYwlXfPZ5EUpDTlO1xGpAxNQ","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c/05782678681544d9a6d5364591c006ef","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"yOpR1gE_zWyeCUIInjeaDBeBOKVRFWHpcpbPPXA1yjoim2ce0piuQfEF2t8y_SioO4Sfe4UwUkWSTgYvuZzu7R9JrdQVHHRbQ8-StoT_pCZQ4v1UGpbWRHS3WqtK78wyfq26KRPPP3kGu8jrRjfefoxGvJMlavkuruhp0Q5GwBwGXRek2bgUJJDbr7oq6m4r5XcdsCWJrL5TRVhoX4fpuvJ2lchncoczvbNktQ8I-0PwKo5uSJAy6lSuHlsb6xX-Zg2bqa3b6AnHM14sJjSK9MX94tVqSqfMeV0kxl7NOJ0G6aPE0h8kQudHR7oif2C6s1NF7ZLimfj4PcSB6BPZUw","e":"AQAB"},"attributes":{"enabled":true,"created":1558504363,"updated":1558504363,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1854,11 +1599,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:02 GMT
-=======
-      - Wed, 22 May 2019 05:53:22 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1899,11 +1640,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec2f5740e0c/recover?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c/e2c360ce95c2427ea668a804625e4306","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"jVzEjjnM7h4H69B6-QD4UOYZagl9RRqpQJOIlwfkxr9wxMuUo-bEpuyj32RSCNWEOMJr-ruB4PBanOcWUFoQgDipPwAObYq8GHK85neBeBhAitm4K0InOg9cMdrHZgkRET9exuWJZWz3eBAXn1DQQfDd3FAr-YqmFqQubkLJfk-5dtwV1eXt9dqNlPhCwZKP4Vv72O98AJNiQB33MphLpGaF9C_H5VGcN1TVxVcJrV4VWukl-co9u0ILkfIh8qtZAdz4GZb8dXeX25Ilpy7JeKqRNa0QeZ1oBUIukkC0iEus-oXFpIsfK7PWDDtn8610Tl56rsaRRFNffnJs2is41w","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c/bfb79093311546f194554788fbbf35eb","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"vm3melVrIIRtlv6ksdEQRKf0S4O_knU7AnvsDWpnMHkdSYo4G2z5wJlkByzt17TV04tpFv3nni6ztB8kohDKqOqnfkhpOYElZLPca4CqtvMM5r83CD7FaDQwUAdOplImU_7ggsER0dcoIBfGWIxBIhYDRZVn-2iVjR3lCSNkPDAeXzqUhuKKlUnqrYw2TQXjUlVfDNHkur-nbbMAMAvTqf-xKtxPmHNuogPZskE6cEB0JCa1z3YcxhcqNc6Y3pnal6NRLen_n57orPdA_wyF1dxCS6SA24DDt1CLKW4XB8GpKczSHoJHo4jSTA1GcJBI1l6KFbFRtKmriceaw0u3wQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504364,"updated":1558504364,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1912,11 +1649,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:02 GMT
-=======
-      - Wed, 22 May 2019 05:53:23 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -1957,11 +1690,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec3f5740e0c/recover?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c/3f99547af1c94b0dbed23aa6d2bb2520","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"t0aQbuC9f6r969BBpaQhKRj6HDo2w04fgGzPKyZS7dHtahvmxzXOHExMZeaySK0nHsjoT6aAg4bH2T7PR224DImpwOVpa6DWcFwPoIEJUi19lRJO811frzV1IXAcYOkKQRnhoRyFPr-Rzmdla4GR4BGGuv0TOjgb9XsmqQoqu68kw9f2OzJaBnOs8ntxeL9f0Yy5zmyPGRmCL4SADsS0MMqHlNh7UNB8HeWHe7h9sW8uxeG3c4pXOij_98x7m9GUh4c_gDfpCjHC6BeTmDziyUedMxuJ2WKC5cb3UjMKljnm-0uCjfFdmSfCWtEGEz56OxVP6-BL4OtrTOKZG_5g7Q","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c/77ff114c991843e184d666a6a3dfa33b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"3FhRh5WkulnxeK81Z6mUud4SMyNEKf8niwIB7wZs1HR3VbwqkYz5BkPm9a4_bwNivRf_OWGsbzmRo852b6KsxLkhcdyMmM9B0nK0QpEV5OyrywQh42mvok_fi2fXmpyzRbbIMOODAfk_nprXU5Ucn4gvOJfq4XwRTbI_aSqw0NSg0dYkMPgB5QVKLh3MCwSmf0sujFCbqrFKV0Puzp4hk19ICawms6s71r_NTe-wBtwWZvPx-oSnX1Rj6VCZGKTtzZcFgEXQRnL9Y_x8pHOmwQqZBB1YxZg3B6zYLKAHXdi9nAKoInKrZeKvR8l2wxEu26krQNFDKNHOtlHwdpizIQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504366,"updated":1558504366,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -1970,11 +1699,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:02 GMT
-=======
-      - Wed, 22 May 2019 05:53:23 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2015,11 +1740,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec4f5740e0c/recover?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c/8af3f5ea54034f6f934ce0b763fa79c1","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"znSAVSCQ1RJKwjHoePk8kLRVok3HBOsnhF9bJxmY4gtJEZy9yuWXpocdIo-zTR_S67Qn3U66V2KNde8WiFwy-J8tV5Hmu7n5Ru34iDEi8JBzL3DXlbr7Le__wfgX7J2UM4Vqn1bQDVSw1rKs6c4tWAajOgxcr32H_m_515ZEXyNiZjQs3kppw1Gibq46mnnGv6XHyu01iD6J8zddXYlhsMhMMF_f9keng55XoLWe8AeZ1j8iR8Lk7jDrF0ouDW7tZnIo65ndEpaaNirLVDrlJMcUruUpYWHCcdjXuTM9_GatPGxcnZA0XY3h3yM8gmHlGIJT42x4bLOi8-8N5z44Kw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c/1e3e15595db44ec38e94f7230acedfbc","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"zTwOouKkRLzTRSe9sZ0dWEpBVLOvHTPSGQvHJ3GGU_Edr1JxZkB7EcvP9VlrhfJRKj8RVjPMRKqnm6-YSg0rr1uz__UyzmbWOJUhHmKIWX-phpp0961Y2fxV-RsMTBBoASdX8UMryJ8RsFJtoJwPygBNbe8hMFz3VOw5ncrf44YyBLIN82tE46WWEwpVYAdjQeOrKgac_fuY--jp94amh9JMS38GyP8fFcF4zfA7zLDZi1IlK6VBfS3RDT4_5eUWx-HeMEbXAgwjOtCKTUM8u58VPrVo2aj8g4CcbtqUWzzMayzd1QgmcrVcmYEIwbfv5qcnahbAF81NQprnlf0jXQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504366,"updated":1558504366,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -2028,11 +1749,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:02 GMT
-=======
-      - Wed, 22 May 2019 05:53:23 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2073,11 +1790,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec5f5740e0c/recover?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c/c9d413333db2492aa5800f0c4935b313","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"wMGIIynZcOERgPXOaVoVvvMsr7yvmqzpEqmDmw6qepmULCAB3853_Dvx-x2dVCWSLOfWDoJiJoOvVla0aI6KKb7SuQYbsP1kDYle8td1SCIBRLa1SIyJsN1si1peh3JZYn8ZOW8IM9gyIK7hyjipUl8gpWCW7vaXSzzn7VPn5Xccl647ZZ5_24uK7z3K9BdvwSjG9o1-1szasax5L3AiNeOJfItUCNSTrcN5M7YEJr9oLa0qkSt0DVnHKQ66BxMfNl-MDagu3TW4omtVMW5sdRnMGobZh-TS8uDtDKGrQ3k0xSEN-m6uz0dgyoE92TGn7ZUCpZCJSB7yoAMZNTROQw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c/d76ffcc245f744899cc71acadefed71b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"x4ur8upkgsvTeR4yQ7ozJoBLzlLBcfJuj7tsaegUEu7jhY_OnJSJiTOqkN6r50yx3i1cOqGpLTGFL3f6foCd_faWQsAzdxRw3I3ltMuxtdtzhbjHw913FkGNUxoPyZPtrrMy-oBYGq37tG1_9yY-w9KnlsTH9VslqS17zNzGD3GLHxVpm1BkQQE2Qvt7DFltAzUIu9sak2e7W1kYU_a5UFb1YaUbIFHZceKK0MTSgNrnjSfCAtYFCmbVAhQxS3zY68YrXeB0GuZW4XmZwTk6jp4sHJEaoD6LtXR7oLVL34SYs-e_HlPZk0fS93C5kAvypgf1qXkwj4d8VrGdxWTMhQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504367,"updated":1558504367,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -2086,11 +1799,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:03 GMT
-=======
-      - Wed, 22 May 2019 05:53:24 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2131,11 +1840,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec6f5740e0c/recover?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c/fd267a6bb2d34c078f05b25f808f1044","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xXCZAJIou_L0rpNlyK-9UKI9YEkMXG-ocOdL1G-xtBlEHupUNKmwuyz4ifrT5_C9DC7ilpoD_u-Oxd589kWYSxOYen0OOXS9WxL5JP2tqpnoLyaQB8bKDbhhOnH0aisNL6OgcLXOIhShl5LXH9_i3c_l0p_mV-eF6oBWgnKBHoOSgs8lxKpD-XDmNcIl8QXXANjzPSemZ8MbbISnR4vHYOvkbsJRG-58zsm0C8DXGcjE-B9x1xhYsKjGUgGjCEsUuSJUFGxdcerERXEP4vfZLIqkY3k08oz3TK_YINEl-5aXbgivgq0DX1lO90VBnWrd53DLrEcWc1ItbIGYAk9rgw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c/fcefdf349c4f470bb08fe34443662d3e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"6HpglV2_dpmWq0atjyeivYv70WQlFg08VvvFazz-gXdyC2KcRby1iPJ9yozcJ0Iqg8YQUYdAvwLWB9K2b6H8NmKCIf3dwV0WuGr73IJiZhSbYVUxBPK_9mZTIEIvCPVZ6szYEicTyhqmj03BLy7GDVetl3bFdPQ8lYpOZRi54gj3ZHppe2CvCPURHidjQI7dugNBngdZkWDUN0fb9DHQBItsAqfDzN-8MkcGCN8Rq--YRqATYBDMwcFqq4SaMs_0Q1eaIDV7bgvOHYqTOT07uO7Wz2jbYIinyAHPmnYQ3JpYFCYQRg23IvKTcf6wy9xh_xKqi6mogdX6HUuTsgdcDw","e":"AQAB"},"attributes":{"enabled":true,"created":1558504368,"updated":1558504368,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -2144,11 +1849,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:03 GMT
-=======
-      - Wed, 22 May 2019 05:53:24 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2194,11 +1895,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:03 GMT
-=======
-      - Wed, 22 May 2019 05:53:24 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2244,11 +1941,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:03 GMT
-=======
-      - Wed, 22 May 2019 05:53:25 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2294,11 +1987,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:03 GMT
-=======
-      - Wed, 22 May 2019 05:53:25 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2344,11 +2033,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:04 GMT
-=======
-      - Wed, 22 May 2019 05:53:25 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2394,11 +2079,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:04 GMT
-=======
-      - Wed, 22 May 2019 05:53:26 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2444,11 +2125,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:04 GMT
-=======
-      - Wed, 22 May 2019 05:53:26 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2494,11 +2171,7 @@ interactions:
       cache-control:
       - no-cache
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:04 GMT
-=======
-      - Wed, 22 May 2019 05:53:27 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2546,11 +2219,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:25 GMT
-=======
-      - Wed, 22 May 2019 05:53:47 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2589,11 +2258,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c/?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c/838715626d2d41c996a3fe711675b403","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"1Dkuw42x403fzy985ETll4cRjwTcqTYm7FXWOvbgqWtgT9j7oD-y5KGuBHWNl9WkXuH23qrfAQSJV9GaJDaKuK10_9kwsFPYp1HURhdur6pcnlx4IOU7Q6YCGe-ujpGvGKTwvbI-TD7BBkFmGFBBlFERI8vlg9M7LGJOyoYF3z31_0FPO8TtD8bMGLTndk5L7YAtjvd9Fs3YrtWI3eDuYTF5DDGjy3yMawvuPRzyq3KjTWWycNDJnVl5ySYjisJOUfDGItM4ptuHoIIlfgUCbv0GPABKlJGEqxXMHKTJleOVH2yZMsYBcj50sm5IwJoryClyA7lim7EkM6nBhp3r4w","e":"AQAB"},"attributes":{"enabled":true,"created":1559068714,"updated":1559068714,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c/7f4c97dc2ef14e528187406a51b5be4e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"oy686S3eRFcYp1EjxbBgFR5Zq5Cymz1pdLy2U5ogKRkTwmsiJfP87C_-YpfQW00oKFBj01LgxtQVt-ZkO1BZD925neXPRR25WAB7U2VpxIwxJcQCnmtE3YK9XIv66d9GOko_CTg70L4PDHEQAmjLKIAPW8ET6-uNPSub9g_YKZqwD27Ok71X1hiQdfPMvqVDpDkuHY6lUe6LEffsw4CWb7wcwxD7nIntcH0bHF0buvO8uKnIwpwiWmNiJ2JayMDlqWqZe3cIZRr1W0h0rTSTdhdrkxzKtUtzNbbF5uSGRgRWPdC-wYfs4r0DVwZG_jEVrInL9guyFQhCMgEYLzdtHQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504363,"updated":1558504363,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -2602,11 +2267,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:25 GMT
-=======
-      - Wed, 22 May 2019 05:53:48 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2645,11 +2306,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c/?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c/5375e3f4f53a4e19881f7037e21fdb58","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"mFj8C2AoGWo8jFalxN_9FfFdhFAihKoF_NWNbpw00o7DKrgXAtfWm0HG3UnkvUU2ByONpgHIUWoDWsL91CnBHobll3X97J7E12BpVpBOzN3Pbeak9l2RNjDpAZ78GPuvAFgYYzHBRpCCYh6ik_Gs4YAx-SUT8Q2dY__EG-awC5WYSjldnvAXZsO-LGAqGEN1c0JFdJwwC6xer_3LvwnsE7vJpci4UQlT9v2xITmX5E427Acxgk4flTU7h4M4gBbPu6gsR8Y-QixlO0uOOgdUoqJaiJTH9QM41JGHuQZnvz71I7gAroGtbmVqJbXjuXOYwlXfPZ5EUpDTlO1xGpAxNQ","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c/05782678681544d9a6d5364591c006ef","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"yOpR1gE_zWyeCUIInjeaDBeBOKVRFWHpcpbPPXA1yjoim2ce0piuQfEF2t8y_SioO4Sfe4UwUkWSTgYvuZzu7R9JrdQVHHRbQ8-StoT_pCZQ4v1UGpbWRHS3WqtK78wyfq26KRPPP3kGu8jrRjfefoxGvJMlavkuruhp0Q5GwBwGXRek2bgUJJDbr7oq6m4r5XcdsCWJrL5TRVhoX4fpuvJ2lchncoczvbNktQ8I-0PwKo5uSJAy6lSuHlsb6xX-Zg2bqa3b6AnHM14sJjSK9MX94tVqSqfMeV0kxl7NOJ0G6aPE0h8kQudHR7oif2C6s1NF7ZLimfj4PcSB6BPZUw","e":"AQAB"},"attributes":{"enabled":true,"created":1558504363,"updated":1558504363,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -2658,11 +2315,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:25 GMT
-=======
-      - Wed, 22 May 2019 05:53:48 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2701,11 +2354,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c/?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c/e2c360ce95c2427ea668a804625e4306","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"jVzEjjnM7h4H69B6-QD4UOYZagl9RRqpQJOIlwfkxr9wxMuUo-bEpuyj32RSCNWEOMJr-ruB4PBanOcWUFoQgDipPwAObYq8GHK85neBeBhAitm4K0InOg9cMdrHZgkRET9exuWJZWz3eBAXn1DQQfDd3FAr-YqmFqQubkLJfk-5dtwV1eXt9dqNlPhCwZKP4Vv72O98AJNiQB33MphLpGaF9C_H5VGcN1TVxVcJrV4VWukl-co9u0ILkfIh8qtZAdz4GZb8dXeX25Ilpy7JeKqRNa0QeZ1oBUIukkC0iEus-oXFpIsfK7PWDDtn8610Tl56rsaRRFNffnJs2is41w","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c/bfb79093311546f194554788fbbf35eb","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"vm3melVrIIRtlv6ksdEQRKf0S4O_knU7AnvsDWpnMHkdSYo4G2z5wJlkByzt17TV04tpFv3nni6ztB8kohDKqOqnfkhpOYElZLPca4CqtvMM5r83CD7FaDQwUAdOplImU_7ggsER0dcoIBfGWIxBIhYDRZVn-2iVjR3lCSNkPDAeXzqUhuKKlUnqrYw2TQXjUlVfDNHkur-nbbMAMAvTqf-xKtxPmHNuogPZskE6cEB0JCa1z3YcxhcqNc6Y3pnal6NRLen_n57orPdA_wyF1dxCS6SA24DDt1CLKW4XB8GpKczSHoJHo4jSTA1GcJBI1l6KFbFRtKmriceaw0u3wQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504364,"updated":1558504364,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -2714,11 +2363,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:25 GMT
-=======
-      - Wed, 22 May 2019 05:53:48 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2757,11 +2402,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c/?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c/3f99547af1c94b0dbed23aa6d2bb2520","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"t0aQbuC9f6r969BBpaQhKRj6HDo2w04fgGzPKyZS7dHtahvmxzXOHExMZeaySK0nHsjoT6aAg4bH2T7PR224DImpwOVpa6DWcFwPoIEJUi19lRJO811frzV1IXAcYOkKQRnhoRyFPr-Rzmdla4GR4BGGuv0TOjgb9XsmqQoqu68kw9f2OzJaBnOs8ntxeL9f0Yy5zmyPGRmCL4SADsS0MMqHlNh7UNB8HeWHe7h9sW8uxeG3c4pXOij_98x7m9GUh4c_gDfpCjHC6BeTmDziyUedMxuJ2WKC5cb3UjMKljnm-0uCjfFdmSfCWtEGEz56OxVP6-BL4OtrTOKZG_5g7Q","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c/77ff114c991843e184d666a6a3dfa33b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"3FhRh5WkulnxeK81Z6mUud4SMyNEKf8niwIB7wZs1HR3VbwqkYz5BkPm9a4_bwNivRf_OWGsbzmRo852b6KsxLkhcdyMmM9B0nK0QpEV5OyrywQh42mvok_fi2fXmpyzRbbIMOODAfk_nprXU5Ucn4gvOJfq4XwRTbI_aSqw0NSg0dYkMPgB5QVKLh3MCwSmf0sujFCbqrFKV0Puzp4hk19ICawms6s71r_NTe-wBtwWZvPx-oSnX1Rj6VCZGKTtzZcFgEXQRnL9Y_x8pHOmwQqZBB1YxZg3B6zYLKAHXdi9nAKoInKrZeKvR8l2wxEu26krQNFDKNHOtlHwdpizIQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504366,"updated":1558504366,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -2770,11 +2411,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:25 GMT
-=======
-      - Wed, 22 May 2019 05:53:48 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2813,11 +2450,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c/?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c/8af3f5ea54034f6f934ce0b763fa79c1","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"znSAVSCQ1RJKwjHoePk8kLRVok3HBOsnhF9bJxmY4gtJEZy9yuWXpocdIo-zTR_S67Qn3U66V2KNde8WiFwy-J8tV5Hmu7n5Ru34iDEi8JBzL3DXlbr7Le__wfgX7J2UM4Vqn1bQDVSw1rKs6c4tWAajOgxcr32H_m_515ZEXyNiZjQs3kppw1Gibq46mnnGv6XHyu01iD6J8zddXYlhsMhMMF_f9keng55XoLWe8AeZ1j8iR8Lk7jDrF0ouDW7tZnIo65ndEpaaNirLVDrlJMcUruUpYWHCcdjXuTM9_GatPGxcnZA0XY3h3yM8gmHlGIJT42x4bLOi8-8N5z44Kw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068715,"updated":1559068715,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c/1e3e15595db44ec38e94f7230acedfbc","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"zTwOouKkRLzTRSe9sZ0dWEpBVLOvHTPSGQvHJ3GGU_Edr1JxZkB7EcvP9VlrhfJRKj8RVjPMRKqnm6-YSg0rr1uz__UyzmbWOJUhHmKIWX-phpp0961Y2fxV-RsMTBBoASdX8UMryJ8RsFJtoJwPygBNbe8hMFz3VOw5ncrf44YyBLIN82tE46WWEwpVYAdjQeOrKgac_fuY--jp94amh9JMS38GyP8fFcF4zfA7zLDZi1IlK6VBfS3RDT4_5eUWx-HeMEbXAgwjOtCKTUM8u58VPrVo2aj8g4CcbtqUWzzMayzd1QgmcrVcmYEIwbfv5qcnahbAF81NQprnlf0jXQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504366,"updated":1558504366,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -2826,11 +2459,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:25 GMT
-=======
-      - Wed, 22 May 2019 05:53:48 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2869,11 +2498,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c/?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c/c9d413333db2492aa5800f0c4935b313","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"wMGIIynZcOERgPXOaVoVvvMsr7yvmqzpEqmDmw6qepmULCAB3853_Dvx-x2dVCWSLOfWDoJiJoOvVla0aI6KKb7SuQYbsP1kDYle8td1SCIBRLa1SIyJsN1si1peh3JZYn8ZOW8IM9gyIK7hyjipUl8gpWCW7vaXSzzn7VPn5Xccl647ZZ5_24uK7z3K9BdvwSjG9o1-1szasax5L3AiNeOJfItUCNSTrcN5M7YEJr9oLa0qkSt0DVnHKQ66BxMfNl-MDagu3TW4omtVMW5sdRnMGobZh-TS8uDtDKGrQ3k0xSEN-m6uz0dgyoE92TGn7ZUCpZCJSB7yoAMZNTROQw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c/d76ffcc245f744899cc71acadefed71b","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"x4ur8upkgsvTeR4yQ7ozJoBLzlLBcfJuj7tsaegUEu7jhY_OnJSJiTOqkN6r50yx3i1cOqGpLTGFL3f6foCd_faWQsAzdxRw3I3ltMuxtdtzhbjHw913FkGNUxoPyZPtrrMy-oBYGq37tG1_9yY-w9KnlsTH9VslqS17zNzGD3GLHxVpm1BkQQE2Qvt7DFltAzUIu9sak2e7W1kYU_a5UFb1YaUbIFHZceKK0MTSgNrnjSfCAtYFCmbVAhQxS3zY68YrXeB0GuZW4XmZwTk6jp4sHJEaoD6LtXR7oLVL34SYs-e_HlPZk0fS93C5kAvypgf1qXkwj4d8VrGdxWTMhQ","e":"AQAB"},"attributes":{"enabled":true,"created":1558504367,"updated":1558504367,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -2882,11 +2507,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:25 GMT
-=======
-      - Wed, 22 May 2019 05:53:48 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
@@ -2925,11 +2546,7 @@ interactions:
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c/?api-version=7.0
   response:
     body:
-<<<<<<< HEAD
       string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c/fd267a6bb2d34c078f05b25f808f1044","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"xXCZAJIou_L0rpNlyK-9UKI9YEkMXG-ocOdL1G-xtBlEHupUNKmwuyz4ifrT5_C9DC7ilpoD_u-Oxd589kWYSxOYen0OOXS9WxL5JP2tqpnoLyaQB8bKDbhhOnH0aisNL6OgcLXOIhShl5LXH9_i3c_l0p_mV-eF6oBWgnKBHoOSgs8lxKpD-XDmNcIl8QXXANjzPSemZ8MbbISnR4vHYOvkbsJRG-58zsm0C8DXGcjE-B9x1xhYsKjGUgGjCEsUuSJUFGxdcerERXEP4vfZLIqkY3k08oz3TK_YINEl-5aXbgivgq0DX1lO90VBnWrd53DLrEcWc1ItbIGYAk9rgw","e":"AQAB"},"attributes":{"enabled":true,"created":1559068716,"updated":1559068716,"recoveryLevel":"Recoverable+Purgeable"}}'
-=======
-      string: '{"key":{"kid":"https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c/fcefdf349c4f470bb08fe34443662d3e","kty":"RSA","key_ops":["encrypt","decrypt","sign","verify","wrapKey","unwrapKey"],"n":"6HpglV2_dpmWq0atjyeivYv70WQlFg08VvvFazz-gXdyC2KcRby1iPJ9yozcJ0Iqg8YQUYdAvwLWB9K2b6H8NmKCIf3dwV0WuGr73IJiZhSbYVUxBPK_9mZTIEIvCPVZ6szYEicTyhqmj03BLy7GDVetl3bFdPQ8lYpOZRi54gj3ZHppe2CvCPURHidjQI7dugNBngdZkWDUN0fb9DHQBItsAqfDzN-8MkcGCN8Rq--YRqATYBDMwcFqq4SaMs_0Q1eaIDV7bgvOHYqTOT07uO7Wz2jbYIinyAHPmnYQ3JpYFCYQRg23IvKTcf6wy9xh_xKqi6mogdX6HUuTsgdcDw","e":"AQAB"},"attributes":{"enabled":true,"created":1558504368,"updated":1558504368,"recoveryLevel":"Recoverable+Purgeable"}}'
->>>>>>> key and secret clients from keyvault-proto
     headers:
       cache-control:
       - no-cache
@@ -2938,11 +2555,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-<<<<<<< HEAD
       - Tue, 28 May 2019 18:39:26 GMT
-=======
-      - Wed, 22 May 2019 05:53:48 GMT
->>>>>>> key and secret clients from keyvault-proto
       expires:
       - '-1'
       pragma:
