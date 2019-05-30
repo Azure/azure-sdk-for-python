@@ -23,7 +23,7 @@ class ClusterVersionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API. Constant value: "2017-07-01-preview".
+    :ivar api_version: The version of the Service Fabric resource provider API. This is a required parameter and it's value must be "2019-03-01-preview" for this specification. Constant value: "2019-03-01-preview".
     """
 
     models = models
@@ -33,21 +33,22 @@ class ClusterVersionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-07-01-preview"
+        self.api_version = "2019-03-01-preview"
 
         self.config = config
 
     def get(
             self, location, cluster_version, custom_headers=None, raw=False, **operation_config):
-        """Get cluster code versions.
+        """Gets information about a Service Fabric cluster code version available
+        in the specified location.
 
-        Get cluster code versions by location
-        .
+        Gets information about an available Service Fabric cluster code
+        version.
 
-        :param location: The location for the cluster code versions, this is
-         different from cluster location
+        :param location: The location for the cluster code versions. This is
+         different from cluster location.
         :type location: str
-        :param cluster_version: The cluster code version
+        :param cluster_version: The cluster code version.
         :type cluster_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -106,18 +107,19 @@ class ClusterVersionsOperations(object):
 
     def get_by_environment(
             self, location, environment, cluster_version, custom_headers=None, raw=False, **operation_config):
-        """Get cluster code versions by environment.
+        """Gets information about a Service Fabric cluster code version available
+        for the specified environment.
 
-        Get cluster code versions by environment
-        .
+        Gets information about an available Service Fabric cluster code version
+        by environment.
 
-        :param location: The location for the cluster code versions, this is
-         different from cluster location
+        :param location: The location for the cluster code versions. This is
+         different from cluster location.
         :type location: str
-        :param environment: Cluster operating system, the default means all.
-         Possible values include: 'Windows', 'Linux'
+        :param environment: The operating system of the cluster. The default
+         means all. Possible values include: 'Windows', 'Linux'
         :type environment: str
-        :param cluster_version: The cluster code version
+        :param cluster_version: The cluster code version.
         :type cluster_version: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -177,13 +179,14 @@ class ClusterVersionsOperations(object):
 
     def list(
             self, location, custom_headers=None, raw=False, **operation_config):
-        """List cluster code versions by location.
+        """Gets the list of Service Fabric cluster code versions available for the
+        specified location.
 
-        List cluster code versions by location
-        .
+        Gets all available code versions for Service Fabric cluster resources
+        by location.
 
-        :param location: The location for the cluster code versions, this is
-         different from cluster location
+        :param location: The location for the cluster code versions. This is
+         different from cluster location.
         :type location: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -241,16 +244,17 @@ class ClusterVersionsOperations(object):
 
     def list_by_environment(
             self, location, environment, custom_headers=None, raw=False, **operation_config):
-        """List cluster code versions by environment.
+        """Gets the list of Service Fabric cluster code versions available for the
+        specified environment.
 
-        List cluster code versions by environment
-        .
+        Gets all available code versions for Service Fabric cluster resources
+        by environment.
 
-        :param location: The location for the cluster code versions, this is
-         different from cluster location
+        :param location: The location for the cluster code versions. This is
+         different from cluster location.
         :type location: str
-        :param environment: Cluster operating system, the default means all.
-         Possible values include: 'Windows', 'Linux'
+        :param environment: The operating system of the cluster. The default
+         means all. Possible values include: 'Windows', 'Linux'
         :type environment: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

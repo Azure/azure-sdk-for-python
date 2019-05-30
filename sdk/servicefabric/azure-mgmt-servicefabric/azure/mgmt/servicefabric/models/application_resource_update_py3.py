@@ -18,22 +18,26 @@ class ApplicationResourceUpdate(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Azure resource ID.
+    :ivar id: Azure resource identifier.
     :vartype id: str
     :ivar name: Azure resource name.
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
+    :param location: Azure resource location.
     :type location: str
-    :param type_version:
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
+    :ivar etag: Azure resource etag.
+    :vartype etag: str
+    :param type_version: The version of the application type as defined in the
+     application manifest.
     :type type_version: str
-    :param parameters:
-    :type parameters:
-     list[~azure.mgmt.servicefabric.models.ApplicationParameter]
-    :param upgrade_policy:
+    :param parameters: List of application parameters with overridden values
+     from their default values specified in the application manifest.
+    :type parameters: dict[str, str]
+    :param upgrade_policy: Describes the policy for a monitored application
+     upgrade.
     :type upgrade_policy:
      ~azure.mgmt.servicefabric.models.ApplicationUpgradePolicy
     :param minimum_nodes: The minimum number of nodes where Service Fabric
@@ -49,9 +53,10 @@ class ApplicationResourceUpdate(ProxyResource):
      nodes. By default, the value of this property is zero and it means that
      the services can be placed on any node. Default value: 0 .
     :type maximum_nodes: long
-    :param remove_application_capacity: The version of the application type
+    :param remove_application_capacity: Remove the current application
+     capacity settings.
     :type remove_application_capacity: bool
-    :param metrics:
+    :param metrics: List of application capacity metric description.
     :type metrics:
      list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
     """
@@ -60,7 +65,7 @@ class ApplicationResourceUpdate(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
+        'etag': {'readonly': True},
         'minimum_nodes': {'minimum': 0},
         'maximum_nodes': {'minimum': 0},
     }
@@ -70,8 +75,10 @@ class ApplicationResourceUpdate(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'type_version': {'key': 'properties.typeVersion', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '[ApplicationParameter]'},
+        'parameters': {'key': 'properties.parameters', 'type': '{str}'},
         'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'ApplicationUpgradePolicy'},
         'minimum_nodes': {'key': 'properties.minimumNodes', 'type': 'long'},
         'maximum_nodes': {'key': 'properties.maximumNodes', 'type': 'long'},
@@ -79,8 +86,8 @@ class ApplicationResourceUpdate(ProxyResource):
         'metrics': {'key': 'properties.metrics', 'type': '[ApplicationMetricDescription]'},
     }
 
-    def __init__(self, *, location: str, type_version: str=None, parameters=None, upgrade_policy=None, minimum_nodes: int=None, maximum_nodes: int=0, remove_application_capacity: bool=None, metrics=None, **kwargs) -> None:
-        super(ApplicationResourceUpdate, self).__init__(location=location, **kwargs)
+    def __init__(self, *, location: str=None, tags=None, type_version: str=None, parameters=None, upgrade_policy=None, minimum_nodes: int=None, maximum_nodes: int=0, remove_application_capacity: bool=None, metrics=None, **kwargs) -> None:
+        super(ApplicationResourceUpdate, self).__init__(location=location, tags=tags, **kwargs)
         self.type_version = type_version
         self.parameters = parameters
         self.upgrade_policy = upgrade_policy
