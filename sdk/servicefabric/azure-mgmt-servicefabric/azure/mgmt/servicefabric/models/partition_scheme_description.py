@@ -31,7 +31,7 @@ class PartitionSchemeDescription(Model):
     }
 
     _attribute_map = {
-        'partition_scheme': {'key': 'PartitionScheme', 'type': 'str'},
+        'partition_scheme': {'key': 'partitionScheme', 'type': 'str'},
     }
 
     _subtype_map = {

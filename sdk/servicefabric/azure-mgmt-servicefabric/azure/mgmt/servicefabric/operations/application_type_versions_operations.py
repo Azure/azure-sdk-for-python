@@ -17,14 +17,14 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class VersionOperations(object):
-    """VersionOperations operations.
+class ApplicationTypeVersionsOperations(object):
+    """ApplicationTypeVersionsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API. Constant value: "2017-07-01-preview".
+    :ivar api_version: The version of the Service Fabric resource provider API. This is a required parameter and it's value must be "2019-03-01-preview" for this specification. Constant value: "2019-03-01-preview".
     """
 
     models = models
@@ -34,20 +34,24 @@ class VersionOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-07-01-preview"
+        self.api_version = "2019-03-01-preview"
 
         self.config = config
 
     def get(
             self, resource_group_name, cluster_name, application_type_name, version, custom_headers=None, raw=False, **operation_config):
-        """Returns an application type version resource.
+        """Gets a Service Fabric application type version resource.
+
+        Get a Service Fabric application type version resource created or in
+        the process of being created in the Service Fabric application type
+        name resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
+        :param cluster_name: The name of the cluster resource.
         :type cluster_name: str
         :param application_type_name: The name of the application type name
-         resource
+         resource.
         :type application_type_name: str
         :param version: The application type version.
         :type version: str
@@ -56,8 +60,10 @@ class VersionOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: VersionResource or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.servicefabric.models.VersionResource or
+        :return: ApplicationTypeVersionResource or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.servicefabric.models.ApplicationTypeVersionResource or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
@@ -97,7 +103,7 @@ class VersionOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('VersionResource', response)
+            deserialized = self._deserialize('ApplicationTypeVersionResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -107,12 +113,10 @@ class VersionOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}/versions/{version}'}
 
 
-    def _put_initial(
-            self, resource_group_name, cluster_name, application_type_name, version, location, app_package_url, custom_headers=None, raw=False, **operation_config):
-        parameters = models.VersionResource(location=location, app_package_url=app_package_url)
-
+    def _create_initial(
+            self, resource_group_name, cluster_name, application_type_name, version, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.put.metadata['url']
+        url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -138,7 +142,7 @@ class VersionOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'VersionResource')
+        body_content = self._serialize.body(parameters, 'ApplicationTypeVersionResource')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -150,7 +154,7 @@ class VersionOperations(object):
         deserialized = None
 
         if response.status_code == 202:
-            deserialized = self._deserialize('VersionResource', response)
+            deserialized = self._deserialize('ApplicationTypeVersionResource', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -158,51 +162,53 @@ class VersionOperations(object):
 
         return deserialized
 
-    def put(
-            self, resource_group_name, cluster_name, application_type_name, version, location, app_package_url, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Provisions an application type version resource.
+    def create(
+            self, resource_group_name, cluster_name, application_type_name, version, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates or updates a Service Fabric application type version resource.
+
+        Create or update a Service Fabric application type version resource
+        with the specified name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
+        :param cluster_name: The name of the cluster resource.
         :type cluster_name: str
         :param application_type_name: The name of the application type name
-         resource
+         resource.
         :type application_type_name: str
         :param version: The application type version.
         :type version: str
-        :param location: Resource location.
-        :type location: str
-        :param app_package_url: The URL to the application package
-        :type app_package_url: str
+        :param parameters: The application type version resource.
+        :type parameters:
+         ~azure.mgmt.servicefabric.models.ApplicationTypeVersionResource
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns VersionResource or
-         ClientRawResponse<VersionResource> if raw==True
+        :return: An instance of LROPoller that returns
+         ApplicationTypeVersionResource or
+         ClientRawResponse<ApplicationTypeVersionResource> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.servicefabric.models.VersionResource]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.servicefabric.models.ApplicationTypeVersionResource]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.servicefabric.models.VersionResource]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.servicefabric.models.ApplicationTypeVersionResource]]
         :raises:
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
-        raw_result = self._put_initial(
+        raw_result = self._create_initial(
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             application_type_name=application_type_name,
             version=version,
-            location=location,
-            app_package_url=app_package_url,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('VersionResource', response)
+            deserialized = self._deserialize('ApplicationTypeVersionResource', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -217,7 +223,7 @@ class VersionOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}/versions/{version}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}/versions/{version}'}
 
 
     def _delete_initial(
@@ -259,14 +265,17 @@ class VersionOperations(object):
 
     def delete(
             self, resource_group_name, cluster_name, application_type_name, version, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Unprovisions an application type version resource.
+        """Deletes a Service Fabric application type version resource.
+
+        Delete a Service Fabric application type version resource with the
+        specified name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
+        :param cluster_name: The name of the cluster resource.
         :type cluster_name: str
         :param application_type_name: The name of the application type name
-         resource
+         resource.
         :type application_type_name: str
         :param version: The application type version.
         :type version: str
@@ -308,22 +317,28 @@ class VersionOperations(object):
 
     def list(
             self, resource_group_name, cluster_name, application_type_name, custom_headers=None, raw=False, **operation_config):
-        """Returns all versions for the specified application type.
+        """Gets the list of application type version resources created in the
+        specified Service Fabric application type name resource.
+
+        Gets all application type version resources created or in the process
+        of being created in the Service Fabric application type name resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
+        :param cluster_name: The name of the cluster resource.
         :type cluster_name: str
         :param application_type_name: The name of the application type name
-         resource
+         resource.
         :type application_type_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: VersionResourceList or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.servicefabric.models.VersionResourceList or
+        :return: ApplicationTypeVersionResourceList or ClientRawResponse if
+         raw=true
+        :rtype:
+         ~azure.mgmt.servicefabric.models.ApplicationTypeVersionResourceList or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
@@ -362,7 +377,7 @@ class VersionOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('VersionResourceList', response)
+            deserialized = self._deserialize('ApplicationTypeVersionResourceList', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

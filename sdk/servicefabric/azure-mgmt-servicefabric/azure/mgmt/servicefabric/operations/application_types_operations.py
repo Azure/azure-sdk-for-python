@@ -17,14 +17,14 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class ApplicationTypeOperations(object):
-    """ApplicationTypeOperations operations.
+class ApplicationTypesOperations(object):
+    """ApplicationTypesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API. Constant value: "2017-07-01-preview".
+    :ivar api_version: The version of the Service Fabric resource provider API. This is a required parameter and it's value must be "2019-03-01-preview" for this specification. Constant value: "2019-03-01-preview".
     """
 
     models = models
@@ -34,20 +34,23 @@ class ApplicationTypeOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2017-07-01-preview"
+        self.api_version = "2019-03-01-preview"
 
         self.config = config
 
     def get(
             self, resource_group_name, cluster_name, application_type_name, custom_headers=None, raw=False, **operation_config):
-        """Returns an application type name resource.
+        """Gets a Service Fabric application type name resource.
+
+        Get a Service Fabric application type name resource created or in the
+        process of being created in the Service Fabric cluster resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
+        :param cluster_name: The name of the cluster resource.
         :type cluster_name: str
         :param application_type_name: The name of the application type name
-         resource
+         resource.
         :type application_type_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -103,19 +106,24 @@ class ApplicationTypeOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}'}
 
-    def put(
-            self, resource_group_name, cluster_name, application_type_name, location, custom_headers=None, raw=False, **operation_config):
-        """Creates the application type name resource.
+    def create(
+            self, resource_group_name, cluster_name, application_type_name, location=None, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Creates or updates a Service Fabric application type name resource.
+
+        Create or update a Service Fabric application type name resource with
+        the specified name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
+        :param cluster_name: The name of the cluster resource.
         :type cluster_name: str
         :param application_type_name: The name of the application type name
-         resource
+         resource.
         :type application_type_name: str
-        :param location: Resource location.
+        :param location: Azure resource location.
         :type location: str
+        :param tags: Azure resource tags.
+        :type tags: dict[str, str]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -127,10 +135,10 @@ class ApplicationTypeOperations(object):
         :raises:
          :class:`ErrorModelException<azure.mgmt.servicefabric.models.ErrorModelException>`
         """
-        parameters = models.ApplicationTypeResource(location=location)
+        parameters = models.ApplicationTypeResource(location=location, tags=tags)
 
         # Construct URL
-        url = self.put.metadata['url']
+        url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -174,7 +182,7 @@ class ApplicationTypeOperations(object):
             return client_raw_response
 
         return deserialized
-    put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}'}
 
 
     def _delete_initial(
@@ -215,14 +223,17 @@ class ApplicationTypeOperations(object):
 
     def delete(
             self, resource_group_name, cluster_name, application_type_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes the application type name resource.
+        """Deletes a Service Fabric application type name resource.
+
+        Delete a Service Fabric application type name resource with the
+        specified name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
+        :param cluster_name: The name of the cluster resource.
         :type cluster_name: str
         :param application_type_name: The name of the application type name
-         resource
+         resource.
         :type application_type_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
@@ -261,11 +272,15 @@ class ApplicationTypeOperations(object):
 
     def list(
             self, resource_group_name, cluster_name, custom_headers=None, raw=False, **operation_config):
-        """Returns all application type names in the specified cluster.
+        """Gets the list of application type name resources created in the
+        specified Service Fabric cluster resource.
+
+        Gets all application type name resources created or in the process of
+        being created in the Service Fabric cluster resource.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param cluster_name: The name of the cluster resource
+        :param cluster_name: The name of the cluster resource.
         :type cluster_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
