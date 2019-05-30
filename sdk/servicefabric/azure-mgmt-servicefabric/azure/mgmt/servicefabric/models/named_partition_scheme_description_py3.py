@@ -33,7 +33,7 @@ class NamedPartitionSchemeDescription(PartitionSchemeDescription):
     }
 
     _attribute_map = {
-        'partition_scheme': {'key': 'PartitionScheme', 'type': 'str'},
+        'partition_scheme': {'key': 'partitionScheme', 'type': 'str'},
         'count': {'key': 'Count', 'type': 'int'},
         'names': {'key': 'Names', 'type': '[str]'},
     }

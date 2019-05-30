@@ -40,7 +40,7 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
     }
 
     _attribute_map = {
-        'partition_scheme': {'key': 'PartitionScheme', 'type': 'str'},
+        'partition_scheme': {'key': 'partitionScheme', 'type': 'str'},
         'count': {'key': 'Count', 'type': 'int'},
         'low_key': {'key': 'LowKey', 'type': 'str'},
         'high_key': {'key': 'HighKey', 'type': 'str'},

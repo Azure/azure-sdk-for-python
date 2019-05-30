@@ -57,10 +57,10 @@ class ApplicationMetricDescription(Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'maximum_capacity': {'key': 'MaximumCapacity', 'type': 'long'},
-        'reservation_capacity': {'key': 'ReservationCapacity', 'type': 'long'},
-        'total_application_capacity': {'key': 'TotalApplicationCapacity', 'type': 'long'},
+        'name': {'key': 'name', 'type': 'str'},
+        'maximum_capacity': {'key': 'maximumCapacity', 'type': 'long'},
+        'reservation_capacity': {'key': 'reservationCapacity', 'type': 'long'},
+        'total_application_capacity': {'key': 'totalApplicationCapacity', 'type': 'long'},
     }
 
     def __init__(self, *, name: str=None, maximum_capacity: int=None, reservation_capacity: int=None, total_application_capacity: int=None, **kwargs) -> None:

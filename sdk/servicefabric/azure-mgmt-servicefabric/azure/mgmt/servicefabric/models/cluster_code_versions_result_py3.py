@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ClusterCodeVersionsResult(Model):
-    """The result of the ServiceFabric runtime versions.
+    """The result of the Service Fabric runtime versions.
 
     :param id: The identification of the result
     :type id: str
