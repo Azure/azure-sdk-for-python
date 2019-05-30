@@ -49,6 +49,6 @@ class AsyncAuthnClient(AuthnClientBase):
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = AsyncRetryPolicy(
-            retry_on_status_codes=[404, 429] + [x for x in range(500, 600)], **kwargs
+            retry_on_status_codes=[404, 429] + list(range(500, 600)), **kwargs
         )
         return config

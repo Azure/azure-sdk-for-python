@@ -112,7 +112,7 @@ class ManagedIdentityCredential:
         config = Configuration(**kwargs)
         config.header_policy = HeadersPolicy(base_headers={"Metadata": "true"}, **kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
-        config.retry_policy = RetryPolicy(retry_on_status_codes=[404, 429] + [x for x in range(500, 600)], **kwargs)
+        config.retry_policy = RetryPolicy(retry_on_status_codes=[404, 429] + list(range(500, 600)), **kwargs)
         return config
 
     def get_token(self, scopes):

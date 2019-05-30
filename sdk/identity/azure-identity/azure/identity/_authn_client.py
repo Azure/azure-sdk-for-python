@@ -71,7 +71,7 @@ class AuthnClientBase(object):
 
 class AuthnClient(AuthnClientBase):
     """Synchronous authentication client"""
-    
+
     def __init__(self, auth_url, config=None, policies=None, transport=None, **kwargs):
         # type: (str, Optional[Configuration], Optional[Iterable[HTTPPolicy]], Optional[HttpTransport], Mapping[str, Any]) -> None
         config = config or self.create_config(**kwargs)
@@ -93,5 +93,5 @@ class AuthnClient(AuthnClientBase):
         # type: (Mapping[str, Any]) -> Configuration
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
-        config.retry_policy = RetryPolicy(retry_on_status_codes=[404, 429] + [x for x in range(500, 600)], **kwargs)
+        config.retry_policy = RetryPolicy(retry_on_status_codes=[404, 429] + list(range(500, 600)), **kwargs)
         return config
