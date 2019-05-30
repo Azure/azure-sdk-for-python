@@ -3,33 +3,19 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from datetime import datetime
 from typing import Any, AsyncIterable, Mapping, Optional, Dict
 
-from azure.core.configuration import Configuration
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.core.pipeline.policies import UserAgentPolicy, AsyncRetryPolicy, AsyncRedirectPolicy
-from azure.core.pipeline.transport import AsyncioRequestsTransport
-from azure.core.pipeline import AsyncPipeline
 
-from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
-from azure.security.keyvault._generated import KeyVaultClient
-from azure.security.keyvault.aio._internal import AsyncPagingAdapter
-
+from .._internal import _AsyncKeyVaultClientBase, AsyncPagingAdapter
 from ...secrets._models import Secret, DeletedSecret, SecretAttributes
-from datetime import datetime
 
 # TODO: update all returns and raises
 
 
-class SecretClient:
+class SecretClient(_AsyncKeyVaultClientBase):
     """The SecretClient class defines a high level interface for managing secrets in the specified vault.
-
-    :param credentials:  A credential or credential provider which can be used to authenticate to the vault,
-        a ValueError will be raised if the entity is not provided
-    :type credentials: azure.authentication.Credential or azure.authentication.CredentialProvider
-    :param str vault_url: The url of the vault to which the client will connect,
-        a ValueError will be raised if the entity is not provided
-    :param ~azure.core.configuration.Configuration config:  The configuration for the SecretClient
 
     Example:
         .. literalinclude:: ../tests/test_examples_keyvault.py
@@ -39,44 +25,6 @@ class SecretClient:
             :dedent: 4
             :caption: Creates a new instance of the Secret client
     """
-
-    @staticmethod
-    def create_config(**kwargs):
-        pass  # TODO
-
-    def __init__(self, vault_url, credentials, config=None, api_version=None, **kwargs):
-        if not credentials:
-            raise ValueError("credentials")
-
-        if not vault_url:
-            raise ValueError("vault_url")
-
-        self._vault_url = vault_url
-
-        if api_version is None:
-            api_version = KeyVaultClient.DEFAULT_API_VERSION
-
-        # TODO: need config to get default policies, config requires credentials but doesn't do anything with them
-        config = config or KeyVaultClient.get_configuration_class(api_version, aio=True)(credentials)
-
-        # TODO generated default pipeline should be fine when token policy isn't necessary
-        policies = [
-            config.headers_policy,
-            config.user_agent_policy,
-            config.proxy_policy,
-            _BearerTokenCredentialPolicy(credentials),
-            config.redirect_policy,
-            config.retry_policy,
-            config.logging_policy,
-        ]
-        transport = AsyncioRequestsTransport(config)
-        pipeline = AsyncPipeline(transport, policies=policies)
-
-        self._client = KeyVaultClient(credentials, api_version=api_version, pipeline=pipeline, aio=True)
-
-    @property
-    def vault_url(self) -> str:
-        return self._vault_url
 
     async def get_secret(self, name: str, version: str, **kwargs: Mapping[str, Any]) -> Secret:
         """Get a specified secret from the vault.
