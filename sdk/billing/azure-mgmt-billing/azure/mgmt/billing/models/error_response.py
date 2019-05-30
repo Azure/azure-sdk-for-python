@@ -25,9 +25,9 @@ class ErrorResponse(Model):
         'error': {'key': 'error', 'type': 'ErrorDetails'},
     }
 
-    def __init__(self, error=None):
-        super(ErrorResponse, self).__init__()
-        self.error = error
+    def __init__(self, **kwargs):
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
 
 
 class ErrorResponseException(HttpOperationError):
