@@ -12,8 +12,10 @@
 from .application_base import ApplicationBase
 
 
-class ApplicationUpdateParameters(ApplicationBase):
-    """Request parameters for updating a new application.
+class ApplicationCreateParameters(ApplicationBase):
+    """Request parameters for creating a new application.
+
+    All required parameters must be populated in order to send to Azure.
 
     :param allow_guests_sign_in: A property on the application to indicate if
      the application accepts other IDPs or not or partially accepts.
@@ -41,7 +43,8 @@ class ApplicationUpdateParameters(ApplicationBase):
     :type group_membership_claims: object
     :param homepage: The home page of the application.
     :type homepage: str
-    :param informational_urls: urls with more informations of the application.
+    :param informational_urls: URLs with more information about the
+     application.
     :type informational_urls: ~azure.graphrbac.models.InformationalUrl
     :param is_device_only_auth_supported: Specifies whether this application
      supports device authentication without a user. The default is false.
@@ -107,11 +110,15 @@ class ApplicationUpdateParameters(ApplicationBase):
     :type sign_in_audience: str
     :param www_homepage: The primary Web page.
     :type www_homepage: str
-    :param display_name: The display name of the application.
+    :param display_name: Required. The display name of the application.
     :type display_name: str
     :param identifier_uris: A collection of URIs for the application.
     :type identifier_uris: list[str]
     """
+
+    _validation = {
+        'display_name': {'required': True},
+    }
 
     _attribute_map = {
         'allow_guests_sign_in': {'key': 'allowGuestsSignIn', 'type': 'bool'},
@@ -148,6 +155,6 @@ class ApplicationUpdateParameters(ApplicationBase):
     }
 
     def __init__(self, **kwargs):
-        super(ApplicationUpdateParameters, self).__init__(**kwargs)
+        super(ApplicationCreateParameters, self).__init__(**kwargs)
         self.display_name = kwargs.get('display_name', None)
         self.identifier_uris = kwargs.get('identifier_uris', None)

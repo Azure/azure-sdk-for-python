@@ -42,7 +42,8 @@ class ApplicationBase(Model):
     :type group_membership_claims: object
     :param homepage: The home page of the application.
     :type homepage: str
-    :param informational_urls: urls with more informations of the application.
+    :param informational_urls: URLs with more information about the
+     application.
     :type informational_urls: ~azure.graphrbac.models.InformationalUrl
     :param is_device_only_auth_supported: Specifies whether this application
      supports device authentication without a user. The default is false.
@@ -142,34 +143,34 @@ class ApplicationBase(Model):
         'www_homepage': {'key': 'wwwHomepage', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, allow_guests_sign_in: bool=None, allow_passthrough_users: bool=None, app_logo_url: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, error_url: str=None, group_membership_claims=None, homepage: str=None, informational_urls=None, is_device_only_auth_supported: bool=None, key_credentials=None, known_client_applications=None, logout_url: str=None, oauth2_allow_implicit_flow: bool=None, oauth2_allow_url_path_matching: bool=None, oauth2_permissions=None, oauth2_require_post_response: bool=None, org_restrictions=None, optional_claims=None, password_credentials=None, pre_authorized_applications=None, public_client: bool=None, publisher_domain: str=None, reply_urls=None, required_resource_access=None, saml_metadata_url: str=None, sign_in_audience: str=None, www_homepage: str=None, **kwargs) -> None:
         super(ApplicationBase, self).__init__(**kwargs)
-        self.allow_guests_sign_in = kwargs.get('allow_guests_sign_in', None)
-        self.allow_passthrough_users = kwargs.get('allow_passthrough_users', None)
-        self.app_logo_url = kwargs.get('app_logo_url', None)
-        self.app_roles = kwargs.get('app_roles', None)
-        self.app_permissions = kwargs.get('app_permissions', None)
-        self.available_to_other_tenants = kwargs.get('available_to_other_tenants', None)
-        self.error_url = kwargs.get('error_url', None)
-        self.group_membership_claims = kwargs.get('group_membership_claims', None)
-        self.homepage = kwargs.get('homepage', None)
-        self.informational_urls = kwargs.get('informational_urls', None)
-        self.is_device_only_auth_supported = kwargs.get('is_device_only_auth_supported', None)
-        self.key_credentials = kwargs.get('key_credentials', None)
-        self.known_client_applications = kwargs.get('known_client_applications', None)
-        self.logout_url = kwargs.get('logout_url', None)
-        self.oauth2_allow_implicit_flow = kwargs.get('oauth2_allow_implicit_flow', None)
-        self.oauth2_allow_url_path_matching = kwargs.get('oauth2_allow_url_path_matching', None)
-        self.oauth2_permissions = kwargs.get('oauth2_permissions', None)
-        self.oauth2_require_post_response = kwargs.get('oauth2_require_post_response', None)
-        self.org_restrictions = kwargs.get('org_restrictions', None)
-        self.optional_claims = kwargs.get('optional_claims', None)
-        self.password_credentials = kwargs.get('password_credentials', None)
-        self.pre_authorized_applications = kwargs.get('pre_authorized_applications', None)
-        self.public_client = kwargs.get('public_client', None)
-        self.publisher_domain = kwargs.get('publisher_domain', None)
-        self.reply_urls = kwargs.get('reply_urls', None)
-        self.required_resource_access = kwargs.get('required_resource_access', None)
-        self.saml_metadata_url = kwargs.get('saml_metadata_url', None)
-        self.sign_in_audience = kwargs.get('sign_in_audience', None)
-        self.www_homepage = kwargs.get('www_homepage', None)
+        self.allow_guests_sign_in = allow_guests_sign_in
+        self.allow_passthrough_users = allow_passthrough_users
+        self.app_logo_url = app_logo_url
+        self.app_roles = app_roles
+        self.app_permissions = app_permissions
+        self.available_to_other_tenants = available_to_other_tenants
+        self.error_url = error_url
+        self.group_membership_claims = group_membership_claims
+        self.homepage = homepage
+        self.informational_urls = informational_urls
+        self.is_device_only_auth_supported = is_device_only_auth_supported
+        self.key_credentials = key_credentials
+        self.known_client_applications = known_client_applications
+        self.logout_url = logout_url
+        self.oauth2_allow_implicit_flow = oauth2_allow_implicit_flow
+        self.oauth2_allow_url_path_matching = oauth2_allow_url_path_matching
+        self.oauth2_permissions = oauth2_permissions
+        self.oauth2_require_post_response = oauth2_require_post_response
+        self.org_restrictions = org_restrictions
+        self.optional_claims = optional_claims
+        self.password_credentials = password_credentials
+        self.pre_authorized_applications = pre_authorized_applications
+        self.public_client = public_client
+        self.publisher_domain = publisher_domain
+        self.reply_urls = reply_urls
+        self.required_resource_access = required_resource_access
+        self.saml_metadata_url = saml_metadata_url
+        self.sign_in_audience = sign_in_audience
+        self.www_homepage = www_homepage
