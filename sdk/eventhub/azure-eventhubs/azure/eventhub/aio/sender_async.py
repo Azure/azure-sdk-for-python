@@ -171,7 +171,7 @@ class Sender(object):
             self._handler.queue_message(*unsent_events)
             await self._handler.wait_async()
             return True
-        except errors.TokenExpired as shutdown:
+        except errors.AuthenticationException as shutdown:
             log.info("AsyncSender disconnected due to token expiry. Shutting down.")
             error = EventHubAuthenticationError(str(shutdown), shutdown)
             await self.close(exception=error)

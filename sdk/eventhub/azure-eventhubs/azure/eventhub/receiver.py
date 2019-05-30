@@ -187,11 +187,11 @@ class Receiver(object):
             except errors.AMQPConnectionError as shutdown:
                 if str(shutdown).startswith("Unable to open authentication session") and self.auto_reconnect:
                     log.info("Receiver couldn't authenticate.", shutdown)
-                    error = EventHubAuthenticationError(str(shutdown))
+                    error = EventHubAuthenticationError(str(shutdown), shutdown)
                     raise error
                 else:
                     log.info("Receiver connection error (%r).", shutdown)
-                    error = EventHubConnectionError(str(shutdown))
+                    error = EventHubConnectionError(str(shutdown), shutdown)
                     raise error
             except Exception as e:
                 log.info("Unexpected error occurred (%r)", e)
@@ -224,7 +224,7 @@ class Receiver(object):
             while not self._handler.client_ready():
                 time.sleep(0.05)
             return True
-        except errors.TokenExpired as shutdown:
+        except errors.AuthenticationException as shutdown:
             log.info("Receiver disconnected due to token expiry. Shutting down.")
             error = EventHubAuthenticationError(str(shutdown), shutdown)
             self.close(exception=error)
@@ -250,7 +250,7 @@ class Receiver(object):
                 log.info("Receiver couldn't authenticate. Attempting reconnect.")
                 return False
             log.info("Receiver connection error (%r). Shutting down.", shutdown)
-            error = EventHubConnectionError(str(shutdown))
+            error = EventHubConnectionError(str(shutdown), shutdown)
             self.close(exception=error)
             raise error
         except Exception as e:

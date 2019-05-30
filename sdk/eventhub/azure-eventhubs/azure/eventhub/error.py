@@ -62,9 +62,13 @@ class EventHubError(AzureError):
             try:
                 condition = details.condition.value.decode('UTF-8')
             except AttributeError:
-                condition = details.condition.decode('UTF-8')
-            _, _, self.error = condition.partition(':')
-            self.message += "\nError: {}".format(self.error)
+                try:
+                    condition = details.condition.decode('UTF-8')
+                except AttributeError:
+                    condition = None
+            if condition:
+                _, _, self.error = condition.partition(':')
+                self.message += "\nError: {}".format(self.error)
             try:
                 self._parse_error(details.description)
                 for detail in self.details:

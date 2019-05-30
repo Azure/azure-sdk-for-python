@@ -232,7 +232,7 @@ class Receiver(object):
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05)
             return True
-        except errors.TokenExpired as shutdown:
+        except errors.AuthenticationException as shutdown:
             log.info("AsyncReceiver disconnected due to token expiry. Shutting down.")
             error = EventHubError(str(shutdown), shutdown)
             await self.close(exception=error)

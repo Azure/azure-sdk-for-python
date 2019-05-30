@@ -136,11 +136,11 @@ class Sender(object):
             except errors.AMQPConnectionError as shutdown:
                 if str(shutdown).startswith("Unable to open authentication session") and self.auto_reconnect:
                     log.info("Sender couldn't authenticate.", shutdown)
-                    error = EventHubAuthenticationError(str(shutdown))
+                    error = EventHubAuthenticationError(str(shutdown), shutdown)
                     raise error
                 else:
                     log.info("Sender connection error (%r).", shutdown)
-                    error = EventHubConnectionError(str(shutdown))
+                    error = EventHubConnectionError(str(shutdown), shutdown)
                     raise error
             except Exception as e:
                 log.info("Unexpected error occurred (%r)", e)
@@ -165,7 +165,7 @@ class Sender(object):
             self._handler.queue_message(*unsent_events)
             self._handler.wait()
             return True
-        except errors.TokenExpired as shutdown:
+        except errors.AuthenticationException as shutdown:
             log.info("Sender disconnected due to token expiry. Shutting down.")
             error = EventHubAuthenticationError(str(shutdown), shutdown)
             self.close(exception=error)
@@ -191,7 +191,7 @@ class Sender(object):
                 log.info("Sender couldn't authenticate. Attempting reconnect.")
                 return False
             log.info("Sender connection error (%r). Shutting down.", shutdown)
-            error = EventHubConnectionError(str(shutdown))
+            error = EventHubConnectionError(str(shutdown), shutdown)
             self.close(exception=error)
             raise error
         except Exception as e:
@@ -289,7 +289,7 @@ class Sender(object):
             raise ValueError("batch_event_data must not be empty")
         for ed in ed_iter:
             if ed.partition_key != partition_key:
-                raise ValueError("partition key of all EventData must be the same if being sent in a batch")
+                log.warning("partition key of all event_data must be the same if being sent in a batch")
             yield ed
 
     def send(self, event_data):
