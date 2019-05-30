@@ -5,14 +5,16 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Mapping, Optional
 
+from azure.core.credentials import SupportsGetToken
 from azure.core.async_paging import AsyncPagedMixin
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline.transport import AsyncioRequestsTransport, HttpTransport
 from msrest.serialization import Model
 
 from .._generated import KeyVaultClient
-from .._internal import _BearerTokenCredentialPolicy
+from .._internal import KEY_VAULT_SCOPES
 
 
 class AsyncPagingAdapter:
@@ -35,32 +37,35 @@ class AsyncPagingAdapter:
 
 class _AsyncKeyVaultClientBase:
     """
-    :param credentials:  A credential or credential provider which can be used to authenticate to the vault,
+    :param credential:  A credential or credential provider which can be used to authenticate to the vault,
         a ValueError will be raised if the entity is not provided
-    :type credentials: azure.authentication.Credential or azure.authentication.CredentialProvider
+    :type credential: azure.authentication.Credential or azure.authentication.CredentialProvider
     :param str vault_url: The url of the vault to which the client will connect,
         a ValueError will be raised if the entity is not provided
     :param ~azure.core.configuration.Configuration config:  The configuration for the SecretClient
     """
 
     @staticmethod
-    def create_config(credentials: Any, api_version: str = None, **kwargs: Mapping[str, Any]) -> Configuration:
+    def create_config(
+        credential: SupportsGetToken, api_version: str = None, **kwargs: Mapping[str, Any]
+    ) -> Configuration:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
-        config = KeyVaultClient.get_configuration_class(api_version, aio=True)(credentials, **kwargs)
-        config.authentication_policy = _BearerTokenCredentialPolicy(credentials)
+        config = KeyVaultClient.get_configuration_class(api_version, aio=True)(credential, **kwargs)
+        config.authentication_policy = AsyncBearerTokenCredentialPolicy(credential, scopes=KEY_VAULT_SCOPES)
         return config
 
     def __init__(
         self,
         vault_url: str,
-        credentials: Any,  # TODO
+        credential: SupportsGetToken,
         config: Configuration = None,
+        transport: HttpTransport = None,
         api_version: str = None,
         **kwargs: Mapping[str, Any]
     ) -> None:
-        if not credentials:
-            raise ValueError("credentials should be a credential object from azure-identity")
+        if not credential:
+            raise ValueError("credential should be a credential object from azure-identity")
         if not vault_url:
             raise ValueError("vault_url must be the URL of an Azure Key Vault")
 
@@ -69,13 +74,12 @@ class _AsyncKeyVaultClientBase:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
 
-        config = config or self.create_config(credentials, api_version=api_version, **kwargs)
-        transport = kwargs.pop("transport", None)
+        config = config or self.create_config(credential, api_version=api_version, **kwargs)
         pipeline = kwargs.pop("pipeline", None) or self._build_pipeline(config, transport=transport)
-        self._client = KeyVaultClient(credentials, api_version=api_version, pipeline=pipeline, aio=True)
+        self._client = KeyVaultClient(credential, api_version=api_version, pipeline=pipeline, aio=True)
 
     @staticmethod
-    def _build_pipeline(config: Configuration, transport: HttpTransport = None) -> AsyncPipeline:
+    def _build_pipeline(config: Configuration, transport: HttpTransport) -> AsyncPipeline:
         policies = [
             config.headers_policy,
             config.user_agent_policy,
