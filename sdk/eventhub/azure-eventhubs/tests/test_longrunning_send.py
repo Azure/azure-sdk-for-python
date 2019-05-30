@@ -51,8 +51,7 @@ def check_send_successful(outcome, condition):
 
 
 def main(client, args):
-    sender = client.add_sender()
-    client.run()
+    sender = client.create_sender()
     deadline = time.time() + args.duration
     total = 0
 
@@ -70,16 +69,16 @@ def main(client, args):
             if args.batch > 1:
                 data = EventData(batch=data_generator())
             else:
-                data = EventData(body=b"D" * args.payload)
-            sender.transfer(data, callback=check_send_successful)
+                data = EventData(batch=b"D" * args.payload)
+            sender.queue_message(data, callback=check_send_successful)
             total += args.batch
             if total % 10000 == 0:
-               sender.wait()
-               print("Send total {}".format(total))
+                sender.send_pending_messages()
+                print("Send total {}".format(total))
     except Exception as err:
         print("Send failed {}".format(err))
     finally:
-        client.stop()
+        sender.close()
     print("Sent total {}".format(total))
 
 
