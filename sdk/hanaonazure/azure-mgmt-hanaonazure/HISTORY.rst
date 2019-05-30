@@ -12,6 +12,7 @@ Release History
 - Model HanaInstance has a new parameter partner_node_id
 - Model HanaInstance has a new parameter provisioning_state
 - Added operation HanaInstancesOperations.create
+- Added operation HanaInstancesOperations.delete
 
 0.6.0 (2019-05-20)
 ++++++++++++++++++
