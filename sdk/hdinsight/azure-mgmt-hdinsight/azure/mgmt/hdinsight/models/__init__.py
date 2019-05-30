@@ -12,6 +12,11 @@
 try:
     from .cluster_definition_py3 import ClusterDefinition
     from .security_profile_py3 import SecurityProfile
+    from .autoscale_time_and_capacity_py3 import AutoscaleTimeAndCapacity
+    from .autoscale_schedule_py3 import AutoscaleSchedule
+    from .autoscale_capacity_py3 import AutoscaleCapacity
+    from .autoscale_recurrence_py3 import AutoscaleRecurrence
+    from .autoscale_py3 import Autoscale
     from .hardware_profile_py3 import HardwareProfile
     from .virtual_network_profile_py3 import VirtualNetworkProfile
     from .data_disks_groups_py3 import DataDisksGroups
@@ -67,6 +72,11 @@ try:
 except (SyntaxError, ImportError):
     from .cluster_definition import ClusterDefinition
     from .security_profile import SecurityProfile
+    from .autoscale_time_and_capacity import AutoscaleTimeAndCapacity
+    from .autoscale_schedule import AutoscaleSchedule
+    from .autoscale_capacity import AutoscaleCapacity
+    from .autoscale_recurrence import AutoscaleRecurrence
+    from .autoscale import Autoscale
     from .hardware_profile import HardwareProfile
     from .virtual_network_profile import VirtualNetworkProfile
     from .data_disks_groups import DataDisksGroups
@@ -125,6 +135,7 @@ from .runtime_script_action_detail_paged import RuntimeScriptActionDetailPaged
 from .operation_paged import OperationPaged
 from .hd_insight_management_client_enums import (
     DirectoryType,
+    DaysOfWeek,
     OSType,
     Tier,
     JsonWebKeyEncryptionAlgorithm,
@@ -136,6 +147,11 @@ from .hd_insight_management_client_enums import (
 __all__ = [
     'ClusterDefinition',
     'SecurityProfile',
+    'AutoscaleTimeAndCapacity',
+    'AutoscaleSchedule',
+    'AutoscaleCapacity',
+    'AutoscaleRecurrence',
+    'Autoscale',
     'HardwareProfile',
     'VirtualNetworkProfile',
     'DataDisksGroups',
@@ -193,6 +209,7 @@ __all__ = [
     'RuntimeScriptActionDetailPaged',
     'OperationPaged',
     'DirectoryType',
+    'DaysOfWeek',
     'OSType',
     'Tier',
     'JsonWebKeyEncryptionAlgorithm',

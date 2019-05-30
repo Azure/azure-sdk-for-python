@@ -21,6 +21,8 @@ class Role(Model):
     :type min_instance_count: int
     :param target_instance_count: The instance count of the cluster.
     :type target_instance_count: int
+    :param autoscale_configuration: The autoscale configurations.
+    :type autoscale_configuration: ~azure.mgmt.hdinsight.models.Autoscale
     :param hardware_profile: The hardware profile.
     :type hardware_profile: ~azure.mgmt.hdinsight.models.HardwareProfile
     :param os_profile: The operating system profile.
@@ -39,6 +41,7 @@ class Role(Model):
         'name': {'key': 'name', 'type': 'str'},
         'min_instance_count': {'key': 'minInstanceCount', 'type': 'int'},
         'target_instance_count': {'key': 'targetInstanceCount', 'type': 'int'},
+        'autoscale_configuration': {'key': 'autoscale', 'type': 'Autoscale'},
         'hardware_profile': {'key': 'hardwareProfile', 'type': 'HardwareProfile'},
         'os_profile': {'key': 'osProfile', 'type': 'OsProfile'},
         'virtual_network_profile': {'key': 'virtualNetworkProfile', 'type': 'VirtualNetworkProfile'},
@@ -46,11 +49,12 @@ class Role(Model):
         'script_actions': {'key': 'scriptActions', 'type': '[ScriptAction]'},
     }
 
-    def __init__(self, *, name: str=None, min_instance_count: int=None, target_instance_count: int=None, hardware_profile=None, os_profile=None, virtual_network_profile=None, data_disks_groups=None, script_actions=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, min_instance_count: int=None, target_instance_count: int=None, autoscale_configuration=None, hardware_profile=None, os_profile=None, virtual_network_profile=None, data_disks_groups=None, script_actions=None, **kwargs) -> None:
         super(Role, self).__init__(**kwargs)
         self.name = name
         self.min_instance_count = min_instance_count
         self.target_instance_count = target_instance_count
+        self.autoscale_configuration = autoscale_configuration
         self.hardware_profile = hardware_profile
         self.os_profile = os_profile
         self.virtual_network_profile = virtual_network_profile

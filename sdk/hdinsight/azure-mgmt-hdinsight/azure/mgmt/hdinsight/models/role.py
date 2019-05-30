@@ -21,6 +21,8 @@ class Role(Model):
     :type min_instance_count: int
     :param target_instance_count: The instance count of the cluster.
     :type target_instance_count: int
+    :param autoscale_configuration: The autoscale configurations.
+    :type autoscale_configuration: ~azure.mgmt.hdinsight.models.Autoscale
     :param hardware_profile: The hardware profile.
     :type hardware_profile: ~azure.mgmt.hdinsight.models.HardwareProfile
     :param os_profile: The operating system profile.
@@ -39,6 +41,7 @@ class Role(Model):
         'name': {'key': 'name', 'type': 'str'},
         'min_instance_count': {'key': 'minInstanceCount', 'type': 'int'},
         'target_instance_count': {'key': 'targetInstanceCount', 'type': 'int'},
+        'autoscale_configuration': {'key': 'autoscale', 'type': 'Autoscale'},
         'hardware_profile': {'key': 'hardwareProfile', 'type': 'HardwareProfile'},
         'os_profile': {'key': 'osProfile', 'type': 'OsProfile'},
         'virtual_network_profile': {'key': 'virtualNetworkProfile', 'type': 'VirtualNetworkProfile'},
@@ -51,6 +54,7 @@ class Role(Model):
         self.name = kwargs.get('name', None)
         self.min_instance_count = kwargs.get('min_instance_count', None)
         self.target_instance_count = kwargs.get('target_instance_count', None)
+        self.autoscale_configuration = kwargs.get('autoscale_configuration', None)
         self.hardware_profile = kwargs.get('hardware_profile', None)
         self.os_profile = kwargs.get('os_profile', None)
         self.virtual_network_profile = kwargs.get('virtual_network_profile', None)
