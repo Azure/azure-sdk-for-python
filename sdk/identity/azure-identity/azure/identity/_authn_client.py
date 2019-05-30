@@ -29,7 +29,7 @@ class AuthnClientBase(object):
     def __init__(self, auth_url, **kwargs):
         # type: (str, Mapping[str, Any]) -> None
         if not auth_url:
-            raise ValueError("auth_url")
+            raise ValueError("auth_url should be the URL of an OAuth endpoint")
         super(AuthnClientBase, self).__init__()
         self._auth_url = auth_url
         self._cache = TokenCache()
