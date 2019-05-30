@@ -128,7 +128,7 @@ class Key(KeyBase):
         # type: (models.KeyBundle) -> Key
         """Construct a key from an autorest-generated KeyBundle"""
         return cls(
-            key_bundle.attributes, key_bundle.key.kid, key_bundle.key, managed=key_bundle.managed, tags=key_bundle.tags
+            attributes=key_bundle.attributes, vault_id=key_bundle.key.kid, key_material=key_bundle.key, managed=key_bundle.managed, tags=key_bundle.tags
         )
 
     @property
@@ -163,12 +163,12 @@ class DeletedKey(Key):
         # type: (models.DeletedKeyBundle) -> DeletedKey
         """Construct a DeletedKey from an autorest-generated DeletedKeyBundle"""
         return cls(
-            deleted_key_bundle.attributes,
-            deleted_key_bundle.key.kid,
-            deleted_key_bundle.key,
-            deleted_key_bundle.deleted_date,
-            deleted_key_bundle.recovery_id,
-            deleted_key_bundle.scheduled_purge_date,
+            attributes=deleted_key_bundle.attributes,
+            vault_id=deleted_key_bundle.key.kid,
+            key_material=deleted_key_bundle.key,
+            deleted_date=deleted_key_bundle.deleted_date,
+            recovery_id=deleted_key_bundle.recovery_id,
+            scheduled_purge_date=deleted_key_bundle.scheduled_purge_date,
             managed=deleted_key_bundle.managed,
             tags=deleted_key_bundle.tags,
         )
@@ -178,8 +178,8 @@ class DeletedKey(Key):
         # type: (models.DeletedKeyItem) -> DeletedKey
         """Construct a DeletedKey from an autorest-generated DeletedKeyItem"""
         return cls(
-            deleted_key_item.attributes,
-            deleted_key_item.kid,
+            attributes=deleted_key_item.attributes,
+            vault_id=deleted_key_item.kid,
             deleted_date=deleted_key_item.deleted_date,
             recovery_id=deleted_key_item.recovery_id,
             scheduled_purge_date=deleted_key_item.scheduled_purge_date,

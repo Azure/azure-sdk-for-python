@@ -38,8 +38,6 @@ class KeyClient:
 
     # pylint:disable=protected-access
 
-    _api_version = "7.0"
-
     @staticmethod
     def create_config(**kwargs):
         pass  # TODO
@@ -73,7 +71,7 @@ class KeyClient:
         transport = RequestsTransport(config)
         pipeline = Pipeline(transport, policies=policies)
 
-        self._client = KeyVaultClient(credentials, api_version=self._api_version, pipeline=pipeline)
+        self._client = KeyVaultClient(credentials, api_version=api_version, pipeline=pipeline)
 
     @property
     def vault_url(self):
@@ -689,8 +687,6 @@ class KeyClient:
          ~azure.security.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
         :param value:
         :type value: bytes
-        :param callable cls: A custom type or function that will be passed the
-         direct response
         :returns: The wrapped symmetric key.
         :rtype: ~azure.security.keyvault.keys._models.KeyOperationResult
 
@@ -729,8 +725,6 @@ class KeyClient:
          ~azure.security.keyvault.v7_0.models.JsonWebKeyEncryptionAlgorithm
         :param value:
         :type value: bytes
-        :param callable cls: A custom type or function that will be passed the
-         direct response
         :returns: The unwrapped symmetric key.
         :rtype: ~azure.security.keyvault.keys._models.KeyOperationResult
 

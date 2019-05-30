@@ -305,7 +305,7 @@ class KeyClientTests(KeyVaultTestCase):
         # create key
         created_bundle = client.create_key(key_name, "RSA")
         self.assertIsNotNone(created_bundle)
-        plain_text = self.plain_text
+        plain_text = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
 
         # wrap without version
         result = client.wrap_key(created_bundle.name, "RSA-OAEP", plain_text)
