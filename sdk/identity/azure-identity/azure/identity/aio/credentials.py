@@ -63,14 +63,14 @@ class AsyncEnvironmentCredential:
     def __init__(self, **kwargs: Mapping[str, Any]) -> None:
         self._credential = None  # type: Optional[Union[AsyncCertificateCredential, AsyncClientSecretCredential]]
 
-        if not any(v for v in EnvironmentVariables.CLIENT_SECRET_VARS if os.environ.get(v) is None):
+        if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = AsyncClientSecretCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 secret=os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 **kwargs
             )
-        elif not any(v for v in EnvironmentVariables.CERT_VARS if os.environ.get(v) is None):
+        elif all(os.environ.get(v) is not None for v in EnvironmentVariables.CERT_VARS):
             try:
                 with open(os.environ[EnvironmentVariables.AZURE_PRIVATE_KEY_FILE]) as private_key_file:
                     private_key = private_key_file.read()
@@ -85,9 +85,12 @@ class AsyncEnvironmentCredential:
                 **kwargs
             )
 
-    async def get_token(self, scopes):
+    async def get_token(self, scopes: Iterable[str]) -> str:
         if not self._credential:
-            raise AuthenticationError("required environment variables not defined")
+            message = "Missing environment settings. To authenticate with a client secret, set {}. To authenticate with a certificate, set {}.".format(
+                ", ".join(EnvironmentVariables.CLIENT_SECRET_VARS), ", ".join(EnvironmentVariables.CERT_VARS)
+            )
+            raise AuthenticationError(message)
         return await self._credential.get_token(scopes)
 
 
@@ -114,9 +117,7 @@ class AsyncManagedIdentityCredential:
         config = Configuration(**kwargs)
         config.header_policy = HeadersPolicy(base_headers={"Metadata": "true"}, **kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
-        config.retry_policy = AsyncRetryPolicy(
-            retry_on_status_codes=[404, 429] + list(range(500, 600)), **kwargs
-        )
+        config.retry_policy = AsyncRetryPolicy(retry_on_status_codes=[404, 429] + list(range(500, 600)), **kwargs)
         return config
 
 

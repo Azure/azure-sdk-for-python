@@ -93,6 +93,7 @@ def test_cert_environment_credential(monkeypatch):
     def validate_request(request, **kwargs):
         assert tenant_id in request.url
         assert request.data["client_id"] == client_id
+        assert request.data["grant_type"] == "client_credentials"
         # raising here makes mocking a transport response unnecessary
         raise AuthenticationError(success_message)
 
@@ -100,6 +101,11 @@ def test_cert_environment_credential(monkeypatch):
     with pytest.raises(AuthenticationError) as ex:
         credential.get_token(("",))
     assert str(ex.value) == success_message
+
+
+def test_environment_credential_error():
+    with pytest.raises(AuthenticationError):
+        EnvironmentCredential().get_token(("",))
 
 
 def test_credential_chain_error_message():

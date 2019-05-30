@@ -67,14 +67,14 @@ class EnvironmentCredential:
         # type: (Mapping[str, Any]) -> None
         self._credential = None  # type: Optional[Union[CertificateCredential, ClientSecretCredential]]
 
-        if not any(v for v in EnvironmentVariables.CLIENT_SECRET_VARS if os.environ.get(v) is None):
+        if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 secret=os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 **kwargs
             )
-        elif not any(v for v in EnvironmentVariables.CERT_VARS if os.environ.get(v) is None):
+        elif all(os.environ.get(v) is not None for v in EnvironmentVariables.CERT_VARS):
             try:
                 with open(os.environ[EnvironmentVariables.AZURE_PRIVATE_KEY_FILE]) as private_key_file:
                     private_key = private_key_file.read()
@@ -92,7 +92,10 @@ class EnvironmentCredential:
     def get_token(self, scopes):
         # type: (Iterable[str]) -> str
         if not self._credential:
-            raise AuthenticationError("required environment variables not defined")
+            message = "Missing environment settings. To authenticate with a client secret, set {}. To authenticate with a certificate, set {}.".format(
+                ", ".join(EnvironmentVariables.CLIENT_SECRET_VARS), ", ".join(EnvironmentVariables.CERT_VARS)
+            )
+            raise AuthenticationError(message)
         return self._credential.get_token(scopes)
 
 

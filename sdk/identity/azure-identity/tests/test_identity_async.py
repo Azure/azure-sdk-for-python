@@ -68,6 +68,7 @@ async def test_cert_environment_credential(monkeypatch):
     def validate_request(request, **kwargs):
         assert tenant_id in request.url
         assert request.data["client_id"] == client_id
+        assert request.data["grant_type"] == "client_credentials"
         # raising here makes mocking a transport response unnecessary
         raise AuthenticationError(success_message)
 
@@ -100,6 +101,12 @@ async def test_client_secret_environment_credential(monkeypatch):
     with pytest.raises(AuthenticationError) as ex:
         await credential.get_token(("",))
     assert str(ex.value) == success_message
+
+
+@pytest.mark.asyncio
+async def test_environment_credential_error():
+    with pytest.raises(AuthenticationError):
+        await AsyncEnvironmentCredential().get_token(("",))
 
 
 @pytest.mark.asyncio
