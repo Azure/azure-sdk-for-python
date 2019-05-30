@@ -1,4 +1,0 @@
--e ../azure-sdk-tools
--e ../sdk/authorization/azure-mgmt-authorization
--e ../azure-mgmt-storage
--e ../sdk/network/azure-mgmt-network
