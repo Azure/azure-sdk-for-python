@@ -12,22 +12,21 @@
 from msrest.serialization import Model
 
 
-class InvoiceSectionProperties(Model):
+class InvoiceSectionCreationRequest(Model):
     """The properties of an InvoiceSection.
 
     :param display_name: The name of the InvoiceSection.
     :type display_name: str
-    :param billing_profiles: The billing profiles associated to the billing
-     account.
-    :type billing_profiles: list[~azure.mgmt.billing.models.BillingProfile]
+    :param billing_profile_id: The billing profile id.
+    :type billing_profile_id: str
     """
 
     _attribute_map = {
         'display_name': {'key': 'displayName', 'type': 'str'},
-        'billing_profiles': {'key': 'billingProfiles', 'type': '[BillingProfile]'},
+        'billing_profile_id': {'key': 'billingProfileId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(InvoiceSectionProperties, self).__init__(**kwargs)
-        self.display_name = kwargs.get('display_name', None)
-        self.billing_profiles = kwargs.get('billing_profiles', None)
+    def __init__(self, *, display_name: str=None, billing_profile_id: str=None, **kwargs) -> None:
+        super(InvoiceSectionCreationRequest, self).__init__(**kwargs)
+        self.display_name = display_name
+        self.billing_profile_id = billing_profile_id

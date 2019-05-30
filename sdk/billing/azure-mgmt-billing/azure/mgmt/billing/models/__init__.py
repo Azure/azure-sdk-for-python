@@ -26,7 +26,6 @@ try:
     from .update_auto_renew_operation_summary_py3 import UpdateAutoRenewOperationSummary
     from .enabled_azure_sk_us_py3 import EnabledAzureSKUs
     from .billing_profile_py3 import BillingProfile
-    from .invoice_section_properties_py3 import InvoiceSectionProperties
     from .invoice_section_py3 import InvoiceSection
     from .enrollment_policies_py3 import EnrollmentPolicies
     from .enrollment_py3 import Enrollment
@@ -38,6 +37,7 @@ try:
     from .department_list_result_py3 import DepartmentListResult
     from .enrollment_account_list_result_py3 import EnrollmentAccountListResult
     from .billing_profile_list_result_py3 import BillingProfileListResult
+    from .invoice_section_creation_request_py3 import InvoiceSectionCreationRequest
     from .invoice_section_list_result_py3 import InvoiceSectionListResult
     from .operation_status_py3 import OperationStatus
     from .download_url_py3 import DownloadUrl
@@ -90,7 +90,6 @@ except (SyntaxError, ImportError):
     from .update_auto_renew_operation_summary import UpdateAutoRenewOperationSummary
     from .enabled_azure_sk_us import EnabledAzureSKUs
     from .billing_profile import BillingProfile
-    from .invoice_section_properties import InvoiceSectionProperties
     from .invoice_section import InvoiceSection
     from .enrollment_policies import EnrollmentPolicies
     from .enrollment import Enrollment
@@ -102,6 +101,7 @@ except (SyntaxError, ImportError):
     from .department_list_result import DepartmentListResult
     from .enrollment_account_list_result import EnrollmentAccountListResult
     from .billing_profile_list_result import BillingProfileListResult
+    from .invoice_section_creation_request import InvoiceSectionCreationRequest
     from .invoice_section_list_result import InvoiceSectionListResult
     from .operation_status import OperationStatus
     from .download_url import DownloadUrl
@@ -177,7 +177,6 @@ __all__ = [
     'UpdateAutoRenewOperationSummary',
     'EnabledAzureSKUs',
     'BillingProfile',
-    'InvoiceSectionProperties',
     'InvoiceSection',
     'EnrollmentPolicies',
     'Enrollment',
@@ -189,6 +188,7 @@ __all__ = [
     'DepartmentListResult',
     'EnrollmentAccountListResult',
     'BillingProfileListResult',
+    'InvoiceSectionCreationRequest',
     'InvoiceSectionListResult',
     'OperationStatus',
     'DownloadUrl',

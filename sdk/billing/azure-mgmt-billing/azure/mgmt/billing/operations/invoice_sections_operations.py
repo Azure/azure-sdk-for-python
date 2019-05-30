@@ -101,8 +101,8 @@ class InvoiceSectionsOperations(object):
 
 
     def _create_initial(
-            self, billing_account_name, display_name=None, billing_profiles=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.InvoiceSectionProperties(display_name=display_name, billing_profiles=billing_profiles)
+            self, billing_account_name, display_name=None, billing_profile_id=None, custom_headers=None, raw=False, **operation_config):
+        parameters = models.InvoiceSectionCreationRequest(display_name=display_name, billing_profile_id=billing_profile_id)
 
         # Construct URL
         url = self.create.metadata['url']
@@ -127,7 +127,7 @@ class InvoiceSectionsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'InvoiceSectionProperties')
+        body_content = self._serialize.body(parameters, 'InvoiceSectionCreationRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -155,17 +155,15 @@ class InvoiceSectionsOperations(object):
         return deserialized
 
     def create(
-            self, billing_account_name, display_name=None, billing_profiles=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, billing_account_name, display_name=None, billing_profile_id=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """The operation to create a InvoiceSection.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param display_name: The name of the InvoiceSection.
         :type display_name: str
-        :param billing_profiles: The billing profiles associated to the
-         billing account.
-        :type billing_profiles:
-         list[~azure.mgmt.billing.models.BillingProfile]
+        :param billing_profile_id: The billing profile id.
+        :type billing_profile_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -183,7 +181,7 @@ class InvoiceSectionsOperations(object):
         raw_result = self._create_initial(
             billing_account_name=billing_account_name,
             display_name=display_name,
-            billing_profiles=billing_profiles,
+            billing_profile_id=billing_profile_id,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
