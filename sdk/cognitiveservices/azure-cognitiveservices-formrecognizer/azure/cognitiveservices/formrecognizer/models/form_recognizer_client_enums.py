@@ -9,5 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "1.0-preview"
+from enum import Enum
 
+
+class TextOperationStatusCodes(str, Enum):
+
+    not_started = "Not Started"
+    running = "Running"
+    failed = "Failed"
+    succeeded = "Succeeded"
+
+
+class TextRecognitionResultDimensionUnit(str, Enum):
+
+    pixel = "pixel"
+    inch = "inch"
+
+
+class TextRecognitionResultConfidenceClass(str, Enum):
+
+    high = "High"
+    low = "Low"
