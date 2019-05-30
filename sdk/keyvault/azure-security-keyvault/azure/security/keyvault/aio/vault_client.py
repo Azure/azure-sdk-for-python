@@ -17,20 +17,20 @@ class VaultClient(object):
     @property
     def secrets(self):
         """
-        :rtype: ~azure.keyvault.aio.secrets.SecretClient
+        :rtype: ~azure.security.keyvault.aio.secrets.SecretClient
         """
         return self._secrets
 
     @property
     def keys(self):
         """
-        :rtype:`azure.security.keyvault.KeyClient`
+        :rtype:`azure.security.keyvault.aio.keys.KeyClient`
         """
         return self._keys
 
-    @property
-    def certificates(self):
-        """
-        :rtype: ~azure.keyvault.aio.certificates.CertificateClient`
-        """
-        pass
+    # @property
+    # def certificates(self):
+    #     """
+    #     :rtype: ~azure.keyvault.aio.certificates.CertificateClient`
+    #     """
+    #     pass

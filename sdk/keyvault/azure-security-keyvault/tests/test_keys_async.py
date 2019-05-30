@@ -70,9 +70,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         key_size = 2048
         key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
         tags = {"purpose": "unit test", "test name ": "CreateRSAKeyTest"}
-        created_key = await client.create_rsa_key(
-            key_name, hsm=hsm, size=key_size, key_ops=key_ops, tags=tags
-        )
+        created_key = await client.create_rsa_key(key_name, hsm=hsm, size=key_size, key_ops=key_ops, tags=tags)
         self.assertTrue(created_key.tags, "Missing the optional key attributes.")
         self.assertEqual(tags, created_key.tags)
         key_type = "RSA-HSM" if hsm else "RSA"
@@ -338,7 +336,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
             recovered_key = await client.recover_deleted_key(key_name)
             expected_key = keys[key_name]
             self._assert_key_attributes_equal(expected_key, recovered_key)
-        
+
         # purge select keys
         for key_name in [s for s in keys.keys() if s.startswith("keyprg")]:
             await client.purge_deleted_key(key_name)

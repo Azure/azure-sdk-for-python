@@ -1,19 +1,19 @@
 interactions:
 - request:
-    body: '{"kty": "RSA", "attributes": {}}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '32'
+      - '14'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c/create?api-version=7.0
   response:
@@ -60,20 +60,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"kty": "RSA", "attributes": {}}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '32'
+      - '14'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c/create?api-version=7.0
   response:
@@ -120,20 +120,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"kty": "RSA", "attributes": {}}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '32'
+      - '14'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c/create?api-version=7.0
   response:
@@ -180,20 +180,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"kty": "RSA", "attributes": {}}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '32'
+      - '14'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c/create?api-version=7.0
   response:
@@ -240,20 +240,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"kty": "RSA", "attributes": {}}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '32'
+      - '14'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c/create?api-version=7.0
   response:
@@ -300,20 +300,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"kty": "RSA", "attributes": {}}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '32'
+      - '14'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c/create?api-version=7.0
   response:
@@ -360,20 +360,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"kty": "RSA", "attributes": {}}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '32'
+      - '14'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c/create?api-version=7.0
   response:
@@ -420,20 +420,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"kty": "RSA", "attributes": {}}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '32'
+      - '14'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg0f5740e0c/create?api-version=7.0
   response:
@@ -480,20 +480,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"kty": "RSA", "attributes": {}}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '32'
+      - '14'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg1f5740e0c/create?api-version=7.0
   response:
@@ -540,20 +540,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"kty": "RSA", "attributes": {}}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '32'
+      - '14'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg2f5740e0c/create?api-version=7.0
   response:
@@ -600,20 +600,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"kty": "RSA", "attributes": {}}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '32'
+      - '14'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg3f5740e0c/create?api-version=7.0
   response:
@@ -660,20 +660,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"kty": "RSA", "attributes": {}}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '32'
+      - '14'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg4f5740e0c/create?api-version=7.0
   response:
@@ -720,20 +720,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"kty": "RSA", "attributes": {}}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '32'
+      - '14'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg5f5740e0c/create?api-version=7.0
   response:
@@ -780,20 +780,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: '{"kty": "RSA", "attributes": {}}'
+    body: '{"kty": "RSA"}'
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '32'
+      - '14'
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg6f5740e0c/create?api-version=7.0
   response:
@@ -843,7 +843,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -851,7 +851,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c?api-version=7.0
   response:
@@ -901,7 +901,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -909,7 +909,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c?api-version=7.0
   response:
@@ -959,7 +959,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -967,7 +967,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c?api-version=7.0
   response:
@@ -1017,7 +1017,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1025,7 +1025,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c?api-version=7.0
   response:
@@ -1075,7 +1075,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1083,7 +1083,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c?api-version=7.0
   response:
@@ -1133,7 +1133,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1141,7 +1141,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c?api-version=7.0
   response:
@@ -1191,7 +1191,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1199,7 +1199,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c?api-version=7.0
   response:
@@ -1249,7 +1249,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1257,7 +1257,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg0f5740e0c?api-version=7.0
   response:
@@ -1307,7 +1307,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1315,7 +1315,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg1f5740e0c?api-version=7.0
   response:
@@ -1365,7 +1365,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1373,7 +1373,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg2f5740e0c?api-version=7.0
   response:
@@ -1423,7 +1423,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1431,7 +1431,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg3f5740e0c?api-version=7.0
   response:
@@ -1481,7 +1481,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1489,7 +1489,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg4f5740e0c?api-version=7.0
   response:
@@ -1539,7 +1539,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1547,7 +1547,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg5f5740e0c?api-version=7.0
   response:
@@ -1597,7 +1597,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1605,7 +1605,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyprg6f5740e0c?api-version=7.0
   response:
@@ -1655,13 +1655,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys?api-version=7.0
   response:
@@ -1711,13 +1711,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: GET
 <<<<<<< HEAD
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys?api-version=7.0&$skiptoken=eyJOZXh0TWFya2VyIjoiMiExMjghTURBd01EVXlJV3RsZVM5TFJWbFNSVU0xUmpVM05EQkZNRU12UXpsRU5ERXpNek16UkVJeU5Ea3lRVUUxT0RBd1JqQkRORGt6TlVJek1UTWhNREF3TURJNElUazVPVGt0TVRJdE16RlVNak02TlRrNk5Ua3VPVGs1T1RrNU9Wb2giLCJUYXJnZXRMb2NhdGlvbiI6MH0
@@ -1770,7 +1770,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1778,7 +1778,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec0f5740e0c/recover?api-version=7.0
   response:
@@ -1828,7 +1828,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1836,7 +1836,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec1f5740e0c/recover?api-version=7.0
   response:
@@ -1886,7 +1886,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1894,7 +1894,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec2f5740e0c/recover?api-version=7.0
   response:
@@ -1944,7 +1944,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1952,7 +1952,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec3f5740e0c/recover?api-version=7.0
   response:
@@ -2002,7 +2002,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -2010,7 +2010,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec4f5740e0c/recover?api-version=7.0
   response:
@@ -2060,7 +2060,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -2068,7 +2068,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec5f5740e0c/recover?api-version=7.0
   response:
@@ -2118,7 +2118,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -2126,7 +2126,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: POST
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyrec6f5740e0c/recover?api-version=7.0
   response:
@@ -2184,7 +2184,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg0f5740e0c?api-version=7.0
   response:
@@ -2234,7 +2234,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg1f5740e0c?api-version=7.0
   response:
@@ -2284,7 +2284,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg2f5740e0c?api-version=7.0
   response:
@@ -2334,7 +2334,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg3f5740e0c?api-version=7.0
   response:
@@ -2384,7 +2384,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg4f5740e0c?api-version=7.0
   response:
@@ -2434,7 +2434,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg5f5740e0c?api-version=7.0
   response:
@@ -2484,7 +2484,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: DELETE
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys/keyprg6f5740e0c?api-version=7.0
   response:
@@ -2526,13 +2526,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vaultf5740e0c.vault.azure.net/deletedkeys?api-version=7.0
   response:
@@ -2578,13 +2578,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec0f5740e0c/?api-version=7.0
   response:
@@ -2634,13 +2634,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec1f5740e0c/?api-version=7.0
   response:
@@ -2690,13 +2690,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec2f5740e0c/?api-version=7.0
   response:
@@ -2746,13 +2746,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec3f5740e0c/?api-version=7.0
   response:
@@ -2802,13 +2802,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec4f5740e0c/?api-version=7.0
   response:
@@ -2858,13 +2858,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec5f5740e0c/?api-version=7.0
   response:
@@ -2914,13 +2914,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - KeyClient
+      - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: GET
     uri: https://vaultf5740e0c.vault.azure.net/keys/keyrec6f5740e0c/?api-version=7.0
   response:

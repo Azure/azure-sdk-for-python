@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: GET
-    uri: https://vault95361743.vault.azure.net/keys?api-version=7.0
+    uri: https://vaultae7917b6.vault.azure.net/keys?api-version=7.0
   response:
     body:
       string: '{"value":null,"nextLink":null}'
@@ -23,7 +23,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 May 2019 21:03:18 GMT
+      - Thu, 30 May 2019 17:44:30 GMT
       expires:
       - '-1'
       pragma:
@@ -59,7 +59,7 @@ interactions:
       User-Agent:
       - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: GET
-    uri: https://vault95361743.vault.azure.net/keys/key-name/versions?api-version=7.0
+    uri: https://vaultae7917b6.vault.azure.net/keys/key-name/versions?api-version=7.0
   response:
     body:
       string: '{"value":null,"nextLink":null}'
@@ -71,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 May 2019 21:03:18 GMT
+      - Thu, 30 May 2019 17:44:30 GMT
       expires:
       - '-1'
       pragma:
@@ -107,7 +107,7 @@ interactions:
       User-Agent:
       - python/3.7.2 (Windows-10-10.0.18362-SP0) azure-core/0.0.1 azsdk-python-azure-keyvault/7.0
     method: GET
-    uri: https://vault95361743.vault.azure.net/deletedkeys?api-version=7.0
+    uri: https://vaultae7917b6.vault.azure.net/deletedkeys?api-version=7.0
   response:
     body:
       string: '{"value":null,"nextLink":null}'
@@ -119,7 +119,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 23 May 2019 21:03:18 GMT
+      - Thu, 30 May 2019 17:44:30 GMT
       expires:
       - '-1'
       pragma:
