@@ -125,7 +125,7 @@ class KeyClient:
          JsonWebKeyType. Possible values include: 'EC', 'EC-HSM', 'RSA',
          'RSA-HSM', 'oct'
         :param size: The key size in bits. For example: 2048, 3072, or
-        4096 for RSA.
+         4096 for RSA.
         :type size: int
         :param curve: Elliptic curve name. If none then defaults to 'P-256'. For valid values, see
          JsonWebKeyCurveName. Possible values include: 'P-256', 'P-384',
@@ -354,8 +354,9 @@ class KeyClient:
         )
         return Key._from_key_bundle(bundle)
 
-    async def list_keys(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[KeyBase]:
+    def list_keys(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[KeyBase]:
         """List keys in the specified vault.
+        
         Retrieves a list of the keys in the Key Vault as JSON Web Key
         structures that contain the public part of a stored key. The LIST
         operation is applicable to all key types, however only the base key
@@ -366,6 +367,7 @@ class KeyClient:
         :returns: An iterator like instance of KeyBase
         :rtype:
          typing.AsyncIterable[~azure.security.keyvault.keys._models.KeyBase]
+        
         Example:
             .. literalinclude:: ../tests/test_examples_keys_async.py
                 :start-after: [START list_keys]
@@ -379,8 +381,9 @@ class KeyClient:
         iterable = AsyncPagingAdapter(pages, KeyBase._from_key_item)
         return iterable
 
-    async def list_key_versions(self, name: str, **kwargs: Mapping[str, Any]) -> AsyncIterable[KeyBase]:
+    def list_key_versions(self, name: str, **kwargs: Mapping[str, Any]) -> AsyncIterable[KeyBase]:
         """Retrieves a list of individual key versions with the same key name.
+        
         The full key identifier, attributes, and tags are provided in the
         response. This operation requires the keys/list permission.
 
@@ -389,6 +392,7 @@ class KeyClient:
         :returns: An iterator like instance of KeyBase
         :rtype:
          typing.AsyncIterable[~azure.security.keyvault.keys._models.KeyBase]
+        
         Example:
             .. literalinclude:: ../tests/test_examples_keys_async.py
                 :start-after: [START list_key_versions]
@@ -523,7 +527,7 @@ class KeyClient:
         bundle = await self._client.get_deleted_key(self.vault_url, name, error_map={404: ResourceNotFoundError})
         return DeletedKey._from_deleted_key_bundle(bundle)
 
-    async def list_deleted_keys(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[DeletedKey]:
+    def list_deleted_keys(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[DeletedKey]:
         """Lists the deleted keys in the specified vault.
         
         Retrieves a list of the keys in the Key Vault as JSON Web Key
@@ -575,6 +579,7 @@ class KeyClient:
 
     async def recover_deleted_key(self, name: str, **kwargs: Mapping[str, Any]) -> Key:
         """Recovers the deleted key to its latest version.
+        
         The Recover Deleted Key operation is applicable for deleted keys in
         soft-delete enabled vaults. It recovers the deleted key back to its
         latest version under /keys. An attempt to recover an non-deleted key

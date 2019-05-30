@@ -4,5 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from .vault_client import VaultClient
+from ..keys._client import KeyClient
+from ..secrets._client import SecretClient
 
-__all__ = ["VaultClient"]
+__all__ = ["VaultClient", "KeyClient", "SecretClient"]

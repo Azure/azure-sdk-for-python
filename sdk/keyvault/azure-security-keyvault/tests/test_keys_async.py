@@ -16,7 +16,6 @@ from azure.security.keyvault.aio import VaultClient
 from azure.security.keyvault._generated.v7_0.models import JsonWebKey
 
 from dateutil import parser as date_parse
-import time
 
 
 def await_prepared_test(test_fn):
@@ -175,7 +174,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         self.assertEqual("P-256", created_ec_key_curve.key_material.crv)
 
         # import key
-        self._import_test_key(client, "import-test-key")
+        await self._import_test_key(client, "import-test-key")
         # create rsa key
         created_rsa_key = await self._create_rsa_key(client, key_name="crud-rsa-key", hsm=False)
 
@@ -190,8 +189,8 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         # update key with version
         if self.is_live:
             # wait to ensure the key's update time won't equal its creation time
-            time.sleep(1)
-        self._update_key(client, created_rsa_key)
+            await asyncio.sleep(1)
+        await self._update_key(client, created_rsa_key)
 
         # delete the new key
         deleted_key = await client.delete_key(created_rsa_key.name)
@@ -205,7 +204,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
 
         if self.is_live:
             # wait to ensure the key has been deleted
-            time.sleep(30)
+            await asyncio.sleep(30)
         # get the deleted key when soft deleted enabled
         deleted_key = await client.get_deleted_key(created_rsa_key.name)
         self.assertIsNotNone(deleted_key)
@@ -229,7 +228,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
 
         # list keys
         result = client.list_keys(max_page_size=max_keys)
-        self._validate_key_list(result, expected)
+        await self._validate_key_list(result, expected)
 
     @ResourceGroupPreparer()
     @VaultClientPreparer()
@@ -247,7 +246,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
             key = await client.create_key(key_name, "RSA")
             expected[key.id] = key
 
-        result = await client.list_key_versions(key_name)
+        result = client.list_key_versions(key_name)
 
         # validate list key versions with attributes
         async for key in result:
@@ -278,7 +277,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         await self._poll_until_resource_found(client.get_deleted_key, expected.keys())
 
         # validate all our deleted keys are returned by list_deleted_keys
-        result = await client.list_deleted_keys()
+        result = client.list_deleted_keys()
         await self._validate_key_list(result, expected)
 
     @ResourceGroupPreparer()
