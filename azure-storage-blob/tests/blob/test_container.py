@@ -104,11 +104,8 @@ class StorageContainerTest(StorageTestCase):
         container = self.bsc.get_container_client(container_name)
         created = container.create_container(public_access='container')
 
-        anonymous_service = ContainerClient(self._get_account_url(), container=container_name)
-
         # Assert
         self.assertTrue(created)
-        anonymous_service.list_blobs(container_name)
 
     @record
     def test_create_container_with_public_access_blob(self):
@@ -306,20 +303,20 @@ class StorageContainerTest(StorageTestCase):
     def test_set_container_metadata_with_lease_id(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '43'}
-        container_name = self._create_container()
-        lease_id = self.bs.acquire_container_lease(container_name)
+        container = self._create_container()
+        lease_id = container.acquire_lease()
 
         # Act
-        self.bs.set_container_metadata(container_name, metadata, lease_id)
+        container.set_container_metadata(metadata, lease_id)
 
         # Assert
-        md = self.bs.get_container_metadata(container_name)
+        md = container.get_container_metadata()
         self.assertDictEqual(md, metadata)
 
     @record
     def test_set_container_metadata_with_non_existing_container(self):
         # Arrange
-        container_name = self._get_container_reference()
+        container = self._get_container_reference()
 
         # Act
         with self.assertRaises(AzureHttpError):
@@ -404,8 +401,8 @@ class StorageContainerTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(acl)
-        self.assertEqual(len(acl), 0)
-        self.assertIsNone(acl.public_access)
+        self.assertIsNone(acl.get('public_access'))
+        self.assertIsNone(acl.get('signed_identifiers'))
 
     @record
     def test_get_container_acl_with_lease_id(self):
@@ -418,8 +415,7 @@ class StorageContainerTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(acl)
-        self.assertEqual(len(acl), 0)
-        self.assertIsNone(acl.public_access)
+        self.assertIsNone(acl.get('public_access'))
 
     @record
     def test_set_container_acl(self):
@@ -435,29 +431,29 @@ class StorageContainerTest(StorageTestCase):
     @record
     def test_set_container_acl_with_lease_id(self):
         # Arrange
-        container_name = self._create_container()
-        lease_id = self.bs.acquire_container_lease(container_name)
+        container = self._create_container()
+        lease_id = container.acquire_lease()
 
         # Act
-        self.bs.set_container_acl(container_name, lease_id=lease_id)
+        container.set_container_acl(lease=lease_id)
 
         # Assert
-        acl = self.bs.get_container_acl(container_name)
+        acl = container.get_container_acl()
         self.assertIsNotNone(acl)
-        self.assertIsNone(acl.public_access)
+        self.assertIsNone(acl.get('public_access'))
 
     @record
     def test_set_container_acl_with_public_access(self):
         # Arrange
-        container_name = self._create_container()
+        container = self._create_container()
 
         # Act
-        self.bs.set_container_acl(container_name, None, 'container')
+        container.set_container_acl(None, public_access='container')
 
         # Assert
-        acl = self.bs.get_container_acl(container_name)
+        acl = container.get_container_acl()
         self.assertIsNotNone(acl)
-        self.assertEqual('container', acl.public_access)
+        self.assertEqual('container', acl.get('public_access'))
 
     @record
     def test_set_container_acl_with_empty_signed_identifiers(self):
@@ -474,45 +470,60 @@ class StorageContainerTest(StorageTestCase):
         self.assertIsNone(acl.public_access)
 
     @record
-    def test_set_container_acl_with_empty_signed_identifier(self):
+    def test_set_container_acl_with_empty_access_policy(self):
         # Arrange
         container = self._create_container()
+        identifier = SignedIdentifier(id='empty', access_policy=None)
+        identifiers = [identifier]
 
         # Act
-        container.set_container_acl()
-
-        # Assert
-        acl = container.get_container_acl()
-        self.assertIsNotNone(acl)
-        self.assertEqual(len(acl), 1)
-        self.assertIsNotNone(acl['empty'])
-        self.assertIsNone(acl['empty'].permission)
-        self.assertIsNone(acl['empty'].expiry)
-        self.assertIsNone(acl['empty'].start)
-        self.assertIsNone(acl.public_access)
-
-    @record
-    def test_set_container_acl_with_signed_identifiers(self):
-        # Arrange
-        container = self._create_container()
-
-        # Act
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
-                                     expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow() - timedelta(minutes=1))
-        identifiers = SignedIdentifier(id='testid', access_policy=access_policy)
-
         container.set_container_acl(identifiers)
 
         # Assert
         acl = container.get_container_acl()
         self.assertIsNotNone(acl)
-        self.assertEqual(len(acl), 1)
-        self.assertTrue('testid' in acl)
-        self.assertIsNone(acl.public_access)
+        self.assertEquals('empty', acl.get('signed_identifiers')[0].id)
+        self.assertIsNone(acl.get('signed_identifiers')[0].access_policy)
+
+    @record
+    def test_set_container_acl_with_signed_identifiers(self):
+        # Arrange
+        container = self._create_container()
+        expiry = (datetime.utcnow() + timedelta(hours=1)).astimezone(tzutc()).strftime('%Y-%m-%dT%H:%M:%SZ')
+        start = (datetime.utcnow()).astimezone(tzutc()).strftime('%Y-%m-%dT%H:%M:%SZ')
+        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+                                     expiry=expiry,
+                                     start=start)
+        signed_identifier = SignedIdentifier(id='testid', access_policy=access_policy)
+        signed_identifiers = [signed_identifier]
+
+        # Act
+        container.set_container_acl(signed_identifiers)
+
+        # Assert
+        acl = container.get_container_acl()
+        self.assertIsNotNone(acl)
+        self.assertEquals('testid', acl.get('signed_identifiers')[0].id)
+        self.assertIsNone(acl.get('public_access'))
+
+    @record
+    def test_set_container_acl_with_three_identifiers(self):
+        # Arrange
+        container = self._create_container()
+        identifiers = list()
+        for i in range(0, 2):
+            identifiers.append(SignedIdentifier(id=i, access_policy=None))
+
+        # Act
+        container.set_container_acl(identifiers)
+
+        # Assert
+        acl = container.get_container_acl()
+        self.assertEquals(2, len(acl.get('signed_identifiers')))
 
     @record
     def test_set_container_acl_too_many_ids(self):
+        # TODO: ADD validation logic for when too many access policies provided
         # Arrange
         container_name = self._create_container()
 
@@ -523,7 +534,7 @@ class StorageContainerTest(StorageTestCase):
 
         # Assert
         with self.assertRaisesRegexp(AzureException, 'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'):
-            self.bs.set_container_acl(container_name, identifiers)
+            container_name.set_container_acl(identifiers)
 
     @record
     def test_lease_container_acquire_and_release(self):
@@ -641,8 +652,6 @@ class StorageContainerTest(StorageTestCase):
 
         # Assert
         self.assertTrue(deleted)
-        exists = self.bs.exists(container_name)
-        self.assertFalse(exists)
 
     @record
     def test_delete_container_with_existing_container_fail_not_exist(self):
