@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import time
 import asyncio
 import functools
 

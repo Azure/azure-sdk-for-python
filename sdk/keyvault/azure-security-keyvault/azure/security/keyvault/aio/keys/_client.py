@@ -651,7 +651,7 @@ class KeyClient:
         return Key._from_key_bundle(bundle)
 
     async def wrap_key(
-        self, name: str, algorithm: str, value: bytes, version: Optional[str]=None, **kwargs: Mapping[str, Any]
+        self, name: str, algorithm: str, value: bytes, version: Optional[str] = None, **kwargs: Mapping[str, Any]
     ) -> KeyOperationResult:
         """Wraps a symmetric key using a specified key.
 
@@ -687,7 +687,7 @@ class KeyClient:
         return KeyOperationResult(id=bundle.kid, value=bundle.result)
 
     async def unwrap_key(
-        self, name: str, algorithm: str, value: bytes, version: Optional[str]=None, **kwargs: Mapping[str, Any]
+        self, name: str, algorithm: str, value: bytes, version: Optional[str] = None, **kwargs: Mapping[str, Any]
     ) -> KeyOperationResult:
         """Unwraps a symmetric key using the specified key that was initially used
         for wrapping that key.
