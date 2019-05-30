@@ -32,8 +32,10 @@ from .query_iterable import QueryIterable
 from .partition_key import NonePartitionKeyValue
 from typing import (
     Any,
-    List,
+    Callable,
     Dict,
+    List,
+    Optional,
     Union,
     cast
 )
@@ -145,9 +147,10 @@ class Container:
         initial_headers=None,
         populate_query_metrics=None,
         post_trigger_include=None,
-        request_options=None
+        request_options=None, 
+        response_hook=None
     ):
-        # type: (Union[str, Dict[str, Any]], Any, str, Dict[str, str], bool, str, Dict[str, Any]) -> Dict[str, str]
+        # type: (Union[str, Dict[str, Any]], Any, str, Dict[str, str], bool, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
         """
         Get the item identified by `id`.
 
@@ -158,6 +161,7 @@ class Container:
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: Dict representing the item to be retrieved.
         :raise `HTTPFailure`: If the given item couldn't be retrieved.
 
@@ -185,9 +189,12 @@ class Container:
         if post_trigger_include:
             request_options["postTriggerInclude"] = post_trigger_include
 
-        return self.client_connection.ReadItem(
+        result = self.client_connection.ReadItem(
             document_link=doc_link, options=request_options
         )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        return result
 
     def read_all_items(
         self,
@@ -195,9 +202,10 @@ class Container:
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
-        feed_options=None
+        feed_options=None, 
+        response_hook=None
     ):
-        # type: (int, str, Dict[str, str], bool, Dict[str, Any]) -> QueryIterable
+        # type: (int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """ List all items in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -205,6 +213,7 @@ class Container:
         :param initial_headers: Initial headers to be sent as part of the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param feed_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`QueryIterable` instance representing an iterable of items (dicts).
         """
         if not feed_options:
@@ -221,6 +230,8 @@ class Container:
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options
         )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
         return items
 
     def query_items_change_feed(
@@ -229,7 +240,8 @@ class Container:
             is_start_from_beginning=False,
             continuation=None,
             max_item_count=None,
-            feed_options=None
+            feed_options=None, 
+            response_hook=None
     ):
         """ Get a sorted list of items that were changed, in the order in which they were modified.
 
@@ -240,6 +252,7 @@ class Container:
         :param continuation: e_tag value to be used as continuation for reading change feed.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`QueryIterable` instance representing an iterable of items (dicts).
 
         """
@@ -254,9 +267,12 @@ class Container:
         if continuation is not None:
             feed_options["continuation"] = continuation
 
-        return self.client_connection.QueryItemsChangeFeed(
+        result = self.client_connection.QueryItemsChangeFeed(
             self.container_link, options=feed_options
         )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        return result
 
     def query_items(
         self,
@@ -269,9 +285,10 @@ class Container:
         initial_headers=None,
         enable_scan_in_query=None,
         populate_query_metrics=None,
-        feed_options=None
+        feed_options=None, 
+        response_hook=None
     ):
-        # type: (str, List, Any, bool, int, str, Dict[str, str], bool, bool, Dict[str, Any]) -> QueryIterable
+        # type: (str, List, Any, bool, int, str, Dict[str, str], bool, bool, Dict[str, Any, Optional[Callable]) -> QueryIterable
         """Return all results matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -285,6 +302,7 @@ class Container:
         :param enable_scan_in_query: Allow scan on the queries which couldn't be served as indexing was opted out on the requested paths.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param feed_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`QueryIterable` instance representing an iterable of items (dicts).
 
         You can use any value for the container name in the FROM clause, but typically the container name is used.
@@ -333,6 +351,8 @@ class Container:
             options=feed_options,
             partition_key=partition_key,
         )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
         return items
 
     def replace_item(
@@ -345,9 +365,10 @@ class Container:
         populate_query_metrics=None,
         pre_trigger_include=None,
         post_trigger_include=None,
-        request_options=None
+        request_options=None, 
+        response_hook=None
     ):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any]) -> Dict[str, str]
+        # type: (Union[str, Dict[str, Any]], Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
         """ Replaces the specified item if it exists in the container.
 
         :param item: The ID (name) or dict representing item to be replaced.
@@ -359,6 +380,7 @@ class Container:
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the item after replace went through.
         :raise `HTTPFailure`: If the replace failed or the item with given id does not exist.
 
@@ -380,11 +402,14 @@ class Container:
         if post_trigger_include:
             request_options["postTriggerInclude"] = post_trigger_include
 
-        return self.client_connection.ReplaceItem(
+        result = self.client_connection.ReplaceItem(
             document_link=item_link,
             new_document=body,
             options=request_options
         )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        return result
 
     def upsert_item(
         self,
@@ -395,9 +420,10 @@ class Container:
         populate_query_metrics=None,
         pre_trigger_include=None,
         post_trigger_include=None,
-        request_options=None
+        request_options=None, 
+        response_hook=None
     ):
-        # type: (Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any]) -> Dict[str, str]
+        # type: (Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
         """ Insert or update the specified item.
 
         :param body: A dict-like object representing the item to update or insert.
@@ -408,6 +434,7 @@ class Container:
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the upserted item.
         :raise `HTTPFailure`: If the given item could not be upserted.
 
@@ -430,10 +457,13 @@ class Container:
         if post_trigger_include:
             request_options["postTriggerInclude"] = post_trigger_include
 
-        return self.client_connection.UpsertItem(
+        result = self.client_connection.UpsertItem(
             database_or_Container_link=self.container_link,
             document=body
         )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        return result
 
     def create_item(
         self,
@@ -445,9 +475,10 @@ class Container:
         pre_trigger_include=None,
         post_trigger_include=None,
         indexing_directive=None,
-        request_options=None
+        request_options=None, 
+        response_hook=None
     ):
-        # type: (Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Any, Dict[str, Any]) -> Dict[str, str]
+        # type: (Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Any, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
         """ Create an item in the container.
 
         :param body: A dict-like object representing the item to create.
@@ -459,6 +490,7 @@ class Container:
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :param indexing_directive: Indicate whether the document should be omitted from indexing.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the new item.
         :raises `HTTPFailure`: If item with the given ID already exists.
 
@@ -484,11 +516,14 @@ class Container:
         if indexing_directive:
             request_options["indexingDirective"] = indexing_directive
 
-        return self.client_connection.CreateItem(
+        result = self.client_connection.CreateItem(
             database_or_Container_link=self.container_link,
             document=body,
             options=request_options
         )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        return result
 
     def delete_item(
         self,
@@ -500,9 +535,10 @@ class Container:
         populate_query_metrics=None,
         pre_trigger_include=None,
         post_trigger_include=None,
-        request_options=None
+        request_options=None, 
+        response_hook=None
     ):
-        # type: (Union[Dict[str, Any], str], Any, str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any]) -> None
+        # type: (Union[Dict[str, Any], str], Any, str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> None
         """ Delete the specified item from the container.
 
         :param item: The ID (name) or dict representing item to be deleted.
@@ -514,6 +550,7 @@ class Container:
         :param pre_trigger_include: trigger id to be used as pre operation trigger.
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :raises `HTTPFailure`: The item wasn't deleted successfully. If the item does not exist in the container, a `404` error is returned.
 
         """
@@ -538,11 +575,14 @@ class Container:
         self.client_connection.DeleteItem(
             document_link=document_link, options=request_options
         )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
 
-    def read_offer(self):
-        # type: () -> Offer
+    def read_offer(self, response_hook=None):
+        # type: (Optional[Callable]) -> Offer
         """ Read the Offer object for this container.
 
+        :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the container.
         :raise HTTPFailure: If no offer exists for the container or if the offer could not be retrieved.
 
@@ -559,18 +599,23 @@ class Container:
         if len(offers) <= 0:
             raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for container " + self.container_link)
 
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+
         return Offer(
             offer_throughput=offers[0]['content']['offerThroughput'],
             properties=offers[0])
 
     def replace_throughput(
             self,
-            throughput
+            throughput, 
+            response_hook=None
     ):
-        # type: (int) -> Offer
+        # type: (in, Optional[Callable]) -> Offer
         """ Replace the container's throughput
 
         :param throughput: The throughput to be set (an integer).
+        :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the container, updated with new throughput.
         :raise HTTPFailure: If no offer exists for the container or if the offer could not be updated.
 
@@ -592,6 +637,10 @@ class Container:
             offer_link=offers[0]['_self'],
             offer=offers[0]
         )
+
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+
         return Offer(
             offer_throughput=data['content']['offerThroughput'],
             properties=data)
@@ -599,13 +648,15 @@ class Container:
     def read_all_conflicts(
             self,
             max_item_count=None,
-            feed_options=None
+            feed_options=None, 
+            response_hook=None
     ):
-        # type: (int, Dict[str, Any]) -> QueryIterable
+        # type: (int, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """ List all conflicts in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`QueryIterable` instance representing an iterable of conflicts (dicts).
 
         """
@@ -614,10 +665,13 @@ class Container:
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        return self.client_connection.ReadConflicts(
+        result = self.client_connection.ReadConflicts(
             collection_link=self.container_link,
             feed_options=feed_options
         )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        return result
 
     def query_conflicts(
             self,
@@ -626,9 +680,10 @@ class Container:
             enable_cross_partition_query=None,
             partition_key=None,
             max_item_count=None,
-            feed_options=None
+            feed_options=None, 
+            response_hook=None
     ):
-        # type: (str, List, bool, Any, int, Dict[str, Any]) -> QueryIterable
+        # type: (str, List, bool, Any, int, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """Return all conflicts matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -638,6 +693,7 @@ class Container:
         More than one request is necessary if the query is not scoped to single partition key value.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`QueryIterable` instance representing an iterable of conflicts (dicts).
 
         """
@@ -650,26 +706,31 @@ class Container:
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
 
-        return self.client_connection.QueryConflicts(
+        result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
             query=query
             if parameters is None
             else dict(query=query, parameters=parameters),
             options=feed_options,
         )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        return result
 
     def get_conflict(
             self,
             conflict,
             partition_key,
-            request_options=None
+            request_options=None, 
+            response_hook=None
     ):
-        # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any]) -> Dict[str, str]
+        # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
         """ Get the conflict identified by `id`.
 
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
         :param partition_key: Partition key for the conflict to retrieve.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the retrieved conflict.
         :raise `HTTPFailure`: If the given conflict couldn't be retrieved.
 
@@ -679,23 +740,28 @@ class Container:
         if partition_key:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
-        return self.client_connection.ReadConflict(
+        result = self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict),
             options=request_options
         )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        return result
 
     def delete_conflict(
             self,
             conflict,
             partition_key,
-            request_options=None
+            request_options=None, 
+            response_hook=None
     ):
-        # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any]) -> None
+        # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any], Optional[Callable]) -> None
         """ Delete the specified conflict from the container.
 
         :param conflict: The ID (name) or dict representing the conflict to be deleted.
         :param partition_key: Partition key for the conflict to delete.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :raises `HTTPFailure`: The conflict wasn't deleted successfully. If the conflict does not exist in the container, a `404` error is returned.
 
         """
@@ -708,6 +774,8 @@ class Container:
             conflict_link=self._get_conflict_link(conflict),
             options=request_options
         )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
 
     def _set_partition_key(self, partition_key):
         if partition_key == NonePartitionKeyValue:
