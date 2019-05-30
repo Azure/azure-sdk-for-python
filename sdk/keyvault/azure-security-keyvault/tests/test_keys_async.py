@@ -312,17 +312,18 @@ class KeyVaultKeyTest(KeyVaultTestCase):
     @VaultClientPreparer(enable_soft_delete=True)
     @await_prepared_test
     async def test_recover_purge(self, vault_client, **kwargs):
+
         self.assertIsNotNone(vault_client)
         client = vault_client.keys
         keys = {}
 
         # create keys to recover
-        for i in range(self.list_test_size):
+        for i in range(0, self.list_test_size):
             key_name = self.get_resource_name("keyrec{}".format(i))
             keys[key_name] = await client.create_key(key_name, "RSA")
 
         # create keys to purge
-        for i in range(self.list_test_size):
+        for i in range(0, self.list_test_size):
             key_name = self.get_resource_name("keyprg{}".format(i))
             keys[key_name] = await client.create_key(key_name, "RSA")
 
@@ -337,21 +338,20 @@ class KeyVaultKeyTest(KeyVaultTestCase):
             recovered_key = await client.recover_deleted_key(key_name)
             expected_key = keys[key_name]
             self._assert_key_attributes_equal(expected_key, recovered_key)
-
+        
         # purge select keys
         for key_name in [s for s in keys.keys() if s.startswith("keyprg")]:
             await client.purge_deleted_key(key_name)
 
         # validate the recovered keys
         expected = {k: v for k, v in keys.items() if k.startswith("keyrec")}
+        await self._poll_until_resource_found(client.get_key, expected.keys())
+
         actual = {}
         for k in expected.keys():
             actual[k] = await client.get_key(k)
-        self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
-        # validate none of our purged keys are returned by list_deleted_keys
-        async for deleted_key in await client.list_deleted_keys():
-            self.assertTrue(not any(s in deleted_key for s in keys.keys()))
+        self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
     @ResourceGroupPreparer()
     @VaultClientPreparer()
