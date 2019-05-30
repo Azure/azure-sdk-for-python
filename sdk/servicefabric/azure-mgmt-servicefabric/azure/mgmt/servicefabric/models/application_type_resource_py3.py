@@ -18,16 +18,18 @@ class ApplicationTypeResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Azure resource ID.
+    :ivar id: Azure resource identifier.
     :vartype id: str
     :ivar name: Azure resource name.
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
+    :param location: Azure resource location.
     :type location: str
+    :param tags: Azure resource tags.
+    :type tags: dict[str, str]
+    :ivar etag: Azure resource etag.
+    :vartype etag: str
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response.
     :vartype provisioning_state: str
@@ -37,7 +39,7 @@ class ApplicationTypeResource(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'required': True},
+        'etag': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -46,9 +48,11 @@ class ApplicationTypeResource(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, **kwargs) -> None:
-        super(ApplicationTypeResource, self).__init__(location=location, **kwargs)
+    def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
+        super(ApplicationTypeResource, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
