@@ -24,7 +24,8 @@ from uamqp import constants
 from azure.eventhub import __version__
 from azure.eventhub.sender import Sender
 from azure.eventhub.receiver import Receiver
-from azure.eventhub.common import EventHubError, parse_sas_token
+from azure.eventhub.common import parse_sas_token
+from azure.eventhub.error import EventHubError
 from .client_abstract import EventHubClientAbstract
 from .common import SASTokenCredentials, SharedKeyCredentials
 

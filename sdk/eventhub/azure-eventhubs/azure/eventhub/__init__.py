@@ -5,7 +5,8 @@
 
 __version__ = "1.3.1"
 
-from azure.eventhub.common import EventData, EventHubError, EventPosition
+from azure.eventhub.common import EventData, EventPosition
+from azure.eventhub.error import EventHubError, EventHubAuthenticationError, EventHubConnectionError, EventHubMessageError
 from azure.eventhub.client import EventHubClient
 from azure.eventhub.sender import Sender
 from azure.eventhub.receiver import Receiver
@@ -17,6 +18,9 @@ __all__ = [
     "__version__",
     "EventData",
     "EventHubError",
+    "EventHubConnectionError",
+    "EventHubMessageError",
+    "EventHubAuthenticationError",
     "EventPosition",
     "EventHubClient",
     "Sender",

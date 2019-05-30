@@ -11,7 +11,8 @@ import time
 from uamqp import types, errors
 from uamqp import ReceiveClient, Source
 
-from azure.eventhub.common import EventHubError, EventData, _error_handler
+from azure.eventhub.common import EventData
+from azure.eventhub.error import EventHubError, EventHubAuthenticationError, EventHubConnectionError, _error_handler
 
 
 log = logging.getLogger(__name__)
@@ -51,6 +52,7 @@ class Receiver(object):
         self.client = client
         self.source = source
         self.offset = event_position
+        self.iter_started = False
         self.prefetch = prefetch
         self.exclusive_receiver_priority = exclusive_receiver_priority
         self.keep_alive = keep_alive
@@ -86,43 +88,45 @@ class Receiver(object):
         self.close(exc_val)
 
     def __iter__(self):
-        if not self.running:
-            self._open()
-        self.messages_iter = self._handler.receive_messages_iter()
         return self
 
     def __next__(self):
-        try:
-            message = next(self.messages_iter)
-            event_data = EventData(message=message)
-            self.offset = event_data.offset
-            return event_data
-        except (errors.TokenExpired, errors.AuthenticationException):
-            log.info("Receiver disconnected due to token error. Attempting reconnect.")
-            self.reconnect()
-        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-            if shutdown.action.retry and self.auto_reconnect:
-                log.info("Receiver detached. Attempting reconnect.")
+        self._open()
+        while True:
+            try:
+                if not self.iter_started:
+                    self.messages_iter = self._handler.receive_messages_iter()
+                    self.iter_started = True
+                message = next(self.messages_iter)
+                event_data = EventData(message=message)
+                self.offset = event_data.offset
+                return event_data
+            except (errors.TokenExpired, errors.AuthenticationException):
+                log.info("Receiver disconnected due to token error. Attempting reconnect.")
                 self.reconnect()
-            log.info("Receiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
-            self.close(exception=error)
-            raise error
-        except errors.MessageHandlerError as shutdown:
-            if self.auto_reconnect:
-                log.info("Receiver detached. Attempting reconnect.")
-                self.reconnect()
-            log.info("Receiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
-            self.close(exception=error)
-            raise error
-        except StopIteration:
-            raise
-        except Exception as e:
-            log.info("Unexpected error occurred (%r). Shutting down.", e)
-            error = EventHubError("Receive failed: {}".format(e))
-            self.close(exception=error)
-            raise error
+            except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+                if shutdown.action.retry and self.auto_reconnect:
+                    log.info("Receiver detached. Attempting reconnect.")
+                    self.reconnect()
+                log.info("Receiver detached. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
+            except errors.MessageHandlerError as shutdown:
+                if self.auto_reconnect:
+                    log.info("Receiver detached. Attempting reconnect.")
+                    self.reconnect()
+                log.info("Receiver detached. Shutting down.")
+                error = EventHubError(str(shutdown), shutdown)
+                self.close(exception=error)
+                raise error
+            except StopIteration:
+                raise
+            except Exception as e:
+                log.info("Unexpected error occurred (%r). Shutting down.", e)
+                error = EventHubError("Receive failed: {}".format(e))
+                self.close(exception=error)
+                raise error
 
     def _open(self):
         """
@@ -162,10 +166,37 @@ class Receiver(object):
                 keep_alive_interval=self.keep_alive,
                 client_name=self.name,
                 properties=self.client.create_properties(self.client.config.user_agent))
-        self._handler.open()
-        self.running = True
-        while not self._handler.client_ready():
-            time.sleep(0.05)
+        if not self.running:
+            try:
+                self._handler.open()
+                self.running = True
+                while not self._handler.client_ready():
+                    time.sleep(0.05)
+
+            except errors.AuthenticationException:
+                log.info("Receiver failed authentication. Retrying...")
+                self.reconnect()
+            except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+                if shutdown.action.retry and self.auto_reconnect:
+                    log.info("Receiver detached. Attempting reconnect.")
+                    self.reconnect()
+                else:
+                    log.info("Receiver detached. Failed to connect")
+                    error = EventHubConnectionError(str(shutdown), shutdown)
+                    raise error
+            except errors.AMQPConnectionError as shutdown:
+                if str(shutdown).startswith("Unable to open authentication session") and self.auto_reconnect:
+                    log.info("Receiver couldn't authenticate.", shutdown)
+                    error = EventHubAuthenticationError(str(shutdown))
+                    raise error
+                else:
+                    log.info("Receiver connection error (%r).", shutdown)
+                    error = EventHubConnectionError(str(shutdown))
+                    raise error
+            except Exception as e:
+                log.info("Unexpected error occurred (%r)", e)
+                error = EventHubError("Receiver connect failed: {}".format(e))
+                raise error
 
     def _reconnect(self):  # pylint: disable=too-many-statements
         # pylint: disable=protected-access
@@ -187,6 +218,7 @@ class Receiver(object):
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
             properties=self.client.create_properties(self.client.config.user_agent))
+        self.iter_started = False
         try:
             self._handler.open()
             while not self._handler.client_ready():
@@ -194,7 +226,7 @@ class Receiver(object):
             return True
         except errors.TokenExpired as shutdown:
             log.info("Receiver disconnected due to token expiry. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
+            error = EventHubAuthenticationError(str(shutdown), shutdown)
             self.close(exception=error)
             raise error
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
@@ -202,7 +234,7 @@ class Receiver(object):
                 log.info("Receiver detached. Attempting reconnect.")
                 return False
             log.info("Receiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
+            error = EventHubConnectionError(str(shutdown), shutdown)
             self.close(exception=error)
             raise error
         except errors.MessageHandlerError as shutdown:
@@ -210,7 +242,7 @@ class Receiver(object):
                 log.info("Receiver detached. Attempting reconnect.")
                 return False
             log.info("Receiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
+            error = EventHubConnectionError(str(shutdown), shutdown)
             self.close(exception=error)
             raise error
         except errors.AMQPConnectionError as shutdown:
@@ -218,7 +250,7 @@ class Receiver(object):
                 log.info("Receiver couldn't authenticate. Attempting reconnect.")
                 return False
             log.info("Receiver connection error (%r). Shutting down.", shutdown)
-            error = EventHubError(str(shutdown))
+            error = EventHubConnectionError(str(shutdown))
             self.close(exception=error)
             raise error
         except Exception as e:
@@ -300,8 +332,8 @@ class Receiver(object):
         """
         if self.error:
             raise self.error
-        if not self.running:
-            self._open()
+        self._open()
+
         data_batch = []
         try:
             timeout_ms = 1000 * timeout if timeout else 0
@@ -323,7 +355,7 @@ class Receiver(object):
                 self.reconnect()
                 return data_batch
             log.info("Receiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
+            error = EventHubConnectionError(str(shutdown), shutdown)
             self.close(exception=error)
             raise error
         except errors.MessageHandlerError as shutdown:
@@ -332,7 +364,7 @@ class Receiver(object):
                 self.reconnect()
                 return data_batch
             log.info("Receiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
+            error = EventHubConnectionError(str(shutdown), shutdown)
             self.close(exception=error)
             raise error
         except Exception as e:
