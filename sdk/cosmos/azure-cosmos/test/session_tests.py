@@ -12,6 +12,8 @@ from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 import azure.cosmos.synchronized_request as synchronized_request
 import azure.cosmos.retry_utility as retry_utility
 
+pytestmark = pytest.mark.cosmosEmulator
+
 @pytest.mark.usefixtures("teardown")
 class SessionTests(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""

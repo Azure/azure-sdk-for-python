@@ -29,6 +29,7 @@ import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes
 import test_config
 
+pytestmark = pytest.mark.cosmosEmulator
 
 #IMPORTANT NOTES:
   

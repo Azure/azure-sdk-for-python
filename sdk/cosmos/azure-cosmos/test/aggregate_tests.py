@@ -33,6 +33,8 @@ import azure.cosmos.documents as documents
 import test_config
 from azure.cosmos.errors import HTTPFailure
 
+pytestmark = pytest.mark.cosmosEmulator
+
 class _config:
     host = test_config._test_config.host
     master_key = test_config._test_config.masterKey

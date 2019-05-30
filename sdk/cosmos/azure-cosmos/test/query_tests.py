@@ -5,6 +5,8 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import test_config
 
+pytestmark = pytest.mark.cosmosEmulator
+
 @pytest.mark.usefixtures("teardown")
 class QueryTest(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""

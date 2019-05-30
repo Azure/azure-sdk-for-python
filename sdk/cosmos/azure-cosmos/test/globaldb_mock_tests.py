@@ -32,6 +32,8 @@ import azure.cosmos.global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.retry_utility as retry_utility
 import test_config
 
+pytestmark = pytest.mark.cosmosEmulator
+
 location_changed = False
 
 class MockGlobalEndpointManager:

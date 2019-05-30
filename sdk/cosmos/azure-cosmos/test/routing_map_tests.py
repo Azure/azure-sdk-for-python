@@ -27,6 +27,8 @@ from azure.cosmos.routing.routing_map_provider import _PartitionKeyRangeCache
 from azure.cosmos.routing import routing_range as routing_range
 import test_config
 
+pytestmark = pytest.mark.cosmosEmulator
+
 #IMPORTANT NOTES:
   
 #      Most test cases in this file create collections in your Azure Cosmos account.

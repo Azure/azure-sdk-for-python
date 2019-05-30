@@ -11,6 +11,8 @@ from azure.cosmos.request_object import _RequestObject
 import azure.cosmos.global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.http_constants as http_constants
 
+pytestmark = pytest.mark.cosmosEmulator
+
 @pytest.mark.usefixtures("teardown")
 class TestStreamingFailover(unittest.TestCase):
 

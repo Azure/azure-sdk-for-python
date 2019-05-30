@@ -5,6 +5,8 @@ import azure.cosmos.documents as documents
 from azure.cosmos.vector_session_token import VectorSessionToken
 from azure.cosmos.errors import CosmosError
 
+pytestmark = pytest.mark.cosmosEmulator
+
 @pytest.mark.usefixtures("teardown")
 class SessionTokenUnitTest(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""

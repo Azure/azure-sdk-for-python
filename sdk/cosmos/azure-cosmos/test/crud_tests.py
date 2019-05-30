@@ -52,6 +52,7 @@ import test_config
 import test_partition_resolver
 import azure.cosmos.base as base
 
+pytestmark = pytest.mark.cosmosEmulator
 
 #IMPORTANT NOTES: 
   

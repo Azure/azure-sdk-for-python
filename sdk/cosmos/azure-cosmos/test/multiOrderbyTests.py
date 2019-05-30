@@ -26,6 +26,8 @@ import random
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 
+pytestmark = pytest.mark.cosmosEmulator
+
 # IMPORTANT NOTES:
 
 #      Most test cases in this file create collections in your Azure Cosmos account.
