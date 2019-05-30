@@ -467,11 +467,16 @@ class BillingRoleAssignmentsOperations(object):
     list_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/providers/Microsoft.Billing/billingRoleAssignments'}
 
     def add_by_billing_account_name(
-            self, billing_account_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, principal_id=None, billing_role_definition_id=None, custom_headers=None, raw=False, **operation_config):
         """The operation to add a role assignment to a billing account.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
+        :param principal_id: The user's principal id that the role gets
+         assigned to
+        :type principal_id: str
+        :param billing_role_definition_id: The role definition id
+        :type billing_role_definition_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -484,7 +489,7 @@ class BillingRoleAssignmentsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        parameters = None
+        parameters = models.BillingRoleAssignmentPayload(principal_id=principal_id, billing_role_definition_id=billing_role_definition_id)
 
         # Construct URL
         url = self.add_by_billing_account_name.metadata['url']
@@ -592,13 +597,18 @@ class BillingRoleAssignmentsOperations(object):
     list_by_invoice_section_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Billing/billingRoleAssignments'}
 
     def add_by_invoice_section_name(
-            self, billing_account_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, invoice_section_name, principal_id=None, billing_role_definition_id=None, custom_headers=None, raw=False, **operation_config):
         """The operation to add a role assignment to a invoice Section.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
+        :param principal_id: The user's principal id that the role gets
+         assigned to
+        :type principal_id: str
+        :param billing_role_definition_id: The role definition id
+        :type billing_role_definition_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -611,7 +621,7 @@ class BillingRoleAssignmentsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        parameters = None
+        parameters = models.BillingRoleAssignmentPayload(principal_id=principal_id, billing_role_definition_id=billing_role_definition_id)
 
         # Construct URL
         url = self.add_by_invoice_section_name.metadata['url']
@@ -720,13 +730,18 @@ class BillingRoleAssignmentsOperations(object):
     list_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/providers/Microsoft.Billing/billingRoleAssignments'}
 
     def add_by_billing_profile_name(
-            self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
+            self, billing_account_name, billing_profile_name, principal_id=None, billing_role_definition_id=None, custom_headers=None, raw=False, **operation_config):
         """The operation to add a role assignment to a billing profile.
 
         :param billing_account_name: billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
+        :param principal_id: The user's principal id that the role gets
+         assigned to
+        :type principal_id: str
+        :param billing_role_definition_id: The role definition id
+        :type billing_role_definition_id: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -739,7 +754,7 @@ class BillingRoleAssignmentsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        parameters = None
+        parameters = models.BillingRoleAssignmentPayload(principal_id=principal_id, billing_role_definition_id=billing_role_definition_id)
 
         # Construct URL
         url = self.add_by_billing_profile_name.metadata['url']

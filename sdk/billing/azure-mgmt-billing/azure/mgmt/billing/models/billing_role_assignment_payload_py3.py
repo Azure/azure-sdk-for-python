@@ -15,26 +15,19 @@ from msrest.serialization import Model
 class BillingRoleAssignmentPayload(Model):
     """The payload use to update role assignment on a scope.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar principal_id: The user's principal id that the role gets assigned to
-    :vartype principal_id: str
-    :ivar billing_role_definition_name: The role definition id
-    :vartype billing_role_definition_name: str
+    :param principal_id: The user's principal id that the role gets assigned
+     to
+    :type principal_id: str
+    :param billing_role_definition_id: The role definition id
+    :type billing_role_definition_id: str
     """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'billing_role_definition_name': {'readonly': True},
-    }
 
     _attribute_map = {
         'principal_id': {'key': 'principalId', 'type': 'str'},
-        'billing_role_definition_name': {'key': 'billingRoleDefinitionName', 'type': 'str'},
+        'billing_role_definition_id': {'key': 'billingRoleDefinitionId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, principal_id: str=None, billing_role_definition_id: str=None, **kwargs) -> None:
         super(BillingRoleAssignmentPayload, self).__init__(**kwargs)
-        self.principal_id = None
-        self.billing_role_definition_name = None
+        self.principal_id = principal_id
+        self.billing_role_definition_id = billing_role_definition_id
