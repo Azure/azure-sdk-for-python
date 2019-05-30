@@ -9,7 +9,7 @@ trigger:
 variables:
   PythonVersion: '3.6'
   ReleaseTag: 'RELEASE_CANDIDATE'
-  TestMarkArgument: '-m not cosmosEmulator'
+  TestMarkArgument: 'not cosmosEmulator'
 
 jobs:
   - job: 'Build'
@@ -164,4 +164,4 @@ jobs:
       - template: templates/steps/archetype-sdk-client.yml
         parameters:
           coverageParam: '--disablecov'
-          testMarkArgument: '-m not cosmosEmulator'
+          testMarkArgument: '$(TestMarkArgument)'
