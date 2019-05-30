@@ -27,6 +27,9 @@ from .compliances_operations import CompliancesOperations
 from .information_protection_policies_operations import InformationProtectionPoliciesOperations
 from .security_contacts_operations import SecurityContactsOperations
 from .workspace_settings_operations import WorkspaceSettingsOperations
+from .io_tsecurity_solutions_operations import IoTSecuritySolutionsOperations
+from .io_tsecurity_solutions_resource_group_operations import IoTSecuritySolutionsResourceGroupOperations
+from .iot_security_solution_operations import IotSecuritySolutionOperations
 from .regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
 from .regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
 from .regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
@@ -50,6 +53,9 @@ __all__ = [
     'InformationProtectionPoliciesOperations',
     'SecurityContactsOperations',
     'WorkspaceSettingsOperations',
+    'IoTSecuritySolutionsOperations',
+    'IoTSecuritySolutionsResourceGroupOperations',
+    'IotSecuritySolutionOperations',
     'RegulatoryComplianceStandardsOperations',
     'RegulatoryComplianceControlsOperations',
     'RegulatoryComplianceAssessmentsOperations',

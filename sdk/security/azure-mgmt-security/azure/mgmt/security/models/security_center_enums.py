@@ -100,6 +100,22 @@ class AlertsToAdmins(str, Enum):
     off = "Off"  #: Don't send notification on new alerts to the subscription's admins
 
 
+class SecuritySolutionStatus(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class ExportData(str, Enum):
+
+    raw_events = "RawEvents"  #: Agent raw events
+
+
+class DataSource(str, Enum):
+
+    twin_data = "TwinData"  #: Devices twin data
+
+
 class State(str, Enum):
 
     passed = "Passed"  #: All supported regulatory compliance controls in the given standard have a passed state

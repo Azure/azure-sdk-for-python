@@ -65,6 +65,8 @@ try:
     from .information_protection_policy_py3 import InformationProtectionPolicy
     from .security_contact_py3 import SecurityContact
     from .workspace_setting_py3 import WorkspaceSetting
+    from .tags_resource_py3 import TagsResource
+    from .io_tsecurity_solution_model_py3 import IoTSecuritySolutionModel
     from .regulatory_compliance_standard_py3 import RegulatoryComplianceStandard
     from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
     from .regulatory_compliance_assessment_py3 import RegulatoryComplianceAssessment
@@ -124,6 +126,8 @@ except (SyntaxError, ImportError):
     from .information_protection_policy import InformationProtectionPolicy
     from .security_contact import SecurityContact
     from .workspace_setting import WorkspaceSetting
+    from .tags_resource import TagsResource
+    from .io_tsecurity_solution_model import IoTSecuritySolutionModel
     from .regulatory_compliance_standard import RegulatoryComplianceStandard
     from .regulatory_compliance_control import RegulatoryComplianceControl
     from .regulatory_compliance_assessment import RegulatoryComplianceAssessment
@@ -143,6 +147,7 @@ from .compliance_paged import CompliancePaged
 from .information_protection_policy_paged import InformationProtectionPolicyPaged
 from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
+from .io_tsecurity_solution_model_paged import IoTSecuritySolutionModelPaged
 from .regulatory_compliance_standard_paged import RegulatoryComplianceStandardPaged
 from .regulatory_compliance_control_paged import RegulatoryComplianceControlPaged
 from .regulatory_compliance_assessment_paged import RegulatoryComplianceAssessmentPaged
@@ -160,6 +165,9 @@ from .security_center_enums import (
     AutoProvision,
     AlertNotifications,
     AlertsToAdmins,
+    SecuritySolutionStatus,
+    ExportData,
+    DataSource,
     State,
     ConnectionType,
 )
@@ -220,6 +228,8 @@ __all__ = [
     'InformationProtectionPolicy',
     'SecurityContact',
     'WorkspaceSetting',
+    'TagsResource',
+    'IoTSecuritySolutionModel',
     'RegulatoryComplianceStandard',
     'RegulatoryComplianceControl',
     'RegulatoryComplianceAssessment',
@@ -239,6 +249,7 @@ __all__ = [
     'InformationProtectionPolicyPaged',
     'SecurityContactPaged',
     'WorkspaceSettingPaged',
+    'IoTSecuritySolutionModelPaged',
     'RegulatoryComplianceStandardPaged',
     'RegulatoryComplianceControlPaged',
     'RegulatoryComplianceAssessmentPaged',
@@ -255,6 +266,9 @@ __all__ = [
     'AutoProvision',
     'AlertNotifications',
     'AlertsToAdmins',
+    'SecuritySolutionStatus',
+    'ExportData',
+    'DataSource',
     'State',
     'ConnectionType',
 ]
