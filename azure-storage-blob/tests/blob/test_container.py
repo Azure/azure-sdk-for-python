@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
+from dateutil.tz import tzutc
 
 from azure.storage.blob._generated.models import AccessPolicy, SignedIdentifier, ListBlobsIncludeItem
 from azure.storage.blob.models import ContainerPermissions
@@ -425,6 +426,26 @@ class StorageContainerTest(StorageTestCase):
         # Act
         response = container.set_container_acl()
 
+        self.assertIsNotNone(response.get('ETag'))
+        self.assertIsNotNone(response.get('Last-Modified'))
+
+    @record
+    def test_set_container_acl_with_one_signed_identifier(self):
+        # Arrange
+        container = self._create_container()
+
+        # Act
+        expiry = (datetime.utcnow() + timedelta(hours=1)).astimezone(tzutc()).strftime('%Y-%m-%dT%H:%M:%SZ')
+        start = (datetime.utcnow()).astimezone(tzutc()).strftime('%Y-%m-%dT%H:%M:%SZ')
+        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+                                     expiry=expiry,
+                                     start=start)
+        signed_identifier = SignedIdentifier(id='testid', access_policy=access_policy)
+        signed_identifiers = [signed_identifier]
+
+        response = container.set_container_acl(signed_identifiers)
+
+        # Assert
         self.assertIsNotNone(response.get('ETag'))
         self.assertIsNotNone(response.get('Last-Modified'))
 

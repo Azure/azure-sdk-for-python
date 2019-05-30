@@ -19,8 +19,10 @@ class AccessPolicy(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param start: Required. the date-time the policy is active
+                  The date should be exactly in this 019-05-23T21:21:28Z format
     :type start: datetime
     :param expiry: Required. the date-time the policy expires
+                   The date should be exactly in this 019-05-23T21:21:28Z format
     :type expiry: datetime
     :param permission: Required. the permissions for the acl policy
     :type permission: str
@@ -33,8 +35,8 @@ class AccessPolicy(Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'iso-8601', 'xml': {'name': 'Start'}},
-        'expiry': {'key': 'Expiry', 'type': 'iso-8601', 'xml': {'name': 'Expiry'}},
+        'start': {'key': 'Start', 'type': 'str', 'xml': {'name': 'Start'}},
+        'expiry': {'key': 'Expiry', 'type': 'str', 'xml': {'name': 'Expiry'}},
         'permission': {'key': 'Permission', 'type': 'str', 'xml': {'name': 'Permission'}},
     }
     _xml_map = {
