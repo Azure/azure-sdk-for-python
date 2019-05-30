@@ -94,12 +94,12 @@ class LineOfCreditsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingAccounts/default/lineOfCredit/default'}
 
 
-    def _increase_initial(
+    def _update_initial(
             self, credit_limit=None, status=None, custom_headers=None, raw=False, **operation_config):
         parameters = models.LineOfCredit(credit_limit=credit_limit, status=status)
 
         # Construct URL
-        url = self.increase.metadata['url']
+        url = self.update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
@@ -148,7 +148,7 @@ class LineOfCreditsOperations(object):
 
         return deserialized
 
-    def increase(
+    def update(
             self, credit_limit=None, status=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Increase the current line of credit.
 
@@ -171,7 +171,7 @@ class LineOfCreditsOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        raw_result = self._increase_initial(
+        raw_result = self._update_initial(
             credit_limit=credit_limit,
             status=status,
             custom_headers=custom_headers,
@@ -201,4 +201,4 @@ class LineOfCreditsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    increase.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingAccounts/default/lineOfCredit/default'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingAccounts/default/lineOfCredit/default'}
