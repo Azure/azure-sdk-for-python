@@ -9,29 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .directory_object import DirectoryObject
+from .application_base_py3 import ApplicationBase
 
 
-class Application(DirectoryObject):
-    """Active Directory application information.
+class ApplicationUpdateParameters(ApplicationBase):
+    """Request parameters for updating a new application.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :ivar object_id: The object ID.
-    :vartype object_id: str
-    :ivar deletion_timestamp: The time at which the directory object was
-     deleted.
-    :vartype deletion_timestamp: datetime
-    :param object_type: Required. Constant filled by server.
-    :type object_type: str
-    :param app_id: The application ID.
-    :type app_id: str
     :param allow_guests_sign_in: A property on the application to indicate if
      the application accepts other IDPs or not or partially accepts.
     :type allow_guests_sign_in: bool
@@ -50,8 +33,6 @@ class Application(DirectoryObject):
     :param available_to_other_tenants: Whether the application is available to
      other tenants.
     :type available_to_other_tenants: bool
-    :param display_name: The display name of the application.
-    :type display_name: str
     :param error_url: A URL provided by the author of the application to
      report errors when using the application.
     :type error_url: str
@@ -60,9 +41,8 @@ class Application(DirectoryObject):
     :type group_membership_claims: object
     :param homepage: The home page of the application.
     :type homepage: str
-    :param identifier_uris: A collection of URIs for the application.
-    :type identifier_uris: list[str]
-    :param informational_urls: urls with more informations of the application.
+    :param informational_urls: URLs with more information about the
+     application.
     :type informational_urls: ~azure.graphrbac.models.InformationalUrl
     :param is_device_only_auth_supported: Specifies whether this application
      supports device authentication without a user. The default is false.
@@ -128,31 +108,22 @@ class Application(DirectoryObject):
     :type sign_in_audience: str
     :param www_homepage: The primary Web page.
     :type www_homepage: str
+    :param display_name: The display name of the application.
+    :type display_name: str
+    :param identifier_uris: A collection of URIs for the application.
+    :type identifier_uris: list[str]
     """
 
-    _validation = {
-        'object_id': {'readonly': True},
-        'deletion_timestamp': {'readonly': True},
-        'object_type': {'required': True},
-    }
-
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'object_id': {'key': 'objectId', 'type': 'str'},
-        'deletion_timestamp': {'key': 'deletionTimestamp', 'type': 'iso-8601'},
-        'object_type': {'key': 'objectType', 'type': 'str'},
-        'app_id': {'key': 'appId', 'type': 'str'},
         'allow_guests_sign_in': {'key': 'allowGuestsSignIn', 'type': 'bool'},
         'allow_passthrough_users': {'key': 'allowPassthroughUsers', 'type': 'bool'},
         'app_logo_url': {'key': 'appLogoUrl', 'type': 'str'},
         'app_roles': {'key': 'appRoles', 'type': '[AppRole]'},
         'app_permissions': {'key': 'appPermissions', 'type': '[str]'},
         'available_to_other_tenants': {'key': 'availableToOtherTenants', 'type': 'bool'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
         'error_url': {'key': 'errorUrl', 'type': 'str'},
         'group_membership_claims': {'key': 'groupMembershipClaims', 'type': 'object'},
         'homepage': {'key': 'homepage', 'type': 'str'},
-        'identifier_uris': {'key': 'identifierUris', 'type': '[str]'},
         'informational_urls': {'key': 'informationalUrls', 'type': 'InformationalUrl'},
         'is_device_only_auth_supported': {'key': 'isDeviceOnlyAuthSupported', 'type': 'bool'},
         'key_credentials': {'key': 'keyCredentials', 'type': '[KeyCredential]'},
@@ -173,40 +144,11 @@ class Application(DirectoryObject):
         'saml_metadata_url': {'key': 'samlMetadataUrl', 'type': 'str'},
         'sign_in_audience': {'key': 'signInAudience', 'type': 'str'},
         'www_homepage': {'key': 'wwwHomepage', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'identifier_uris': {'key': 'identifierUris', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(Application, self).__init__(**kwargs)
-        self.app_id = kwargs.get('app_id', None)
-        self.allow_guests_sign_in = kwargs.get('allow_guests_sign_in', None)
-        self.allow_passthrough_users = kwargs.get('allow_passthrough_users', None)
-        self.app_logo_url = kwargs.get('app_logo_url', None)
-        self.app_roles = kwargs.get('app_roles', None)
-        self.app_permissions = kwargs.get('app_permissions', None)
-        self.available_to_other_tenants = kwargs.get('available_to_other_tenants', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.error_url = kwargs.get('error_url', None)
-        self.group_membership_claims = kwargs.get('group_membership_claims', None)
-        self.homepage = kwargs.get('homepage', None)
-        self.identifier_uris = kwargs.get('identifier_uris', None)
-        self.informational_urls = kwargs.get('informational_urls', None)
-        self.is_device_only_auth_supported = kwargs.get('is_device_only_auth_supported', None)
-        self.key_credentials = kwargs.get('key_credentials', None)
-        self.known_client_applications = kwargs.get('known_client_applications', None)
-        self.logout_url = kwargs.get('logout_url', None)
-        self.oauth2_allow_implicit_flow = kwargs.get('oauth2_allow_implicit_flow', None)
-        self.oauth2_allow_url_path_matching = kwargs.get('oauth2_allow_url_path_matching', None)
-        self.oauth2_permissions = kwargs.get('oauth2_permissions', None)
-        self.oauth2_require_post_response = kwargs.get('oauth2_require_post_response', None)
-        self.org_restrictions = kwargs.get('org_restrictions', None)
-        self.optional_claims = kwargs.get('optional_claims', None)
-        self.password_credentials = kwargs.get('password_credentials', None)
-        self.pre_authorized_applications = kwargs.get('pre_authorized_applications', None)
-        self.public_client = kwargs.get('public_client', None)
-        self.publisher_domain = kwargs.get('publisher_domain', None)
-        self.reply_urls = kwargs.get('reply_urls', None)
-        self.required_resource_access = kwargs.get('required_resource_access', None)
-        self.saml_metadata_url = kwargs.get('saml_metadata_url', None)
-        self.sign_in_audience = kwargs.get('sign_in_audience', None)
-        self.www_homepage = kwargs.get('www_homepage', None)
-        self.object_type = 'Application'
+    def __init__(self, *, allow_guests_sign_in: bool=None, allow_passthrough_users: bool=None, app_logo_url: str=None, app_roles=None, app_permissions=None, available_to_other_tenants: bool=None, error_url: str=None, group_membership_claims=None, homepage: str=None, informational_urls=None, is_device_only_auth_supported: bool=None, key_credentials=None, known_client_applications=None, logout_url: str=None, oauth2_allow_implicit_flow: bool=None, oauth2_allow_url_path_matching: bool=None, oauth2_permissions=None, oauth2_require_post_response: bool=None, org_restrictions=None, optional_claims=None, password_credentials=None, pre_authorized_applications=None, public_client: bool=None, publisher_domain: str=None, reply_urls=None, required_resource_access=None, saml_metadata_url: str=None, sign_in_audience: str=None, www_homepage: str=None, display_name: str=None, identifier_uris=None, **kwargs) -> None:
+        super(ApplicationUpdateParameters, self).__init__(allow_guests_sign_in=allow_guests_sign_in, allow_passthrough_users=allow_passthrough_users, app_logo_url=app_logo_url, app_roles=app_roles, app_permissions=app_permissions, available_to_other_tenants=available_to_other_tenants, error_url=error_url, group_membership_claims=group_membership_claims, homepage=homepage, informational_urls=informational_urls, is_device_only_auth_supported=is_device_only_auth_supported, key_credentials=key_credentials, known_client_applications=known_client_applications, logout_url=logout_url, oauth2_allow_implicit_flow=oauth2_allow_implicit_flow, oauth2_allow_url_path_matching=oauth2_allow_url_path_matching, oauth2_permissions=oauth2_permissions, oauth2_require_post_response=oauth2_require_post_response, org_restrictions=org_restrictions, optional_claims=optional_claims, password_credentials=password_credentials, pre_authorized_applications=pre_authorized_applications, public_client=public_client, publisher_domain=publisher_domain, reply_urls=reply_urls, required_resource_access=required_resource_access, saml_metadata_url=saml_metadata_url, sign_in_audience=sign_in_audience, www_homepage=www_homepage, **kwargs)
+        self.display_name = display_name
+        self.identifier_uris = identifier_uris

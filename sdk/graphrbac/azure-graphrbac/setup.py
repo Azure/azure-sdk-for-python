@@ -12,8 +12,8 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-mgmt-billing"
-PACKAGE_PPRINT_NAME = "Billing"
+PACKAGE_NAME = "azure-graphrbac"
+PACKAGE_PPRINT_NAME = "Graph RBAC"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -53,6 +53,7 @@ setup(
     version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + history,
+    long_description_content_type='text/x-rst',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
@@ -74,7 +75,6 @@ setup(
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
-        'azure.mgmt',
     ]),
     install_requires=[
         'msrest>=0.5.0',
@@ -82,6 +82,6 @@ setup(
         'azure-common~=1.1',
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-mgmt-nspkg'],
+        ":python_version<'3.0'": ['azure-nspkg'],
     }
 )
