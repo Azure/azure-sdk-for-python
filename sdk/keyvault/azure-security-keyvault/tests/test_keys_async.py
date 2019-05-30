@@ -312,17 +312,18 @@ class KeyVaultKeyTest(KeyVaultTestCase):
     @VaultClientPreparer(enable_soft_delete=True)
     @await_prepared_test
     async def test_recover_purge(self, vault_client, **kwargs):
+
         self.assertIsNotNone(vault_client)
         client = vault_client.keys
         keys = {}
 
         # create keys to recover
-        for i in range(self.list_test_size):
+        for i in range(0, self.list_test_size):
             key_name = self.get_resource_name("keyrec{}".format(i))
             keys[key_name] = await client.create_key(key_name, "RSA")
 
         # create keys to purge
-        for i in range(self.list_test_size):
+        for i in range(0, self.list_test_size):
             key_name = self.get_resource_name("keyprg{}".format(i))
             keys[key_name] = await client.create_key(key_name, "RSA")
 
@@ -344,6 +345,8 @@ class KeyVaultKeyTest(KeyVaultTestCase):
 
         # validate the recovered keys
         expected = {k: v for k, v in keys.items() if k.startswith("keyrec")}
+        await self._poll_until_resource_found(client.get_key, expected.keys())
+
         actual = {}
         for k in expected.keys():
             actual[k] = await client.get_key(k)
