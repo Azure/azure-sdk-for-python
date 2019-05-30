@@ -29,8 +29,10 @@ from .documents import ConnectionPolicy, DatabaseAccount
 from .query_iterable import QueryIterable
 from typing import (
     Any,
+    Callable,
     Dict,
     Mapping,
+    Optional,
     Union,
     cast
 )
@@ -91,9 +93,10 @@ class CosmosClient:
         access_condition=None,
         populate_query_metrics=None,
         offer_throughput=None,
-        request_options=None
+        request_options=None,
+        response_hook=None
     ):
-        # type: (str, str, Dict[str, str], Dict[str, str], bool, int, Dict[str, Any]) -> Database
+        # type: (str, str, Dict[str, str], Dict[str, str], bool, int, Dict[str, Any], Optional[Callable]) -> Database
         """Create a new database with the given ID (name).
 
         :param id: ID (name) of the database to create.
@@ -103,6 +106,7 @@ class CosmosClient:
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param offer_throughput: The provisioned throughput for this offer.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`Database` instance representing the new database.
         :raises `HTTPFailure`: If database with the given ID already exists.
 
@@ -130,6 +134,8 @@ class CosmosClient:
             request_options["offerThroughput"] = offer_throughput
 
         result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
         return Database(self.client_connection, id=result["id"], properties=result)
 
     def get_database(
@@ -162,9 +168,10 @@ class CosmosClient:
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
-        feed_options=None
+        feed_options=None,
+        response_hook=None
     ):
-        # type: (int, str, Dict[str, str], bool, Dict[str, Any]) -> QueryIterable
+        # type: (int, str, Dict[str, str], bool, Dict[str, Any],  Optional[Callable]) -> QueryIterable
         """
         List the databases in a Cosmos DB SQL database account.
 
@@ -173,6 +180,7 @@ class CosmosClient:
         :param initial_headers: Initial headers to be sent as part of the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param feed_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`QueryIterable` instance representing an iterable of database properties (dicts).
 
         """
@@ -187,9 +195,12 @@ class CosmosClient:
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
-        return self.client_connection.ReadDatabases(
+        result = self.client_connection.ReadDatabases(
             options=feed_options
         )
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        return result
 
     def query_databases(
         self,
@@ -200,9 +211,10 @@ class CosmosClient:
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
-        feed_options=None
+        feed_options=None,
+        response_hook=None
     ):
-        # type: (str, List[str], bool, int, str, Dict[str,str], bool, Dict[str, Any]) -> QueryIterable
+        # type: (str, List[str], bool, int, str, Dict[str,str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
 
         """
         Query the databases in a Cosmos DB SQL database account.
@@ -215,6 +227,7 @@ class CosmosClient:
         :param initial_headers: Initial headers to be sent as part of the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param feed_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`QueryIterable` instance representing an iterable of database properties (dicts).
 
         """
@@ -237,14 +250,17 @@ class CosmosClient:
             # (just returning a generator did not initiate the first network call, so
             # the headers were misleading)
             # This needs to change for "real" implementation
-            return self.client_connection.QueryDatabases(
+            result = self.client_connection.QueryDatabases(
                 query=query
                 if parameters is None
                 else dict(query=query, parameters=parameters),
                 options=feed_options
             )
         else:
-            return self.client_connection.ReadDatabases(options=feed_options)
+            result = self.client_connection.ReadDatabases(options=feed_options)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        return result
 
     def delete_database(
         self,
@@ -253,9 +269,10 @@ class CosmosClient:
         initial_headers=None,
         access_condition=None,
         populate_query_metrics=None,
-        request_options=None
+        request_options=None, 
+        response_hook=None
     ):
-        # type: (Union[str, Database, Dict[str, Any]], str, Dict[str, str], Dict[str, str], bool, Dict[str, Any]) -> None
+        # type: (Union[str, Database, Dict[str, Any]], str, Dict[str, str], Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> None
         """
         Delete the database with the given ID (name).
 
@@ -265,6 +282,7 @@ class CosmosClient:
         :param access_condition: Conditions Associated with the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :raise HTTPFailure: If the database couldn't be deleted.
 
         """
@@ -281,13 +299,20 @@ class CosmosClient:
 
         database_link = self._get_database_link(database)
         self.client_connection.DeleteDatabase(database_link, options=request_options)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
 
-    def get_database_account(self):
-        # type: () -> DatabaseAccount
+    def get_database_account(self, response_hook=None):
+        # type: (Optional[Callable]) -> DatabaseAccount
         """
         Retrieve the database account information.
 
+        :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`DatabaseAccount` instance representing the Cosmos DB Database Account.
 
         """
-        return self.client_connection.GetDatabaseAccount()
+        result = self.client_connection.GetDatabaseAccount()
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+        return result
+
