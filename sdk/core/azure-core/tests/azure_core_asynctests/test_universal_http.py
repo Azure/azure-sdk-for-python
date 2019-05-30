@@ -25,13 +25,11 @@
 #--------------------------------------------------------------------------
 import sys
 
-from azure.core.pipeline.transport import (
-    HttpRequest,
-    AioHttpTransport,
-    AsyncHttpTransport,
-    AsyncioRequestsTransport,
-    TrioRequestsTransport)
-
+from azure.core.pipeline.transport import HttpRequest
+from azure.core.pipeline.transport.requests_asyncio import AsyncioRequestsTransport
+from azure.core.pipeline.transport.requests_trio import TrioRequestsTransport
+from azure.core.pipeline.transport.aiohttp import AioHttpTransport
+from azure.core.pipeline.transport.base_async import AsyncHttpTransport
 from azure.core.configuration import Configuration
 
 import trio

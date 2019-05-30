@@ -27,14 +27,21 @@ import sys
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
+
 from azure.core.pipeline.policies import SansIOHTTPPolicy, UserAgentPolicy, AsyncRedirectPolicy
-from azure.core.pipeline.transport import (
-    AsyncHttpTransport,
-    HttpRequest,
-    AsyncioRequestsTransport,
-    TrioRequestsTransport,
-    AioHttpTransport
-)
+from azure.core.pipeline.transport.base_async import AsyncHttpTransport
+from azure.core.pipeline.transport.requests_asyncio import AsyncioRequestsTransport
+from azure.core.pipeline.transport.requests_trio import TrioRequestsTransport
+from azure.core.pipeline.transport.aiohttp import AioHttpTransport
+from azure.core.pipeline.transport import HttpRequest
+from azure.core.pipeline_client_async import AsyncPipelineClient
+
+try:
+    from .pipeline_client_async import AsyncPipelineClient #pylint: disable=unused-import
+    __all__.extend(["AsyncPipelineClient"])
+except (ImportError, SyntaxError): # Python <= 3.5
+    pass
+
 
 import aiohttp
 import trio
@@ -149,4 +156,18 @@ def test_conf_async_trio_requests():
             return await pipeline.run(request)
 
     response = trio.run(do)
+    assert response.http_response.status_code == 200
+
+@pytest.mark.asyncio
+async def test_async_pipeline_client():
+
+    conf = Configuration()
+    request = HttpRequest("GET", "https://bing.com")
+    conf.user_agent_policy = UserAgentPolicy("myusergant")
+    conf.redirect_policy = AsyncRedirectPolicy()
+
+    async with AsyncPipelineClient(base_url="https://bing.com", config=conf) as client:
+        response = await client._pipeline.run(request)
+
+    assert client._pipeline._transport.session is None
     assert response.http_response.status_code == 200

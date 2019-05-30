@@ -7,7 +7,8 @@ from unittest.mock import Mock
 from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.policies.credentials_async import AsyncBearerTokenCredentialPolicy
-from azure.core.pipeline.transport import HttpRequest, AsyncHttpTransport
+from azure.core.pipeline.transport import HttpRequest
+from azure.core.pipeline.transport.base_async import AsyncHttpTransport
 import pytest
 
 

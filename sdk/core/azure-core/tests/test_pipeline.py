@@ -40,7 +40,7 @@ import sys
 import requests
 import pytest
 
-from azure.core import Configuration
+from azure.core import Configuration, PipelineClient
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
@@ -120,6 +120,20 @@ class TestRequestsTransport(unittest.TestCase):
         transport.close()
         assert transport.session
         transport.session.close()
+
+    def test_pipeline_client(self):
+        conf = Configuration()
+        conf.user_agent_policy = UserAgentPolicy("myusergant")
+        conf.redirect_policy = RedirectPolicy()
+        request = HttpRequest("GET", "https://bing.com")
+        
+        with PipelineClient(base_url="https://bing.com", config=conf) as client:
+            pipeline_response = client._pipeline.run(request)
+
+        response = pipeline_response.http_response
+
+        assert client._pipeline._transport.session is None
+        assert response.status_code == 200
 
 
 class TestClientRequest(unittest.TestCase):
