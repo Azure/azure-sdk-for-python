@@ -352,6 +352,7 @@ class KeyVaultKeyTest(KeyVaultTestCase):
 
     @ResourceGroupPreparer()
     @VaultClientPreparer()
+    @await_prepared_test
     async def test_key_wrap_and_unwrap(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
         client = vault_client.keys
@@ -360,13 +361,21 @@ class KeyVaultKeyTest(KeyVaultTestCase):
         # create key
         created_bundle = await client.create_key(key_name, "RSA")
         self.assertIsNotNone(created_bundle)
-        plain_text = self.plain_text
+        plain_text = b"5063e6aaa845f150200547944fd199679c98ed6f99da0a0b2dafeaf1f4684496fd532c1c229968cb9dee44957fcef7ccef59ceda0b362e56bcd78fd3faee5781c623c0bb22b35beabde0664fd30e0e824aba3dd1b0afffc4a3d955ede20cf6a854d52cfd"
+
+       # wrap without version
+        result = await client.wrap_key(created_bundle.name, "RSA-OAEP", plain_text)
+        cipher_text = result.value
+
+        # unwrap without version
+        result = await client.unwrap_key(created_bundle.name, "RSA-OAEP", cipher_text)
+        self.assertEqual(plain_text, result.value)
 
         # wrap with version
-        result = await client.wrap_key(created_bundle.name, created_bundle.version, "RSA-OAEP", plain_text)
+        result = await client.wrap_key(created_bundle.name, "RSA-OAEP", plain_text, version=created_bundle.version)
         cipher_text = result.value
         self.assertIsNotNone(cipher_text)
 
         # unwrap with version
-        result = await client.unwrap_key(created_bundle.name, created_bundle.version, "RSA-OAEP", cipher_text)
+        result = await client.unwrap_key(created_bundle.name, "RSA-OAEP", cipher_text, version=created_bundle.version)
         self.assertEqual(plain_text, result.value)

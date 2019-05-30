@@ -651,7 +651,7 @@ class KeyClient:
         return Key._from_key_bundle(bundle)
 
     async def wrap_key(
-        self, name: str, version: str, algorithm: str, value: bytes, **kwargs: Mapping[str, Any]
+        self, name: str, algorithm: str, value: bytes, version: Optional[str]=None, **kwargs: Mapping[str, Any]
     ) -> KeyOperationResult:
         """Wraps a symmetric key using a specified key.
 
@@ -678,13 +678,16 @@ class KeyClient:
         :rtype: ~azure.security.keyvault.keys._models.KeyOperationResult
 
         """
+        if version is None:
+            version = ""
+
         bundle = await self._client.wrap_key(
             self.vault_url, name, key_version=version, algorithm=algorithm, value=value
         )
         return KeyOperationResult(id=bundle.kid, value=bundle.result)
 
     async def unwrap_key(
-        self, name: str, version: str, algorithm: str, value: bytes, **kwargs: Mapping[str, Any]
+        self, name: str, algorithm: str, value: bytes, version: Optional[str]=None, **kwargs: Mapping[str, Any]
     ) -> KeyOperationResult:
         """Unwraps a symmetric key using the specified key that was initially used
         for wrapping that key.
@@ -709,6 +712,9 @@ class KeyClient:
         :rtype: ~azure.security.keyvault.keys._models.KeyOperationResult
 
         """
+        if version is None:
+            version = ""
+
         bundle = await self._client.unwrap_key(
             self.vault_url, name, key_version=version, algorithm=algorithm, value=value
         )
