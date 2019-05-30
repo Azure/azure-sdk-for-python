@@ -5,6 +5,7 @@
 
 from uamqp import types, constants, errors
 import six
+from azure.core import AzureError
 
 _NO_RETRY_ERRORS = (
     b"com.microsoft:argument-out-of-range",
@@ -38,7 +39,7 @@ def _error_handler(error):
     return errors.ErrorAction(retry=True)
 
 
-class EventHubError(Exception):
+class EventHubError(AzureError):
     """
     Represents an error happened in the client.
 
