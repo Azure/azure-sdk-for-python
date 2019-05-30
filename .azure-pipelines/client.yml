@@ -127,7 +127,7 @@ jobs:
     steps:
       - template: templates/steps/archetype-sdk-client.yml
         parameters:
-          TestMarkArgument: '$(TestMarkArgument)'
+          testMarkArgument: '$(TestMarkArgument)'
 
       - script: |
           coverage xml
