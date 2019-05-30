@@ -27,7 +27,7 @@ class SingletonPartitionSchemeDescription(PartitionSchemeDescription):
     }
 
     _attribute_map = {
-        'partition_scheme': {'key': 'PartitionScheme', 'type': 'str'},
+        'partition_scheme': {'key': 'partitionScheme', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
