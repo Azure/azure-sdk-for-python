@@ -168,7 +168,7 @@ class EventHubClient(EventHubClientAbstract):
             await mgmt_client.close_async()
 
     def create_receiver(
-            self, partition_id, consumer_group="$default", event_position=None, exclusive_receiver_priority=None, operation=None,
+            self, partition_id, consumer_group="$Default", event_position=None, exclusive_receiver_priority=None, operation=None,
             prefetch=None, loop=None):
         """
         Add an async receiver to the client for a particular consumer group and partition.
