@@ -60,6 +60,12 @@ if __name__ == '__main__':
               'Example: --junitxml="junit/test-results.xml"'))
 
     parser.add_argument(
+        '--mark_arg',
+        dest='mark_arg',
+        help=('The complete argument for `pytest -m "<input>"`. This can be used to exclude or include specific pytest markers.'
+              '--mark_arg="not cosmosEmulator"'))
+
+    parser.add_argument(
         '--disablecov',
         help = ('Flag that disables code coverage.'),
         action='store_true')
@@ -86,5 +92,8 @@ if __name__ == '__main__':
 
     if args.disablecov:
         test_results_arg.append('--no-cov')
+
+    if args.mark_arg:
+        test_results_arg.append(['-m', '"{}"'.format(args.mark_arg)])
 
     prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
