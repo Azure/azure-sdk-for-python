@@ -96,7 +96,7 @@ try:
     from .multiple_pipeline_trigger_py3 import MultiplePipelineTrigger
     from .azure_function_linked_service_py3 import AzureFunctionLinkedService
     from .azure_data_explorer_linked_service_py3 import AzureDataExplorerLinkedService
-    from .sap_table_linked_service_py3 import SapTableLinkedService
+    from .sap_table_py3 import SapTable
     from .google_ad_words_linked_service_py3 import GoogleAdWordsLinkedService
     from .oracle_service_cloud_linked_service_py3 import OracleServiceCloudLinkedService
     from .dynamics_ax_linked_service_py3 import DynamicsAXLinkedService
@@ -231,6 +231,7 @@ try:
     from .http_dataset_py3 import HttpDataset
     from .azure_search_index_dataset_py3 import AzureSearchIndexDataset
     from .web_table_dataset_py3 import WebTableDataset
+    from .sap_table_resource_dataset_py3 import SapTableResourceDataset
     from .rest_resource_dataset_py3 import RestResourceDataset
     from .sql_server_table_dataset_py3 import SqlServerTableDataset
     from .sap_open_hub_table_dataset_py3 import SapOpenHubTableDataset
@@ -547,7 +548,7 @@ except (SyntaxError, ImportError):
     from .multiple_pipeline_trigger import MultiplePipelineTrigger
     from .azure_function_linked_service import AzureFunctionLinkedService
     from .azure_data_explorer_linked_service import AzureDataExplorerLinkedService
-    from .sap_table_linked_service import SapTableLinkedService
+    from .sap_table import SapTable
     from .google_ad_words_linked_service import GoogleAdWordsLinkedService
     from .oracle_service_cloud_linked_service import OracleServiceCloudLinkedService
     from .dynamics_ax_linked_service import DynamicsAXLinkedService
@@ -682,6 +683,7 @@ except (SyntaxError, ImportError):
     from .http_dataset import HttpDataset
     from .azure_search_index_dataset import AzureSearchIndexDataset
     from .web_table_dataset import WebTableDataset
+    from .sap_table_resource_dataset import SapTableResourceDataset
     from .rest_resource_dataset import RestResourceDataset
     from .sql_server_table_dataset import SqlServerTableDataset
     from .sap_open_hub_table_dataset import SapOpenHubTableDataset
@@ -1066,7 +1068,7 @@ __all__ = [
     'MultiplePipelineTrigger',
     'AzureFunctionLinkedService',
     'AzureDataExplorerLinkedService',
-    'SapTableLinkedService',
+    'SapTable',
     'GoogleAdWordsLinkedService',
     'OracleServiceCloudLinkedService',
     'DynamicsAXLinkedService',
@@ -1201,6 +1203,7 @@ __all__ = [
     'HttpDataset',
     'AzureSearchIndexDataset',
     'WebTableDataset',
+    'SapTableResourceDataset',
     'RestResourceDataset',
     'SqlServerTableDataset',
     'SapOpenHubTableDataset',
