@@ -66,7 +66,7 @@ class AzureError(Exception):
     """Base exception for all errors."""
 
     def __init__(self, message, *args, **kwargs):
-        self.inner_exception = kwargs.get('error')        
+        self.inner_exception = kwargs.get('error')
         self.exc_type, self.exc_value, self.exc_traceback = sys.exc_info()
         self.exc_type = self.exc_type.__name__ if self.exc_type else type(self.inner_exception)
         self.exc_msg = "{}, {}: {}".format(message, self.exc_type, self.exc_value)  # type: ignore
