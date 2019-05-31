@@ -32,16 +32,32 @@ from .base import SansIOHTTPPolicy
 class CustomHookPolicy(SansIOHTTPPolicy):
     """A simple policy that enable the given callback
     with the response.
+
+    Keyword argument:
+    :param raw_response_hook: Callback function. Will be invoked on response.
     """
     def __init__(self, **kwargs): # pylint: disable=unused-argument
         self._callback = None
 
     def on_request(self, request): # type: ignore # pylint: disable=arguments-differ
         # type: (PipelineRequest) -> None
+        """This is executed before sending the request to the next policy.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
         self._callback = request.context.options.pop('raw_response_hook', None) # type: ignore
+
 
     def on_response(self, request, response): # type: ignore # pylint: disable=arguments-differ
         # type: (PipelineRequest, PipelineResponse) -> None
+        """This is executed after the request comes back from the policy.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: The PipelineResponse object.
+        :type response: ~azure.core.pipeline.PipelineResponse
+        """
         if self._callback:
             self._callback(response)
             request.context.options.update({'raw_response_hook': self._callback}) # type: ignore

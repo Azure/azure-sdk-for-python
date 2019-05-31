@@ -42,10 +42,29 @@ _LOGGER = logging.getLogger(__name__)
 class PipelineClient(object):
     """Service client core methods.
 
-    This contains methods are sans I/O and not tight to sync or async implementation.
-    :param Configuration config: Service configuration.
-    """
+    Builds a Pipeline client.
 
+    :param str base_url: URL for the request.
+    :param config: Service configuration. This is a required parameter.
+    :type config: ~azure.core.Configuration
+    :param kwargs: keyword arguments
+    :return: A pipeline object.
+    :rtype: ~azure.core.pipeline.Pipeline
+
+    Keyword arguments:
+    pipeline - A Pipeline object. If omitted, a Pipeline object is created
+     and returned.
+    transport - The HTTP Transport type. If omitted, RequestsTransport is used
+     for synchronous transport.
+
+    Example:
+        .. literalinclude:: ../../examples/examples_sync.py
+            :start-after: [START build_pipeline_client]
+            :end-before: [END build_pipeline_client]
+            :language: python
+            :dedent: 4
+            :caption: Builds the pipeline client.
+    """
     def __init__(self, base_url, config, **kwargs):
         if config is None:
             raise ValueError("Config is a required parameter")
@@ -95,10 +114,13 @@ class PipelineClient(object):
         # type: (...) -> HttpRequest
         """Create HttpRequest object.
 
+        :param str method: HTTP method (GET, HEAD, etc.)
         :param str url: URL for the request.
         :param dict params: URL query parameters.
         :param dict headers: Headers
         :param dict form_content: Form content
+        :return: An HttpRequest object
+        :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = HttpRequest(method, self.format_url(url))
 
@@ -156,6 +178,8 @@ class PipelineClient(object):
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param dict form_content: Form content
+        :return: An HttpRequest object
+        :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = self._request('GET', url, params, headers, content, form_content, None)
         request.method = 'GET'
@@ -176,6 +200,8 @@ class PipelineClient(object):
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param dict form_content: Form content
+        :return: An HttpRequest object
+        :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = self._request('PUT', url, params, headers, content, form_content, stream_content)
         return request
@@ -195,6 +221,8 @@ class PipelineClient(object):
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param dict form_content: Form content
+        :return: An HttpRequest object
+        :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = self._request('POST', url, params, headers, content, form_content, stream_content)
         return request
@@ -214,6 +242,8 @@ class PipelineClient(object):
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param dict form_content: Form content
+        :return: An HttpRequest object
+        :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = self._request('HEAD', url, params, headers, content, form_content, stream_content)
         return request
@@ -233,6 +263,8 @@ class PipelineClient(object):
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param dict form_content: Form content
+        :return: An HttpRequest object
+        :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = self._request('PATCH', url, params, headers, content, form_content, stream_content)
         return request
@@ -245,6 +277,8 @@ class PipelineClient(object):
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param dict form_content: Form content
+        :return: An HttpRequest object
+        :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = self._request('DELETE', url, params, headers, content, form_content, None)
         return request
@@ -257,6 +291,8 @@ class PipelineClient(object):
         :param dict params: Request URL parameters.
         :param dict headers: Headers
         :param dict form_content: Form content
+        :return: An HttpRequest object
+        :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
         request = self._request('MERGE', url, params, headers, content, form_content, None)
         return request
