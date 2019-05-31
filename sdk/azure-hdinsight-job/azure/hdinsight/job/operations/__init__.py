@@ -9,5 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.1.0"
+from .job_operations import JobOperations
 
+__all__ = [
+    'JobOperations',
+]

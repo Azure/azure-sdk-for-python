@@ -9,5 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.1.0"
+from .hd_insight_job_management_client import HDInsightJobManagementClient
+from .version import VERSION
+
+__all__ = ['HDInsightJobManagementClient']
+
+__version__ = VERSION
 

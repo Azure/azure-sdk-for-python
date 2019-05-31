@@ -9,5 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.1.0"
+from enum import Enum
 
+
+class ApplicationState(str, Enum):
+
+    new = "NEW"
+    new_saving = "NEW_SAVING"
+    submitted = "SUBMITTED"
+    accepted = "ACCEPTED"
+    running = "RUNNING"
+    finished = "FINISHED"
+    finishing = "FINISHING"
+    failed = "FAILED"
+    killed = "KILLED"

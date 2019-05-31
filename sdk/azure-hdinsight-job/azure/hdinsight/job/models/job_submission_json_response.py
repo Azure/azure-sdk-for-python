@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.1.0"
+from msrest.serialization import Model
 
+
+class JobSubmissionJsonResponse(Model):
+    """The job submission json response.
+
+    :param id: The Id of the created job.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(JobSubmissionJsonResponse, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
