@@ -241,7 +241,7 @@ class Sender(object):
         elif isinstance(exception, EventHubError):
             self.error = exception
         elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
-            self.error = EventHubError(str(exception), exception)
+            self.error = EventHubConnectionError(str(exception), exception)
         elif exception:
             self.error = EventHubError(str(exception))
         else:
