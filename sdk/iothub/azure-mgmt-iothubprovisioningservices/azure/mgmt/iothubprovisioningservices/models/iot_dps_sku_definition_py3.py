@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class IotDpsSkuDefinition(Model):
-    """Available Sku's of tier and units.
+    """Available SKUs of tier and units.
 
     :param name: Sku name. Possible values include: 'S1'
     :type name: str or ~azure.mgmt.iothubprovisioningservices.models.IotDpsSku
