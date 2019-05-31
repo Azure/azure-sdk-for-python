@@ -40,7 +40,7 @@ class LiveEventInput(Model):
     }
 
     _attribute_map = {
-        'streaming_protocol': {'key': 'streamingProtocol', 'type': 'LiveEventInputProtocol'},
+        'streaming_protocol': {'key': 'streamingProtocol', 'type': 'str'},
         'access_control': {'key': 'accessControl', 'type': 'LiveEventInputAccessControl'},
         'key_frame_interval_duration': {'key': 'keyFrameIntervalDuration', 'type': 'str'},
         'access_token': {'key': 'accessToken', 'type': 'str'},

@@ -104,7 +104,7 @@ class StreamingEndpoint(TrackedResource):
         'cdn_provider': {'key': 'properties.cdnProvider', 'type': 'str'},
         'cdn_profile': {'key': 'properties.cdnProfile', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'StreamingEndpointResourceState'},
+        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'cross_site_access_policies': {'key': 'properties.crossSiteAccessPolicies', 'type': 'CrossSiteAccessPolicies'},
         'free_trial_end_time': {'key': 'properties.freeTrialEndTime', 'type': 'iso-8601'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},

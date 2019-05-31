@@ -22,6 +22,12 @@ class JobInputHttp(JobInputClip):
     :param files: List of files. Required for JobInputHttp. Maximum of 4000
      characters each.
     :type files: list[str]
+    :param start: Defines a point on the timeline of the input media at which
+     processing will start. Defaults to the beginning of the input media.
+    :type start: ~azure.mgmt.media.models.ClipTime
+    :param end: Defines a point on the timeline of the input media at which
+     processing will end. Defaults to the end of the input media.
+    :type end: ~azure.mgmt.media.models.ClipTime
     :param label: A label that is assigned to a JobInputClip, that is used to
      satisfy a reference used in the Transform. For example, a Transform can be
      authored so as to take an image file with the label 'xyz' and apply it as
@@ -43,11 +49,13 @@ class JobInputHttp(JobInputClip):
     _attribute_map = {
         'odatatype': {'key': '@odata\\.type', 'type': 'str'},
         'files': {'key': 'files', 'type': '[str]'},
+        'start': {'key': 'start', 'type': 'ClipTime'},
+        'end': {'key': 'end', 'type': 'ClipTime'},
         'label': {'key': 'label', 'type': 'str'},
         'base_uri': {'key': 'baseUri', 'type': 'str'},
     }
 
-    def __init__(self, *, files=None, label: str=None, base_uri: str=None, **kwargs) -> None:
-        super(JobInputHttp, self).__init__(files=files, label=label, **kwargs)
+    def __init__(self, *, files=None, start=None, end=None, label: str=None, base_uri: str=None, **kwargs) -> None:
+        super(JobInputHttp, self).__init__(files=files, start=start, end=end, label=label, **kwargs)
         self.base_uri = base_uri
         self.odatatype = '#Microsoft.Media.JobInputHttp'
