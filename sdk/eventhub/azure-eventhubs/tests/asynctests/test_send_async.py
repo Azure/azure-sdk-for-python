@@ -28,19 +28,19 @@ async def test_send_with_partition_key_async(connstr_receivers):
             partition_key = b"test_partition_" + partition
             for i in range(50):
                 data = EventData(str(data_val))
-                data.partition_key = partition_key
+                # data.partition_key = partition_key
                 data_val += 1
-                await sender.send(data)
+                await sender.send(data, batching_label=partition_key)
 
     found_partition_keys = {}
     for index, partition in enumerate(receivers):
         received = partition.receive(timeout=5)
         for message in received:
             try:
-                existing = found_partition_keys[message.partition_key]
+                existing = found_partition_keys[message._batching_label]
                 assert existing == index
             except KeyError:
-                found_partition_keys[message.partition_key] = index
+                found_partition_keys[message._batching_label] = index
 
 
 @pytest.mark.liveTest

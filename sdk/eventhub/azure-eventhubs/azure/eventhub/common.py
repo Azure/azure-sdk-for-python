@@ -105,8 +105,9 @@ class EventData(object):
             dic['enqueued_time'] = str(self.enqueued_time)
         if self.device_id:
             dic['device_id'] = str(self.device_id)
-        if self.partition_key:
-            dic['partition_key'] = str(self.partition_key)
+        if self._batching_label:
+            dic['_batching_label'] = str(self._batching_label)
+
 
         return str(dic)
 
@@ -154,7 +155,7 @@ class EventData(object):
         return self._annotations.get(EventData.PROP_DEVICE_ID, None)
 
     @property
-    def partition_key(self):
+    def _batching_label(self):
         """
         The partition key of the event data object.
 
@@ -165,8 +166,8 @@ class EventData(object):
         except KeyError:
             return self._annotations.get(EventData.PROP_PARTITION_KEY, None)
 
-    @partition_key.setter
-    def partition_key(self, value):
+    @_batching_label.setter
+    def _batching_label(self, value):
         """
         Set the partition key of the event data object.
 
@@ -180,6 +181,7 @@ class EventData(object):
         self.message.annotations = annotations
         self.message.header = header
         self._annotations = annotations
+
 
     @property
     def application_properties(self):
@@ -254,9 +256,20 @@ class EventData(object):
 
 
 class _BatchSendEventData(EventData):
-    def __init__(self, batch_event_data):
-        # TODO: rethink if to_device should be included in
+    def __init__(self, batch_event_data, batching_label=None):
         self.message = BatchMessage(data=batch_event_data, multi_messages=False, properties=None)
+        self.set_batching_label(batching_label)
+
+    def set_batching_label(self, value):
+        if value:
+            annotations = self.message.annotations
+            if annotations is None:
+                annotations = dict()
+            annotations[types.AMQPSymbol(EventData.PROP_PARTITION_KEY)] = value
+            header = MessageHeader()
+            header.durable = True
+            self.message.annotations = annotations
+            self.message.header = header
 
 
 class EventPosition(object):
