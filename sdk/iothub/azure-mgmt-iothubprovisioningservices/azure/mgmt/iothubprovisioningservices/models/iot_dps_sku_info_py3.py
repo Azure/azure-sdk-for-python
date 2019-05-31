@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class IotDpsSkuInfo(Model):
-    """List of possible provisoning service SKUs.
+    """List of possible provisioning service SKUs.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class IotDpsPropertiesDescription(Model):
-    """the service specific properties of a provisoning service, including keys,
+    """the service specific properties of a provisioning service, including keys,
     linked iot hubs, current state, and system generated properties such as
     hostname and idScope.
 
@@ -28,7 +28,7 @@ class IotDpsPropertiesDescription(Model):
     :param provisioning_state: The ARM provisioning state of the provisioning
      service.
     :type provisioning_state: str
-    :param iot_hubs: List of IoT hubs assosciated with this provisioning
+    :param iot_hubs: List of IoT hubs associated with this provisioning
      service.
     :type iot_hubs:
      list[~azure.mgmt.iothubprovisioningservices.models.IotHubDefinitionDescription]
