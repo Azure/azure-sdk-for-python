@@ -3,6 +3,26 @@
 Release History
 ===============
 
+2.3.0 (2019-06-03)
+++++++++++++++++++
+
+**Features**
+
+- Model Provider has a new parameter registration_policy
+- Model ProviderResourceType has a new parameter capabilities
+- Model DeploymentOperationProperties has a new parameter duration
+- Model DeploymentPropertiesExtended has a new parameter duration
+- Added operation DeploymentOperations.get_at_management_group_scope
+- Added operation DeploymentOperations.list_at_management_group_scope
+- Added operation DeploymentsOperations.export_template_at_management_group_scope
+- Added operation DeploymentsOperations.create_or_update_at_management_group_scope
+- Added operation DeploymentsOperations.list_at_management_group_scope
+- Added operation DeploymentsOperations.get_at_management_group_scope
+- Added operation DeploymentsOperations.check_existence_at_management_group_scope
+- Added operation DeploymentsOperations.cancel_at_management_group_scope
+- Added operation DeploymentsOperations.delete_at_management_group_scope
+- Added operation DeploymentsOperations.validate_at_management_group_scope
+
 2.2.0 (2019-05-23)
 ++++++++++++++++++
 
