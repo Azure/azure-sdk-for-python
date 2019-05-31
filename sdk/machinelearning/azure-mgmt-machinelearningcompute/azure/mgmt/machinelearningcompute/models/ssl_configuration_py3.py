@@ -35,9 +35,9 @@ class SslConfiguration(Model):
         'cname': {'key': 'cname', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, status="Enabled", cert: str=None, key: str=None, cname: str=None, **kwargs) -> None:
         super(SslConfiguration, self).__init__(**kwargs)
-        self.status = kwargs.get('status', "Enabled")
-        self.cert = kwargs.get('cert', None)
-        self.key = kwargs.get('key', None)
-        self.cname = kwargs.get('cname', None)
+        self.status = status
+        self.cert = cert
+        self.key = key
+        self.cname = cname

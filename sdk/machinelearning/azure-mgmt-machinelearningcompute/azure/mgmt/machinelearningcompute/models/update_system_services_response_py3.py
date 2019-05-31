@@ -42,7 +42,7 @@ class UpdateSystemServicesResponse(Model):
         'update_completed_on': {'key': 'updateCompletedOn', 'type': 'iso-8601'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super(UpdateSystemServicesResponse, self).__init__(**kwargs)
         self.update_status = None
         self.update_started_on = None

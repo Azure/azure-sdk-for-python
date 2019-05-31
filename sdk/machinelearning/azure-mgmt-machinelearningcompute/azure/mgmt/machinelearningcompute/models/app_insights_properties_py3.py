@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.5.0"
+from msrest.serialization import Model
 
+
+class AppInsightsProperties(Model):
+    """Properties of App Insights.
+
+    :param resource_id: ARM resource ID of the App Insights.
+    :type resource_id: str
+    """
+
+    _attribute_map = {
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+    }
+
+    def __init__(self, *, resource_id: str=None, **kwargs) -> None:
+        super(AppInsightsProperties, self).__init__(**kwargs)
+        self.resource_id = resource_id

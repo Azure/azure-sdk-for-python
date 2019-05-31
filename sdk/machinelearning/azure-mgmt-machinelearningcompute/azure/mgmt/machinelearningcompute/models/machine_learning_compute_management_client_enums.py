@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class OperationStatus(Enum):
+class OperationStatus(str, Enum):
 
     unknown = "Unknown"
     updating = "Updating"
@@ -23,26 +23,26 @@ class OperationStatus(Enum):
     canceled = "Canceled"
 
 
-class ClusterType(Enum):
+class ClusterType(str, Enum):
 
     acs = "ACS"
     local = "Local"
 
 
-class OrchestratorType(Enum):
+class OrchestratorType(str, Enum):
 
     kubernetes = "Kubernetes"
     none = "None"
 
 
-class SystemServiceType(Enum):
+class SystemServiceType(str, Enum):
 
     none = "None"
     scoring_front_end = "ScoringFrontEnd"
     batch_front_end = "BatchFrontEnd"
 
 
-class AgentVMSizeTypes(Enum):
+class AgentVMSizeTypes(str, Enum):
 
     standard_a0 = "Standard_A0"
     standard_a1 = "Standard_A1"
@@ -93,13 +93,13 @@ class AgentVMSizeTypes(Enum):
     standard_gs5 = "Standard_GS5"
 
 
-class Status(Enum):
+class Status(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
 
 
-class UpdatesAvailable(Enum):
+class UpdatesAvailable(str, Enum):
 
     yes = "Yes"
     no = "No"
