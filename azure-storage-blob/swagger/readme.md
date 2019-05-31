@@ -11,7 +11,7 @@ pipeline:
      scope: unused
 
 # Generate blob storage
-input-file: ./queue.json
+input-file: ./blob.json
 ```
 
 ## Python
