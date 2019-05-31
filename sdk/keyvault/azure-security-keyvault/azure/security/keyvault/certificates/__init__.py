@@ -5,6 +5,25 @@
 # --------------------------------------------------------------------------
 
 from ._client import CertificateClient
-from ._models import Secret, SecretAttributes, DeletedSecret
+from ._models import (
+    Certificate,
+    CertificateBase,
+    DeletedCertificate,
+    CertificateOperation,
+    CertificatePolicy,
+    Contact,
+    Issuer,
+    IssuerBase,
+)
 
-__all__ = ["SecretClient", "SecretAttributes", "Secret", "DeletedSecret"]
+__all__ = [
+    "CertificateClient",
+    "CertificateBase",
+    "Certificate",
+    "DeletedCertificate",
+    "CertificatePolicy",
+    "Issuer",
+    "IssuerBase",
+    "Contact",
+    "CertificateOperation",
+]

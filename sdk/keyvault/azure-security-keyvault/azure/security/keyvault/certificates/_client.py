@@ -3,22 +3,27 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Dict, Generator, Mapping, Optional
+from typing import Any, Dict, Mapping, Optional
 from datetime import datetime
 
-from azure.core import Configuration
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import RetryPolicy, RedirectPolicy, UserAgentPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
 
 from .._generated import KeyVaultClient
-from ._models import Secret, DeletedSecret, SecretAttributes
+from ._models import (
+    Certificate,
+    CertificateBase,
+    DeletedCertificate,
+    CertificatePolicy,
+    Issuer,
+    IssuerBase,
+    Contact,
+    CertificateOperation,
+)
 
 
 class CertificateClient:
-
     @staticmethod
     def create_config(**kwargs):
         pass  # TODO
@@ -50,147 +55,168 @@ class CertificateClient:
         transport = RequestsTransport(config)
         pipeline = Pipeline(transport, policies=policies)
 
-        self._client = KeyVaultClient(credentials, api_version=self._api_version, pipeline=pipeline)
+        self._client = KeyVaultClient(credentials, api_version=api_version, pipeline=pipeline)
 
     @property
     def vault_url(self):
         # type: () -> str
         return self._vault_url
 
-    def create_certificate(name, policy=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
-        # type: (str, Optional[CertificatePolicy], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> CertificateOperation
-        if enabled is not None or not_before is not None or expires is not None:
-            attributes = self._client.models.CertificateAttributes(enabled=enabled, not_before=not_before, expires=expires)
-        else:
-            attributes = None
-        bundle = self._client.create_certificate(name, certificate_policy=policy, certificate_attributes=attributes, tags=None, **kwargs)
-        return bundle
+    def create_certificate(self, name, policy=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
+        # type: (str, Optional[CertificatePolicy], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Mapping[str, Any]]) -> CertificateOperation
+        pass
 
-    def get_certificate(self, name, version=None):
+    def get_certificate(self, name, version=None, **kwargs):
         # type: (str, Optional[str]) -> Certificate
-        bundle = self._client.get_certificate(self._vault_url, name, version, error_map={404: ResourceNotFoundError})
-        return bundle
+        pass
 
     def delete_certificate(self, name, **kwargs):
-        # type: (str) -> Certificate
-        bundle = self._client.delete_certificate(name)
-        return bundle
+        # type: (str) -> DeletedCertificate
+        pass
 
     def get_deleted_certificate(self, name, **kwargs):
-        # type: (str) -> Certificate
-        bundle = self._client.get_deleted_certificate(name)
-        return bundle
+        # type: (str) -> DeletedCertificate
+        pass
 
     def purge_deleted_certificate(self, name, **kwargs):
         # type: (str) -> None
-        bundle = self._client.purge_deleted_certificate(name)
         pass
 
     def recover_deleted_certificate(self, name, **kwargs):
         # type: (str) -> Certificate
         pass
 
-    def import_certificate(self, name, base64_encoded_certificate, policy=None, enabled=None, password=None, not_before=None, expires=None, tags=None, **kwargs):
-        # type: (str, str, Optional[str], Optional[Policy], Optional[bool], Optional[Dict[str, str]]) -> Certificate
+    def import_certificate(
+        self,
+        name,
+        base64_encoded_certificate,
+        password=None,
+        policy=None,
+        enabled=None,
+        not_before=None,
+        expires=None,
+        tags=None,
+        **kwargs
+    ):
+        # type: (str, str, Optional[str], Optional[Policy], Optional[bool],Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Certificate
         pass
 
-    def get_certificate_policy(self, name, policy):
+    def get_certificate_policy(self, name, **kwargs):
         # type: (str) -> CertificatePolicy
         pass
 
-    def update_certificate_policy(self, name, policy):
+    def update_certificate_policy(self, name, policy, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
         # type: (str, CertificatePolicy) -> CertificatePolicy
-        # TODO: does the new policy affect the most recent cert or take effect at next issue?
         pass
 
-    def update_certificate(self, name, version, policy=None, enabled=None, tags=None):
-        # type: (str, str, Optional[Policy], Optional[bool], Optional[Dict[str, str]]) -> Certificate
-        # TODO: does this immediately issue a new cert under the new policy?
-        #       why would I change the policy for an old version?
+    def update_certificate(self, name, version, not_before=None, expires=None, enabled=None, tags=None, **kwargs):
+        # type: (str, str, Optional[bool], Optional[Dict[str, str]]) -> Certificate
         pass
 
-    def merge_certificate(self, name, x509_certificates, enabled=True, not_before=None, expires=None, tags=None):
-        # type: (str, bytes, Optional[bool], Optional[Dict[str, str]]) -> Certificate
+    def merge_certificate(
+        self, name, x509_certificates, enabled=True, not_before=None, expires=None, tags=None, **kwargs
+    ):
+        # type: (str, list[str], Optional[bool], Optional[Dict[str, str]]) -> Certificate
         pass
 
-    def backup_certificate(self, name):
+    def backup_certificate(self, name, **kwargs):
         # type: (str) -> bytes
         pass
 
-    def restore_certificate(self, certificate_backup):
+    def restore_certificate(self, backup, **kwargs):
         # type: (bytes) -> Certificate
         pass
-    
-    # What is this include_pending?
-    def list_deleted_certificates(self, include_pending=None):
+
+    def list_deleted_certificates(self, include_pending=None, **kwargs):
+        # type: (Optional[bool]) -> Iterable[DeletedCertificate]
+        pass
+
+    def list_certificates(self, include_pending=None, **kwargs):
         # type: (Optional[bool]) -> Iterable[CertificateBase]
         pass
 
-    def list_certificates(self, include_pending=None):
-        # type: (Optional[bool]) -> Iterable[CertificateBase]
-        pass
-
-    def list_certificate_versions(self, name):
+    def list_certificate_versions(self, name, **kwargs):
         # type: (str) -> Iterable[CertificateBase]
         pass
-    
-    def get_issuer(self, name):
-        # type: (str) -> Issuer
-        pass
 
-    def create_issuer(self, name, provider, account_id=None, password=None, organization_id=None, admin_details=None, enabled=None):
-        # type: (str, str, Optional[str], Optional[str], Optional[organization_id], , Optional[admin_details], Optional[bool]) -> Issuer
-        pass
-
-    def update_issuer(self, name, provider=None, account_id=None, password=None, organization_id=None, admin_details=None, enabled=True):
-        # type: (str, Optional[str], Optional[str], Optional[str], Optional[organization_id], , Optional[admin_details], Optional[bool]) -> Issuer
-        pass
-
-    def delete_issuer(self, name):
-        # type: (str) -> Issuer
-        pass
-
-    def list_issuers(self):
-        # type: () -> Iterable[IssuerBase]
-        pass
-
-    # contacts are vault-wide
-    def set_contacts(self, contacts):
+    def create_contacts(self, contacts, **kwargs):
         # type: (Iterable[Contact]) -> Iterable[Contact]
-        # TODO: rest api includes an id which doesn't look useful for anything; should it be returned anyway?
+        # TODO: rest api includes an id should it be returned?
         pass
-    
-    def list_contacts(self):
+
+    def list_contacts(self, **kwargs):
         # type: () -> Iterable[Contact]
         pass
 
-    def delete_contacts(self):
+    def delete_contacts(self, **kwargs):
         # type: () -> Iterable[Contact]
         pass
-    
-    def get_certificate_operation(self, name):
+
+    def get_certificate_operation(self, name, **kwargs):
         # type: (str) -> CertificateOperation
         pass
 
-    def delete_certificate_operation(self, name):
-        # type: (str) -> Operation
-        # TODO: what distinguishes this from canceling an operation?
+    def delete_certificate_operation(self, name, **kwargs):
+        # type: (str) -> CertificateOperation
         pass
 
-    def cancel_certificate_operation(self, name):
-        # type: (str) -> Operation
+    def cancel_certificate_operation(self, name, **kwargs):
+        # type: (str) -> CertificateOperation
         pass
 
-    # TODO:
-
-    def disable_certificate(self, name):
-        # type: (str) -> Certificate
-        # wraps update cert
+    def get_pending_certificate_signing_request(self, name, **kwargs):
+        # type: (str) -> str
         pass
 
-    def enable_certificate(self, name):
-        # type: (str) -> Certificate
-        # wraps update cert
+    def get_issuer(self, name, **kwargs):
+        # type: (str) -> Issuer
         pass
 
+    #   TODO: params first_name, last_name, email, phone may change on how we want to handle admin_details
+    def create_issuer(
+        self,
+        name,
+        provider,
+        account_id=None,
+        password=None,
+        organization_id=None,
+        first_name=None,
+        last_name=None,
+        email=None,
+        phone=None,
+        enabled=None,
+        not_before=None,
+        expires=None,
+        tags=None,
+        **kwargs
+    ):
+        # type: (str, str, Optional[str], Optional[str], Optional[organization_id], Optional[str], Optional[str], Optional[str], Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Issuer
+        pass
 
+    def update_issuer(
+        self,
+        name,
+        provider=None,
+        account_id=None,
+        password=None,
+        organization_id=None,
+        first_name=None,
+        last_name=None,
+        email=None,
+        phone=None,
+        enabled=True,
+        not_before=None,
+        expires=None,
+        tags=None,
+        **kwargs
+    ):
+        # type: (str, Optional[str], Optional[str], Optional[str], Optional[organization_id], Optional[str], Optional[str], Optional[str], Optional[str], Optional[bool], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Issuer
+        pass
+
+    def delete_issuer(self, name, **kwargs):
+        # type: (str) -> Issuer
+        pass
+
+    def list_issuers(self, **kwargs):
+        # type: () -> Iterable[IssuerBase]
+        pass
