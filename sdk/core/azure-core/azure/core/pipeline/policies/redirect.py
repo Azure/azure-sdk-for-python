@@ -47,25 +47,17 @@ class RedirectPolicy(HTTPPolicy):
 
     A redirect policy in the pipeline can be configured directly or per operation.
 
-    .. code-block:: python
-        config = FooService.create_config()
-
-        # Client allows redirects. Defaults to True.
-        config.redirect_policy.allow = True
-
-        # The maximum allowed redirects. The default value is 30
-        config.redirect_policy.max_redirects = 10
-
-        # It can also be overridden per operation.
-        result = client.get_operation(redirects_allow=True, redirect_max=5)
-
-        # Alternatively you can disable redirects entirely
-        from azure.core.pipeline.policies import RedirectPolicy
-        config.redirect_policy = RedirectPolicy.no_redirects()
-
     Keyword arguments:
     :param redirects_allow: Whether the client allows redirects. Defaults to True.
     :param redirect_max: The maximum allowed redirects. Defaults to 30.
+
+    Example:
+        .. literalinclude:: ../../examples/examples_sync.py
+            :start-after: [START redirect_policy]
+            :end-before: [END redirect_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring a redirect policy.
     """
 
     REDIRECT_STATUSES = frozenset([300, 301, 302, 303, 307, 308])

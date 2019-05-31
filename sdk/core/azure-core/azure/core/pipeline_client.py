@@ -44,15 +44,6 @@ class PipelineClient(object):
 
     Builds a Pipeline client.
 
-    .. code-block:: python
-
-        pipeline_client = PipelineClient(
-            base_url="http://service.azure.net",
-            config=configuration,
-            pipeline=None,
-            transport=None
-        )
-
     :param str base_url: URL for the request.
     :param config: Service configuration. This is a required parameter.
     :type config: ~azure.core.Configuration
@@ -65,6 +56,14 @@ class PipelineClient(object):
      and returned.
     transport - The HTTP Transport type. If omitted, RequestsTransport is used
      for synchronous transport.
+
+    Example:
+        .. literalinclude:: ../../examples/examples_sync.py
+            :start-after: [START build_pipeline_client]
+            :end-before: [END build_pipeline_client]
+            :language: python
+            :dedent: 4
+            :caption: Builds the pipeline client.
     """
     def __init__(self, base_url, config, **kwargs):
         if config is None:

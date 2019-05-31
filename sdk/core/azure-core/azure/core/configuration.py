@@ -34,38 +34,6 @@ class Configuration(object):
     Configuration to construct the pipeline correctly, as well as inserting any
     unexposed/non-configurable policies.
 
-    .. code-block:: python
-
-        class FooServiceClient():
-
-            @staticmethod
-            def create_config(**kwargs):
-                # Here the SDK developer would define the default
-                # config to interact with the service
-                config = Configuration(**kwargs)
-                config.headers_policy = HeadersPolicy({"CustomHeader": "Value"}, **kwargs)
-                config.authentication_policy = BearerTokenCredentialPolicy(credential, **kwargs)
-                config.user_agent_policy = UserAgentPolicy("ServiceUserAgentValue", **kwargs)
-                config.retry_policy = RetryPolicy(**kwargs)
-                config.redirect_policy = RedirectPolicy(**kwargs)
-                config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
-                config.proxy_policy = ProxyPolicy(**kwargs)
-                config.transport = kwargs.get('transport', RequestsTransport)
-
-            def __init__(self, endpoint=None, credentials=None, configuration=None, **kwargs):
-                config = configuration or FooServiceClient.create_config(**kwargs)
-                transport = config.get_transport(**kwargs)
-                policies = [
-                    config.user_agent_policy,
-                    config.headers_policy,
-                    config.authentication_policy,
-                    ContentDecodePolicy(),
-                    config.redirect_policy,
-                    config.retry_policy,
-                    config.logging_policy,
-                ]
-                self._pipeline = Pipeline(transport, policies=policies)
-
     :param connection: Provides the configuration parameters for the transport.
     :type connection: ~azure.core.ConnectionConfiguration
     :param headers_policy: Provides parameters for custom or additional headers to be sent with the request.
@@ -80,6 +48,13 @@ class Configuration(object):
      header to requests.
     :param transport: The Http Transport type. E.g. RequestsTransport, AsyncioRequestsTransport,
      TrioRequestsTransport, AioHttpTransport.
+
+    Example:
+        .. literalinclude:: ../../examples/examples_config.py
+            :start-after: [START configuration]
+            :end-before: [END configuration]
+            :language: python
+            :caption: Creates the service configuration and adds policies.
     """
 
     def __init__(self, transport=None, **kwargs):
@@ -120,31 +95,20 @@ class ConnectionConfiguration(object):
     Common properies that can be configured on all transports. Found in the
     Configuration object.
 
-    .. code-block:: python
-
-        foo_config = FooServiceClient.create_config(
-            connection_timeout=100,
-            connection_verify=True,
-            connection_cert=None,
-            connection_data_block_size=4096
-            )
-
-    Or parameters can be tweaked later:
-
-    .. code-block:: python
-
-        foo_config = FooServiceClient.create_config()
-        foo_config.connection.timeout = 100
-        foo_config.connection.verify = True
-        foo_config.connection.cert = None
-        foo_config.connection.data_block_size = 4096
-
     :param int connection_timeout: The connect and read timeout value. Defaults to 100 seconds.
     :param bool connection_verify: SSL certificate verification. Enabled by default. Set to False to disable,
      alternatively can be set to the path to a CA_BUNDLE file or directory with certificates of trusted CAs.
     :param str connection_cert: Client-side certificates. You can specify a local cert to use as client side
      certificate, as a single file (containing the private key and the certificate) or as a tuple of both files' paths.
     :param int connection_data_block_size: The block size of data sent over the connection. Defaults to 4096 bytes.
+
+    Example:
+        .. literalinclude:: ../../examples/examples_config.py
+            :start-after: [START connection_configuration]
+            :end-before: [END connection_configuration]
+            :language: python
+            :dedent: 4
+            :caption: Configuring transport connection settings.
     """
 
     def __init__(self, **kwargs):

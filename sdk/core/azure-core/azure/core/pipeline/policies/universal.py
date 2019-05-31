@@ -58,16 +58,15 @@ class HeadersPolicy(SansIOHTTPPolicy):
     configured up front, where any custom headers will be applied to all outgoing
     operations, and additional headers can also be added dynamically per operation.
 
-    .. code-block:: python
-        config = FooService.create_config()
-        config.headers_policy.headers = {'CustomValue': 'Foo'}
-
-        # Or headers can be added per operation. These headers will supplement existing headers
-        # or those defined in the config headers policy. They will also overwrite existing
-        # identical headers.
-        result = client.get_operation(headers={'CustomValue': 'Bar'})
-
     :param dict base_headers: Headers to send with the request.
+
+    Example:
+        .. literalinclude:: ../../examples/examples_sansio.py
+            :start-after: [START headers_policy]
+            :end-before: [END headers_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring a headers policy.
     """
     def __init__(self, base_headers=None, **kwargs):
         # type: (Mapping[str, str], Any) -> None
@@ -103,19 +102,17 @@ class HeadersPolicy(SansIOHTTPPolicy):
 class UserAgentPolicy(SansIOHTTPPolicy):
     """User-Agent Policy. Allows custom values to be added to the User-Agent header.
 
-    .. code-block:: python
-        config = FooService.create_config()
-
-        # The user-agent policy allows you to append a custom value to the header.
-        config.user_agent_policy.add_user_agent("CustomValue")
-
-        # You can also pass in a custom value per operation to append to the end of the user-agent.
-        # This can be used together with the policy configuration to append multiple values.
-        result = client.get_operation(user_agent="AnotherValue")
-
     :param str base_user_agent: Sets the base user agent value.
     :param bool user_agent_overwrite: Keyword argument that overwrites User-Agent when True. Defaults to False.
     :param bool user_agent_use_env: Keyword argument that gets user-agent from environment. Defaults to True.
+
+    Example:
+        .. literalinclude:: ../../examples/examples_sansio.py
+            :start-after: [START user_agent_policy]
+            :end-before: [END user_agent_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring a user agent policy.
     """
     _USERAGENT = "User-Agent"
     _ENV_ADDITIONAL_USER_AGENT = 'AZURE_HTTP_USER_AGENT'
@@ -177,38 +174,18 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
 
     This accepts both global configuration, and per-request level with "enable_http_logger"
 
-    .. code-block:: python
-
-        import sys
-        import logging
-
-        # Create a logger for the 'azure' SDK
-        logger = logging.getLogger("azure")
-        logger.set_level(logging.DEBUG)
-
-        # Configure a console output
-        handler = logging.StreamHandler(stream=sys.stdout)
-        logger.addHandler(handler)
-
-        # Configure a file output
-        file_handler = logging.FileHandler(filename)
-        logger.addHandler(file_handler)
-
-        # Enable network trace logging. This will be logged at DEBUG level.
-        # By default, logging is disabled.
-        config = FooService.create_config()
-        config.logging_policy.enable_http_logger = True
-
-    The logger can also be enabled per operation.
-
-    .. code-block:: python
-
-        result = client.get_operation(logging_enable=True)
-
     :param bool logging_enable: Use to enable per operation. Defaults to False.
      Keyword argument.
     :param bool enable_http_logger: Enables network trace logging at DEBUG level.
      Defaults to False.
+
+    Example:
+        .. literalinclude:: ../../examples/examples_sansio.py
+            :start-after: [START network_trace_logging_policy]
+            :end-before: [END network_trace_logging_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring a network trace logging policy.
     """
     def __init__(self, logging_enable=False, **kwargs): # pylint: disable=unused-argument
         self.enable_http_logger = logging_enable
@@ -406,18 +383,18 @@ class ProxyPolicy(SansIOHTTPPolicy):
     Dictionary mapping protocol or protocol and host to the URL of the proxy
     to be used on each Request.
 
-    .. code-block:: python
-
-        config = FooService.create_config()
-
-        # Examples
-        config.proxy_policy.proxies = {'http': 'foo.bar:3128'}
-        config.proxy_policy.proxies = {'http://host.name': 'foo.bar:4012'}
-
     :param dict proxies: Maps protocol or protocol and hostname to the URL
      of the proxy.
     :param bool proxies_use_env_settings: Keyword argument that uses proxy settings
      from environment. Defaults to True.
+
+    Example:
+        .. literalinclude:: ../../examples/examples_sansio.py
+            :start-after: [START proxy_policy]
+            :end-before: [END proxy_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring a proxy policy.
     """
     def __init__(self, proxies=None, **kwargs):
         self.proxies = proxies

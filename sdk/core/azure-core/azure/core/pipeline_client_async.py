@@ -44,15 +44,6 @@ class AsyncPipelineClient(object):
 
     Builds an AsyncPipeline client.
 
-    .. code-block:: python
-
-        async_pipeline_client = AsyncPipelineClient(
-            base_url="http://service.azure.net",
-            config=configuration,
-            pipeline=None,
-            transport=None
-        )
-
     :param str base_url: URL for the request.
     :param config: Service configuration. This is a required parameter.
     :type config: ~azure.core.Configuration
@@ -65,6 +56,14 @@ class AsyncPipelineClient(object):
      and returned.
     transport - The HTTP Transport type. If omitted, AioHttpTransport is used
      for asynchronous transport.
+
+    Example:
+        .. literalinclude:: ../../examples/examples_async.py
+            :start-after: [START build_async_pipeline_client]
+            :end-before: [END build_async_pipeline_client]
+            :language: python
+            :dedent: 4
+            :caption: Builds the async pipeline client.
     """
     def __init__(self, base_url, config, **kwargs):
         if config is None:

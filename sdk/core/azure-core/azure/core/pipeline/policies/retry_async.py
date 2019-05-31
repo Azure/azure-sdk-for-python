@@ -44,57 +44,6 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
 
     The async retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
 
-    .. code-block:: python
-
-        config = FooService.create_config()
-
-        # Total number of retries to allow. Takes precedence over other counts.
-        # Default value is 10.
-        config.retry_policy.total_retries = 5
-
-        # How many connection-related errors to retry on.
-        # These are errors raised before the request is sent to the remote server,
-        # which we assume has not triggered the server to process the request. Default value is 3
-        config.retry_policy.connect_retries = 2
-
-        # How many times to retry on read errors.
-        # These errors are raised after the request was sent to the server, so the
-        # request may have side-effects. Default value is 3.
-        config.retry_policy.read_retries = 4
-
-        # How many times to retry on bad status codes. Default value is 3.
-        config.retry_policy.status_retries = 3
-
-        # A backoff factor to apply between attempts after the second try
-        # (most errors are resolved immediately by a second try without a delay).
-        # Retry policy will sleep for:
-        #    {backoff factor} * (2 ** ({number of total retries} - 1))
-        # seconds. If the backoff_factor is 0.1, then the retry will sleep
-        # for [0.0s, 0.2s, 0.4s, ...] between retries.
-        # The default value is 0.8.
-        config.retry_policy.backoff_factor = 0.5
-
-        # The maximum back off time. Default value is 120 seconds (2 minutes).
-        config.retry_policy.backoff_max
-
-        # Alternatively you can disable redirects entirely
-        from azure.core.pipeline.policies import AsyncRetryPolicy
-        config.retry_policy = AsyncRetryPolicy.no_retries()
-
-    All of these settings can also be configured per operation.
-
-    .. code-block:: python
-
-        result = client.get_operation(
-            retry_total=10,
-            retry_connect=1,
-            retry_read=1,
-            retry_status=5,
-            retry_backoff_factory=0.5,
-            retry_backoff_max=60,
-            retry_on_methods=['GET']
-        )
-
     Keyword arguments:
     :param int retry_total: Total number of retries to allow. Takes precedence over other counts.
      Default value is 10.
@@ -111,6 +60,14 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
      seconds. If the backoff_factor is 0.1, then the retry will sleep
      for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
     :param int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+
+    Example:
+        .. literalinclude:: ../../examples/examples_async.py
+            :start-after: [START async_retry_policy]
+            :end-before: [END async_retry_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring an async retry policy.
     """
 
     async def _sleep_for_retry(self, response, transport):
