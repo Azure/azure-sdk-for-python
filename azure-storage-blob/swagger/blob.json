@@ -2,10 +2,15 @@
   "swagger": "2.0",
   "info": {
     "title": "Azure Blob Storage",
-    "version": "2018-03-28",
+    "version": "2018-11-09",
     "x-ms-code-generation-settings": {
       "header": "MIT",
-      "strictSpecAdherence": false
+      "strictSpecAdherence": false,
+      "namespace": "Azure.Storage.Blobs",
+      "client-name": "BlobRestClient",
+      "client-extensions-name": "BlobExtensions",
+      "x-ms-skip-path-components": true,
+      "x-ms-public": false
     }
   },
   "x-ms-parameterized-host": {
@@ -45,7 +50,7 @@
         "description": "Sets properties for a storage account's Blob service endpoint, including properties for Storage Analytics and CORS (Cross-Origin Resource Sharing) rules",
         "parameters": [
           {
-            "$ref": "#/parameters/StorageServiceProperties"
+            "$ref": "#/parameters/BlobServiceProperties"
           },
           {
             "$ref": "#/parameters/Timeout"
@@ -64,26 +69,19 @@
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
+                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request.",
+                "x-ms-ignore": true
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
+                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above.",
+                "x-ms-ignore": true
               }
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -111,29 +109,23 @@
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
+                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request.",
+                "x-ms-ignore": true
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
+                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above.",
+                "x-ms-ignore": true
               }
             },
+            "x-ms-schema-client-name": "Properties",
             "schema": {
-              "$ref": "#/definitions/StorageServiceProperties"
+              "$ref": "#/definitions/BlobServiceProperties"
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -183,34 +175,28 @@
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
+                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request.",
+                "x-ms-ignore": true
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
+                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above.",
+                "x-ms-ignore": true
               },
               "Date": {
                 "type": "string",
                 "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
+                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated",
+                "x-ms-ignore": true
               }
             },
             "schema": {
-              "$ref": "#/definitions/StorageServiceStats"
+              "$ref": "#/definitions/BlobServiceStatistics"
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -272,29 +258,22 @@
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
+                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request.",
+                "x-ms-ignore": true
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
+                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above.",
+                "x-ms-ignore": true
               }
             },
             "schema": {
-              "$ref": "#/definitions/ListContainersSegmentResponse"
+              "$ref": "#/definitions/ContainersSegment"
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         },
         "x-ms-pageable": {
@@ -313,6 +292,80 @@
         }
       ]
     },
+    "/?restype=service&comp=userdelegationkey": {
+      "post": {
+        "tags": [
+          "service"
+        ],
+        "operationId": "Service_GetUserDelegationKey",
+        "description": "Retrieves a user delgation key for the Blob service. This is only a valid operation when using bearer token authentication.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/KeyInfo"
+          },
+          {
+            "$ref": "#/parameters/Timeout"
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/parameters/ClientRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success.",
+            "headers": {
+              "x-ms-request-id": {
+                "x-ms-client-name": "RequestId",
+                "type": "string",
+                "x-ms-ignore": true,
+                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
+              },
+              "x-ms-version": {
+                "x-ms-client-name": "Version",
+                "type": "string",
+                "x-ms-ignore": true,
+                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
+              },
+              "Date": {
+                "type": "string",
+                "format": "date-time-rfc1123",
+                "x-ms-ignore": true,
+                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/UserDelegationKey"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/Failure"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "restype",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "enum": [
+            "service"
+          ]
+        },
+        {
+          "name": "comp",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "enum": [
+            "userdelegationkey"
+          ]
+        }
+      ]
+    },
     "/?restype=account&comp=properties": {
       "get": {
         "tags": [
@@ -327,66 +380,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Success (OK)",
-            "headers": {
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              },
-              "x-ms-sku-name": {
-                "x-ms-client-name": "SkuName",
-                "type": "string",
-                "enum": [
-                  "Standard_LRS",
-                  "Standard_GRS",
-                  "Standard_RAGRS",
-                  "Standard_ZRS",
-                  "Premium_LRS"
-                ],
-                "x-ms-enum": {
-                  "name": "SkuName",
-                  "modelAsString": false
-                },
-                "description": "Identifies the sku name of the account"
-              },
-              "x-ms-account-kind": {
-                "x-ms-client-name": "AccountKind",
-                "type": "string",
-                "enum": [
-                  "Storage",
-                  "BlobStorage",
-                  "StorageV2"
-                ],
-                "x-ms-enum": {
-                  "name": "AccountKind",
-                  "modelAsString": false
-                },
-                "description": "Identifies the account kind"
-              }
-            }
+            "$ref": "#/responses/AccountInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -437,46 +434,10 @@
         ],
         "responses": {
           "201": {
-            "description": "Success, Container created.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/ContainerInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -503,6 +464,8 @@
         "responses": {
           "200": {
             "description": "Success",
+            "x-ms-client-name": "FlattenedContainerItem",
+            "x-ms-public":  false,
             "headers": {
               "x-ms-meta": {
                 "type": "string",
@@ -544,7 +507,7 @@
                   "broken"
                 ],
                 "x-ms-enum": {
-                  "name": "LeaseStateType",
+                  "name": "LeaseState",
                   "modelAsString": false
                 }
               },
@@ -557,7 +520,7 @@
                   "unlocked"
                 ],
                 "x-ms-enum": {
-                  "name": "LeaseStatusType",
+                  "name": "LeaseStatus",
                   "modelAsString": false
                 }
               },
@@ -586,7 +549,7 @@
                 ],
                 "x-ms-enum": {
                   "name": "PublicAccessType",
-                  "modelAsString": true
+                  "modelAsString": false
                 }
               },
               "x-ms-has-immutability-policy": {
@@ -602,16 +565,7 @@
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -648,31 +602,25 @@
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
               },
               "Date": {
                 "type": "string",
                 "format": "date-time-rfc1123",
+                "x-ms-ignore": true,
                 "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
               }
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -717,46 +665,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/ContainerInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -805,6 +717,7 @@
         "responses": {
           "200": {
             "description": "Success",
+            "x-ms-client-name": "ContainerAccessPolicy",
             "headers": {
               "x-ms-blob-public-access": {
                 "x-ms-client-name": "BlobPublicAccess",
@@ -816,7 +729,7 @@
                 ],
                 "x-ms-enum": {
                   "name": "PublicAccessType",
-                  "modelAsString": true
+                  "modelAsString": false
                 }
               },
               "ETag": {
@@ -832,34 +745,29 @@
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
+                "x-ms-ignore":  true,
                 "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
               },
               "Date": {
                 "type": "string",
                 "format": "date-time-rfc1123",
+                "x-ms-ignore": true,
                 "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
               }
             },
+            "x-ms-schema-client-name": "SignedIdentifiers",
             "schema": {
               "$ref": "#/definitions/SignedIdentifiers"
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -897,46 +805,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Success.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/ContainerInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -993,51 +865,10 @@
         ],
         "responses": {
           "201": {
-            "description": "The Acquire operation completed successfully.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-lease-id": {
-                "x-ms-client-name": "LeaseId",
-                "type": "string",
-                "description": "Uniquely identifies a container's lease"
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/Lease"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -1107,46 +938,10 @@
         ],
         "responses": {
           "200": {
-            "description": "The Release operation completed successfully.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/ContainerInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -1216,51 +1011,10 @@
         ],
         "responses": {
           "200": {
-            "description": "The Renew operation completed successfully.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-lease-id": {
-                "x-ms-client-name": "LeaseId",
-                "type": "string",
-                "description": "Uniquely identifies a container's lease"
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/Lease"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -1330,51 +1084,10 @@
         ],
         "responses": {
           "202": {
-            "description": "The Break operation completed successfully.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-lease-time": {
-                "x-ms-client-name": "LeaseTime",
-                "type": "integer",
-                "description": "Approximate time remaining in the lease period, in seconds."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/BrokenLease"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -1447,51 +1160,10 @@
         ],
         "responses": {
           "200": {
-            "description": "The Change operation completed successfully.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-lease-id": {
-                "x-ms-client-name": "LeaseId",
-                "type": "string",
-                "description": "Uniquely identifies a container's lease"
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/Lease"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -1537,7 +1209,7 @@
         "tags": [
           "containers"
         ],
-        "operationId": "Container_ListBlobFlatSegment",
+        "operationId": "Container_ListBlobsFlatSegment",
         "description": "[Update] The List Blobs operation returns a list of the blobs under the specified container",
         "parameters": [
           {
@@ -1568,39 +1240,34 @@
             "headers": {
               "Content-Type": {
                 "type": "string",
-                "description": "The media type of the body of the response. For List Blobs this is 'application/xml'"
+                "description": "The media type of the body of the response. For List Blobs this is 'application/xml'",
+                "x-ms-ignore": true
               },
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
+                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request.",
+                "x-ms-ignore": true
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
+                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above.",
+                "x-ms-ignore": true
               },
               "Date": {
                 "type": "string",
                 "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
+                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated",
+                "x-ms-ignore": true
               }
             },
             "schema": {
-              "$ref": "#/definitions/ListBlobsFlatSegmentResponse"
+              "$ref": "#/definitions/BlobsFlatSegment"
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         },
         "x-ms-pageable": {
@@ -1633,7 +1300,7 @@
         "tags": [
           "containers"
         ],
-        "operationId": "Container_ListBlobHierarchySegment",
+        "operationId": "Container_ListBlobsHierarchySegment",
         "description": "[Update] The List Blobs operation returns a list of the blobs under the specified container",
         "parameters": [
           {
@@ -1667,39 +1334,34 @@
             "headers": {
               "Content-Type": {
                 "type": "string",
-                "description": "The media type of the body of the response. For List Blobs this is 'application/xml'"
+                "description": "The media type of the body of the response. For List Blobs this is 'application/xml'",
+                "x-ms-ignore": true
               },
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
+                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request.",
+                "x-ms-ignore": true
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
+                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above.",
+                "x-ms-ignore": true
               },
               "Date": {
                 "type": "string",
                 "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
+                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated",
+                "x-ms-ignore": true
               }
             },
             "schema": {
-              "$ref": "#/definitions/ListBlobsHierarchySegmentResponse"
+              "$ref": "#/definitions/BlobsHierarchySegment"
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         },
         "x-ms-pageable": {
@@ -1733,7 +1395,7 @@
           "container"
         ],
         "operationId": "Container_GetAccountInfo",
-        "description": "Returns the sku name and account kind ",
+        "description": "Returns the sku name and account kind",
         "parameters": [
           {
             "$ref": "#/parameters/ApiVersionParameter"
@@ -1741,66 +1403,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Success (OK)",
-            "headers": {
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              },
-              "x-ms-sku-name": {
-                "x-ms-client-name": "SkuName",
-                "type": "string",
-                "enum": [
-                  "Standard_LRS",
-                  "Standard_GRS",
-                  "Standard_RAGRS",
-                  "Standard_ZRS",
-                  "Premium_LRS"
-                ],
-                "x-ms-enum": {
-                  "name": "SkuName",
-                  "modelAsString": false
-                },
-                "description": "Identifies the sku name of the account"
-              },
-              "x-ms-account-kind": {
-                "x-ms-client-name": "AccountKind",
-                "type": "string",
-                "enum": [
-                  "Storage",
-                  "BlobStorage",
-                  "StorageV2"
-                ],
-                "x-ms-enum": {
-                  "name": "AccountKind",
-                  "modelAsString": false
-                },
-                "description": "Identifies the account kind"
-              }
-            }
+            "$ref": "#/responses/AccountInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -1870,6 +1476,8 @@
         "responses": {
           "200": {
             "description": "Returns the content of the entire blob.",
+            "x-ms-client-name": "FlattenedDownloadProperties",
+            "x-ms-public": false,
             "headers": {
               "Last-Modified": {
                 "type": "string",
@@ -1902,6 +1510,7 @@
               "Content-MD5": {
                 "type": "string",
                 "format": "byte",
+                "x-ms-client-name": "ContentHash",
                 "description": "If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity."
               },
               "Content-Encoding": {
@@ -1964,6 +1573,7 @@
               "x-ms-copy-source": {
                 "x-ms-client-name": "CopySource",
                 "type": "string",
+                "format": "url",
                 "description": "URL up to 2 KB in length that specifies the source blob or file used in the last attempted Copy Blob operation where this blob was the destination blob. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List."
               },
               "x-ms-copy-status": {
@@ -1977,7 +1587,7 @@
                   "failed"
                 ],
                 "x-ms-enum": {
-                  "name": "CopyStatusType",
+                  "name": "CopyStatus",
                   "modelAsString": false
                 }
               },
@@ -2006,7 +1616,7 @@
                   "broken"
                 ],
                 "x-ms-enum": {
-                  "name": "LeaseStateType",
+                  "name": "LeaseState",
                   "modelAsString": false
                 }
               },
@@ -2019,7 +1629,7 @@
                   "unlocked"
                 ],
                 "x-ms-enum": {
-                  "name": "LeaseStatusType",
+                  "name": "LeaseStatus",
                   "modelAsString": false
                 }
               },
@@ -2053,12 +1663,13 @@
                 "description": "The value of this header is set to true if the blob data and application metadata are completely encrypted using the specified algorithm. Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the blob/application metadata are encrypted)."
               },
               "x-ms-blob-content-md5": {
-                "x-ms-client-name": "BlobContentMD5",
+                "x-ms-client-name": "BlobContentHash",
                 "type": "string",
                 "format": "byte",
                 "description": "If the blob has a MD5 hash, and if request contains range header (Range or x-ms-range), this response header is returned with the value of the whole blob's MD5 value. This value may or may not be equal to the value returned in Content-MD5 header, with the latter calculated from the requested range"
               }
             },
+            "x-ms-schema-client-name": "Content",
             "schema": {
               "type": "object",
               "format": "file"
@@ -2066,6 +1677,8 @@
           },
           "206": {
             "description": "Returns the content of a specified range of the blob.",
+            "x-ms-client-name": "FlattenedDownloadProperties",
+            "x-ms-public": false,
             "headers": {
               "Last-Modified": {
                 "type": "string",
@@ -2098,6 +1711,7 @@
               "Content-MD5": {
                 "type": "string",
                 "format": "byte",
+                "x-ms-client-name": "ContentHash",
                 "description": "If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity."
               },
               "Content-Encoding": {
@@ -2160,6 +1774,7 @@
               "x-ms-copy-source": {
                 "x-ms-client-name": "CopySource",
                 "type": "string",
+                "format": "url",
                 "description": "URL up to 2 KB in length that specifies the source blob or file used in the last attempted Copy Blob operation where this blob was the destination blob. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List."
               },
               "x-ms-copy-status": {
@@ -2173,7 +1788,7 @@
                   "failed"
                 ],
                 "x-ms-enum": {
-                  "name": "CopyStatusType",
+                  "name": "CopyStatus",
                   "modelAsString": false
                 }
               },
@@ -2202,7 +1817,7 @@
                   "broken"
                 ],
                 "x-ms-enum": {
-                  "name": "LeaseStateType",
+                  "name": "LeaseState",
                   "modelAsString": false
                 }
               },
@@ -2215,7 +1830,7 @@
                   "unlocked"
                 ],
                 "x-ms-enum": {
-                  "name": "LeaseStatusType",
+                  "name": "LeaseStatus",
                   "modelAsString": false
                 }
               },
@@ -2249,28 +1864,23 @@
                 "description": "The value of this header is set to true if the blob data and application metadata are completely encrypted using the specified algorithm. Otherwise, the value is set to false (when the blob is unencrypted, or if only parts of the blob/application metadata are encrypted)."
               },
               "x-ms-blob-content-md5": {
-                "x-ms-client-name": "BlobContentMD5",
+                "x-ms-client-name": "BlobContentHash",
                 "type": "string",
                 "format": "byte",
                 "description": "If the blob has a MD5 hash, and if request contains range header (Range or x-ms-range), this response header is returned with the value of the whole blob's MD5 value. This value may or may not be equal to the value returned in Content-MD5 header, with the latter calculated from the requested range"
               }
             },
+            "x-ms-schema-client-name": "Content",
             "schema": {
               "type": "object",
               "format": "file"
             }
           },
+          "304": {
+            "$ref": "#/responses/ConditionNotMet"
+          },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -2281,15 +1891,6 @@
         "operationId": "Blob_GetProperties",
         "description": "The Get Properties operation returns all user-defined metadata, standard HTTP properties, and system properties for the blob. It does not return the content of the blob.",
         "parameters": [
-          {
-            "name": "comp",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "enum": [
-              "metadata"
-            ]
-          },
           {
             "$ref": "#/parameters/Snapshot"
           },
@@ -2321,11 +1922,12 @@
         "responses": {
           "200": {
             "description": "Returns the properties of the blob.",
+            "x-ms-client-name":  "BlobProperties",
             "headers": {
               "Last-Modified": {
                 "type": "string",
                 "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
+                "description": "Returns the date and time the blob was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
               },
               "x-ms-creation-time": {
                 "x-ms-client-name": "CreationTime",
@@ -2376,6 +1978,7 @@
               "x-ms-copy-source": {
                 "x-ms-client-name": "CopySource",
                 "type": "string",
+                "format": "url",
                 "description": "URL up to 2 KB in length that specifies the source blob or file used in the last attempted Copy Blob operation where this blob was the destination blob. This header does not appear if this blob has never been the destination in a Copy Blob operation, or if this blob has been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List."
               },
               "x-ms-copy-status": {
@@ -2389,7 +1992,7 @@
                   "failed"
                 ],
                 "x-ms-enum": {
-                  "name": "CopyStatusType",
+                  "name": "CopyStatus",
                   "modelAsString": false
                 }
               },
@@ -2428,7 +2031,7 @@
                   "broken"
                 ],
                 "x-ms-enum": {
-                  "name": "LeaseStateType",
+                  "name": "LeaseState",
                   "modelAsString": false
                 }
               },
@@ -2441,7 +2044,7 @@
                   "unlocked"
                 ],
                 "x-ms-enum": {
-                  "name": "LeaseStatusType",
+                  "name": "LeaseStatus",
                   "modelAsString": false
                 }
               },
@@ -2462,10 +2065,15 @@
               "Content-MD5": {
                 "type": "string",
                 "format": "byte",
-                "description": "If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity."
+                "x-ms-client-name":  "ContentHash",
+                "description": "If the blob has an Hash hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity."
               },
               "Content-Encoding": {
-                "type": "string",
+                "type": "array",
+                "collectionFormat": "multi",
+                "items": {
+                  "type": "string"
+                },
                 "description": "This header returns the value that was specified for the Content-Encoding request header"
               },
               "Content-Disposition": {
@@ -2473,7 +2081,11 @@
                 "description": "This header returns the value that was specified for the 'x-ms-blob-content-disposition' header. The Content-Disposition response header field conveys additional information about how to process the response payload, and also can be used to attach additional metadata. For example, if set to attachment, it indicates that the user-agent should not display the response, but instead show a Save As dialog with a filename other than the blob name specified."
               },
               "Content-Language": {
-                "type": "string",
+                "type": "array",
+                "collectionFormat": "multi",
+                "items": {
+                  "type": "string"
+                },
                 "description": "This header returns the value that was specified for the Content-Language request header."
               },
               "Cache-Control": {
@@ -2489,16 +2101,19 @@
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
               },
               "Date": {
                 "type": "string",
                 "format": "date-time-rfc1123",
+                "x-ms-ignore": true,
                 "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
               },
               "Accept-Ranges": {
@@ -2538,17 +2153,11 @@
               }
             }
           },
+          "304": {
+            "$ref": "#/responses/ConditionNotMet"
+          },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/ConditionNotMet"
           }
         }
       },
@@ -2597,31 +2206,25 @@
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
               },
               "Date": {
                 "type": "string",
                 "format": "date-time-rfc1123",
+                "x-ms-ignore": true,
                 "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
               }
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       }
@@ -2694,56 +2297,10 @@
         ],
         "responses": {
           "201": {
-            "description": "The blob was created.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "Content-MD5": {
-                "type": "string",
-                "format": "byte",
-                "description": "If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              },
-              "x-ms-request-server-encrypted": {
-                "x-ms-client-name": "IsServerEncrypted",
-                "type": "boolean",
-                "description": "The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise."
-              }
-            }
+            "$ref": "#/responses/BlobContentInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -2828,56 +2385,10 @@
         ],
         "responses": {
           "201": {
-            "description": "The blob was created.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "Content-MD5": {
-                "type": "string",
-                "format": "byte",
-                "description": "If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              },
-              "x-ms-request-server-encrypted": {
-                "x-ms-client-name": "IsServerEncrypted",
-                "type": "boolean",
-                "description": "The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise."
-              }
-            }
+            "$ref": "#/responses/BlobContentInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -2965,56 +2476,10 @@
         ],
         "responses": {
           "201": {
-            "description": "The blob was updated.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "Content-MD5": {
-                "type": "string",
-                "format": "byte",
-                "description": "If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              },
-              "x-ms-request-server-encrypted": {
-                "x-ms-client-name": "IsServerEncrypted",
-                "type": "boolean",
-                "description": "The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise."
-              }
-            }
+            "$ref": "#/responses/BlobContentInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -3062,31 +2527,25 @@
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
+                "x-ms-ignore":  true,
                 "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
               },
               "Date": {
                 "type": "string",
                 "format": "date-time-rfc1123",
+                "x-ms-ignore": true,
                 "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated."
               }
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -3107,7 +2566,7 @@
         "tags": [
           "blob"
         ],
-        "operationId": "Blob_SetHTTPHeaders",
+        "operationId": "Blob_SetHttpHeaders",
         "description": "The Set HTTP Headers operation sets system properties on the blob",
         "parameters": [
           {
@@ -3156,6 +2615,8 @@
         "responses": {
           "200": {
             "description": "The properties were set successfully.",
+            "x-ms-client-name": "SetHttpHeadersOperation",
+            "x-ms-public":  false,
             "headers": {
               "ETag": {
                 "type": "string",
@@ -3191,16 +2652,7 @@
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -3255,6 +2707,8 @@
         "responses": {
           "200": {
             "description": "The metadata was set successfully.",
+            "x-ms-client-name": "SetMetadataOperation",
+            "x-ms-public": false,
             "headers": {
               "ETag": {
                 "type": "string",
@@ -3289,16 +2743,7 @@
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -3352,51 +2797,10 @@
         ],
         "responses": {
           "201": {
-            "description": "The Acquire operation completed successfully.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the blob was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-lease-id": {
-                "x-ms-client-name": "LeaseId",
-                "type": "string",
-                "description": "Uniquely identifies a blobs's lease"
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/Lease"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -3463,46 +2867,10 @@
         ],
         "responses": {
           "200": {
-            "description": "The Release operation completed successfully.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the blob was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/BlobInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -3569,51 +2937,10 @@
         ],
         "responses": {
           "200": {
-            "description": "The Renew operation completed successfully.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the blob was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-lease-id": {
-                "x-ms-client-name": "LeaseId",
-                "type": "string",
-                "description": "Uniquely identifies a blobs's lease"
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/Lease"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -3683,51 +3010,10 @@
         ],
         "responses": {
           "200": {
-            "description": "The Change operation completed successfully.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the blob was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-lease-id": {
-                "x-ms-client-name": "LeaseId",
-                "type": "string",
-                "description": "Uniquely identifies a blobs's lease"
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/Lease"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -3794,51 +3080,10 @@
         ],
         "responses": {
           "202": {
-            "description": "The Break operation completed successfully.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the blob was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-lease-time": {
-                "x-ms-client-name": "LeaseTime",
-                "type": "integer",
-                "description": "Approximate time remaining in the lease period, in seconds."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/BrokenLease"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -3909,6 +3154,7 @@
         "responses": {
           "201": {
             "description": "The snaptshot was taken successfully.",
+            "x-ms-client-name": "BlobSnapshotInfo",
             "headers": {
               "x-ms-snapshot": {
                 "x-ms-client-name": "Snapshot",
@@ -3928,31 +3174,25 @@
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
               },
               "Date": {
                 "type": "string",
                 "format": "date-time-rfc1123",
+                "x-ms-ignore": true,
                 "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
               }
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -3973,7 +3213,7 @@
         "tags": [
           "blob"
         ],
-        "operationId": "Blob_StartCopyFromURL",
+        "operationId": "Blob_StartCopyFromUri",
         "description": "The Start Copy From URL operation copies a blob or an internet resource to a new blob.",
         "parameters": [
           {
@@ -4021,77 +3261,93 @@
         ],
         "responses": {
           "202": {
-            "description": "The copy blob has been accepted with the specified copy status.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              },
-              "x-ms-copy-id": {
-                "x-ms-client-name": "CopyId",
-                "type": "string",
-                "description": "String identifier for this copy operation. Use with Get Blob Properties to check the status of this copy operation, or pass to Abort Copy Blob to abort a pending copy."
-              },
-              "x-ms-copy-status": {
-                "x-ms-client-name": "CopyStatus",
-                "description": "State of the copy operation identified by x-ms-copy-id.",
-                "type": "string",
-                "enum": [
-                  "pending",
-                  "success",
-                  "aborted",
-                  "failed"
-                ],
-                "x-ms-enum": {
-                  "name": "CopyStatusType",
-                  "modelAsString": false
-                }
-              }
-            }
+            "$ref": "#/responses/BlobCopyInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
       "parameters": []
+    },
+    "/{containerName}/{blob}?comp=copy&sync": {
+      "put": {
+        "tags": [
+          "blob"
+        ],
+        "operationId": "Blob_CopyFromUri",
+        "description": "The Copy From URL operation copies a blob or an internet resource to a new blob. It will not return a response until the copy is complete.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/Timeout"
+          },
+          {
+            "$ref": "#/parameters/Metadata"
+          },
+          {
+            "$ref": "#/parameters/SourceIfModifiedSince"
+          },
+          {
+            "$ref": "#/parameters/SourceIfUnmodifiedSince"
+          },
+          {
+            "$ref": "#/parameters/SourceIfMatch"
+          },
+          {
+            "$ref": "#/parameters/SourceIfNoneMatch"
+          },
+          {
+            "$ref": "#/parameters/IfModifiedSince"
+          },
+          {
+            "$ref": "#/parameters/IfUnmodifiedSince"
+          },
+          {
+            "$ref": "#/parameters/IfMatch"
+          },
+          {
+            "$ref": "#/parameters/IfNoneMatch"
+          },
+          {
+            "$ref": "#/parameters/CopySource"
+          },
+          {
+            "$ref": "#/parameters/LeaseIdOptional"
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/parameters/ClientRequestId"
+          }
+        ],
+        "responses": {
+          "202": {
+            "$ref": "#/responses/BlobCopyInfo"
+          },
+          "default": {
+            "$ref": "#/responses/Failure"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "x-ms-requires-sync",
+          "in": "header",
+          "required": true,
+          "type": "string",
+          "enum": [
+            "true"
+          ]
+        }
+      ]
     },
     "/{containerName}/{blob}?comp=copy&copyid={CopyId}": {
       "put": {
         "tags": [
           "blob"
         ],
-        "operationId": "Blob_AbortCopyFromURL",
+        "operationId": "Blob_AbortCopyFromUri",
         "description": "The Abort Copy From URL operation aborts a pending Copy From URL operation, and leaves a destination blob with zero length and full metadata.",
         "parameters": [
           {
@@ -4117,31 +3373,25 @@
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
+                "x-ms-ignore":  true,
                 "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
               },
               "Date": {
                 "type": "string",
                 "format": "date-time-rfc1123",
+                "x-ms-ignore": true,
                 "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
               }
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -4199,11 +3449,13 @@
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
+                "x-ms-ignore":  true,
                 "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and newer."
               }
             }
@@ -4214,26 +3466,19 @@
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and newer."
               }
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -4249,7 +3494,7 @@
         }
       ]
     },
-    "/{containerName}/{blobName}?restype=account&comp=properties": {
+    "/{containerName}/{blob}?restype=account&comp=properties": {
       "get": {
         "tags": [
           "blob"
@@ -4263,66 +3508,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Success (OK)",
-            "headers": {
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              },
-              "x-ms-sku-name": {
-                "x-ms-client-name": "SkuName",
-                "type": "string",
-                "enum": [
-                  "Standard_LRS",
-                  "Standard_GRS",
-                  "Standard_RAGRS",
-                  "Standard_ZRS",
-                  "Premium_LRS"
-                ],
-                "x-ms-enum": {
-                  "name": "SkuName",
-                  "modelAsString": false
-                },
-                "description": "Identifies the sku name of the account"
-              },
-              "x-ms-account-kind": {
-                "x-ms-client-name": "AccountKind",
-                "type": "string",
-                "enum": [
-                  "Storage",
-                  "BlobStorage",
-                  "StorageV2"
-                ],
-                "x-ms-enum": {
-                  "name": "AccountKind",
-                  "modelAsString": false
-                },
-                "description": "Identifies the account kind"
-              }
-            }
+            "$ref": "#/responses/AccountInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -4385,46 +3574,10 @@
         ],
         "responses": {
           "201": {
-            "description": "The block was created.",
-            "headers": {
-              "Content-MD5": {
-                "type": "string",
-                "format": "byte",
-                "description": "If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              },
-              "x-ms-request-server-encrypted": {
-                "x-ms-client-name": "IsServerEncrypted",
-                "type": "boolean",
-                "description": "The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise."
-              }
-            }
+            "$ref": "#/responses/BlobContentInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -4445,7 +3598,7 @@
         "tags": [
           "blockblob"
         ],
-        "operationId": "BlockBlob_StageBlockFromURL",
+        "operationId": "BlockBlob_StageBlockFromUri",
         "description": "The Stage Block operation creates a new block to be committed as part of a blob where the contents are read from a URL.",
         "parameters": [
           {
@@ -4469,55 +3622,34 @@
           {
             "$ref": "#/parameters/LeaseIdOptional"
           },
+           {
+            "$ref": "#/parameters/SourceIfModifiedSince"
+          },
+          {
+            "$ref": "#/parameters/SourceIfUnmodifiedSince"
+          },
+          {
+            "$ref": "#/parameters/SourceIfMatch"
+          },
+          {
+            "$ref": "#/parameters/SourceIfNoneMatch"
+          },
           {
             "$ref": "#/parameters/ApiVersionParameter"
           },
           {
             "$ref": "#/parameters/ClientRequestId"
-          }
+    	    }
         ],
         "responses": {
           "201": {
-            "description": "The block was created.",
-            "headers": {
-              "Content-MD5": {
-                "type": "string",
-                "format": "byte",
-                "description": "If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              },
-              "x-ms-request-server-encrypted": {
-                "x-ms-client-name": "IsServerEncrypted",
-                "type": "boolean",
-                "description": "The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise."
-              }
-            }
+            "$ref": "#/responses/BlobContentInfo"
+          },
+          "304": {
+            "$ref": "#/responses/ConditionNotMet"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -4597,56 +3729,10 @@
         ],
         "responses": {
           "201": {
-            "description": "The block list was recorded.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "Content-MD5": {
-                "type": "string",
-                "format": "byte",
-                "description": "If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              },
-              "x-ms-request-server-encrypted": {
-                "x-ms-client-name": "IsServerEncrypted",
-                "type": "boolean",
-                "description": "The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise."
-              }
-            }
+            "$ref": "#/responses/BlobContentInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -4679,6 +3765,8 @@
         "responses": {
           "200": {
             "description": "The page range was written.",
+            "x-ms-client-name": "GetBlockListOperation",
+            "x-ms-public": false, 
             "headers": {
               "Last-Modified": {
                 "type": "string",
@@ -4721,16 +3809,7 @@
             }
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -4805,62 +3884,10 @@
         ],
         "responses": {
           "201": {
-            "description": "The page range was written.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "Content-MD5": {
-                "type": "string",
-                "format": "byte",
-                "description": "If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity."
-              },
-              "x-ms-blob-sequence-number": {
-                "x-ms-client-name": "BlobSequenceNumber",
-                "type": "integer",
-                "format": "int64",
-                "description": "The current sequence number for the page blob."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              },
-              "x-ms-request-server-encrypted": {
-                "x-ms-client-name": "IsServerEncrypted",
-                "type": "boolean",
-                "description": "The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise."
-              }
-            }
+            "$ref": "#/responses/BlobContentInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -4945,57 +3972,10 @@
         ],
         "responses": {
           "201": {
-            "description": "The page range was cleared.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "Content-MD5": {
-                "type": "string",
-                "format": "byte",
-                "description": "If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity."
-              },
-              "x-ms-blob-sequence-number": {
-                "x-ms-client-name": "BlobSequenceNumber",
-                "type": "integer",
-                "format": "int64",
-                "description": "The current sequence number for the page blob."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/BlobContentInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -5019,6 +3999,118 @@
           "type": "string",
           "enum": [
             "clear"
+          ],
+          "x-ms-enum": {
+            "name": "PageWriteType",
+            "modelAsString": false
+          }
+        }
+      ]
+    },
+    "/{containerName}/{blob}?comp=page&update&fromUrl": {
+      "put": {
+        "tags": [
+          "pageblob"
+        ],
+        "operationId": "PageBlob_UploadPagesFromUri",
+        "description": "The Upload Pages operation writes a range of pages to a page blob where the contents are read from a URL",
+        "consumes": [
+          "application/octet-stream"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/SourceUrl"
+          },
+          {
+            "$ref": "#/parameters/SourceRangeRequiredPutPageFromUrl"
+          },
+          {
+            "$ref": "#/parameters/SourceContentMD5"
+          },
+          {
+            "$ref": "#/parameters/ContentLength"
+          },
+          {
+            "$ref": "#/parameters/Timeout"
+          },
+          {
+            "$ref": "#/parameters/RangeRequiredPutPageFromUrl"
+          },
+          {
+            "$ref": "#/parameters/LeaseIdOptional"
+          },
+          {
+            "$ref": "#/parameters/IfSequenceNumberLessThanOrEqualTo"
+          },
+          {
+            "$ref": "#/parameters/IfSequenceNumberLessThan"
+          },
+          {
+            "$ref": "#/parameters/IfSequenceNumberEqualTo"
+          },
+          {
+            "$ref": "#/parameters/IfModifiedSince"
+          },
+          {
+            "$ref": "#/parameters/IfUnmodifiedSince"
+          },
+          {
+            "$ref": "#/parameters/IfMatch"
+          },
+          {
+            "$ref": "#/parameters/IfNoneMatch"
+          },
+          {
+            "$ref": "#/parameters/SourceIfModifiedSince"
+          },
+          {
+            "$ref": "#/parameters/SourceIfUnmodifiedSince"
+          },
+          {
+            "$ref": "#/parameters/SourceIfMatch"
+          },
+          {
+            "$ref": "#/parameters/SourceIfNoneMatch"
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/parameters/ClientRequestId"
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/BlobContentInfo"
+          },
+          "304": {
+            "$ref": "#/responses/ConditionNotMet"
+          },
+          "default": {
+            "$ref": "#/responses/Failure"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "comp",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "enum": [
+            "page"
+          ]
+        },
+        {
+          "name": "x-ms-page-write",
+          "x-ms-client-name": "pageWrite",
+          "in": "header",
+          "required": true,
+          "x-ms-parameter-location": "method",
+          "description": "Required. You may specify one of the following options:\n  - Update: Writes the bytes specified by the request body into the specified range. The Range and Content-Length headers must match to perform the update.\n  - Clear: Clears the specified range and releases the space used in storage for that range. To clear a range, set the Content-Length header to zero, and the Range header to a value that indicates the range to clear, up to maximum blob size.",
+          "type": "string",
+          "enum": [
+            "update"
           ],
           "x-ms-enum": {
             "name": "PageWriteType",
@@ -5069,6 +4161,7 @@
         "responses": {
           "200": {
             "description": "Information on the page blob was found.",
+            "x-ms-client-name":  "PageRangesInfo",
             "headers": {
               "Last-Modified": {
                 "type": "string",
@@ -5089,16 +4182,19 @@
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
               },
               "Date": {
                 "type": "string",
                 "format": "date-time-rfc1123",
+                "x-ms-ignore": true,
                 "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
               }
             },
@@ -5106,17 +4202,11 @@
               "$ref": "#/definitions/PageList"
             }
           },
+          "304": {
+            "$ref": "#/responses/ConditionNotMet"
+          },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -5138,7 +4228,7 @@
           "pageblob"
         ],
         "operationId": "PageBlob_GetPageRangesDiff",
-        "description": "[Update] The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob that were changed between target blob and previous snapshot.",
+        "description": "The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob that were changed between target blob and previous snapshot.",
         "parameters": [
           {
             "$ref": "#/parameters/Snapshot"
@@ -5177,6 +4267,7 @@
         "responses": {
           "200": {
             "description": "Information on the page blob was found.",
+            "x-ms-client-name": "PageRangesInfo",
             "headers": {
               "Last-Modified": {
                 "type": "string",
@@ -5197,16 +4288,19 @@
               "x-ms-request-id": {
                 "x-ms-client-name": "RequestId",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
               },
               "x-ms-version": {
                 "x-ms-client-name": "Version",
                 "type": "string",
+                "x-ms-ignore": true,
                 "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
               },
               "Date": {
                 "type": "string",
                 "format": "date-time-rfc1123",
+                "x-ms-ignore": true,
                 "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
               }
             },
@@ -5214,17 +4308,11 @@
               "$ref": "#/definitions/PageList"
             }
           },
+          "304": {
+            "$ref": "#/responses/ConditionNotMet"
+          },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -5278,52 +4366,10 @@
         ],
         "responses": {
           "200": {
-            "description": "The Blob was resized successfully",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-blob-sequence-number": {
-                "x-ms-client-name": "BlobSequenceNumber",
-                "type": "integer",
-                "format": "int64",
-                "description": "The current sequence number for a page blob. This header is not returned for block blobs or append blobs"
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/BlobInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -5380,52 +4426,10 @@
         ],
         "responses": {
           "200": {
-            "description": "The sequence numbers were updated successfully.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-blob-sequence-number": {
-                "x-ms-client-name": "BlobSequenceNumber",
-                "type": "integer",
-                "format": "int64",
-                "description": "The current sequence number for a page blob. This header is not returned for block blobs or append blobs"
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              }
-            }
+            "$ref": "#/responses/BlobInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -5476,66 +4480,10 @@
         ],
         "responses": {
           "202": {
-            "description": "The blob was copied.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              },
-              "x-ms-copy-id": {
-                "x-ms-client-name": "CopyId",
-                "type": "string",
-                "description": "String identifier for this copy operation. Use with Get Blob Properties to check the status of this copy operation, or pass to Abort Copy Blob to abort a pending copy."
-              },
-              "x-ms-copy-status": {
-                "x-ms-client-name": "CopyStatus",
-                "description": "State of the copy operation identified by x-ms-copy-id.",
-                "type": "string",
-                "enum": [
-                  "pending",
-                  "success",
-                  "aborted",
-                  "failed"
-                ],
-                "x-ms-enum": {
-                  "name": "CopyStatusType",
-                  "modelAsString": false
-                }
-              }
-            }
+            "$ref": "#/responses/BlobCopyInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -5604,61 +4552,97 @@
         ],
         "responses": {
           "201": {
-            "description": "The block was created.",
-            "headers": {
-              "ETag": {
-                "type": "string",
-                "format": "etag",
-                "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
-              },
-              "Last-Modified": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
-              },
-              "Content-MD5": {
-                "type": "string",
-                "format": "byte",
-                "description": "If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity."
-              },
-              "x-ms-request-id": {
-                "x-ms-client-name": "RequestId",
-                "type": "string",
-                "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
-              },
-              "x-ms-version": {
-                "x-ms-client-name": "Version",
-                "type": "string",
-                "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
-              },
-              "Date": {
-                "type": "string",
-                "format": "date-time-rfc1123",
-                "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
-              },
-              "x-ms-blob-append-offset": {
-                "x-ms-client-name": "BlobAppendOffset",
-                "type": "string",
-                "description": "This response header is returned only for append operations. It returns the offset at which the block was committed, in bytes."
-              },
-              "x-ms-blob-committed-block-count": {
-                "x-ms-client-name": "BlobCommittedBlockCount",
-                "type": "integer",
-                "description": "The number of committed blocks present in the blob. This header is returned only for append blobs."
-              }
-            }
+            "$ref": "#/responses/BlobAppendInfo"
           },
           "default": {
-            "description": "Failure",
-            "headers": {
-              "x-ms-error-code": {
-                "x-ms-client-name": "ErrorCode",
-                "type": "string"
-              }
-            },
-            "schema": {
-              "$ref": "#/definitions/StorageError"
-            }
+            "$ref": "#/responses/Failure"
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "comp",
+          "in": "query",
+          "required": true,
+          "type": "string",
+          "enum": [
+            "appendblock"
+          ]
+        }
+      ]
+    },
+    "/{containerName}/{blob}?comp=appendblock&fromUrl": {
+      "put": {
+        "tags": [
+          "appendblob"
+        ],
+        "operationId": "AppendBlob_AppendBlockFromUri",
+        "description": "The Append Block operation commits a new block of data to the end of an existing append blob where the contents are read from a source url. The Append Block operation is permitted only if the blob was created with x-ms-blob-type set to AppendBlob. Append Block is supported only on version 2015-02-21 version or later.",
+        "parameters": [
+          {
+            "$ref": "#/parameters/SourceUrl"
+          },
+          {
+            "$ref": "#/parameters/SourceRange"
+          },
+          {
+            "$ref": "#/parameters/SourceContentMD5"
+          },
+          {
+            "$ref": "#/parameters/Timeout"
+          },
+          {
+            "$ref": "#/parameters/ContentLength"
+          },
+          {
+            "$ref": "#/parameters/LeaseIdOptional"
+          },
+          {
+            "$ref": "#/parameters/BlobConditionMaxSize"
+          },
+          {
+            "$ref": "#/parameters/BlobConditionAppendPos"
+          },
+          {
+            "$ref": "#/parameters/IfModifiedSince"
+          },
+          {
+            "$ref": "#/parameters/IfUnmodifiedSince"
+          },
+          {
+            "$ref": "#/parameters/IfMatch"
+          },
+          {
+            "$ref": "#/parameters/IfNoneMatch"
+          },
+          {
+            "$ref": "#/parameters/SourceIfModifiedSince"
+          },
+          {
+            "$ref": "#/parameters/SourceIfUnmodifiedSince"
+          },
+          {
+            "$ref": "#/parameters/SourceIfMatch"
+          },
+          {
+            "$ref": "#/parameters/SourceIfNoneMatch"
+          },
+          {
+            "$ref": "#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "#/parameters/ClientRequestId"
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/BlobAppendInfo"
+          },
+          "304": {
+            "$ref": "#/responses/ConditionNotMet"
+          },
+          "default": {
+            "$ref": "#/responses/Failure"
           }
         }
       },
@@ -5675,7 +4659,459 @@
       ]
     }
   },
+  "responses": {
+    "Failure": {
+      "description": "Failure",
+      "x-ms-client-name": "StorageErrorResult",
+      "x-ms-create-exception": true,
+      "x-ms-public": false,
+      "headers": {
+        "x-ms-error-code": {
+          "x-ms-client-name": "ErrorCode",
+          "type": "string",
+          "x-ms-ignore": true
+        }
+      },
+      "schema": {
+        "$ref": "#/definitions/StorageError"
+      }
+    },
+    "ConditionNotMet": {
+      "description": "The condition specified using HTTP conditional header(s) is not met.",
+      "x-ms-client-name": "ConditionNotMetError",
+      "x-ms-create-exception": true,
+      "x-ms-public": false,
+      "headers": {
+        "x-ms-error-code": {
+          "x-ms-client-name": "ErrorCode",
+          "type": "string"
+        }
+      }
+    },
+    "AccountInfo": {
+      "description": "Success (OK)",
+      "x-ms-client-name": "AccountInfo",
+      "headers": {
+        "x-ms-request-id": {
+          "x-ms-client-name": "RequestId",
+          "type": "string",
+          "x-ms-ignore": true,
+          "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
+        },
+        "x-ms-version": {
+          "x-ms-client-name": "Version",
+          "type": "string",
+          "x-ms-ignore": true,
+          "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
+        },
+        "Date": {
+          "type": "string",
+          "format": "date-time-rfc1123",
+          "x-ms-ignore": true,
+          "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
+        },
+        "x-ms-sku-name": {
+          "x-ms-client-name": "SkuName",
+          "type": "string",
+          "enum": [
+            "Standard_LRS",
+            "Standard_GRS",
+            "Standard_RAGRS",
+            "Standard_ZRS",
+            "Premium_LRS"
+          ],
+          "x-ms-enum": {
+            "name": "SkuName",
+            "modelAsString": false
+          },
+          "description": "Identifies the sku name of the account"
+        },
+        "x-ms-account-kind": {
+          "x-ms-client-name": "AccountKind",
+          "type": "string",
+          "enum": [
+            "Storage",
+            "BlobStorage",
+            "StorageV2"
+          ],
+          "x-ms-enum": {
+            "name": "AccountKind",
+            "modelAsString": false
+          },
+          "description": "Identifies the account kind"
+        }
+      }
+    },
+    "ContainerInfo": {
+      "description": "Success",
+      "x-ms-client-name": "ContainerInfo",
+      "headers": {
+        "ETag": {
+          "type": "string",
+          "format": "etag",
+          "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
+        },
+        "Last-Modified": {
+          "type": "string",
+          "format": "date-time-rfc1123",
+          "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
+        },
+        "x-ms-request-id": {
+          "x-ms-client-name": "RequestId",
+          "type": "string",
+          "x-ms-ignore": true,
+          "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
+        },
+        "x-ms-version": {
+          "x-ms-client-name": "Version",
+          "type": "string",
+          "x-ms-ignore": true,
+          "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
+        },
+        "Date": {
+          "type": "string",
+          "format": "date-time-rfc1123",
+          "x-ms-ignore": true,
+          "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
+        }
+      }
+    },
+    "BlobInfo": {
+      "description": "The operation completed successfully.",
+      "x-ms-client-name": "BlobInfo",
+      "headers": {
+        "ETag": {
+          "type": "string",
+          "format": "etag",
+          "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
+        },
+        "Last-Modified": {
+          "type": "string",
+          "format": "date-time-rfc1123",
+          "description": "Returns the date and time the blob was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
+        },
+        "x-ms-request-id": {
+          "x-ms-client-name": "RequestId",
+          "type": "string",
+          "x-ms-ignore": true,
+          "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
+        },
+        "x-ms-version": {
+          "x-ms-client-name": "Version",
+          "type": "string",
+          "x-ms-ignore": true,
+          "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
+        },
+        "Date": {
+          "type": "string",
+          "format": "date-time-rfc1123",
+          "x-ms-ignore": true,
+          "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
+        }
+      }
+    },
+    "Lease": {
+      "description": "The lease operation completed successfully.",
+      "x-ms-client-name": "Lease",
+      "headers": {
+        "ETag": {
+          "type": "string",
+          "format": "etag",
+          "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
+        },
+        "Last-Modified": {
+          "type": "string",
+          "format": "date-time-rfc1123",
+          "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
+        },
+        "x-ms-lease-id": {
+          "x-ms-client-name": "LeaseId",
+          "type": "string",
+          "description": "Uniquely identifies a container or blob's lease"
+        },
+        "x-ms-request-id": {
+          "x-ms-client-name": "RequestId",
+          "type": "string",
+          "x-ms-ignore": true,
+          "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
+        },
+        "x-ms-version": {
+          "x-ms-client-name": "Version",
+          "type": "string",
+          "x-ms-ignore": true,
+          "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
+        },
+        "Date": {
+          "type": "string",
+          "format": "date-time-rfc1123",
+          "x-ms-ignore": true,
+          "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
+        }
+      }
+    },
+    "BrokenLease": {
+      "description": "The Break operation completed successfully.",
+      "x-ms-client-name": "BrokenLease",
+      "x-ms-public": false,
+      "headers": {
+        "ETag": {
+          "type": "string",
+          "format": "etag",
+          "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
+        },
+        "Last-Modified": {
+          "type": "string",
+          "format": "date-time-rfc1123",
+          "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
+        },
+        "x-ms-lease-time": {
+          "x-ms-client-name": "LeaseTime",
+          "type": "integer",
+          "description": "Approximate time remaining in the lease period, in seconds."
+        },
+        "x-ms-request-id": {
+          "x-ms-client-name": "RequestId",
+          "type": "string",
+          "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
+        },
+        "x-ms-version": {
+          "x-ms-client-name": "Version",
+          "type": "string",
+          "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
+        },
+        "Date": {
+          "type": "string",
+          "format": "date-time-rfc1123",
+          "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
+        }
+      }
+    },
+    "BlobContentInfo": {
+      "description": "The operation completed successfully.",
+      "x-ms-client-name": "BlobContentInfo",
+      "headers": {
+        "ETag": {
+          "type": "string",
+          "format": "etag",
+          "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
+        },
+        "Last-Modified": {
+          "type": "string",
+          "format": "date-time-rfc1123",
+          "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
+        },
+        "Content-MD5": {
+          "type": "string",
+          "format": "byte",
+          "x-ms-client-name": "ContentHash",
+          "description": "If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity."
+        },
+        "x-ms-blob-sequence-number": {
+          "x-ms-client-name": "BlobSequenceNumber",
+          "type": "integer",
+          "format": "int64",
+          "description": "The current sequence number for the page blob.  This is only returned for page blobs."
+        },
+        "x-ms-request-id": {
+          "x-ms-client-name": "RequestId",
+          "type": "string",
+          "x-ms-ignore": true,
+          "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
+        },
+        "x-ms-version": {
+          "x-ms-client-name": "Version",
+          "type": "string",
+          "x-ms-ignore": true,
+          "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
+        },
+        "Date": {
+          "type": "string",
+          "format": "date-time-rfc1123",
+          "x-ms-ignore": true,
+          "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
+        },
+        "x-ms-request-server-encrypted": {
+          "x-ms-client-name": "IsServerEncrypted",
+          "type": "boolean",
+          "x-ms-ignore":  true,
+          "description": "The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise."
+        }
+      }
+    },
+    "BlobAppendInfo": {
+      "description": "The operation completed successfully.",
+      "x-ms-client-name": "BlobAppendInfo",
+      "headers": {
+        "ETag": {
+          "type": "string",
+          "format": "etag",
+          "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
+        },
+        "Last-Modified": {
+          "type": "string",
+          "format": "date-time-rfc1123",
+          "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
+        },
+        "Content-MD5": {
+          "type": "string",
+          "format": "byte",
+          "x-ms-client-name": "ContentHash",
+          "description": "If the blob has an MD5 hash and this operation is to read the full blob, this response header is returned so that the client can check for message content integrity."
+        },
+        "x-ms-request-id": {
+          "x-ms-client-name": "RequestId",
+          "type": "string",
+          "x-ms-ignore": true,
+          "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
+        },
+        "x-ms-version": {
+          "x-ms-client-name": "Version",
+          "type": "string",
+          "x-ms-ignore": true,
+          "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
+        },
+        "Date": {
+          "type": "string",
+          "format": "date-time-rfc1123",
+          "x-ms-ignore": true,
+          "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
+        },
+        "x-ms-blob-append-offset": {
+          "x-ms-client-name": "BlobAppendOffset",
+          "type": "string",
+          "description": "This response header is returned only for append operations. It returns the offset at which the block was committed, in bytes."
+        },
+        "x-ms-blob-committed-block-count": {
+          "x-ms-client-name": "BlobCommittedBlockCount",
+          "type": "integer",
+          "description": "The number of committed blocks present in the blob. This header is returned only for append blobs."
+        },
+        "x-ms-request-server-encrypted": {
+          "x-ms-client-name": "IsServerEncrypted",
+          "type": "boolean",
+          "description": "The value of this header is set to true if the contents of the request are successfully encrypted using the specified algorithm, and false otherwise."
+        }
+      }
+    },
+    "BlobCopyInfo": {
+      "description": "The operation completed successfully.",
+      "x-ms-client-name": "BlobCopyInfo",
+      "headers": {
+        "ETag": {
+          "type": "string",
+          "format": "etag",
+          "description": "The ETag contains a value that you can use to perform operations conditionally. If the request version is 2011-08-18 or newer, the ETag value will be in quotes."
+        },
+        "Last-Modified": {
+          "type": "string",
+          "format": "date-time-rfc1123",
+          "description": "Returns the date and time the container was last modified. Any operation that modifies the blob, including an update of the blob's metadata or properties, changes the last-modified time of the blob."
+        },
+        "x-ms-request-id": {
+          "x-ms-client-name": "RequestId",
+          "type": "string",
+          "x-ms-ignore": true,
+          "description": "This header uniquely identifies the request that was made and can be used for troubleshooting the request."
+        },
+        "x-ms-version": {
+          "x-ms-client-name": "Version",
+          "type": "string",
+          "x-ms-ignore": true,
+          "description": "Indicates the version of the Blob service used to execute the request. This header is returned for requests made against version 2009-09-19 and above."
+        },
+        "Date": {
+          "type": "string",
+          "format": "date-time-rfc1123",
+          "x-ms-ignore": true,
+          "description": "UTC date/time value generated by the service that indicates the time at which the response was initiated"
+        },
+        "x-ms-copy-id": {
+          "x-ms-client-name": "CopyId",
+          "type": "string",
+          "description": "String identifier for this copy operation. Use with Get Blob Properties to check the status of this copy operation, or pass to Abort Copy Blob to abort a pending copy."
+        },
+        "x-ms-copy-status": {
+          "x-ms-client-name": "CopyStatus",
+          "description": "State of the copy operation identified by x-ms-copy-id.",
+          "type": "string",
+          "enum": [
+            "pending",
+            "success",
+            "aborted",
+            "failed"
+          ],
+          "x-ms-enum": {
+            "name": "CopyStatus",
+            "modelAsString": false
+          }
+        }
+      }
+    }
+  },
   "definitions": {
+    "KeyInfo": {
+      "type": "object",
+      "required": [
+        "Start",
+        "Expiry"
+      ],
+      "description": "Key information",
+      "properties": {
+        "Start": {
+          "description": "The date-time the key is active in ISO 8601 UTC time",
+          "type": "string"
+        },
+        "Expiry": {
+          "description": "The date-time the key expires in ISO 8601 UTC time",
+          "type": "string"
+        }
+      }
+    },
+    "UserDelegationKey": {
+      "type": "object",
+      "required": [
+        "SignedOid",
+        "SignedTid",
+        "SignedStart",
+        "SignedExpiry",
+        "SignedService",
+        "SignedVersion",
+        "Value"
+      ],
+      "description": "A user delegation key",
+      "properties": {
+        "SignedOid": {
+          "description": "The Azure Active Directory object ID in GUID format.",
+          "type": "string"
+        },
+        "SignedTid": {
+          "description": "The Azure Active Directory tenant ID in GUID format",
+          "type": "string"
+        },
+        "SignedStart": {
+          "description": "The date-time the key is active",
+          "type": "string",
+          "format": "date-time"
+        },
+        "SignedExpiry": {
+          "description": "The date-time the key expires",
+          "type": "string",
+          "format": "date-time"
+        },
+        "SignedService": {
+          "description": "Abbreviation of the Azure Storage service that accepts the key",
+          "type": "string"
+        },
+        "SignedVersion": {
+          "description": "The service version that created the key",
+          "type": "string"
+        },
+        "Value": {
+          "description": "The key as a base64 string",
+          "type": "string"
+        }
+      }
+    },
     "PublicAccessType": {
       "type": "string",
       "enum": [
@@ -5684,7 +5120,7 @@
       ],
       "x-ms-enum": {
         "name": "PublicAccessType",
-        "modelAsString": true
+        "modelAsString": false
       }
     },
     "CopyStatus": {
@@ -5696,7 +5132,7 @@
         "failed"
       ],
       "x-ms-enum": {
-        "name": "CopyStatusType",
+        "name": "CopyStatus",
         "modelAsString": false
       }
     },
@@ -5721,7 +5157,7 @@
         "broken"
       ],
       "x-ms-enum": {
-        "name": "LeaseStateType",
+        "name": "LeaseState",
         "modelAsString": false
       }
     },
@@ -5732,13 +5168,17 @@
         "unlocked"
       ],
       "x-ms-enum": {
-        "name": "LeaseStatusType",
+        "name": "LeaseStatus",
         "modelAsString": false
       }
     },
     "StorageError": {
       "type": "object",
+      "x-ms-public": false,
       "properties": {
+        "Code": {
+          "type": "string"
+        },
         "Message": {
           "type": "string"
         }
@@ -5807,8 +5247,6 @@
       "type": "object",
       "required": [
         "Name",
-        "Deleted",
-        "Snapshot",
         "Properties"
       ],
       "properties": {
@@ -5822,23 +5260,19 @@
           "type": "string"
         },
         "Properties": {
-          "$ref": "#/definitions/BlobProperties"
+          "$ref": "#/definitions/BlobItemProperties"
         },
         "Metadata": {
-          "$ref": "#/definitions/Metadata"
+          "$ref": "#/definitions/BlobMetadata"
         }
       }
     },
-    "BlobProperties": {
+    "BlobItemProperties": {
       "xml": {
         "name": "Properties"
       },
       "description": "Properties of a blob",
       "type": "object",
-      "required": [
-        "Etag",
-        "Last-Modified"
-      ],
       "properties": {
         "Creation-Time": {
           "type": "string",
@@ -5848,9 +5282,10 @@
           "type": "string",
           "format": "date-time-rfc1123"
         },
-        "Etag": {
+        "ETag": {
           "type": "string",
-          "format": "etag"
+          "format": "etag",
+          "xml": { "name":  "Etag" }
         },
         "Content-Length": {
           "type": "integer",
@@ -5868,7 +5303,8 @@
         },
         "Content-MD5": {
           "type": "string",
-          "format": "byte"
+          "format": "byte",
+          "x-ms-client-name": "ContentHash"
         },
         "Content-Disposition": {
           "type": "string"
@@ -5909,7 +5345,8 @@
           "$ref": "#/definitions/CopyStatus"
         },
         "CopySource": {
-          "type": "string"
+          "type": "string",
+          "format": "url"
         },
         "CopyProgress": {
           "type": "string"
@@ -5952,19 +5389,16 @@
         }
       }
     },
-    "ListBlobsFlatSegmentResponse": {
+    "BlobsFlatSegment": {
       "xml": {
         "name": "EnumerationResults"
       },
       "description": "An enumeration of blobs",
+      "x-ms-client-name": "BlobsFlatSegment",
       "type": "object",
       "required": [
         "ServiceEndpoint",
         "ContainerName",
-        "Prefix",
-        "Marker",
-        "MaxResults",
-        "Delimiter",
         "Segment",
         "NextMarker"
       ],
@@ -5993,100 +5427,81 @@
         "Delimiter": {
           "type": "string"
         },
-        "Segment": {
-          "$ref": "#/definitions/BlobFlatListSegment"
-        },
-        "NextMarker": {
-          "type": "string"
-        }
-      }
-    },
-    "ListBlobsHierarchySegmentResponse": {
-      "xml": {
-        "name": "EnumerationResults"
-      },
-      "description": "An enumeration of blobs",
-      "type": "object",
-      "required": [
-        "ServiceEndpoint",
-        "ContainerName",
-        "Prefix",
-        "Marker",
-        "MaxResults",
-        "Delimiter",
-        "Segment",
-        "NextMarker"
-      ],
-      "properties": {
-        "ServiceEndpoint": {
-          "type": "string",
-          "xml": {
-            "attribute": true
-          }
-        },
-        "ContainerName": {
-          "type": "string",
-          "xml": {
-            "attribute": true
-          }
-        },
-        "Prefix": {
-          "type": "string"
-        },
-        "Marker": {
-          "type": "string"
-        },
-        "MaxResults": {
-          "type": "integer"
-        },
-        "Delimiter": {
-          "type": "string"
-        },
-        "Segment": {
-          "$ref": "#/definitions/BlobHierarchyListSegment"
-        },
-        "NextMarker": {
-          "type": "string"
-        }
-      }
-    },
-    "BlobFlatListSegment": {
-      "xml": {
-        "name": "Blobs"
-      },
-      "required": [
-        "BlobItems"
-      ],
-      "type": "object",
-      "properties": {
         "BlobItems": {
           "type": "array",
+          "xml": {
+            "name": "Blobs",
+            "wrapped":  true
+          },
           "items": {
-          "$ref": "#/definitions/BlobItem"
+            "$ref": "#/definitions/BlobItem"
           }
+        },
+        "NextMarker": {
+          "type": "string"
         }
       }
     },
-    "BlobHierarchyListSegment": {
+    "BlobsHierarchySegment": {
       "xml": {
-        "name": "Blobs"
+        "name": "EnumerationResults"
       },
+      "description": "An enumeration of blobs",
+      "x-ms-client-name": "BlobsHierarchySegment",
       "type": "object",
       "required": [
-        "BlobItems"
+        "ServiceEndpoint",
+        "ContainerName",
+        "Segment",
+        "NextMarker"
       ],
       "properties": {
+        "ServiceEndpoint": {
+          "type": "string",
+          "xml": {
+            "attribute": true
+          }
+        },
+        "ContainerName": {
+          "type": "string",
+          "xml": {
+            "attribute": true
+          }
+        },
+        "Prefix": {
+          "type": "string"
+        },
+        "Marker": {
+          "type": "string"
+        },
+        "MaxResults": {
+          "type": "integer"
+        },
+        "Delimiter": {
+          "type": "string"
+        },
+        "BlobItems": {
+          "type": "array",
+          "xml": {
+            "name": "Blobs",
+            "wrapped": true
+          },
+          "items": {
+            "$ref": "#/definitions/BlobItem"
+          }
+        },
         "BlobPrefixes": {
           "type": "array",
+          "xml": {
+            "name": "Blobs",
+            "wrapped": true
+          },
           "items": {
             "$ref": "#/definitions/BlobPrefix"
           }
         },
-        "BlobItems": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/BlobItem"
-          }
+        "NextMarker": {
+          "type": "string"
         }
       }
     },
@@ -6195,7 +5610,7 @@
           "$ref": "#/definitions/ContainerProperties"
         },
         "Metadata": {
-          "$ref": "#/definitions/Metadata"
+          "$ref": "#/definitions/ContainerMetadata"
         }
       }
     },
@@ -6203,7 +5618,7 @@
       "type": "object",
       "required": [
         "Last-Modified",
-        "Etag"
+        "ETag"
       ],
       "description": "Properties of a container",
       "properties": {
@@ -6211,9 +5626,10 @@
           "type": "string",
           "format": "date-time-rfc1123"
         },
-        "Etag": {
+        "ETag": {
           "type": "string",
-          "format": "etag"
+          "format": "etag",
+          "xml": { "name": "Etag" }
         },
         "LeaseStatus": {
           "$ref": "#/definitions/LeaseStatus"
@@ -6235,7 +5651,7 @@
         }
       }
     },
-    "ListContainersSegmentResponse": {
+    "ContainersSegment": {
       "xml": {
         "name": "EnumerationResults"
       },
@@ -6243,8 +5659,6 @@
       "type": "object",
       "required": [
         "ServiceEndpoint",
-        "Prefix",
-        "MaxResults",
         "NextMarker",
         "ContainerItems"
       ],
@@ -6445,8 +5859,8 @@
             "unavailable"
           ],
           "x-ms-enum": {
-            "name": "GeoReplicationStatusType",
-            "modelAsString": true
+            "name": "GeoReplicationStatus",
+            "modelAsString": false
           }
         },
         "LastSyncTime": {
@@ -6458,6 +5872,7 @@
     },
     "Logging": {
       "description": "Azure Analytics Logging settings.",
+      "x-ms-disable-warnings": "CA1724",
       "type": "object",
       "required": [
         "Version",
@@ -6488,13 +5903,34 @@
         }
       }
     },
-    "Metadata": {
+    "ContainerMetadata": {
       "type": "object",
+      "xml": {
+        "name": "Metadata"
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "BlobMetadata": {
+      "type": "object",
+      "xml": {
+        "name": "Metadata"
+      },
+      "properties": {
+        "Encrypted": {
+          "type": "string",
+          "xml": {
+            "attribute": true
+          }
+        }
+      },
       "additionalProperties": {
         "type": "string"
       }
     },
     "Metrics": {
+      "type":  "object",
       "description": "a summary of request statistics grouped by API in hour or minute aggregates for blobs",
       "required": [
         "Enabled"
@@ -6654,9 +6090,12 @@
         }
       }
     },
-    "StorageServiceProperties": {
+    "BlobServiceProperties": {
       "description": "Storage Service Properties.",
       "type": "object",
+      "xml": {
+        "name": "StorageServiceProperties"
+      },
       "properties": {
         "Logging": {
           "$ref": "#/definitions/Logging"
@@ -6689,9 +6128,10 @@
         }
       }
     },
-    "StorageServiceStats": {
-      "description": "Stats for the storage service.",
+    "BlobServiceStatistics": {
+      "description": "Statistics for the storage service.",
       "type": "object",
+      "xml": { "name": "StorageServiceStats" },
       "properties": {
         "GeoReplication": {
           "$ref": "#/definitions/GeoReplication"
@@ -6702,9 +6142,11 @@
   "parameters": {
     "Url": {
       "name": "url",
+      "x-ms-client-name": "resourceUri",
       "description": "The URL of the service account, container, or blob that is the targe of the desired operation.",
       "required": true,
       "type": "string",
+      "format": "url",
       "in": "path",
       "x-ms-skip-url-encoding": true
     },
@@ -6716,7 +6158,7 @@
       "type": "string",
       "description": "Specifies the version of the operation to use for this request.",
       "enum": [
-        "2018-03-28"
+        "2018-11-09"
       ]
     },
     "Blob": {
@@ -6782,7 +6224,7 @@
       ],
       "x-ms-enum": {
         "name": "PublicAccessType",
-        "modelAsString": true
+        "modelAsString": false
       }
     },
     "AccessTier": {
@@ -6827,7 +6269,11 @@
       "x-ms-client-name": "blobContentEncoding",
       "in": "header",
       "required": false,
-      "type": "string",
+      "type": "array",
+      "collectionFormat": "multi",
+      "items": {
+        "type": "string"
+      },
       "x-ms-parameter-location": "method",
       "x-ms-parameter-grouping": {
         "name": "blob-HTTP-headers"
@@ -6839,7 +6285,11 @@
       "x-ms-client-name": "blobContentLanguage",
       "in": "header",
       "required": false,
-      "type": "string",
+      "type": "array",
+      "collectionFormat": "multi",
+      "items": {
+        "type": "string"
+      },
       "x-ms-parameter-location": "method",
       "x-ms-parameter-grouping": {
         "name": "blob-HTTP-headers"
@@ -6868,7 +6318,7 @@
     },
     "BlobContentMD5": {
       "name": "x-ms-blob-content-md5",
-      "x-ms-client-name": "blobContentMD5",
+      "x-ms-client-name": "blobContentHash",
       "in": "header",
       "required": false,
       "type": "string",
@@ -6951,7 +6401,7 @@
       "description": "Cache control for given resource"
     },
     "ContainerAcl": {
-      "name": "containerAcl",
+      "name": "permissions",
       "in": "body",
       "schema": {
         "$ref": "#/definitions/SignedIdentifiers"
@@ -6985,6 +6435,7 @@
       "x-ms-parameter-location": "method",
       "description": "The container name."
     },
+
     "ContentLength": {
       "name": "Content-Length",
       "in": "header",
@@ -6996,7 +6447,7 @@
     },
     "ContentMD5": {
       "name": "Content-MD5",
-      "x-ms-client-name": "transactionalContentMD5",
+      "x-ms-client-name": "transactionalContentHash",
       "in": "header",
       "required": false,
       "type": "string",
@@ -7027,7 +6478,7 @@
         "only"
       ],
       "x-ms-enum": {
-        "name": "DeleteSnapshotsOptionType",
+        "name": "DeleteSnapshotsOption",
         "modelAsString": false
       }
     },
@@ -7037,11 +6488,11 @@
       "type": "string",
       "x-ms-parameter-location": "method",
       "in": "query",
-      "required": true
+      "required": false
     },
     "GetRangeContentMD5": {
       "name": "x-ms-range-get-content-md5",
-      "x-ms-client-name": "rangeGetContentMD5",
+      "x-ms-client-name": "rangeGetContentHash",
       "in": "header",
       "required": false,
       "type": "boolean",
@@ -7139,6 +6590,15 @@
       },
       "description": "Specify this header value to operate only on a blob if it has a sequence number less than or equal to the specified."
     },
+    "KeyInfo": {
+      "name": "KeyInfo",
+      "in": "body",
+      "x-ms-parameter-location": "method",
+      "required": true,
+      "schema": {
+        "$ref": "#/definitions/KeyInfo"
+      }
+    },
     "ListBlobsInclude": {
       "name": "include",
       "in": "query",
@@ -7147,12 +6607,13 @@
       "collectionFormat": "csv",
       "items": {
         "type": "string",
+        "x-ms-public": false,
         "enum": [
-          "snapshots",
-          "metadata",
-          "uncommittedblobs",
           "copy",
-          "deleted"
+          "deleted",
+          "metadata",
+          "snapshots",
+          "uncommittedblobs"
         ],
         "x-ms-enum": {
           "name": "ListBlobsIncludeItem",
@@ -7162,21 +6623,22 @@
       "x-ms-parameter-location": "method",
       "description": "Include this parameter to specify one or more datasets to include in the response."
     },
-    "ListContainersInclude": { 
-      "name": "include", 
-      "in": "query", 
-      "required": false, 
-      "type": "string", 
-      "enum": [ 
-        "metadata" 
-      ], 
-      "x-ms-enum": { 
-        "name": "ListContainersIncludeType", 
-        "modelAsString": false 
-      }, 
-      "x-ms-parameter-location": "method", 
-      "description": "Include this parameter to specify that the container's metadata be returned as part of the response body." 
-    }, 
+    "ListContainersInclude": {
+      "name": "include",
+      "in": "query",
+      "required": false,
+      "type": "string",
+      "x-ms-public": false,
+      "enum": [
+        "metadata"
+      ],
+      "x-ms-enum": {
+        "name": "ListContainersIncludeType",
+        "modelAsString": false
+      },
+      "x-ms-parameter-location": "method",
+      "description": "Include this parameter to specify that the container's metadata be returned as part of the response body."
+    },
     "LeaseBreakPeriod": {
       "name": "x-ms-lease-break-period",
       "x-ms-client-name": "breakPeriod",
@@ -7286,6 +6748,15 @@
       "x-ms-parameter-location": "method",
       "description": "Return only the bytes of the blob in the specified range."
     },
+    "RangeRequiredPutPageFromUrl": {
+      "name": "x-ms-range",
+      "x-ms-client-name": "range",
+      "in": "header",
+      "required": true,
+      "type": "string",
+      "x-ms-parameter-location": "method",
+      "description": "The range of bytes to which the source range would be written. The range should be 512 aligned and range-end is required."
+    },
     "SequenceNumberAction": {
       "name": "x-ms-sequence-number-action",
       "x-ms-client-name": "sequenceNumberAction",
@@ -7300,7 +6771,7 @@
         "increment"
       ],
       "x-ms-enum": {
-        "name": "SequenceNumberActionType",
+        "name": "SequenceNumberAction",
         "modelAsString": false
       }
     },
@@ -7314,7 +6785,7 @@
     },
     "SourceContentMD5": {
       "name": "x-ms-source-content-md5",
-      "x-ms-client-name": "sourceContentMD5",
+      "x-ms-client-name": "sourceContentHash",
       "in": "header",
       "required": false,
       "type": "string",
@@ -7330,6 +6801,15 @@
       "type": "string",
       "x-ms-parameter-location": "method",
       "description": "Bytes of source data in the specified range."
+      },
+    "SourceRangeRequiredPutPageFromUrl": {
+      "name": "x-ms-source-range",
+      "x-ms-client-name": "sourceRange",
+      "in": "header",
+      "required": true,
+      "type": "string",
+      "x-ms-parameter-location": "method",
+      "description": "Bytes of source data in the specified range. The length of this range should match the ContentLength header and x-ms-range/Range destination range header."
     },
     "SourceIfMatch": {
       "name": "x-ms-source-if-match",
@@ -7383,9 +6863,18 @@
       },
       "description": "Specify this header value to operate only on a blob if it has not been modified since the specified date/time."
     },
+      "SourceLeaseId": {
+        "name": "x-ms-source-lease-id",
+        "x-ms-client-name": "sourceLeaseId",
+        "in": "header",
+        "required": false,
+        "type": "string",
+        "x-ms-parameter-location": "method",
+        "description": "A lease ID for the source path. If specified, the source path must have an active lease and the leaase ID must match."
+      },
     "SourceUrl": {
       "name": "x-ms-copy-source",
-      "x-ms-client-name": "sourceUrl",
+      "x-ms-client-name": "sourceUri",
       "in": "header",
       "required": true,
       "type": "string",
@@ -7393,12 +6882,12 @@
       "x-ms-parameter-location": "method",
       "description": "Specify a URL to the copy source."
     },
-    "StorageServiceProperties": {
-      "name": "StorageServiceProperties",
+    "BlobServiceProperties": {
+      "name": "BlobServiceProperties",
       "in": "body",
       "required": true,
       "schema": {
-        "$ref": "#/definitions/StorageServiceProperties"
+        "$ref": "#/definitions/BlobServiceProperties"
       },
       "x-ms-parameter-location": "method",
       "description": "The StorageService properties."
@@ -7411,6 +6900,75 @@
       "minimum": 0,
       "x-ms-parameter-location": "method",
       "description": "The timeout parameter is expressed in seconds. For more information, see <a href=\"https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\">Setting Timeouts for Blob Service Operations.</a>"
+      },
+      "VersionId": {
+        "name": "versionid",
+        "x-ms-client-name": "versionId",
+        "in": "query",
+        "required": false,
+        "type": "string",
+        "x-ms-parameter-location": "method",
+        "description": "The version ID parameter is an opaque DateTime value that, when present, specifies the blob version to retrieve."
+      },
+      "XMsCacheControl": {
+        "name": "x-ms-cache-control",
+        "x-ms-client-name": "cacheControl",
+        "in": "header",
+        "required": false,
+        "type": "string",
+        "x-ms-parameter-location": "method",
+        "x-ms-parameter-grouping": {
+          "name": "directory-http-headers"
+        },
+        "description": "Cache control for given resource"
+      },
+      "XMsContentType": {
+        "name": "x-ms-content-type",
+        "x-ms-client-name": "contentType",
+        "in": "header",
+        "required": false,
+        "type": "string",
+        "x-ms-parameter-location": "method",
+        "x-ms-parameter-grouping": {
+          "name": "directory-http-headers"
+        },
+        "description": "Content type for given resource"
+      },
+      "XMsContentEncoding": {
+        "name": "x-ms-content-encoding",
+        "x-ms-client-name": "contentEncoding",
+        "in": "header",
+        "required": false,
+        "type": "string",
+        "x-ms-parameter-location": "method",
+        "x-ms-parameter-grouping": {
+          "name": "directory-http-headers"
+        },
+        "description": "Content encoding for given resource"
+      },
+      "XMsContentLanguage": {
+        "name": "x-ms-content-language",
+        "x-ms-client-name": "contentLanguage",
+        "in": "header",
+        "required": false,
+        "type": "string",
+        "x-ms-parameter-location": "method",
+        "x-ms-parameter-grouping": {
+          "name": "directory-http-headers"
+        },
+        "description": "Content language for given resource"
+      },
+      "XMsContentDisposition": {
+        "name": "x-ms-content-disposition",
+        "x-ms-client-name": "contentDisposition",
+        "in": "header",
+        "required": false,
+        "type": "string",
+        "x-ms-parameter-location": "method",
+        "x-ms-parameter-grouping": {
+          "name": "directory-http-headers"
+        },
+        "description": "Content disposition for given resource"
     }
   }
 }
