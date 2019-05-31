@@ -346,8 +346,9 @@ class Receiver(object):
         if self.error:
             raise self.error
         await self._open()
+
+        data_batch = []
         while True:
-            data_batch = []
             try:
                 timeout_ms = 1000 * timeout if timeout else 0
                 message_batch = await self._handler.receive_message_batch_async(
