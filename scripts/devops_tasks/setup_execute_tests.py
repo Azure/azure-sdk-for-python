@@ -22,7 +22,7 @@ dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 # evaluating whether we want this or not.
 ALLOWED_RETURN_CODES = []
 
-MANAGEMENT_PACKAGE_IDENTIFIERS = ['mgmt', 'azure-cognitiveservices-personalizer']
+MANAGEMENT_PACKAGE_IDENTIFIERS = ['mgmt', 'azure-cognitiveservices']
 
 def prep_and_run_tests(targeted_packages, python_version, test_res):
     print('running test setup for {}'.format(targeted_packages))
