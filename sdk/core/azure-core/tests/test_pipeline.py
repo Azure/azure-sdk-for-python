@@ -146,7 +146,7 @@ class TestClientRequest(unittest.TestCase):
         data = ET.Element("root")
         request.set_xml_body(data)
 
-        assert request.data == b"<?xml version='1.0' encoding='utf8'?>\n<root />"
+        assert request.data == b"<?xml version='1.0' encoding='utf-8'?>\n<root />"
 
     def test_request_url_with_params(self):
 
