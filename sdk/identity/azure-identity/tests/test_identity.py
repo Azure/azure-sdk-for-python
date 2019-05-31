@@ -21,7 +21,8 @@ from azure.identity import (
     EnvironmentCredential,
     TokenCredentialChain,
     ManagedIdentityCredential,
-    CertificateCredential)
+    CertificateCredential,
+)
 from azure.identity.constants import EnvironmentVariables
 
 
@@ -81,12 +82,10 @@ def test_cert_environment_credential(monkeypatch):
     client_id = "fake-client-id"
     private_key_file = os.path.join(os.path.dirname(__file__), "private-key.pem")
     tenant_id = "fake-tenant-id"
-    thumbprint = "0ee111848510505f35155f0571067efa538ea036"
 
     monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_ID, client_id)
     monkeypatch.setenv(EnvironmentVariables.AZURE_PRIVATE_KEY_FILE, private_key_file)
     monkeypatch.setenv(EnvironmentVariables.AZURE_TENANT_ID, tenant_id)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_THUMBPRINT, thumbprint)
 
     success_message = "request passed validation"
 
@@ -210,11 +209,3 @@ def test_msi_credential_retries(monkeypatch):
             pass
         assert mock_send.call_count is 1 + retry_total
         mock_send.reset_mock()
-
-
-def test_cert_credential_constructor():
-    client_id = "client_id"
-    tenant_id = "tenant_id"
-    private_key = "Bag Attributes\n    Microsoft Local Key set: <No Values>\n    localKeyID: 01 00 00 00 \n    friendlyName: te-6c7ca2ba-5bec-4802-bde3-1755fb26d651\n    Microsoft CSP Name: Microsoft Software Key Storage Provider\nKey Attributes\n    X509v3 Key Usage: 90 \n-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDZnnXDSPMKmbA+\nLx+iZio78D0RS61lP5UfRQJU4NMnZhA1qEdVsvQfR+24eN4U34zXYsHMGP57NVRT\nGYpy842oH6XAJ3uq59FgkO7NB6z1FXqnFbfAese+mssSlXtc91Ach4BpePk2/umO\neCZp/7l0pQPKMrawY8z7zogTnegAIwSDvVeGU0Zap4WPRMmMDAE38s7i0Dfxa1kh\n9/TXvH/x6/+uNIyTIZ8PMH2uv9w/LNex4vh+Pw8jwo5XdVRXRessdMt2I3dVUtkw\nAGHh1TA9Qkflji9tXjv3r2nRHqMLcqhPeIDJVkqUIqSiINQ61gy7CdkMxalp0MxE\n6Mjo7eBpAgMBAAECggEAdv0XsvGeQnuKTFYD3A40pZVULrLMWoILjY90GOjdS7uY\nvV4HsyooJTp1Ftqvw4YAQnyzLl+0NbYRJ2bdtsDJAdZcENcF3Yrnhv94Mw8xWMin\nydgsIsh/kw6cXsrxKwHnAdJtOj51Ncbn+YhkqKy0wLzBd7uG/Kd1G3HwIZnDkt6Q\nE6J4G0u9atEX7pvV8/JBK3QxAZoOo1FkOO2IDk92z85G9+7GysDRssu6erzihX/b\n/fG/DVx1vjeZz1jUC3rIbOhEmq1To0FdOlyRT79IW0RZWRNFAEaFE9sNYR4ZSsgZ\nBwznp1vwtwefPk31WJkGf+WRUERhG8vycOVOBErXCQKBgQD8fgO9JSESdOm8QIHt\nkbqzA+IdyOL7lnK8SdWNiCqdX3e7ZokbYhlUvj6Hf3gGQUTHwTvGa2LIifrSo7jh\nVvO7kIBRg7eMhK6mZMArEINFqEjlqnC5w+Js7hrhjMwPjwIzmcZ3R9GVWl1aq543\nQ8S+0aByxd7HKGG2DOtcdZxW1wKBgQDcpGtKslM3ql7hIMigrwg2vpB7OOj2P4Ja\ncfY/DE4NJ+ZlAzPyDy/Hho7oSxb9ez0xxpOVz5/FpU0Ve1YfRU/41LAndHjudE3z\nsxr7TjGcNS6Ao9790RCqtuE1LipaJ+pKvMS/4J94EM3jbpfZB0Dckmk0gz4lTvUM\n5ZedRpravwKBgQDIfyRm6PnnFxGX3D2QMb1oc7f1YNTlZSV84MCEX9E/IFUKabSM\nGwz0XxF2NUFQ7jk4yfe2awWJKxASfdHMlmh605cho494NNAe7zgtujITeTtRrFNR\nH/xH9ZdA7bYI0M21vfF8PHpvt88Ttd2wEs9Dm2BmYzuxOB7HGmE3DWl1BwKBgQCJ\n1B+9wpWfYUrxoRQS5CPiZrpEbzF/mf6o1yW3Ds23BCS1FwIdBIWZQyIEU9vhrll0\nvZI19EPfKDp139zVneuuCdacXvKoKnkDce+56oetB7+r1jIXJcEeky0tllAYj3SZ\nCUByiDO1wfGLT+uFRDWtU7xqdE2e6qrDSqyiL5fOawKBgDkkyj0ayZnxcMGgM5W6\ng1bwx5q3Kjc0FzGd8cmO5BLmxW8sCcQykOoZb42qmlGEJU0Q8ppiz82xmI7l+Sml\nQdVTbroI9ECxwRFX97pu8gBR4rI1lyfCllI3Pm2Y6cvapki0eq+1jEReSclsyMK9\nmvgSQ07XbJjrqb6hJJo6iLmh\n-----END PRIVATE KEY-----\n"
-    thumbprint = "0ee111848510505f35155f0571067efa538ea036"
-    CertificateCredential(client_id, tenant_id, private_key, thumbprint)

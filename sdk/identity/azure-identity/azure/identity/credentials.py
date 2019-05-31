@@ -44,12 +44,12 @@ class ClientSecretCredential(ClientSecretCredentialBase):
 
 
 class CertificateCredential(CertificateCredentialBase):
-    """Authenticates with a certificate (thumbprint and PEM-encoded private key)"""
+    """Authenticates with a certificate"""
 
-    def __init__(self, client_id, tenant_id, private_key, thumbprint, config=None, **kwargs):
-        # type: (str, str, str, str, Optional[Configuration], Mapping[str, Any]) -> None
+    def __init__(self, client_id, tenant_id, private_key, config=None, **kwargs):
+        # type: (str, str, str, Optional[Configuration], Mapping[str, Any]) -> None
         self._client = AuthnClient(OAUTH_ENDPOINT.format(tenant_id), config, **kwargs)
-        super(CertificateCredential, self).__init__(client_id, tenant_id, private_key, thumbprint, **kwargs)
+        super(CertificateCredential, self).__init__(client_id, tenant_id, private_key, **kwargs)
 
     def get_token(self, scopes):
         # type: (Iterable[str]) -> str
@@ -61,7 +61,7 @@ class CertificateCredential(CertificateCredentialBase):
 
 
 class EnvironmentCredential:
-    """Authenticates with a secret or certificate (thumbprint and PEM-encoded private key)"""
+    """Authenticates with a secret or certificate using environment variable settings"""
 
     def __init__(self, **kwargs):
         # type: (Mapping[str, Any]) -> None
@@ -85,7 +85,6 @@ class EnvironmentCredential:
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 private_key=private_key,
-                thumbprint=os.environ[EnvironmentVariables.AZURE_THUMBPRINT],
                 **kwargs
             )
 

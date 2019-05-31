@@ -13,8 +13,7 @@ class EnvironmentVariables:
     CLIENT_SECRET_VARS = (AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID)
 
     AZURE_PRIVATE_KEY_FILE = "AZURE_PRIVATE_KEY_FILE"
-    AZURE_THUMBPRINT = "AZURE_THUMBPRINT"
-    CERT_VARS = (AZURE_CLIENT_ID, AZURE_PRIVATE_KEY_FILE, AZURE_TENANT_ID, AZURE_THUMBPRINT)
+    CERT_VARS = (AZURE_CLIENT_ID, AZURE_PRIVATE_KEY_FILE, AZURE_TENANT_ID)
 
 
 # https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http

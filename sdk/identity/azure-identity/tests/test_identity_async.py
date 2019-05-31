@@ -56,12 +56,10 @@ async def test_cert_environment_credential(monkeypatch):
     client_id = "fake-client-id"
     private_key_file = os.path.join(os.path.dirname(__file__), "private-key.pem")
     tenant_id = "fake-tenant-id"
-    thumbprint = "0ee111848510505f35155f0571067efa538ea036"
 
     monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_ID, client_id)
     monkeypatch.setenv(EnvironmentVariables.AZURE_PRIVATE_KEY_FILE, private_key_file)
     monkeypatch.setenv(EnvironmentVariables.AZURE_TENANT_ID, tenant_id)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_THUMBPRINT, thumbprint)
 
     success_message = "request passed validation"
 

@@ -44,11 +44,10 @@ class AsyncCertificateCredential(CertificateCredentialBase):
         client_id: str,
         tenant_id: str,
         private_key: str,
-        thumbprint: str,
         config: Optional[Configuration] = None,
         **kwargs: Mapping[str, Any]
     ) -> None:
-        super(AsyncCertificateCredential, self).__init__(client_id, tenant_id, private_key, thumbprint, **kwargs)
+        super(AsyncCertificateCredential, self).__init__(client_id, tenant_id, private_key, **kwargs)
         self._client = AsyncAuthnClient(OAUTH_ENDPOINT.format(tenant_id), config, **kwargs)
 
     async def get_token(self, scopes: Iterable[str]) -> str:
@@ -81,7 +80,6 @@ class AsyncEnvironmentCredential:
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 private_key=private_key,
-                thumbprint=os.environ[EnvironmentVariables.AZURE_THUMBPRINT],
                 **kwargs
             )
 

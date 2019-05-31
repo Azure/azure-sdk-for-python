@@ -31,16 +31,14 @@ class ClientSecretCredentialBase(object):
 
 
 class CertificateCredentialBase(object):
-    def __init__(self, client_id, tenant_id, private_key, thumbprint, **kwargs):
-        # type: (str, str, str, str, Mapping[str, Any]) -> None
+    def __init__(self, client_id, tenant_id, private_key, **kwargs):
+        # type: (str, str, str, Mapping[str, Any]) -> None
         if not private_key:
             raise ValueError("private_key should be a PEM-encoded private key")
-        if not thumbprint:
-            raise ValueError("certificate credentials require thumbprint")
 
         super(CertificateCredentialBase, self).__init__()
         auth_url = OAUTH_ENDPOINT.format(tenant_id)
-        signer = JwtSigner(private_key, "RS256", thumbprint)
+        signer = JwtSigner(private_key, "RS256")
         client_assertion = signer.sign_assertion(audience=auth_url, issuer=client_id)
         self._form_data = {
             "client_assertion": client_assertion,
