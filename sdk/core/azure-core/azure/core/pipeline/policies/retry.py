@@ -48,21 +48,32 @@ _LOGGER = logging.getLogger(__name__)
 class RetryPolicy(HTTPPolicy):
     """A retry policy.
 
-    :param retry_total: Total number of retries to allow. Takes precedence over other counts.
+    The retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
+
+    Keyword arguments:
+    :param int retry_total: Total number of retries to allow. Takes precedence over other counts.
      Default value is 10.
-    :param retry_connect: How many connection-related errors to retry on.
+    :param int retry_connect: How many connection-related errors to retry on.
      These are errors raised before the request is sent to the remote server,
-     which we assume has not triggered the server to process the request. Default value is 3
-    :param retry_read: How many times to retry on read errors.
+     which we assume has not triggered the server to process the request. Default value is 3.
+    :param int retry_read: How many times to retry on read errors.
      These errors are raised after the request was sent to the server, so the
      request may have side-effects. Default value is 3.
-    :param retry_status: How many times to retry on bad status codes. Default value is 3.
-    :param retry_backoff_factor: A backoff factor to apply between attempts after the second try
+    :param int retry_status: How many times to retry on bad status codes. Default value is 3.
+    :param int retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay).
      Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
      seconds. If the backoff_factor is 0.1, then the retry will sleep
      for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
-    :param retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+    :param int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+
+    Example:
+        .. literalinclude:: ../../../../examples/examples_sync.py
+            :start-after: [START retry_policy]
+            :end-before: [END retry_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring a retry policy.
     """
 
     #: Maximum backoff time.
@@ -86,9 +97,17 @@ class RetryPolicy(HTTPPolicy):
 
     @classmethod
     def no_retries(cls):
+        """Disable retries.
+        """
         return cls(retry_count_total=0)
 
     def configure_retries(self, options):
+        """Configures the retry settings.
+
+        :param options: keyword arguments from context.
+        :return: A dict containing settings and history for retries.
+        :rtype: dict
+        """
         return {
             'total': options.pop("retry_total", self.total_retries),
             'connect': options.pop("retry_connect", self.connect_retries),
@@ -101,8 +120,10 @@ class RetryPolicy(HTTPPolicy):
         }
 
     def get_backoff_time(self, settings):
-        """ Formula for computing the current backoff
+        """Returns the current backoff time.
 
+        :param dict settings: The retry settings.
+        :return: The current backoff value.
         :rtype: float
         """
         # We want to consider only the last consecutive errors sequence (Ignore redirects).
@@ -114,6 +135,11 @@ class RetryPolicy(HTTPPolicy):
         return min(settings['max_backoff'], backoff_value)
 
     def parse_retry_after(self, retry_after):
+        """Helper to parse Retry-After and get value in seconds.
+
+        :param str retry_after: Retry-After header
+        :rtype: int
+        """
         try:
             seconds = int(retry_after)
         except TypeError:
@@ -128,14 +154,25 @@ class RetryPolicy(HTTPPolicy):
         return seconds
 
     def get_retry_after(self, response):
-        """Get the value of Retry-After in seconds."""
+        """Get the value of Retry-After in seconds.
 
+        :param response: The PipelineResponse object
+        :type response: ~azure.core.pipeline.PipelineResponse
+        :return: Value of Retry-After in seconds.
+        :rtype: int
+        """
         retry_after = response.http_response.headers.get("Retry-After")
         if retry_after is None:
             return None
         return self.parse_retry_after(retry_after)
 
     def _sleep_for_retry(self, response, transport):
+        """Sleep based on the Retry-After response header value.
+
+        :param response: The PipelineResponse object.
+        :type response: ~azure.core.pipeline.PipelineResponse
+        :param transport: The HTTP transport type.
+        """
         retry_after = self.get_retry_after(response)
         if retry_after:
             transport.sleep(retry_after)
@@ -143,6 +180,11 @@ class RetryPolicy(HTTPPolicy):
         return False
 
     def _sleep_backoff(self, settings, transport):
+        """Sleep using exponential backoff. Immediately returns if backoff is 0.
+
+        :param dict settings: The retry settings.
+        :param transport: The HTTP transport type.
+        """
         backoff = self.get_backoff_time(settings)
         if backoff <= 0:
             return
@@ -155,6 +197,11 @@ class RetryPolicy(HTTPPolicy):
         and sleep the duration of the time requested. If that is not present, it
         will use an exponential backoff. By default, the backoff factor is 0 and
         this method will return immediately.
+
+        :param dict settings: The retry settings.
+        :param transport: The HTTP transport type.
+        :param response: The PipelineResponse object.
+        :type response: ~azure.core.pipeline.PipelineResponse
         """
         if response:
             slept = self._sleep_for_retry(response, transport)
@@ -163,20 +210,28 @@ class RetryPolicy(HTTPPolicy):
         self._sleep_backoff(settings, transport)
 
     def _is_connection_error(self, err):
-        """ Errors when we're fairly sure that the server did not receive the
+        """Errors when we're fairly sure that the server did not receive the
         request, so it should be safe to retry.
         """
         return isinstance(err, ServiceRequestError)
 
     def _is_read_error(self, err):
-        """ Errors that occur after the request has been started, so we should
+        """Errors that occur after the request has been started, so we should
         assume that the server began processing it.
         """
         return isinstance(err, ServiceResponseError)
 
     def _is_method_retryable(self, settings, request, response=None):
-        """ Checks if a given HTTP method should be retried upon, depending if
+        """Checks if a given HTTP method should be retried upon, depending if
         it is included on the method whitelist.
+
+        :param dict settings: The retry settings.
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: The PipelineResponse object.
+        :type response: ~azure.core.pipeline.PipelineResponse
+        :return: True if method should be retried upon. False if not in method whitelist.
+        :rtype: bool
         """
         if response and request.method.upper() in ['POST', 'PATCH'] and \
                 response.status_code in [500, 503, 504]:
@@ -187,11 +242,19 @@ class RetryPolicy(HTTPPolicy):
         return True
 
     def is_retry(self, settings, response):
-        """Is this method/status code retryable? (Based on whitelists and control
-        variables such as the number of total retries to allow, whether to
-        respect the Retry-After header, whether this header is present, and
-        whether the returned status code is on the list of status codes to
-        be retried upon on the presence of the aforementioned header)
+        """Checks if method/status code is retryable.
+
+        Based on whitelists and control variables such as the number of
+        total retries to allow, whether to respect the Retry-After header,
+        whether this header is present, and whether the returned status
+        code is on the list of status codes to be retried upon on the
+        presence of the aforementioned header.
+
+        :param dict settings: The retry settings.
+        :param response: The PipelineResponse object
+        :type response: ~azure.core.pipeline.PipelineResponse.
+        :return: True if method/status code is retryable. False if not retryable.
+        :rtype: bool
         """
         has_retry_after = bool(response.http_response.headers.get("Retry-After"))
         if has_retry_after and self._respect_retry_after_header:
@@ -201,7 +264,12 @@ class RetryPolicy(HTTPPolicy):
         return settings['total'] and response.http_response.status_code in self._retry_on_status_codes
 
     def is_exhausted(self, settings):
-        """Are we out of retries?"""
+        """Checks if any retries left.
+
+        :param dict settings: the retry settings
+        :return: False if have more retries. True if retries exhausted.
+        :rtype: bool
+        """
         retry_counts = (settings['total'], settings['connect'], settings['read'], settings['status'])
         retry_counts = list(filter(None, retry_counts))
         if not retry_counts:
@@ -212,11 +280,14 @@ class RetryPolicy(HTTPPolicy):
     def increment(self, settings, response=None, error=None):
         """Increment the retry counters.
 
+        :param settings: The retry settings.
         :param response: A pipeline response object.
+        :type response: ~azure.core.pipeline.PipelineResponse
         :param error: An error encountered during the request, or
-            None if the response was received successfully.
-
+         None if the response was received successfully.
         :return: Whether the retry attempts are exhausted.
+         False if exhausted; True if more retry attempts available.
+        :rtype: bool
         """
         settings['total'] -= 1
 
@@ -240,10 +311,26 @@ class RetryPolicy(HTTPPolicy):
         return not self.is_exhausted(settings)
 
     def update_context(self, context, retry_settings):
+        """Updates retry history in pipeline context.
+
+        :param context: The pipeline context.
+        :type context: ~azure.core.pipeline.PipelineContext
+        :param retry_settings: The retry settings.
+        :type retry_settings: dict
+        """
         if retry_settings['history']:
             context['history'] = retry_settings['history']
 
     def send(self, request):
+        """Sends the PipelineRequest object to the next policy.
+         Uses retry settings if necessary.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        :raises: ~azure.core.exceptions.AzureError if maximum retries exceeded.
+        """
         retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)

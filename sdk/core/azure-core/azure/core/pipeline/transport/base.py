@@ -78,6 +78,7 @@ class HttpRequest(object):
     """Represents a HTTP request.
 
     URL can be given without query parameters, to be added later using "format_parameters".
+
     :param str method: HTTP method (GET, HEAD, etc.)
     :param str url: At least complete scheme/host/path
     :param dict[str,str] headers: HTTP headers
@@ -152,14 +153,20 @@ class HttpRequest(object):
         self.url = self.url + query
 
     def set_streamed_data_body(self, data):
-        """Set a streamable data body."""
+        """Set a streamable data body.
+
+        :param data: The request field data.
+        """
         if not any(hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]):
             raise TypeError("A streamable data source must be an open file-like object or iterable.")
         self.data = data
         self.files = None
 
     def set_xml_body(self, data):
-        """Set an XML element tree as the body of the request."""
+        """Set an XML element tree as the body of the request.
+
+        :param data: The request field data.
+        """
         if data is None:
             self.data = None
         else:
@@ -169,7 +176,10 @@ class HttpRequest(object):
         self.files = None
 
     def set_json_body(self, data):
-        """Set a JSON-friendly object as the body of the request."""
+        """Set a JSON-friendly object as the body of the request.
+        
+        :param data: The request field data.
+        """
         if data is None:
             self.data = None
         else:
@@ -178,7 +188,10 @@ class HttpRequest(object):
         self.files = None
 
     def set_formdata_body(self, data=None):
-        """Set form-encoded data as the body of the request."""
+        """Set form-encoded data as the body of the request.
+
+        :param data: The request field data.
+        """
         if data is None:
             data = {}
         content_type = self.headers.pop('Content-Type', None) if self.headers else None
@@ -191,7 +204,10 @@ class HttpRequest(object):
             self.data = None
 
     def set_bytes_body(self, data):
-        """Set generic bytes as the body of the request."""
+        """Set generic bytes as the body of the request.
+        
+        :param data: The request field data.
+        """
         if data:
             self.headers['Content-Length'] = str(len(data))
         self.data = data
@@ -204,6 +220,15 @@ class _HttpResponseBase(object):
     No body is defined here on purpose, since async pipeline
     will provide async ways to access the body
     Full in-memory using "body" as bytes.
+
+    :param request: The request.
+    :type request: ~azure.core.pipeline.transport.HttpRequest
+    :param internal_response: The object returned from the HTTP library.
+    :param int status_code: The status code of the response
+    :param dict headers: The request headers.
+    :param str reason: Status reason of response.
+    :param str content_type: The content type.
+    :param int block_size: Defaults to 4096 bytes.
     """
     def __init__(self, request, internal_response, block_size=None):
         # type: (HttpRequest, Any, Optional[int]) -> None
@@ -233,7 +258,6 @@ class _HttpResponseBase(object):
 
 class HttpResponse(_HttpResponseBase):
     def stream_download(self):
-
         # type: () -> Iterator[bytes]
         """Generator for streaming request body data.
 
