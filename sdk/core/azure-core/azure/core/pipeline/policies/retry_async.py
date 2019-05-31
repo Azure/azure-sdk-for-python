@@ -40,9 +40,43 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
+    """Async flavor of the retry policy.
 
+    The async retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
+
+    Keyword arguments:
+    :param int retry_total: Total number of retries to allow. Takes precedence over other counts.
+     Default value is 10.
+    :param int retry_connect: How many connection-related errors to retry on.
+     These are errors raised before the request is sent to the remote server,
+     which we assume has not triggered the server to process the request. Default value is 3.
+    :param int retry_read: How many times to retry on read errors.
+     These errors are raised after the request was sent to the server, so the
+     request may have side-effects. Default value is 3.
+    :param int retry_status: How many times to retry on bad status codes. Default value is 3.
+    :param int retry_backoff_factor: A backoff factor to apply between attempts after the second try
+     (most errors are resolved immediately by a second try without a delay).
+     Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
+     seconds. If the backoff_factor is 0.1, then the retry will sleep
+     for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
+    :param int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+
+    Example:
+        .. literalinclude:: ../../../../examples/examples_async.py
+            :start-after: [START async_retry_policy]
+            :end-before: [END async_retry_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring an async retry policy.
+    """
 
     async def _sleep_for_retry(self, response, transport):
+        """Sleep based on the Retry-After response header value.
+
+        :param response: The PipelineResponse object.
+        :type response: ~azure.core.pipeline.PipelineResponse
+        :param transport: The HTTP transport type.
+        """
         retry_after = self.get_retry_after(response)
         if retry_after:
             await transport.sleep(retry_after)
@@ -50,18 +84,28 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
         return False
 
     async def _sleep_backoff(self, settings, transport):
+        """Sleep using exponential backoff. Immediately returns if backoff is 0.
+
+        :param dict settings: The retry settings.
+        :param transport: The HTTP transport type.
+        """
         backoff = self.get_backoff_time(settings)
         if backoff <= 0:
             return
         await transport.sleep(backoff)
 
     async def sleep(self, settings, transport, response=None):
-        """ Sleep between retry attempts.
+        """Sleep between retry attempts.
 
         This method will respect a server's ``Retry-After`` response header
         and sleep the duration of the time requested. If that is not present, it
         will use an exponential backoff. By default, the backoff factor is 0 and
         this method will return immediately.
+
+        :param dict settings: The retry settings.
+        :param transport: The HTTP transport type.
+        :param response: The PipelineResponse object.
+        :type response: ~azure.core.pipeline.PipelineResponse
         """
         if response:
             slept = await self._sleep_for_retry(response, transport)
@@ -70,6 +114,15 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
         await self._sleep_backoff(settings, transport)
 
     async def send(self, request):
+        """Uses the configured retry policy to send the request
+         to the next policy in the pipeline.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        :raises: ~azure.core.exceptions.AzureError if maximum retries exceeded.
+        """
         retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)

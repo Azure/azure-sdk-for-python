@@ -52,9 +52,21 @@ ContentDecodePolicyType = TypeVar('ContentDecodePolicyType', bound='ContentDecod
 
 
 class HeadersPolicy(SansIOHTTPPolicy):
-    """A simple policy that sends the given headers
-    with the request.
-    This will overwrite any headers already defined in the request.
+    """A simple policy that sends the given headers with the request.
+
+    This will overwrite any headers already defined in the request. Headers can be
+    configured up front, where any custom headers will be applied to all outgoing
+    operations, and additional headers can also be added dynamically per operation.
+
+    :param dict base_headers: Headers to send with the request.
+
+    Example:
+        .. literalinclude:: ../../../../examples/examples_sansio.py
+            :start-after: [START headers_policy]
+            :end-before: [END headers_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring a headers policy.
     """
     def __init__(self, base_headers=None, **kwargs):
         # type: (Mapping[str, str], Any) -> None
@@ -67,11 +79,20 @@ class HeadersPolicy(SansIOHTTPPolicy):
         return self._headers
 
     def add_header(self, key, value):
-        """Add a header to the configuration to be applied to all requests."""
+        """Add a header to the configuration to be applied to all requests.
+
+        :param str key: The header.
+        :param str value: The header's value.
+        """
         self._headers[key] = value
 
     def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
+        """Updates with the given headers before sending the request to the next policy.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
         request.http_request.headers.update(self.headers) # type: ignore
         additional_headers = request.context.options.pop('headers', {}) # type: ignore
         if additional_headers:
@@ -79,6 +100,20 @@ class HeadersPolicy(SansIOHTTPPolicy):
 
 
 class UserAgentPolicy(SansIOHTTPPolicy):
+    """User-Agent Policy. Allows custom values to be added to the User-Agent header.
+
+    :param str base_user_agent: Sets the base user agent value.
+    :param bool user_agent_overwrite: Keyword argument that overwrites User-Agent when True. Defaults to False.
+    :param bool user_agent_use_env: Keyword argument that gets user-agent from environment. Defaults to True.
+
+    Example:
+        .. literalinclude:: ../../../../examples/examples_sansio.py
+            :start-after: [START user_agent_policy]
+            :end-before: [END user_agent_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring a user agent policy.
+    """
     _USERAGENT = "User-Agent"
     _ENV_ADDITIONAL_USER_AGENT = 'AZURE_HTTP_USER_AGENT'
 
@@ -115,6 +150,11 @@ class UserAgentPolicy(SansIOHTTPPolicy):
 
     def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
+        """Modifies the User-Agent header before the request is sent.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
         http_request = request.http_request
         options = request.context.options # type: ignore
         if 'user_agent' in options:
@@ -130,14 +170,33 @@ class UserAgentPolicy(SansIOHTTPPolicy):
 
 
 class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
-    """A policy that logs HTTP request and response to the DEBUG logger.
+    """The logging policy in the pipeline is used to output HTTP network trace to the configured logger.
+
     This accepts both global configuration, and per-request level with "enable_http_logger"
+
+    :param bool logging_enable: Use to enable per operation. Defaults to False.
+     Keyword argument.
+    :param bool enable_http_logger: Enables network trace logging at DEBUG level.
+     Defaults to False.
+
+    Example:
+        .. literalinclude:: ../../../../examples/examples_sansio.py
+            :start-after: [START network_trace_logging_policy]
+            :end-before: [END network_trace_logging_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring a network trace logging policy.
     """
     def __init__(self, logging_enable=False, **kwargs): # pylint: disable=unused-argument
         self.enable_http_logger = logging_enable
 
     def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
+        """Logs HTTP request to the DEBUG logger.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
         http_request = request.http_request
         options = request.context.options # type: ignore
         if options.pop("logging_enable", self.enable_http_logger):
@@ -165,6 +224,13 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
 
     def on_response(self, request, response, **kwargs):
         # type: (PipelineRequest, PipelineResponse, Any) -> None
+        """Logs HTTP response to the DEBUG logger.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: The PipelineResponse object.
+        :type response: ~azure.core.pipeline.PipelineResponse
+        """
         if response.context.pop("logging_enable", self.enable_http_logger): # type: ignore
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
@@ -197,7 +263,8 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
 
 
 class ContentDecodePolicy(SansIOHTTPPolicy):
-
+    """Policy for decoding unstreamed response content.
+    """
     JSON_MIMETYPES = [
         'application/json',
         'text/json' # Because we're open minded people...
@@ -268,6 +335,9 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         Use bytes and headers to NOT use any requests/aiohttp or whatever
         specific implementation.
         Headers will tested for "content-type"
+
+        :param response: The HTTP response.
+        :type response: ~azure.core.pipeline.transport.HttpResponse
         """
         # Try to use content-type from headers if available
         content_type = None
@@ -289,6 +359,11 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         This will load the entire payload in memory.
         Will follow Content-Type to parse.
         We assume everything is UTF8 (BOM acceptable).
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: The PipelineResponse object.
+        :type response: ~azure.core.pipeline.PipelineResponse
         :param raw_data: Data to be processed.
         :param content_type: How to parse if raw_data is a string/bytes.
         :raises JSONDecodeError: If JSON is requested and parsing is impossible.
@@ -303,7 +378,24 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
 
 
 class ProxyPolicy(SansIOHTTPPolicy):
+    """A proxy policy.
 
+    Dictionary mapping protocol or protocol and host to the URL of the proxy
+    to be used on each Request.
+
+    :param dict proxies: Maps protocol or protocol and hostname to the URL
+     of the proxy.
+    :param bool proxies_use_env_settings: Keyword argument that uses proxy settings
+     from environment. Defaults to True.
+
+    Example:
+        .. literalinclude:: ../../../../examples/examples_sansio.py
+            :start-after: [START proxy_policy]
+            :end-before: [END proxy_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring a proxy policy.
+    """
     def __init__(self, proxies=None, **kwargs):
         self.proxies = proxies
         self.use_env_settings = kwargs.pop('proxies_use_env_settings', True)

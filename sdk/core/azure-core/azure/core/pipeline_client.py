@@ -39,10 +39,29 @@ _LOGGER = logging.getLogger(__name__)
 class PipelineClient(PipelineClientBase):
     """Service client core methods.
 
-    This contains methods are sans I/O and not tight to sync or async implementation.
-    :param Configuration config: Service configuration.
-    """
+    Builds a Pipeline client.
 
+    :param str base_url: URL for the request.
+    :param config: Service configuration. This is a required parameter.
+    :type config: ~azure.core.Configuration
+    :param kwargs: keyword arguments
+    :return: A pipeline object.
+    :rtype: ~azure.core.pipeline.Pipeline
+
+    Keyword arguments:
+    pipeline - A Pipeline object. If omitted, a Pipeline object is created
+     and returned.
+    transport - The HTTP Transport type. If omitted, RequestsTransport is used
+     for synchronous transport.
+
+    Example:
+        .. literalinclude:: ../../examples/examples_sync.py
+            :start-after: [START build_pipeline_client]
+            :end-before: [END build_pipeline_client]
+            :language: python
+            :dedent: 4
+            :caption: Builds the pipeline client.
+    """
     def __init__(self, base_url, config, **kwargs):
         super(PipelineClient, self).__init__(base_url)
         if config is None:
@@ -83,3 +102,4 @@ class PipelineClient(PipelineClientBase):
             transport,
             policies
         )
+

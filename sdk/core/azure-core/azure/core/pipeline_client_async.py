@@ -39,10 +39,29 @@ _LOGGER = logging.getLogger(__name__)
 class AsyncPipelineClient(PipelineClientBase):
     """Service client core methods.
 
-    This contains methods are sans I/O and not tight to sync or async implementation.
-    :param Configuration config: Service configuration.
-    """
+    Builds an AsyncPipeline client.
 
+    :param str base_url: URL for the request.
+    :param config: Service configuration. This is a required parameter.
+    :type config: ~azure.core.Configuration
+    :param kwargs: keyword arguments.
+    :return: An async pipeline object.
+    :rtype: ~azure.core.pipeline.AsyncPipeline
+
+    Keyword arguments:
+    pipeline - A Pipeline object. If omitted, an AsyncPipeline is created
+     and returned.
+    transport - The HTTP Transport type. If omitted, AioHttpTransport is used
+     for asynchronous transport.
+
+    Example:
+        .. literalinclude:: ../../examples/examples_async.py
+            :start-after: [START build_async_pipeline_client]
+            :end-before: [END build_async_pipeline_client]
+            :language: python
+            :dedent: 4
+            :caption: Builds the async pipeline client.
+    """
     def __init__(self, base_url, config, **kwargs):
         super(AsyncPipelineClient, self).__init__(base_url)
         if config is None:
