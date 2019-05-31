@@ -60,7 +60,9 @@ def _get_running_loop():
 
 #pylint: disable=too-many-ancestors
 class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
-
+    """Identical implementation as the synchronous RequestsTransport wrapped in a class with
+     asynchronous methods. Uses the built-in asyncio event loop.
+    """
     async def __aenter__(self):
         return super(AsyncioRequestsTransport, self).__enter__()
 
@@ -69,6 +71,12 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
 
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
         """Send the request using this HTTP sender.
+
+        :param request: The HttpRequest
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :param kwargs: Any keyword arguments
+        :return: The AsyncHttpResponse
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         self.open()
         loop = kwargs.get("loop", _get_running_loop())
@@ -111,7 +119,13 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
 
 
 class AsyncioStreamDownloadGenerator(AsyncIterator):
+    """Streams the response body data.
 
+    :param response: The response object.
+    :param int block_size: block size of data sent over connection.
+    :param generator iter_content_func: Iterator for response data.
+    :param int content_length: size of body in bytes.
+    """
     def __init__(self, response: requests.Response, block_size: int) -> None:
         self.response = response
         self.block_size = block_size
@@ -150,7 +164,8 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 
 
 class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse): # type: ignore
-
+    """Asynchronous streaming of data from the response.
+    """
     def stream_download(self) -> AsyncIteratorType[bytes]: # type: ignore
         """Generator for streaming request body data."""
         return AsyncioStreamDownloadGenerator(self.internal_response, self.block_size) # type: ignore
