@@ -102,24 +102,17 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
 
         This method is executed inside the exception handler.
 
-        .. code-block:: python
-
-            try:
-                do_something()
-            except MyError:
-                if not policy.on_exception(request):
-                    raise               
-
-        or use
-
-        .. code-block:: python
-
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-
         :param request: The Pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         :return: False.
         :rtype: bool
+
+        Example:
+            .. literalinclude:: ../../../../examples/examples_sansio.py
+                :start-after: [START on_exception]
+                :end-before: [END on_exception]
+                :language: python
+                :dedent: 4
         """
         return False
 

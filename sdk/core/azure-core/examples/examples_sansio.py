@@ -24,13 +24,14 @@
 #
 #--------------------------------------------------------------------------
 
+import sys
 from azure.core.configuration import Configuration
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline_client import PipelineClient
 from azure.core.pipeline.policies import HeadersPolicy, RedirectPolicy
 from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.pipeline.policies import NetworkTraceLoggingPolicy
-from azure.core.pipeline.policies import ProxyPolicy
+from azure.core.pipeline.policies import ProxyPolicy, SansIOHTTPPolicy
 
 
 def test_example_headers_policy():
@@ -127,3 +128,17 @@ def example_proxy_policy():
     # You can also configure proxies by setting the environment variables
     # HTTP_PROXY and HTTPS_PROXY.
     # [END proxy_policy]
+
+def example_on_exception():
+    policy = SansIOHTTPPolicy()
+    request = HttpRequest("GET", "https://bing.com")
+    # [START on_exception]
+    try:
+        response = policy.next.send(request)
+    except Exception:
+        if not policy.on_exception(request):
+            raise
+
+    # or use
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    # [END on_exception]

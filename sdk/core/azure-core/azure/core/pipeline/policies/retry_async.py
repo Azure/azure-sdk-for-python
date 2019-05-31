@@ -62,7 +62,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
     :param int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
 
     Example:
-        .. literalinclude:: ../../examples/examples_async.py
+        .. literalinclude:: ../../../../examples/examples_async.py
             :start-after: [START async_retry_policy]
             :end-before: [END async_retry_policy]
             :language: python
