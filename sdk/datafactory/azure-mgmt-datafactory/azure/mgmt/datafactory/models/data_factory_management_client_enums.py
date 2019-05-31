@@ -77,6 +77,8 @@ class RunQueryFilterOperand(str, Enum):
     activity_type = "ActivityType"
     trigger_name = "TriggerName"
     trigger_run_timestamp = "TriggerRunTimestamp"
+    run_group_id = "RunGroupId"
+    latest_only = "LatestOnly"
 
 
 class RunQueryFilterOperator(str, Enum):
@@ -156,6 +158,12 @@ class RecurrenceFrequency(str, Enum):
     week = "Week"
     month = "Month"
     year = "Year"
+
+
+class GoogleAdWordsAuthenticationType(str, Enum):
+
+    service_authentication = "ServiceAuthentication"
+    user_authentication = "UserAuthentication"
 
 
 class SparkServerType(str, Enum):
@@ -267,6 +275,14 @@ class HttpAuthenticationType(str, Enum):
     client_certificate = "ClientCertificate"
 
 
+class RestServiceAuthenticationType(str, Enum):
+
+    anonymous = "Anonymous"
+    basic = "Basic"
+    aad_service_principal = "AadServicePrincipal"
+    managed_service_identity = "ManagedServiceIdentity"
+
+
 class MongoDbAuthenticationType(str, Enum):
 
     basic = "Basic"
@@ -277,6 +293,15 @@ class ODataAuthenticationType(str, Enum):
 
     basic = "Basic"
     anonymous = "Anonymous"
+    windows = "Windows"
+    aad_service_principal = "AadServicePrincipal"
+    managed_service_identity = "ManagedServiceIdentity"
+
+
+class ODataAadServicePrincipalCredentialType(str, Enum):
+
+    service_principal_key = "ServicePrincipalKey"
+    service_principal_cert = "ServicePrincipalCert"
 
 
 class TeradataAuthenticationType(str, Enum):
@@ -294,18 +319,6 @@ class SybaseAuthenticationType(str, Enum):
 
     basic = "Basic"
     windows = "Windows"
-
-
-class DatasetCompressionLevel(str, Enum):
-
-    optimal = "Optimal"
-    fastest = "Fastest"
-
-
-class JsonFormatFilePattern(str, Enum):
-
-    set_of_objects = "setOfObjects"
-    array_of_objects = "arrayOfObjects"
 
 
 class AzureFunctionActivityMethod(str, Enum):
@@ -327,34 +340,15 @@ class WebActivityMethod(str, Enum):
     delete = "DELETE"
 
 
-class CassandraSourceReadConsistencyLevels(str, Enum):
-
-    all = "ALL"
-    each_quorum = "EACH_QUORUM"
-    quorum = "QUORUM"
-    local_quorum = "LOCAL_QUORUM"
-    one = "ONE"
-    two = "TWO"
-    three = "THREE"
-    local_one = "LOCAL_ONE"
-    serial = "SERIAL"
-    local_serial = "LOCAL_SERIAL"
-
-
 class StoredProcedureParameterType(str, Enum):
 
     string = "String"
     int_enum = "Int"
+    int64 = "Int64"
     decimal_enum = "Decimal"
     guid = "Guid"
     boolean = "Boolean"
     date_enum = "Date"
-
-
-class SalesforceSourceReadBehavior(str, Enum):
-
-    query = "Query"
-    query_all = "QueryAll"
 
 
 class HDInsightActivityDebugInfoOption(str, Enum):
@@ -364,35 +358,15 @@ class HDInsightActivityDebugInfoOption(str, Enum):
     failure = "Failure"
 
 
-class SalesforceSinkWriteBehavior(str, Enum):
-
-    insert = "Insert"
-    upsert = "Upsert"
-
-
-class AzureSearchIndexWriteBehaviorType(str, Enum):
-
-    merge = "Merge"
-    upload = "Upload"
-
-
-class CopyBehaviorType(str, Enum):
-
-    preserve_hierarchy = "PreserveHierarchy"
-    flatten_hierarchy = "FlattenHierarchy"
-    merge_files = "MergeFiles"
-
-
 class PolybaseSettingsRejectType(str, Enum):
 
     value = "value"
     percentage = "percentage"
 
 
-class SapCloudForCustomerSinkWriteBehavior(str, Enum):
+class WebHookActivityMethod(str, Enum):
 
-    insert = "Insert"
-    update = "Update"
+    post = "POST"
 
 
 class IntegrationRuntimeType(str, Enum):
@@ -432,6 +406,12 @@ class ManagedIntegrationRuntimeNodeStatus(str, Enum):
     available = "Available"
     recycling = "Recycling"
     unavailable = "Unavailable"
+
+
+class IntegrationRuntimeEntityReferenceType(str, Enum):
+
+    integration_runtime_reference = "IntegrationRuntimeReference"
+    linked_service_reference = "LinkedServiceReference"
 
 
 class IntegrationRuntimeSsisCatalogPricingTier(str, Enum):

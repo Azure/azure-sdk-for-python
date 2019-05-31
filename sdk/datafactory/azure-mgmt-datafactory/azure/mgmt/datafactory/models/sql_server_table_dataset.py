@@ -43,15 +43,14 @@ class SqlServerTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: Required. The table name of the SQL Server dataset.
-     Type: string (or Expression with resultType string).
+    :param table_name: The table name of the SQL Server dataset. Type: string
+     (or Expression with resultType string).
     :type table_name: object
     """
 
     _validation = {
         'linked_service_name': {'required': True},
         'type': {'required': True},
-        'table_name': {'required': True},
     }
 
     _attribute_map = {

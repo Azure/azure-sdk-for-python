@@ -34,11 +34,18 @@ class DocumentDbCollectionSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the sink data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param nesting_separator: Nested properties separator. Default is . (dot).
      Type: string (or Expression with resultType string).
     :type nesting_separator: object
+    :param write_behavior: Describes how to write data to Azure Cosmos DB.
+     Allowed values: insert and upsert.
+    :type write_behavior: object
     """
 
     _validation = {
@@ -51,11 +58,14 @@ class DocumentDbCollectionSink(CopySink):
         'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'nesting_separator': {'key': 'nestingSeparator', 'type': 'object'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(DocumentDbCollectionSink, self).__init__(**kwargs)
         self.nesting_separator = kwargs.get('nesting_separator', None)
+        self.write_behavior = kwargs.get('write_behavior', None)
         self.type = 'DocumentDbCollectionSink'

@@ -27,6 +27,10 @@ class CassandraSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param query: Database query. Should be a SQL-92 query expression or
@@ -38,11 +42,8 @@ class CassandraSource(CopySource):
      the client application. Cassandra checks the specified number of Cassandra
      servers for data to satisfy the read request. Must be one of
      cassandraSourceReadConsistencyLevels. The default value is 'ONE'. It is
-     case-insensitive. Possible values include: 'ALL', 'EACH_QUORUM', 'QUORUM',
-     'LOCAL_QUORUM', 'ONE', 'TWO', 'THREE', 'LOCAL_ONE', 'SERIAL',
-     'LOCAL_SERIAL'
-    :type consistency_level: str or
-     ~azure.mgmt.datafactory.models.CassandraSourceReadConsistencyLevels
+     case-insensitive.
+    :type consistency_level: object
     """
 
     _validation = {
@@ -53,9 +54,10 @@ class CassandraSource(CopySource):
         'additional_properties': {'key': '', 'type': '{object}'},
         'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
-        'consistency_level': {'key': 'consistencyLevel', 'type': 'str'},
+        'consistency_level': {'key': 'consistencyLevel', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):

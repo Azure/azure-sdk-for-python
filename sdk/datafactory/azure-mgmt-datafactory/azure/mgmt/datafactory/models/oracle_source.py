@@ -27,6 +27,10 @@ class OracleSource(CopySource):
      with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param oracle_reader_query: Oracle reader query. Type: string (or
@@ -36,6 +40,13 @@ class OracleSource(CopySource):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type query_timeout: object
+    :param partition_option: The partition mechanism that will be used for
+     oracle read in parallel.
+    :type partition_option: object
+    :param partition_settings: The settings that will be leveraged for oracle
+     source partitioning.
+    :type partition_settings:
+     ~azure.mgmt.datafactory.models.OraclePartitionSettings
     """
 
     _validation = {
@@ -46,13 +57,18 @@ class OracleSource(CopySource):
         'additional_properties': {'key': '', 'type': '{object}'},
         'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'oracle_reader_query': {'key': 'oracleReaderQuery', 'type': 'object'},
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+        'partition_option': {'key': 'partitionOption', 'type': 'object'},
+        'partition_settings': {'key': 'partitionSettings', 'type': 'OraclePartitionSettings'},
     }
 
     def __init__(self, **kwargs):
         super(OracleSource, self).__init__(**kwargs)
         self.oracle_reader_query = kwargs.get('oracle_reader_query', None)
         self.query_timeout = kwargs.get('query_timeout', None)
+        self.partition_option = kwargs.get('partition_option', None)
+        self.partition_settings = kwargs.get('partition_settings', None)
         self.type = 'OracleSource'

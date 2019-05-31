@@ -12,19 +12,20 @@
 from msrest.serialization import Model
 
 
-class CopyTranslator(Model):
-    """A copy activity translator.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: TabularTranslator
+class ConnectorReadSetting(Model):
+    """Connector read settings.
 
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Constant filled by server.
+    :param type: Required. The read setting type.
     :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
     """
 
     _validation = {
@@ -34,13 +35,11 @@ class CopyTranslator(Model):
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
     }
 
-    _subtype_map = {
-        'type': {'TabularTranslator': 'TabularTranslator'}
-    }
-
-    def __init__(self, *, additional_properties=None, **kwargs) -> None:
-        super(CopyTranslator, self).__init__(**kwargs)
+    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, **kwargs) -> None:
+        super(ConnectorReadSetting, self).__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None
+        self.type = type
+        self.max_concurrent_connections = max_concurrent_connections

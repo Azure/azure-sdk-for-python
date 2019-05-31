@@ -34,6 +34,10 @@ class SqlSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the sink data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param sql_writer_stored_procedure_name: SQL writer stored procedure name.
@@ -48,6 +52,10 @@ class SqlSink(CopySink):
     :param stored_procedure_parameters: SQL stored procedure parameters.
     :type stored_procedure_parameters: dict[str,
      ~azure.mgmt.datafactory.models.StoredProcedureParameter]
+    :param stored_procedure_table_type_parameter_name: The stored procedure
+     parameter name of the table type. Type: string (or Expression with
+     resultType string).
+    :type stored_procedure_table_type_parameter_name: object
     """
 
     _validation = {
@@ -60,11 +68,13 @@ class SqlSink(CopySink):
         'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'sql_writer_stored_procedure_name': {'key': 'sqlWriterStoredProcedureName', 'type': 'object'},
         'sql_writer_table_type': {'key': 'sqlWriterTableType', 'type': 'object'},
         'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
+        'stored_procedure_table_type_parameter_name': {'key': 'storedProcedureTableTypeParameterName', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
@@ -73,4 +83,5 @@ class SqlSink(CopySink):
         self.sql_writer_table_type = kwargs.get('sql_writer_table_type', None)
         self.pre_copy_script = kwargs.get('pre_copy_script', None)
         self.stored_procedure_parameters = kwargs.get('stored_procedure_parameters', None)
+        self.stored_procedure_table_type_parameter_name = kwargs.get('stored_procedure_table_type_parameter_name', None)
         self.type = 'SqlSink'
