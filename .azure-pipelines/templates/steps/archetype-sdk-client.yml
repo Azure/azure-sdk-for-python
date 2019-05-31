@@ -27,7 +27,7 @@ steps:
     displayName: 'Setup and Run Tests'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: '"$(BuildTargetingString)" --junitxml="junit/test-results.xml" ${{ parameters.coverageParam }} --mark_arg=${{ parameters.testMarkArgument }}'
+      arguments: '"$(BuildTargetingString)" --junitxml="junit/test-results.xml" ${{ parameters.coverageParam }} --mark_arg="${{ parameters.testMarkArgument }}"'
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
