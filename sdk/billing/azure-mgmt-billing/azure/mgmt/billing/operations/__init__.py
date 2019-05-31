@@ -11,7 +11,7 @@
 
 from .billing_accounts_operations import BillingAccountsOperations
 from .payment_methods_operations import PaymentMethodsOperations
-from .billing_accounts_validate_address_operations import BillingAccountsValidateAddressOperations
+from .addresses_operations import AddressesOperations
 from .available_balances_operations import AvailableBalancesOperations
 from .billing_profiles_operations import BillingProfilesOperations
 from .invoice_sections_operations import InvoiceSectionsOperations
@@ -36,7 +36,7 @@ from .line_of_credits_operations import LineOfCreditsOperations
 __all__ = [
     'BillingAccountsOperations',
     'PaymentMethodsOperations',
-    'BillingAccountsValidateAddressOperations',
+    'AddressesOperations',
     'AvailableBalancesOperations',
     'BillingProfilesOperations',
     'InvoiceSectionsOperations',
