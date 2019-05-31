@@ -117,7 +117,7 @@ class EventHubClient(EventHubClientAbstract):
             await mgmt_client.close_async()
     
     async def get_partition_ids(self):
-        return await self.get_properties()['partition_ids']
+        return (await self.get_properties())['partition_ids']
 
     async def get_partition_properties(self, partition):
         """
