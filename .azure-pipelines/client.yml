@@ -9,6 +9,7 @@ trigger:
 variables:
   PythonVersion: '3.6'
   ReleaseTag: 'RELEASE_CANDIDATE'
+  TestMarkArgument: 'not cosmosEmulator'
 
 jobs:
   - job: 'Build'
@@ -125,6 +126,8 @@ jobs:
 
     steps:
       - template: templates/steps/archetype-sdk-client.yml
+        parameters:
+          testMarkArgument: '$(TestMarkArgument)'
 
       - script: |
           coverage xml
@@ -161,3 +164,4 @@ jobs:
       - template: templates/steps/archetype-sdk-client.yml
         parameters:
           coverageParam: '--disablecov'
+          testMarkArgument: '$(TestMarkArgument)'
