@@ -30,9 +30,9 @@ import logging
 import os
 import time
 try:
-    from urlparse import urlparse # type: ignore
+    from urlparse import urljoin, urlparse # type: ignore
 except ImportError:
-    from urllib.parse import urlparse
+    from urllib.parse import urljoin, urlparse
 import xml.etree.ElementTree as ET
 
 from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, # pylint: disable=unused-import
