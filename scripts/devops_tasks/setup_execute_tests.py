@@ -22,6 +22,8 @@ dev_setup_script_location = os.path.join(root_dir, 'scripts/dev_setup.py')
 # evaluating whether we want this or not.
 ALLOWED_RETURN_CODES = []
 
+MANAGEMENT_PACKAGE_IDENTIFIERS = ['mgmt', 'azure-cognitiveservices-personalizer']
+
 def prep_and_run_tests(targeted_packages, python_version, test_res):
     print('running test setup for {}'.format(targeted_packages))
     run_check_call([python_version, dev_setup_script_location, '-p', ','.join([os.path.basename(p) for p in targeted_packages])], root_dir)
@@ -29,7 +31,7 @@ def prep_and_run_tests(targeted_packages, python_version, test_res):
     # if we are targeting only packages that are management plane, it is a possibility 
     # that no tests running is an acceptable situation
     # we explicitly handle this here.
-    if all(map(lambda x : 'mgmt' in x, targeted_packages)):
+    if all(map(lambda x : any([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]), targeted_packages)):
         ALLOWED_RETURN_CODES.append(5)
 
     print('Setup complete. Running pytest for {}'.format(targeted_packages))
@@ -60,6 +62,12 @@ if __name__ == '__main__':
               'Example: --junitxml="junit/test-results.xml"'))
 
     parser.add_argument(
+        '--mark_arg',
+        dest='mark_arg',
+        help=('The complete argument for `pytest -m "<input>"`. This can be used to exclude or include specific pytest markers.'
+              '--mark_arg="not cosmosEmulator"'))
+
+    parser.add_argument(
         '--disablecov',
         help = ('Flag that disables code coverage.'),
         action='store_true')
@@ -86,5 +94,8 @@ if __name__ == '__main__':
 
     if args.disablecov:
         test_results_arg.append('--no-cov')
+
+    if args.mark_arg:
+        test_results_arg.extend(['-m', '"{}"'.format(args.mark_arg)])
 
     prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
