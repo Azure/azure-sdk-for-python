@@ -322,13 +322,15 @@ class PipelineClientBase(object):
 
     @staticmethod
     def _format_url_section(template, **kwargs):
-        while True:
+        components = template.split("/")
+        while components:
             try:
                 return template.format(**kwargs)
             except KeyError as key:
-                components = template.split("/")
-                new_components = [c for c in components if "{{{}}}".format(key.args[0]) not in c]
-                template = "/".join(new_components)
+                formatted_components = template.split("/")
+                components = [c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c]
+                template = "/".join(components)
+        # No URL sections left - returning None
 
     def format_url(self, url_template, **kwargs):
         # type: (str, Any) -> str
