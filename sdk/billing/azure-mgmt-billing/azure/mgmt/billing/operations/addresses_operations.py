@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class BillingAccountsValidateAddressOperations(object):
-    """BillingAccountsValidateAddressOperations operations.
+class AddressesOperations(object):
+    """AddressesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,12 +36,10 @@ class BillingAccountsValidateAddressOperations(object):
 
         self.config = config
 
-    def post(
-            self, billing_account_name, address, custom_headers=None, raw=False, **operation_config):
+    def validate(
+            self, address, custom_headers=None, raw=False, **operation_config):
         """Validates the address.
 
-        :param billing_account_name: billing Account Id.
-        :type billing_account_name: str
         :param address:
         :type address: ~azure.mgmt.billing.models.Address
         :param dict custom_headers: headers that will be added to the request
@@ -56,11 +54,7 @@ class BillingAccountsValidateAddressOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.post.metadata['url']
-        path_format_arguments = {
-            'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        url = self.validate.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -97,4 +91,4 @@ class BillingAccountsValidateAddressOperations(object):
             return client_raw_response
 
         return deserialized
-    post.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/validateAddress'}
+    validate.metadata = {'url': '/providers/Microsoft.Billing/validateAddress'}
