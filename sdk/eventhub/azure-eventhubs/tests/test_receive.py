@@ -14,7 +14,7 @@ from azure.eventhub import EventData, EventHubClient, EventPosition, TransportTy
 
 # def test_receive_without_events(connstr_senders):
 #     connection_str, senders = connstr_senders
-#     client = EventHubClient.from_connection_string(connection_str, debug=True)
+#     client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
 #     receiver = client.create_receiver("$default", "0", event_position=EventPosition('@latest'))
 #     finish = datetime.datetime.now() + datetime.timedelta(seconds=240)
 #     count = 0
@@ -36,7 +36,7 @@ from azure.eventhub import EventData, EventHubClient, EventPosition, TransportTy
 @pytest.mark.liveTest
 def test_receive_end_of_stream(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'))
     with receiver:
         received = receiver.receive(timeout=5)
@@ -52,7 +52,7 @@ def test_receive_end_of_stream(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_with_offset_sync(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     partitions = client.get_properties()
     assert partitions["partition_ids"] == ["0", "1"]
     receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'))
@@ -82,7 +82,7 @@ def test_receive_with_offset_sync(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_with_inclusive_offset(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'))
 
     with receiver:
@@ -106,7 +106,7 @@ def test_receive_with_inclusive_offset(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_with_datetime_sync(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     partitions = client.get_properties()
     assert partitions["partition_ids"] == ["0", "1"]
     receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'))
@@ -135,7 +135,7 @@ def test_receive_with_datetime_sync(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_with_custom_datetime_sync(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     for i in range(5):
         senders[0].send(EventData(b"Message before timestamp"))
     time.sleep(60)
@@ -161,9 +161,8 @@ def test_receive_with_custom_datetime_sync(connstr_senders):
 
 @pytest.mark.liveTest
 def test_receive_with_sequence_no(connstr_senders):
-    # TODO: liveTest fail when just one event data is sent
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'))
 
     with receiver:
@@ -187,7 +186,7 @@ def test_receive_with_sequence_no(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_with_inclusive_sequence_no(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'))
     with receiver:
         received = receiver.receive(timeout=5)
@@ -205,7 +204,7 @@ def test_receive_with_inclusive_sequence_no(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_batch(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     receiver = client.create_receiver(partition_id="0", prefetch=500, event_position=EventPosition('@latest'))
     with receiver:
         received = receiver.receive(timeout=5)
@@ -234,7 +233,7 @@ def test_receive_batch_with_app_prop_sync(connstr_senders):
             ed.application_properties = batch_app_prop
             yield ed
 
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     receiver = client.create_receiver(partition_id="0", prefetch=500, event_position=EventPosition('@latest'))
     with receiver:
         received = receiver.receive(timeout=5)
@@ -256,7 +255,7 @@ def test_receive_batch_with_app_prop_sync(connstr_senders):
 @pytest.mark.liveTest
 def test_receive_over_websocket_sync(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket, network_tracing=False)
     receiver = client.create_receiver(partition_id="0", prefetch=500, event_position=EventPosition('@latest'))
 
     event_list = []

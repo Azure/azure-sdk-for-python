@@ -97,7 +97,7 @@ def test_long_running_receive(connection_str):
     if args.conn_str:
         client = EventHubClient.from_connection_string(
             args.conn_str,
-            eventhub=args.eventhub, debug=False)
+            eventhub=args.eventhub, network_tracing=False)
     elif args.address:
         client = EventHubClient(
             args.address,

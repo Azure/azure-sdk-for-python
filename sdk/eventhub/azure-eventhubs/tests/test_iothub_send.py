@@ -16,11 +16,10 @@ from azure.eventhub import EventData, EventHubClient
 
 @pytest.mark.liveTest
 def test_iothub_send_single_event(iot_connection_str, device_id):
-    client = EventHubClient.from_iothub_connection_string(iot_connection_str, debug=True)
-    sender = client.add_sender(operation='/messages/devicebound')
+    client = EventHubClient.from_iothub_connection_string(iot_connection_str, network_tracing=True)
+    sender = client.create_sender(operation='/messages/devicebound')
     try:
-        outcome = sender.send(EventData(b"A single event", to_device=device_id))
-        assert outcome.value == 0
+        sender.send(EventData(b"A single event", to_device=device_id))
     except:
         raise
     finally:

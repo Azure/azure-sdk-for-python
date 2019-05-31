@@ -18,11 +18,11 @@ from azure.eventhub import (
 @pytest.mark.liveTest
 def test_send_with_long_interval_sync(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str, debug=True)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
     sender = client.create_sender()
     with sender:
         sender.send(EventData(b"A single event"))
-        for _ in range(2):
+        for _ in range(1):
             time.sleep(300)
             sender.send(EventData(b"A single event"))
 
@@ -30,22 +30,22 @@ def test_send_with_long_interval_sync(connstr_receivers):
     for r in receivers:
        received.extend(r.receive(timeout=1))
 
-    assert len(received) == 3
+    assert len(received) == 2
     assert list(received[0].body)[0] == b"A single event"
 
 
 @pytest.mark.liveTest
 def test_send_with_forced_conn_close_sync(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str, debug=True)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
     sender = client.create_sender()
     with sender:
         sender.send(EventData(b"A single event"))
-        sender._handler._message_sender.destroy()
+        sender._handler._connection._conn.destroy()
         time.sleep(300)
         sender.send(EventData(b"A single event"))
         sender.send(EventData(b"A single event"))
-        sender._handler._message_sender.destroy()
+        sender._handler._connection._conn.destroy()
         time.sleep(300)
         sender.send(EventData(b"A single event"))
         sender.send(EventData(b"A single event"))
