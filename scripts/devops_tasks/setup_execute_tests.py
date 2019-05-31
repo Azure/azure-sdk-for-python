@@ -94,6 +94,6 @@ if __name__ == '__main__':
         test_results_arg.append('--no-cov')
 
     if args.mark_arg:
-        test_results_arg.append(['-m', '{}'.format(args.mark_arg)])
+        test_results_arg.extend(['-m', '"{}"'.format(args.mark_arg)])
 
     prep_and_run_tests(targeted_packages, args.python_version, test_results_arg)
