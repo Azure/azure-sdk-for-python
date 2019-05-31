@@ -486,7 +486,7 @@ class ContainerClient(object):
             include=include,
             timeout=timeout,
             **kwargs)
-        return BlobPropertiesPaged(command, prefix=prefix, results_per_page=results_per_page,  marker=marker)
+        return BlobPropertiesPaged(command, prefix=starts_with, results_per_page=results_per_page,  marker=marker)
 
     # def walk_blob_propertes(self, prefix=None, include=None, delimiter="/", timeout=None, **kwargs):
     #     # type: (Optional[str], Optional[str], str, Optional[int]) -> Iterable[BlobProperties]
