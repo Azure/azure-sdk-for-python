@@ -33,6 +33,7 @@ try:
     from .department_py3 import Department
     from .billing_account_py3 import BillingAccount
     from .billing_account_list_result_py3 import BillingAccountListResult
+    from .billing_account_update_properties_py3 import BillingAccountUpdateProperties
     from .billing_property_py3 import BillingProperty
     from .department_list_result_py3 import DepartmentListResult
     from .enrollment_account_list_result_py3 import EnrollmentAccountListResult
@@ -97,6 +98,7 @@ except (SyntaxError, ImportError):
     from .department import Department
     from .billing_account import BillingAccount
     from .billing_account_list_result import BillingAccountListResult
+    from .billing_account_update_properties import BillingAccountUpdateProperties
     from .billing_property import BillingProperty
     from .department_list_result import DepartmentListResult
     from .enrollment_account_list_result import EnrollmentAccountListResult
@@ -184,6 +186,7 @@ __all__ = [
     'Department',
     'BillingAccount',
     'BillingAccountListResult',
+    'BillingAccountUpdateProperties',
     'BillingProperty',
     'DepartmentListResult',
     'EnrollmentAccountListResult',
