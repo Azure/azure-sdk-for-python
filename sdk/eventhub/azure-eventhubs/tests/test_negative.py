@@ -13,6 +13,9 @@ from azure.eventhub import (
     EventData,
     EventPosition,
     EventHubError,
+    EventHubAuthenticationError,
+    EventHubConnectionError,
+    EventHubMessageError,
     EventHubClient)
 
 
@@ -21,7 +24,7 @@ def test_send_with_invalid_hostname(invalid_hostname, connstr_receivers):
     _, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=False)
     sender = client.create_sender()
-    with pytest.raises(EventHubError):
+    with pytest.raises(EventHubAuthenticationError):
         sender._open()
 
 
@@ -29,7 +32,7 @@ def test_send_with_invalid_hostname(invalid_hostname, connstr_receivers):
 def test_receive_with_invalid_hostname_sync(invalid_hostname):
     client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=True)
     receiver = client.create_receiver(partition_id="0")
-    with pytest.raises(EventHubError):
+    with pytest.raises(EventHubAuthenticationError):
         receiver._open()
 
 
@@ -38,7 +41,7 @@ def test_send_with_invalid_key(invalid_key, connstr_receivers):
     _, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(invalid_key, network_tracing=False)
     sender = client.create_sender()
-    with pytest.raises(EventHubError):
+    with pytest.raises(EventHubAuthenticationError):
         sender._open()
 
 
@@ -46,7 +49,7 @@ def test_send_with_invalid_key(invalid_key, connstr_receivers):
 def test_receive_with_invalid_key_sync(invalid_key):
     client = EventHubClient.from_connection_string(invalid_key, network_tracing=True)
     receiver = client.create_receiver(partition_id="0")
-    with pytest.raises(EventHubError):
+    with pytest.raises(EventHubAuthenticationError):
         receiver._open()
 
 
@@ -55,7 +58,7 @@ def test_send_with_invalid_policy(invalid_policy, connstr_receivers):
     _, receivers = connstr_receivers
     client = EventHubClient.from_connection_string(invalid_policy, network_tracing=False)
     sender = client.create_sender()
-    with pytest.raises(EventHubError):
+    with pytest.raises(EventHubAuthenticationError):
         sender._open()
 
 
@@ -63,7 +66,7 @@ def test_send_with_invalid_policy(invalid_policy, connstr_receivers):
 def test_receive_with_invalid_policy_sync(invalid_policy):
     client = EventHubClient.from_connection_string(invalid_policy, network_tracing=True)
     receiver = client.create_receiver(partition_id="0")
-    with pytest.raises(EventHubError):
+    with pytest.raises(EventHubAuthenticationError):
         receiver._open()
 
 
@@ -85,7 +88,7 @@ def test_send_partition_key_with_partition_sync(connection_str):
 def test_non_existing_entity_sender(connection_str):
     client = EventHubClient.from_connection_string(connection_str, eventhub="nemo", network_tracing=False)
     sender = client.create_sender(partition_id="1")
-    with pytest.raises(EventHubError):
+    with pytest.raises(EventHubAuthenticationError):
         sender._open()
 
 
@@ -93,7 +96,7 @@ def test_non_existing_entity_sender(connection_str):
 def test_non_existing_entity_receiver(connection_str):
     client = EventHubClient.from_connection_string(connection_str, eventhub="nemo", network_tracing=False)
     receiver = client.create_receiver(partition_id="0")
-    with pytest.raises(EventHubError):
+    with pytest.raises(EventHubAuthenticationError):
         receiver._open()
 
 
@@ -104,7 +107,7 @@ def test_receive_from_invalid_partitions_sync(connection_str):
         client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
         receiver = client.create_receiver(partition_id=p)
         try:
-            with pytest.raises(EventHubError):
+            with pytest.raises(EventHubConnectionError):
                 receiver.receive(timeout=10)
         finally:
             receiver.close()
@@ -117,7 +120,7 @@ def test_send_to_invalid_partitions(connection_str):
         client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
         sender = client.create_sender(partition_id=p)
         try:
-            with pytest.raises(EventHubError):
+            with pytest.raises(EventHubConnectionError):
                 sender._open()
         finally:
             sender.close()
@@ -131,7 +134,7 @@ def test_send_too_large_message(connection_str):
     sender = client.create_sender()
     try:
         data = EventData(b"A" * 1100000)
-        with pytest.raises(EventHubError):
+        with pytest.raises(EventHubMessageError):
             sender.send(data)
     finally:
         sender.close()

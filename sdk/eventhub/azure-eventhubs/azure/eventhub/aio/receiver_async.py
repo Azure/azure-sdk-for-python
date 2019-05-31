@@ -236,7 +236,7 @@ class Receiver(object):
             return True
         except errors.AuthenticationException as shutdown:
             log.info("AsyncReceiver disconnected due to token expiry. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
+            error = EventHubAuthenticationError(str(shutdown), shutdown)
             await self.close(exception=error)
             raise error
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
@@ -244,7 +244,7 @@ class Receiver(object):
                 log.info("AsyncReceiver detached. Attempting reconnect.")
                 return False
             log.info("AsyncReceiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
+            error = EventHubConnectionError(str(shutdown), shutdown)
             await self.close(exception=error)
             raise error
         except errors.MessageHandlerError as shutdown:
@@ -252,7 +252,7 @@ class Receiver(object):
                 log.info("AsyncReceiver detached. Attempting reconnect.")
                 return False
             log.info("AsyncReceiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
+            error = EventHubConnectionError(str(shutdown), shutdown)
             await self.close(exception=error)
             raise error
         except errors.AMQPConnectionError as shutdown:
@@ -260,7 +260,7 @@ class Receiver(object):
                 log.info("AsyncReceiver couldn't authenticate. Attempting reconnect.")
                 return False
             log.info("AsyncReceiver connection error (%r). Shutting down.", shutdown)
-            error = EventHubError(str(shutdown))
+            error = EventHubConnectionError(str(shutdown))
             await self.close(exception=error)
             raise error
         except Exception as e:
