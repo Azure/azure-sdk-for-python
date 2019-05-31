@@ -15,9 +15,11 @@ from msrest.serialization import Model
 class ErrorDetail(Model):
     """Error detail information.
 
-    :param code: Error code.
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. Error code.
     :type code: str
-    :param message: Error message.
+    :param message: Required. Error message.
     :type message: str
     """
 
@@ -31,7 +33,7 @@ class ErrorDetail(Model):
         'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(self, code, message):
-        super(ErrorDetail, self).__init__()
-        self.code = code
-        self.message = message
+    def __init__(self, **kwargs):
+        super(ErrorDetail, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)

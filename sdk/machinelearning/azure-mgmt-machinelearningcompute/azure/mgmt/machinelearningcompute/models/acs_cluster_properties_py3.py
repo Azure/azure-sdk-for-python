@@ -76,12 +76,12 @@ class AcsClusterProperties(Model):
         'agent_vm_size': {'key': 'agentVmSize', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, orchestrator_type, orchestrator_properties=None, system_services=None, master_count: int=1, agent_count: int=2, agent_vm_size="Standard_D3_v2", **kwargs) -> None:
         super(AcsClusterProperties, self).__init__(**kwargs)
         self.cluster_fqdn = None
-        self.orchestrator_type = kwargs.get('orchestrator_type', None)
-        self.orchestrator_properties = kwargs.get('orchestrator_properties', None)
-        self.system_services = kwargs.get('system_services', None)
-        self.master_count = kwargs.get('master_count', 1)
-        self.agent_count = kwargs.get('agent_count', 2)
-        self.agent_vm_size = kwargs.get('agent_vm_size', "Standard_D3_v2")
+        self.orchestrator_type = orchestrator_type
+        self.orchestrator_properties = orchestrator_properties
+        self.system_services = system_services
+        self.master_count = master_count
+        self.agent_count = agent_count
+        self.agent_vm_size = agent_vm_size
