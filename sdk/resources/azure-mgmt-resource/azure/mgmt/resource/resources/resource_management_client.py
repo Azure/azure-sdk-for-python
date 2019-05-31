@@ -68,7 +68,7 @@ class ResourceManagementClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION='2018-05-01'
+    DEFAULT_API_VERSION='2019-05-01'
     _PROFILE_TAG = "azure.mgmt.resource.resources.ResourceManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
