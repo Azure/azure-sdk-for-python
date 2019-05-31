@@ -296,7 +296,8 @@ class PipelineClientBase(object):
 
         return request
 
-    def _format_url_section(self, template, **kwargs):
+    @staticmethod
+    def _format_url_section(template, **kwargs):
         while True:
             try:
                 return template.format(**kwargs)
@@ -447,4 +448,3 @@ class PipelineClientBase(object):
         """
         request = self._request('MERGE', url, params, headers, content, form_content, None)
         return request
-
