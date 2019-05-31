@@ -6,14 +6,13 @@
 
 
 class EnvironmentVariables:
-    # TODO: align cross-language
     AZURE_CLIENT_ID = "AZURE_CLIENT_ID"
     AZURE_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
     AZURE_TENANT_ID = "AZURE_TENANT_ID"
     CLIENT_SECRET_VARS = (AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID)
 
-    AZURE_PRIVATE_KEY_FILE = "AZURE_PRIVATE_KEY_FILE"
-    CERT_VARS = (AZURE_CLIENT_ID, AZURE_PRIVATE_KEY_FILE, AZURE_TENANT_ID)
+    AZURE_CLIENT_CERTIFICATE_PATH = "AZURE_CLIENT_CERTIFICATE_PATH"
+    CERT_VARS = (AZURE_CLIENT_ID, AZURE_CLIENT_CERTIFICATE_PATH, AZURE_TENANT_ID)
 
 
 # https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http

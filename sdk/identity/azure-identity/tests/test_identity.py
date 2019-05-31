@@ -84,7 +84,7 @@ def test_cert_environment_credential(monkeypatch):
     tenant_id = "fake-tenant-id"
 
     monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_ID, client_id)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_PRIVATE_KEY_FILE, private_key_file)
+    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH, private_key_file)
     monkeypatch.setenv(EnvironmentVariables.AZURE_TENANT_ID, tenant_id)
 
     success_message = "request passed validation"

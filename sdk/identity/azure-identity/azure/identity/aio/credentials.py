@@ -71,7 +71,7 @@ class AsyncEnvironmentCredential:
             )
         elif all(os.environ.get(v) is not None for v in EnvironmentVariables.CERT_VARS):
             try:
-                with open(os.environ[EnvironmentVariables.AZURE_PRIVATE_KEY_FILE]) as private_key_file:
+                with open(os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH]) as private_key_file:
                     private_key = private_key_file.read()
             except IOError:
                 return
