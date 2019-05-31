@@ -25,7 +25,7 @@ async def pump(receiver, sleep=None):
 
 async def get_partitions(iot_connection_str):
     try:
-        client = EventHubClient.from_iothub_connection_string(iot_connection_str, debug=True)
+        client = EventHubClient.from_iothub_connection_string(iot_connection_str, network_tracing=True)
         receiver = client.create_receiver(partition_id="0", prefetch=1000, operation='/messages/events')
         async with receiver:
             partitions = await client.get_properties()
@@ -38,7 +38,7 @@ async def get_partitions(iot_connection_str):
 @pytest.mark.asyncio
 async def test_iothub_receive_multiple_async(iot_connection_str):
     partitions = await get_partitions(iot_connection_str)
-    client = EventHubClient.from_iothub_connection_string(iot_connection_str, debug=True)
+    client = EventHubClient.from_iothub_connection_string(iot_connection_str, network_tracing=True)
     try:
         receivers = []
         for p in partitions:
