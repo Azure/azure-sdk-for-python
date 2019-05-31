@@ -22,8 +22,11 @@ class ServiceLoadMetricDescription(Model):
      that is specified in Name exactly. Note that metric names are case
      sensitive.
     :type name: str
-    :param weight: Possible values include: 'Zero', 'Low', 'Medium', 'High'
-    :type weight: str or ~azure.mgmt.servicefabric.models.enum
+    :param weight: The service load metric relative weight, compared to other
+     metrics configured for this service, as a number. Possible values include:
+     'Zero', 'Low', 'Medium', 'High'
+    :type weight: str or
+     ~azure.mgmt.servicefabric.models.ServiceLoadMetricWeight
     :param primary_default_load: Used only for Stateful services. The default
      amount of load, as a number, that this service creates for this metric
      when it is a Primary replica.
@@ -42,11 +45,11 @@ class ServiceLoadMetricDescription(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str'},
-        'weight': {'key': 'Weight', 'type': 'str'},
-        'primary_default_load': {'key': 'PrimaryDefaultLoad', 'type': 'int'},
-        'secondary_default_load': {'key': 'SecondaryDefaultLoad', 'type': 'int'},
-        'default_load': {'key': 'DefaultLoad', 'type': 'int'},
+        'name': {'key': 'name', 'type': 'str'},
+        'weight': {'key': 'weight', 'type': 'str'},
+        'primary_default_load': {'key': 'primaryDefaultLoad', 'type': 'int'},
+        'secondary_default_load': {'key': 'secondaryDefaultLoad', 'type': 'int'},
+        'default_load': {'key': 'defaultLoad', 'type': 'int'},
     }
 
     def __init__(self, *, name: str, weight=None, primary_default_load: int=None, secondary_default_load: int=None, default_load: int=None, **kwargs) -> None:

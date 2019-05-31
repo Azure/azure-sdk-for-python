@@ -17,10 +17,14 @@ class ServiceCorrelationDescription(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param scheme: Required. Possible values include: 'Invalid', 'Affinity',
+    :param scheme: Required. The ServiceCorrelationScheme which describes the
+     relationship between this service and the service specified via
+     ServiceName. Possible values include: 'Invalid', 'Affinity',
      'AlignedAffinity', 'NonAlignedAffinity'
-    :type scheme: str or ~azure.mgmt.servicefabric.models.enum
-    :param service_name: Required.
+    :type scheme: str or
+     ~azure.mgmt.servicefabric.models.ServiceCorrelationScheme
+    :param service_name: Required. The name of the service that the
+     correlation relationship is established with.
     :type service_name: str
     """
 
@@ -30,8 +34,8 @@ class ServiceCorrelationDescription(Model):
     }
 
     _attribute_map = {
-        'scheme': {'key': 'Scheme', 'type': 'str'},
-        'service_name': {'key': 'ServiceName', 'type': 'str'},
+        'scheme': {'key': 'scheme', 'type': 'str'},
+        'service_name': {'key': 'serviceName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
