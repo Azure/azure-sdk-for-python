@@ -85,7 +85,8 @@ async def pump(_pid, receiver, _args, _dl):
 
 
 @pytest.mark.liveTest
-def test_long_running_receive_async(connection_str):
+@pytest.mark.asyncio
+async def test_long_running_receive_async(connection_str):
     parser = argparse.ArgumentParser()
     parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
     parser.add_argument("--consumer", help="Consumer group name", default="$default")
@@ -118,7 +119,7 @@ def test_long_running_receive_async(connection_str):
 
     try:
         if not args.partitions:
-            partitions = loop.run_until_complete(get_partitions(client))
+            partitions = await client.get_partition_ids()
         else:
             partitions = args.partitions.split(",")
         pumps = []
@@ -126,12 +127,13 @@ def test_long_running_receive_async(connection_str):
             receiver = client.create_receiver(
                 partition_id=pid,
                 event_position=EventPosition(args.offset),
-                prefetch=50)
+                prefetch=50,
+                loop=loop)
             pumps.append(pump(pid, receiver, args, args.duration))
-        loop.run_until_complete(asyncio.gather(*pumps))
+        await asyncio.gather(*pumps)
     finally:
         pass
 
 
 if __name__ == '__main__':
-    test_long_running_receive_async(os.environ.get('EVENT_HUB_CONNECTION_STR'))
+    asyncio.run(test_long_running_receive_async(os.environ.get('EVENT_HUB_CONNECTION_STR')))

@@ -93,7 +93,7 @@ async def test_non_existing_entity_sender_async(connection_str):
     client = EventHubClient.from_connection_string(connection_str, eventhub="nemo", debug=False)
     sender = client.create_sender(partition_id="1")
     with pytest.raises(EventHubError):
-        await await sender._open()
+        await sender._open()
 
 
 @pytest.mark.liveTest

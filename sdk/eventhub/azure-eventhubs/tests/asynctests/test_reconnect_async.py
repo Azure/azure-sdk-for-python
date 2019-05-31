@@ -24,16 +24,18 @@ async def test_send_with_long_interval_async(connstr_receivers):
     sender = client.create_sender()
     try:
         await sender.send(EventData(b"A single event"))
-        for _ in range(2):
-            await asyncio.sleep(300)
+        for _ in range(1):
+            #await asyncio.sleep(300)
+            sender._handler._connection._conn.destroy()
             await sender.send(EventData(b"A single event"))
     finally:
         await sender.close()
 
     received = []
     for r in receivers:
-       received.extend(r.receive(timeout=1))
-    assert len(received) == 3
+        r._handler._connection._conn.destroy()
+        received.extend(r.receive(timeout=1))
+    assert len(received) == 2
     assert list(received[0].body)[0] == b"A single event"
 
 

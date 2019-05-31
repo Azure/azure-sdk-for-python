@@ -84,7 +84,8 @@ async def pump(pid, sender, args, duration):
 
 
 @pytest.mark.liveTest
-def test_long_running_partition_send_async(connection_str):
+@pytest.mark.asyncio
+async def test_long_running_partition_send_async(connection_str):
     parser = argparse.ArgumentParser()
     parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
     parser.add_argument("--payload", help="payload size", type=int, default=1024)
@@ -103,7 +104,7 @@ def test_long_running_partition_send_async(connection_str):
     if args.conn_str:
         client = EventHubClient.from_connection_string(
             args.conn_str,
-            eventhub=args.eventhub, debug=True)
+            eventhub=args.eventhub, network_tracing=True)
     elif args.address:
         client = EventHubClient(
             args.address,
@@ -119,7 +120,7 @@ def test_long_running_partition_send_async(connection_str):
 
     try:
         if not args.partitions:
-            partitions = loop.run_until_complete(get_partitions(client))
+            partitions = await client.get_partition_ids()
         else:
             pid_range = args.partitions.split("-")
             if len(pid_range) > 1:
@@ -130,7 +131,7 @@ def test_long_running_partition_send_async(connection_str):
         for pid in partitions:
             sender = client.create_sender(partition_id=pid, send_timeout=0)
             pumps.append(pump(pid, sender, args, args.duration))
-        results = loop.run_until_complete(asyncio.gather(*pumps, return_exceptions=True))
+        results = await asyncio.gather(*pumps, return_exceptions=True)
         assert not results
     except Exception as e:
         logger.error("Sender failed: {}".format(e))
@@ -139,4 +140,4 @@ def test_long_running_partition_send_async(connection_str):
 
 
 if __name__ == '__main__':
-    test_long_running_partition_send_async(os.environ.get('EVENT_HUB_CONNECTION_STR'))
+    asyncio.run(test_long_running_partition_send_async(os.environ.get('EVENT_HUB_CONNECTION_STR')))
