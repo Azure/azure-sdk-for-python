@@ -11,6 +11,8 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -103,28 +105,9 @@ class RegistrationAssignmentsOperations(object):
         return deserialized
     get.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments/{registrationAssignmentId}'}
 
-    def delete(
-            self, scope, registration_assignment_id, api_version, custom_headers=None, raw=False, **operation_config):
-        """Deletes the specified registration assignment.
 
-        :param scope: Scope of the resource.
-        :type scope: str
-        :param registration_assignment_id: Guid of the registration
-         assignment.
-        :type registration_assignment_id: str
-        :param api_version: The API version to use for this operation.
-        :type api_version: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: RegistrationAssignment or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.managedservices.models.RegistrationAssignment or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.managedservices.models.ErrorResponseException>`
-        """
+    def _delete_initial(
+            self, scope, registration_assignment_id, api_version, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
@@ -139,7 +122,6 @@ class RegistrationAssignmentsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -151,24 +133,16 @@ class RegistrationAssignmentsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200, 202, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('RegistrationAssignment', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
 
-        return deserialized
-    delete.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments/{registrationAssignmentId}'}
-
-    def create_or_update(
-            self, scope, registration_assignment_id, api_version, properties=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a registration assignment.
+    def delete(
+            self, scope, registration_assignment_id, api_version, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes the specified registration assignment.
 
         :param scope: Scope of the resource.
         :type scope: str
@@ -177,20 +151,44 @@ class RegistrationAssignmentsOperations(object):
         :type registration_assignment_id: str
         :param api_version: The API version to use for this operation.
         :type api_version: str
-        :param properties: Properties of a registration assignment.
-        :type properties:
-         ~azure.mgmt.managedservices.models.RegistrationAssignmentProperties
         :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: RegistrationAssignment or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.managedservices.models.RegistrationAssignment or
-         ~msrest.pipeline.ClientRawResponse
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.managedservices.models.ErrorResponseException>`
         """
+        raw_result = self._delete_initial(
+            scope=scope,
+            registration_assignment_id=registration_assignment_id,
+            api_version=api_version,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    delete.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments/{registrationAssignmentId}'}
+
+
+    def _create_or_update_initial(
+            self, scope, registration_assignment_id, api_version, properties=None, custom_headers=None, raw=False, **operation_config):
         request_body = models.RegistrationAssignment(properties=properties)
 
         # Construct URL
@@ -238,6 +236,61 @@ class RegistrationAssignmentsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def create_or_update(
+            self, scope, registration_assignment_id, api_version, properties=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates or updates a registration assignment.
+
+        :param scope: Scope of the resource.
+        :type scope: str
+        :param registration_assignment_id: Guid of the registration
+         assignment.
+        :type registration_assignment_id: str
+        :param api_version: The API version to use for this operation.
+        :type api_version: str
+        :param properties: Properties of a registration assignment.
+        :type properties:
+         ~azure.mgmt.managedservices.models.RegistrationAssignmentProperties
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns RegistrationAssignment
+         or ClientRawResponse<RegistrationAssignment> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.managedservices.models.RegistrationAssignment]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.managedservices.models.RegistrationAssignment]]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.managedservices.models.ErrorResponseException>`
+        """
+        raw_result = self._create_or_update_initial(
+            scope=scope,
+            registration_assignment_id=registration_assignment_id,
+            api_version=api_version,
+            properties=properties,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('RegistrationAssignment', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationAssignments/{registrationAssignmentId}'}
 
     def list(
