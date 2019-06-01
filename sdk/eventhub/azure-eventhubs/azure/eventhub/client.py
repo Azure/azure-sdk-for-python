@@ -74,7 +74,7 @@ class EventHubClient(EventHubClientAbstract):
                 transport_type=transport_type)
 
         elif isinstance(self.credential, SASTokenCredentials):
-            token = self.sas_token() if callable(self.sas_token) else self.sas_token
+            token = self.credential.get_sas_token()
             try:
                 expiry = int(parse_sas_token(token)['se'])
             except (KeyError, TypeError, IndexError):

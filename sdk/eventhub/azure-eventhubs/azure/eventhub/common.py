@@ -349,6 +349,12 @@ class SASTokenCredentials(object):
     def __init__(self, token):
         self.token = token
 
+    def get_sas_token(self):
+        if callable(self.token):
+            return self.token()
+        else:
+            return self.token
+
 
 class SharedKeyCredentials(object):
     def __init__(self, policy, key):

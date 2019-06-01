@@ -129,15 +129,11 @@ class EventHubClientAbstract(object):
         self.address.path = "/" + event_hub_path if event_hub_path else ""
         self._auth_config = {}
         self.credential = credential
-        if isinstance(credential, SASTokenCredentials):
-            self.sas_token = credential.token
-        elif isinstance(credential, SharedKeyCredentials):
+        if isinstance(credential, SharedKeyCredentials):
             self.username = credential.policy
             self.password = credential.key
             self._auth_config['username'] = self.username
             self._auth_config['password'] = self.password
-        else:
-            self.aad_credential = credential
 
         self.host = host
         self.eh_name = event_hub_path

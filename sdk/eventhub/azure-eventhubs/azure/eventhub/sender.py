@@ -13,8 +13,8 @@ from uamqp import SendClient
 from uamqp.constants import MessageSendResult
 
 from azure.eventhub.common import EventData, _BatchSendEventData
-from azure.eventhub.error import EventHubError, EventHubConnectionError, \
-    EventHubAuthenticationError, EventHubMessageError, _error_handler
+from azure.eventhub.error import EventHubError, ConnectError, \
+    AuthenticationError, EventDataError, _error_handler
 
 log = logging.getLogger(__name__)
 
@@ -131,16 +131,16 @@ class Sender(object):
                     self.reconnect()
                 else:
                     log.info("Sender detached. Failed to connect")
-                    error = EventHubConnectionError(str(shutdown), shutdown)
+                    error = ConnectError(str(shutdown), shutdown)
                     raise error
             except errors.AMQPConnectionError as shutdown:
                 if str(shutdown).startswith("Unable to open authentication session") and self.auto_reconnect:
                     log.info("Sender couldn't authenticate.", shutdown)
-                    error = EventHubAuthenticationError(str(shutdown), shutdown)
+                    error = AuthenticationError(str(shutdown), shutdown)
                     raise error
                 else:
                     log.info("Sender connection error (%r).", shutdown)
-                    error = EventHubConnectionError(str(shutdown), shutdown)
+                    error = ConnectError(str(shutdown), shutdown)
                     raise error
             except Exception as e:
                 log.info("Unexpected error occurred (%r)", e)
@@ -169,7 +169,7 @@ class Sender(object):
             return True
         except errors.AuthenticationException as shutdown:
             log.info("Sender disconnected due to token expiry. Shutting down.")
-            error = EventHubAuthenticationError(str(shutdown), shutdown)
+            error = AuthenticationError(str(shutdown), shutdown)
             self.close(exception=error)
             raise error
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
@@ -177,7 +177,7 @@ class Sender(object):
                 log.info("Sender detached. Attempting reconnect.")
                 return False
             log.info("Sender reconnect failed. Shutting down.")
-            error = EventHubConnectionError(str(shutdown), shutdown)
+            error = ConnectError(str(shutdown), shutdown)
             self.close(exception=error)
             raise error
         except errors.MessageHandlerError as shutdown:
@@ -185,7 +185,7 @@ class Sender(object):
                 log.info("Sender detached. Attempting reconnect.")
                 return False
             log.info("Sender reconnect failed. Shutting down.")
-            error = EventHubConnectionError(str(shutdown), shutdown)
+            error = ConnectError(str(shutdown), shutdown)
             self.close(exception=error)
             raise error
         except errors.AMQPConnectionError as shutdown:
@@ -193,7 +193,7 @@ class Sender(object):
                 log.info("Sender couldn't authenticate. Attempting reconnect.")
                 return False
             log.info("Sender connection error (%r). Shutting down.", shutdown)
-            error = EventHubConnectionError(str(shutdown), shutdown)
+            error = ConnectError(str(shutdown), shutdown)
             self.close(exception=error)
             raise error
         except Exception as e:
@@ -248,7 +248,7 @@ class Sender(object):
             if self._outcome != MessageSendResult.Ok:
                 raise Sender._error(self._outcome, self._condition)
         except errors.MessageException as failed:
-            error = EventHubMessageError(str(failed), failed)
+            error = EventDataError(str(failed), failed)
             self.close(exception=error)
             raise error
         except (errors.TokenExpired, errors.AuthenticationException):
@@ -260,7 +260,7 @@ class Sender(object):
                 self.reconnect()
             else:
                 log.info("Sender detached. Shutting down.")
-                error = EventHubConnectionError(str(shutdown), shutdown)
+                error = ConnectError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
         except errors.MessageHandlerError as shutdown:
@@ -269,7 +269,7 @@ class Sender(object):
                 self.reconnect()
             else:
                 log.info("Sender detached. Shutting down.")
-                error = EventHubConnectionError(str(shutdown), shutdown)
+                error = ConnectError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
         except Exception as e:
@@ -282,13 +282,10 @@ class Sender(object):
 
     @staticmethod
     def _set_batching_label(event_datas, batching_label):
-        if batching_label:
-            ed_iter = iter(event_datas)
-            for ed in ed_iter:
-                ed._batching_label = batching_label
-                yield ed
-        else:
-            return event_datas
+        ed_iter = iter(event_datas)
+        for ed in ed_iter:
+            ed._batching_label = batching_label
+            yield ed
 
     def send(self, event_data, batching_label=None):
         """
@@ -320,7 +317,7 @@ class Sender(object):
         else:
             wrapper_event_data = _BatchSendEventData(
                 self._set_batching_label(event_data, batching_label),
-                batching_label=batching_label)
+                batching_label=batching_label) if batching_label else _BatchSendEventData(event_data)
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self._send_event_data(wrapper_event_data)
 

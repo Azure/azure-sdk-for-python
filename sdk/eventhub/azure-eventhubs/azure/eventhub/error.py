@@ -95,14 +95,14 @@ class EventHubError(AzureError):
             self.details = details
 
 
-class EventHubAuthenticationError(EventHubError):
+class AuthenticationError(EventHubError):
     pass
 
 
-class EventHubConnectionError(EventHubError):
+class ConnectError(EventHubError):
     pass
 
 
-class EventHubMessageError(EventHubError):
+class EventDataError(EventHubError):
     pass
 
