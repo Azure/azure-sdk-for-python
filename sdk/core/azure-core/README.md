@@ -21,6 +21,7 @@ from azure.core.pipeline.policies import (
     HeadersPolicy,
     RetryPolicy,
     RedirectPolicy,
+    BearerTokenCredentialPolicy,
     ContentDecodePolicy
 )
 
