@@ -19,6 +19,10 @@ class TrainRequest(Model):
 
     :param source: Required. Get or set source path.
     :type source: str
+    :param source_filter: Get or set filter to further search the
+     source path for content.
+    :type source_filter:
+     ~azure.cognitiveservices.formrecognizer.models.TrainSourceFilter
     """
 
     _validation = {
@@ -27,8 +31,10 @@ class TrainRequest(Model):
 
     _attribute_map = {
         'source': {'key': 'source', 'type': 'str'},
+        'source_filter': {'key': 'sourceFilter', 'type': 'TrainSourceFilter'},
     }
 
     def __init__(self, **kwargs):
         super(TrainRequest, self).__init__(**kwargs)
         self.source = kwargs.get('source', None)
+        self.source_filter = kwargs.get('source_filter', None)
