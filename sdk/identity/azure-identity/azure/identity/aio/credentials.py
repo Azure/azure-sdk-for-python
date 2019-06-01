@@ -43,11 +43,11 @@ class AsyncCertificateCredential(CertificateCredentialBase):
         self,
         client_id: str,
         tenant_id: str,
-        private_key: str,
+        certificate_path: str,
         config: Optional[Configuration] = None,
         **kwargs: Mapping[str, Any]
     ) -> None:
-        super(AsyncCertificateCredential, self).__init__(client_id, tenant_id, private_key, **kwargs)
+        super(AsyncCertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
         self._client = AsyncAuthnClient(OAUTH_ENDPOINT.format(tenant_id), config, **kwargs)
 
     async def get_token(self, scopes: Iterable[str]) -> str:
@@ -70,16 +70,10 @@ class AsyncEnvironmentCredential:
                 **kwargs
             )
         elif all(os.environ.get(v) is not None for v in EnvironmentVariables.CERT_VARS):
-            try:
-                with open(os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH]) as private_key_file:
-                    private_key = private_key_file.read()
-            except IOError:
-                return
-
             self._credential = AsyncCertificateCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
-                private_key=private_key,
+                certificate_path=os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH],
                 **kwargs
             )
 

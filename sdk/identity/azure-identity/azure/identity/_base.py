@@ -31,13 +31,17 @@ class ClientSecretCredentialBase(object):
 
 
 class CertificateCredentialBase(object):
-    def __init__(self, client_id, tenant_id, private_key, **kwargs):
+    def __init__(self, client_id, tenant_id, certificate_path, **kwargs):
         # type: (str, str, str, Mapping[str, Any]) -> None
-        if not private_key:
-            raise ValueError("private_key should be a PEM-encoded private key")
+        if not certificate_path:
+            # TODO: support PFX
+            raise ValueError("certificate_path must be the path to a PEM-encoded private key file")
 
         super(CertificateCredentialBase, self).__init__()
         auth_url = OAUTH_ENDPOINT.format(tenant_id)
+
+        with open(certificate_path) as pem:
+            private_key = pem.read()
         signer = JwtSigner(private_key, "RS256")
         client_assertion = signer.sign_assertion(audience=auth_url, issuer=client_id)
         self._form_data = {

@@ -80,11 +80,11 @@ def test_client_secret_environment_credential(monkeypatch):
 
 def test_cert_environment_credential(monkeypatch):
     client_id = "fake-client-id"
-    private_key_file = os.path.join(os.path.dirname(__file__), "private-key.pem")
+    pem_path = os.path.join(os.path.dirname(__file__), "private-key.pem")
     tenant_id = "fake-tenant-id"
 
     monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_ID, client_id)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH, private_key_file)
+    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH, pem_path)
     monkeypatch.setenv(EnvironmentVariables.AZURE_TENANT_ID, tenant_id)
 
     success_message = "request passed validation"

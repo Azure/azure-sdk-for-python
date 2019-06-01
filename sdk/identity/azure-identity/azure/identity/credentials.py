@@ -46,10 +46,10 @@ class ClientSecretCredential(ClientSecretCredentialBase):
 class CertificateCredential(CertificateCredentialBase):
     """Authenticates with a certificate"""
 
-    def __init__(self, client_id, tenant_id, private_key, config=None, **kwargs):
+    def __init__(self, client_id, tenant_id, certificate_path, config=None, **kwargs):
         # type: (str, str, str, Optional[Configuration], Mapping[str, Any]) -> None
         self._client = AuthnClient(OAUTH_ENDPOINT.format(tenant_id), config, **kwargs)
-        super(CertificateCredential, self).__init__(client_id, tenant_id, private_key, **kwargs)
+        super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
 
     def get_token(self, scopes):
         # type: (Iterable[str]) -> str
@@ -75,16 +75,10 @@ class EnvironmentCredential:
                 **kwargs
             )
         elif all(os.environ.get(v) is not None for v in EnvironmentVariables.CERT_VARS):
-            try:
-                with open(os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH]) as private_key_file:
-                    private_key = private_key_file.read()
-            except IOError:
-                return
-
             self._credential = CertificateCredential(
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
-                private_key=private_key,
+                certificate_path=os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH],
                 **kwargs
             )
 
