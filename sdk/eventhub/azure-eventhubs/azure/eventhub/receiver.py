@@ -187,7 +187,7 @@ class Receiver(object):
                     raise error
             except errors.AMQPConnectionError as shutdown:
                 if str(shutdown).startswith("Unable to open authentication session") and self.auto_reconnect:
-                    log.info("Receiver couldn't authenticate.", shutdown)
+                    log.info("Receiver couldn't authenticate (%r).", shutdown)
                     error = AuthenticationError(str(shutdown), shutdown)
                     raise error
                 else:
