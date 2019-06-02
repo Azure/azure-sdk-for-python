@@ -157,7 +157,7 @@ class EventHubClient(EventHubClientAbstract):
             if partition_info:
                 output['event_hub_path'] = partition_info[b'name'].decode('utf-8')
                 output['id'] = partition_info[b'partition'].decode('utf-8')
-                output['begin_sequence_number'] = partition_info[b'begin_sequence_number']
+                output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
                 output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']
                 output['last_enqueued_offset'] = partition_info[b'last_enqueued_offset'].decode('utf-8')
                 output['last_enqueued_time_utc'] = datetime.datetime.utcfromtimestamp(
