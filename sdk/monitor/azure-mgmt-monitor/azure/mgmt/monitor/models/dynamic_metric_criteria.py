@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .multi_metric_criteria import MultiMetricCriteria
 
 
-class MultiMetricCriteria(Model):
-    """The types of conditions for a multi resource alert.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MetricCriteria, DynamicMetricCriteria
+class DynamicMetricCriteria(MultiMetricCriteria):
+    """Criterion for dynamic threshold.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -35,6 +32,22 @@ class MultiMetricCriteria(Model):
     :type dimensions: list[~azure.mgmt.monitor.models.MetricDimension]
     :param criterion_type: Required. Constant filled by server.
     :type criterion_type: str
+    :param operator: Required. The operator used to compare the metric value
+     against the threshold.
+    :type operator: object
+    :param alert_sensitivity: Required. The extent of deviation required to
+     trigger an alert. This will affect how tight the threshold is to the
+     metric series pattern.
+    :type alert_sensitivity: object
+    :param failing_periods: Required. The minimum number of violations
+     required within the selected lookback time window required to raise an
+     alert.
+    :type failing_periods:
+     ~azure.mgmt.monitor.models.DynamicThresholdFailingPeriods
+    :param ignore_data_before: Use this option to set the date from which to
+     start learning the metric historical data and calculate the dynamic
+     thresholds (in ISO8601 format)
+    :type ignore_data_before: datetime
     """
 
     _validation = {
@@ -42,6 +55,9 @@ class MultiMetricCriteria(Model):
         'metric_name': {'required': True},
         'time_aggregation': {'required': True},
         'criterion_type': {'required': True},
+        'operator': {'required': True},
+        'alert_sensitivity': {'required': True},
+        'failing_periods': {'required': True},
     }
 
     _attribute_map = {
@@ -52,18 +68,16 @@ class MultiMetricCriteria(Model):
         'time_aggregation': {'key': 'timeAggregation', 'type': 'object'},
         'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
         'criterion_type': {'key': 'criterionType', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'criterion_type': {'StaticThresholdCriterion': 'MetricCriteria', 'DynamicThresholdCriterion': 'DynamicMetricCriteria'}
+        'operator': {'key': 'operator', 'type': 'object'},
+        'alert_sensitivity': {'key': 'alertSensitivity', 'type': 'object'},
+        'failing_periods': {'key': 'failingPeriods', 'type': 'DynamicThresholdFailingPeriods'},
+        'ignore_data_before': {'key': 'ignoreDataBefore', 'type': 'iso-8601'},
     }
 
     def __init__(self, **kwargs):
-        super(MultiMetricCriteria, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.name = kwargs.get('name', None)
-        self.metric_name = kwargs.get('metric_name', None)
-        self.metric_namespace = kwargs.get('metric_namespace', None)
-        self.time_aggregation = kwargs.get('time_aggregation', None)
-        self.dimensions = kwargs.get('dimensions', None)
-        self.criterion_type = None
+        super(DynamicMetricCriteria, self).__init__(**kwargs)
+        self.operator = kwargs.get('operator', None)
+        self.alert_sensitivity = kwargs.get('alert_sensitivity', None)
+        self.failing_periods = kwargs.get('failing_periods', None)
+        self.ignore_data_before = kwargs.get('ignore_data_before', None)
+        self.criterion_type = 'DynamicThresholdCriterion'

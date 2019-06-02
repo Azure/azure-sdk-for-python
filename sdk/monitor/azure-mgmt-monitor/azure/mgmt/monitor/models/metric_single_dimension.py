@@ -12,35 +12,28 @@
 from msrest.serialization import Model
 
 
-class ArmRoleReceiver(Model):
-    """An arm role receiver.
+class MetricSingleDimension(Model):
+    """The metric dimension name and value.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the arm role receiver. Names must be
-     unique across all receivers within an action group.
+    :param name: Required. Name of the dimension.
     :type name: str
-    :param role_id: Required. The arm role id.
-    :type role_id: str
-    :param use_common_alert_schema: Required. Indicates whether to use common
-     alert schema.
-    :type use_common_alert_schema: bool
+    :param value: Required. Value of the dimension.
+    :type value: str
     """
 
     _validation = {
         'name': {'required': True},
-        'role_id': {'required': True},
-        'use_common_alert_schema': {'required': True},
+        'value': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'role_id': {'key': 'roleId', 'type': 'str'},
-        'use_common_alert_schema': {'key': 'useCommonAlertSchema', 'type': 'bool'},
+        'value': {'key': 'value', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ArmRoleReceiver, self).__init__(**kwargs)
+        super(MetricSingleDimension, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.role_id = kwargs.get('role_id', None)
-        self.use_common_alert_schema = kwargs.get('use_common_alert_schema', None)
+        self.value = kwargs.get('value', None)

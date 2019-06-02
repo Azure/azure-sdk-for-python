@@ -22,19 +22,25 @@ class WebhookReceiver(Model):
     :type name: str
     :param service_uri: Required. The URI where webhooks should be sent.
     :type service_uri: str
+    :param use_common_alert_schema: Required. Indicates whether to use common
+     alert schema.
+    :type use_common_alert_schema: bool
     """
 
     _validation = {
         'name': {'required': True},
         'service_uri': {'required': True},
+        'use_common_alert_schema': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
         'service_uri': {'key': 'serviceUri', 'type': 'str'},
+        'use_common_alert_schema': {'key': 'useCommonAlertSchema', 'type': 'bool'},
     }
 
-    def __init__(self, *, name: str, service_uri: str, **kwargs) -> None:
+    def __init__(self, *, name: str, service_uri: str, use_common_alert_schema: bool, **kwargs) -> None:
         super(WebhookReceiver, self).__init__(**kwargs)
         self.name = name
         self.service_uri = service_uri
+        self.use_common_alert_schema = use_common_alert_schema
