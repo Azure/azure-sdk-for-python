@@ -82,7 +82,7 @@ class EndpointSettingsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_settings.metadata = {'url': '/endpointsettings'}
+    get_settings.metadata = {'url': '/endpointSettings'}
 
     def update_settings(
             self, active_learning=None, custom_headers=None, raw=False, **operation_config):
@@ -140,4 +140,4 @@ class EndpointSettingsOperations(object):
             return client_raw_response
 
         return deserialized
-    update_settings.metadata = {'url': '/endpointsettings'}
+    update_settings.metadata = {'url': '/endpointSettings'}
