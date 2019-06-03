@@ -115,10 +115,7 @@ class Database(object):
     ):
         # type: (str, Dict[str, str], bool, Dict[str, Any]) -> Dict[str, Any]
         """
-<<<<<<< HEAD
         Read the database properties
-=======
->>>>>>> split get/read database method
 
         :param database: The ID (name), dict representing the properties or :class:`Database` instance of the database to read.
         :param session_token: Token for use with Session consistency.
