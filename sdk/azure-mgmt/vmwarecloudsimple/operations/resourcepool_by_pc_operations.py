@@ -42,7 +42,7 @@ class ResourcepoolByPCOperations(object):
 
         Returns resource pool templates by its name.
 
-        :param pc_name: The privae cloud name.
+        :param pc_name: The private cloud name.
         :type pc_name: str
         :param resource_pool_name: resource pool id (vsphereId)
         :type resource_pool_name: str

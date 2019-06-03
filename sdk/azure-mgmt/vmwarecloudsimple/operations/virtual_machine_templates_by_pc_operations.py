@@ -42,7 +42,7 @@ class VirtualMachineTemplatesByPCOperations(object):
 
         Returns list of virtual machine templates in region for private cloud.
 
-        :param pc_name: The privae cloud name.
+        :param pc_name: The private cloud name.
         :type pc_name: str
         :param resource_pool_name: Resource pool used to derive vSphere
          cluster which contains VM templates

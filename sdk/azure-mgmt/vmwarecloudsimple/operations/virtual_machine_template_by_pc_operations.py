@@ -42,7 +42,7 @@ class VirtualMachineTemplateByPCOperations(object):
 
         Returns virtual machine templates by its name.
 
-        :param pc_name: The privae cloud name.
+        :param pc_name: The private cloud name.
         :type pc_name: str
         :param virtual_machine_template_name: virtual machine template id
          (vsphereId)

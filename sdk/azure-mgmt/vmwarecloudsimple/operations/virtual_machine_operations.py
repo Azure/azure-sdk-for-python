@@ -735,7 +735,7 @@ class VirtualMachineOperations(object):
         :type resource_group_name: str
         :param virtual_machine_name: virtual machine name
         :type virtual_machine_name: str
-        :param mode: quiry stop mode parameter (reboot, shutdown, etc...).
+        :param mode: query stop mode parameter (reboot, shutdown, etc...).
          Possible values include: 'reboot', 'suspend', 'shutdown', 'poweroff'
         :type mode: str or ~microsoft.vmwarecloudsimple.models.StopMode
         :param mode1: mode indicates a type of stop operation - reboot,

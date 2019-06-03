@@ -50,7 +50,7 @@ class VirtualMachine(Model):
      ~microsoft.vmwarecloudsimple.models.GuestOSType
     :param nics: The list of Virtual NICs
     :type nics: list[~microsoft.vmwarecloudsimple.models.VirtualNic]
-    :param number_of_cores: Required. The numnber of CPU cores
+    :param number_of_cores: Required. The number of CPU cores
     :type number_of_cores: int
     :param password: Password for login
     :type password: str

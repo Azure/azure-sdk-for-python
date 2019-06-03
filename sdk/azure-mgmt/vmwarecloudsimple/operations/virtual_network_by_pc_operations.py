@@ -42,7 +42,7 @@ class VirtualNetworkByPCOperations(object):
 
         Return virtual network by its name.
 
-        :param pc_name: The privae cloud name.
+        :param pc_name: The private cloud name.
         :type pc_name: str
         :param virtual_network_name: virtual network id (vsphereId)
         :type virtual_network_name: str

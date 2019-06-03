@@ -40,7 +40,7 @@ class AvailableOperations(object):
             self, custom_headers=None, raw=False, **operation_config):
         """Implements list of available operations.
 
-        Return lisf of operatiions.
+        Return list of operations.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

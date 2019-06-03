@@ -26,7 +26,7 @@ class VirtualNetwork(Model):
     :type id: str
     :param location: Azure region
     :type location: str
-    :ivar name: {VirtualNetworkeName}
+    :ivar name: {VirtualNetworkName}
     :vartype name: str
     :ivar private_cloud_id: The Private Cloud id
     :vartype private_cloud_id: str

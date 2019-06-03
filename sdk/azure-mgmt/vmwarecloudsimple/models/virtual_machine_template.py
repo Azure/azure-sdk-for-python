@@ -26,7 +26,7 @@ class VirtualMachineTemplate(Model):
     :type location: str
     :ivar name: {virtualMachineTemplateName}
     :vartype name: str
-    :param amount_of_ram: The amout of memory
+    :param amount_of_ram: The amount of memory
     :type amount_of_ram: int
     :param controllers: The list of Virtual Disk Controllers
     :type controllers:

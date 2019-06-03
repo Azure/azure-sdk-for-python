@@ -33,8 +33,8 @@ class DedicatedCloudService(Model):
      collect the subnet address and always treat it as /28
     :type gateway_subnet: str
     :ivar is_account_onboarded: indicates whether account onboarded or not in
-     a given region by nwiaas. Possible values include: 'notOnBoarded',
-     'onBoarded', 'onBoardingFailed', 'onBoarding'
+     a given region. Possible values include: 'notOnBoarded', 'onBoarded',
+     'onBoardingFailed', 'onBoarding'
     :vartype is_account_onboarded: str or
      ~microsoft.vmwarecloudsimple.models.OnboardingStatus
     :param nodes: total nodes purchased

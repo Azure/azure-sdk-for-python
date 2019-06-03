@@ -58,12 +58,11 @@ class PrivateCloud(Model):
     :type total_ram: int
     :param total_storage: Disk space in TB
     :type total_storage: float
-    :param private_cloud_properties_type: Virtualizaiton type e.g. "vSphere"
+    :param private_cloud_properties_type: Virtualization type e.g. "vSphere"
     :type private_cloud_properties_type: str
     :param v_sphere_version: e.g. "6.5u2"
     :type v_sphere_version: str
-    :param vcenter_fqdn: FQDN for vcneter access e.g.
-     "vcsa-4-westus.az.cloudsimple.io"
+    :param vcenter_fqdn: FQDN for vcneter access
     :type vcenter_fqdn: str
     :param vcenter_refid: Vcenters' ip address
     :type vcenter_refid: str

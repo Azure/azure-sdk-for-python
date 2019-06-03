@@ -269,7 +269,7 @@ class VMwareCloudSimpleClient(SDKClient):
 
         Returns private cloud by its name.
 
-        :param pc_name: The privae cloud name.
+        :param pc_name: The private cloud name.
         :type pc_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
