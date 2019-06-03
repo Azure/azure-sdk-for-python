@@ -1,4 +1,4 @@
-﻿# --------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
 #
@@ -24,10 +24,30 @@
 #
 # --------------------------------------------------------------------------
 
+from azure.core import PipelineClient
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline.policies import ContentDecodePolicy
+from .policies import ARMAutoResourceProviderRegistrationPolicy
 
-from .version import msrestazure_version
-from .pipeline_client import ARMPipelineClient
 
-__all__ = ["ARMPipelineClient"]
+class ARMPipelineClient(PipelineClient):
+    """A pipeline client designed for ARM explicitly.
+    """
 
-__version__ = msrestazure_version
+    def _build_pipeline(self, config, transport): # pylint: disable=no-self-use
+        policies = [
+            ARMAutoResourceProviderRegistrationPolicy(),
+            config.headers_policy,
+            config.user_agent_policy,
+            config.authentication_policy,
+            ContentDecodePolicy(),
+            config.redirect_policy,
+            config.retry_policy,
+            config.custom_hook_policy,
+            config.logging_policy,
+        ]
+
+        return Pipeline(
+            transport,
+            policies
+        )
