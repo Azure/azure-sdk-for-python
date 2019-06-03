@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class IoTSecurityAggregatedRecommendationList(Model):
-    """List of iot aggregated security recommendations.
+    """List of IoT aggregated security recommendations.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.

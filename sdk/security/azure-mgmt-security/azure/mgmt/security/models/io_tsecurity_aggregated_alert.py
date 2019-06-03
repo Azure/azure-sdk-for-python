@@ -41,7 +41,7 @@ class IoTSecurityAggregatedAlert(Resource):
     :vartype remediation_steps: str
     :ivar description: Description of the incident and what it means
     :vartype description: str
-    :ivar count: Occurance number of the alert within the aggregated date
+    :ivar count: Occurrence number of the alert within the aggregated date
     :vartype count: int
     :ivar effected_resource_type: Azure resource ID of the resource that got
      the alerts
