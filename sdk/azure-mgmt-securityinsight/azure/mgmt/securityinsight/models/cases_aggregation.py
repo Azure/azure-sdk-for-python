@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .aggregations import Aggregations
 
 
-class Aggregations(Model):
-    """The aggregation.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CasesAggregation
+class CasesAggregation(Aggregations):
+    """Represents aggregations results for cases.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -31,6 +28,12 @@ class Aggregations(Model):
     :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
+    :param aggregation_by_severity: Aggregations results by case severity.
+    :type aggregation_by_severity:
+     ~azure.mgmt.securityinsight.models.CasesAggregationBySeverityProperties
+    :param aggregation_by_status: Aggregations results by case status.
+    :type aggregation_by_status:
+     ~azure.mgmt.securityinsight.models.CasesAggregationByStatusProperties
     """
 
     _validation = {
@@ -45,15 +48,12 @@ class Aggregations(Model):
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
+        'aggregation_by_severity': {'key': 'properties.aggregationBySeverity', 'type': 'CasesAggregationBySeverityProperties'},
+        'aggregation_by_status': {'key': 'properties.aggregationByStatus', 'type': 'CasesAggregationByStatusProperties'},
     }
 
-    _subtype_map = {
-        'kind': {'CasesAggregation': 'CasesAggregation'}
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(Aggregations, self).__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
-        self.kind = None
+    def __init__(self, **kwargs):
+        super(CasesAggregation, self).__init__(**kwargs)
+        self.aggregation_by_severity = kwargs.get('aggregation_by_severity', None)
+        self.aggregation_by_status = kwargs.get('aggregation_by_status', None)
+        self.kind = 'CasesAggregation'
