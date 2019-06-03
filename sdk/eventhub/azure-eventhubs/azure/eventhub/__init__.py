@@ -5,21 +5,29 @@
 
 __version__ = "1.3.1"
 
-from azure.eventhub.common import EventData, EventHubError, EventPosition
+from azure.eventhub.common import EventData, EventPosition
+from azure.eventhub.error import EventHubError, EventDataError, ConnectError, AuthenticationError
 from azure.eventhub.client import EventHubClient
 from azure.eventhub.sender import Sender
 from azure.eventhub.receiver import Receiver
-from uamqp.constants import MessageSendResult
-from uamqp.constants import TransportType
+from .constants import MessageSendResult
+from .constants import TransportType
+from .common import FIRST_AVAILABLE, NEW_EVENTS_ONLY, SharedKeyCredentials, SASTokenCredentials
 
 __all__ = [
+    "__version__",
     "EventData",
     "EventHubError",
+    "ConnectError",
+    "EventDataError",
+    "AuthenticationError",
     "EventPosition",
     "EventHubClient",
     "Sender",
     "Receiver",
     "MessageSendResult",
     "TransportType",
+    "FIRST_AVAILABLE", "NEW_EVENTS_ONLY",
+    "SharedKeyCredentials",
+    "SASTokenCredentials",
 ]
-

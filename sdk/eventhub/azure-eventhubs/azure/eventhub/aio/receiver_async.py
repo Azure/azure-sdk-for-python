@@ -11,7 +11,7 @@ from uamqp import errors, types
 from uamqp import ReceiveClientAsync, Source
 
 from azure.eventhub import EventHubError, EventData
-from azure.eventhub.common import _error_handler
+from azure.eventhub.error import EventHubError, AuthenticationError, ConnectError, _error_handler
 
 log = logging.getLogger(__name__)
 
@@ -33,8 +33,8 @@ class Receiver(object):
     _epoch = b'com.microsoft:epoch'
 
     def __init__(  # pylint: disable=super-init-not-called
-            self, client, source, offset=None, prefetch=300, epoch=None,
-            keep_alive=None, auto_reconnect=False, loop=None):
+            self, client, source, offset=None, prefetch=300, exclusive_receiver_priority=None,
+            keep_alive=None, auto_reconnect=True, loop=None):
         """
         Instantiate an async receiver.
 
@@ -54,8 +54,9 @@ class Receiver(object):
         self.client = client
         self.source = source
         self.offset = offset
+        self.messages_iter = None
         self.prefetch = prefetch
-        self.epoch = epoch
+        self.exclusive_receiver_priority = exclusive_receiver_priority
         self.keep_alive = keep_alive
         self.auto_reconnect = auto_reconnect
         self.retry_policy = errors.ErrorPolicy(max_retries=self.client.config.max_retries, on_error=_error_handler)
@@ -68,8 +69,8 @@ class Receiver(object):
         source = Source(self.source)
         if self.offset is not None:
             source.set_filter(self.offset.selector())
-        if epoch:
-            self.properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(epoch))}
+        if exclusive_receiver_priority:
+            self.properties = {types.AMQPSymbol(self._epoch): types.AMQPLong(int(exclusive_receiver_priority))}
         self._handler = ReceiveClientAsync(
             source,
             auth=self.client.get_auth(),
@@ -80,7 +81,7 @@ class Receiver(object):
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
-            properties=self.client.create_properties(),
+            properties=self.client.create_properties(self.client.config.user_agent),
             loop=self.loop)
 
     async def __aenter__(self):
@@ -90,12 +91,14 @@ class Receiver(object):
         await self.close(exc_val)
 
     def __aiter__(self):
-        self.messages_iter = self._handler.receive_messages_iter_async()
         return self
 
     async def __anext__(self):
+        await self._open()
         while True:
             try:
+                if not self.messages_iter:
+                    self.messages_iter = self._handler.receive_messages_iter_async()
                 message = await self.messages_iter.__anext__()
                 event_data = EventData(message=message)
                 self.offset = event_data.offset
@@ -107,25 +110,32 @@ class Receiver(object):
                 if shutdown.action.retry and self.auto_reconnect:
                     log.info("Receiver detached. Attempting reconnect.")
                     await self.reconnect()
-                log.info("Receiver detached. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                await self.close(exception=error)
-                raise error
+                else:
+                    log.info("Receiver detached. Shutting down.")
+                    error = ConnectError(str(shutdown), shutdown)
+                    await self.close(exception=error)
+                    raise error
             except errors.MessageHandlerError as shutdown:
                 if self.auto_reconnect:
                     log.info("Receiver detached. Attempting reconnect.")
                     await self.reconnect()
-                log.info("Receiver detached. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                await self.close(exception=error)
-                raise error
+                else:
+                    log.info("Receiver detached. Shutting down.")
+                    error = ConnectError(str(shutdown), shutdown)
+                    await self.close(exception=error)
+                    raise error
+            except StopAsyncIteration:
+                raise
+            except asyncio.CancelledError:
+                # TODO: stop self.message_iter
+                raise
             except Exception as e:
                 log.info("Unexpected error occurred (%r). Shutting down.", e)
                 error = EventHubError("Receive failed: {}".format(e))
                 await self.close(exception=error)
                 raise error
 
-    async def open(self):
+    async def _open(self):
         """
         Open the Receiver using the supplied conneciton.
         If the handler has previously been redirected, the redirect
@@ -144,7 +154,6 @@ class Receiver(object):
 
         """
         # pylint: disable=protected-access
-        self.running = True
         if self.redirected:
             self.source = self.redirected.address
             source = Source(self.source)
@@ -156,18 +165,46 @@ class Receiver(object):
             self._handler = ReceiveClientAsync(
                 source,
                 auth=self.client.get_auth(**alt_creds),
-                debug=self.client.debug,
+                debug=self.client.config.network_tracing,
                 prefetch=self.prefetch,
                 link_properties=self.properties,
                 timeout=self.timeout,
                 error_policy=self.retry_policy,
                 keep_alive_interval=self.keep_alive,
                 client_name=self.name,
-                properties=self.client.create_properties(),
+                properties=self.client.create_properties(self.client.config.user_agent),
                 loop=self.loop)
-        await self._handler.open_async()
-        while not await self._handler.client_ready_async():
-            await asyncio.sleep(0.05)
+
+        if not self.running:
+            try:
+                await self._handler.open_async()
+                self.running = True
+                while not await self._handler.client_ready_async():
+                    await asyncio.sleep(0.05)
+            except errors.AuthenticationException:
+                    log.info("Receiver failed authentication. Retrying...")
+                    await self.reconnect()
+            except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
+                if shutdown.action.retry and self.auto_reconnect:
+                    log.info("Receiver detached. Attempting reconnect.")
+                    await self.reconnect()
+                else:
+                    log.info("Receiver detached. Failed to connect")
+                    error = ConnectError(str(shutdown), shutdown)
+                    raise error
+            except errors.AMQPConnectionError as shutdown:
+                if str(shutdown).startswith("Unable to open authentication session") and self.auto_reconnect:
+                    log.info("Receiver couldn't authenticate (%r).", shutdown)
+                    error = AuthenticationError(str(shutdown))
+                    raise error
+                else:
+                    log.info("Receiver connection error (%r).", shutdown)
+                    error = ConnectError(str(shutdown))
+                    raise error
+            except Exception as e:
+                log.info("Unexpected error occurred (%r)", e)
+                error = EventHubError("Receiver connect failed: {}".format(e))
+                raise error
 
     async def _reconnect(self):  # pylint: disable=too-many-statements
         # pylint: disable=protected-access
@@ -181,23 +218,24 @@ class Receiver(object):
         self._handler = ReceiveClientAsync(
             source,
             auth=self.client.get_auth(**alt_creds),
-            debug=self.client.debug,
+            debug=self.client.config.network_tracing,
             prefetch=self.prefetch,
             link_properties=self.properties,
             timeout=self.timeout,
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
-            properties=self.client.create_properties(),
+            properties=self.client.create_properties(self.client.config.user_agent),
             loop=self.loop)
+        self.messages_iter = None
         try:
             await self._handler.open_async()
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05)
             return True
-        except errors.TokenExpired as shutdown:
+        except errors.AuthenticationException as shutdown:
             log.info("AsyncReceiver disconnected due to token expiry. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
+            error = AuthenticationError(str(shutdown), shutdown)
             await self.close(exception=error)
             raise error
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
@@ -205,7 +243,7 @@ class Receiver(object):
                 log.info("AsyncReceiver detached. Attempting reconnect.")
                 return False
             log.info("AsyncReceiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
+            error = ConnectError(str(shutdown), shutdown)
             await self.close(exception=error)
             raise error
         except errors.MessageHandlerError as shutdown:
@@ -213,7 +251,7 @@ class Receiver(object):
                 log.info("AsyncReceiver detached. Attempting reconnect.")
                 return False
             log.info("AsyncReceiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
+            error = ConnectError(str(shutdown), shutdown)
             await self.close(exception=error)
             raise error
         except errors.AMQPConnectionError as shutdown:
@@ -221,7 +259,7 @@ class Receiver(object):
                 log.info("AsyncReceiver couldn't authenticate. Attempting reconnect.")
                 return False
             log.info("AsyncReceiver connection error (%r). Shutting down.", shutdown)
-            error = EventHubError(str(shutdown))
+            error = ConnectError(str(shutdown))
             await self.close(exception=error)
             raise error
         except Exception as e:
@@ -233,7 +271,7 @@ class Receiver(object):
     async def reconnect(self):
         """If the Receiver was disconnected from the service with
         a retryable error - attempt to reconnect."""
-        while not await self._reconnect_async():
+        while not await self._reconnect():
             await asyncio.sleep(self.reconnect_backoff)
 
     async def close(self, exception=None):
@@ -263,12 +301,24 @@ class Receiver(object):
         elif isinstance(exception, EventHubError):
             self.error = exception
         elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
-            self.error = EventHubError(str(exception), exception)
+            self.error = ConnectError(str(exception), exception)
         elif exception:
             self.error = EventHubError(str(exception))
         else:
             self.error = EventHubError("This receive handler is now closed.")
         await self._handler.close_async()
+
+    @property
+    def queue_size(self):
+        """
+        The current size of the unprocessed Event queue.
+
+        :rtype: int
+        """
+        # pylint: disable=protected-access
+        if self._handler._received_messages:
+            return self._handler._received_messages.qsize()
+        return 0
 
     async def receive(self, max_batch_size=None, timeout=None):
         """
@@ -294,83 +344,41 @@ class Receiver(object):
         """
         if self.error:
             raise self.error
-        if not self.running:
-            await self.open()
+        await self._open()
+
         data_batch = []
-        try:
-            timeout_ms = 1000 * timeout if timeout else 0
-            message_batch = await self._handler.receive_message_batch_async(
-                max_batch_size=max_batch_size,
-                timeout=timeout_ms)
-            for message in message_batch:
-                event_data = EventData(message=message)
-                self.offset = event_data.offset
-                data_batch.append(event_data)
-            return data_batch
-        except (errors.TokenExpired, errors.AuthenticationException):
-            log.info("AsyncReceiver disconnected due to token error. Attempting reconnect.")
-            await self.reconnect()
-            return data_batch
-        except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
-            if shutdown.action.retry and self.auto_reconnect:
-                log.info("AsyncReceiver detached. Attempting reconnect.")
-                await self.reconnect()
-                return data_batch
-            log.info("AsyncReceiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
-            await self.close(exception=error)
-            raise error
-        except errors.MessageHandlerError as shutdown:
-            if self.auto_reconnect:
-                log.info("AsyncReceiver detached. Attempting reconnect.")
-                await self.reconnect()
-                return data_batch
-            log.info("AsyncReceiver detached. Shutting down.")
-            error = EventHubError(str(shutdown), shutdown)
-            await self.close(exception=error)
-            raise error
-        except Exception as e:
-            log.info("Unexpected error occurred (%r). Shutting down.", e)
-            error = EventHubError("Receive failed: {}".format(e))
-            await self.close(exception=error)
-            raise error
-
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        await self.close(exc_val)
-
-    def __aiter__(self):
-        self.messages_iter = self._handler.receive_messages_iter_async()
-        return self
-
-    async def __anext__(self):
         while True:
             try:
-                message = await self.messages_iter.__anext__()
-                event_data = EventData(message=message)
-                self.offset = event_data.offset
-                return event_data
+                timeout_ms = 1000 * timeout if timeout else 0
+                message_batch = await self._handler.receive_message_batch_async(
+                    max_batch_size=max_batch_size,
+                    timeout=timeout_ms)
+                for message in message_batch:
+                    event_data = EventData(message=message)
+                    self.offset = event_data.offset
+                    data_batch.append(event_data)
+                return data_batch
             except (errors.TokenExpired, errors.AuthenticationException):
-                log.info("Receiver disconnected due to token error. Attempting reconnect.")
+                log.info("AsyncReceiver disconnected due to token error. Attempting reconnect.")
                 await self.reconnect()
             except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
                 if shutdown.action.retry and self.auto_reconnect:
-                    log.info("Receiver detached. Attempting reconnect.")
+                    log.info("AsyncReceiver detached. Attempting reconnect.")
                     await self.reconnect()
-                log.info("Receiver detached. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                await self.close(exception=error)
-                raise error
+                else:
+                    log.info("AsyncReceiver detached. Shutting down.")
+                    error = ConnectError(str(shutdown), shutdown)
+                    await self.close(exception=error)
+                    raise error
             except errors.MessageHandlerError as shutdown:
                 if self.auto_reconnect:
-                    log.info("Receiver detached. Attempting reconnect.")
+                    log.info("AsyncReceiver detached. Attempting reconnect.")
                     await self.reconnect()
-                log.info("Receiver detached. Shutting down.")
-                error = EventHubError(str(shutdown), shutdown)
-                await self.close(exception=error)
-                raise error
+                else:
+                    log.info("AsyncReceiver detached. Shutting down.")
+                    error = ConnectError(str(shutdown), shutdown)
+                    await self.close(exception=error)
+                    raise error
             except Exception as e:
                 log.info("Unexpected error occurred (%r). Shutting down.", e)
                 error = EventHubError("Receive failed: {}".format(e))

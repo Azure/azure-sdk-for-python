@@ -9,159 +9,156 @@ import pytest
 import time
 import sys
 
-from azure import eventhub
 from azure.eventhub import (
     EventData,
-    Offset,
+    EventPosition,
     EventHubError,
+    AuthenticationError,
+    ConnectError,
+    EventDataError,
     EventHubClient)
 
 
 @pytest.mark.liveTest
 def test_send_with_invalid_hostname(invalid_hostname, connstr_receivers):
     _, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(invalid_hostname, debug=False)
-    sender = client.add_sender()
-    with pytest.raises(EventHubError):
-        client.run()
+    client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=False)
+    sender = client.create_sender()
+    with pytest.raises(AuthenticationError):
+        sender._open()
 
 
 @pytest.mark.liveTest
 def test_receive_with_invalid_hostname_sync(invalid_hostname):
-    client = EventHubClient.from_connection_string(invalid_hostname, debug=True)
-    receiver = client.add_receiver("$default", "0")
-    with pytest.raises(EventHubError):
-        client.run()
+    client = EventHubClient.from_connection_string(invalid_hostname, network_tracing=True)
+    receiver = client.create_receiver(partition_id="0")
+    with pytest.raises(AuthenticationError):
+        receiver._open()
 
 
 @pytest.mark.liveTest
 def test_send_with_invalid_key(invalid_key, connstr_receivers):
     _, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(invalid_key, debug=False)
-    sender = client.add_sender()
-    with pytest.raises(EventHubError):
-        client.run()
+    client = EventHubClient.from_connection_string(invalid_key, network_tracing=False)
+    sender = client.create_sender()
+    with pytest.raises(AuthenticationError):
+        sender._open()
 
 
 @pytest.mark.liveTest
 def test_receive_with_invalid_key_sync(invalid_key):
-    client = EventHubClient.from_connection_string(invalid_key, debug=True)
-    receiver = client.add_receiver("$default", "0")
-    with pytest.raises(EventHubError):
-        client.run()
+    client = EventHubClient.from_connection_string(invalid_key, network_tracing=True)
+    receiver = client.create_receiver(partition_id="0")
+    with pytest.raises(AuthenticationError):
+        receiver._open()
 
 
 @pytest.mark.liveTest
 def test_send_with_invalid_policy(invalid_policy, connstr_receivers):
     _, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(invalid_policy, debug=False)
-    sender = client.add_sender()
-    with pytest.raises(EventHubError):
-        client.run()
+    client = EventHubClient.from_connection_string(invalid_policy, network_tracing=False)
+    sender = client.create_sender()
+    with pytest.raises(AuthenticationError):
+        sender._open()
 
 
 @pytest.mark.liveTest
 def test_receive_with_invalid_policy_sync(invalid_policy):
-    client = EventHubClient.from_connection_string(invalid_policy, debug=True)
-    receiver = client.add_receiver("$default", "0")
-    with pytest.raises(EventHubError):
-        client.run()
+    client = EventHubClient.from_connection_string(invalid_policy, network_tracing=True)
+    receiver = client.create_receiver(partition_id="0")
+    with pytest.raises(AuthenticationError):
+        receiver._open()
 
 
 @pytest.mark.liveTest
 def test_send_partition_key_with_partition_sync(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, debug=True)
-    sender = client.add_sender(partition="1")
+    pytest.skip("Skipped tentatively. Confirm whether to throw ValueError or just warn users")
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
+    sender = client.create_sender(partition_id="1")
     try:
-        client.run()
         data = EventData(b"Data")
         data.partition_key = b"PKey"
         with pytest.raises(ValueError):
             sender.send(data)
     finally:
-        client.stop()
+        sender.close()
 
 
 @pytest.mark.liveTest
 def test_non_existing_entity_sender(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, eventhub="nemo", debug=False)
-    sender = client.add_sender(partition="1")
-    with pytest.raises(EventHubError):
-        client.run()
+    client = EventHubClient.from_connection_string(connection_str, eventhub="nemo", network_tracing=False)
+    sender = client.create_sender(partition_id="1")
+    with pytest.raises(AuthenticationError):
+        sender._open()
 
 
 @pytest.mark.liveTest
 def test_non_existing_entity_receiver(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, eventhub="nemo", debug=False)
-    receiver = client.add_receiver("$default", "0")
-    with pytest.raises(EventHubError):
-        client.run()
+    client = EventHubClient.from_connection_string(connection_str, eventhub="nemo", network_tracing=False)
+    receiver = client.create_receiver(partition_id="0")
+    with pytest.raises(AuthenticationError):
+        receiver._open()
 
 
 @pytest.mark.liveTest
 def test_receive_from_invalid_partitions_sync(connection_str):
     partitions = ["XYZ", "-1", "1000", "-" ]
     for p in partitions:
-        client = EventHubClient.from_connection_string(connection_str, debug=True)
-        receiver = client.add_receiver("$default", p)
+        client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
+        receiver = client.create_receiver(partition_id=p)
         try:
-            with pytest.raises(EventHubError):
-                client.run()
+            with pytest.raises(ConnectError):
                 receiver.receive(timeout=10)
         finally:
-            client.stop()
+            receiver.close()
 
 
 @pytest.mark.liveTest
 def test_send_to_invalid_partitions(connection_str):
     partitions = ["XYZ", "-1", "1000", "-" ]
     for p in partitions:
-        client = EventHubClient.from_connection_string(connection_str, debug=False)
-        sender = client.add_sender(partition=p)
+        client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+        sender = client.create_sender(partition_id=p)
         try:
-            with pytest.raises(EventHubError):
-                client.run()
+            with pytest.raises(ConnectError):
+                sender._open()
         finally:
-            client.stop()
+            sender.close()
 
 
 @pytest.mark.liveTest
 def test_send_too_large_message(connection_str):
     if sys.platform.startswith('darwin'):
         pytest.skip("Skipping on OSX - open issue regarding message size")
-    client = EventHubClient.from_connection_string(connection_str, debug=True)
-    sender = client.add_sender()
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
+    sender = client.create_sender()
     try:
-        client.run()
-        data = EventData(b"A" * 300000)
-        with pytest.raises(EventHubError):
+        data = EventData(b"A" * 1100000)
+        with pytest.raises(EventDataError):
             sender.send(data)
     finally:
-        client.stop()
+        sender.close()
 
 
 @pytest.mark.liveTest
 def test_send_null_body(connection_str):
-    partitions = ["XYZ", "-1", "1000", "-" ]
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
-    sender = client.add_sender()
+    partitions = ["XYZ", "-1", "1000", "-"]
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    sender = client.create_sender()
     try:
-        client.run()
         with pytest.raises(ValueError):
             data = EventData(None)
             sender.send(data)
     finally:
-        client.stop()
+        sender.close()
 
 
 @pytest.mark.liveTest
 def test_message_body_types(connstr_senders):
     connection_str, senders = connstr_senders
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
-    receiver = client.add_receiver("$default", "0", offset=Offset('@latest'))
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'))
     try:
-        client.run()
-
         received = receiver.receive(timeout=5)
         assert len(received) == 0
         senders[0].send(EventData(b"Bytes Data"))
@@ -207,4 +204,4 @@ def test_message_body_types(connstr_senders):
     except:
         raise
     finally:
-        client.stop()
+        receiver.close()

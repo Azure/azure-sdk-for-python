@@ -11,40 +11,10 @@ import json
 
 import six
 
-from uamqp import Message, BatchMessage
+import uamqp
+from uamqp import BatchMessage
 from uamqp import types, constants, errors
 from uamqp.message import MessageHeader, MessageProperties
-
-_NO_RETRY_ERRORS = (
-    b"com.microsoft:argument-out-of-range",
-    b"com.microsoft:entity-disabled",
-    b"com.microsoft:auth-failed",
-    b"com.microsoft:precondition-failed",
-    b"com.microsoft:argument-error"
-)
-
-def _error_handler(error):
-    """
-    Called internally when an event has failed to send so we
-    can parse the error to determine whether we should attempt
-    to retry sending the event again.
-    Returns the action to take according to error type.
-
-    :param error: The error received in the send attempt.
-    :type error: Exception
-    :rtype: ~uamqp.errors.ErrorAction
-    """
-    if error.condition == b'com.microsoft:server-busy':
-        return errors.ErrorAction(retry=True, backoff=4)
-    if error.condition == b'com.microsoft:timeout':
-        return errors.ErrorAction(retry=True, backoff=2)
-    if error.condition == b'com.microsoft:operation-cancelled':
-        return errors.ErrorAction(retry=True)
-    if error.condition == b"com.microsoft:container-close":
-        return errors.ErrorAction(retry=True, backoff=4)
-    if error.condition in _NO_RETRY_ERRORS:
-        return errors.ErrorAction(retry=False)
-    return errors.ErrorAction(retry=True)
 
 
 def parse_sas_token(sas_token):
@@ -61,6 +31,9 @@ def parse_sas_token(sas_token):
         key, value = field.split('=', 1)
         sas_data[key.lower()] = value
     return sas_data
+
+
+Message = uamqp.Message
 
 
 class EventData(object):
@@ -118,6 +91,26 @@ class EventData(object):
             else:
                 self.message = Message(body, properties=self.msg_properties)
 
+    def __str__(self):
+        dic = {
+            'body': self.body_as_str(),
+            'application_properties': str(self.application_properties)
+        }
+
+        if self.sequence_number:
+            dic['sequence_number'] = str(self.sequence_number)
+        if self.offset:
+            dic['offset'] = str(self.offset)
+        if self.enqueued_time:
+            dic['enqueued_time'] = str(self.enqueued_time)
+        if self.device_id:
+            dic['device_id'] = str(self.device_id)
+        if self._batching_label:
+            dic['_batching_label'] = str(self._batching_label)
+
+
+        return str(dic)
+
     @property
     def sequence_number(self):
         """
@@ -130,9 +123,9 @@ class EventData(object):
     @property
     def offset(self):
         """
-        The offset of the event data object.
+        The position of the event data object.
 
-        :rtype: ~azure.eventhub.common.Offset
+        :rtype: ~azure.eventhub.common.EventPosition
         """
         try:
             return EventPosition(self._annotations[EventData.PROP_OFFSET].decode('UTF-8'))
@@ -162,7 +155,7 @@ class EventData(object):
         return self._annotations.get(EventData.PROP_DEVICE_ID, None)
 
     @property
-    def partition_key(self):
+    def _batching_label(self):
         """
         The partition key of the event data object.
 
@@ -173,8 +166,8 @@ class EventData(object):
         except KeyError:
             return self._annotations.get(EventData.PROP_PARTITION_KEY, None)
 
-    @partition_key.setter
-    def partition_key(self, value):
+    @_batching_label.setter
+    def _batching_label(self, value):
         """
         Set the partition key of the event data object.
 
@@ -188,6 +181,7 @@ class EventData(object):
         self.message.annotations = annotations
         self.message.header = header
         self._annotations = annotations
+
 
     @property
     def application_properties(self):
@@ -262,9 +256,20 @@ class EventData(object):
 
 
 class _BatchSendEventData(EventData):
-    def __init__(self, batch_event_data):
-        # TODO: rethink if to_device should be included in
-        self.message = BatchMessage(data=batch_event_data, multi_messages=True, properties=None)
+    def __init__(self, batch_event_data, batching_label=None):
+        self.message = BatchMessage(data=batch_event_data, multi_messages=False, properties=None)
+        self.set_batching_label(batching_label)
+
+    def set_batching_label(self, value):
+        if value:
+            annotations = self.message.annotations
+            if annotations is None:
+                annotations = dict()
+            annotations[types.AMQPSymbol(EventData.PROP_PARTITION_KEY)] = value
+            header = MessageHeader()
+            header.durable = True
+            self.message.annotations = annotations
+            self.message.header = header
 
 
 class EventPosition(object):
@@ -294,8 +299,11 @@ class EventPosition(object):
         :param inclusive: Whether to include the supplied value as the start point.
         :type inclusive: bool
         """
-        self.value = value
+        self.value = value if value is not None else "-1"
         self.inclusive = inclusive
+
+    def __str__(self):
+        return str(self.value)
 
     def selector(self):
         """
@@ -312,12 +320,12 @@ class EventPosition(object):
         return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
 
     @staticmethod
-    def from_start_of_stream():
-        return EventPosition("-1")
+    def first_available():
+        return FIRST_AVAILABLE
 
-    @staticmethod
-    def from_end_of_stream():
-        return EventPosition("@latest")
+    @classmethod
+    def new_events_only(cls):
+        return NEW_EVENTS_ONLY
 
     @staticmethod
     def from_offset(offset, inclusive=False):
@@ -332,53 +340,29 @@ class EventPosition(object):
         return EventPosition(enqueued_time, inclusive)
 
 
-class EventHubError(Exception):
-    """
-    Represents an error happened in the client.
+FIRST_AVAILABLE = EventPosition("-1")
+NEW_EVENTS_ONLY = EventPosition("@latest")
 
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar error: The error condition, if available.
-    :vartype error: str
-    :ivar details: The error details, if included in the
-     service response.
-    :vartype details: dict[str, str]
-    """
 
-    def __init__(self, message, details=None):
-        self.error = None
-        self.message = message
-        self.details = details
-        if isinstance(message, constants.MessageSendResult):
-            self.message = "Message send failed with result: {}".format(message)
-        if details and isinstance(details, Exception):
-            try:
-                condition = details.condition.value.decode('UTF-8')
-            except AttributeError:
-                condition = details.condition.decode('UTF-8')
-            _, _, self.error = condition.partition(':')
-            self.message += "\nError: {}".format(self.error)
-            try:
-                self._parse_error(details.description)
-                for detail in self.details:
-                    self.message += "\n{}".format(detail)
-            except:  # pylint: disable=bare-except
-                self.message += "\n{}".format(details)
-        super(EventHubError, self).__init__(self.message)
+# TODO: move some behaviors to these two classes.
+class SASTokenCredentials(object):
+    def __init__(self, token):
+        self.token = token
 
-    def _parse_error(self, error_list):
-        details = []
-        self.message = error_list if isinstance(error_list, six.text_type) else error_list.decode('UTF-8')
-        details_index = self.message.find(" Reference:")
-        if details_index >= 0:
-            details_msg = self.message[details_index + 1:]
-            self.message = self.message[0:details_index]
+    def get_sas_token(self):
+        if callable(self.token):
+            return self.token()
+        else:
+            return self.token
 
-            tracking_index = details_msg.index(", TrackingId:")
-            system_index = details_msg.index(", SystemTracker:")
-            timestamp_index = details_msg.index(", Timestamp:")
-            details.append(details_msg[:tracking_index])
-            details.append(details_msg[tracking_index + 2: system_index])
-            details.append(details_msg[system_index + 2: timestamp_index])
-            details.append(details_msg[timestamp_index + 2:])
-            self.details = details
+
+class SharedKeyCredentials(object):
+    def __init__(self, policy, key):
+        self.policy = policy
+        self.key = key
+
+
+class Address(object):
+    def __init__(self, hostname=None, path=None):
+        self.hostname = hostname
+        self.path = path

@@ -165,13 +165,11 @@ def device_id():
 @pytest.fixture()
 def connstr_receivers(connection_str):
     client = EventHubClient.from_connection_string(connection_str, debug=False)
-    eh_hub_info = client.get_eventhub_information()
-    partitions = eh_hub_info["partition_ids"]
-
-    recv_offset = EventPosition("@latest")
+    partitions = client.get_partition_ids()
     receivers = []
     for p in partitions:
-        receiver = client.create_receiver("$default", p, prefetch=500, offset=EventPosition("@latest"))
+        #receiver = client.create_receiver(partition_id=p, prefetch=500, event_position=EventPosition("@latest"))
+        receiver = client.create_receiver(partition_id=p, prefetch=500, event_position=EventPosition("-1"))
         receivers.append(receiver)
         receiver.receive(timeout=1)
     yield connection_str, receivers
@@ -183,12 +181,11 @@ def connstr_receivers(connection_str):
 @pytest.fixture()
 def connstr_senders(connection_str):
     client = EventHubClient.from_connection_string(connection_str, debug=True)
-    eh_hub_info = client.get_eventhub_information()
-    partitions = eh_hub_info["partition_ids"]
+    partitions = client.get_partition_ids()
 
     senders = []
     for p in partitions:
-        sender = client.create_sender(partition=p)
+        sender = client.create_sender(partition_id=p)
         senders.append(sender)
     yield connection_str, senders
     for s in senders:

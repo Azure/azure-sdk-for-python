@@ -11,7 +11,7 @@ import pytest
 import time
 import json
 
-from azure.eventhub import EventData
+from azure.eventhub import EventData, TransportType
 from azure.eventhub.aio import EventHubClient
 
 
@@ -19,34 +19,35 @@ from azure.eventhub.aio import EventHubClient
 @pytest.mark.asyncio
 async def test_send_with_partition_key_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     sender = client.create_sender()
 
-    data_val = 0
-    for partition in [b"a", b"b", b"c", b"d", b"e", b"f"]:
-        partition_key = b"test_partition_" + partition
-        for i in range(50):
-            data = EventData(str(data_val))
-            data.partition_key = partition_key
-            data_val += 1
-            await sender.send(data)
+    async with sender:
+        data_val = 0
+        for partition in [b"a", b"b", b"c", b"d", b"e", b"f"]:
+            partition_key = b"test_partition_" + partition
+            for i in range(50):
+                data = EventData(str(data_val))
+                # data.partition_key = partition_key
+                data_val += 1
+                await sender.send(data, batching_label=partition_key)
 
     found_partition_keys = {}
     for index, partition in enumerate(receivers):
         received = partition.receive(timeout=5)
         for message in received:
             try:
-                existing = found_partition_keys[message.partition_key]
+                existing = found_partition_keys[message._batching_label]
                 assert existing == index
             except KeyError:
-                found_partition_keys[message.partition_key] = index
+                found_partition_keys[message._batching_label] = index
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_and_receive_zero_length_body_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     sender = client.create_sender()
     async with sender:
         await sender.send(EventData(""))
@@ -63,7 +64,7 @@ async def test_send_and_receive_zero_length_body_async(connstr_receivers):
 @pytest.mark.asyncio
 async def test_send_single_event_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     sender = client.create_sender()
     async with sender:
         await sender.send(EventData(b"A single event"))
@@ -80,14 +81,15 @@ async def test_send_single_event_async(connstr_receivers):
 @pytest.mark.asyncio
 async def test_send_batch_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
+
     def batched():
         for i in range(10):
             yield EventData("Event number {}".format(i))
 
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     sender = client.create_sender()
     async with sender:
-        await sender.send_batch(batched())
+        await sender.send(batched())
 
     time.sleep(1)
     received = []
@@ -103,8 +105,8 @@ async def test_send_batch_async(connstr_receivers):
 @pytest.mark.asyncio
 async def test_send_partition_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
-    sender = client.create_sender(partition="1")
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    sender = client.create_sender(partition_id="1")
     async with sender:
         await sender.send(EventData(b"Data"))
 
@@ -118,8 +120,8 @@ async def test_send_partition_async(connstr_receivers):
 @pytest.mark.asyncio
 async def test_send_non_ascii_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
-    sender = client.create_sender(partition="0")
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    sender = client.create_sender(partition_id="0")
     async with sender:
         await sender.send(EventData("é,è,à,ù,â,ê,î,ô,û"))
         await sender.send(EventData(json.dumps({"foo": "漢字"})))
@@ -139,10 +141,10 @@ async def test_send_partition_batch_async(connstr_receivers):
         for i in range(10):
             yield EventData("Event number {}".format(i))
 
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
-    sender = client.create_sender(partition="1")
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    sender = client.create_sender(partition_id="1")
     async with sender:
-        await sender.send_batch(batched())
+        await sender.send(batched())
 
     partition_0 = receivers[0].receive(timeout=2)
     assert len(partition_0) == 0
@@ -154,7 +156,7 @@ async def test_send_partition_batch_async(connstr_receivers):
 @pytest.mark.asyncio
 async def test_send_array_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     sender = client.create_sender()
     async with sender:
         await sender.send(EventData([b"A", b"B", b"C"]))
@@ -171,9 +173,9 @@ async def test_send_array_async(connstr_receivers):
 @pytest.mark.asyncio
 async def test_send_multiple_clients_async(connstr_receivers):
     connection_str, receivers = connstr_receivers
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
-    sender_0 = client.create_sender(partition="0")
-    sender_1 = client.create_sender(partition="1")
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
+    sender_0 = client.create_sender(partition_id="0")
+    sender_1 = client.create_sender(partition_id="1")
     async with sender_0 and sender_1:
         await sender_0.send(EventData(b"Message 0"))
         await sender_1.send(EventData(b"Message 1"))
@@ -187,7 +189,6 @@ async def test_send_multiple_clients_async(connstr_receivers):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_send_batch_with_app_prop_async(connstr_receivers):
-    # pytest.skip("Waiting on uAMQP release")
     connection_str, receivers = connstr_receivers
     app_prop_key = "raw_prop"
     app_prop_value = "raw_value"
@@ -197,16 +198,16 @@ async def test_send_batch_with_app_prop_async(connstr_receivers):
         for i in range(10):
             ed = EventData("Event number {}".format(i))
             ed.application_properties = app_prop
-            yield "Event number {}".format(i)
+            yield ed
         for i in range(10, 20):
             ed = EventData("Event number {}".format(i))
             ed.application_properties = app_prop
-            yield "Event number {}".format(i)
+            yield ed
 
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     sender = client.create_sender()
     async with sender:
-        await sender.send_batch(batched())
+        await sender.send(batched())
 
     time.sleep(1)
 
@@ -219,3 +220,25 @@ async def test_send_batch_with_app_prop_async(connstr_receivers):
         assert list(message.body)[0] == "Event number {}".format(index).encode('utf-8')
         assert (app_prop_key.encode('utf-8') in message.application_properties) \
             and (dict(message.application_properties)[app_prop_key.encode('utf-8')] == app_prop_value.encode('utf-8'))
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_send_over_websocket_async(connstr_receivers):
+    connection_str, receivers = connstr_receivers
+    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket, network_tracing=False)
+    sender = client.create_sender()
+
+    event_list = []
+    for i in range(20):
+        event_list.append(EventData("Event Number {}".format(i)))
+
+    async with sender:
+        await sender.send(event_list)
+
+    time.sleep(1)
+    received = []
+    for r in receivers:
+        received.extend(r.receive(timeout=3))
+
+    assert len(received) == 20
