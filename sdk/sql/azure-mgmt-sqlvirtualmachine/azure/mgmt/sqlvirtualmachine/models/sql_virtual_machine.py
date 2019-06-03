@@ -35,7 +35,7 @@ class SqlVirtualMachine(TrackedResource):
     :param virtual_machine_resource_id: ARM Resource id of underlying virtual
      machine created from SQL marketplace image.
     :type virtual_machine_resource_id: str
-    :ivar provisioning_state: Provisioning state to track the aysnc operation
+    :ivar provisioning_state: Provisioning state to track the async operation
      status.
     :vartype provisioning_state: str
     :ivar sql_image_offer: SQL image offer. Examples include SQL2016-WS2016,
@@ -45,9 +45,9 @@ class SqlVirtualMachine(TrackedResource):
      include: 'PAYG', 'AHUB'
     :type sql_server_license_type: str or
      ~azure.mgmt.sqlvirtualmachine.models.SqlServerLicenseType
-    :ivar sql_image_sku: SQL image sku. Possible values include: 'Developer',
-     'Express', 'Standard', 'Enterprise', 'Web'
-    :vartype sql_image_sku: str or
+    :param sql_image_sku: SQL Server edition type. Possible values include:
+     'Developer', 'Express', 'Standard', 'Enterprise', 'Web'
+    :type sql_image_sku: str or
      ~azure.mgmt.sqlvirtualmachine.models.SqlImageSku
     :param sql_virtual_machine_group_resource_id: ARM resource id of the SQL
      virtual machine group this SQL virtual machine is or will be part of.
@@ -79,7 +79,6 @@ class SqlVirtualMachine(TrackedResource):
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'sql_image_offer': {'readonly': True},
-        'sql_image_sku': {'readonly': True},
     }
 
     _attribute_map = {
@@ -109,7 +108,7 @@ class SqlVirtualMachine(TrackedResource):
         self.provisioning_state = None
         self.sql_image_offer = None
         self.sql_server_license_type = kwargs.get('sql_server_license_type', None)
-        self.sql_image_sku = None
+        self.sql_image_sku = kwargs.get('sql_image_sku', None)
         self.sql_virtual_machine_group_resource_id = kwargs.get('sql_virtual_machine_group_resource_id', None)
         self.wsfc_domain_credentials = kwargs.get('wsfc_domain_credentials', None)
         self.auto_patching_settings = kwargs.get('auto_patching_settings', None)
