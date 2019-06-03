@@ -518,7 +518,6 @@ class StorageCommonBlobTest(StorageTestCase):
     # GET request. This is preferred to relying on the ErrorCode in the body.
     @ record
     def test_get_blob_metadata_fail(self):
-        pytest.skip("Failing with no error code")  # TODO
         # Arrange
         blob_name = self._create_block_blob()
 
@@ -1166,7 +1165,6 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_unicode_get_blob_unicode_name(self):
-        pytest.skip("Not working")  # TODO
         # Arrange
         blob_name = '啊齄丂狛狜'
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
