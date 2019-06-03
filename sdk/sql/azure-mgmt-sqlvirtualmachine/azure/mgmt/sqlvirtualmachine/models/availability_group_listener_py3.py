@@ -24,7 +24,7 @@ class AvailabilityGroupListener(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar provisioning_state: Provisioning state to track the aysnc operation
+    :ivar provisioning_state: Provisioning state to track the async operation
      status.
     :vartype provisioning_state: str
     :param availability_group_name: Name of the availability group.
