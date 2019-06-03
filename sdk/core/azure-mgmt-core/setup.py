@@ -50,6 +50,5 @@ setup(
         'Topic :: Software Development'],
     install_requires=[
         "azure-core>=1.0.0",
-        "adal>=0.6.0,<2.0.0",
     ],
 )
