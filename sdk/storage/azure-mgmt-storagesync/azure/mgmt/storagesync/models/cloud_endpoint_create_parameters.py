@@ -32,6 +32,8 @@ class CloudEndpointCreateParameters(ProxyResource):
     :type azure_file_share_name: str
     :param storage_account_tenant_id: Storage Account Tenant Id
     :type storage_account_tenant_id: str
+    :param friendly_name: Friendly Name
+    :type friendly_name: str
     """
 
     _validation = {
@@ -47,6 +49,7 @@ class CloudEndpointCreateParameters(ProxyResource):
         'storage_account_resource_id': {'key': 'properties.storageAccountResourceId', 'type': 'str'},
         'azure_file_share_name': {'key': 'properties.azureFileShareName', 'type': 'str'},
         'storage_account_tenant_id': {'key': 'properties.storageAccountTenantId', 'type': 'str'},
+        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -54,3 +57,4 @@ class CloudEndpointCreateParameters(ProxyResource):
         self.storage_account_resource_id = kwargs.get('storage_account_resource_id', None)
         self.azure_file_share_name = kwargs.get('azure_file_share_name', None)
         self.storage_account_tenant_id = kwargs.get('storage_account_tenant_id', None)
+        self.friendly_name = kwargs.get('friendly_name', None)

@@ -24,7 +24,7 @@ class CloudEndpointsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version to use for this operation. Constant value: "2019-02-01".
+    :ivar api_version: The API version to use for this operation. Constant value: "2019-03-01".
     """
 
     models = models
@@ -34,7 +34,7 @@ class CloudEndpointsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-02-01"
+        self.api_version = "2019-03-01"
 
         self.config = config
 
@@ -924,3 +924,111 @@ class CloudEndpointsOperations(object):
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     post_restore.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}/syncGroups/{syncGroupName}/cloudEndpoints/{cloudEndpointName}/postrestore'}
+
+
+    def _trigger_change_detection_initial(
+            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, parameters, custom_headers=None, raw=False, **operation_config):
+        # Construct URL
+        url = self.trigger_change_detection.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', min_length=1),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'storageSyncServiceName': self._serialize.url("storage_sync_service_name", storage_sync_service_name, 'str'),
+            'syncGroupName': self._serialize.url("sync_group_name", sync_group_name, 'str'),
+            'cloudEndpointName': self._serialize.url("cloud_endpoint_name", cloud_endpoint_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str', min_length=1)
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'TriggerChangeDetectionParameters')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            raise models.StorageSyncErrorException(self._deserialize, response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(None, response)
+            header_dict = {
+                'Location': 'str',
+                'x-ms-request-id': 'str',
+                'x-ms-correlation-request-id': 'str',
+            }
+            client_raw_response.add_headers(header_dict)
+            return client_raw_response
+
+    def trigger_change_detection(
+            self, resource_group_name, storage_sync_service_name, sync_group_name, cloud_endpoint_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Triggers detection of changes performed on Azure File share connected
+        to the specified Azure File Sync Cloud Endpoint.
+
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
+        :type resource_group_name: str
+        :param storage_sync_service_name: Name of Storage Sync Service
+         resource.
+        :type storage_sync_service_name: str
+        :param sync_group_name: Name of Sync Group resource.
+        :type sync_group_name: str
+        :param cloud_endpoint_name: Name of Cloud Endpoint object.
+        :type cloud_endpoint_name: str
+        :param parameters: Trigger Change Detection Action parameters.
+        :type parameters:
+         ~azure.mgmt.storagesync.models.TriggerChangeDetectionParameters
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`StorageSyncErrorException<azure.mgmt.storagesync.models.StorageSyncErrorException>`
+        """
+        raw_result = self._trigger_change_detection_initial(
+            resource_group_name=resource_group_name,
+            storage_sync_service_name=storage_sync_service_name,
+            sync_group_name=sync_group_name,
+            cloud_endpoint_name=cloud_endpoint_name,
+            parameters=parameters,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                client_raw_response.add_headers({
+                    'Location': 'str',
+                    'x-ms-request-id': 'str',
+                    'x-ms-correlation-request-id': 'str',
+                })
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+    trigger_change_detection.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.StorageSync/storageSyncServices/{storageSyncServiceName}/syncGroups/{syncGroupName}/cloudEndpoints/{cloudEndpointName}/triggerChangeDetection'}

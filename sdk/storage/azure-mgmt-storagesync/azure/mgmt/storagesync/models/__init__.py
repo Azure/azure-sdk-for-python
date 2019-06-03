@@ -17,6 +17,7 @@ try:
     from .storage_sync_service_py3 import StorageSyncService
     from .sync_group_py3 import SyncGroup
     from .cloud_endpoint_py3 import CloudEndpoint
+    from .trigger_change_detection_parameters_py3 import TriggerChangeDetectionParameters
     from .recall_action_parameters_py3 import RecallActionParameters
     from .storage_sync_service_create_parameters_py3 import StorageSyncServiceCreateParameters
     from .sync_group_create_parameters_py3 import SyncGroupCreateParameters
@@ -44,6 +45,7 @@ try:
     from .backup_request_py3 import BackupRequest
     from .post_backup_response_py3 import PostBackupResponse
     from .storage_sync_service_update_parameters_py3 import StorageSyncServiceUpdateParameters
+    from .operation_status_py3 import OperationStatus
     from .tracked_resource_py3 import TrackedResource
     from .azure_entity_resource_py3 import AzureEntityResource
     from .resource_py3 import Resource
@@ -56,6 +58,7 @@ except (SyntaxError, ImportError):
     from .storage_sync_service import StorageSyncService
     from .sync_group import SyncGroup
     from .cloud_endpoint import CloudEndpoint
+    from .trigger_change_detection_parameters import TriggerChangeDetectionParameters
     from .recall_action_parameters import RecallActionParameters
     from .storage_sync_service_create_parameters import StorageSyncServiceCreateParameters
     from .sync_group_create_parameters import SyncGroupCreateParameters
@@ -83,6 +86,7 @@ except (SyntaxError, ImportError):
     from .backup_request import BackupRequest
     from .post_backup_response import PostBackupResponse
     from .storage_sync_service_update_parameters import StorageSyncServiceUpdateParameters
+    from .operation_status import OperationStatus
     from .tracked_resource import TrackedResource
     from .azure_entity_resource import AzureEntityResource
     from .resource import Resource
@@ -96,6 +100,7 @@ from .registered_server_paged import RegisteredServerPaged
 from .workflow_paged import WorkflowPaged
 from .storage_sync_management_client_enums import (
     Reason,
+    ChangeDetectionMode,
     NameAvailabilityReason,
 )
 
@@ -107,6 +112,7 @@ __all__ = [
     'StorageSyncService',
     'SyncGroup',
     'CloudEndpoint',
+    'TriggerChangeDetectionParameters',
     'RecallActionParameters',
     'StorageSyncServiceCreateParameters',
     'SyncGroupCreateParameters',
@@ -134,6 +140,7 @@ __all__ = [
     'BackupRequest',
     'PostBackupResponse',
     'StorageSyncServiceUpdateParameters',
+    'OperationStatus',
     'TrackedResource',
     'AzureEntityResource',
     'Resource',
@@ -146,5 +153,6 @@ __all__ = [
     'RegisteredServerPaged',
     'WorkflowPaged',
     'Reason',
+    'ChangeDetectionMode',
     'NameAvailabilityReason',
 ]

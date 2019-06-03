@@ -20,6 +20,7 @@ from .operations.cloud_endpoints_operations import CloudEndpointsOperations
 from .operations.server_endpoints_operations import ServerEndpointsOperations
 from .operations.registered_servers_operations import RegisteredServersOperations
 from .operations.workflows_operations import WorkflowsOperations
+from .operations.operation_status_operations import OperationStatusOperations
 from . import models
 
 
@@ -75,6 +76,8 @@ class StorageSyncManagementClient(SDKClient):
     :vartype registered_servers: azure.mgmt.storagesync.operations.RegisteredServersOperations
     :ivar workflows: Workflows operations
     :vartype workflows: azure.mgmt.storagesync.operations.WorkflowsOperations
+    :ivar operation_status: OperationStatus operations
+    :vartype operation_status: azure.mgmt.storagesync.operations.OperationStatusOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -91,7 +94,7 @@ class StorageSyncManagementClient(SDKClient):
         super(StorageSyncManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-02-01'
+        self.api_version = '2019-03-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -108,4 +111,6 @@ class StorageSyncManagementClient(SDKClient):
         self.registered_servers = RegisteredServersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.workflows = WorkflowsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.operation_status = OperationStatusOperations(
             self._client, self.config, self._serialize, self._deserialize)

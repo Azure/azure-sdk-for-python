@@ -16,6 +16,7 @@ from .cloud_endpoints_operations import CloudEndpointsOperations
 from .server_endpoints_operations import ServerEndpointsOperations
 from .registered_servers_operations import RegisteredServersOperations
 from .workflows_operations import WorkflowsOperations
+from .operation_status_operations import OperationStatusOperations
 
 __all__ = [
     'Operations',
@@ -25,4 +26,5 @@ __all__ = [
     'ServerEndpointsOperations',
     'RegisteredServersOperations',
     'WorkflowsOperations',
+    'OperationStatusOperations',
 ]
