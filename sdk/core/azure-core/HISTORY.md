@@ -1,5 +1,5 @@
 
-v0.0.1 (unreleased)
+v0.0.1
 -------------------
 
 - New pipeline
