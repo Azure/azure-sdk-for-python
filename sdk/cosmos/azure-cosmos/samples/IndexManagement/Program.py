@@ -62,7 +62,7 @@ def Query_Entities(parent, entity_type, id = None):
 
         elif entity_type == 'collection':
             if id == None:
-                entities = list(parent.list_container_properties())
+                entities = list(parent.get_all_containers())
             else:
                 entities = list(parent.query_containers(find_entity_by_id_query))
 

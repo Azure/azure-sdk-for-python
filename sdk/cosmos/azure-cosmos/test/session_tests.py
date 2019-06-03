@@ -36,7 +36,7 @@ class SessionTests(unittest.TestCase):
         created_document = self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
         self.created_collection.get_item(item=created_document['id'], partition_key='mypk')
         self.assertNotEqual(self.last_session_token_sent, None)
-        self.created_db.get_container(container=self.created_collection)
+        self.created_db.get_container(container=self.created_collection).read()
         self.assertEqual(self.last_session_token_sent, None)
         self.created_collection.get_item(item=created_document['id'], partition_key='mypk')
         self.assertNotEqual(self.last_session_token_sent, None)

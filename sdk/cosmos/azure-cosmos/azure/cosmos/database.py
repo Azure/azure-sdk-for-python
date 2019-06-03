@@ -36,6 +36,7 @@ from typing import (
     Any,
     List,
     Dict,
+    Mapping,
     Union,
     cast
 )
@@ -80,7 +81,7 @@ class Database(object):
         if isinstance(container_or_id, six.string_types):
             return container_or_id
         try:
-            return cast("Container", container_or_id).properties['id']
+            return cast("Container", container_or_id).id
         except AttributeError:
             pass
         return cast("Dict[str, str]", container_or_id)["id"]
@@ -114,6 +115,7 @@ class Database(object):
     ):
         # type: (str, Dict[str, str], bool, Dict[str, Any]) -> Dict[str, Any]
         """
+        Read the database properties
 
         :param database: The ID (name), dict representing the properties or :class:`Database` instance of the database to read.
         :param session_token: Token for use with Session consistency.
@@ -267,25 +269,11 @@ class Database(object):
     def get_container(
         self,
         container,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        populate_partition_key_range_statistics=None,
-        populate_quota_info=None,
-        request_options=None
     ):
-        # type: (Union[str, Container, Dict[str, Any]], str, Dict[str, str], bool, bool, bool, Dict[str, Any]) -> Container
+        # type: (Union[str, Container, Dict[str, Any]]) -> Container
         """ Get the specified `Container`, or a container with specified ID (name).
 
         :param container: The ID (name) of the container, a :class:`Container` instance, or a dict representing the properties of the container to be retrieved.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param populate_partition_key_range_statistics: Enable returning partition key range statistics in response headers.
-        :param populate_quota_info: Enable returning collection storage quota information in response headers.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :raise `HTTPFailure`: Raised if the container couldn't be retrieved. This includes if the container does not exist.
-        :returns: :class:`Container` instance representing the retrieved container.
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START get_container]
@@ -296,31 +284,20 @@ class Database(object):
             :name: get_container
 
         """
-        if not request_options:
-            request_options = {} # type: Dict[str, Any]
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if populate_query_metrics is not None:
-            request_options["populateQueryMetrics"] = populate_query_metrics
-        if populate_partition_key_range_statistics is not None:
-            request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
-        if populate_quota_info is not None:
-            request_options["populateQuotaInfo"] = populate_quota_info
+        if isinstance(container, Container):
+            id_value = container.id
+        elif isinstance(container, Mapping):
+            id_value = container['id']
+        else:
+            id_value = container
 
-        collection_link = self._get_container_link(container)
-        container_properties = self.client_connection.ReadContainer(
-            collection_link, options=request_options
-        )
         return Container(
             self.client_connection,
             self.database_link,
-            container_properties["id"],
-            properties=container_properties,
+            id_value
         )
 
-    def list_container_properties(
+    def get_all_containers(
         self,
         max_item_count=None,
         session_token=None,

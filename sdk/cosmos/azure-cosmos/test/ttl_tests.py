@@ -79,7 +79,8 @@ class Test_ttl_tests(unittest.TestCase):
             default_ttl=ttl,
             partition_key=PartitionKey(path='/id', kind='Hash')
             )
-        self.assertEqual(created_collection.properties['defaultTtl'], ttl)
+        created_collection_properties = created_collection.read()
+        self.assertEqual(created_collection_properties['defaultTtl'], ttl)
 
         collection_id = 'test_collection_and_document_ttl_values4' + str(uuid.uuid4())
         ttl = -10

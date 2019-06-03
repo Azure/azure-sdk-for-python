@@ -190,14 +190,16 @@ class PartitionKeyTests(unittest.TestCase):
             id='container_with_pkd_v2' + str(uuid.uuid4()),
             partition_key=partition_key.PartitionKey(path="/id", kind="Hash")
         )
-        self.assertEquals(created_container.properties['partitionKey']['version'], 2)
+        created_container_properties = created_container.read()
+        self.assertEquals(created_container_properties['partitionKey']['version'], 2)
         self.created_db.delete_container(created_container)
 
         created_container = self.created_db.create_container(
             id='container_with_pkd_v2' + str(uuid.uuid4()),
             partition_key=partition_key.PartitionKey(path="/id", kind="Hash", version=2)
         )
-        self.assertEquals(created_container.properties['partitionKey']['version'], 2)
+        created_container_properties = created_container.read()
+        self.assertEquals(created_container_properties['partitionKey']['version'], 2)
         self.created_db.delete_container(created_container)
 
     def test_hash_v1_partition_key_definition(self):
@@ -205,5 +207,6 @@ class PartitionKeyTests(unittest.TestCase):
             id='container_with_pkd_v2' + str(uuid.uuid4()),
             partition_key=partition_key.PartitionKey(path="/id", kind="Hash", version=1)
         )
-        self.assertEquals(created_container.properties['partitionKey']['version'], 1)
+        created_container_properties = created_container.read()
+        self.assertEquals(created_container_properties['partitionKey']['version'], 1)
         self.created_db.delete_container(created_container)
