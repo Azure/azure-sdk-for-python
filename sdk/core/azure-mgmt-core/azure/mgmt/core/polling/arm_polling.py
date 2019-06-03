@@ -31,7 +31,7 @@ except ImportError:
     from urllib.parse import urlparse
 
 from msrest.exceptions import DeserializationError
-from msrest.polling import PollingMethod
+from azure.core.polling import PollingMethod
 
 from ..exceptions import CloudError
 
