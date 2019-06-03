@@ -37,7 +37,7 @@ class IoTSecurityAggregatedAlert(Resource):
      include: 'Informational', 'Low', 'Medium', 'High'
     :vartype reported_severity: str or
      ~azure.mgmt.security.models.ReportedSeverity
-    :ivar remediation_steps: Recommended steps to reradiate the incident
+    :ivar remediation_steps: Recommended steps for remediation
     :vartype remediation_steps: str
     :ivar description: Description of the incident and what it means
     :vartype description: str
