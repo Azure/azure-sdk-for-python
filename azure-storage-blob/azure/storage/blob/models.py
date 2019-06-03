@@ -607,7 +607,7 @@ class BlobBlock(object):
     """
     BlockBlob Block class.
 
-    :ivar str id:
+    :ivar str block_id:
         Block id.
     :ivar str state:
         Block state.
@@ -645,10 +645,9 @@ class PageRange(object):
         for get_page_range_diff API.
     """
 
-    def __init__(self, start=None, end=None, is_cleared=False):
+    def __init__(self, start=None, end=None):
         self.start = start
         self.end = end
-        self.is_cleared = is_cleared
 
 
 class AccessPolicy(GenAccessPolicy):

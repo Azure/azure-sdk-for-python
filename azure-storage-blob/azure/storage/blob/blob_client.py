@@ -64,7 +64,6 @@ if TYPE_CHECKING:
         BlobPermissions,
         ContentSettings,
         BlobBlock,
-        PageRange,
     )
 
 
@@ -1472,7 +1471,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             timeout=None, # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> List[PageRange]
+        # type: (...) -> List[dict[str, int]]
         """
         Returns the list of valid page ranges for a Page Blob or snapshot
         of a page blob.
