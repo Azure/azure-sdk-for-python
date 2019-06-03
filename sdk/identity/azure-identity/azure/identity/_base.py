@@ -25,7 +25,7 @@ class ClientSecretCredentialBase(object):
         if not secret:
             raise ValueError("secret should be an Azure Active Directory application's client secret")
         if not tenant_id:
-            raise ValueError("tenant_id should be an Azure Active Directory tenant's id (also called its 'directory' id)")
+            raise ValueError("tenant_id should be an Azure Active Directory tenant's id (also called its 'directory id')")
         self._form_data = {"client_id": client_id, "client_secret": secret, "grant_type": "client_credentials"}
         super(ClientSecretCredentialBase, self).__init__()
 
