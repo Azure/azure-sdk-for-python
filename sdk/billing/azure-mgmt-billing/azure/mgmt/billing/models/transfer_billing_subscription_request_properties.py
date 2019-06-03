@@ -17,12 +17,16 @@ class TransferBillingSubscriptionRequestProperties(Model):
 
     :param destination_invoice_section_id: The destination invoice section id.
     :type destination_invoice_section_id: str
+    :param destination_billing_profile_id: The destination billing profile id.
+    :type destination_billing_profile_id: str
     """
 
     _attribute_map = {
         'destination_invoice_section_id': {'key': 'destinationInvoiceSectionId', 'type': 'str'},
+        'destination_billing_profile_id': {'key': 'destinationBillingProfileId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(TransferBillingSubscriptionRequestProperties, self).__init__(**kwargs)
         self.destination_invoice_section_id = kwargs.get('destination_invoice_section_id', None)
+        self.destination_billing_profile_id = kwargs.get('destination_billing_profile_id', None)
