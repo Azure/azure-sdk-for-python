@@ -9,6 +9,7 @@ import hashlib
 import hmac
 import sys
 import isodate
+import logging
 from os import fstat
 from io import (BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation)
 from typing import (  # pylint: disable=unused-import
@@ -56,10 +57,14 @@ if TYPE_CHECKING:
     from azure.core.exceptions import AzureError
     from .lease import Lease
 
+
 try:
     _unicode_type = unicode
 except NameError:
     _unicode_type = str
+
+_LOGGER = logging.getLogger(__name__)
+
 
 def parse_connection_str(conn_str, credentials):
     conn_settings = dict([s.split('=', 1) for s in conn_str.split(';')])
@@ -117,13 +122,15 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
     return encoded_digest
 
 
-def serialize_iso(attr, **kwargs):
+def serialize_iso(attr):
     """Serialize Datetime object into ISO-8601 formatted string.
 
     :param Datetime attr: Object to be serialized.
     :rtype: str
     :raises: SerializationError if format invalid.
     """
+    if not attr:
+        return None
     if isinstance(attr, str):
         attr = isodate.parse_datetime(attr)
     try:

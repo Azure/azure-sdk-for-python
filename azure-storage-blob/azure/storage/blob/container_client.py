@@ -23,7 +23,7 @@ from azure.core import Configuration
 from .common import BlobType
 from .lease import Lease
 from .blob_client import BlobClient
-from .models import ContainerProperties, BlobProperties, BlobPropertiesPaged
+from .models import ContainerProperties, BlobProperties, BlobPropertiesPaged, AccessPolicy
 from ._utils import (
     create_client,
     create_configuration,
@@ -36,12 +36,18 @@ from ._utils import (
     process_storage_error,
     encode_base64,
     parse_connection_str,
+    serialize_iso,
     return_response_and_deserialized)
 from ._deserialize import (
     deserialize_container_properties,
     deserialize_metadata
 )
-from ._generated.models import BlobHTTPHeaders, StorageErrorException, SignedIdentifier
+
+from ._generated.models import (
+    ListBlobsIncludeItem,
+    BlobHTTPHeaders,
+    StorageErrorException,
+    SignedIdentifier)
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
@@ -430,7 +436,7 @@ class ContainerClient(object):
         }
 
     def set_container_acl(
-            self, signed_identifiers=None,  # type: Optional[list[SignedIdentifier]]
+            self, signed_identifiers=None,  # type: Optional[Dict[str, Optional[AccessPolicy]]]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
             lease=None,  # type: Optional[Union[str, Lease]]
             if_modified_since=None,  # type: Optional[datetime]
@@ -440,15 +446,21 @@ class ContainerClient(object):
         """
         :returns: Container-updated property dict (Etag and last modified).
         """
-        if signed_identifiers and len(signed_identifiers) > 5:
-            raise ValueError(
-                'Too many access policies provided. The server does not support setting '
-                'more than 5 access policies on a single resource.')
+        if signed_identifiers:
+            if len(signed_identifiers) > 5:
+                raise ValueError(
+                    'Too many access policies provided. The server does not support setting '
+                    'more than 5 access policies on a single resource.')
+            identifiers = []
+            for key, value in signed_identifiers.items():
+                identifiers.append(SignedIdentifier(id=key, access_policy=value))
+            signed_identifiers = identifiers
+
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since)
         access_conditions = get_access_conditions(lease)
         response = self._client.container.set_access_policy(
-            container_acl=signed_identifiers,
+            container_acl=signed_identifiers or None,
             timeout=timeout,
             access=public_access,
             lease_access_conditions=access_conditions,
@@ -461,7 +473,7 @@ class ContainerClient(object):
         }
 
     def list_blob_properties(self, starts_with=None, include=None, timeout=None, **kwargs):
-        # type: (Optional[str], Optional[str], Optional[int]) -> Iterable[BlobProperties]
+        # type: (Optional[str], Optional[Include], Optional[int]) -> Iterable[BlobProperties]
         """
         Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
@@ -482,6 +494,7 @@ class ContainerClient(object):
         """
         if include and not isinstance(include, list):
             include = [include]
+
         results_per_page = kwargs.pop('results_per_page', None)
         marker = kwargs.pop('marker', "")
         command = functools.partial(
@@ -492,22 +505,39 @@ class ContainerClient(object):
             **kwargs)
         return BlobPropertiesPaged(command, prefix=starts_with, results_per_page=results_per_page,  marker=marker)
 
-    # def walk_blob_propertes(self, prefix=None, include=None, delimiter="/", timeout=None, **kwargs):
-    #     # type: (Optional[str], Optional[str], str, Optional[int]) -> Iterable[BlobProperties]
+    # def walk_blob_properties(self, starts_with=None, include=None, delimiter="/", timeout=None, **kwargs):
+    #     # type: (Optional[str], Optional[Include], Optional[int]) -> Iterable[BlobProperties]
     #     """
-    #     :returns: A generator that honors directory hierarchy.
+    #     Returns a generator to list the blobs under the specified container.
+    #     The generator will lazily follow the continuation tokens returned by
+    #     the service.
+
+    #     :param str starts_with:
+    #         Filters the results to return only blobs whose names
+    #         begin with the specified prefix.
+    #     :param ~azure.storage.blob.models.Include include:
+    #         Specifies one or more additional datasets to include in the response.
+    #     :param str marker:
+    #         An opaque continuation token. This value can be retrieved from the 
+    #         next_marker field of a previous generator object. If specified,
+    #         this generator will begin returning results from this point.
+    #     :param int timeout:
+    #         The timeout parameter is expressed in seconds.
+    #     :returns: An iterable (auto-paging) response of BlobProperties.
     #     """
     #     if include and not isinstance(include, list):
     #         include = [include]
+
     #     results_per_page = kwargs.pop('results_per_page', None)
+    #     marker = kwargs.pop('marker', "")
     #     command = functools.partial(
-    #         self._client.container.list_blob_hierarchy_segment,
-    #         delimiter=delimiter,
-    #         prefix=prefix,
+    #         self._client.container.list_blob_hierarchy_segment(
+    #         delimiter,
+    #         prefix=starts_with,
     #         include=include,
     #         timeout=timeout,
     #         **kwargs)
-    #     return BlobPropertiesPaged(command, prefix=prefix, results_per_page=results_per_page)
+    #     return BlobPropertiesWalked(command, prefix=starts_with, results_per_page=results_per_page,  marker=marker)
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]

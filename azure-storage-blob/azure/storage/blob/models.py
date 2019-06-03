@@ -14,7 +14,8 @@ from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import StorageServiceProperties
 from ._generated.models import BlobProperties as GenBlobProps
-from ._utils import decode_base64
+from ._generated.models import AccessPolicy as GenAccessPolicy
+from ._utils import decode_base64, serialize_iso
 from .common import BlockState, BlobType
 
 
@@ -411,7 +412,53 @@ class BlobPropertiesPaged(Paged):
         if isinstance(item, BlobProperties):
             return item
         return BlobProperties._from_generated(item)
-    
+
+
+class BlobPropertiesWalked(BlobPropertiesPaged):
+
+    def _advance_page(self):
+        # type: () -> List[Model]
+        """Force moving the cursor to the next azure call.
+
+        This method is for advanced usage, iterator protocol is prefered.
+
+        :raises: StopIteration if no further page
+        :return: The current page list
+        :rtype: list
+        """
+        if self.next_marker is None:
+            raise StopIteration("End of paging")
+        self._current_page_iter_index = 0
+        self._response = self._get_next(
+            marker=self.next_marker or None,
+            maxresults=self.results_per_page)
+
+        self.service_endpoint = self._response.service_endpoint
+        self.prefix = self._response.prefix
+        self.current_marker = self._response.marker
+        self.results_per_page = self._response.max_results
+        self.current_page_blobs = self._response.segment.blob_items
+        self.current_page_dirs = self._response.segment.blob_prefixes
+        self.next_marker = self._response.next_marker or None
+        self.container_name = self._response.container_name
+        self.delimiter = self._response.delimiter
+
+    def __next__(self):
+        item = super(BlobPropertiesPaged, self).__next__()
+        if isinstance(item, BlobProperties):
+            return item
+        return BlobProperties._from_generated(item)
+
+    def __next__(self):
+        """Iterate through responses."""
+        if self.current_page and self._current_page_iter_index < len(self.current_page):
+            response = self.current_page[self._current_page_iter_index]
+            self._current_page_iter_index += 1
+            return response
+        else:
+            self._advance_page()
+            return self.__next__()
+
 
 class LeaseProperties(object):
     """
@@ -483,12 +530,12 @@ class ContentSettings(object):
     @classmethod
     def _from_generated(cls, generated):
         settings = cls()
-        settings.content_type = generated.properties.content_type
-        settings.content_encoding = generated.properties.content_encoding
-        settings.content_language = generated.properties.content_language
-        settings.content_md5 = generated.properties.content_md5
-        settings.content_disposition = generated.properties.content_disposition
-        settings.cache_control = generated.properties.cache_control
+        settings.content_type = generated.properties.content_type or None
+        settings.content_encoding = generated.properties.content_encoding or None
+        settings.content_language = generated.properties.content_language or None
+        settings.content_md5 = generated.properties.content_md5 or None
+        settings.content_disposition = generated.properties.content_disposition or None
+        settings.cache_control = generated.properties.cache_control or None
         return settings
 
 
@@ -545,14 +592,14 @@ class CopyProperties(object):
     @classmethod
     def _from_generated(cls, generated):
         copy = cls()
-        copy.id = generated.properties.copy_id
-        copy.status = _get_enum_value(generated.properties.copy_status)
-        copy.source = generated.properties.copy_source
-        copy.progress = generated.properties.copy_progress
-        copy.completion_time = generated.properties.copy_completion_time
-        copy.status_description = generated.properties.copy_status_description
-        copy.incremental_copy = generated.properties.incremental_copy
-        copy.destination_snapshot = generated.properties.destination_snapshot
+        copy.id = generated.properties.copy_id or None
+        copy.status = _get_enum_value(generated.properties.copy_status) or None
+        copy.source = generated.properties.copy_source or None
+        copy.progress = generated.properties.copy_progress or None
+        copy.completion_time = generated.properties.copy_completion_time or None
+        copy.status_description = generated.properties.copy_status_description or None
+        copy.incremental_copy = generated.properties.incremental_copy or None
+        copy.destination_snapshot = generated.properties.destination_snapshot or None
         return copy
 
 
@@ -602,6 +649,57 @@ class PageRange(object):
         self.start = start
         self.end = end
         self.is_cleared = is_cleared
+
+
+class AccessPolicy(GenAccessPolicy):
+    '''
+    Access Policy class used by the set and get acl methods in each service.
+
+    A stored access policy can specify the start time, expiry time, and 
+    permissions for the Shared Access Signatures with which it's associated. 
+    Depending on how you want to control access to your resource, you can
+    specify all of these parameters within the stored access policy, and omit 
+    them from the URL for the Shared Access Signature. Doing so permits you to 
+    modify the associated signature's behavior at any time, as well as to revoke 
+    it. Or you can specify one or more of the access policy parameters within 
+    the stored access policy, and the others on the URL. Finally, you can 
+    specify all of the parameters on the URL. In this case, you can use the 
+    stored access policy to revoke the signature, but not to modify its behavior.
+
+    Together the Shared Access Signature and the stored access policy must 
+    include all fields required to authenticate the signature. If any required 
+    fields are missing, the request will fail. Likewise, if a field is specified 
+    both in the Shared Access Signature URL and in the stored access policy, the 
+    request will fail with status code 400 (Bad Request).
+    '''
+
+    def __init__(self, permission=None, expiry=None, start=None):
+        '''
+        :param str permission:
+            The permissions associated with the shared access signature. The 
+            user is restricted to operations allowed by the permissions. 
+            Required unless an id is given referencing a stored access policy 
+            which contains this field. This field must be omitted if it has been 
+            specified in an associated stored access policy.
+        :param expiry:
+            The time at which the shared access signature becomes invalid. 
+            Required unless an id is given referencing a stored access policy 
+            which contains this field. This field must be omitted if it has 
+            been specified in an associated stored access policy. Azure will always 
+            convert values to UTC. If a date is passed in without timezone info, it 
+            is assumed to be UTC.
+        :type expiry: datetime or str
+        :param start:
+            The time at which the shared access signature becomes valid. If 
+            omitted, start time for this call is assumed to be the time when the 
+            storage service receives the request. Azure will always convert values 
+            to UTC. If a date is passed in without timezone info, it is assumed to 
+            be UTC.
+        :type start: datetime or str
+        '''
+        self.start = serialize_iso(start)
+        self.expiry = serialize_iso(expiry)
+        self.permission = permission
 
 
 class ResourceTypes(object):

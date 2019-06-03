@@ -1002,6 +1002,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             timeout=None,  # type: Optional[int]
             premium_page_blob_tier=None,
             requires_sync=False,  # type: Optional[bool]
+            polling=True,  # type: bool
             **kwargs
         ):
         # type: (...) -> Any
@@ -1117,12 +1118,10 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :returns: A pollable object to check copy operation status (and abort).
         :rtype: :class:`~azure.storage.blob.polling.CopyStatusPoller`
         """
-        #from azure.core.polling import NoPolling  # TODO: Support no polling
-
         if requires_sync and self.blob_type != BlobType.BlockBlob:
             raise TypeError("The 'requires_sync' option can only be used with Block Blobs.")
 
-        if copy_source.startswith('/'):
+        if source_url.startswith('/'):
             # Backwards compatibility for earlier versions of the SDK where
             # the copy source can be in the following formats:
             # - Blob in named container:
@@ -1134,9 +1133,9 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             # - Snapshot in root container:
             #     /accountName/blobName?snapshot=<DateTime>
             account, _, source = \
-                copy_source.partition('/')[2].partition('/')
+                source_url.partition('/')[2].partition('/')
             parsed_url = urlparse(self.url)
-            copy_source = "{}://{}/{}".format(
+            source_url = "{}://{}/{}".format(
                 self.scheme,
                 parsed_url.hostname.replace(self.account, account),
                 source.strip('/')
@@ -1162,7 +1161,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             destination_if_match,
             destination_if_none_match)
         start_copy = self._client.blob.start_copy_from_url(
-            copy_source,
+            source_url,
             timeout=timeout,
             source_modified_access_conditions=source_mod_conditions,
             modified_access_conditions=dest_mod_conditions,
@@ -1171,18 +1170,15 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             cls=return_response_headers,
             error_map=basic_error_map(),
             **kwargs)
-        polling_interval = self._config.blob_settings.copy_polling_interval
-        # if polling is True: 
-        # elif polling is False: polling_method = NoPolling()
-        # else: polling_method = polling
-        polling_method = CopyBlob(
-            polling_interval,
-            timeout=timeout,
+
+        poller = CopyStatusPoller(
+            self, start_copy,
+            polling=polling,
+            configuration=self._config,
             lease=destination_lease,
-            **kwargs)
-        poller = CopyStatusPoller(self, start_copy, None, polling_method)
-        if requires_sync:
-            poller.wait()
+            timeout=timeout)
+        #if requires_sync:  # TODO
+        #    poller.wait()
         return poller
 
     def acquire_lease(

@@ -488,6 +488,15 @@
         "description": "returns all user-defined metadata and system properties for the specified container. The data returned does not include the container's list of blobs",
         "parameters": [
           {
+            "name": "comp",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "metadata"
+            ]
+          },
+          {
             "$ref": "#/parameters/Timeout"
           },
           {
@@ -5756,12 +5765,12 @@
         "Start": {
           "description": "the date-time the policy is active",
           "type": "string",
-          "format": "date-time"
+          "format": "str"
         },
         "Expiry": {
           "description": "the date-time the policy expires",
           "type": "string",
-          "format": "date-time"
+          "format": "str"
         },
         "Permission": {
           "description": "the permissions for the acl policy",

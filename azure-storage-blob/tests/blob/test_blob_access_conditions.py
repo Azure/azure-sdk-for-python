@@ -1282,7 +1282,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         lease = blob.acquire_lease(
             if_modified_since=test_datetime,
-            proposed_lease_id=test_lease_id)
+            lease_id=test_lease_id)
 
         blob.break_lease()
 
@@ -1318,7 +1318,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         lease = blob.acquire_lease(
             if_unmodified_since=test_datetime,
-            proposed_lease_id=test_lease_id)
+            lease_id=test_lease_id)
 
         blob.break_lease()
 
@@ -1352,7 +1352,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         lease = blob.acquire_lease(
-            proposed_lease_id=test_lease_id,
+            lease_id=test_lease_id,
             if_match=etag)
 
         blob.break_lease()
@@ -1384,7 +1384,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         lease = blob.acquire_lease(
-            proposed_lease_id=test_lease_id,
+            lease_id=test_lease_id,
             if_none_match='0x111111111111111')
 
         blob.break_lease()

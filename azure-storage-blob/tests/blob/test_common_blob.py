@@ -1093,7 +1093,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease_id = 'a0e6c241-96ea-45a3-a44b-6ae868bc14d0'
-        lease = blob.acquire_lease(proposed_lease_id=lease_id)
+        lease = blob.acquire_lease(lease_id=lease_id)
 
         # Assert
         self.assertEqual(lease.id, lease_id)
