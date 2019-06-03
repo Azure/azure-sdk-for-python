@@ -20,6 +20,7 @@ class SkuName(str, Enum):
     standard_akamai = "Standard_Akamai"
     standard_china_cdn = "Standard_ChinaCdn"
     standard_microsoft = "Standard_Microsoft"
+    premium_china_cdn = "Premium_ChinaCdn"
 
 
 class ProfileResourceState(str, Enum):
@@ -61,6 +62,153 @@ class GeoFilterActions(str, Enum):
 
     block = "Block"
     allow = "Allow"
+
+
+class RemoteAddressOperator(str, Enum):
+
+    any = "Any"
+    ip_match = "IPMatch"
+    geo_match = "GeoMatch"
+
+
+class Transform(str, Enum):
+
+    lowercase = "Lowercase"
+    uppercase = "Uppercase"
+
+
+class QueryStringOperator(str, Enum):
+
+    any = "Any"
+    equal = "Equal"
+    contains = "Contains"
+    begins_with = "BeginsWith"
+    ends_with = "EndsWith"
+    less_than = "LessThan"
+    less_than_or_equal = "LessThanOrEqual"
+    greater_than = "GreaterThan"
+    greater_than_or_equal = "GreaterThanOrEqual"
+
+
+class PostArgsOperator(str, Enum):
+
+    any = "Any"
+    equal = "Equal"
+    contains = "Contains"
+    begins_with = "BeginsWith"
+    ends_with = "EndsWith"
+    less_than = "LessThan"
+    less_than_or_equal = "LessThanOrEqual"
+    greater_than = "GreaterThan"
+    greater_than_or_equal = "GreaterThanOrEqual"
+
+
+class RequestUriOperator(str, Enum):
+
+    any = "Any"
+    equal = "Equal"
+    contains = "Contains"
+    begins_with = "BeginsWith"
+    ends_with = "EndsWith"
+    less_than = "LessThan"
+    less_than_or_equal = "LessThanOrEqual"
+    greater_than = "GreaterThan"
+    greater_than_or_equal = "GreaterThanOrEqual"
+
+
+class RequestHeaderOperator(str, Enum):
+
+    any = "Any"
+    equal = "Equal"
+    contains = "Contains"
+    begins_with = "BeginsWith"
+    ends_with = "EndsWith"
+    less_than = "LessThan"
+    less_than_or_equal = "LessThanOrEqual"
+    greater_than = "GreaterThan"
+    greater_than_or_equal = "GreaterThanOrEqual"
+
+
+class RequestBodyOperator(str, Enum):
+
+    any = "Any"
+    equal = "Equal"
+    contains = "Contains"
+    begins_with = "BeginsWith"
+    ends_with = "EndsWith"
+    less_than = "LessThan"
+    less_than_or_equal = "LessThanOrEqual"
+    greater_than = "GreaterThan"
+    greater_than_or_equal = "GreaterThanOrEqual"
+
+
+class UrlPathOperator(str, Enum):
+
+    any = "Any"
+    equal = "Equal"
+    contains = "Contains"
+    begins_with = "BeginsWith"
+    ends_with = "EndsWith"
+    less_than = "LessThan"
+    less_than_or_equal = "LessThanOrEqual"
+    greater_than = "GreaterThan"
+    greater_than_or_equal = "GreaterThanOrEqual"
+    wildcard = "Wildcard"
+
+
+class UrlFileExtensionOperator(str, Enum):
+
+    any = "Any"
+    equal = "Equal"
+    contains = "Contains"
+    begins_with = "BeginsWith"
+    ends_with = "EndsWith"
+    less_than = "LessThan"
+    less_than_or_equal = "LessThanOrEqual"
+    greater_than = "GreaterThan"
+    greater_than_or_equal = "GreaterThanOrEqual"
+
+
+class UrlFileNameOperator(str, Enum):
+
+    any = "Any"
+    equal = "Equal"
+    contains = "Contains"
+    begins_with = "BeginsWith"
+    ends_with = "EndsWith"
+    less_than = "LessThan"
+    less_than_or_equal = "LessThanOrEqual"
+    greater_than = "GreaterThan"
+    greater_than_or_equal = "GreaterThanOrEqual"
+
+
+class RedirectType(str, Enum):
+
+    moved = "Moved"
+    found = "Found"
+    temporary_redirect = "TemporaryRedirect"
+    permanent_redirect = "PermanentRedirect"
+
+
+class DestinationProtocol(str, Enum):
+
+    match_request = "MatchRequest"
+    http = "Http"
+    https = "Https"
+
+
+class HeaderAction(str, Enum):
+
+    append = "Append"
+    overwrite = "Overwrite"
+    delete = "Delete"
+
+
+class CacheBehavior(str, Enum):
+
+    bypass_cache = "BypassCache"
+    override = "Override"
+    set_if_missing = "SetIfMissing"
 
 
 class OriginResourceState(str, Enum):

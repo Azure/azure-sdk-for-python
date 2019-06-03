@@ -13,14 +13,14 @@ from .delivery_rule_condition import DeliveryRuleCondition
 
 
 class DeliveryRuleUrlPathCondition(DeliveryRuleCondition):
-    """Defines the URL path condition for the delivery rule.
+    """Defines the UrlPath condition for the delivery rule.
 
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. Constant filled by server.
     :type name: str
     :param parameters: Required. Defines the parameters for the condition.
-    :type parameters: ~azure.mgmt.cdn.models.UrlPathConditionParameters
+    :type parameters: ~azure.mgmt.cdn.models.UrlPathMatchConditionParameters
     """
 
     _validation = {
@@ -30,7 +30,7 @@ class DeliveryRuleUrlPathCondition(DeliveryRuleCondition):
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'UrlPathConditionParameters'},
+        'parameters': {'key': 'parameters', 'type': 'UrlPathMatchConditionParameters'},
     }
 
     def __init__(self, **kwargs):
