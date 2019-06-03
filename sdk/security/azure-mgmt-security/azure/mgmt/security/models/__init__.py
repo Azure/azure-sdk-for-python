@@ -67,6 +67,15 @@ try:
     from .workspace_setting_py3 import WorkspaceSetting
     from .tags_resource_py3 import TagsResource
     from .io_tsecurity_solution_model_py3 import IoTSecuritySolutionModel
+    from .io_tseverity_metrics_py3 import IoTSeverityMetrics
+    from .io_tsecurity_solution_analytics_model_devices_metrics_item_py3 import IoTSecuritySolutionAnalyticsModelDevicesMetricsItem
+    from .io_tsecurity_device_alerts_py3 import IoTSecurityDeviceAlerts
+    from .io_tsecurity_solution_analytics_model_py3 import IoTSecuritySolutionAnalyticsModel
+    from .io_tsecurity_aggregated_alert_py3 import IoTSecurityAggregatedAlert
+    from .io_tsecurity_aggregated_alert_list_py3 import IoTSecurityAggregatedAlertList
+    from .io_tsecurity_aggregated_recommendation_py3 import IoTSecurityAggregatedRecommendation
+    from .io_tsecurity_aggregated_recommendation_list_py3 import IoTSecurityAggregatedRecommendationList
+    from .io_tsecurity_device_alerts_list_py3 import IoTSecurityDeviceAlertsList
     from .regulatory_compliance_standard_py3 import RegulatoryComplianceStandard
     from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
     from .regulatory_compliance_assessment_py3 import RegulatoryComplianceAssessment
@@ -128,6 +137,15 @@ except (SyntaxError, ImportError):
     from .workspace_setting import WorkspaceSetting
     from .tags_resource import TagsResource
     from .io_tsecurity_solution_model import IoTSecuritySolutionModel
+    from .io_tseverity_metrics import IoTSeverityMetrics
+    from .io_tsecurity_solution_analytics_model_devices_metrics_item import IoTSecuritySolutionAnalyticsModelDevicesMetricsItem
+    from .io_tsecurity_device_alerts import IoTSecurityDeviceAlerts
+    from .io_tsecurity_solution_analytics_model import IoTSecuritySolutionAnalyticsModel
+    from .io_tsecurity_aggregated_alert import IoTSecurityAggregatedAlert
+    from .io_tsecurity_aggregated_alert_list import IoTSecurityAggregatedAlertList
+    from .io_tsecurity_aggregated_recommendation import IoTSecurityAggregatedRecommendation
+    from .io_tsecurity_aggregated_recommendation_list import IoTSecurityAggregatedRecommendationList
+    from .io_tsecurity_device_alerts_list import IoTSecurityDeviceAlertsList
     from .regulatory_compliance_standard import RegulatoryComplianceStandard
     from .regulatory_compliance_control import RegulatoryComplianceControl
     from .regulatory_compliance_assessment import RegulatoryComplianceAssessment
@@ -230,6 +248,15 @@ __all__ = [
     'WorkspaceSetting',
     'TagsResource',
     'IoTSecuritySolutionModel',
+    'IoTSeverityMetrics',
+    'IoTSecuritySolutionAnalyticsModelDevicesMetricsItem',
+    'IoTSecurityDeviceAlerts',
+    'IoTSecuritySolutionAnalyticsModel',
+    'IoTSecurityAggregatedAlert',
+    'IoTSecurityAggregatedAlertList',
+    'IoTSecurityAggregatedRecommendation',
+    'IoTSecurityAggregatedRecommendationList',
+    'IoTSecurityDeviceAlertsList',
     'RegulatoryComplianceStandard',
     'RegulatoryComplianceControl',
     'RegulatoryComplianceAssessment',
