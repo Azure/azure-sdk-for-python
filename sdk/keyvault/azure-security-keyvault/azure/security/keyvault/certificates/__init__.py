@@ -14,6 +14,7 @@ from ._models import (
     Contact,
     Issuer,
     IssuerBase,
+    LifetimeAction,
 )
 
 __all__ = [
@@ -26,4 +27,5 @@ __all__ = [
     "IssuerBase",
     "Contact",
     "CertificateOperation",
+    "LifetimeAction"
 ]

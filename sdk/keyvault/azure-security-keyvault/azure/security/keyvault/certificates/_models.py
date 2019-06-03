@@ -14,7 +14,7 @@ class Error(object):
     """The key vault server error."""
 
     def __init__(self, code, message, inner_error):
-        # type: (str, str, models.Error, Mapping[str, Any]) -> None
+        # type: (str, str, models.Error) -> None
         self._code = code
         self._message = message
         self._inner_error = inner_error
@@ -37,7 +37,7 @@ class Error(object):
 
 class CertificateBase(object):
     def __init__(self, attributes, cert_id, thumbprint, **kwargs):
-        # type: (models.CertificateAttributes, Optional[str], Mapping[str, Any]) -> None
+        # type: (models.CertificateAttributes, str, bytes, Mapping[str, Any]) -> None
         self._attributes = attributes
         self._id = cert_id
         self._vault_id = _parse_vault_id(cert_id)
@@ -58,7 +58,7 @@ class CertificateBase(object):
     @property
     def id(self):
         # type: () -> str
-        return self._id
+        pass
 
     @property
     def name(self):
@@ -113,7 +113,7 @@ class CertificateBase(object):
 
 class Certificate(CertificateBase):
     def __init__(self, attributes, cert_id, thumbprint, kid, sid, policy, cer, **kwargs):
-        # type: (models.CertificateAttributes, str, str, str, models.CertificatePolicy, bytes, Mapping[str, Any]) -> None
+        # type: (models.CertificateAttributes, str, bytes, str, str, models.CertificatePolicy, bytes, Mapping[str, Any]) -> None
         super(Certificate, self).__init__(attributes, cert_id, thumbprint, **kwargs)
         self._kid = kid
         self._sid = sid
@@ -123,14 +123,14 @@ class Certificate(CertificateBase):
     @classmethod
     def _from_certificate_bundle(cls, certificate_bundle):
         # type: (models.CertificateBundle) -> Certificate
-        """Construct a certificate from an autorest-generated certificateBundle"""
+        """Construct a Certificate from an autorest-generated CertificateBundle"""
         return cls(
             attributes=certificate_bundle.attributes,
             cert_id=certificate_bundle.id,
             thumbprint=certificate_bundle.x509_thumbprint,
             kid=certificate_bundle.kid,
             sid=certificate_bundle.sid,
-            policy=certificate_bundle.policy,
+            policy=CertificatePolicy._from_certificate_policy_bundle(certificate_bundle.policy),
             cer=certificate_bundle.cer,
             tags=certificate_bundle.tags,
         )
@@ -174,72 +174,62 @@ class CertificateOperation(object):
         request_id,
     ):
         # type: (str, str, str, bool, str, bool, str, str, models.Error, str, str, Mapping[str, Any]) -> None
-        self._id = cert_operation_id
-        self._issuer_name = issuer_name
-        self._certificate_type = certificate_type
-        self._certificate_transparency = certificate_transparency
-        self._csr = csr
-        self._cancellation_requested = cancellation_requested
-        self._status = status
-        self._status_details = status_details
-        self._error = error
-        self._target = target
-        self._request_id = request_id
+        pass
 
     @property
     def id(self):
         # type: () -> str
-        return self._id
+        pass
 
     @property
     def issuer_name(self):
         # type: () -> str
-        return self._issuer_name
+        pass
 
     @property
     def certificate_type(self):
         # type: () -> str
-        return self._certificate_type
+        pass
 
     @property
     def certificate_transparency(self):
         # type: () -> bool
-        return self._certificate_transparency
+        pass
 
     @property
     def csr(self):
         # type: () -> str
-        return self._csr
+        pass
 
     @property
     def cancellation_requested(self):
         # type: () -> bool
-        return self._cancellation_requested
+        pass
 
     @property
     def status(self):
         # type: () -> str
-        return self._status
+        pass
 
     @property
     def status_details(self):
         # type: () -> str
-        return self._status_details
+        pass
 
     @property
     def error(self):
         # type: () -> models.Error
-        return self._error
+        pass
 
     @property
     def target(self):
         # type: () -> str
-        return self._target
+        pass
 
     @property
     def request_id(self):
         # type: () -> str
-        return self._request_id
+        pass
 
 
 class CertificatePolicy(object):
@@ -260,74 +250,88 @@ class CertificatePolicy(object):
         certificate_type,
         certificate_transparency,
     ):
-        # type: (str, models.KeyProperties, str, str, list[str], list[str], list[str], int, list[models.LifeTimeActions], str, str, bool, Mapping[str, Any]) -> None
-        self._id = cert_policy_id
-        self._key_properties = key_properties
-        self._content_type = content_type
-        self._subject_name = subject_name
-        self._subject_alternative_emails = subject_alternative_emails
-        self._subject_alternative_dns_names = subject_alternative_dns_names
-        self._subject_alternative_upns = subject_alternative_upns
-        self._validity_in_months = validity_in_months
-        self._lifetime_actions = lifetime_actions
-        self._issuer_name = issuer_name
-        self._certificate_type = certificate_type
-        self._certificate_transparency = certificate_transparency
+        # type: (str, models.KeyProperties, str, str, list[str], list[str], list[str], int, list[models.LifetimeAction], str, str, bool, Mapping[str, Any]) -> None
+        pass
 
-    # created updated stuff question
+    @classmethod
+    def _from_certificate_policy_bundle(cls, certificate_policy_bundle):
+        # type: (models.CertificatePolicy) -> CertificatePolicy
+        """Construct a CertificatePolicy from an autorest-generated CertificatePolicy bundle"""
+        pass
+
     @property
     def id(self):
         # type: () -> str
-        return self._id
+        pass
+
+    @property
+    def name(self):
+        # type: () -> str
+        pass
 
     @property
     def content_type(self):
         # type: () -> str
-        return self._content_type
+        pass
 
     @property
     def subject_name(self):
         # type: () -> str
-        return self._subject_name
+        pass
 
     @property
     def subject_alternative_emails(self):
         # type: () -> list[str]
-        return self._subject_alternative_emails
+        pass
 
     @property
     def subject_alternative_dns_names(self):
         # type: () -> list[str]
-        return self._subject_alternative_dns_names
+        pass
 
     @property
     def subject_alternative_upns(self):
         # type: () -> list[str]
-        return self._subject_alternative_upns
+        pass
 
     @property
     def validity_in_months(self):
         # type: () -> int
-        return self._validity_in_months
+        pass
 
     @property
     def lifetime_actions(self):
-        return self._lifetime_actions  # need to spread this out?
+        pass
 
     @property
     def issuer_name(self):
         # type: () -> str
-        return self._issuer_name
+        pass
 
     @property
     def certificate_type(self):
         # type: () -> str
-        return self._certificate_type
+        pass
 
     @property
     def certificate_transparency(self):
         # type: () -> bool
-        return self._certificate_transparency
+        pass
+
+    @property
+    def created(self):
+        # type: () -> datetime
+        pass
+
+    @property
+    def enabled(self):
+        # type: () -> bool
+        pass
+
+    @property
+    def updated(self):
+        # type: () -> datetime
+        pass
 
 
 class Contact:
@@ -357,8 +361,8 @@ class Contact:
 
 
 class IssuerBase(object):
-    def __init__(self, attributes, issuer_id, provider, **kwargs):
-        # type: (models.IssuerAttributes, str, str, Mapping[str, Any]) -> None
+    def __init__(self, issuer_id, provider, attributes=None):
+        # type: (str, str, Optional[models.IssuerAttributes]) -> None
         self._attributes = attributes
         self._id = issuer_id
         self._vault_id = _parse_vault_id(issuer_id)
@@ -366,9 +370,9 @@ class IssuerBase(object):
 
     @classmethod
     def _from_issuer_item(cls, issuer_item):
-        # type: (models.IssuerItem) -> IssuerBase
+        # type: (models.CertificateIssuerItem) -> IssuerBase
         """Construct a IssuerBase from an autorest-generated IssuerItem"""
-        return cls(attributes=issuer_item.attributes, issuer_id=issuer_item.id, provider=issuer_item.provider)
+        return cls(issuer_id=issuer_item.id, provider=issuer_item.provider)
 
     @property
     def enabled(self):
@@ -419,10 +423,9 @@ class Issuer(IssuerBase):
         first_name=None,
         last_name=None,
         phone=None,
-        **kwargs
     ):
-        # type: (models.IssuerAttributes, str, str, str, str, Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Mapping[str, Mapping[str, Any]]) -> None
-        super(Issuer, self).__init__(attributes, issuer_id, provider, **kwargs)
+        # type: (models.IssuerAttributes, str, str, str, str, Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]) -> None
+        super(Issuer, self).__init__(attributes, issuer_id, provider)
         self._account_id = account_id
         self._password = password
         self._organization_id = organization_id
@@ -439,8 +442,8 @@ class Issuer(IssuerBase):
             attributes=issuer_bundle.attributes,
             issuer_id=issuer_bundle.id,
             provider=issuer_bundle.provider,
-            account_id=issuer_bundle.account_id,
-            password=issuer_bundle.password,
+            account_id=issuer_bundle.credentials.account_id,
+            password=issuer_bundle.credentials.password,
             organization_id=issuer_bundle.organization_details.id,
             email=issuer_bundle.organization_details.admin_details.email,
             first_name=issuer_bundle.organization_details.admin_details.first_name,
@@ -532,7 +535,7 @@ class LifetimeAction(object):
     """
 
     def __init__(self, action_type, lifetime_percentage=None, days_before_expiry=None):
-        # type: (int, int, models.ActionType) -> None
+        # type: (models.ActionType, Optional[int], Optional[int]) -> None
         self._lifetime_percentage = lifetime_percentage
         self._days_before_expiry = days_before_expiry
         self._action_type = action_type
@@ -571,7 +574,7 @@ class DeletedCertificate(Certificate):
         scheduled_purge_date=None,
         **kwargs
     ):
-        # type: (models.CertificateAttributes, str, Optional[str], Optional[str], Optional[str], Optional[models.CertificatePolicy], Optional[bytes], optional[datetime], Optional[str], Optional[datetime], Mapping[str, Mapping[str, Any]) -> None
+        # type: (models.CertificateAttributes, str, bytes, Optional[str], Optional[str], Optional[models.CertificatePolicy], Optional[bytes], Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
         super(DeletedCertificate, self).__init__(attributes, cert_id, thumbprint, kid, sid, policy, cer, **kwargs)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
@@ -585,13 +588,8 @@ class DeletedCertificate(Certificate):
             attributes=deleted_certificate_item.attributes,
             cert_id=deleted_certificate_item.id,
             thumbprint=deleted_certificate_item.x509_thumbprint,
-            kid=None,
-            sid=None,
-            policy=None,
-            cer=None,
             recovery_id=deleted_certificate_item.recovery_id,
             scheduled_purge_date=deleted_certificate_item.scheduled_purge_date,
-            managed=deleted_certificate_item.managed,
             tags=deleted_certificate_item.tags,
         )
 

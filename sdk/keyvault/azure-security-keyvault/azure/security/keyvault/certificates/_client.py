@@ -3,14 +3,9 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Dict, Mapping, Optional
+from typing import Any, Dict, Mapping, Optional, Generator, Iterable
 from datetime import datetime
-
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport
-from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
-
-from .._generated import KeyVaultClient
+from .._generated.v7_0 import models
 from ._models import (
     Certificate,
     CertificateBase,
@@ -29,61 +24,35 @@ class CertificateClient:
         pass  # TODO
 
     def __init__(self, vault_url, credentials, config=None, api_version=None, **kwargs):
-        if not credentials:
-            raise ValueError("credentials")
-
-        if not vault_url:
-            raise ValueError("vault_url")
-
-        self._vault_url = vault_url
-
-        if api_version is None:
-            api_version = KeyVaultClient.DEFAULT_API_VERSION
-
-        config = config or KeyVaultClient.get_configuration_class(api_version)(credentials)
-
-        # TODO generated default pipeline should be fine when token policy isn't necessary
-        policies = [
-            config.headers_policy,
-            config.user_agent_policy,
-            config.proxy_policy,
-            _BearerTokenCredentialPolicy(credentials),
-            config.redirect_policy,
-            config.retry_policy,
-            config.logging_policy,
-        ]
-        transport = RequestsTransport(config)
-        pipeline = Pipeline(transport, policies=policies)
-
-        self._client = KeyVaultClient(credentials, api_version=api_version, pipeline=pipeline)
+        pass
 
     @property
     def vault_url(self):
         # type: () -> str
-        return self._vault_url
+        pass
 
     def create_certificate(self, name, policy=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
-        # type: (str, models.CertificatePolicy, Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Mapping[str, Any]]) -> CertificateOperation
+        # type: (str, models.CertificatePolicy, Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> CertificateOperation
         pass
 
     def get_certificate(self, name, version=None, **kwargs):
-        # type: (str, Optional[str]) -> Certificate
+        # type: (str, Optional[str], Mapping[str, Any]) -> Certificate
         pass
 
     def delete_certificate(self, name, **kwargs):
-        # type: (str) -> DeletedCertificate
+        # type: (str, Mapping[str, Any]) -> DeletedCertificate
         pass
 
     def get_deleted_certificate(self, name, **kwargs):
-        # type: (str) -> DeletedCertificate
+        # type: (str, Mapping[str, Any]) -> DeletedCertificate
         pass
 
     def purge_deleted_certificate(self, name, **kwargs):
-        # type: (str) -> None
+        # type: (str, Mapping[str, Any]) -> None
         pass
 
     def recover_deleted_certificate(self, name, **kwargs):
-        # type: (str) -> Certificate
+        # type: (str, Mapping[str, Any]) -> Certificate
         pass
 
     def import_certificate(
@@ -102,7 +71,7 @@ class CertificateClient:
         pass
 
     def get_certificate_policy(self, name, **kwargs):
-        # type: (str) -> CertificatePolicy
+        # type: (str, Mapping[str, Any]) -> CertificatePolicy
         pass
 
     def update_certificate_policy(self, name, policy, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
@@ -128,28 +97,28 @@ class CertificateClient:
         pass
 
     def list_deleted_certificates(self, include_pending=None, **kwargs):
-        # type: (Optional[bool], Mapping[str, Any]) -> Iterable[DeletedCertificate]
+        # type: (Optional[bool], Mapping[str, Any]) -> Generator[DeletedCertificate]
         pass
 
     def list_certificates(self, include_pending=None, **kwargs):
-        # type: (Optional[bool], Mapping[str, Any]) -> Iterable[CertificateBase]
+        # type: (Optional[bool], Mapping[str, Any]) -> Generator[CertificateBase]
         pass
 
     def list_certificate_versions(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> Iterable[CertificateBase]
+        # type: (str, Mapping[str, Any]) -> Generator[CertificateBase]
         pass
 
     def create_contacts(self, contacts, **kwargs):
-        # type: (Iterable[Contact], Mapping[str, Any]) -> Iterable[Contact]
+        # type: (Iterable[Contact], Mapping[str, Any]) -> Generator[Contact]
         # TODO: rest api includes an id should it be returned?
         pass
 
     def list_contacts(self, **kwargs):
-        # type: (Mapping[str, Any]) -> Iterable[Contact]
+        # type: (Mapping[str, Any]) -> Generator[Contact]
         pass
 
     def delete_contacts(self, **kwargs):
-        # type: (Mapping[str, Any]) -> Iterable[Contact]
+        # type: (Mapping[str, Any]) -> Generator[Contact]
         pass
 
     def get_certificate_operation(self, name, **kwargs):
@@ -160,8 +129,8 @@ class CertificateClient:
         # type: (str, Mapping[str, Any]) -> CertificateOperation
         pass
 
-    def cancel_certificate_operation(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> CertificateOperation
+    def cancel_certificate_operation(self, name, cancellation_requested, **kwargs):
+        # type: (str, bool, Mapping[str, Any]) -> CertificateOperation
         pass
 
     def get_pending_certificate_signing_request(self, name, **kwargs):
@@ -190,7 +159,7 @@ class CertificateClient:
         tags=None,
         **kwargs
     ):
-        # type: (str, str, Optional[str], Optional[str], Optional[organization_id], Optional[str], Optional[str], Optional[str], Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Issuer
+        # type: (str, str, Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Issuer
         pass
 
     def update_issuer(
@@ -210,7 +179,7 @@ class CertificateClient:
         tags=None,
         **kwargs
     ):
-        # type: (str, Optional[str], Optional[str], Optional[str], Optional[organization_id], Optional[str], Optional[str], Optional[str], Optional[str], Optional[bool], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Issuer
+        # type: (str, Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Issuer
         pass
 
     def delete_issuer(self, name, **kwargs):
@@ -218,5 +187,5 @@ class CertificateClient:
         pass
 
     def list_issuers(self, **kwargs):
-        # type: (Mapping[str, Any]) -> Iterable[IssuerBase]
+        # type: (Mapping[str, Any]) -> Generator[IssuerBase]
         pass
