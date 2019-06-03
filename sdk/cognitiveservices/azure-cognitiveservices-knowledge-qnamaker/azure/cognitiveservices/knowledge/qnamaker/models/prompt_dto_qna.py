@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .qn_adto import QnADTO
 
 
-class QnADTO(Model):
-    """Q-A object.
+class PromptDTOQna(QnADTO):
+    """QnADTO - Either QnaId or QnADTO needs to be present in a PromptDTO object.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -49,11 +49,5 @@ class QnADTO(Model):
         'context': {'key': 'context', 'type': 'QnADTOContext'},
     }
 
-    def __init__(self, *, answer: str, questions, id: int=None, source: str=None, metadata=None, context=None, **kwargs) -> None:
-        super(QnADTO, self).__init__(**kwargs)
-        self.id = id
-        self.answer = answer
-        self.source = source
-        self.questions = questions
-        self.metadata = metadata
-        self.context = context
+    def __init__(self, **kwargs):
+        super(PromptDTOQna, self).__init__(**kwargs)
