@@ -21,7 +21,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Iterable, List, Mapping, Optional, Union
-    from azure.core.credentials import SupportsGetToken
+    from azure.core.credentials import TokenCredential
 
 # pylint:disable=too-few-public-methods
 
@@ -129,7 +129,7 @@ class TokenCredentialChain:
     """A sequence of token credentials"""
 
     def __init__(self, credentials):
-        # type: (Iterable[SupportsGetToken]) -> None
+        # type: (Iterable[TokenCredential]) -> None
         if not credentials:
             raise ValueError("at least one credential is required")
         self._credentials = credentials
