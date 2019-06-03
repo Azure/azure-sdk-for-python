@@ -106,10 +106,12 @@ class AsyncManagedIdentityCredential:
 
     @staticmethod
     def create_config(**kwargs: Mapping[str, Any]) -> Configuration:
-        config = Configuration(**kwargs)
+        timeout = kwargs.pop("connection_timeout", 2)
+        config = Configuration(connection_timeout=timeout, **kwargs)
         config.header_policy = HeadersPolicy(base_headers={"Metadata": "true"}, **kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
-        config.retry_policy = AsyncRetryPolicy(retry_on_status_codes=[404, 429] + list(range(500, 600)), **kwargs)
+        retries = kwargs.pop("retry_total", 5)
+        config.retry_policy = AsyncRetryPolicy(retry_total=retries, retry_on_status_codes=[404, 429] + list(range(500, 600)), **kwargs)
         return config
 
 

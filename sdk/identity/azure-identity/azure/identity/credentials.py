@@ -92,7 +92,6 @@ class EnvironmentCredential:
         return self._credential.get_token(scopes)
 
 
-# TODO: support multiple identities?
 class ManagedIdentityCredential:
     """Authenticates with a managed identity"""
 
@@ -105,10 +104,12 @@ class ManagedIdentityCredential:
     @staticmethod
     def create_config(**kwargs):
         # type: (Mapping[str, str]) -> Configuration
-        config = Configuration(**kwargs)
+        timeout = kwargs.pop("connection_timeout", 2)
+        config = Configuration(connection_timeout=timeout, **kwargs)
         config.header_policy = HeadersPolicy(base_headers={"Metadata": "true"}, **kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
-        config.retry_policy = RetryPolicy(retry_on_status_codes=[404, 429] + list(range(500, 600)), **kwargs)
+        retries = kwargs.pop("retry_total", 5)
+        config.retry_policy = RetryPolicy(retry_total=retries, retry_on_status_codes=[404, 429] + list(range(500, 600)), **kwargs)
         return config
 
     def get_token(self, scopes):
