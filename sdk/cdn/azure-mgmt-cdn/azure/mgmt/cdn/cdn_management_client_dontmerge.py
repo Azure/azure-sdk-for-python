@@ -27,8 +27,8 @@ from .operations.edge_nodes_operations import EdgeNodesOperations
 from . import models
 
 
-class CdnManagementClientConfiguration(AzureConfiguration):
-    """Configuration for CdnManagementClient
+class CdnManagementClientDONTMERGEConfiguration(AzureConfiguration):
+    """Configuration for CdnManagementClientDONTMERGE
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
@@ -50,7 +50,7 @@ class CdnManagementClientConfiguration(AzureConfiguration):
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(CdnManagementClientConfiguration, self).__init__(base_url)
+        super(CdnManagementClientDONTMERGEConfiguration, self).__init__(base_url)
 
         self.add_user_agent('azure-mgmt-cdn/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
@@ -59,11 +59,11 @@ class CdnManagementClientConfiguration(AzureConfiguration):
         self.subscription_id = subscription_id
 
 
-class CdnManagementClient(SDKClient):
+class CdnManagementClientDONTMERGE(SDKClient):
     """Use these APIs to manage Azure CDN resources through the Azure Resource Manager. You must make sure that requests made to these resources are secure.
 
     :ivar config: Configuration for client.
-    :vartype config: CdnManagementClientConfiguration
+    :vartype config: CdnManagementClientDONTMERGEConfiguration
 
     :ivar profiles: Profiles operations
     :vartype profiles: azure.mgmt.cdn.operations.ProfilesOperations
@@ -91,11 +91,11 @@ class CdnManagementClient(SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = CdnManagementClientConfiguration(credentials, subscription_id, base_url)
-        super(CdnManagementClient, self).__init__(self.config.credentials, self.config)
+        self.config = CdnManagementClientDONTMERGEConfiguration(credentials, subscription_id, base_url)
+        super(CdnManagementClientDONTMERGE, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-10-12'
+        self.api_version = '2019-04-15'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
