@@ -12,7 +12,7 @@
 try:
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
-    from .resource_py3 import Resource
+    from .proxy_resource_py3 import ProxyResource
     from .essentials_py3 import Essentials
     from .alert_properties_py3 import AlertProperties
     from .alert_py3 import Alert
@@ -31,7 +31,7 @@ try:
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .operation import Operation
-    from .resource import Resource
+    from .proxy_resource import ProxyResource
     from .essentials import Essentials
     from .alert_properties import AlertProperties
     from .alert import Alert
@@ -67,7 +67,7 @@ from .alerts_management_client_enums import (
 __all__ = [
     'OperationDisplay',
     'Operation',
-    'Resource',
+    'ProxyResource',
     'Essentials',
     'AlertProperties',
     'Alert',

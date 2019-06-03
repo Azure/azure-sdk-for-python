@@ -13,26 +13,26 @@ from msrest.serialization import Model
 
 
 class Essentials(Model):
-    """This object contains normalized fields across different monitor service and
-    also contains state related fields.
+    """This object contains consistent fields across different monitor services.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar severity: Severity of alert Sev0 being highest and Sev3 being
+    :ivar severity: Severity of alert Sev0 being highest and Sev4 being
      lowest. Possible values include: 'Sev0', 'Sev1', 'Sev2', 'Sev3', 'Sev4'
     :vartype severity: str or ~azure.mgmt.alertsmanagement.models.Severity
-    :ivar signal_type: Log based alert or metric based alert. Possible values
-     include: 'Metric', 'Log', 'Unknown'
+    :ivar signal_type: The type of signal the alert is based on, which could
+     be metrics, logs or activity logs. Possible values include: 'Metric',
+     'Log', 'Unknown'
     :vartype signal_type: str or
      ~azure.mgmt.alertsmanagement.models.SignalType
-    :ivar alert_state: Alert object state, which is modified by the user.
+    :ivar alert_state: Alert object state, which can be modified by the user.
      Possible values include: 'New', 'Acknowledged', 'Closed'
     :vartype alert_state: str or
      ~azure.mgmt.alertsmanagement.models.AlertState
-    :ivar monitor_condition: Represents rule condition(Fired/Resolved)
-     maintained by monitor service depending on the state of the state.
-     Possible values include: 'Fired', 'Resolved'
+    :ivar monitor_condition: Can be 'Fired' or 'Resolved', which represents
+     whether the underlying conditions have crossed the defined alert rule
+     thresholds. Possible values include: 'Fired', 'Resolved'
     :vartype monitor_condition: str or
      ~azure.mgmt.alertsmanagement.models.MonitorCondition
     :param target_resource: Target ARM resource, on which alert got created.
@@ -51,7 +51,7 @@ class Essentials(Model):
      Administrative', 'ActivityLog Security', 'ActivityLog Recommendation',
      'ActivityLog Policy', 'ActivityLog Autoscale', 'Log Analytics', 'Nagios',
      'Platform', 'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights',
-     'Zabbix'
+     'Zabbix', 'Resource Health'
     :vartype monitor_service: str or
      ~azure.mgmt.alertsmanagement.models.MonitorService
     :ivar alert_rule: Rule(monitor) which fired alert instance. Depending on
@@ -73,7 +73,7 @@ class Essentials(Model):
     :vartype last_modified_date_time: datetime
     :ivar monitor_condition_resolved_date_time: Resolved time(ISO-8601 format)
      of alert instance. This will be updated when monitor service resolves the
-     alert instance because of the rule condition is not met.
+     alert instance because the rule condition is no longer met.
     :vartype monitor_condition_resolved_date_time: datetime
     :ivar last_modified_user_name: User who last modified the alert, in case
      of monitor service updates user would be 'system', otherwise name of the

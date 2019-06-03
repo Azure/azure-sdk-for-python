@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
+class ProxyResource(Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when
@@ -39,7 +39,7 @@ class Resource(Model):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(Resource, self).__init__(**kwargs)
+        super(ProxyResource, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
