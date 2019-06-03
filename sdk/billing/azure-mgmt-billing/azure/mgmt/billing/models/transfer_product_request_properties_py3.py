@@ -15,14 +15,18 @@ from msrest.serialization import Model
 class TransferProductRequestProperties(Model):
     """The properties of the product to initiate a transfer.
 
-    :param destination_invoice_section_id: Destination invoice section id.
+    :param destination_invoice_section_id: The destination invoice section id.
     :type destination_invoice_section_id: str
+    :param destination_billing_profile_id: The destination billing profile id.
+    :type destination_billing_profile_id: str
     """
 
     _attribute_map = {
         'destination_invoice_section_id': {'key': 'destinationInvoiceSectionId', 'type': 'str'},
+        'destination_billing_profile_id': {'key': 'destinationBillingProfileId', 'type': 'str'},
     }
 
-    def __init__(self, *, destination_invoice_section_id: str=None, **kwargs) -> None:
+    def __init__(self, *, destination_invoice_section_id: str=None, destination_billing_profile_id: str=None, **kwargs) -> None:
         super(TransferProductRequestProperties, self).__init__(**kwargs)
         self.destination_invoice_section_id = destination_invoice_section_id
+        self.destination_billing_profile_id = destination_billing_profile_id
