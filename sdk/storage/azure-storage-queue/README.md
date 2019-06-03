@@ -10,6 +10,6 @@
 
 ## Troubleshooting
 
-## Next Steps
+## Next steps
 
 ## Contributing
