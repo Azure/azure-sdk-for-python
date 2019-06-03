@@ -35,7 +35,7 @@ class SqlVirtualMachine(TrackedResource):
     :param virtual_machine_resource_id: ARM Resource id of underlying virtual
      machine created from SQL marketplace image.
     :type virtual_machine_resource_id: str
-    :ivar provisioning_state: Provisioning state to track the aysnc operation
+    :ivar provisioning_state: Provisioning state to track the async operation
      status.
     :vartype provisioning_state: str
     :ivar sql_image_offer: SQL image offer. Examples include SQL2016-WS2016,
@@ -45,9 +45,9 @@ class SqlVirtualMachine(TrackedResource):
      include: 'PAYG', 'AHUB'
     :type sql_server_license_type: str or
      ~azure.mgmt.sqlvirtualmachine.models.SqlServerLicenseType
-    :ivar sql_image_sku: SQL image sku. Possible values include: 'Developer',
-     'Express', 'Standard', 'Enterprise', 'Web'
-    :vartype sql_image_sku: str or
+    :param sql_image_sku: SQL Server edition type. Possible values include:
+     'Developer', 'Express', 'Standard', 'Enterprise', 'Web'
+    :type sql_image_sku: str or
      ~azure.mgmt.sqlvirtualmachine.models.SqlImageSku
     :param sql_virtual_machine_group_resource_id: ARM resource id of the SQL
      virtual machine group this SQL virtual machine is or will be part of.
@@ -79,7 +79,6 @@ class SqlVirtualMachine(TrackedResource):
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
         'sql_image_offer': {'readonly': True},
-        'sql_image_sku': {'readonly': True},
     }
 
     _attribute_map = {
@@ -102,14 +101,14 @@ class SqlVirtualMachine(TrackedResource):
         'server_configurations_management_settings': {'key': 'properties.serverConfigurationsManagementSettings', 'type': 'ServerConfigurationsManagementSettings'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, virtual_machine_resource_id: str=None, sql_server_license_type=None, sql_virtual_machine_group_resource_id: str=None, wsfc_domain_credentials=None, auto_patching_settings=None, auto_backup_settings=None, key_vault_credential_settings=None, server_configurations_management_settings=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, virtual_machine_resource_id: str=None, sql_server_license_type=None, sql_image_sku=None, sql_virtual_machine_group_resource_id: str=None, wsfc_domain_credentials=None, auto_patching_settings=None, auto_backup_settings=None, key_vault_credential_settings=None, server_configurations_management_settings=None, **kwargs) -> None:
         super(SqlVirtualMachine, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.virtual_machine_resource_id = virtual_machine_resource_id
         self.provisioning_state = None
         self.sql_image_offer = None
         self.sql_server_license_type = sql_server_license_type
-        self.sql_image_sku = None
+        self.sql_image_sku = sql_image_sku
         self.sql_virtual_machine_group_resource_id = sql_virtual_machine_group_resource_id
         self.wsfc_domain_credentials = wsfc_domain_credentials
         self.auto_patching_settings = auto_patching_settings
