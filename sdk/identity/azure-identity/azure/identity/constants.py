@@ -18,4 +18,5 @@ class EnvironmentVariables:
 # https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http
 IMDS_ENDPOINT = "http://169.254.169.254/metadata/identity/oauth2/token"
 
+# TODO: other clouds have other endpoints
 OAUTH_ENDPOINT = "https://login.microsoftonline.com/{}/oauth2/v2.0/token"
