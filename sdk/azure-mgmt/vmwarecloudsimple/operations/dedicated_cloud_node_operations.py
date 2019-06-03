@@ -317,7 +317,7 @@ class DedicatedCloudNodeOperations(object):
             self, resource_group_name, dedicated_cloud_node_name, dedicated_cloud_node_request, custom_headers=None, raw=False, polling=True, **operation_config):
         """Implements dedicated cloud node PUT method.
 
-        Returns decicated cloud node by its name.
+        Returns dedicated cloud node by its name.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str

@@ -29,7 +29,7 @@ class VirtualMachine(Model):
     :vartype name: str
     :param plan: Virtual machine plan
     :type plan: ~microsoft.vmwarecloudsimple.models.Plan
-    :param amount_of_ram: Required. The amount of memeory
+    :param amount_of_ram: Required. The amount of memory
     :type amount_of_ram: int
     :ivar controllers: The list of Virtual Disks' Controllers
     :vartype controllers:
