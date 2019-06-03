@@ -3,6 +3,17 @@
 Release History
 ===============
 
+0.6.1 (2019-05-31)
+++++++++++++++++++
+
+**Features**
+
+- Add is_zone_redundant attribute
+
+**Bugfix**
+
+- Fix some incorrect type from int to long (Python 2)
+
 0.6.0 (2019-05-03)
 ++++++++++++++++++
 
