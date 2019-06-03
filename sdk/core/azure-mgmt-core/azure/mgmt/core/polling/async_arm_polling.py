@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import asyncio
 
-from ..azure_exceptions import CloudError
+from ..exceptions import CloudError
 from .arm_polling import (
     failed,
     BadStatus,

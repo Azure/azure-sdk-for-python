@@ -28,7 +28,8 @@ import json
 
 from requests import RequestException
 
-from msrest.exceptions import ClientException
+from azure.core.exceptions import AzureError
+
 from msrest.serialization import Deserializer
 from msrest.exceptions import DeserializationError
 
@@ -141,7 +142,7 @@ class CloudErrorData(object):
             pass
 
 
-class CloudError(ClientException):
+class CloudError(AzureError):
     """ClientError, exception raised for failed Azure REST call.
     Will attempt to deserialize response into meaningful error
     data.

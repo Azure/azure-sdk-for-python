@@ -33,7 +33,7 @@ except ImportError:
 from msrest.exceptions import DeserializationError
 from msrest.polling import PollingMethod
 
-from ..azure_exceptions import CloudError
+from ..exceptions import CloudError
 
 
 FINISHED = frozenset(['succeeded', 'canceled', 'failed'])

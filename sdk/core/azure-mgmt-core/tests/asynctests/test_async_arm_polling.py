@@ -42,7 +42,7 @@ from msrest.service_client import ServiceClient
 from msrest.exceptions import DeserializationError
 from msrest.polling import async_poller
 
-from azure.mgmt.core.azure_exceptions import CloudError
+from azure.mgmt.core.exceptions import CloudError
 from azure.mgmt.core.polling.async_arm_polling import (
     AsyncARMPolling,
 )
