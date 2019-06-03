@@ -29,6 +29,8 @@ class Settings(Model):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
+    :param etag: Etag of the alert rule.
+    :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
     """
@@ -44,6 +46,7 @@ class Settings(Model):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
@@ -51,9 +54,10 @@ class Settings(Model):
         'kind': {'UebaSettings': 'UebaSettings', 'ToggleSettings': 'ToggleSettings'}
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, etag: str=None, **kwargs) -> None:
         super(Settings, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
+        self.etag = etag
         self.kind = None

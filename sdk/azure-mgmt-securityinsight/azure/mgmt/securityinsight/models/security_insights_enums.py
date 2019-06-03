@@ -99,6 +99,12 @@ class StatusInMcas(str, Enum):
     disabled = "Disabled"
 
 
+class LicenseStatus(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class AggregationsKind(str, Enum):
 
     cases_aggregation = "CasesAggregation"

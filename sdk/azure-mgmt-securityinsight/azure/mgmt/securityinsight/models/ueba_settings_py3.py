@@ -26,6 +26,8 @@ class UebaSettings(Settings):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
+    :param etag: Etag of the alert rule.
+    :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
     :param is_enabled: Determines whether User and Entity Behavior Analytics
@@ -37,8 +39,9 @@ class UebaSettings(Settings):
     :vartype status_in_mcas: str or
      ~azure.mgmt.securityinsight.models.StatusInMcas
     :ivar atp_license_status: Determines whether the tenant has ATP (Advanced
-     Threat Protection) license.
-    :vartype atp_license_status: bool
+     Threat Protection) license. Possible values include: 'Enabled', 'Disabled'
+    :vartype atp_license_status: str or
+     ~azure.mgmt.securityinsight.models.LicenseStatus
     """
 
     _validation = {
@@ -54,14 +57,15 @@ class UebaSettings(Settings):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
         'status_in_mcas': {'key': 'properties.statusInMcas', 'type': 'str'},
-        'atp_license_status': {'key': 'properties.atpLicenseStatus', 'type': 'bool'},
+        'atp_license_status': {'key': 'properties.atpLicenseStatus', 'type': 'str'},
     }
 
-    def __init__(self, *, is_enabled: bool=None, **kwargs) -> None:
-        super(UebaSettings, self).__init__(**kwargs)
+    def __init__(self, *, etag: str=None, is_enabled: bool=None, **kwargs) -> None:
+        super(UebaSettings, self).__init__(etag=etag, **kwargs)
         self.is_enabled = is_enabled
         self.status_in_mcas = None
         self.atp_license_status = None

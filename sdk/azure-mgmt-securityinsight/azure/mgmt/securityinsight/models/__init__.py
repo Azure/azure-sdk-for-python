@@ -113,6 +113,7 @@ from .security_insights_enums import (
     OSFamily,
     SettingKind,
     StatusInMcas,
+    LicenseStatus,
     AggregationsKind,
 )
 
@@ -178,5 +179,6 @@ __all__ = [
     'OSFamily',
     'SettingKind',
     'StatusInMcas',
+    'LicenseStatus',
     'AggregationsKind',
 ]

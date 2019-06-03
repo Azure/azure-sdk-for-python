@@ -26,6 +26,8 @@ class ToggleSettings(Settings):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
+    :param etag: Etag of the alert rule.
+    :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
     :param is_enabled: Determines whether the setting is enable or disabled.
@@ -43,11 +45,12 @@ class ToggleSettings(Settings):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
     }
 
-    def __init__(self, *, is_enabled: bool=None, **kwargs) -> None:
-        super(ToggleSettings, self).__init__(**kwargs)
+    def __init__(self, *, etag: str=None, is_enabled: bool=None, **kwargs) -> None:
+        super(ToggleSettings, self).__init__(etag=etag, **kwargs)
         self.is_enabled = is_enabled
         self.kind = 'ToggleSettings'
