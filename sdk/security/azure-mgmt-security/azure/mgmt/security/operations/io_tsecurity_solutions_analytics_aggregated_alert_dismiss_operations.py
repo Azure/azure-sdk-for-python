@@ -92,4 +92,4 @@ class IoTSecuritySolutionsAnalyticsAggregatedAlertDismissOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/Analytics/AggregatedAlert/{aggregatedAlertName}/Dismiss'}
+    put.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/Analytics/current/AggregatedAlert/{aggregatedAlertName}/Dismiss'}

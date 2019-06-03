@@ -72,9 +72,7 @@ try:
     from .io_tsecurity_device_alerts_py3 import IoTSecurityDeviceAlerts
     from .io_tsecurity_solution_analytics_model_py3 import IoTSecuritySolutionAnalyticsModel
     from .io_tsecurity_aggregated_alert_py3 import IoTSecurityAggregatedAlert
-    from .io_tsecurity_aggregated_alert_list_py3 import IoTSecurityAggregatedAlertList
     from .io_tsecurity_aggregated_recommendation_py3 import IoTSecurityAggregatedRecommendation
-    from .io_tsecurity_aggregated_recommendation_list_py3 import IoTSecurityAggregatedRecommendationList
     from .io_tsecurity_device_alerts_list_py3 import IoTSecurityDeviceAlertsList
     from .regulatory_compliance_standard_py3 import RegulatoryComplianceStandard
     from .regulatory_compliance_control_py3 import RegulatoryComplianceControl
@@ -142,9 +140,7 @@ except (SyntaxError, ImportError):
     from .io_tsecurity_device_alerts import IoTSecurityDeviceAlerts
     from .io_tsecurity_solution_analytics_model import IoTSecuritySolutionAnalyticsModel
     from .io_tsecurity_aggregated_alert import IoTSecurityAggregatedAlert
-    from .io_tsecurity_aggregated_alert_list import IoTSecurityAggregatedAlertList
     from .io_tsecurity_aggregated_recommendation import IoTSecurityAggregatedRecommendation
-    from .io_tsecurity_aggregated_recommendation_list import IoTSecurityAggregatedRecommendationList
     from .io_tsecurity_device_alerts_list import IoTSecurityDeviceAlertsList
     from .regulatory_compliance_standard import RegulatoryComplianceStandard
     from .regulatory_compliance_control import RegulatoryComplianceControl
@@ -166,6 +162,8 @@ from .information_protection_policy_paged import InformationProtectionPolicyPage
 from .security_contact_paged import SecurityContactPaged
 from .workspace_setting_paged import WorkspaceSettingPaged
 from .io_tsecurity_solution_model_paged import IoTSecuritySolutionModelPaged
+from .io_tsecurity_aggregated_alert_paged import IoTSecurityAggregatedAlertPaged
+from .io_tsecurity_aggregated_recommendation_paged import IoTSecurityAggregatedRecommendationPaged
 from .regulatory_compliance_standard_paged import RegulatoryComplianceStandardPaged
 from .regulatory_compliance_control_paged import RegulatoryComplianceControlPaged
 from .regulatory_compliance_assessment_paged import RegulatoryComplianceAssessmentPaged
@@ -253,9 +251,7 @@ __all__ = [
     'IoTSecurityDeviceAlerts',
     'IoTSecuritySolutionAnalyticsModel',
     'IoTSecurityAggregatedAlert',
-    'IoTSecurityAggregatedAlertList',
     'IoTSecurityAggregatedRecommendation',
-    'IoTSecurityAggregatedRecommendationList',
     'IoTSecurityDeviceAlertsList',
     'RegulatoryComplianceStandard',
     'RegulatoryComplianceControl',
@@ -277,6 +273,8 @@ __all__ = [
     'SecurityContactPaged',
     'WorkspaceSettingPaged',
     'IoTSecuritySolutionModelPaged',
+    'IoTSecurityAggregatedAlertPaged',
+    'IoTSecurityAggregatedRecommendationPaged',
     'RegulatoryComplianceStandardPaged',
     'RegulatoryComplianceControlPaged',
     'RegulatoryComplianceAssessmentPaged',

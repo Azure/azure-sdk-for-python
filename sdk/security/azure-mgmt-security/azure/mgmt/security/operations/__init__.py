@@ -31,9 +31,11 @@ from .io_tsecurity_solutions_operations import IoTSecuritySolutionsOperations
 from .io_tsecurity_solutions_resource_group_operations import IoTSecuritySolutionsResourceGroupOperations
 from .iot_security_solution_operations import IotSecuritySolutionOperations
 from .io_tsecurity_solutions_analytics_operations import IoTSecuritySolutionsAnalyticsOperations
+from .io_tsecurity_solutions_analytics_aggregated_alerts_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations
 from .io_tsecurity_solutions_analytics_aggregated_alert_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
 from .io_tsecurity_solutions_analytics_aggregated_alert_dismiss_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertDismissOperations
 from .io_tsecurity_solutions_analytics_recommendation_operations import IoTSecuritySolutionsAnalyticsRecommendationOperations
+from .io_tsecurity_solutions_analytics_recommendations_operations import IoTSecuritySolutionsAnalyticsRecommendationsOperations
 from .regulatory_compliance_standards_operations import RegulatoryComplianceStandardsOperations
 from .regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations
 from .regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations
@@ -61,9 +63,11 @@ __all__ = [
     'IoTSecuritySolutionsResourceGroupOperations',
     'IotSecuritySolutionOperations',
     'IoTSecuritySolutionsAnalyticsOperations',
+    'IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations',
     'IoTSecuritySolutionsAnalyticsAggregatedAlertOperations',
     'IoTSecuritySolutionsAnalyticsAggregatedAlertDismissOperations',
     'IoTSecuritySolutionsAnalyticsRecommendationOperations',
+    'IoTSecuritySolutionsAnalyticsRecommendationsOperations',
     'RegulatoryComplianceStandardsOperations',
     'RegulatoryComplianceControlsOperations',
     'RegulatoryComplianceAssessmentsOperations',
