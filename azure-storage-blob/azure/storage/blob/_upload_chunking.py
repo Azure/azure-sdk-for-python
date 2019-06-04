@@ -8,6 +8,8 @@ from threading import Lock
 
 from math import ceil
 
+import six
+
 from ._utils import (
     encode_base64,
     url_quote,
@@ -23,7 +25,7 @@ _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = '{0} should be a seekable file-like/io.
 
 
 def _upload_blob_chunks(blob_service, blob_size, block_size, stream, max_connections, validate_content,
-                        access_conditions, uploader_class, maxsize_condition=None, modified_access_conditions=None,
+                        access_conditions, uploader_class, append_conditions=None, modified_access_conditions=None,
                         timeout=None, content_encryption_key=None, initialization_vector=None, **kwargs):
 
     encryptor, padder = _get_blob_encryptor_and_padder(
@@ -44,7 +46,7 @@ def _upload_blob_chunks(blob_service, blob_size, block_size, stream, max_connect
         padder
     )
 
-    uploader.maxsize_condition = maxsize_condition
+    uploader.append_conditions = append_conditions
     uploader.request_options = kwargs
 
     # Access conditions do not work with parallelism
@@ -97,7 +99,7 @@ def _upload_blob_chunks(blob_service, blob_size, block_size, stream, max_connect
 
 def _upload_blob_substream_blocks(blob_service, blob_size, block_size, stream, max_connections,
                                   validate_content, access_conditions, uploader_class,
-                                  maxsize_condition=None, modified_access_conditions=None, timeout=None, **kwargs):
+                                  append_conditions=None, modified_access_conditions=None, timeout=None, **kwargs):
 
     uploader = uploader_class(
         blob_service,
@@ -111,7 +113,7 @@ def _upload_blob_substream_blocks(blob_service, blob_size, block_size, stream, m
         None,
         None
     )
-    uploader.maxsize_condition = maxsize_condition
+    uploader.append_conditions = append_conditions
     uploader.request_options = kwargs
 
     # ETag matching does not work with parallelism as a ranged upload may start
@@ -121,7 +123,7 @@ def _upload_blob_substream_blocks(blob_service, blob_size, block_size, stream, m
     else:
         uploader.modified_access_conditions = modified_access_conditions
 
-    uploader.maxsize_condition = maxsize_condition
+    uploader.append_conditions = append_conditions
 
     if max_connections > 1:
         import concurrent.futures
@@ -295,31 +297,30 @@ class _AppendBlobChunkUploader(_BlobChunkUploader):
 
     def _upload_chunk(self, chunk_offset, chunk_data):
         if not hasattr(self, 'current_length'):
-            resp = self.blob_service.append_block(
-                self.container_name,
-                self.blob_name,
-                chunk_data,
-                validate_content=self.validate_content,
-                lease_id=self.lease_id,
-                maxsize_condition=self.maxsize_condition,
-                timeout=self.timeout,
-                if_modified_since=self.if_modified_since,
-                if_unmodified_since=self.if_unmodified_since,
-                if_match=self.if_match,
-                if_none_match=self.if_none_match
-            )
-
-            self.current_length = resp.append_offset
-        else:
             self.response_headers = self.blob_service.append_block(
-                self.container_name,
-                self.blob_name,
                 chunk_data,
-                validate_content=self.validate_content,
-                lease_id=self.lease_id,
-                maxsize_condition=self.maxsize_condition,
-                appendpos_condition=self.current_length + chunk_offset,
+                content_length=len(chunk_data),
                 timeout=self.timeout,
+                lease_access_conditions=self.lease_access_conditions,
+                modified_access_conditions=self.modified_access_conditions,
+                validate_content=self.validate_content,
+                append_position_access_conditions=self.append_conditions,
+                cls=return_response_headers,
+                **self.request_options
+            )
+            self.current_length = int(self.response_headers['x-ms-blob-append-offset'])
+        else:
+            self.append_conditions.append_position = self.current_length + chunk_offset
+            self.response_headers = self.blob_service.append_block(
+                chunk_data,
+                content_length=len(chunk_data),
+                timeout=self.timeout,
+                lease_access_conditions=self.lease_access_conditions,
+                modified_access_conditions=self.modified_access_conditions,
+                validate_content=self.validate_content,
+                append_position_access_conditions=self.append_conditions,
+                cls=return_response_headers,
+                **self.request_options
             )
 
 
@@ -472,10 +473,11 @@ class IterStreamer(object):
     """
     File-like streaming iterator.
     """
-    def __init__(self, generator):
+    def __init__(self, generator, encoding='UTF-8'):
         self.generator = generator
         self.iterator = iter(generator)
-        self.leftover = ''
+        self.leftover = b''
+        self.encoding = encoding
 
     def __len__(self):
         return self.generator.__len__()
@@ -484,7 +486,7 @@ class IterStreamer(object):
         return self.iterator
 
     def next(self):
-        return self.iterator.next()
+        return next(self.iterator)
 
     def read(self, size):
         data = self.leftover
@@ -492,6 +494,8 @@ class IterStreamer(object):
         try:
             while count < size:
                 chunk = self.next()
+                if isinstance(chunk, six.text_type):
+                    chunk = chunk.encode(self.encoding)
                 data += chunk
                 count += len(chunk)
         except StopIteration:

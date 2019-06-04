@@ -46,12 +46,14 @@ from ._deserialize import (
 from ._generated.models import (
     BlobHTTPHeaders,
     StorageErrorException,
-    BlockLookupList)
+    BlockLookupList,
+    AppendPositionAccessConditions)
 from ._upload_chunking import (
     _upload_blob_chunks,
     _upload_blob_substream_blocks,
     _PageBlobChunkUploader,
     _BlockBlobChunkUploader,
+    _AppendBlobChunkUploader,
     IterStreamer)
 
 if TYPE_CHECKING:
@@ -399,7 +401,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         elif hasattr(data, 'read'):
             stream = data
         elif hasattr(data, '__iter__'):
-            stream = IterStreamer(data)
+            stream = IterStreamer(data, encoding=encoding)
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
 
@@ -535,9 +537,26 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 initialization_vector=iv,
                 **kwargs
             )
-        # TODO: Upload other blob types
-        else:
-            raise NotImplementedError("Other blob types not yet implemented.")
+        elif self.blob_type == BlobType.AppendBlob:
+            if length == 0:
+                return {}
+            append_conditions = AppendPositionAccessConditions(
+                max_size=maxsize_condition,
+                append_condition=None)
+            return _upload_blob_chunks(
+                blob_service=self._client.append_blob,
+                blob_size=length,
+                block_size=self._config.blob_settings.max_block_size,
+                stream=stream,
+                append_conditions=append_conditions,
+                max_connections=max_connections,
+                validate_content=validate_content,
+                access_conditions=access_conditions,
+                uploader_class=_AppendBlobChunkUploader,
+                modified_access_conditions=mod_conditions,
+                timeout=timeout,
+                **kwargs
+            )
 
     def download_blob(
             self, offset=None,  # type: Optional[int]
@@ -1784,7 +1803,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 headers['x-ms-meta-encryptiondata'] = encryption_data
         if not length:
             try:
-                length = len(page)
+                length = get_length(page)
             except TypeError:
                 raise ValueError("Please specifiy content length.")
         if start_range is None or start_range % 512 != 0:
@@ -1947,14 +1966,18 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
 
     def append_block(
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            length=None,  # type: Optional[int]
             validate_content=False,  # type: Optional[bool]
             maxsize_condition=None,  # type: Optional[int]
             appendpos_condition=None,  # type: Optional[int]
+            lease=None, # type: Optional[Union[Lease, str]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[datetime]
-            timeout=None  # type: Optional[int]
+            encoding='UTF-8',  # type: str
+            timeout=None,  # type: Optional[int]
+            **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
         """
@@ -1963,3 +1986,40 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         """
         if self.blob_type != BlobType.AppendBlob:
             raise TypeError("This operation is only available for AppendBlob type blobs.")
+        if self.require_encryption and not self.key_encryption_key:
+            raise ValueError("Encryption required but no key was provided.")
+        cek, iv, encryption_data = None, None, None
+        if self.key_encryption_key is not None:
+            cek, iv, encryption_data = _generate_blob_encryption_data(self.key_encryption_key)
+        headers = kwargs.pop('headers', {})
+        if encryption_data is not None:
+                headers['x-ms-meta-encryptiondata'] = encryption_data
+
+        if isinstance(data, six.text_type):
+            data = data.encode(encoding)
+        if not length:
+            try:
+                length = get_length(data)
+            except TypeError:
+                raise ValueError("Please specifiy content length.")
+        if length == 0:
+            return {}
+        append_conditions = None
+        if maxsize_condition or appendpos_condition:
+            append_conditions = AppendPositionAccessConditions(
+                max_size=maxsize_condition,
+                append_condition=appendpos_condition
+            )
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        return self._client.append_blob.append_block(
+            data[:length],
+            content_length=length,
+            timeout=None,
+            transactional_content_md5=None,
+            lease_access_conditions=access_conditions,
+            append_position_access_conditions=append_conditions,
+            modified_access_conditions=mod_conditions,
+            cls=return_response_headers,
+            **kwargs)

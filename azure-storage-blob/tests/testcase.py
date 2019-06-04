@@ -361,7 +361,7 @@ class StorageTestCase(unittest.TestCase):
         index = 0
         total = None if unknown_size else size
         small_chunk_size = size % max_chunk_size
-        self.assertEqual(len(progress), 1 + math.ceil(size / max_chunk_size))
+        self.assertEqual(len(progress), math.ceil(size / max_chunk_size))
         for i in progress:
             self.assertTrue(i[0] % max_chunk_size == 0 or i[0] % max_chunk_size == small_chunk_size)
             self.assertEqual(i[1], total)
