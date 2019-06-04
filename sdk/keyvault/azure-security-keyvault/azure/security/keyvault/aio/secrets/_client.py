@@ -18,7 +18,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
     """The SecretClient class defines a high level interface for managing secrets in the specified vault.
 
     Example:
-        .. literalinclude:: ../tests/test_examples_keyvault.py
+        .. literalinclude:: ../tests/test_examples_secrets_async.py
             :start-after: [START create_secret_client]
             :end-before: [END create_secret_client]
             :language: python
@@ -41,7 +41,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
          :class:`KeyVaultErrorException<azure.keyvault.KeyVaultErrorException>`
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keyvault_async.py
+            .. literalinclude:: ../tests/test_examples_secrets_async.py
                 :start-after: [START get_secret]
                 :end-before: [END get_secret]
                 :language: python
@@ -84,7 +84,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :raises:{
         :class:`azure.core.HttpRequestError`
                 Example:
-            .. literalinclude:: ../tests/test_examples_keyvault_async.py
+            .. literalinclude:: ../tests/test_examples_secrets_async.py
                 :start-after: [START set_secret]
                 :end-before: [END set_secret]
                 :language: python
@@ -133,7 +133,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ClientRequestError if the client failed to create the secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keyvault_async.py
+            .. literalinclude:: ../tests/test_examples_secrets_async.py
                 :start-after: [START update_secret]
                 :end-before: [END update_secret]
                 :language: python
@@ -170,7 +170,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
          :class:`HttpRequestError<azure.core.HttpRequestError>`
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keyvault_async.py
+            .. literalinclude:: ../tests/test_examples_secrets_async.py
                 :start-after: [START list_secrets]
                 :end-before: [END list_secrets]
                 :language: python
@@ -199,7 +199,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
          :class:`HttpRequestError<azure.core.HttpRequestError>`
 
         Example:
-        .. literalinclude:: ../tests/test_examples_keyvault_async.py
+        .. literalinclude:: ../tests/test_examples_secrets_async.py
             :start-after: [START list_secret_versions]
             :end-before: [END list_secret_versions]
             :language: python
@@ -225,7 +225,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
          :class:azure.core.HttpRequestError
 
          Example:
-            .. literalinclude:: ../tests/test_examples_keyvault_async.py
+            .. literalinclude:: ../tests/test_examples_secrets_async.py
                 :start-after: [START backup_secret]
                 :end-before: [END backup_secret]
                 :language: python
@@ -248,7 +248,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
          :class:azure.core.HttpRequestError
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keyvault_async.py
+            .. literalinclude:: ../tests/test_examples_secrets_async.py
                 :start-after: [START restore_secret]
                 :end-before: [END restore_secret]
                 :language: python
@@ -271,7 +271,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ClientRequestError, if client failed to delete the secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keyvault_async.py
+            .. literalinclude:: ../tests/test_examples_secrets_async.py
                 :start-after: [START delete_secret]
                 :end-before: [END delete_secret]
                 :language: python
@@ -293,7 +293,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ClientRequestError, if client failed to get the deleted secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keyvault_async.py
+            .. literalinclude:: ../tests/test_examples_secrets_async.py
                 :start-after: [START get_deleted_secret]
                 :end-before: [END get_deleted_secret]
                 :language: python
@@ -315,7 +315,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
          typing.AsyncIterable[~azure.keyvault.secrets._models.DeletedSecret]
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keyvault_async.py
+            .. literalinclude:: ../tests/test_examples_secrets_async.py
                 :start-after: [START list_deleted_secrets]
                 :end-before: [END list_deleted_secrets]
                 :language: python
@@ -339,7 +339,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ClientRequestError, if client failed to return the purged secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keyvault_async.py
+            .. literalinclude:: ../tests/test_examples_secrets_async.py
                 :start-after: [START purge_deleted_secret]
                 :end-before: [END purge_deleted_secret]
                 :language: python
@@ -361,7 +361,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         :raises: ~azure.core.exceptions.ClientRequestError, if client failed to recover the deleted secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keyvault_async.py
+            .. literalinclude:: ../tests/test_examples_secrets_async.py
                 :start-after: [START recover_deleted_secret]
                 :end-before: [END recover_deleted_secret]
                 :language: python

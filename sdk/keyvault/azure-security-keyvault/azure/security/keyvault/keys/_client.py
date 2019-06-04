@@ -17,7 +17,7 @@ class KeyClient(_KeyVaultClientBase):
     managing keys in the specified vault.
 
     Example:
-        .. literalinclude:: ../tests/test_examples_keyvault.py
+        .. literalinclude:: ../tests/test_examples_keys.py
             :start-after: [START create_key_client]
             :end-before: [END create_key_client]
             :language: python
