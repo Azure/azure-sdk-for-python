@@ -20,7 +20,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Iterable, List, Mapping, Optional, Union
+    from typing import Any, Dict, Mapping, Optional, Union
     from azure.core.credentials import TokenCredential
 
 # pylint:disable=too-few-public-methods
@@ -34,8 +34,8 @@ class ClientSecretCredential(ClientSecretCredentialBase):
         super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
         self._client = AuthnClient(OAUTH_ENDPOINT.format(tenant_id), config, **kwargs)
 
-    def get_token(self, scopes):
-        # type: (Iterable[str]) -> str
+    def get_token(self, *scopes):
+        # type: (*str) -> str
         token = self._client.get_cached_token(scopes)
         if not token:
             data = dict(self._form_data, scope=" ".join(scopes))
@@ -51,8 +51,8 @@ class CertificateCredential(CertificateCredentialBase):
         self._client = AuthnClient(OAUTH_ENDPOINT.format(tenant_id), config, **kwargs)
         super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
 
-    def get_token(self, scopes):
-        # type: (Iterable[str]) -> str
+    def get_token(self, *scopes):
+        # type: (*str) -> str
         token = self._client.get_cached_token(scopes)
         if not token:
             data = dict(self._form_data, scope=" ".join(scopes))
@@ -82,28 +82,28 @@ class EnvironmentCredential:
                 **kwargs
             )
 
-    def get_token(self, scopes):
-        # type: (Iterable[str]) -> str
+    def get_token(self, *scopes):
+        # type: (*str) -> str
         if not self._credential:
             message = "Missing environment settings. To authenticate with a client secret, set {}. To authenticate with a certificate, set {}.".format(
                 ", ".join(EnvironmentVariables.CLIENT_SECRET_VARS), ", ".join(EnvironmentVariables.CERT_VARS)
             )
             raise AuthenticationError(message)
-        return self._credential.get_token(scopes)
+        return self._credential.get_token(*scopes)
 
 
 class ManagedIdentityCredential:
     """Authenticates with a managed identity"""
 
     def __init__(self, config=None, **kwargs):
-        # type: (Optional[Configuration], Mapping[str, Any]) -> None
+        # type: (Optional[Configuration], Dict[str, Any]) -> None
         config = config or self.create_config(**kwargs)
         policies = [config.header_policy, ContentDecodePolicy(), config.logging_policy, config.retry_policy]
         self._client = AuthnClient(IMDS_ENDPOINT, config, policies)
 
     @staticmethod
     def create_config(**kwargs):
-        # type: (Mapping[str, str]) -> Configuration
+        # type: (Dict[str, str]) -> Configuration
         timeout = kwargs.pop("connection_timeout", 2)
         config = Configuration(connection_timeout=timeout, **kwargs)
         config.header_policy = HeadersPolicy(base_headers={"Metadata": "true"}, **kwargs)
@@ -112,8 +112,8 @@ class ManagedIdentityCredential:
         config.retry_policy = RetryPolicy(retry_total=retries, retry_on_status_codes=[404, 429] + list(range(500, 600)), **kwargs)
         return config
 
-    def get_token(self, scopes):
-        # type: (List[str]) -> str
+    def get_token(self, *scopes):
+        # type: (*str) -> str
         if len(scopes) != 1:
             raise ValueError("Managed identity credential supports one scope per request")
         token = self._client.get_cached_token(scopes)
@@ -128,25 +128,25 @@ class ManagedIdentityCredential:
 class TokenCredentialChain:
     """A sequence of token credentials"""
 
-    def __init__(self, credentials):
-        # type: (Iterable[TokenCredential]) -> None
+    def __init__(self, *credentials):
+        # type: (*TokenCredential) -> None
         if not credentials:
             raise ValueError("at least one credential is required")
         self._credentials = credentials
 
     @classmethod
     def default(cls):
-        return cls([EnvironmentCredential(), ManagedIdentityCredential()])
+        return cls(EnvironmentCredential(), ManagedIdentityCredential())
 
-    def get_token(self, scopes):
-        # type: (Iterable[str]) -> str
+    def get_token(self, *scopes):
+        # type: (*str) -> str
         """Attempts to get a token from each credential, in order, returning the first token.
            If no token is acquired, raises an exception listing error messages.
         """
         history = []
         for credential in self._credentials:
             try:
-                return credential.get_token(scopes)
+                return credential.get_token(*scopes)
             except AuthenticationError as ex:
                 history.append((credential, ex.message))
             except Exception as ex:  # pylint: disable=broad-except

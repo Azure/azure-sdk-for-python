@@ -43,10 +43,10 @@ async def test_client_secret_credential_cache(monkeypatch):
 
     credential = AsyncClientSecretCredential("client_id", "secret", tenant_id=str(uuid.uuid1()))
     scopes = ("https://foo.bar/.default", "https://bar.qux/.default")
-    token = await credential.get_token(scopes)
+    token = await credential.get_token(*scopes)
     assert token == expired
 
-    token = await credential.get_token(scopes)
+    token = await credential.get_token(*scopes)
     assert token == expired
     assert mock_send.call_count == 2
 
@@ -72,7 +72,7 @@ async def test_cert_environment_credential(monkeypatch):
 
     credential = AsyncEnvironmentCredential(transport=Mock(send=validate_request))
     with pytest.raises(AuthenticationError) as ex:
-        await credential.get_token(("",))
+        await credential.get_token("scope")
     assert str(ex.value) == success_message
 
 
@@ -97,14 +97,14 @@ async def test_client_secret_environment_credential(monkeypatch):
 
     credential = AsyncEnvironmentCredential(transport=Mock(send=validate_request))
     with pytest.raises(AuthenticationError) as ex:
-        await credential.get_token(("",))
+        await credential.get_token("scope")
     assert str(ex.value) == success_message
 
 
 @pytest.mark.asyncio
 async def test_environment_credential_error():
     with pytest.raises(AuthenticationError):
-        await AsyncEnvironmentCredential().get_token(("",))
+        await AsyncEnvironmentCredential().get_token("scope")
 
 
 @pytest.mark.asyncio
@@ -118,7 +118,7 @@ async def test_credential_chain_error_message():
     second_credential = Mock(name="second_credential", get_token=lambda _: raise_authn_error(second_error))
 
     with pytest.raises(AuthenticationError) as ex:
-        await AsyncTokenCredentialChain([first_credential, second_credential]).get_token(("scope",))
+        await AsyncTokenCredentialChain(first_credential, second_credential).get_token("scope")
 
     assert "ClientSecretCredential" in ex.value.message
     assert first_error in ex.value.message
@@ -137,7 +137,7 @@ async def test_chain_attempts_all_credentials():
         Mock(get_token=asyncio.coroutine(lambda _: expected_token)),
     ]
 
-    token = await AsyncTokenCredentialChain(credentials).get_token(("scope",))
+    token = await AsyncTokenCredentialChain(*credentials).get_token("scope")
     assert token is expected_token
 
     for credential in credentials[:-1]:
@@ -150,8 +150,8 @@ async def test_chain_returns_first_token():
     first_credential = Mock(get_token=asyncio.coroutine(lambda _: expected_token))
     second_credential = Mock(get_token=Mock())
 
-    aggregate = AsyncTokenCredentialChain([first_credential, second_credential])
-    credential = await aggregate.get_token(("scope",))
+    aggregate = AsyncTokenCredentialChain(first_credential, second_credential)
+    credential = await aggregate.get_token("scope")
 
     assert credential is expected_token
     assert second_credential.get_token.call_count == 0
@@ -178,7 +178,7 @@ async def test_msi_credential_cache(monkeypatch):
     monkeypatch.setattr(requests.Session, "send", value=mock_send)
 
     credential = AsyncManagedIdentityCredential()
-    token = await credential.get_token((scope,))
+    token = await credential.get_token(scope)
     assert token == expired
     assert mock_send.call_count == 1
 
@@ -188,12 +188,12 @@ async def test_msi_credential_cache(monkeypatch):
     token_payload["expires_in"] = 3600
     token_payload["access_token"] = good_for_an_hour
     mock_response.text = json.dumps(token_payload)
-    token = await credential.get_token((scope,))
+    token = await credential.get_token(scope)
     assert token == good_for_an_hour
     assert mock_send.call_count == 2
 
     # get_token should return the cached token now
-    token = await credential.get_token((scope,))
+    token = await credential.get_token(scope)
     assert token == good_for_an_hour
     assert mock_send.call_count == 2
 
@@ -211,7 +211,7 @@ async def test_msi_credential_retries(monkeypatch):
     for status_code in (404, 429, 500):
         mock_response.status_code = status_code
         try:
-            await credential.get_token(("",))
+            await credential.get_token("scope")
         except AuthenticationError:
             pass
         assert mock_send.call_count is 1 + retry_total

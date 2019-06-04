@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
-from typing import Any, Iterable, Mapping, Optional, Union
+from typing import Any, Dict, Mapping, Optional, Union
 
 from azure.core import Configuration
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
@@ -30,7 +30,7 @@ class AsyncClientSecretCredential(ClientSecretCredentialBase):
         super(AsyncClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
         self._client = AsyncAuthnClient(OAUTH_ENDPOINT.format(tenant_id), config, **kwargs)
 
-    async def get_token(self, scopes: Iterable[str]) -> str:
+    async def get_token(self, *scopes: str) -> str:
         token = self._client.get_cached_token(scopes)
         if not token:
             data = dict(self._form_data, scope=" ".join(scopes))
@@ -50,7 +50,7 @@ class AsyncCertificateCredential(CertificateCredentialBase):
         super(AsyncCertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
         self._client = AsyncAuthnClient(OAUTH_ENDPOINT.format(tenant_id), config, **kwargs)
 
-    async def get_token(self, scopes: Iterable[str]) -> str:
+    async def get_token(self, *scopes: str) -> str:
         token = self._client.get_cached_token(scopes)
         if not token:
             data = dict(self._form_data, scope=" ".join(scopes))
@@ -77,23 +77,22 @@ class AsyncEnvironmentCredential:
                 **kwargs
             )
 
-    async def get_token(self, scopes: Iterable[str]) -> str:
+    async def get_token(self, *scopes: str) -> str:
         if not self._credential:
             message = "Missing environment settings. To authenticate with a client secret, set {}. To authenticate with a certificate, set {}.".format(
                 ", ".join(EnvironmentVariables.CLIENT_SECRET_VARS), ", ".join(EnvironmentVariables.CERT_VARS)
             )
             raise AuthenticationError(message)
-        return await self._credential.get_token(scopes)
+        return await self._credential.get_token(*scopes)
 
 
 class AsyncManagedIdentityCredential:
-    def __init__(self, config: Optional[Configuration] = None, **kwargs: Mapping[str, Any]) -> None:
+    def __init__(self, config: Optional[Configuration] = None, **kwargs: Dict[str, Any]) -> None:
         config = config or self.create_config(**kwargs)
         policies = [config.header_policy, ContentDecodePolicy(), config.logging_policy, config.retry_policy]
         self._client = AsyncAuthnClient(IMDS_ENDPOINT, config, policies)
 
-    async def get_token(self, scopes: Iterable[str]) -> str:
-        scopes = list(scopes)
+    async def get_token(self, *scopes: str) -> str:
         if len(scopes) != 1:
             raise ValueError("Managed identity credential supports one scope per request")
         token = self._client.get_cached_token(scopes)
@@ -105,7 +104,7 @@ class AsyncManagedIdentityCredential:
         return token  # type: ignore
 
     @staticmethod
-    def create_config(**kwargs: Mapping[str, Any]) -> Configuration:
+    def create_config(**kwargs: Dict[str, Any]) -> Configuration:
         timeout = kwargs.pop("connection_timeout", 2)
         config = Configuration(connection_timeout=timeout, **kwargs)
         config.header_policy = HeadersPolicy(base_headers={"Metadata": "true"}, **kwargs)
@@ -120,16 +119,16 @@ class AsyncTokenCredentialChain(TokenCredentialChain):
 
     @classmethod
     def default(cls):
-        return cls([AsyncEnvironmentCredential(), AsyncManagedIdentityCredential()])
+        return cls(AsyncEnvironmentCredential(), AsyncManagedIdentityCredential())
 
-    async def get_token(self, scopes: Iterable[str]) -> str:
+    async def get_token(self, *scopes: str) -> str:
         """Attempts to get a token from each credential, in order, returning the first token.
            If no token is acquired, raises an exception listing error messages.
         """
         history = []
         for credential in self._credentials:
             try:
-                return await credential.get_token(scopes)
+                return await credential.get_token(*scopes)
             except AuthenticationError as ex:
                 history.append((credential, ex.message))
             except Exception as ex:  # pylint: disable=broad-except
