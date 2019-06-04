@@ -3,15 +3,27 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    # pylint:disable=unused-import
+    from azure.core import Configuration
+    from azure.core.credentials import SupportsGetToken
+    from typing import Any, Mapping, Optional
+
 from .keys._client import KeyClient
 from .secrets._client import SecretClient
 
 
 class VaultClient(object):
-    def __init__(self, vault_url, credentials, config=None, **kwargs):
+    def __init__(self, vault_url, credential, config=None, **kwargs):
+        # type: (str, SupportsGetToken, Optional[Configuration], **Any) -> None
         self._vault_url = vault_url.strip(" /")
-        self._secrets = SecretClient(self._vault_url, credentials, config=config, **kwargs)
-        self._keys = KeyClient(self._vault_url, credentials, config=config, **kwargs)
+        self._secrets = SecretClient(self._vault_url, credential, config=config, **kwargs)
+        self._keys = KeyClient(self._vault_url, credential, config=config, **kwargs)
 
     @property
     def secrets(self):

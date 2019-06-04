@@ -3,16 +3,22 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Any, Optional
+
+from azure.core import Configuration
+from azure.core.credentials import SupportsGetToken
+
 from .keys._client import KeyClient
 from .secrets._client import SecretClient
 
 
 class VaultClient(object):
-
-    def __init__(self, vault_url, credentials, config=None, **kwargs):
+    def __init__(
+        self, vault_url: str, credential: SupportsGetToken, config: Configuration = None, **kwargs: Any
+    ) -> None:
         self.vault_url = vault_url
-        self._secrets = SecretClient(vault_url, credentials, config=config, **kwargs)
-        self._keys = KeyClient(vault_url, credentials, config=config, **kwargs)
+        self._secrets = SecretClient(vault_url, credential, config=config, **kwargs)
+        self._keys = KeyClient(vault_url, credential, config=config, **kwargs)
 
     @property
     def secrets(self):

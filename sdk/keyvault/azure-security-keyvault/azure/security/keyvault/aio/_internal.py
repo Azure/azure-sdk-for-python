@@ -62,7 +62,7 @@ class _AsyncKeyVaultClientBase:
         config: Configuration = None,
         transport: HttpTransport = None,
         api_version: str = None,
-        **kwargs: Mapping[str, Any]
+        **kwargs: Any
     ) -> None:
         if not credential:
             raise ValueError("credential should be a credential object from azure-identity")
