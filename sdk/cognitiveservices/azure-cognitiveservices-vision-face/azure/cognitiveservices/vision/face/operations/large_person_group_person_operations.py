@@ -509,7 +509,7 @@ class LargePersonGroupPersonOperations(object):
     update_face.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedfaces/{persistedFaceId}'}
 
     def add_face_from_url(
-            self, large_person_group_id, person_id, url, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
+            self, large_person_group_id, person_id, url, user_data=None, target_face=None, detection_model="detection_01", custom_headers=None, raw=False, **operation_config):
         """Add a face to a person into a large person group for face
         identification or verification. To deal with an image contains multiple
         faces, input face can be specified as an image with a targetFace
@@ -541,6 +541,22 @@ class LargePersonGroupPersonOperations(object):
         * Adding/deleting faces to/from a same person will be processed
         sequentially. Adding/deleting faces to/from different persons are
         processed in parallel.
+        * The minimum detectable face size is 36x36 pixels in an image no
+        larger than 1920x1080 pixels. Images with dimensions higher than
+        1920x1080 pixels will need a proportionally larger minimum face size.
+        * Different 'detectionModel' values can be provided. To use and compare
+        different detection models, please refer to [How to specify a detection
+        model](https://docs.microsoft.com/en-us/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model)
+        | Model | Recommended use-case(s) |
+        | ---------- | -------- |
+        | 'detection_01': | The default detection model for [LargePersonGroup
+        Person - Add
+        Face](/docs/services/563879b61984550e40cbbe8d/operations/599adf2a3a7b9412a4d53f42).
+        Recommend for near frontal face detection. For scenarios with
+        exceptionally large angle (head-pose) faces, occluded faces or wrong
+        image orientation, the faces in such cases may not be detected. |
+        | 'detection_02': | Detection model released in 2019 May with improved
+        accuracy especially on small, side and blurry faces. |.
 
         :param large_person_group_id: Id referencing a particular large person
          group.
@@ -558,6 +574,12 @@ class LargePersonGroupPersonOperations(object):
          image, targetFace is required to specify which face to add. No
          targetFace means there is only one face detected in the entire image.
         :type target_face: list[int]
+        :param detection_model: The 'detectionModel' associated with the
+         detected faceIds. Supported 'detectionModel' values include
+         "detection_01" or "detection_02". Possible values include:
+         'detection_01', 'detection_02'
+        :type detection_model: str or
+         ~azure.cognitiveservices.vision.face.models.DetectionModel
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -586,6 +608,8 @@ class LargePersonGroupPersonOperations(object):
             query_parameters['userData'] = self._serialize.query("user_data", user_data, 'str', max_length=1024)
         if target_face is not None:
             query_parameters['targetFace'] = self._serialize.query("target_face", target_face, '[int]', div=',')
+        if detection_model is not None:
+            query_parameters['detectionModel'] = self._serialize.query("detection_model", detection_model, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -617,7 +641,7 @@ class LargePersonGroupPersonOperations(object):
     add_face_from_url.metadata = {'url': '/largepersongroups/{largePersonGroupId}/persons/{personId}/persistedfaces'}
 
     def add_face_from_stream(
-            self, large_person_group_id, person_id, image, user_data=None, target_face=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, large_person_group_id, person_id, image, user_data=None, target_face=None, detection_model="detection_01", custom_headers=None, raw=False, callback=None, **operation_config):
         """Add a representative face to a person for identification. The input
         face is specified as an image with a targetFace rectangle.
 
@@ -637,6 +661,12 @@ class LargePersonGroupPersonOperations(object):
          image, targetFace is required to specify which face to add. No
          targetFace means there is only one face detected in the entire image.
         :type target_face: list[int]
+        :param detection_model: The 'detectionModel' associated with the
+         detected faceIds. Supported 'detectionModel' values include
+         "detection_01" or "detection_02". Possible values include:
+         'detection_01', 'detection_02'
+        :type detection_model: str or
+         ~azure.cognitiveservices.vision.face.models.DetectionModel
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -668,6 +698,8 @@ class LargePersonGroupPersonOperations(object):
             query_parameters['userData'] = self._serialize.query("user_data", user_data, 'str', max_length=1024)
         if target_face is not None:
             query_parameters['targetFace'] = self._serialize.query("target_face", target_face, '[int]', div=',')
+        if detection_model is not None:
+            query_parameters['detectionModel'] = self._serialize.query("detection_model", detection_model, 'str')
 
         # Construct headers
         header_parameters = {}

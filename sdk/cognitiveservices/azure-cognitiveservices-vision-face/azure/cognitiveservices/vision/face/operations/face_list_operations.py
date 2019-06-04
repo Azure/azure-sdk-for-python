@@ -397,7 +397,7 @@ class FaceListOperations(object):
     delete_face.metadata = {'url': '/facelists/{faceListId}/persistedfaces/{persistedFaceId}'}
 
     def add_face_from_url(
-            self, face_list_id, url, user_data=None, target_face=None, custom_headers=None, raw=False, **operation_config):
+            self, face_list_id, url, user_data=None, target_face=None, detection_model="detection_01", custom_headers=None, raw=False, **operation_config):
         """Add a face to a specified face list, up to 1,000 faces.
         <br /> To deal with an image contains multiple faces, input face can be
         specified as an image with a targetFace rectangle. It returns a
@@ -425,6 +425,21 @@ class FaceListOperations(object):
         head-pose, or large occlusions will cause failures.
         * Adding/deleting faces to/from a same face list are processed
         sequentially and to/from different face lists are in parallel.
+        * The minimum detectable face size is 36x36 pixels in an image no
+        larger than 1920x1080 pixels. Images with dimensions higher than
+        1920x1080 pixels will need a proportionally larger minimum face size.
+        * Different 'detectionModel' values can be provided. To use and compare
+        different detection models, please refer to [How to specify a detection
+        model](https://docs.microsoft.com/en-us/azure/cognitive-services/face/face-api-how-to-topics/specify-detection-model)
+        | Model | Recommended use-case(s) |
+        | ---------- | -------- |
+        | 'detection_01': | The default detection model for [FaceList - Add
+        Face](/docs/services/563879b61984550e40cbbe8d/operations/563879b61984550f30395250).
+        Recommend for near frontal face detection. For scenarios with
+        exceptionally large angle (head-pose) faces, occluded faces or wrong
+        image orientation, the faces in such cases may not be detected. |
+        | 'detection_02': | Detection model released in 2019 May with improved
+        accuracy especially on small, side and blurry faces. |.
 
         :param face_list_id: Id referencing a particular face list.
         :type face_list_id: str
@@ -439,6 +454,12 @@ class FaceListOperations(object):
          image, targetFace is required to specify which face to add. No
          targetFace means there is only one face detected in the entire image.
         :type target_face: list[int]
+        :param detection_model: The 'detectionModel' associated with the
+         detected faceIds. Supported 'detectionModel' values include
+         "detection_01" or "detection_02". Possible values include:
+         'detection_01', 'detection_02'
+        :type detection_model: str or
+         ~azure.cognitiveservices.vision.face.models.DetectionModel
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -466,6 +487,8 @@ class FaceListOperations(object):
             query_parameters['userData'] = self._serialize.query("user_data", user_data, 'str', max_length=1024)
         if target_face is not None:
             query_parameters['targetFace'] = self._serialize.query("target_face", target_face, '[int]', div=',')
+        if detection_model is not None:
+            query_parameters['detectionModel'] = self._serialize.query("detection_model", detection_model, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -497,7 +520,7 @@ class FaceListOperations(object):
     add_face_from_url.metadata = {'url': '/facelists/{faceListId}/persistedfaces'}
 
     def add_face_from_stream(
-            self, face_list_id, image, user_data=None, target_face=None, custom_headers=None, raw=False, callback=None, **operation_config):
+            self, face_list_id, image, user_data=None, target_face=None, detection_model="detection_01", custom_headers=None, raw=False, callback=None, **operation_config):
         """Add a face to a face list. The input face is specified as an image with
         a targetFace rectangle. It returns a persistedFaceId representing the
         added face, and persistedFaceId will not expire.
@@ -515,6 +538,12 @@ class FaceListOperations(object):
          image, targetFace is required to specify which face to add. No
          targetFace means there is only one face detected in the entire image.
         :type target_face: list[int]
+        :param detection_model: The 'detectionModel' associated with the
+         detected faceIds. Supported 'detectionModel' values include
+         "detection_01" or "detection_02". Possible values include:
+         'detection_01', 'detection_02'
+        :type detection_model: str or
+         ~azure.cognitiveservices.vision.face.models.DetectionModel
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -545,6 +574,8 @@ class FaceListOperations(object):
             query_parameters['userData'] = self._serialize.query("user_data", user_data, 'str', max_length=1024)
         if target_face is not None:
             query_parameters['targetFace'] = self._serialize.query("target_face", target_face, '[int]', div=',')
+        if detection_model is not None:
+            query_parameters['detectionModel'] = self._serialize.query("detection_model", detection_model, 'str')
 
         # Construct headers
         header_parameters = {}
