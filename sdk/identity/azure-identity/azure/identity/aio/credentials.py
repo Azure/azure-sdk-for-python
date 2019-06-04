@@ -11,7 +11,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, Net
 
 from ._authn_client import AsyncAuthnClient
 from .._base import ClientSecretCredentialBase, CertificateCredentialBase
-from ..constants import EnvironmentVariables, IMDS_ENDPOINT, OAUTH_ENDPOINT
+from ..constants import Endpoints, EnvironmentVariables
 from ..credentials import TokenCredentialChain
 from ..exceptions import AuthenticationError
 
@@ -28,7 +28,7 @@ class AsyncClientSecretCredential(ClientSecretCredentialBase):
         **kwargs: Mapping[str, Any]
     ) -> None:
         super(AsyncClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
-        self._client = AsyncAuthnClient(OAUTH_ENDPOINT.format(tenant_id), config, **kwargs)
+        self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
 
     async def get_token(self, *scopes: str) -> str:
         token = self._client.get_cached_token(scopes)
@@ -48,7 +48,7 @@ class AsyncCertificateCredential(CertificateCredentialBase):
         **kwargs: Mapping[str, Any]
     ) -> None:
         super(AsyncCertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
-        self._client = AsyncAuthnClient(OAUTH_ENDPOINT.format(tenant_id), config, **kwargs)
+        self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
 
     async def get_token(self, *scopes: str) -> str:
         token = self._client.get_cached_token(scopes)
@@ -90,7 +90,7 @@ class AsyncManagedIdentityCredential:
     def __init__(self, config: Optional[Configuration] = None, **kwargs: Dict[str, Any]) -> None:
         config = config or self.create_config(**kwargs)
         policies = [config.header_policy, ContentDecodePolicy(), config.logging_policy, config.retry_policy]
-        self._client = AsyncAuthnClient(IMDS_ENDPOINT, config, policies)
+        self._client = AsyncAuthnClient(Endpoints.IMDS, config, policies)
 
     async def get_token(self, *scopes: str) -> str:
         if len(scopes) != 1:

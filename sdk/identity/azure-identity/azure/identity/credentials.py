@@ -10,7 +10,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, Net
 
 from ._authn_client import AuthnClient
 from ._base import ClientSecretCredentialBase, CertificateCredentialBase
-from .constants import EnvironmentVariables, IMDS_ENDPOINT, OAUTH_ENDPOINT
+from .constants import Endpoints, EnvironmentVariables
 from .exceptions import AuthenticationError
 
 try:
@@ -32,7 +32,7 @@ class ClientSecretCredential(ClientSecretCredentialBase):
     def __init__(self, client_id, secret, tenant_id, config=None, **kwargs):
         # type: (str, str, str, Optional[Configuration], Mapping[str, Any]) -> None
         super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
-        self._client = AuthnClient(OAUTH_ENDPOINT.format(tenant_id), config, **kwargs)
+        self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
 
     def get_token(self, *scopes):
         # type: (*str) -> str
@@ -48,7 +48,7 @@ class CertificateCredential(CertificateCredentialBase):
 
     def __init__(self, client_id, tenant_id, certificate_path, config=None, **kwargs):
         # type: (str, str, str, Optional[Configuration], Mapping[str, Any]) -> None
-        self._client = AuthnClient(OAUTH_ENDPOINT.format(tenant_id), config, **kwargs)
+        self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
         super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
 
     def get_token(self, *scopes):
@@ -99,7 +99,7 @@ class ManagedIdentityCredential:
         # type: (Optional[Configuration], Dict[str, Any]) -> None
         config = config or self.create_config(**kwargs)
         policies = [config.header_policy, ContentDecodePolicy(), config.logging_policy, config.retry_policy]
-        self._client = AuthnClient(IMDS_ENDPOINT, config, policies)
+        self._client = AuthnClient(Endpoints.IMDS, config, policies)
 
     @staticmethod
     def create_config(**kwargs):
