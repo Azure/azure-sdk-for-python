@@ -67,7 +67,6 @@ class AzureError(Exception):
 
     def __init__(self, message, *args, **kwargs):
         self.inner_exception = kwargs.get('error')
-        self.response = kwargs.get('response')
         self.exc_type, self.exc_value, self.exc_traceback = sys.exc_info()
         self.exc_type = self.exc_type.__name__ if self.exc_type else type(self.inner_exception)
         self.exc_msg = "{}, {}: {}".format(message, self.exc_type, self.exc_value)  # type: ignore
@@ -102,6 +101,7 @@ class HttpResponseError(AzureError):
 
     def __init__(self, message=None, response=None, **kwargs):
         self.reason = None
+        self.response = response
         if response:
             self.reason = response.reason
         message = "Operation returned an invalid status code '{}'".format(self.reason)
@@ -116,7 +116,7 @@ class HttpResponseError(AzureError):
                     message = self.error.message #pylint: disable=no-member
         except AttributeError:
             pass
-        super(HttpResponseError, self).__init__(message=message, response=response, **kwargs)
+        super(HttpResponseError, self).__init__(message=message, **kwargs)
 
 
 class DecodeError(HttpResponseError):

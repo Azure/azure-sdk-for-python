@@ -31,9 +31,33 @@ from .redirect import RedirectPolicy
 
 
 class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):  # type: ignore
-    """An async redirect policy."""
+    """An async redirect policy.
+
+    An async redirect policy in the pipeline can be configured directly or per operation.
+
+    Keyword arguments:
+    :param redirects_allow: Whether the client allows redirects. Defaults to True.
+    :param redirect_max: The maximum allowed redirects. Defaults to 30.
+
+    Example:
+        .. literalinclude:: ../../../../examples/examples_async.py
+            :start-after: [START async_redirect_policy]
+            :end-before: [END async_redirect_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring an async redirect policy.
+    """
 
     async def send(self, request):
+        """Sends the PipelineRequest object to the next policy. Uses redirect settings
+        to send the request to redirect endpoint if necessary.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: Returns the PipelineResponse or raises error if maximum redirects exceeded.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        :raises: ~azure.core.exceptions.TooManyRedirectsError if maximum redirects exceeded.
+        """
         redirects_remaining = True
         redirect_settings = self.configure_redirects(request.context.options)
         while redirects_remaining:

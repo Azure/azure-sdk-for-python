@@ -1,6 +1,6 @@
 parameters:
   coverageParam: ''
-
+  testMarkArgument: ''
 steps:
   - powershell: |
         Invoke-WebRequest -Uri "https://github.com/Azure/azure-sdk-tools/releases/download/sdk-tools_14793/sdk-tools.zip" `
@@ -27,7 +27,7 @@ steps:
     displayName: 'Setup and Run Tests'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: '"$(BuildTargetingString)" --junitxml="junit/test-results.xml" ${{ parameters.coverageParam }}'
+      arguments: '"$(BuildTargetingString)" --junitxml="junit/test-results.xml" ${{ parameters.coverageParam }} --mark_arg="${{ parameters.testMarkArgument }}"'
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()

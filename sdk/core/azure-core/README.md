@@ -21,6 +21,7 @@ from azure.core.pipeline.policies import (
     HeadersPolicy,
     RetryPolicy,
     RedirectPolicy,
+    BearerTokenCredentialPolicy,
     ContentDecodePolicy
 )
 
@@ -33,6 +34,7 @@ class FooServiceClient():
         config = Configuration(**kwargs)
         config.headers_policy = HeadersPolicy({"CustomHeader": "Value"}, **kwargs)
         config.user_agent_policy = UserAgentPolicy("ServiceUserAgentValue", **kwargs)
+        config.authentication_policy = BearerTokenCredentialPolicy(credential, **kwargs)
         config.retry_policy = RetryPolicy(**kwargs)
         config.redirect_policy = RedirectPolicy(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
@@ -45,7 +47,7 @@ class FooServiceClient():
         policies = [
             config.user_agent_policy,
             config.headers_policy,
-            credentials,
+            config.authentication_policy,
             ContentDecodePolicy(),
             config.redirect_policy,
             config.retry_policy,
@@ -118,7 +120,7 @@ transport = RequestsTransport(config)
 policies = [
     config.headers_policy,
     config.user_agent_policy,
-    credentials,  # Credentials policy needs to be inserted after all request mutation to accomodate signing.
+    config.authentication_policy,  # Credentials policy needs to be inserted after all request mutation to accomodate signing.
     ContentDecodePolicy(),
     config.redirect_policy,
     config.retry_policy,

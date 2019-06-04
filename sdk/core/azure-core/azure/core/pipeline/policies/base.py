@@ -41,6 +41,12 @@ _LOGGER = logging.getLogger(__name__)
 
 class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]): # type: ignore
     """An HTTP policy ABC.
+
+    Use with a synchronous pipeline.
+
+    :param next: Use to process the next policy in the pipeline. Set when pipeline is
+     instantiated and all policies chained.
+    :type next: HTTPPolicy or HTTPTransport
     """
     def __init__(self):
         self.next = None
@@ -48,55 +54,81 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]): # type: ignor
     @abc.abstractmethod
     def send(self, request):
         # type: (PipelineRequest) -> PipelineResponse
-        """Mutate the request.
+        """Abstract send method for a synchronous pipeline. Mutates the request.
+
         Context content is dependent on the HttpTransport.
+
+        :param request: The pipeline request object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The pipeline response object.
+        :rtype: ~azure.core.pipeline.PipelineResponse
         """
 
 class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     """Represents a sans I/O policy.
-    This policy can act before the I/O, and after the I/O.
-    Use this policy if the actual I/O in the middle is an implementation
-    detail.
-    Context is not available, since it's implementation dependent.
-    if a policy needs a context of the Sender, it can't be universal.
-    Example: setting a UserAgent does not need to be tied to
-    sync or async implementation or specific HTTP lib
+
+    SansIOHTTPPolicy is a base class for policies that only modify or
+    mutate a request based on the HTTP specification, and do no depend
+    on the specifics of any particular transport. SansIOHTTPPolicy
+    subclasses will function in either a Pipeline or an AsyncPipeline,
+    and can act either before the request is done, or after.
     """
 
     def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
-        """Is executed before sending the request to next policy.
+        """Is executed before sending the request from next policy.
+
+        :param request: Request to be modified before sent from next policy.
+        :type request: ~azure.core.pipeline.PipelineRequest
         """
 
     def on_response(self, request, response, **kwargs):
         # type: (PipelineRequest, PipelineResponse, Any) -> None
         """Is executed after the request comes back from the policy.
+
+        :param request: Request to be modified after returning from the policy.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: Pipeline response object
+        :type response: ~azure.core.pipeline.PipelineResponse
         """
 
     #pylint: disable=no-self-use
     def on_exception(self, _request, **kwargs):  #pylint: disable=unused-argument
         # type: (PipelineRequest, Any) -> bool
-        """Is executed if an exception comes back from the following
-        policy.
-        Return True if the exception has been handled and should not
-        be forwarded to the caller.
+        """Is executed if an exception is raised while executing the next policy.
+
+        Developer can optionally implement this method to return True
+        if the exception has been handled and should not be forwarded to the caller.
+
         This method is executed inside the exception handler.
-        To get the exception, raise and catch it:
-            try:
-                raise
-            except MyError:
-                do_something()
-        or use
-            exc_type, exc_value, exc_traceback = sys.exc_info()
+
+        :param request: The Pipeline request object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: False.
+        :rtype: bool
+
+        Example:
+            .. literalinclude:: ../../../../examples/examples_sansio.py
+                :start-after: [START on_exception]
+                :end-before: [END on_exception]
+                :language: python
+                :dedent: 4
         """
         return False
 
 
 class RequestHistory(object):
     """A container for an attempted request and the applicable response.
-    This is used to document requests/responses that resulted in redirected requests.
-    """
 
+    This is used to document requests/responses that resulted in redirected/retried requests.
+
+    :param http_request: The request.
+    :type http_request: ~azure.core.pipeline.PipelineRequest
+    :param http_response: The HTTP response.
+    :type http_response: ~azure.core.pipeline.transport.HttpResponse
+    :param Exception error: An error encountered during the request, or None if the response was received successfully.
+    :param dict context: The pipeline context.
+    """
     def __init__(self, http_request, http_response=None, error=None, context=None):
         # type: (PipelineRequest, Optional[PipelineResponse], Exception, Optional[Dict[str, Any]]) -> None
         self.http_request = copy.deepcopy(http_request)

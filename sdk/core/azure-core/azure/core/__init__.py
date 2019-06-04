@@ -36,6 +36,7 @@ __all__ = [
     "Configuration",
     "PipelineClient",
     "HttpResponseError",
+    "HttpRequest",
 ]
 
 try:

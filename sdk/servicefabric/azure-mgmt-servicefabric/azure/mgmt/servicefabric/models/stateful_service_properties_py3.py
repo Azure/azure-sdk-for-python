@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_properties_py3 import ServiceProperties
+from .service_resource_properties_py3 import ServiceResourceProperties
 
 
-class StatefulServiceProperties(ServiceProperties):
+class StatefulServiceProperties(ServiceResourceProperties):
     """The properties of a stateful service resource.
 
     Variables are only populated by the server, and will be ignored when
@@ -26,26 +26,33 @@ class StatefulServiceProperties(ServiceProperties):
      requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
     :type placement_constraints: str
-    :param correlation_scheme:
+    :param correlation_scheme: A list that describes the correlation of the
+     service with other services.
     :type correlation_scheme:
      list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
-    :param service_load_metrics:
+    :param service_load_metrics: The service load metrics is given as an array
+     of ServiceLoadMetricDescription objects.
     :type service_load_metrics:
      list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies:
+    :param service_placement_policies: A list that describes the correlation
+     of the service with other services.
     :type service_placement_policies:
      list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Possible values include: 'Zero', 'Low',
-     'Medium', 'High'
-    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.enum
+    :param default_move_cost: Specifies the move cost for the service.
+     Possible values include: 'Zero', 'Low', 'Medium', 'High'
+    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
     :ivar provisioning_state: The current deployment or provisioning state,
      which only appears in the response
     :vartype provisioning_state: str
     :param service_type_name: The name of the service type
     :type service_type_name: str
-    :param partition_description:
+    :param partition_description: Describes how the service is partitioned.
     :type partition_description:
      ~azure.mgmt.servicefabric.models.PartitionSchemeDescription
+    :param service_package_activation_mode: The activation Mode of the service
+     package. Possible values include: 'SharedProcess', 'ExclusiveProcess'
+    :type service_package_activation_mode: str or
+     ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
     :param service_kind: Required. Constant filled by server.
     :type service_kind: str
     :param has_persisted_state: A flag indicating whether this is a persistent
@@ -86,6 +93,7 @@ class StatefulServiceProperties(ServiceProperties):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'service_type_name': {'key': 'serviceTypeName', 'type': 'str'},
         'partition_description': {'key': 'partitionDescription', 'type': 'PartitionSchemeDescription'},
+        'service_package_activation_mode': {'key': 'servicePackageActivationMode', 'type': 'str'},
         'service_kind': {'key': 'serviceKind', 'type': 'str'},
         'has_persisted_state': {'key': 'hasPersistedState', 'type': 'bool'},
         'target_replica_set_size': {'key': 'targetReplicaSetSize', 'type': 'int'},
@@ -95,8 +103,8 @@ class StatefulServiceProperties(ServiceProperties):
         'stand_by_replica_keep_duration': {'key': 'standByReplicaKeepDuration', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, placement_constraints: str=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, service_type_name: str=None, partition_description=None, has_persisted_state: bool=None, target_replica_set_size: int=None, min_replica_set_size: int=None, replica_restart_wait_duration=None, quorum_loss_wait_duration=None, stand_by_replica_keep_duration=None, **kwargs) -> None:
-        super(StatefulServiceProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, service_type_name=service_type_name, partition_description=partition_description, **kwargs)
+    def __init__(self, *, placement_constraints: str=None, correlation_scheme=None, service_load_metrics=None, service_placement_policies=None, default_move_cost=None, service_type_name: str=None, partition_description=None, service_package_activation_mode=None, has_persisted_state: bool=None, target_replica_set_size: int=None, min_replica_set_size: int=None, replica_restart_wait_duration=None, quorum_loss_wait_duration=None, stand_by_replica_keep_duration=None, **kwargs) -> None:
+        super(StatefulServiceProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, service_type_name=service_type_name, partition_description=partition_description, service_package_activation_mode=service_package_activation_mode, **kwargs)
         self.has_persisted_state = has_persisted_state
         self.target_replica_set_size = target_replica_set_size
         self.min_replica_set_size = min_replica_set_size
