@@ -23,10 +23,8 @@ class Inconsistency(Model):
     :param confidence_scores: Required. Scores of inconsistent series in the
      time series group.
     :type confidence_scores: list[float]
-    :param begin: Required. Start time of the time series group.
-    :type begin: datetime
-    :param end: Required. End time of the time series group.
-    :type end: datetime
+    :param timestamp: Inconsistency detect timestamp.
+    :type timestamp: datetime
     :param epsilon: Parameter to be tuned to get inconsistency.
     :type epsilon: float
     """
@@ -34,22 +32,18 @@ class Inconsistency(Model):
     _validation = {
         'inconsistent_series_ids': {'required': True},
         'confidence_scores': {'required': True},
-        'begin': {'required': True},
-        'end': {'required': True},
     }
 
     _attribute_map = {
         'inconsistent_series_ids': {'key': 'inconsistentSeriesIds', 'type': '[str]'},
         'confidence_scores': {'key': 'confidenceScores', 'type': '[float]'},
-        'begin': {'key': 'begin', 'type': 'iso-8601'},
-        'end': {'key': 'end', 'type': 'iso-8601'},
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
         'epsilon': {'key': 'epsilon', 'type': 'float'},
     }
 
-    def __init__(self, *, inconsistent_series_ids, confidence_scores, begin, end, epsilon: float=None, **kwargs) -> None:
+    def __init__(self, *, inconsistent_series_ids, confidence_scores, timestamp=None, epsilon: float=None, **kwargs) -> None:
         super(Inconsistency, self).__init__(**kwargs)
         self.inconsistent_series_ids = inconsistent_series_ids
         self.confidence_scores = confidence_scores
-        self.begin = begin
-        self.end = end
+        self.timestamp = timestamp
         self.epsilon = epsilon

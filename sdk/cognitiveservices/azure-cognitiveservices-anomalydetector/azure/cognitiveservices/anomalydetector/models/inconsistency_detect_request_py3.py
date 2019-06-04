@@ -17,27 +17,22 @@ class InconsistencyDetectRequest(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param begin: Required. Start time of the time series group.
-    :type begin: datetime
-    :param end: Required. End time of the time series group.
-    :type end: datetime
+    :param timestamp: Required. Inconsistency detect timestamp.
+    :type timestamp: datetime
     :param epsilon: Parameter to be tuned to get inconsistency.
     :type epsilon: float
     """
 
     _validation = {
-        'begin': {'required': True},
-        'end': {'required': True},
+        'timestamp': {'required': True},
     }
 
     _attribute_map = {
-        'begin': {'key': 'begin', 'type': 'iso-8601'},
-        'end': {'key': 'end', 'type': 'iso-8601'},
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
         'epsilon': {'key': 'epsilon', 'type': 'float'},
     }
 
-    def __init__(self, *, begin, end, epsilon: float=None, **kwargs) -> None:
+    def __init__(self, *, timestamp, epsilon: float=None, **kwargs) -> None:
         super(InconsistencyDetectRequest, self).__init__(**kwargs)
-        self.begin = begin
-        self.end = end
+        self.timestamp = timestamp
         self.epsilon = epsilon

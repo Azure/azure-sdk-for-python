@@ -297,78 +297,9 @@ class TimeSeriesOperations(object):
             return client_raw_response
     write.metadata = {'url': '/timeseries/{timeSeriesId}/write'}
 
-    def entire_detect_in_time_range(
+    def detect_on_timestamp(
             self, time_series_id, body, custom_headers=None, raw=False, **operation_config):
-        """Detect anomalies for the entire time range.
-
-        This operation will detect anomalies between begin and end time range,
-        points between begin and end will be detected together with the same
-        model.
-
-        :param time_series_id: Unique id for time series.
-        :type time_series_id: str
-        :param body: Begin and end is required in the request. Advanced model
-         parameters (period, sensitivity, maxAnomalyRatio) can also be set in
-         the request.
-        :type body:
-         ~azure.cognitiveservices.anomalydetector.models.AnomalyDetectInTimeRangeRequest
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: AnomalyDetectInTimeRangeResponse or ClientRawResponse if
-         raw=true
-        :rtype:
-         ~azure.cognitiveservices.anomalydetector.models.AnomalyDetectInTimeRangeResponse
-         or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
-        """
-        # Construct URL
-        url = self.entire_detect_in_time_range.metadata['url']
-        path_format_arguments = {
-            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
-            'timeSeriesId': self._serialize.url("time_series_id", time_series_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if custom_headers:
-            header_parameters.update(custom_headers)
-
-        # Construct body
-        body_content = self._serialize.body(body, 'AnomalyDetectInTimeRangeRequest')
-
-        # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            raise models.APIErrorException(self._deserialize, response)
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('AnomalyDetectInTimeRangeResponse', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    entire_detect_in_time_range.metadata = {'url': '/timeseries/{timeSeriesId}/entire/detect'}
-
-    def last_detect_in_time_range(
-            self, time_series_id, body, custom_headers=None, raw=False, **operation_config):
-        """Detect anomaly status of the latest points that hasn't been detected
-        before in the given time range.
+        """Detect anomaly status on a given timestamp.
 
         This operation can be used in streaming monitoring scenario, when user
         would like to monitor a time series, the user only need to provide a
@@ -377,26 +308,26 @@ class TimeSeriesOperations(object):
 
         :param time_series_id: Unique id for time series.
         :type time_series_id: str
-        :param body: Begin and end is required in the request. Advanced model
+        :param body: Timestamp is required in the request. Advanced model
          parameters (period, sensitivity, maxAnomalyRatio) can also be set in
          the request.
         :type body:
-         ~azure.cognitiveservices.anomalydetector.models.AnomalyDetectInTimeRangeRequest
+         ~azure.cognitiveservices.anomalydetector.models.AnomalyDetectOnTimestampRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: AnomalyDetectInTimeRangeResponse or ClientRawResponse if
+        :return: AnomalyDetectOnTimestampResponse or ClientRawResponse if
          raw=true
         :rtype:
-         ~azure.cognitiveservices.anomalydetector.models.AnomalyDetectInTimeRangeResponse
+         ~azure.cognitiveservices.anomalydetector.models.AnomalyDetectOnTimestampResponse
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
         """
         # Construct URL
-        url = self.last_detect_in_time_range.metadata['url']
+        url = self.detect_on_timestamp.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'timeSeriesId': self._serialize.url("time_series_id", time_series_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -414,7 +345,7 @@ class TimeSeriesOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(body, 'AnomalyDetectInTimeRangeRequest')
+        body_content = self._serialize.body(body, 'AnomalyDetectOnTimestampRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -426,16 +357,16 @@ class TimeSeriesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('AnomalyDetectInTimeRangeResponse', response)
+            deserialized = self._deserialize('AnomalyDetectOnTimestampResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    last_detect_in_time_range.metadata = {'url': '/timeseries/{timeSeriesId}/last/detect'}
+    detect_on_timestamp.metadata = {'url': '/timeseries/{timeSeriesId}/detect'}
 
-    def change_point_detect_in_time_range(
+    def change_point_detect_on_timestamp(
             self, time_series_id, body, custom_headers=None, raw=False, **operation_config):
         """Detect change point for the interval series.
 
@@ -444,25 +375,25 @@ class TimeSeriesOperations(object):
 
         :param time_series_id: Unique id for time series.
         :type time_series_id: str
-        :param body: timeSeriesId, begin and end is needed. Advanced model
-         parameters can also be set in the request if needed.
+        :param body: Timestamp is needed. Advanced model parameters can also
+         be set in the request if needed.
         :type body:
-         ~azure.cognitiveservices.anomalydetector.models.ChangePointDetectInTimeRangeRequest
+         ~azure.cognitiveservices.anomalydetector.models.ChangePointDetectOnTimestampRequest
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ChangePointDetectInTimeRangeResponse or ClientRawResponse if
+        :return: ChangePointDetectOnTimestampResponse or ClientRawResponse if
          raw=true
         :rtype:
-         ~azure.cognitiveservices.anomalydetector.models.ChangePointDetectInTimeRangeResponse
+         ~azure.cognitiveservices.anomalydetector.models.ChangePointDetectOnTimestampResponse
          or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
         """
         # Construct URL
-        url = self.change_point_detect_in_time_range.metadata['url']
+        url = self.change_point_detect_on_timestamp.metadata['url']
         path_format_arguments = {
             'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
             'timeSeriesId': self._serialize.url("time_series_id", time_series_id, 'str', max_length=64, pattern=r'^[a-z0-9-_]+$')
@@ -480,7 +411,7 @@ class TimeSeriesOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(body, 'ChangePointDetectInTimeRangeRequest')
+        body_content = self._serialize.body(body, 'ChangePointDetectOnTimestampRequest')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -492,14 +423,14 @@ class TimeSeriesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ChangePointDetectInTimeRangeResponse', response)
+            deserialized = self._deserialize('ChangePointDetectOnTimestampResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    change_point_detect_in_time_range.metadata = {'url': '/timeseries/{timeSeriesId}/changepoint/detect'}
+    change_point_detect_on_timestamp.metadata = {'url': '/timeseries/{timeSeriesId}/changepoint/detect'}
 
     def label(
             self, time_series_id, body, custom_headers=None, raw=False, **operation_config):

@@ -250,7 +250,7 @@ class TimeSeriesGroupOperations(object):
     list.metadata = {'url': '/timeseriesgroups'}
 
     def inconsistency_detect(
-            self, time_series_group_id, body, custom_headers=None, raw=False, **operation_config):
+            self, time_series_group_id, timestamp, epsilon=None, custom_headers=None, raw=False, **operation_config):
         """Detect inconsistent time series from a group of similar time series.
 
         This operation helps detect the inconsistent series among a group
@@ -258,11 +258,10 @@ class TimeSeriesGroupOperations(object):
 
         :param time_series_group_id: Unique id for time series group.
         :type time_series_group_id: str
-        :param body: Start time and end time is necessary, and a parameter
-         called epsilon is needed to tune the result. Epsilon should be within
-         0 and 1.
-        :type body:
-         ~azure.cognitiveservices.anomalydetector.models.InconsistencyDetectRequest
+        :param timestamp: Inconsistency detect timestamp.
+        :type timestamp: datetime
+        :param epsilon: Parameter to be tuned to get inconsistency.
+        :type epsilon: float
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -274,6 +273,8 @@ class TimeSeriesGroupOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.anomalydetector.models.APIErrorException>`
         """
+        body = models.InconsistencyDetectRequest(timestamp=timestamp, epsilon=epsilon)
+
         # Construct URL
         url = self.inconsistency_detect.metadata['url']
         path_format_arguments = {

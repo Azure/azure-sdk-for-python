@@ -26,12 +26,12 @@ try:
     from .inconsistency_query_request_py3 import InconsistencyQueryRequest
     from .change_point_detect_request_py3 import ChangePointDetectRequest
     from .change_point_detect_response_py3 import ChangePointDetectResponse
-    from .change_point_detect_in_time_range_request_py3 import ChangePointDetectInTimeRangeRequest
-    from .change_point_detect_in_time_range_response_py3 import ChangePointDetectInTimeRangeResponse
+    from .change_point_detect_on_timestamp_request_py3 import ChangePointDetectOnTimestampRequest
+    from .change_point_detect_on_timestamp_response_py3 import ChangePointDetectOnTimestampResponse
     from .time_series_query_request_py3 import TimeSeriesQueryRequest
     from .time_series_query_response_py3 import TimeSeriesQueryResponse
-    from .anomaly_detect_in_time_range_request_py3 import AnomalyDetectInTimeRangeRequest
-    from .anomaly_detect_in_time_range_response_py3 import AnomalyDetectInTimeRangeResponse
+    from .anomaly_detect_on_timestamp_request_py3 import AnomalyDetectOnTimestampRequest
+    from .anomaly_detect_on_timestamp_response_py3 import AnomalyDetectOnTimestampResponse
     from .label_request_py3 import LabelRequest
 except (SyntaxError, ImportError):
     from .api_error import APIError, APIErrorException
@@ -50,12 +50,12 @@ except (SyntaxError, ImportError):
     from .inconsistency_query_request import InconsistencyQueryRequest
     from .change_point_detect_request import ChangePointDetectRequest
     from .change_point_detect_response import ChangePointDetectResponse
-    from .change_point_detect_in_time_range_request import ChangePointDetectInTimeRangeRequest
-    from .change_point_detect_in_time_range_response import ChangePointDetectInTimeRangeResponse
+    from .change_point_detect_on_timestamp_request import ChangePointDetectOnTimestampRequest
+    from .change_point_detect_on_timestamp_response import ChangePointDetectOnTimestampResponse
     from .time_series_query_request import TimeSeriesQueryRequest
     from .time_series_query_response import TimeSeriesQueryResponse
-    from .anomaly_detect_in_time_range_request import AnomalyDetectInTimeRangeRequest
-    from .anomaly_detect_in_time_range_response import AnomalyDetectInTimeRangeResponse
+    from .anomaly_detect_on_timestamp_request import AnomalyDetectOnTimestampRequest
+    from .anomaly_detect_on_timestamp_response import AnomalyDetectOnTimestampResponse
     from .label_request import LabelRequest
 from .anomaly_detector_client_enums import (
     Granularity,
@@ -81,12 +81,12 @@ __all__ = [
     'InconsistencyQueryRequest',
     'ChangePointDetectRequest',
     'ChangePointDetectResponse',
-    'ChangePointDetectInTimeRangeRequest',
-    'ChangePointDetectInTimeRangeResponse',
+    'ChangePointDetectOnTimestampRequest',
+    'ChangePointDetectOnTimestampResponse',
     'TimeSeriesQueryRequest',
     'TimeSeriesQueryResponse',
-    'AnomalyDetectInTimeRangeRequest',
-    'AnomalyDetectInTimeRangeResponse',
+    'AnomalyDetectOnTimestampRequest',
+    'AnomalyDetectOnTimestampResponse',
     'LabelRequest',
     'Granularity',
     'TimeSeriesField',

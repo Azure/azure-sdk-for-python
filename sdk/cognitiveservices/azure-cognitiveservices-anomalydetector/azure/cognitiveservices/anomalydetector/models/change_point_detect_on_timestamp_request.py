@@ -12,15 +12,11 @@
 from msrest.serialization import Model
 
 
-class ChangePointDetectInTimeRangeRequest(Model):
-    """ChangePointDetectInTimeRangeRequest.
+class ChangePointDetectOnTimestampRequest(Model):
+    """ChangePointDetectOnTimestampRequest.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param begin: Required. The begin timestamp of you want to detect.
-    :type begin: datetime
-    :param end: Required. The end timestamp of you want to detect.
-    :type end: datetime
+    :param timestamp: The timestamp of a data point.
+    :type timestamp: datetime
     :param period: Optional argument, periodic value of a time series. If the
      value is null or does not present, the API will determine the period
      automatically.
@@ -34,23 +30,16 @@ class ChangePointDetectInTimeRangeRequest(Model):
     :type threshold: float
     """
 
-    _validation = {
-        'begin': {'required': True},
-        'end': {'required': True},
-    }
-
     _attribute_map = {
-        'begin': {'key': 'begin', 'type': 'iso-8601'},
-        'end': {'key': 'end', 'type': 'iso-8601'},
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
         'period': {'key': 'period', 'type': 'int'},
         'stable_trend_window': {'key': 'stableTrendWindow', 'type': 'int'},
         'threshold': {'key': 'threshold', 'type': 'float'},
     }
 
-    def __init__(self, *, begin, end, period: int=None, stable_trend_window: int=None, threshold: float=None, **kwargs) -> None:
-        super(ChangePointDetectInTimeRangeRequest, self).__init__(**kwargs)
-        self.begin = begin
-        self.end = end
-        self.period = period
-        self.stable_trend_window = stable_trend_window
-        self.threshold = threshold
+    def __init__(self, **kwargs):
+        super(ChangePointDetectOnTimestampRequest, self).__init__(**kwargs)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.period = kwargs.get('period', None)
+        self.stable_trend_window = kwargs.get('stable_trend_window', None)
+        self.threshold = kwargs.get('threshold', None)

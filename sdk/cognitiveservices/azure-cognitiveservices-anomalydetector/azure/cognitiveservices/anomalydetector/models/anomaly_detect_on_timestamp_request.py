@@ -12,15 +12,13 @@
 from msrest.serialization import Model
 
 
-class AnomalyDetectInTimeRangeRequest(Model):
-    """AnomalyDetectInTimeRangeRequest.
+class AnomalyDetectOnTimestampRequest(Model):
+    """AnomalyDetectOnTimestampRequest.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param begin: Required. begin of a detection time range
-    :type begin: datetime
-    :param end: Required. end of a detection time range
-    :type end: datetime
+    :param timestamp: Required. Timestamp of a data point
+    :type timestamp: datetime
     :param period: Optional argument, periodic value of a time series. If the
      value is null or does not present, the API will determine the period
      automatically.
@@ -35,22 +33,19 @@ class AnomalyDetectInTimeRangeRequest(Model):
     """
 
     _validation = {
-        'begin': {'required': True},
-        'end': {'required': True},
+        'timestamp': {'required': True},
     }
 
     _attribute_map = {
-        'begin': {'key': 'begin', 'type': 'iso-8601'},
-        'end': {'key': 'end', 'type': 'iso-8601'},
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
         'period': {'key': 'period', 'type': 'int'},
         'max_anomaly_ratio': {'key': 'maxAnomalyRatio', 'type': 'float'},
         'sensitivity': {'key': 'sensitivity', 'type': 'int'},
     }
 
-    def __init__(self, *, begin, end, period: int=None, max_anomaly_ratio: float=None, sensitivity: int=None, **kwargs) -> None:
-        super(AnomalyDetectInTimeRangeRequest, self).__init__(**kwargs)
-        self.begin = begin
-        self.end = end
-        self.period = period
-        self.max_anomaly_ratio = max_anomaly_ratio
-        self.sensitivity = sensitivity
+    def __init__(self, **kwargs):
+        super(AnomalyDetectOnTimestampRequest, self).__init__(**kwargs)
+        self.timestamp = kwargs.get('timestamp', None)
+        self.period = kwargs.get('period', None)
+        self.max_anomaly_ratio = kwargs.get('max_anomaly_ratio', None)
+        self.sensitivity = kwargs.get('sensitivity', None)
