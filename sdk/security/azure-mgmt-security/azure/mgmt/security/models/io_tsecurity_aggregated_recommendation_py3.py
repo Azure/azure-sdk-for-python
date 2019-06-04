@@ -18,15 +18,13 @@ class IoTSecurityAggregatedRecommendation(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param recommendation_name: Required. Name of the alert type
+    :param recommendation_name: Name of the alert type
     :type recommendation_name: str
     :ivar recommendation_display_name: Display name of the alert type
     :vartype recommendation_display_name: str
@@ -55,7 +53,6 @@ class IoTSecurityAggregatedRecommendation(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'recommendation_name': {'required': True},
         'recommendation_display_name': {'readonly': True},
         'description': {'readonly': True},
         'detected_by': {'readonly': True},
@@ -80,7 +77,7 @@ class IoTSecurityAggregatedRecommendation(Resource):
         'log_analytics_query': {'key': 'logAnalyticsQuery', 'type': 'str'},
     }
 
-    def __init__(self, *, recommendation_name: str, recommendation_type_id: str=None, **kwargs) -> None:
+    def __init__(self, *, recommendation_name: str=None, recommendation_type_id: str=None, **kwargs) -> None:
         super(IoTSecurityAggregatedRecommendation, self).__init__(**kwargs)
         self.recommendation_name = recommendation_name
         self.recommendation_display_name = None
