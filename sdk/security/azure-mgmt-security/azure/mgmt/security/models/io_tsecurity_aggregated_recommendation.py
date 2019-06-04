@@ -18,34 +18,38 @@ class IoTSecurityAggregatedRecommendation(Resource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :ivar recommendation_name: Name of the alert type
+    :ivar recommendation_name: Required. Name of the alert type
     :vartype recommendation_name: str
-    :ivar recommendation_display_name: Display name of the alert type
+    :ivar recommendation_display_name: Required. Display name of the alert
+     type
     :vartype recommendation_display_name: str
-    :ivar description: Description of the incident and what it means
+    :ivar description: Required. Description of the incident and what it means
     :vartype description: str
-    :param recommendation_type_id: The recommendation-type GUID.
+    :param recommendation_type_id: Required. The recommendation-type GUID.
     :type recommendation_type_id: str
-    :ivar detected_by: Name of the vendor that discovered the incident
+    :ivar detected_by: Required. Name of the vendor that discovered the
+     incident
     :vartype detected_by: str
-    :ivar reported_severity: Estimated severity of this alert. Possible values
-     include: 'Informational', 'Low', 'Medium', 'High'
+    :ivar reported_severity: Required. Estimated severity of this alert.
+     Possible values include: 'Informational', 'Low', 'Medium', 'High'
     :vartype reported_severity: str or
      ~azure.mgmt.security.models.ReportedSeverity
-    :ivar healthy_devices: the number of the healthy devices within the
-     solution
+    :ivar healthy_devices: Required. the number of the healthy devices within
+     the solution
     :vartype healthy_devices: int
-    :ivar unhealthy_devices: the number of the unhealthy devices within the
-     solution
+    :ivar unhealthy_devices: Required. the number of the unhealthy devices
+     within the solution
     :vartype unhealthy_devices: int
-    :ivar log_analytics_query: query in log analytics to get the list of
-     affected devices/alerts
+    :ivar log_analytics_query: Required. query in log analytics to get the
+     list of affected devices/alerts
     :vartype log_analytics_query: str
     """
 
@@ -53,14 +57,15 @@ class IoTSecurityAggregatedRecommendation(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'recommendation_name': {'readonly': True},
-        'recommendation_display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'detected_by': {'readonly': True},
-        'reported_severity': {'readonly': True},
-        'healthy_devices': {'readonly': True},
-        'unhealthy_devices': {'readonly': True},
-        'log_analytics_query': {'readonly': True},
+        'recommendation_name': {'required': True, 'readonly': True},
+        'recommendation_display_name': {'required': True, 'readonly': True},
+        'description': {'required': True, 'readonly': True},
+        'recommendation_type_id': {'required': True},
+        'detected_by': {'required': True, 'readonly': True},
+        'reported_severity': {'required': True, 'readonly': True},
+        'healthy_devices': {'required': True, 'readonly': True},
+        'unhealthy_devices': {'required': True, 'readonly': True},
+        'log_analytics_query': {'required': True, 'readonly': True},
     }
 
     _attribute_map = {
