@@ -115,11 +115,13 @@ class AzureNetAppFilesManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
 
     def check_name_availability(
-            self, location, custom_headers=None, raw=False, **operation_config):
+            self, body, location, custom_headers=None, raw=False, **operation_config):
         """Check resource name availability.
 
         Check if a resource name is available.
 
+        :param body: Name availability request.
+        :type body: object
         :param location: The location
         :type location: str
         :param dict custom_headers: headers that will be added to the request
@@ -147,6 +149,7 @@ class AzureNetAppFilesManagementClient(SDKClient):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -154,8 +157,11 @@ class AzureNetAppFilesManagementClient(SDKClient):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(body, 'object')
+
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -176,11 +182,13 @@ class AzureNetAppFilesManagementClient(SDKClient):
     check_name_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.NetApp/locations/{location}/checkNameAvailability'}
 
     def check_file_path_availability(
-            self, location, custom_headers=None, raw=False, **operation_config):
+            self, body, location, custom_headers=None, raw=False, **operation_config):
         """Check file path availability.
 
         Check if a file path is available.
 
+        :param body: File path availability request.
+        :type body: object
         :param location: The location
         :type location: str
         :param dict custom_headers: headers that will be added to the request
@@ -208,6 +216,7 @@ class AzureNetAppFilesManagementClient(SDKClient):
         # Construct headers
         header_parameters = {}
         header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -215,8 +224,11 @@ class AzureNetAppFilesManagementClient(SDKClient):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(body, 'object')
+
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters)
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
