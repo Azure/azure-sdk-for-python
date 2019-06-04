@@ -331,7 +331,7 @@ class PoliciesOperations(object):
     def update(
             self, resource_group_name, policy_name, tags=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Update an existing CdnWebApplicationFirewallPolicy with the specified
-        policy name uner the specified subcription and resource group.
+        policy name under the specified subcription and resource group.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
