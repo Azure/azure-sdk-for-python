@@ -105,7 +105,7 @@ class SingleValueReplacer(RecordingProcessor):
                                               quote_plus(self.moniker))
 
         if is_text_payload(request) and request.body:
-            body = str(request.body)
+            body = str(request.body, 'utf-8') if isinstance(request.body, bytes) else str(request.body)
             if self.random_name in body:
                 request.body = body.replace(self.random_name, self.moniker)
 
