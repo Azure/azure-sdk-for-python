@@ -17,7 +17,7 @@ class DeliveryRule(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Name of the rule
+    :param name: Required. Name of the rule
     :type name: str
     :param order: Required. The order in which the rules are applied for the
      endpoint. Possible values {0,1,2,3,………}. A rule with a lesser order will
@@ -34,6 +34,7 @@ class DeliveryRule(Model):
     """
 
     _validation = {
+        'name': {'required': True},
         'order': {'required': True},
         'actions': {'required': True},
     }

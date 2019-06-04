@@ -16,6 +16,8 @@ from .custom_domains_operations import CustomDomainsOperations
 from .resource_usage_operations import ResourceUsageOperations
 from .operations import Operations
 from .edge_nodes_operations import EdgeNodesOperations
+from .policies_operations import PoliciesOperations
+from .managed_rule_sets_operations import ManagedRuleSetsOperations
 
 __all__ = [
     'ProfilesOperations',
@@ -25,4 +27,6 @@ __all__ = [
     'ResourceUsageOperations',
     'Operations',
     'EdgeNodesOperations',
+    'PoliciesOperations',
+    'ManagedRuleSetsOperations',
 ]

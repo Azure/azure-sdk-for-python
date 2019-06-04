@@ -12,20 +12,17 @@
 from msrest.serialization import Model
 
 
-class Sku(Model):
-    """The pricing tier (defines a CDN provider, feature list and rate) of the CDN
-    profile.
+class CdnEndpoint(Model):
+    """Defines the ARM Resource ID for the linked endpoints.
 
-    :param name: Name of the pricing tier. Possible values include:
-     'Standard_Verizon', 'Premium_Verizon', 'Custom_Verizon',
-     'Standard_Akamai', 'Standard_ChinaCdn', 'Standard_Microsoft'
-    :type name: str or ~azure.mgmt.cdn.models.SkuName
+    :param id: ARM Resource ID string.
+    :type id: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(CdnEndpoint, self).__init__(**kwargs)
+        self.id = id

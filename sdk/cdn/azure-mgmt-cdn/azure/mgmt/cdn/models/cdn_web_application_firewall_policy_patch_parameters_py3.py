@@ -12,20 +12,17 @@
 from msrest.serialization import Model
 
 
-class Sku(Model):
-    """The pricing tier (defines a CDN provider, feature list and rate) of the CDN
-    profile.
+class CdnWebApplicationFirewallPolicyPatchParameters(Model):
+    """Properties required to update a CdnWebApplicationFirewallPolicy.
 
-    :param name: Name of the pricing tier. Possible values include:
-     'Standard_Verizon', 'Premium_Verizon', 'Custom_Verizon',
-     'Standard_Akamai', 'Standard_ChinaCdn', 'Standard_Microsoft'
-    :type name: str or ~azure.mgmt.cdn.models.SkuName
+    :param tags: CdnWebApplicationFirewallPolicy tags
+    :type tags: dict[str, str]
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs):
-        super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+    def __init__(self, *, tags=None, **kwargs) -> None:
+        super(CdnWebApplicationFirewallPolicyPatchParameters, self).__init__(**kwargs)
+        self.tags = tags
