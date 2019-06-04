@@ -93,7 +93,7 @@ class ClustersOperations(object):
             return client_raw_response
 
         return deserialized
-    list_available_clusters.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventHub/availableClusters'}
+    list_available_clusters.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.EventHub/availableClusterRegions'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):

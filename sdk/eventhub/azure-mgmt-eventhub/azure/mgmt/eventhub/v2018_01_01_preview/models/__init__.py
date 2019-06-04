@@ -14,6 +14,7 @@ try:
     from .operation_py3 import Operation
     from .cluster_sku_py3 import ClusterSku
     from .cluster_py3 import Cluster
+    from .available_cluster_py3 import AvailableCluster
     from .available_clusters_list_py3 import AvailableClustersList
     from .cluster_quota_configuration_properties_py3 import ClusterQuotaConfigurationProperties
     from .error_response_py3 import ErrorResponse, ErrorResponseException
@@ -34,6 +35,7 @@ except (SyntaxError, ImportError):
     from .operation import Operation
     from .cluster_sku import ClusterSku
     from .cluster import Cluster
+    from .available_cluster import AvailableCluster
     from .available_clusters_list import AvailableClustersList
     from .cluster_quota_configuration_properties import ClusterQuotaConfigurationProperties
     from .error_response import ErrorResponse, ErrorResponseException
@@ -67,6 +69,7 @@ __all__ = [
     'Operation',
     'ClusterSku',
     'Cluster',
+    'AvailableCluster',
     'AvailableClustersList',
     'ClusterQuotaConfigurationProperties',
     'ErrorResponse', 'ErrorResponseException',
