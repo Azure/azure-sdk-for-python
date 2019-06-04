@@ -265,7 +265,7 @@ class StorageTestCase(unittest.TestCase):
 
 
         standardMsg = '{0} not found in {1}'.format(
-            repr(item_name), repr(container))
+            repr(item_name), [str(c) for c in container])
         self.fail(self._formatMessage(msg, standardMsg))
 
     def assertNamedItemNotInContainer(self, container, item_name, msg=None):

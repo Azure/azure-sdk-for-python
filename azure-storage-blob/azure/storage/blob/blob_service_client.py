@@ -341,7 +341,6 @@ class BlobServiceClient(object):
         """
         include = 'metadata' if include_metadata else None
         results_per_page = kwargs.pop('results_per_page', None)
-        marker = kwargs.pop('marker', "")
         command = functools.partial(
             self._client.service.list_containers_segment,
             prefix=starts_with,

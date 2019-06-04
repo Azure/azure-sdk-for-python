@@ -37,6 +37,7 @@ from ._utils import (
     encode_base64,
     parse_connection_str,
     serialize_iso,
+    basic_error_map,
     return_response_and_deserialized)
 from ._deserialize import (
     deserialize_container_properties,
@@ -195,6 +196,7 @@ class ContainerClient(object):
             access=public_access,
             cls=return_response_headers,
             headers=headers,
+            error_map=basic_error_map(),
             **kwargs)
 
     def delete_container(
@@ -289,6 +291,7 @@ class ContainerClient(object):
             proposed_lease_id=lease_id,
             modified_access_conditions=mod_conditions,
             cls=return_response_headers,
+            error_map=basic_error_map(),
             **kwargs)
         return Lease(self._client.container, **response)
 
@@ -342,15 +345,20 @@ class ContainerClient(object):
             break_period=lease_break_period,
             modified_access_conditions=mod_conditions,
             cls=return_response_headers,
+            error_map=basic_error_map(),
             **kwargs)
         return response.get('x-ms-lease-time')
 
-    def get_account_information(self, timeout=None):
+    def get_account_information(self, timeout=None, **kwargs):
         # type: (Optional[int]) -> Dict[str, str]
         """
         :returns: A dict of account information (SKU and account type).
         """
-        response = self._client.container.get_account_info(cls=return_response_headers, timeout=timeout)
+        response = self._client.container.get_account_info(
+            cls=return_response_headers,
+            timeout=timeout,
+            error_map=basic_error_map(),
+            **kwargs)
         return {
             'SKU': response.get('x-ms-sku-name'),
             'AccountType': response.get('x-ms-account-kind')
@@ -375,11 +383,12 @@ class ContainerClient(object):
             timeout=timeout,
             lease_access_conditions=access_conditions,
             cls=deserialize_container_properties,
+            error_map=basic_error_map(),
             **kwargs)
         response.name = self.name
         return response
 
-    def get_container_metadata(self, lease=None, timeout=None):
+    def get_container_metadata(self, lease=None, timeout=None, **kwargs):
         # type: (Optional[Union[Lease, str]], Optional[int]) -> Dict[str, str]
         """
         :returns: A dict of metadata.
@@ -391,6 +400,8 @@ class ContainerClient(object):
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 cls=deserialize_metadata,
+                error_map=basic_error_map(),
+                **kwargs
                 )
         except StorageErrorException as error:
             process_storage_error(error)
@@ -416,10 +427,11 @@ class ContainerClient(object):
             modified_access_conditions=mod_conditions,
             cls=return_response_headers,
             headers=headers,
+            error_map=basic_error_map(),
             **kwargs
         )
 
-    def get_container_acl(self, lease=None, timeout=None):
+    def get_container_acl(self, lease=None, timeout=None, **kwargs):
         # type: (Optional[Union[Lease, str]], Optional[int]) -> Dict[str, str]
         """
         :returns: Access policy information in a dict.
@@ -429,6 +441,8 @@ class ContainerClient(object):
             timeout=timeout,
             lease_access_conditions=access_conditions,
             cls=return_response_and_deserialized,
+            error_map=basic_error_map(),
+            **kwargs
         )
         return {
             'public_access': response.get('header').get('x-ms-blob-public-access'),
@@ -466,13 +480,14 @@ class ContainerClient(object):
             lease_access_conditions=access_conditions,
             modified_access_conditions=mod_conditions,
             cls=return_response_headers,
+            error_map=basic_error_map(),
         )
         return {
             'ETag': response.get('ETag'),
             'Last-Modified': response.get('Last-Modified')
         }
 
-    def list_blob_properties(self, starts_with=None, include=None, timeout=None, **kwargs):
+    def list_blob_properties(self, starts_with=None, include=None, marker=None, timeout=None, **kwargs):
         # type: (Optional[str], Optional[Include], Optional[int]) -> Iterable[BlobProperties]
         """
         Returns a generator to list the blobs under the specified container.
@@ -496,12 +511,12 @@ class ContainerClient(object):
             include = [include]
 
         results_per_page = kwargs.pop('results_per_page', None)
-        marker = kwargs.pop('marker', "")
         command = functools.partial(
             self._client.container.list_blob_flat_segment,
             prefix=starts_with,
             include=include,
             timeout=timeout,
+            error_map=basic_error_map(),
             **kwargs)
         return BlobPropertiesPaged(command, prefix=starts_with, results_per_page=results_per_page,  marker=marker)
 

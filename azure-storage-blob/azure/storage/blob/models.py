@@ -213,13 +213,13 @@ class ContainerProperties(object):
 
 class ContainerPropertiesPaged(Paged):
 
-    def __init__(self, command, prefix=None, results_per_page=None, **kwargs):
-        super(ContainerPropertiesPaged, self).__init__(command, None, **kwargs)
+    def __init__(self, command, prefix=None, results_per_page=None, marker=None):
+        super(ContainerPropertiesPaged, self).__init__(command, None)
         self.service_endpoint = None
         self.prefix = prefix
         self.current_marker = None
         self.results_per_page = results_per_page
-        self.next_marker = kwargs.get('marker', "")
+        self.next_marker = marker or ""
 
     def _advance_page(self):
         # type: () -> List[Model]
@@ -369,13 +369,13 @@ class BlobProperties(object):
 
 class BlobPropertiesPaged(Paged):
 
-    def __init__(self, command, container=None, prefix=None, results_per_page=None, **kwargs):
-        super(BlobPropertiesPaged, self).__init__(command, None, **kwargs)
+    def __init__(self, command, container=None, prefix=None, results_per_page=None, marker=None):
+        super(BlobPropertiesPaged, self).__init__(command, None)
         self.service_endpoint = None
         self.prefix = prefix
         self.current_marker = None
         self.results_per_page = results_per_page
-        self.next_marker = kwargs.get('marker', "")
+        self.next_marker = marker or ""
         self.container_name = container
         self.delimiter = None
         self.segment = None
