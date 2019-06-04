@@ -44,13 +44,11 @@ The following code snippet demonstrates a way you can instantiate the KeyVaultCl
     vault_client = VaultClient(vault_url=vault_url, credentials=credentials)
 ```
 ## Key concepts
-* Vault: A user can create a key vault and gain full access and control over it. When using Key Vault, application developers no longer need to store security information in their application. Not having to store security information in applications eliminates the need to make this information part of the code
+### Vault
+  A user can create a key vault and gain full access and control over it. When using Key Vault, application developers no longer need to store security information in their application. Not having to store security information in applications eliminates the need to make this information part of the code.
 
-* Soft-delete: Key Vault's soft delete feature allows recovery of the deleted vaults and vault objects, known as soft-delete. Soft-delete is an optional Key Vault behavior and is not enabled by default in this release.
-Specifically, it addresses the following scenarios:
-
-  * Support for recoverable deletion of a key vault
-  * Support for recoverable deletion of key vault objects (ex. keys, secrets, certificates)
+### Vault Client:
+A vault client performs interactions with the Keys and Secrets client for creating and getting an instance of the Keys/Secrets client. An asynchronous and synchronous, VaultClient, client exists in the SDK allowing for selection of a client based on an application's use case.
 
 ## Examples
 The following sections provide several code snippets covering some of the most common Key Vault related tasks, including:
@@ -68,6 +66,7 @@ The following sections provide several code snippets covering some of the most c
 
     # Create a new Vault client using Azure credentials
     vault_client = VaultClient(vault_url=vault_url, credentials=credentials)
+    # retrieves an instance of Secret Client
     secret_client = vault_client.secrets
 ```
 
@@ -82,7 +81,8 @@ The following sections provide several code snippets covering some of the most c
 
     # Create a new Vault client using Azure credentials
     vault_client = VaultClient(vault_url=vault_url, credentials=credentials)
-    secret_client = vault_client.keys
+    # retrieves an instance of Key Client
+    key_client = vault_client.keys
 ```
 
 ## Troubleshooting
