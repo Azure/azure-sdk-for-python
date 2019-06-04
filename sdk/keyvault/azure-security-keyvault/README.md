@@ -25,7 +25,7 @@ Install the Azure Key Vault client library for Python with pip:
 * An existing Key Vault. You can create this by following the instructions on [this article](https://docs.microsoft.com/en-gb/azure/key-vault/quick-create-portal).
 
 ### Authenticate the client
-Interaction with Key Vault starts with an instance of the KeyVaultClient class. vault_url, credentials, config=None You need the vault url, azure credentials, and the client configuration to instantiate the client object.
+In order to interact with the Key Vault service, you'll need to create an instance of the [KeyVaultClient](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault) class. For this, you will need a vault url, azure credentials, client id, client secret, tenant id and resource url.
 
 ### Get credentials
 You can find credential information in [Azure Portal](https://portal.azure.com/).
