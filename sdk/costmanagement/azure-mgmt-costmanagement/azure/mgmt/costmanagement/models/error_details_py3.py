@@ -18,10 +18,15 @@ class ErrorDetails(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar code: Error code.
+    :ivar code: A machine readable error code.
     :vartype code: str
-    :ivar message: Error message indicating why the operation failed.
+    :ivar message: A human readable error message.
     :vartype message: str
+    :param target: Indicates which property in the request is responsible for
+     the error.
+    :type target: str
+    :param details: error details.
+    :type details: list[~azure.mgmt.costmanagement.models.ErrorBase]
     """
 
     _validation = {
@@ -32,9 +37,13 @@ class ErrorDetails(Model):
     _attribute_map = {
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorBase]'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, target: str=None, details=None, **kwargs) -> None:
         super(ErrorDetails, self).__init__(**kwargs)
         self.code = None
         self.message = None
+        self.target = target
+        self.details = details

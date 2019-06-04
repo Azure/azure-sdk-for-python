@@ -13,9 +13,9 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
-from .operations.dimensions_operations import DimensionsOperations
-from .operations.query_operations import QueryOperations
-from .operations.exports_operations import ExportsOperations
+from .operations.views_operations import ViewsOperations
+from .operations.budgets_operations import BudgetsOperations
+from .operations.budget_operations import BudgetOperations
 from .operations.operations import Operations
 from . import models
 
@@ -58,12 +58,12 @@ class CostManagementClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: CostManagementClientConfiguration
 
-    :ivar dimensions: Dimensions operations
-    :vartype dimensions: azure.mgmt.costmanagement.operations.DimensionsOperations
-    :ivar query: Query operations
-    :vartype query: azure.mgmt.costmanagement.operations.QueryOperations
-    :ivar exports: Exports operations
-    :vartype exports: azure.mgmt.costmanagement.operations.ExportsOperations
+    :ivar views: Views operations
+    :vartype views: azure.mgmt.costmanagement.operations.ViewsOperations
+    :ivar budgets: Budgets operations
+    :vartype budgets: azure.mgmt.costmanagement.operations.BudgetsOperations
+    :ivar budget: Budget operations
+    :vartype budget: azure.mgmt.costmanagement.operations.BudgetOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.costmanagement.operations.Operations
 
@@ -82,15 +82,15 @@ class CostManagementClient(SDKClient):
         super(CostManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-01-01'
+        self.api_version = '2019-04-01-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.dimensions = DimensionsOperations(
+        self.views = ViewsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.query = QueryOperations(
+        self.budgets = BudgetsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.exports = ExportsOperations(
+        self.budget = BudgetOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
