@@ -12,19 +12,17 @@
 from msrest.serialization import Model
 
 
-class AvailableClustersList(Model):
-    """The response of the List Available Clusters operation.
+class AvailableCluster(Model):
+    """Pre-provisioned and readily available Event Hubs Cluster count per region.
 
-    :param value: The count of readily available and pre-provisioned Event
-     Hubs Clusters per region.
-    :type value:
-     list[~azure.mgmt.eventhub.v2018_01_01_preview.models.AvailableCluster]
+    :param location: Location fo the Available Cluster
+    :type location: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AvailableCluster]'},
+        'location': {'key': 'location', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(AvailableClustersList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, *, location: str=None, **kwargs) -> None:
+        super(AvailableCluster, self).__init__(**kwargs)
+        self.location = location
