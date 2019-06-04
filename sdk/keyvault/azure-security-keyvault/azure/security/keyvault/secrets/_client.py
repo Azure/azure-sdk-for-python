@@ -50,9 +50,8 @@ class SecretClient(_KeyVaultClientBase):
                 :language: python
                 :dedent: 4
                 :caption: Get secret from the key vault
-
         """
-        bundle = self._client.get_secret(self._vault_url, name, version, error_map={404: ResourceNotFoundError})
+        bundle = self._client.get_secret(self._vault_url, name, version or "", error_map={404: ResourceNotFoundError})
         return Secret._from_secret_bundle(bundle)
 
     def set_secret(
@@ -139,7 +138,7 @@ class SecretClient(_KeyVaultClientBase):
         bundle = self._client.update_secret(
             self.vault_url,
             name,
-            secret_version=version,
+            secret_version=version or "",
             content_type=content_type,
             tags=tags,
             secret_attributes=attributes,
