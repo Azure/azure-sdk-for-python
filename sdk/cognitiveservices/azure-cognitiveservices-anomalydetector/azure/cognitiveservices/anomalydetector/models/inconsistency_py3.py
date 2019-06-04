@@ -23,7 +23,7 @@ class Inconsistency(Model):
     :param confidence_scores: Required. Scores of inconsistent series in the
      time series group.
     :type confidence_scores: list[float]
-    :param timestamp: Inconsistency detect timestamp.
+    :param timestamp: Required. Inconsistency detect timestamp.
     :type timestamp: datetime
     :param epsilon: Parameter to be tuned to get inconsistency.
     :type epsilon: float
@@ -32,6 +32,7 @@ class Inconsistency(Model):
     _validation = {
         'inconsistent_series_ids': {'required': True},
         'confidence_scores': {'required': True},
+        'timestamp': {'required': True},
     }
 
     _attribute_map = {
@@ -41,7 +42,7 @@ class Inconsistency(Model):
         'epsilon': {'key': 'epsilon', 'type': 'float'},
     }
 
-    def __init__(self, *, inconsistent_series_ids, confidence_scores, timestamp=None, epsilon: float=None, **kwargs) -> None:
+    def __init__(self, *, inconsistent_series_ids, confidence_scores, timestamp, epsilon: float=None, **kwargs) -> None:
         super(Inconsistency, self).__init__(**kwargs)
         self.inconsistent_series_ids = inconsistent_series_ids
         self.confidence_scores = confidence_scores

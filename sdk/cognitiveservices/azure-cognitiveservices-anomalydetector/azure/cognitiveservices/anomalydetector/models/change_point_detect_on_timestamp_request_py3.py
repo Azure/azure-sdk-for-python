@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ChangePointDetectOnTimestampRequest(Model):
     """ChangePointDetectOnTimestampRequest.
 
-    :param timestamp: The timestamp of a data point.
+    All required parameters must be populated in order to send to Azure.
+
+    :param timestamp: Required. The timestamp of a data point.
     :type timestamp: datetime
     :param period: Optional argument, periodic value of a time series. If the
      value is null or does not present, the API will determine the period
@@ -30,6 +32,10 @@ class ChangePointDetectOnTimestampRequest(Model):
     :type threshold: float
     """
 
+    _validation = {
+        'timestamp': {'required': True},
+    }
+
     _attribute_map = {
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
         'period': {'key': 'period', 'type': 'int'},
@@ -37,7 +43,7 @@ class ChangePointDetectOnTimestampRequest(Model):
         'threshold': {'key': 'threshold', 'type': 'float'},
     }
 
-    def __init__(self, *, timestamp=None, period: int=None, stable_trend_window: int=None, threshold: float=None, **kwargs) -> None:
+    def __init__(self, *, timestamp, period: int=None, stable_trend_window: int=None, threshold: float=None, **kwargs) -> None:
         super(ChangePointDetectOnTimestampRequest, self).__init__(**kwargs)
         self.timestamp = timestamp
         self.period = period

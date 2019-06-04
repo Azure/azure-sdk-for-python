@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ChangePointDetectOnTimestampRequest(Model):
     """ChangePointDetectOnTimestampRequest.
 
-    :param timestamp: The timestamp of a data point.
+    All required parameters must be populated in order to send to Azure.
+
+    :param timestamp: Required. The timestamp of a data point.
     :type timestamp: datetime
     :param period: Optional argument, periodic value of a time series. If the
      value is null or does not present, the API will determine the period
@@ -29,6 +31,10 @@ class ChangePointDetectOnTimestampRequest(Model):
      means less change point will be accepted.
     :type threshold: float
     """
+
+    _validation = {
+        'timestamp': {'required': True},
+    }
 
     _attribute_map = {
         'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
