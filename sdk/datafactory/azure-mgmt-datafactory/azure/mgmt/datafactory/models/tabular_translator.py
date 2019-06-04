@@ -31,6 +31,10 @@ class TabularTranslator(CopyTranslator):
      "$.Column2.Property1", "Column3": "$.Column2.Property2"}. Type: object (or
      Expression with resultType object).
     :type schema_mapping: object
+    :param collection_reference: The JSON Path of the Nested Array that is
+     going to do cross-apply. Type: object (or Expression with resultType
+     object).
+    :type collection_reference: object
     """
 
     _validation = {
@@ -42,10 +46,12 @@ class TabularTranslator(CopyTranslator):
         'type': {'key': 'type', 'type': 'str'},
         'column_mappings': {'key': 'columnMappings', 'type': 'object'},
         'schema_mapping': {'key': 'schemaMapping', 'type': 'object'},
+        'collection_reference': {'key': 'collectionReference', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(TabularTranslator, self).__init__(**kwargs)
         self.column_mappings = kwargs.get('column_mappings', None)
         self.schema_mapping = kwargs.get('schema_mapping', None)
+        self.collection_reference = kwargs.get('collection_reference', None)
         self.type = 'TabularTranslator'
