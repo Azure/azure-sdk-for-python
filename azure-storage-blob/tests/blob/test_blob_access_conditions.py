@@ -89,7 +89,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         return container, blob
 
     def _create_container_and_append_blob(self, container_name, blob_name):
-        self._create_container(container_name)
+        container = self._create_container(container_name)
         blob = self.bsc.get_blob_client(container_name, blob_name, blob_type=BlobType.AppendBlob)
         resp = blob.create_blob()
         return container, blob
@@ -1779,260 +1779,220 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
     @record
     def test_append_block_with_if_modified(self):
         # Arrange
-        pytest.skip("append blobs")
-        self._create_container_and_append_blob(self.container_name, 'blob1')
+        container, blob = self._create_container_and_append_blob(self.container_name, 'blob1')
         test_datetime = (datetime.datetime.utcnow() -
                          datetime.timedelta(minutes=15))
         # Act
         for i in range(5):
-            resp = self.bsc.append_block(
-                self.container_name, 'blob1',
-                u'block {0}'.format(i).encode('utf-8'),
-                if_modified_since=test_datetime)
+            resp = blob.append_block(u'block {0}'.format(i), if_modified_since=test_datetime)
             self.assertIsNotNone(resp)
 
         # Assert
-        blob = self.bs.get_blob_to_bytes(self.container_name, 'blob1')
-        self.assertEqual(b'block 0block 1block 2block 3block 4', blob.content)
+        content = b"".join(list(blob.download_blob()))
+        self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
     def test_append_block_with_if_modified_fail(self):
         # Arrange
-        pytest.skip("append blobs")
-        self._create_container_and_append_blob(self.container_name, 'blob1')
+        container, blob = self._create_container_and_append_blob(self.container_name, 'blob1')
         test_datetime = (datetime.datetime.utcnow() +
                          datetime.timedelta(minutes=15))
         # Act
-        with self.assertRaises(AzureHttpError):
+        with self.assertRaises(HttpResponseError):
             for i in range(5):
-                resp = self.bsc.append_block(
-                    self.container_name, 'blob1',
-                    u'block {0}'.format(i).encode('utf-8'),
-                    if_modified_since=test_datetime)
+                resp = blob.append_block(u'block {0}'.format(i), if_modified_since=test_datetime)
 
         # Assert
 
     @record
     def test_append_block_with_if_unmodified(self):
         # Arrange
-        pytest.skip("append blobs")
-        self._create_container_and_append_blob(self.container_name, 'blob1')
+        container, blob = self._create_container_and_append_blob(self.container_name, 'blob1')
         test_datetime = (datetime.datetime.utcnow() +
                          datetime.timedelta(minutes=15))
         # Act
         for i in range(5):
-            resp = self.bsc.append_block(
-                self.container_name, 'blob1',
-                u'block {0}'.format(i).encode('utf-8'),
-                if_unmodified_since=test_datetime)
+            resp = blob.append_block(u'block {0}'.format(i), if_unmodified_since=test_datetime)
             self.assertIsNotNone(resp)
 
         # Assert
-        blob = self.bs.get_blob_to_bytes(self.container_name, 'blob1')
-        self.assertEqual(b'block 0block 1block 2block 3block 4', blob.content)
+        content = b"".join(list(blob.download_blob()))
+        self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
     def test_append_block_with_if_unmodified_fail(self):
         # Arrange
-        pytest.skip("append blobs")
-        self._create_container_and_append_blob(self.container_name, 'blob1')
+        container, blob = self._create_container_and_append_blob(self.container_name, 'blob1')
         test_datetime = (datetime.datetime.utcnow() -
                          datetime.timedelta(minutes=15))
         # Act
-        with self.assertRaises(AzureHttpError):
+        with self.assertRaises(HttpResponseError):
             for i in range(5):
-                resp = self.bsc.append_block(
-                    self.container_name, 'blob1',
-                    u'block {0}'.format(i).encode('utf-8'),
-                    if_unmodified_since=test_datetime)
+                resp = blob.append_block(u'block {0}'.format(i), if_unmodified_since=test_datetime)
 
         # Assert
 
     @record
     def test_append_block_with_if_match(self):
         # Arrange
-        pytest.skip("append blobs")
-        self._create_container_and_append_blob(self.container_name, 'blob1')
+        container, blob = self._create_container_and_append_blob(self.container_name, 'blob1')
 
         # Act
         for i in range(5):
-            etag = self.abs.get_blob_properties(self.container_name, 'blob1').properties.etag
-            resp = self.bsc.append_block(
-                self.container_name, 'blob1',
-                u'block {0}'.format(i).encode('utf-8'),
-                if_match=etag)
+            etag = blob.get_blob_properties().etag
+            resp = blob.append_block(u'block {0}'.format(i), if_match=etag)
             self.assertIsNotNone(resp)
 
         # Assert
-        blob = self.bs.get_blob_to_bytes(self.container_name, 'blob1')
-        self.assertEqual(b'block 0block 1block 2block 3block 4', blob.content)
+        content = b"".join(list(blob.download_blob()))
+        self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
     def test_append_block_with_if_match_fail(self):
         # Arrange
-        pytest.skip("append blobs")
-        self._create_container_and_append_blob(self.container_name, 'blob1')
+        container, blob = self._create_container_and_append_blob(self.container_name, 'blob1')
 
         # Act
-        with self.assertRaises(AzureHttpError):
+        with self.assertRaises(HttpResponseError):
             for i in range(5):
-                resp = self.bsc.append_block(
-                    self.container_name, 'blob1',
-                    u'block {0}'.format(i).encode('utf-8'),
-                    if_match='0x111111111111111')
+                resp = blob.append_block(u'block {0}'.format(i), if_match='0x111111111111111')
 
         # Assert
 
     @record
     def test_append_block_with_if_none_match(self):
         # Arrange
-        pytest.skip("append blobs")
-        self._create_container_and_append_blob(self.container_name, 'blob1')
+        container, blob = self._create_container_and_append_blob(self.container_name, 'blob1')
 
         # Act
         for i in range(5):
-            resp = self.bsc.append_block(
-                self.container_name, 'blob1',
-                u'block {0}'.format(i).encode('utf-8'),
-                if_none_match='0x8D2C9167D53FC2C')
+            resp = blob.append_block(u'block {0}'.format(i), if_none_match='0x8D2C9167D53FC2C')
             self.assertIsNotNone(resp)
 
         # Assert
-        blob = self.bs.get_blob_to_bytes(self.container_name, 'blob1')
-        self.assertEqual(b'block 0block 1block 2block 3block 4', blob.content)
+        content = b"".join(list(blob.download_blob()))
+        self.assertEqual(b'block 0block 1block 2block 3block 4', content)
 
     @record
     def test_append_block_with_if_none_match_fail(self):
         # Arrange
-        pytest.skip("append blobs")
-        self._create_container_and_append_blob(self.container_name, 'blob1')
+        container, blob = self._create_container_and_append_blob(self.container_name, 'blob1')
 
         # Act
-        with self.assertRaises(AzureHttpError):
+        with self.assertRaises(HttpResponseError):
             for i in range(5):
-                etag = self.abs.get_blob_properties(self.container_name, 'blob1').properties.etag
-                resp = self.bsc.append_block(
-                    self.container_name, 'blob1',
-                    u'block {0}'.format(i).encode('utf-8'),
-                    if_none_match=etag)
+                etag = blob.get_blob_properties().etag
+                resp = blob.append_block(u'block {0}'.format(i), if_none_match=etag)
 
         # Assert
         
     @record
     def test_append_blob_from_bytes_with_if_modified(self):
         # Arrange
-        pytest.skip("append blobs")
         blob_name = self.get_resource_name("blob")
-        resp = self._create_container_and_append_blob(self.container_name, blob_name)
-        test_datetime = (resp.last_modified - datetime.timedelta(minutes=15))
+        container, blob = self._create_container_and_append_blob(self.container_name, blob_name)
+        test_datetime = (datetime.datetime.utcnow() - datetime.timedelta(minutes=15))
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-        self.abs.append_blob_from_bytes(self.container_name, blob_name, data, if_modified_since=test_datetime)
+        blob.upload_blob(data, if_modified_since=test_datetime)
 
         # Assert
-        blob = self.bs.get_blob_to_bytes(self.container_name, blob_name)
-        self.assertEqual(data, blob.content)
+        content = b"".join(list(blob.download_blob()))
+        self.assertEqual(data, content)
 
     @record
     def test_append_blob_from_bytes_with_if_modified_fail(self):
         # Arrange
-        pytest.skip("append blobs")
         blob_name = self.get_resource_name("blob")
-        resp = self._create_container_and_append_blob(self.container_name, blob_name)
-        test_datetime = (resp.last_modified + datetime.timedelta(minutes=15))
+        container, blob = self._create_container_and_append_blob(self.container_name, blob_name)
+        test_datetime = (datetime.datetime.utcnow() + datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(AzureHttpError):
+        with self.assertRaises(HttpResponseError):
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-            self.abs.append_blob_from_bytes(self.container_name, blob_name, data, if_modified_since=test_datetime)
+            blob.upload_blob(data, if_modified_since=test_datetime)
 
     @record
     def test_append_blob_from_bytes_with_if_unmodified(self):
         # Arrange
-        pytest.skip("append blobs")
         blob_name = self.get_resource_name("blob")
-        resp = self._create_container_and_append_blob(self.container_name, blob_name)
-        test_datetime = (resp.last_modified + datetime.timedelta(minutes=15))
+        container, blob = self._create_container_and_append_blob(self.container_name, blob_name)
+        test_datetime = (datetime.datetime.utcnow() + datetime.timedelta(minutes=15))
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-        self.abs.append_blob_from_bytes(self.container_name, blob_name, data, if_unmodified_since=test_datetime)
+        blob.upload_blob(data, if_unmodified_since=test_datetime)
 
         # Assert
-        blob = self.bs.get_blob_to_bytes(self.container_name, blob_name)
-        self.assertEqual(data, blob.content)
+        content = b"".join(list(blob.download_blob()))
+        self.assertEqual(data, content)
 
     @record
     def test_append_blob_from_bytes_with_if_unmodified_fail(self):
         # Arrange
-        pytest.skip("append blobs")
         blob_name = self.get_resource_name("blob")
-        resp = self._create_container_and_append_blob(self.container_name, blob_name)
-        test_datetime = (resp.last_modified - datetime.timedelta(minutes=15))
+        container, blob = self._create_container_and_append_blob(self.container_name, blob_name)
+        test_datetime = (datetime.datetime.utcnow() - datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(AzureHttpError):
+        with self.assertRaises(HttpResponseError):
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-            self.abs.append_blob_from_bytes(self.container_name, blob_name, data, if_unmodified_since=test_datetime)
+            blob.upload_blob(data, if_unmodified_since=test_datetime)
 
     @record
     def test_append_blob_from_bytes_with_if_match(self):
         # Arrange
-        pytest.skip("append blobs")
         blob_name = self.get_resource_name("blob")
-        resp = self._create_container_and_append_blob(self.container_name, blob_name)
-        test_etag = resp.get('ETag')
+        container, blob = self._create_container_and_append_blob(self.container_name, blob_name)
+        test_etag = blob.get_blob_properties().etag
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-        self.abs.append_blob_from_bytes(self.container_name, blob_name, data, if_match=test_etag)
+        blob.upload_blob(data, if_match=test_etag)
 
         # Assert
-        blob = self.bs.get_blob_to_bytes(self.container_name, blob_name)
-        self.assertEqual(data, blob.content)
+        content = b"".join(list(blob.download_blob()))
+        self.assertEqual(data, content)
 
     @record
     def test_append_blob_from_bytes_with_if_match_fail(self):
         # Arrange
-        pytest.skip("append blobs")
         blob_name = self.get_resource_name("blob")
-        self._create_container_and_append_blob(self.container_name, blob_name)
+        container, blob = self._create_container_and_append_blob(self.container_name, blob_name)
         test_etag = '0x8D2C9167D53FC2C'
 
         # Act
-        with self.assertRaises(AzureHttpError):
+        with self.assertRaises(HttpResponseError):
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-            self.abs.append_blob_from_bytes(self.container_name, blob_name, data, if_match=test_etag)
+            blob.upload_blob(data, if_match=test_etag)
 
     @record
     def test_append_blob_from_bytes_with_if_none_match(self):
         # Arrange
-        pytest.skip("append blobs")
         blob_name = self.get_resource_name("blob")
-        self._create_container_and_append_blob(self.container_name, blob_name)
+        container, blob = self._create_container_and_append_blob(self.container_name, blob_name)
         test_etag = '0x8D2C9167D53FC2C'
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-        self.abs.append_blob_from_bytes(self.container_name, blob_name, data, if_none_match=test_etag)
+        blob.upload_blob(data, if_none_match=test_etag)
 
         # Assert
-        blob = self.bs.get_blob_to_bytes(self.container_name, blob_name)
-        self.assertEqual(data, blob.content)
+        content = b"".join(list(blob.download_blob()))
+        self.assertEqual(data, content)
 
     @record
     def test_append_blob_from_bytes_with_if_none_match_fail(self):
         # Arrange
-        pytest.skip("append blobs")
         blob_name = self.get_resource_name("blob")
-        resp = self._create_container_and_append_blob(self.container_name, blob_name)
-        test_etag = resp.get('ETag')
+        container, blob = self._create_container_and_append_blob(self.container_name, blob_name)
+        test_etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(AzureHttpError):
+        with self.assertRaises(HttpResponseError):
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-            self.abs.append_blob_from_bytes(self.container_name, blob_name, data, if_none_match=test_etag)
+            blob.upload_blob(data, if_none_match=test_etag)
 
 
 # ------------------------------------------------------------------------------
