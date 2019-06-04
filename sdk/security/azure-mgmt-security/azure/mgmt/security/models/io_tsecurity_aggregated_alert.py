@@ -26,38 +26,35 @@ class IoTSecurityAggregatedAlert(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :ivar alert_type: Required. Name of the alert type
-    :vartype alert_type: str
-    :ivar alert_display_name: Required. Display name of the alert type
+    :param alert_type: Required. Name of the alert type
+    :type alert_type: str
+    :ivar alert_display_name: Display name of the alert type
     :vartype alert_display_name: str
-    :ivar aggregated_date_utc: Required. The date the incidents were detected
-     by the vendor
+    :ivar aggregated_date_utc: The date the incidents were detected by the
+     vendor
     :vartype aggregated_date_utc: date
-    :ivar vendor_name: Required. Name of the vendor that discovered the
-     incident
+    :ivar vendor_name: Name of the vendor that discovered the incident
     :vartype vendor_name: str
-    :ivar reported_severity: Required. Estimated severity of this alert.
-     Possible values include: 'Informational', 'Low', 'Medium', 'High'
+    :ivar reported_severity: Estimated severity of this alert. Possible values
+     include: 'Informational', 'Low', 'Medium', 'High'
     :vartype reported_severity: str or
      ~azure.mgmt.security.models.ReportedSeverity
-    :ivar remediation_steps: Required. Recommended steps for remediation
+    :ivar remediation_steps: Recommended steps for remediation
     :vartype remediation_steps: str
-    :ivar description: Required. Description of the incident and what it means
+    :ivar description: Description of the incident and what it means
     :vartype description: str
-    :ivar count: Required. Occurrence number of the alert within the
-     aggregated date
+    :ivar count: Occurrence number of the alert within the aggregated date
     :vartype count: int
-    :ivar effected_resource_type: Required. Azure resource ID of the resource
-     that got the alerts
+    :ivar effected_resource_type: Azure resource ID of the resource that got
+     the alerts
     :vartype effected_resource_type: str
-    :ivar system_source: Required. The type of the alerted resource (Azure,
-     Non-Azure)
+    :ivar system_source: The type of the alerted resource (Azure, Non-Azure)
     :vartype system_source: str
-    :ivar action_taken: Required. The action that was taken as a response to
-     the alert (Active, Blocked etc.)
+    :ivar action_taken: The action that was taken as a response to the alert
+     (Active, Blocked etc.)
     :vartype action_taken: str
-    :ivar log_analytics_query: Required. query in log analytics to get the
-     list of affected devices/alerts
+    :ivar log_analytics_query: query in log analytics to get the list of
+     affected devices/alerts
     :vartype log_analytics_query: str
     """
 
@@ -65,18 +62,18 @@ class IoTSecurityAggregatedAlert(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'alert_type': {'required': True, 'readonly': True},
-        'alert_display_name': {'required': True, 'readonly': True},
-        'aggregated_date_utc': {'required': True, 'readonly': True},
-        'vendor_name': {'required': True, 'readonly': True},
-        'reported_severity': {'required': True, 'readonly': True},
-        'remediation_steps': {'required': True, 'readonly': True},
-        'description': {'required': True, 'readonly': True},
-        'count': {'required': True, 'readonly': True},
-        'effected_resource_type': {'required': True, 'readonly': True},
-        'system_source': {'required': True, 'readonly': True},
-        'action_taken': {'required': True, 'readonly': True},
-        'log_analytics_query': {'required': True, 'readonly': True},
+        'alert_type': {'required': True},
+        'alert_display_name': {'readonly': True},
+        'aggregated_date_utc': {'readonly': True},
+        'vendor_name': {'readonly': True},
+        'reported_severity': {'readonly': True},
+        'remediation_steps': {'readonly': True},
+        'description': {'readonly': True},
+        'count': {'readonly': True},
+        'effected_resource_type': {'readonly': True},
+        'system_source': {'readonly': True},
+        'action_taken': {'readonly': True},
+        'log_analytics_query': {'readonly': True},
     }
 
     _attribute_map = {
@@ -99,7 +96,7 @@ class IoTSecurityAggregatedAlert(Resource):
 
     def __init__(self, **kwargs):
         super(IoTSecurityAggregatedAlert, self).__init__(**kwargs)
-        self.alert_type = None
+        self.alert_type = kwargs.get('alert_type', None)
         self.alert_display_name = None
         self.aggregated_date_utc = None
         self.vendor_name = None
