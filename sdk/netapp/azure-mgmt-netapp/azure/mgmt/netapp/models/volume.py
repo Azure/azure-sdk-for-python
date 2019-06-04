@@ -35,18 +35,20 @@ class Volume(Model):
     :param creation_token: Required. Creation Token or File Path. A unique
      file path for the volume. Used when creating mount targets
     :type creation_token: str
-    :param service_level: Required. serviceLevel. The service level of the
-     file system. Possible values include: 'Standard', 'Premium', 'Ultra'.
-     Default value: "Premium" .
+    :param service_level: serviceLevel. The service level of the file system.
+     Possible values include: 'Standard', 'Premium', 'Ultra'. Default value:
+     "Premium" .
     :type service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
-    :param usage_threshold: usageThreshold. Maximum storage quota allowed for
-     a file system in bytes. This is a soft quota used for alerting only.
-     Minimum size is 100 GiB. Upper limit is 100TiB. Default value:
-     107374182400 .
+    :param usage_threshold: Required. usageThreshold. Maximum storage quota
+     allowed for a file system in bytes. This is a soft quota used for alerting
+     only. Minimum size is 100 GiB. Upper limit is 100TiB. Specified in bytes.
+     Default value: 107374182400 .
     :type usage_threshold: long
     :param export_policy: exportPolicy. Set of export policy rules
     :type export_policy:
      ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
+    :param protocol_types: protocolTypes. Set of protocol types
+    :type protocol_types: list[str]
     :ivar provisioning_state: Azure lifecycle management
     :vartype provisioning_state: str
     :param snapshot_id: Snapshot ID. UUID v4 used to identify the Snapshot
@@ -54,9 +56,11 @@ class Volume(Model):
     :ivar baremetal_tenant_id: Baremetal Tenant ID. Unique Baremetal Tenant
      Identifier.
     :vartype baremetal_tenant_id: str
-    :param subnet_id: The Azure Resource URI for a delegated subnet. Must have
-     the delegation Microsoft.NetApp/volumes
+    :param subnet_id: Required. The Azure Resource URI for a delegated subnet.
+     Must have the delegation Microsoft.NetApp/volumes
     :type subnet_id: str
+    :param mount_targets: mountTargets. List of mount targets
+    :type mount_targets: object
     """
 
     _validation = {
@@ -66,11 +70,11 @@ class Volume(Model):
         'type': {'readonly': True},
         'file_system_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'creation_token': {'required': True},
-        'service_level': {'required': True},
-        'usage_threshold': {'maximum': 109951162777600, 'minimum': 107374182400},
+        'usage_threshold': {'required': True, 'maximum': 109951162777600, 'minimum': 107374182400},
         'provisioning_state': {'readonly': True},
         'snapshot_id': {'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
         'baremetal_tenant_id': {'readonly': True, 'max_length': 36, 'min_length': 36, 'pattern': r'^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$'},
+        'subnet_id': {'required': True},
     }
 
     _attribute_map = {
@@ -84,10 +88,12 @@ class Volume(Model):
         'service_level': {'key': 'properties.serviceLevel', 'type': 'str'},
         'usage_threshold': {'key': 'properties.usageThreshold', 'type': 'long'},
         'export_policy': {'key': 'properties.exportPolicy', 'type': 'VolumePropertiesExportPolicy'},
+        'protocol_types': {'key': 'properties.protocolTypes', 'type': '[str]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'snapshot_id': {'key': 'properties.snapshotId', 'type': 'str'},
         'baremetal_tenant_id': {'key': 'properties.baremetalTenantId', 'type': 'str'},
         'subnet_id': {'key': 'properties.subnetId', 'type': 'str'},
+        'mount_targets': {'key': 'properties.mountTargets', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
@@ -102,7 +108,9 @@ class Volume(Model):
         self.service_level = kwargs.get('service_level', "Premium")
         self.usage_threshold = kwargs.get('usage_threshold', 107374182400)
         self.export_policy = kwargs.get('export_policy', None)
+        self.protocol_types = kwargs.get('protocol_types', None)
         self.provisioning_state = None
         self.snapshot_id = kwargs.get('snapshot_id', None)
         self.baremetal_tenant_id = None
         self.subnet_id = kwargs.get('subnet_id', None)
+        self.mount_targets = kwargs.get('mount_targets', None)
