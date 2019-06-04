@@ -36,12 +36,12 @@ from .permission import Permission
 
 class User:
 
-    def __init__(self, client_connection, id, database_link, properties):
+    def __init__(self, client_connection, id, database_link, properties=None):
         # type: (CosmosClientConnection, str, str, Dict[str, Any]) -> None
         self.client_connection = client_connection
         self.id = id
         self.user_link = u"{}/users/{}".format(database_link, id)
-        self.properties = properties
+        self._properties = properties
 
     def _get_permission_link(self, permission_or_id):
         # type: (Union[Permission, str, Dict[str, Any]]) -> str
@@ -52,6 +52,34 @@ class User:
         except AttributeError:
             pass
         return u"{}/permissions/{}".format(self.user_link, cast("Dict[str, str]", permission_or_id)["id"])
+
+    def _get_properties(self):
+        # type: () -> Dict[str, Any]
+        if self._properties is None:
+            self.read()
+        return self._properties
+
+    def read(
+            self,
+            request_options=None
+    ):
+        # type: (Dict[str, Any]) -> User
+        """
+        Read user propertes.
+
+        :param request_options: Dictionary of additional properties to be used for the request.
+        :returns: A :class:`User` instance representing the retrieved user.
+        :raise `HTTPFailure`: If the given user couldn't be retrieved.
+
+        """
+        if not request_options:
+            request_options = {} # type: Dict[str, Any]
+
+        self._properties = self.client_connection.ReadUser(
+            user_link=self.user_link,
+            options=request_options
+        )
+        return self._properties
 
     def list_permission_properties(
             self,

@@ -1031,14 +1031,14 @@ class CRUDTests(unittest.TestCase):
         # create database
         db = self.databaseForTest
         # list users
-        users = list(db.list_user_properties())
+        users = list(db.get_all_users())
         before_create_count = len(users)
         # create user
         user_id = 'new user' + str(uuid.uuid4())
         user = db.create_user(body={'id': user_id})
         self.assertEqual(user.id, user_id, 'user id error')
         # list users after creation
-        users = list(db.list_user_properties())
+        users = list(db.get_all_users())
         self.assertEqual(len(users), before_create_count + 1)
         # query users
         results = list(db.query_users(
@@ -1051,13 +1051,13 @@ class CRUDTests(unittest.TestCase):
 
         # replace user
         replaced_user_id = 'replaced user' + str(uuid.uuid4())
-        user = user.properties
-        user['id'] = replaced_user_id
-        replaced_user = db.replace_user(user_id, user)
+        user_properties = user.read()
+        user_properties['id'] = replaced_user_id
+        replaced_user = db.replace_user(user_id, user_properties)
         self.assertEqual(replaced_user.id,
                          replaced_user_id,
                          'user id should change')
-        self.assertEqual(user['id'],
+        self.assertEqual(user_properties['id'],
                          replaced_user.id,
                          'user id should stay the same')
         # read user
@@ -1066,16 +1066,16 @@ class CRUDTests(unittest.TestCase):
         # delete user
         db.delete_user(user.id)
         # read user after deletion
+        deleted_user = db.get_user(user.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
-                                           db.get_user,
-                                           user.id)
+                                           deleted_user.read)
 
     def test_user_upsert(self):
         # create database
         db = self.databaseForTest
 
         # read users and check count
-        users = list(db.list_user_properties())
+        users = list(db.get_all_users())
         before_create_count = len(users)
 
         # create user using Upsert API
@@ -1086,11 +1086,12 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(user.id, user_id, 'user id error')
 
         # read users after creation and verify updated count
-        users = list(db.list_user_properties())
+        users = list(db.get_all_users())
         self.assertEqual(len(users), before_create_count + 1)
 
         # Should replace the user since it already exists, there is no public property to change here
-        upserted_user = db.upsert_user(user.properties)
+        user_properties = user.read()
+        upserted_user = db.upsert_user(user_properties)
 
         # verify id property
         self.assertEqual(upserted_user.id,
@@ -1098,20 +1099,21 @@ class CRUDTests(unittest.TestCase):
                          'user id should remain same')
 
         # read users after upsert and verify count doesn't increases again
-        users = list(db.list_user_properties())
+        users = list(db.get_all_users())
         self.assertEqual(len(users), before_create_count + 1)
 
-        user.properties['id'] = 'new user' + str(uuid.uuid4())
-        user.id = user.properties['id']
+        user_properties = user.read()
+        user_properties['id'] = 'new user' + str(uuid.uuid4())
+        user.id = user_properties['id']
 
         # Upsert should create new user since id is different
-        new_user = db.upsert_user(user.properties)
+        new_user = db.upsert_user(user_properties)
 
         # verify id property
         self.assertEqual(new_user.id, user.id, 'user id error')
 
         # read users after upsert and verify count increases
-        users = list(db.list_user_properties())
+        users = list(db.get_all_users())
         self.assertEqual(len(users), before_create_count + 2)
 
         # delete users
@@ -1119,7 +1121,7 @@ class CRUDTests(unittest.TestCase):
         db.delete_user(new_user.id)
 
         # read users after delete and verify count remains the same
-        users = list(db.list_user_properties())
+        users = list(db.get_all_users())
         self.assertEqual(len(users), before_create_count)
 
     def test_permission_crud(self):
@@ -2458,7 +2460,8 @@ class CRUDTests(unittest.TestCase):
         self.assertEquals(read_user.id, created_user.id)
 
         # read user with properties
-        read_user = created_db.get_user(created_user.properties)
+        created_user_properties = created_user.read()
+        read_user = created_db.get_user(created_user_properties)
         self.assertEquals(read_user.id, created_user.id)
 
         created_permission = created_user.create_permission({

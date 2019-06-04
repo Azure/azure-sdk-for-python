@@ -458,7 +458,7 @@ class Database(object):
             properties=container_properties,
         )
 
-    def list_user_properties(
+    def get_all_users(
             self,
             max_item_count=None,
             feed_options=None
@@ -514,30 +514,27 @@ class Database(object):
     def get_user(
             self,
             user,
-            request_options=None
     ):
         # type: (Union[str, User, Dict[str, Any]], Dict[str, Any]) -> User
         """
         Get the user identified by `id`.
 
         :param user: The ID (name), dict representing the properties or :class:`User` instance of the user to be retrieved.
-        :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A :class:`User` instance representing the retrieved user.
         :raise `HTTPFailure`: If the given user couldn't be retrieved.
-
+        
         """
-        if not request_options:
-            request_options = {} # type: Dict[str, Any]
+        if isinstance(user, User):
+            id_value = user.id
+        elif isinstance(user, Mapping):
+            id_value = user['id']
+        else:
+            id_value = user
 
-        user = self.client_connection.ReadUser(
-            user_link=self._get_user_link(user_or_id=user),
-            options=request_options
-        )
         return User(
             client_connection=self.client_connection,
-            id=user['id'],
+            id=id_value,
             database_link=self.database_link,
-            properties=user
         )
 
     def create_user(
