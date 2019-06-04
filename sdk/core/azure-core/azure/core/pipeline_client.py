@@ -102,4 +102,3 @@ class PipelineClient(PipelineClientBase):
             transport,
             policies
         )
-
