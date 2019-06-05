@@ -19,7 +19,7 @@ class TrainSourceFilter(Model):
      under the source location. For e.g., when using a Azure Blob
      Uri use the prefix to restrict subfolders for content.
     :type prefix: str
-    :param include_sub_folders: A flag to indicate of sub folders within the
+    :param include_sub_folders: A flag to indicate if sub folders within the
      set of
      prefix folders will also need to included when searching
      for content to be preprocessed.
