@@ -39,12 +39,12 @@ class VaultClient(object):
         """
         return self._keys
 
-    @property
-    def certificates(self):
-        """
-        :rtype: ~azure.keyvault.certificates.CertificateClient
-        """
-        pass
+    # @property
+    # def certificates(self):
+    #     """
+    #     :rtype: ~azure.keyvault.certificates.CertificateClient
+    #     """
+    #     pass
 
     @property
     def vault_url(self):
