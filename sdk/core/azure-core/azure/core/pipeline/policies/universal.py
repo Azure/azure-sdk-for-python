@@ -103,8 +103,12 @@ class UserAgentPolicy(SansIOHTTPPolicy):
     """User-Agent Policy. Allows custom values to be added to the User-Agent header.
 
     :param str base_user_agent: Sets the base user agent value.
-    :param bool user_agent_overwrite: Keyword argument that overwrites User-Agent when True. Defaults to False.
-    :param bool user_agent_use_env: Keyword argument that gets user-agent from environment. Defaults to True.
+
+    **Keyword arguments:**
+
+    *user_agent_overwrite (bool)* - Overwrites User-Agent when True. Defaults to False.
+
+    *user_agent_use_env (bool)* - Gets user-agent from environment. Defaults to True.
 
     Example:
         .. literalinclude:: ../examples/examples_sansio.py
@@ -175,9 +179,6 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
     This accepts both global configuration, and per-request level with "enable_http_logger"
 
     :param bool logging_enable: Use to enable per operation. Defaults to False.
-     Keyword argument.
-    :param bool enable_http_logger: Enables network trace logging at DEBUG level.
-     Defaults to False.
 
     Example:
         .. literalinclude:: ../examples/examples_sansio.py
@@ -386,8 +387,10 @@ class ProxyPolicy(SansIOHTTPPolicy):
 
     :param dict proxies: Maps protocol or protocol and hostname to the URL
      of the proxy.
-    :param bool proxies_use_env_settings: Keyword argument that uses proxy settings
-     from environment. Defaults to True.
+
+    **Keyword argument:**
+
+    *proxies_use_env_settings (bool)* - Uses proxy settings from environment. Defaults to True.
 
     Example:
         .. literalinclude:: ../examples/examples_sansio.py

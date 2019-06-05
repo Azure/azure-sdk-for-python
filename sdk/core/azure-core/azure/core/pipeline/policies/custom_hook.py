@@ -33,7 +33,7 @@ class CustomHookPolicy(SansIOHTTPPolicy):
     """A simple policy that enable the given callback
     with the response.
 
-    Keyword argument:
+    **Keyword argument:**
 
     *raw_response_hook* - Callback function. Will be invoked on response.
     """

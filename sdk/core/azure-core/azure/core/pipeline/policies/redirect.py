@@ -47,10 +47,11 @@ class RedirectPolicy(HTTPPolicy):
 
     A redirect policy in the pipeline can be configured directly or per operation.
 
-    Keyword arguments:
+    **Keyword arguments:**
 
-    :param redirects_allow: Whether the client allows redirects. Defaults to True.
-    :param redirect_max: The maximum allowed redirects. Defaults to 30.
+    *redirects_allow (int)* - Whether the client allows redirects. Defaults to True.
+
+    *redirect_max (int)* - The maximum allowed redirects. Defaults to 30.
 
     Example:
         .. literalinclude:: ../examples/examples_sync.py

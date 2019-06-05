@@ -76,12 +76,22 @@ class PipelineContext(dict):
         return super(PipelineContext, self).__delitem__(key)
 
     def clear(self):
+        """Context objects cannot be cleared.
+
+        :raises: TypeError
+        """
         raise TypeError("Context objects cannot be cleared.")
 
     def update(self, *args, **kwargs):
+        """Context objects cannot be updated.
+
+        :raises: TypeError
+        """
         raise TypeError("Context objects cannot be updated.")
 
     def pop(self, *args):
+        """Removes specified key and returns the value.
+        """
         if args and args[0] in self._protected:
             raise ValueError('Context value {} cannot be popped.'.format(args[0]))
         return super(PipelineContext, self).pop(*args)

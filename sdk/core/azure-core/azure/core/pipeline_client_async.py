@@ -48,7 +48,7 @@ class AsyncPipelineClient(PipelineClientBase):
     :return: An async pipeline object.
     :rtype: ~azure.core.pipeline.AsyncPipeline
 
-    Keyword arguments:
+    **Keyword arguments:**
 
     *pipeline* - A Pipeline object. If omitted, an AsyncPipeline is created and returned.
 

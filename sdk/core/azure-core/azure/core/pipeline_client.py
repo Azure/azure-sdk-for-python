@@ -48,7 +48,7 @@ class PipelineClient(PipelineClientBase):
     :return: A pipeline object.
     :rtype: ~azure.core.pipeline.Pipeline
 
-    Keyword arguments:
+    **Keyword arguments:**
 
     *pipeline* - A Pipeline object. If omitted, a Pipeline object is created and returned.
 
