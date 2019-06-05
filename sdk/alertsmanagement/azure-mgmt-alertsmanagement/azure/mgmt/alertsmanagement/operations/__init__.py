@@ -12,9 +12,11 @@
 from .operations import Operations
 from .alerts_operations import AlertsOperations
 from .smart_groups_operations import SmartGroupsOperations
+from .smart_detector_alert_rules_operations import SmartDetectorAlertRulesOperations
 
 __all__ = [
     'Operations',
     'AlertsOperations',
     'SmartGroupsOperations',
+    'SmartDetectorAlertRulesOperations',
 ]

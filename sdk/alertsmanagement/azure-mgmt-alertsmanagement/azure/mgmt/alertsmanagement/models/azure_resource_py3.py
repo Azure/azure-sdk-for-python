@@ -12,17 +12,17 @@
 from msrest.serialization import Model
 
 
-class Resource(Model):
-    """An azure resource object.
+class AzureResource(Model):
+    """An Azure resource object.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: Azure resource Id
+    :ivar id: The resource ID.
     :vartype id: str
-    :ivar type: Azure resource type
+    :ivar type: The resource type.
     :vartype type: str
-    :ivar name: Azure resource name
+    :ivar name: The resource name.
     :vartype name: str
     """
 
@@ -39,7 +39,7 @@ class Resource(Model):
     }
 
     def __init__(self, **kwargs) -> None:
-        super(Resource, self).__init__(**kwargs)
+        super(AzureResource, self).__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None

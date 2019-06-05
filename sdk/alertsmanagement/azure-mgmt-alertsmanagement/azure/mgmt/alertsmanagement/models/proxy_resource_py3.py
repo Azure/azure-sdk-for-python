@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .proxy_resource import ProxyResource
+from msrest.serialization import Model
 
 
-class AlertsSummary(ProxyResource):
-    """Summary of alerts based on the input filters and 'groupby' parameters.
+class ProxyResource(Model):
+    """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,8 +24,6 @@ class AlertsSummary(ProxyResource):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param properties:
-    :type properties: ~azure.mgmt.alertsmanagement.models.AlertsSummaryGroup
     """
 
     _validation = {
@@ -38,9 +36,10 @@ class AlertsSummary(ProxyResource):
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'AlertsSummaryGroup'},
     }
 
-    def __init__(self, **kwargs):
-        super(AlertsSummary, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+    def __init__(self, **kwargs) -> None:
+        super(ProxyResource, self).__init__(**kwargs)
+        self.id = None
+        self.type = None
+        self.name = None

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class Alert(Resource):
+class Alert(ProxyResource):
     """An alert created in alert management service.
 
     Variables are only populated by the server, and will be ignored when

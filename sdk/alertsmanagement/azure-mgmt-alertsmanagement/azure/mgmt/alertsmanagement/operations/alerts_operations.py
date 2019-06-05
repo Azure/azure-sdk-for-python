@@ -22,7 +22,7 @@ class AlertsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: API version. Constant value: "2018-05-05".
+    :ivar api_version: API version. Constant value: "2019-03-01".
     """
 
     models = models
@@ -32,15 +32,16 @@ class AlertsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-05-05"
+        self.api_version = "2019-03-01"
 
         self.config = config
 
     def get_all(
             self, target_resource=None, target_resource_type=None, target_resource_group=None, monitor_service=None, monitor_condition=None, severity=None, alert_state=None, alert_rule=None, smart_group_id=None, include_context=None, include_egress_config=None, page_count=None, sort_by=None, sort_order=None, select=None, time_range=None, custom_time_range=None, custom_headers=None, raw=False, **operation_config):
-        """List all the existing alerts, where the results can be selective by
-        passing multiple filter parameters including time range and sorted on
-        specific fields. .
+        """List all existing alerts, where the results can be filtered on the
+        basis of multiple parameters (e.g. time range). The results can then be
+        sorted on the basis specific fields, with the default being
+        lastModifiedDateTime. .
 
         :param target_resource: Filter by target resource( which is full ARM
          ID) Default value is select all.
@@ -51,21 +52,21 @@ class AlertsOperations(object):
         :param target_resource_group: Filter by target resource group name.
          Default value is select all.
         :type target_resource_group: str
-        :param monitor_service: Filter by monitor service which is the source
-         of the alert instance. Default value is select all. Possible values
-         include: 'Application Insights', 'ActivityLog Administrative',
-         'ActivityLog Security', 'ActivityLog Recommendation', 'ActivityLog
-         Policy', 'ActivityLog Autoscale', 'Log Analytics', 'Nagios',
-         'Platform', 'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights',
-         'Zabbix'
+        :param monitor_service: Filter by monitor service which generates the
+         alert instance. Default value is select all. Possible values include:
+         'Application Insights', 'ActivityLog Administrative', 'ActivityLog
+         Security', 'ActivityLog Recommendation', 'ActivityLog Policy',
+         'ActivityLog Autoscale', 'Log Analytics', 'Nagios', 'Platform',
+         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix',
+         'Resource Health'
         :type monitor_service: str or
          ~azure.mgmt.alertsmanagement.models.MonitorService
-        :param monitor_condition: Filter by monitor condition which is the
-         state of the  monitor(alertRule) at monitor service. Default value is
-         to select all. Possible values include: 'Fired', 'Resolved'
+        :param monitor_condition: Filter by monitor condition which is either
+         'Fired' or 'Resolved'. Default value is to select all. Possible values
+         include: 'Fired', 'Resolved'
         :type monitor_condition: str or
          ~azure.mgmt.alertsmanagement.models.MonitorCondition
-        :param severity: Filter by severity.  Defaut value is select all.
+        :param severity: Filter by severity.  Default value is select all.
          Possible values include: 'Sev0', 'Sev1', 'Sev2', 'Sev3', 'Sev4'
         :type severity: str or ~azure.mgmt.alertsmanagement.models.Severity
         :param alert_state: Filter by state of the alert instance. Default
@@ -73,14 +74,14 @@ class AlertsOperations(object):
          'Acknowledged', 'Closed'
         :type alert_state: str or
          ~azure.mgmt.alertsmanagement.models.AlertState
-        :param alert_rule: Filter by alert rule(monitor) which fired alert
-         instance.  Default value is to select all.
+        :param alert_rule: Filter by specific alert rule.  Default value is to
+         select all.
         :type alert_rule: str
         :param smart_group_id: Filter the alerts list by the Smart Group Id.
          Default value is none.
         :type smart_group_id: str
-        :param include_context: Include context which has data contextual to
-         the monitor service. Default value is false'
+        :param include_context: Include context which has contextual data
+         specific to the monitor service. Default value is false'
         :type include_context: bool
         :param include_egress_config: Include egress config which would be
          used for displaying the content in portal.  Default value is 'false'.
@@ -102,9 +103,9 @@ class AlertsOperations(object):
          others. Possible values include: 'asc', 'desc'
         :type sort_order: str
         :param select: This filter allows to selection of the fields(comma
-         seperated) which would  be part of the the essential section. This
-         would allow to project only the  required fields rather than getting
-         entire content.  Default is to fetch all the fields in the essentials
+         separated) which would  be part of the essential section. This would
+         allow to project only the  required fields rather than getting entire
+         content.  Default is to fetch all the fields in the essentials
          section.
         :type select: str
         :param time_range: Filter by time range by below listed values.
@@ -134,7 +135,7 @@ class AlertsOperations(object):
                 # Construct URL
                 url = self.get_all.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'scope': self._serialize.url("self.config.scope", self.config.scope, 'str', skip_quote=True)
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -208,13 +209,20 @@ class AlertsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_all.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/alerts'}
+    get_all.metadata = {'url': '/{scope}/providers/Microsoft.AlertsManagement/alerts'}
 
     def get_by_id(
             self, alert_id, custom_headers=None, raw=False, **operation_config):
         """Get a specific alert.
 
-        Get information related to a specific alert.
+        Get information related to a specific alert. If scope is a deleted
+        resource then please use scope as parent resource of the delete
+        resource. For example if my alert id is
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/virtualMachines/vm1/providers/Microsoft.AlertsManagement/alerts/{alertId}'
+        and 'vm1' is deleted then if you want to get alert by id then use
+        parent resource of scope. So in this example get alert by id call will
+        look like this:
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.AlertsManagement/alerts/{alertId}'.
 
         :param alert_id: Unique ID of an alert instance.
         :type alert_id: str
@@ -232,7 +240,7 @@ class AlertsOperations(object):
         # Construct URL
         url = self.get_by_id.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'scope': self._serialize.url("self.config.scope", self.config.scope, 'str', skip_quote=True),
             'alertId': self._serialize.url("alert_id", alert_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -268,11 +276,18 @@ class AlertsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_by_id.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/alerts/{alertId}'}
+    get_by_id.metadata = {'url': '/{scope}/providers/Microsoft.AlertsManagement/alerts/{alertId}'}
 
     def change_state(
             self, alert_id, new_state, custom_headers=None, raw=False, **operation_config):
-        """Change the state of the alert.
+        """Change the state of an alert. If scope is a deleted resource then
+        please use scope as parent resource of the delete resource. For example
+        if my alert id is
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/virtualMachines/vm1/providers/Microsoft.AlertsManagement/alerts/{alertId}'
+        and 'vm1' is deleted then if you want to change state of this
+        particular alert then use parent resource of scope. So in this example
+        change state call will look like this:
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.AlertsManagement/alerts/{alertId}'.
 
         :param alert_id: Unique ID of an alert instance.
         :type alert_id: str
@@ -293,7 +308,7 @@ class AlertsOperations(object):
         # Construct URL
         url = self.change_state.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'scope': self._serialize.url("self.config.scope", self.config.scope, 'str', skip_quote=True),
             'alertId': self._serialize.url("alert_id", alert_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -330,11 +345,20 @@ class AlertsOperations(object):
             return client_raw_response
 
         return deserialized
-    change_state.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/alerts/{alertId}/changestate'}
+    change_state.metadata = {'url': '/{scope}/providers/Microsoft.AlertsManagement/alerts/{alertId}/changestate'}
 
     def get_history(
             self, alert_id, custom_headers=None, raw=False, **operation_config):
-        """Get the history of the changes of an alert.
+        """Get the history of an alert, which captures any monitor condition
+        changes (Fired/Resolved), alert state changes (New/Acknowledged/Closed)
+        and applied action rules for that particular alert. If scope is a
+        deleted resource then please use scope as parent resource of the delete
+        resource. For example if my alert id is
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/virtualMachines/vm1/providers/Microsoft.AlertsManagement/alerts/{alertId}'
+        and 'vm1' is deleted then if you want to get history of this particular
+        alert then use parent resource of scope. So in this example get history
+        call will look like this:
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.AlertsManagement/alerts/{alertId}/history'.
 
         :param alert_id: Unique ID of an alert instance.
         :type alert_id: str
@@ -352,7 +376,7 @@ class AlertsOperations(object):
         # Construct URL
         url = self.get_history.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'scope': self._serialize.url("self.config.scope", self.config.scope, 'str', skip_quote=True),
             'alertId': self._serialize.url("alert_id", alert_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -388,14 +412,16 @@ class AlertsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_history.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/alerts/{alertId}/history'}
+    get_history.metadata = {'url': '/{scope}/providers/Microsoft.AlertsManagement/alerts/{alertId}/history'}
 
     def get_summary(
             self, groupby, include_smart_groups_count=None, target_resource=None, target_resource_type=None, target_resource_group=None, monitor_service=None, monitor_condition=None, severity=None, alert_state=None, alert_rule=None, time_range=None, custom_time_range=None, custom_headers=None, raw=False, **operation_config):
-        """Summary of alerts with the count each severity.
+        """Get a summarized count of your alerts grouped by various parameters
+        (e.g. grouping by 'Severity' returns the count of alerts for each
+        severity).
 
-        :param groupby: This parameter allows the result set to be aggregated
-         by input fields. For example, groupby=severity,alertstate. Possible
+        :param groupby: This parameter allows the result set to be grouped by
+         input fields. For example, groupby=severity,alertstate. Possible
          values include: 'severity', 'alertState', 'monitorCondition',
          'monitorService', 'signalType', 'alertRule'
         :type groupby: str or
@@ -412,21 +438,21 @@ class AlertsOperations(object):
         :param target_resource_group: Filter by target resource group name.
          Default value is select all.
         :type target_resource_group: str
-        :param monitor_service: Filter by monitor service which is the source
-         of the alert instance. Default value is select all. Possible values
-         include: 'Application Insights', 'ActivityLog Administrative',
-         'ActivityLog Security', 'ActivityLog Recommendation', 'ActivityLog
-         Policy', 'ActivityLog Autoscale', 'Log Analytics', 'Nagios',
-         'Platform', 'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights',
-         'Zabbix'
+        :param monitor_service: Filter by monitor service which generates the
+         alert instance. Default value is select all. Possible values include:
+         'Application Insights', 'ActivityLog Administrative', 'ActivityLog
+         Security', 'ActivityLog Recommendation', 'ActivityLog Policy',
+         'ActivityLog Autoscale', 'Log Analytics', 'Nagios', 'Platform',
+         'SCOM', 'ServiceHealth', 'SmartDetector', 'VM Insights', 'Zabbix',
+         'Resource Health'
         :type monitor_service: str or
          ~azure.mgmt.alertsmanagement.models.MonitorService
-        :param monitor_condition: Filter by monitor condition which is the
-         state of the  monitor(alertRule) at monitor service. Default value is
-         to select all. Possible values include: 'Fired', 'Resolved'
+        :param monitor_condition: Filter by monitor condition which is either
+         'Fired' or 'Resolved'. Default value is to select all. Possible values
+         include: 'Fired', 'Resolved'
         :type monitor_condition: str or
          ~azure.mgmt.alertsmanagement.models.MonitorCondition
-        :param severity: Filter by severity.  Defaut value is select all.
+        :param severity: Filter by severity.  Default value is select all.
          Possible values include: 'Sev0', 'Sev1', 'Sev2', 'Sev3', 'Sev4'
         :type severity: str or ~azure.mgmt.alertsmanagement.models.Severity
         :param alert_state: Filter by state of the alert instance. Default
@@ -434,8 +460,8 @@ class AlertsOperations(object):
          'Acknowledged', 'Closed'
         :type alert_state: str or
          ~azure.mgmt.alertsmanagement.models.AlertState
-        :param alert_rule: Filter by alert rule(monitor) which fired alert
-         instance.  Default value is to select all.
+        :param alert_rule: Filter by specific alert rule.  Default value is to
+         select all.
         :type alert_rule: str
         :param time_range: Filter by time range by below listed values.
          Default value is 1 day. Possible values include: '1h', '1d', '7d',
@@ -461,7 +487,7 @@ class AlertsOperations(object):
         # Construct URL
         url = self.get_summary.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'scope': self._serialize.url("self.config.scope", self.config.scope, 'str', skip_quote=True)
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -519,4 +545,4 @@ class AlertsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_summary.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.AlertsManagement/alertsSummary'}
+    get_summary.metadata = {'url': '/{scope}/providers/Microsoft.AlertsManagement/alertsSummary'}
