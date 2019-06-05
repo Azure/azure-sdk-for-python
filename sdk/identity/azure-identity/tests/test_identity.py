@@ -19,11 +19,11 @@ from azure.identity import (
     AuthenticationError,
     ClientSecretCredential,
     EnvironmentCredential,
+    ImdsCredential,
+    MsiCredential,
     TokenCredentialChain,
-    ManagedIdentityCredential,
-    CertificateCredential,
 )
-from azure.identity.constants import EnvironmentVariables
+from azure.identity.constants import EnvironmentVariables, MSI_ENDPOINT, MSI_SECRET
 
 
 def test_client_secret_credential_cache(monkeypatch):
@@ -152,7 +152,7 @@ def test_chain_returns_first_token():
     assert second_credential.get_token.call_count == 0
 
 
-def test_msi_credential_cache(monkeypatch):
+def test_imds_credential_cache(monkeypatch):
     scope = "https://foo.bar"
     expired = "this token's expired"
     now = int(time.time())
@@ -171,7 +171,7 @@ def test_msi_credential_cache(monkeypatch):
     mock_send = Mock(return_value=mock_response)
     monkeypatch.setattr(requests.Session, "send", value=mock_send)
 
-    credential = ManagedIdentityCredential()
+    credential = ImdsCredential()
     token = credential.get_token(scope)
     assert token == expired
     assert mock_send.call_count == 1
@@ -192,14 +192,14 @@ def test_msi_credential_cache(monkeypatch):
     assert mock_send.call_count == 2
 
 
-def test_msi_credential_retries(monkeypatch):
+def test_imds_credential_retries(monkeypatch):
     # monkeypatch requests so we can test pipeline configuration
     mock_response = Mock(headers={"Retry-After": "0"}, text=b"")
     mock_send = Mock(return_value=mock_response)
     monkeypatch.setattr(requests.Session, "send", value=mock_send)
 
     retry_total = 1
-    credential = ManagedIdentityCredential(retry_total=retry_total)
+    credential = ImdsCredential(retry_total=retry_total)
 
     for status_code in (404, 429, 500):
         mock_response.status_code = status_code
@@ -209,3 +209,22 @@ def test_msi_credential_retries(monkeypatch):
             pass
         assert mock_send.call_count is 1 + retry_total
         mock_send.reset_mock()
+
+
+def test_msi_credential(monkeypatch):
+    msi_secret = "secret"
+    monkeypatch.setenv(MSI_SECRET, msi_secret)
+    monkeypatch.setenv(MSI_ENDPOINT, "https://foo.bar")
+
+    success_message = "test passed"
+
+    def validate_request(req, *args, **kwargs):
+        assert req.url.startswith(os.environ[MSI_ENDPOINT])
+        assert req.headers["secret"] is msi_secret
+        exception = Exception()
+        exception.message = success_message
+        raise exception
+
+    with pytest.raises(Exception) as ex:
+        MsiCredential(transport=Mock(send=validate_request)).get_token("https://scope")
+    assert ex.value.message is success_message

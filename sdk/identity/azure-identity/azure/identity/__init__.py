@@ -8,7 +8,9 @@ from .credentials import (
     CertificateCredential,
     ClientSecretCredential,
     EnvironmentCredential,
+    ImdsCredential,
     ManagedIdentityCredential,
+    MsiCredential,
     TokenCredentialChain,
 )
 
@@ -17,7 +19,9 @@ __all__ = [
     "CertificateCredential",
     "ClientSecretCredential",
     "EnvironmentCredential",
+    "ImdsCredential",
     "ManagedIdentityCredential",
+    "MsiCredential",
     "TokenCredentialChain",
 ]
 
@@ -26,7 +30,9 @@ try:
         AsyncCertificateCredential,
         AsyncClientSecretCredential,
         AsyncEnvironmentCredential,
+        AsyncImdsCredential,
         AsyncManagedIdentityCredential,
+        AsyncMsiCredential,
         AsyncTokenCredentialChain,
     )
 
@@ -35,7 +41,9 @@ try:
             "AsyncCertificateCredential",
             "AsyncClientSecretCredential",
             "AsyncEnvironmentCredential",
+            "AsyncImdsCredential",
             "AsyncManagedIdentityCredential",
+            "AsyncMsiCredential",
             "AsyncTokenCredentialChain",
         ]
     )

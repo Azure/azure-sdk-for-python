@@ -7,7 +7,9 @@ from .credentials import (
     AsyncCertificateCredential,
     AsyncClientSecretCredential,
     AsyncEnvironmentCredential,
+    AsyncImdsCredential,
     AsyncManagedIdentityCredential,
+    AsyncMsiCredential,
     AsyncTokenCredentialChain,
 )
 
@@ -15,6 +17,8 @@ __all__ = [
     "AsyncCertificateCredential",
     "AsyncClientSecretCredential",
     "AsyncEnvironmentCredential",
+    "AsyncImdsCredential",
     "AsyncManagedIdentityCredential",
+    "AsyncMsiCredential",
     "AsyncTokenCredentialChain",
 ]

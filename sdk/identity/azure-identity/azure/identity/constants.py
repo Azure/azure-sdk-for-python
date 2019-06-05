@@ -21,3 +21,8 @@ class Endpoints:
 
     # TODO: other clouds have other endpoints
     AAD_OAUTH2_V2_FORMAT = "https://login.microsoftonline.com/{}/oauth2/v2.0/token"
+
+    # https://docs.microsoft.com/en-us/azure/app-service/overview-managed-identity#obtaining-tokens-for-azure-resources
+
+MSI_ENDPOINT = "MSI_ENDPOINT"
+MSI_SECRET = "MSI_SECRET"
