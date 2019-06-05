@@ -71,8 +71,6 @@ class CRUDTests(unittest.TestCase):
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
-    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, connectionPolicy)
-    databseForTest = configs.create_database_if_not_exist(client)
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -95,6 +93,9 @@ class CRUDTests(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        cls.databseForTest = configs.create_database_if_not_exist(cls.client)
+
 
     def setUp(self):
         self.client = cosmos_client.CosmosClient(self.host, {'masterKey': self.masterKey}, self.connectionPolicy)

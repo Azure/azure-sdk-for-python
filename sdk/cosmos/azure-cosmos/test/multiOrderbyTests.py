@@ -57,8 +57,19 @@ class MultiOrderbyTests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, connectionPolicy)
-    database = test_config._test_config.create_database_if_not_exist(client)
+
+    @classmethod
+    def setUpClass(cls):
+        if (cls.masterKey == '[YOUR_KEY_HERE]' or
+                cls.host == '[YOUR_ENDPOINT_HERE]'):
+            raise Exception(
+                "You must specify your Azure Cosmos account values for "
+                "'masterKey' and 'host' at the top of this class to run the "
+                "tests.")
+        
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        cls.database = test_config._test_config.create_database_if_not_exist(cls.client)
+
 
     def generate_multi_orderby_document(self):
         document = {}
