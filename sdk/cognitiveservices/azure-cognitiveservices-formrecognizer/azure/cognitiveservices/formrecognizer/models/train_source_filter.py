@@ -21,7 +21,7 @@ class TrainSourceFilter(Model):
     :type prefix: str
     :param include_sub_folders: A flag to indicate if sub folders within the
      set of
-     prefix folders will also need to included when searching
+     prefix folders will also need to be included when searching
      for content to be preprocessed.
     :type include_sub_folders: bool
     """
