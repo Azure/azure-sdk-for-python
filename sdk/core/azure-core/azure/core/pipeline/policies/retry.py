@@ -51,6 +51,7 @@ class RetryPolicy(HTTPPolicy):
     The retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
 
     Keyword arguments:
+
     :param int retry_total: Total number of retries to allow. Takes precedence over other counts.
      Default value is 10.
     :param int retry_connect: How many connection-related errors to retry on.
@@ -68,7 +69,7 @@ class RetryPolicy(HTTPPolicy):
     :param int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
 
     Example:
-        .. literalinclude:: ../../../../examples/examples_sync.py
+        .. literalinclude:: ../examples/examples_sync.py
             :start-after: [START retry_policy]
             :end-before: [END retry_policy]
             :language: python
@@ -252,7 +253,7 @@ class RetryPolicy(HTTPPolicy):
 
         :param dict settings: The retry settings.
         :param response: The PipelineResponse object
-        :type response: ~azure.core.pipeline.PipelineResponse.
+        :type response: ~azure.core.pipeline.PipelineResponse
         :return: True if method/status code is retryable. False if not retryable.
         :rtype: bool
         """
@@ -325,8 +326,7 @@ class RetryPolicy(HTTPPolicy):
             context['history'] = retry_settings['history']
 
     def send(self, request):
-        """Sends the PipelineRequest object to the next policy.
-         Uses retry settings if necessary.
+        """Sends the PipelineRequest object to the next policy. Uses retry settings if necessary.
 
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest

@@ -36,9 +36,11 @@ def raise_with_traceback(exception, *args, **kwargs):
     # type: (Callable, Any, Any) -> None
     """Raise exception with a specified traceback.
     This MUST be called inside a "except" clause.
+
     :param Exception exception: Error type to be raised.
     :param args: Any additional args to be included with exception.
     :param kwargs: Keyword arguments to include with the exception.
+
     Keyword arguments:
     message Message to be associated with the exception. If omitted, defaults to an empty string.
     """
@@ -95,8 +97,9 @@ class ServiceResponseError(AzureError):
 
 class HttpResponseError(AzureError):
     """A request was made, and a non-success status code was received from the service.
-    :ivar status_code: HttpResponse's status code
-    :ivar response: The response that triggered the exception.
+
+    :param status_code: HttpResponse's status code
+    :param response: The response that triggered the exception.
     """
 
     def __init__(self, message=None, response=None, **kwargs):

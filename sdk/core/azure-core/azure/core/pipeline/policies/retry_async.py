@@ -45,6 +45,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
     The async retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
 
     Keyword arguments:
+
     :param int retry_total: Total number of retries to allow. Takes precedence over other counts.
      Default value is 10.
     :param int retry_connect: How many connection-related errors to retry on.
@@ -62,7 +63,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
     :param int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
 
     Example:
-        .. literalinclude:: ../../../../examples/examples_async.py
+        .. literalinclude:: ../examples/examples_async.py
             :start-after: [START async_retry_policy]
             :end-before: [END async_retry_policy]
             :language: python
@@ -114,8 +115,7 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
         await self._sleep_backoff(settings, transport)
 
     async def send(self, request):
-        """Uses the configured retry policy to send the request
-         to the next policy in the pipeline.
+        """Uses the configured retry policy to send the request to the next policy in the pipeline.
 
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest

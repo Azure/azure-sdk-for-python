@@ -50,8 +50,7 @@ except ImportError: # Python <= 3.5
 
 
 class PipelineContext(dict):
-    """A context object carried by the pipeline request and
-     response containers.
+    """A context object carried by the pipeline request and response containers.
 
     This is transport specific and can contain data persisted between
     pipeline requests (for example reusing an open connection pool or "session"),
