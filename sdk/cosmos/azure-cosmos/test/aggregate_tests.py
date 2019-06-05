@@ -209,15 +209,6 @@ class AggregationQueryTest(with_metaclass(AggregateQueryTestSequenceMeta, unitte
 
     @classmethod
     def setUpClass(cls):
-        # creates the database, collection, and insert all the documents
-        # we will gain some speed up in running the tests by creating the
-        # database, collection and inserting all the docs only once
-
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or cls.host == '[YOUR_ENDPOINT_HERE]'):
-            raise Exception("You must specify your Azure Cosmos account values for "
-                "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
-
         cls._setup()
         cls._generate_test_configs()
         cls._run_all()
