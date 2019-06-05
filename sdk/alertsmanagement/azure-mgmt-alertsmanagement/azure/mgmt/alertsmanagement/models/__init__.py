@@ -12,7 +12,7 @@
 try:
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
-    from .resource_py3 import Resource
+    from .proxy_resource_py3 import ProxyResource
     from .essentials_py3 import Essentials
     from .alert_properties_py3 import AlertProperties
     from .alert_py3 import Alert
@@ -28,10 +28,16 @@ try:
     from .smart_group_aggregated_property_py3 import SmartGroupAggregatedProperty
     from .smart_group_py3 import SmartGroup
     from .smart_groups_list_py3 import SmartGroupsList
+    from .error_response1_py3 import ErrorResponse1, ErrorResponse1Exception
+    from .action_groups_information_py3 import ActionGroupsInformation
+    from .throttling_information_py3 import ThrottlingInformation
+    from .azure_resource_py3 import AzureResource
+    from .detector_py3 import Detector
+    from .alert_rule_py3 import AlertRule
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .operation import Operation
-    from .resource import Resource
+    from .proxy_resource import ProxyResource
     from .essentials import Essentials
     from .alert_properties import AlertProperties
     from .alert import Alert
@@ -47,8 +53,15 @@ except (SyntaxError, ImportError):
     from .smart_group_aggregated_property import SmartGroupAggregatedProperty
     from .smart_group import SmartGroup
     from .smart_groups_list import SmartGroupsList
+    from .error_response1 import ErrorResponse1, ErrorResponse1Exception
+    from .action_groups_information import ActionGroupsInformation
+    from .throttling_information import ThrottlingInformation
+    from .azure_resource import AzureResource
+    from .detector import Detector
+    from .alert_rule import AlertRule
 from .operation_paged import OperationPaged
 from .alert_paged import AlertPaged
+from .alert_rule_paged import AlertRulePaged
 from .alerts_management_client_enums import (
     Severity,
     SignalType,
@@ -58,6 +71,7 @@ from .alerts_management_client_enums import (
     AlertModificationEvent,
     SmartGroupModificationEvent,
     State,
+    AlertRuleState,
     TimeRange,
     AlertsSortByFields,
     AlertsSummaryGroupByFields,
@@ -67,7 +81,7 @@ from .alerts_management_client_enums import (
 __all__ = [
     'OperationDisplay',
     'Operation',
-    'Resource',
+    'ProxyResource',
     'Essentials',
     'AlertProperties',
     'Alert',
@@ -83,8 +97,15 @@ __all__ = [
     'SmartGroupAggregatedProperty',
     'SmartGroup',
     'SmartGroupsList',
+    'ErrorResponse1', 'ErrorResponse1Exception',
+    'ActionGroupsInformation',
+    'ThrottlingInformation',
+    'AzureResource',
+    'Detector',
+    'AlertRule',
     'OperationPaged',
     'AlertPaged',
+    'AlertRulePaged',
     'Severity',
     'SignalType',
     'AlertState',
@@ -93,6 +114,7 @@ __all__ = [
     'AlertModificationEvent',
     'SmartGroupModificationEvent',
     'State',
+    'AlertRuleState',
     'TimeRange',
     'AlertsSortByFields',
     'AlertsSummaryGroupByFields',

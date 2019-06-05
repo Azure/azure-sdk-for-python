@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class SmartGroupModification(Resource):
+class SmartGroupModification(ProxyResource):
     """Alert Modification details.
 
     Variables are only populated by the server, and will be ignored when
