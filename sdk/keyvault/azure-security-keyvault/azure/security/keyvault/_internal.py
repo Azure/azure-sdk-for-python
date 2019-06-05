@@ -71,13 +71,19 @@ class _KeyVaultClientBase(object):
         return config
 
     def __init__(self, vault_url, credential, config=None, transport=None, api_version=None, **kwargs):
-        # type: (str, SupportsGetToken, Configuration, Optional[HttpTransport], Optional[str], Mapping[str, Any]) -> None
+        # type: (str, SupportsGetToken, Configuration, Optional[HttpTransport], Optional[str], **Any) -> None
         if not credential:
             raise ValueError("credential should be a credential object from azure-identity")
         if not vault_url:
             raise ValueError("vault_url must be the URL of an Azure Key Vault")
 
-        self._vault_url = vault_url
+        self._vault_url = vault_url.strip(" /")
+
+        client = kwargs.pop("generated_client", None)
+        if client:
+            # caller provided a configured client -> nothing left to initialize
+            self._client = client
+            return
 
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION

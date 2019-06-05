@@ -26,7 +26,7 @@ def create_vault_client():
     )
 
     # Create a new Vault client using Azure credentials
-    vault_client = VaultClient(vault_url=vault_url, credentials=credentials)
+    vault_client = VaultClient(vault_url=vault_url, credential=credentials)
     # [END create_vault_client]
     return vault_client
 
@@ -46,7 +46,7 @@ def create_secret_client():
     )
 
     # Create a new Secret client using Azure credentials
-    secret_client = SecretClient(vault_url=vault_url, credentials=credentials)
+    secret_client = SecretClient(vault_url=vault_url, credential=credentials)
     # [END create_secret_client]
     return secret_client
 

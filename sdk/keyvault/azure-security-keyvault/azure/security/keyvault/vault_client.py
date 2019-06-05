@@ -12,18 +12,22 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from azure.core import Configuration
     from azure.core.credentials import SupportsGetToken
+    from azure.core.pipeline.transport import HttpTransport
     from typing import Any, Mapping, Optional
 
+from ._internal import _KeyVaultClientBase
 from .keys._client import KeyClient
 from .secrets._client import SecretClient
 
 
-class VaultClient(object):
-    def __init__(self, vault_url, credential, config=None, **kwargs):
-        # type: (str, SupportsGetToken, Optional[Configuration], **Any) -> None
-        self._vault_url = vault_url.strip(" /")
-        self._secrets = SecretClient(self._vault_url, credential, config=config, **kwargs)
-        self._keys = KeyClient(self._vault_url, credential, config=config, **kwargs)
+class VaultClient(_KeyVaultClientBase):
+    def __init__(self, vault_url, credential, config=None, transport=None, api_version=None, **kwargs):
+        # type: (str, SupportsGetToken, Configuration, Optional[HttpTransport], Optional[str], **Any) -> None
+        super(VaultClient, self).__init__(
+            vault_url, credential, config=config, transport=transport, api_version=api_version, **kwargs
+        )
+        self._secrets = SecretClient(self.vault_url, credential, generated_client=self._client, **kwargs)
+        self._keys = KeyClient(self.vault_url, credential, generated_client=self._client, **kwargs)
 
     @property
     def secrets(self):
@@ -45,7 +49,3 @@ class VaultClient(object):
     #     :rtype: ~azure.keyvault.certificates.CertificateClient
     #     """
     #     pass
-
-    @property
-    def vault_url(self):
-        return self._vault_url

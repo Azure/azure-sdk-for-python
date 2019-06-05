@@ -69,7 +69,13 @@ class _AsyncKeyVaultClientBase:
         if not vault_url:
             raise ValueError("vault_url must be the URL of an Azure Key Vault")
 
-        self._vault_url = vault_url
+        self._vault_url = vault_url.strip(" /")
+
+        client = kwargs.pop("generated_client", None)
+        if client:
+            # caller provided a configured client -> nothing left to initialize
+            self._client = client
+            return
 
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION

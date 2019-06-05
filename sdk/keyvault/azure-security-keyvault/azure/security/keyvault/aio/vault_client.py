@@ -7,18 +7,28 @@ from typing import Any, Optional
 
 from azure.core import Configuration
 from azure.core.credentials import SupportsGetToken
+from azure.core.pipeline.transport import HttpTransport
 
+from ._internal import _AsyncKeyVaultClientBase
 from .keys._client import KeyClient
 from .secrets._client import SecretClient
 
 
-class VaultClient(object):
+class VaultClient(_AsyncKeyVaultClientBase):
     def __init__(
-        self, vault_url: str, credential: SupportsGetToken, config: Configuration = None, **kwargs: Any
+        self,
+        vault_url: str,
+        credential: SupportsGetToken,
+        config: Configuration = None,
+        transport: HttpTransport = None,
+        api_version: str = None,
+        **kwargs: Any
     ) -> None:
-        self.vault_url = vault_url
-        self._secrets = SecretClient(vault_url, credential, config=config, **kwargs)
-        self._keys = KeyClient(vault_url, credential, config=config, **kwargs)
+        super(VaultClient, self).__init__(
+            vault_url, credential, config=config, transport=transport, api_version=api_version, **kwargs
+        )
+        self._secrets = SecretClient(self.vault_url, credential, generated_client=self._client, **kwargs)
+        self._keys = KeyClient(self.vault_url, credential, generated_client=self._client, **kwargs)
 
     @property
     def secrets(self):
