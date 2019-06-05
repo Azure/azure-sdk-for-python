@@ -16,6 +16,7 @@ from .version import VERSION
 from .operations.operations import Operations
 from .operations.workspaces_operations import WorkspacesOperations
 from .operations.machine_learning_compute_operations import MachineLearningComputeOperations
+from .operations.quotas_operations import QuotasOperations
 from . import models
 
 
@@ -63,6 +64,8 @@ class AzureMachineLearningWorkspaces(SDKClient):
     :vartype workspaces: azure.mgmt.machinelearningservices.operations.WorkspacesOperations
     :ivar machine_learning_compute: MachineLearningCompute operations
     :vartype machine_learning_compute: azure.mgmt.machinelearningservices.operations.MachineLearningComputeOperations
+    :ivar quotas: Quotas operations
+    :vartype quotas: azure.mgmt.machinelearningservices.operations.QuotasOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -88,4 +91,6 @@ class AzureMachineLearningWorkspaces(SDKClient):
         self.workspaces = WorkspacesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.machine_learning_compute = MachineLearningComputeOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.quotas = QuotasOperations(
             self._client, self.config, self._serialize, self._deserialize)

@@ -23,6 +23,13 @@ class ProvisioningState(str, Enum):
     canceled = "Canceled"
 
 
+class Status(str, Enum):
+
+    undefined = "Undefined"
+    success = "Success"
+    failure = "Failure"
+
+
 class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"

@@ -14,6 +14,11 @@ try:
     from .operation_py3 import Operation
     from .workspace_py3 import Workspace
     from .workspace_update_parameters_py3 import WorkspaceUpdateParameters
+    from .quota_base_properties_py3 import QuotaBaseProperties
+    from .quota_update_parameters_py3 import QuotaUpdateParameters
+    from .update_workspace_quotas_py3 import UpdateWorkspaceQuotas
+    from .resource_name_py3 import ResourceName
+    from .resource_quota_py3 import ResourceQuota
     from .identity_py3 import Identity
     from .resource_py3 import Resource
     from .password_py3 import Password
@@ -46,6 +51,11 @@ except (SyntaxError, ImportError):
     from .operation import Operation
     from .workspace import Workspace
     from .workspace_update_parameters import WorkspaceUpdateParameters
+    from .quota_base_properties import QuotaBaseProperties
+    from .quota_update_parameters import QuotaUpdateParameters
+    from .update_workspace_quotas import UpdateWorkspaceQuotas
+    from .resource_name import ResourceName
+    from .resource_quota import ResourceQuota
     from .identity import Identity
     from .resource import Resource
     from .password import Password
@@ -76,8 +86,10 @@ except (SyntaxError, ImportError):
 from .operation_paged import OperationPaged
 from .workspace_paged import WorkspacePaged
 from .compute_resource_paged import ComputeResourcePaged
+from .resource_quota_paged import ResourceQuotaPaged
 from .azure_machine_learning_workspaces_enums import (
     ProvisioningState,
+    Status,
     ResourceIdentityType,
     ComputeType,
 )
@@ -87,6 +99,11 @@ __all__ = [
     'Operation',
     'Workspace',
     'WorkspaceUpdateParameters',
+    'QuotaBaseProperties',
+    'QuotaUpdateParameters',
+    'UpdateWorkspaceQuotas',
+    'ResourceName',
+    'ResourceQuota',
     'Identity',
     'Resource',
     'Password',
@@ -117,7 +134,9 @@ __all__ = [
     'OperationPaged',
     'WorkspacePaged',
     'ComputeResourcePaged',
+    'ResourceQuotaPaged',
     'ProvisioningState',
+    'Status',
     'ResourceIdentityType',
     'ComputeType',
 ]
