@@ -97,7 +97,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         # update secret with version
         if self.is_live:
             # wait a second to ensure the secret's update time won't equal its creation time
-            time.sleep(1)
+            await asyncio.sleep(1)
 
         updated = await _update_secret(created)
 
@@ -105,7 +105,9 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         deleted = await client.delete_secret(updated.name)
         self.assertIsNotNone(deleted)
 
-        await self._poll_until_resource_found(client.get_deleted_secret, [secret_name])
+        await self._poll_until_no_exception(
+            client.get_deleted_secret, secret_name, expected_exception=ResourceNotFoundError
+        )
 
         # deleted secret isn't found
         with self.assertRaises(ResourceNotFoundError):
@@ -182,7 +184,9 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         for secret_name in expected.keys():
             await client.delete_secret(secret_name)
 
-        await self._poll_until_resource_found(client.get_deleted_secret, expected.keys())
+        await self._poll_until_no_exception(
+            client.get_deleted_secret, *expected.keys(), expected_exception=ResourceNotFoundError
+        )
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         result = client.list_deleted_secrets()
@@ -237,7 +241,9 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         for secret_name in secrets.keys():
             await client.delete_secret(secret_name)
 
-        await self._poll_until_resource_found(client.get_deleted_secret, secrets.keys())
+        await self._poll_until_no_exception(
+            client.get_deleted_secret, *secrets.keys(), expected_exception=ResourceNotFoundError
+        )
 
         # recover select secrets
         for secret_name in [s for s in secrets.keys() if s.startswith("secrec")]:
@@ -249,7 +255,9 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
         # validate the recovered secrets
         expected = {k: v for k, v in secrets.items() if k.startswith("secrec")}
-        await self._poll_until_resource_found(client.get_secret, expected.keys())
+        await self._poll_until_no_exception(
+            client.get_secret, *expected.keys(), expected_exception=ResourceNotFoundError
+        )
 
         actual = {}
         for k in expected.keys():

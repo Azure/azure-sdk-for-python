@@ -2,10 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
-
-import time
+# -------------------------------------------------------------------------
 import codecs
+import functools
+import time
+
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.security.keyvault._generated.v7_0.models import JsonWebKey
 from devtools_testutils import ResourceGroupPreparer
@@ -213,7 +214,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             pass
 
     @ResourceGroupPreparer()
-    @VaultClientPreparer()
+    @VaultClientPreparer(enable_soft_delete=True)
     def test_example_keys_backup_restore(self, vault_client, **kwargs):
         key_client = vault_client.keys
         created_key = key_client.create_key("keyrec", "RSA")
@@ -230,8 +231,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
             key_client.delete_key("keyrec")
             if self.is_live:
-                # wait a second to ensure the key has been deleted
-                time.sleep(20)
+                self._poll_until_no_exception(
+                    functools.partial(key_client.get_deleted_key, key_name), ResourceNotFoundError
+                )
+
             # [START restore_key]
 
             # restores a backed up key
@@ -250,8 +253,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         created_key = key_client.create_key("key-name", "RSA")
         key_client.delete_key(created_key.name)
         if self.is_live:
-            # wait a second to ensure the key has been deleted
-            time.sleep(30)
+            self._poll_until_no_exception(
+                functools.partial(key_client.get_deleted_key, created_key.name), ResourceNotFoundError
+            )
 
         try:
             # [START get_deleted_key]
@@ -276,10 +280,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             pass
 
         try:
-            key_client.delete_key("key-name")
+            key_client.delete_key(created_key.name)
             if self.is_live:
-                # wait a second to ensure the key has been deleted
-                time.sleep(20)
+                self._poll_until_no_exception(
+                    functools.partial(key_client.get_deleted_key, created_key.name), ResourceNotFoundError
+                )
+
             # [START purge_deleted_key]
 
             # if the vault has soft-delete enabled, purge permanently deletes the key

@@ -2,10 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
-import time
+# -------------------------------------------------------------------------
 import codecs
 from dateutil import parser as date_parse
+import functools
+import time
+
+from azure.core.exceptions import ResourceNotFoundError
 from azure.security.keyvault._generated.v7_0.models import JsonWebKey
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
@@ -165,8 +168,10 @@ class KeyClientTests(KeyVaultTestCase):
         )
 
         if self.is_live:
-            # wait to ensure the key has been deleted
-            time.sleep(20)
+            self._poll_until_no_exception(
+                functools.partial(client.get_deleted_key, created_rsa_key.name), ResourceNotFoundError
+            )
+
         # get the deleted key when soft deleted enabled
         deleted_key = client.get_deleted_key(created_rsa_key.name)
         self.assertIsNotNone(deleted_key)
@@ -266,7 +271,10 @@ class KeyClientTests(KeyVaultTestCase):
             client.delete_key(key_name)
 
         if self.is_live:
-            time.sleep(20)
+            for key_name in keys.keys():
+                self._poll_until_no_exception(
+                    functools.partial(client.get_deleted_key, key_name), expected_exception=ResourceNotFoundError
+                )
 
         # validate all our deleted keys are returned by list_deleted_keys
         deleted = [s.name for s in client.list_deleted_keys()]
@@ -274,17 +282,22 @@ class KeyClientTests(KeyVaultTestCase):
         self.assertTrue(all(s in deleted for s in keys.keys()))
 
         # recover select keys
-        for key_name in [s for s in keys.keys() if s.startswith("keyrec")]:
+        keys_to_recover = [s for s in keys.keys() if s.startswith("keyrec")]
+        for key_name in keys_to_recover:
             recovered_key = client.recover_deleted_key(key_name)
             expected_key = keys[key_name]
             self._assert_key_attributes_equal(expected_key, recovered_key)
 
         # purge select keys
-        for key_name in [s for s in keys.keys() if s.startswith("keyprg")]:
+        keys_to_purge = [s for s in keys.keys() if s.startswith("keyprg")]
+        for key_name in keys_to_purge:
             client.purge_deleted_key(key_name)
 
-        if not self.is_playback():
-            time.sleep(20)
+        if self.is_live:
+            for key_name in keys_to_purge:
+                self._poll_until_exception(
+                    functools.partial(client.get_deleted_key, key_name), expected_exception=ResourceNotFoundError
+                )
 
         # validate none of our purged keys are returned by list_deleted_keys
         deleted = [s.name for s in client.list_deleted_keys()]

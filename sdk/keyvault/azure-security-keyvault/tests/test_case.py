@@ -3,6 +3,9 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
+import time
+
 from devtools_testutils import AzureMgmtTestCase
 
 from auth_request_filter import OAuthv2RequestResponsesFilter
@@ -20,3 +23,33 @@ class KeyVaultTestCase(AzureMgmtTestCase):
 
     def tearDown(self):
         super(KeyVaultTestCase, self).tearDown()
+
+    def _poll_until_no_exception(self, fn, expected_exception, max_retries=20, retry_delay=6):
+        """polling helper for live tests because some operations take an unpredictable amount of time to complete"""
+
+        if not self.is_live:
+            return
+
+        for i in range(max_retries):
+            try:
+                fn()
+                break
+            except expected_exception:
+                if i == max_retries - 1:
+                    raise
+                time.sleep(retry_delay)
+
+    def _poll_until_exception(self, fn, expected_exception, max_retries=20, retry_delay=6):
+        """polling helper for live tests because some operations take an unpredictable amount of time to complete"""
+
+        if not self.is_live:
+            return
+
+        for _ in range(max_retries):
+            try:
+                fn()
+                time.sleep(retry_delay)
+            except expected_exception:
+                return
+
+        self.fail("expected exception {expected_exception} was not raised")

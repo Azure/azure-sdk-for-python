@@ -3,9 +3,10 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import time
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
@@ -197,8 +198,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         try:
             deleted_secret = secret_client.delete_secret(secret_name)
             if self.is_live:
-                # wait a second to ensure the secret has been deleted
-                time.sleep(1)
+                self._poll_until_no_exception(
+                    functools.partial(secret_client.get_deleted_secret, secret_name), ResourceNotFoundError
+                )
 
             # [START get_deleted_secret]
             # gets a deleted secret (requires soft-delete enabled for the vault)
@@ -229,8 +231,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         created_secret = secret_client.set_secret("secret-name", "secret-value")
         secret_client.delete_secret(created_secret.name)
         if self.is_live:
-            # wait a second to ensure the secret has been deleted
-            time.sleep(1)
+            self._poll_until_no_exception(
+                functools.partial(secret_client.get_deleted_secret, created_secret.name), ResourceNotFoundError
+            )
 
         try:
             # [START recover_deleted_secret]
@@ -246,12 +249,17 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         try:
             if self.is_live:
-                # wait a second to ensure the secret has been recovered
-                time.sleep(1)
+                self._poll_until_no_exception(
+                    functools.partial(secret_client.get_secret, created_secret.name), ResourceNotFoundError
+                )
+
             secret_client.delete_secret(created_secret.name)
+
             if self.is_live:
-                # wait a second to ensure the secret has been deleted
-                time.sleep(1)
+                self._poll_until_no_exception(
+                    functools.partial(secret_client.get_deleted_secret, created_secret.name), ResourceNotFoundError
+                )
+
             # [START purge_deleted_secret]
 
             # if the vault has soft-delete enabled, purge permanently deletes the secret

@@ -169,8 +169,10 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         )
 
         if self.is_live:
-            # wait to ensure the key has been deleted
-            await asyncio.sleep(30)
+            await self._poll_until_no_exception(
+                client.get_deleted_key, created_rsa_key.name, expected_exception=ResourceNotFoundError
+            )
+
         # get the deleted key when soft deleted enabled
         deleted_key = await client.get_deleted_key(created_rsa_key.name)
         self.assertIsNotNone(deleted_key)
@@ -240,7 +242,9 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         for key_name in expected.keys():
             await client.delete_key(key_name)
 
-        await self._poll_until_resource_found(client.get_deleted_key, expected.keys())
+        await self._poll_until_no_exception(
+            client.get_deleted_key, *expected.keys(), expected_exception=ResourceNotFoundError
+        )
 
         # validate all our deleted keys are returned by list_deleted_keys
         result = client.list_deleted_keys()
@@ -294,7 +298,9 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         for key_name in keys.keys():
             await client.delete_key(key_name)
 
-        await self._poll_until_resource_found(client.get_deleted_key, keys.keys())
+        await self._poll_until_no_exception(
+            client.get_deleted_key, *keys.keys(), expected_exception=ResourceNotFoundError
+        )
 
         # recover select keys
         for key_name in [s for s in keys.keys() if s.startswith("keyrec")]:
@@ -308,7 +314,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
 
         # validate the recovered keys
         expected = {k: v for k, v in keys.items() if k.startswith("keyrec")}
-        await self._poll_until_resource_found(client.get_key, expected.keys())
+        await self._poll_until_no_exception(client.get_key, *expected.keys(), expected_exception=ResourceNotFoundError)
 
         actual = {}
         for k in expected.keys():

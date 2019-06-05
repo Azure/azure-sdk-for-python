@@ -3,14 +3,14 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
+from dateutil import parser as date_parse
+import time
 
 from devtools_testutils import ResourceGroupPreparer
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
-from azure.core.exceptions import HttpResponseError
-
-from dateutil import parser as date_parse
-import time
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 
 class SecretClientTests(KeyVaultTestCase):
@@ -99,6 +99,7 @@ class SecretClientTests(KeyVaultTestCase):
         if self.is_live:
             # wait to ensure the secret's update time won't equal its creation time
             time.sleep(1)
+
         updated = _update_secret(created)
 
         # delete secret
@@ -106,9 +107,7 @@ class SecretClientTests(KeyVaultTestCase):
         self.assertIsNotNone(deleted)
 
         if self.is_live:
-            # wait to ensure the secret has been deleted
-            # TODO: replace sleeps with polling (client won't do it by default because 404 isn't retryable)
-            time.sleep(30)
+            self._poll_until_no_exception(functools.partial(client.get_deleted_secret, created.name), ResourceNotFoundError)
 
         # get the deleted secret
         deleted_secret = client.get_deleted_secret(deleted.name)
@@ -195,9 +194,8 @@ class SecretClientTests(KeyVaultTestCase):
         # delete all secrets
         for secret_name in expected.keys():
             client.delete_secret(secret_name)
-
-        if not self.is_playback():
-            time.sleep(20)
+            if self.is_live:
+                self._poll_until_no_exception(functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError)
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         self._validate_secret_list(list(client.list_deleted_secrets()), expected)
@@ -248,31 +246,32 @@ class SecretClientTests(KeyVaultTestCase):
         # delete all secrets
         for secret_name in secrets.keys():
             client.delete_secret(secret_name)
-
-        if not self.is_playback():
-            time.sleep(20)
+            if self.is_live:
+                self._poll_until_no_exception(functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError)
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         deleted = [s.name for s in client.list_deleted_secrets()]
 
         self.assertTrue(all(s in deleted for s in secrets.keys()))
 
+        secrets_to_purge = {s for s in secrets.keys() if s.startswith("secprg")}
+        secrets_to_recover = [n for n in secrets.keys() if n.startswith("secrec")]
+
         # recover select secrets
-        for secret_name in [s for s in secrets.keys() if s.startswith("secrec")]:
+        for secret_name in secrets_to_recover:
             client.recover_deleted_secret(secret_name)
 
         # purge select secrets
-        for secret_name in [s for s in secrets.keys() if s.startswith("secprg")]:
+        for secret_name in secrets_to_purge:
             client.purge_deleted_secret(secret_name)
 
-        if not self.is_playback():
-            time.sleep(20)
-
-        # validate none of our purged secrets are returned by list_deleted_secrets
-        deleted = [s.name for s in client.list_deleted_secrets()]
-        self.assertTrue(not any(s in deleted for s in secrets.keys()))
+        if self.is_live:
+            time.sleep(10)
 
         # validate the recovered secrets
-        expected = {k: v for k, v in secrets.items() if k.startswith("secrec")}
-        actual = {k: client.get_secret(k, "") for k in expected.keys()}
-        self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
+        for secret_name in secrets_to_recover:
+            self._poll_until_no_exception(functools.partial(client.get_secret, secret_name), ResourceNotFoundError)
+
+        # validate none of our purged secrets are returned by list_deleted_secrets
+        for secret in client.list_deleted_secrets():
+            self.assertFalse(secret.name in secrets_to_purge)

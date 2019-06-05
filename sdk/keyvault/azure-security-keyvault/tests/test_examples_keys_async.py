@@ -2,9 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
-
-import asyncio
+# -------------------------------------------------------------------------
 import functools
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError, HttpResponseError
@@ -231,8 +229,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
             await key_client.delete_key("keyrec")
             if self.is_live:
-                # wait a second to ensure the key has been deleted
-                await asyncio.sleep(20)
+                await self._poll_until_no_exception(
+                    key_client.get_deleted_key, created_key.name, expected_exception=ResourceNotFoundError
+                )
+
             # [START restore_key]
 
             # restores a backed up key
@@ -251,12 +251,16 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         key_client = vault_client.keys
         created_key = await key_client.create_key("key-name", "RSA")
         if self.is_live:
-            # wait a second to ensure the key has been created
-            await asyncio.sleep(20)
+            await self._poll_until_no_exception(
+                key_client.get_key, created_key.name, expected_exception=ResourceNotFoundError
+            )
+
         await key_client.delete_key(created_key.name)
+
         if self.is_live:
-            # wait a second to ensure the key has been deleted
-            await asyncio.sleep(30)
+            await self._poll_until_no_exception(
+                key_client.get_deleted_key, created_key.name, expected_exception=ResourceNotFoundError
+            )
 
         try:
             # [START get_deleted_key]
@@ -282,12 +286,17 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         try:
             if self.is_live:
-                # wait a second to ensure the key has been recovered
-                await asyncio.sleep(20)
+                await self._poll_until_no_exception(
+                    key_client.get_key, created_key.name, expected_exception=ResourceNotFoundError
+                )
+
             await key_client.delete_key("key-name")
+
             if self.is_live:
-                # wait a second to ensure the key has been deleted
-                await asyncio.sleep(20)
+                await self._poll_until_no_exception(
+                    key_client.get_deleted_key, created_key.name, expected_exception=ResourceNotFoundError
+                )
+
             # [START purge_deleted_key]
 
             # if the vault has soft-delete enabled, purge permanently deletes the key

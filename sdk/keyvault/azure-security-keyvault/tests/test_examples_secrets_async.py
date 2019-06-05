@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-import time
 import asyncio
 import functools
 
@@ -13,6 +11,10 @@ from async_preparer import AsyncVaultClientPreparer
 from async_test_case import AsyncKeyVaultTestCase
 from azure.security.keyvault._generated.v7_0.models import KeyVaultErrorException
 from azure.security.keyvault.aio.vault_client import VaultClient
+from devtools_testutils import ResourceGroupPreparer
+
+from async_test_case import AsyncKeyVaultTestCase
+from preparer import VaultClientPreparer
 
 
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):
@@ -25,10 +27,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             # [START set_secret]
             from dateutil import parser as date_parse
 
-            expires = date_parse.parse('2050-02-02T08:00:00.000Z')
+            expires = date_parse.parse("2050-02-02T08:00:00.000Z")
 
             # create a secret with optional arguments
-            secret = await secret_client.set_secret('secret-name', 'secret-value', enabled=True, expires=expires)
+            secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True, expires=expires)
 
             print(secret.version)
             print(secret.created)
@@ -44,11 +46,11 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             # [START get_secret]
 
             # get secret with version
-            secret = await secret_client.get_secret('secret-name', secret_version)
+            secret = await secret_client.get_secret("secret-name", secret_version)
 
             # if the version argument is an empty string or None, the latest
             # version of the secret will be returned
-            secret = await secret_client.get_secret('secret-name', '')
+            secret = await secret_client.get_secret("secret-name", "")
 
             print(secret.id)
             print(secret.name)
@@ -63,13 +65,12 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
             # update attributes of an existing secret
 
-            content_type = 'text/plain'
-            tags = {'foo': 'updated tag'}
+            content_type = "text/plain"
+            tags = {"foo": "updated tag"}
             secret_version = secret.version
             updated_secret = await secret_client.update_secret(
-                'secret-name', secret_version,
-                content_type=content_type,
-                tags=tags)
+                "secret-name", secret_version, content_type=content_type, tags=tags
+            )
 
             print(updated_secret.version)
             print(updated_secret.updated)
@@ -84,7 +85,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             # [START delete_secret]
 
             # delete a secret
-            deleted_secret = await secret_client.delete_secret('secret-name')
+            deleted_secret = await secret_client.delete_secret("secret-name")
 
             print(deleted_secret.name)
             print(deleted_secret.deleted_date)
@@ -118,7 +119,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             from azure.security.keyvault.vault_client import VaultClient
 
             # gets a list of all versions of a secret
-            secret_versions = secret_client.list_secret_versions('secret-name')
+            secret_versions = secret_client.list_secret_versions("secret-name")
 
             async for secret in secret_versions:
                 # the list doesn't include secret values
@@ -149,7 +150,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_secrets_backup_restore(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
-        created_secret = await secret_client.set_secret('secret-name', 'secret-value')
+        created_secret = await secret_client.set_secret("secret-name", "secret-value")
         secret_name = created_secret.name
         try:
             # [START backup_secret]
@@ -164,25 +165,12 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             pass
 
         try:
-            deleted_secret = await secret_client.delete_secret(secret_name)
+            await secret_client.delete_secret(created_secret.name)
             if self.is_live:
-                # wait a second to ensure the secret has been deleted
-                time.sleep(20)
+                await self._poll_until_exception(
+                    secret_client.get_secret, created_secret.name, expected_exception=ResourceNotFoundError
+                )
 
-            # [START get_deleted_secret]
-            # gets a deleted secret (requires soft-delete enabled for the vault)
-            deleted_secret = await secret_client.get_deleted_secret('secret-name')
-            print(deleted_secret.name)
-
-            # [END get_deleted_secret]
-        except KeyVaultErrorException:
-            pass
-
-        try:
-            await secret_client.purge_deleted_secret(created_secret.name)
-            if self.is_live:
-                # wait a second to ensure the secret has been deleted
-                time.sleep(20)
             # [START restore_secret]
 
             # restores a backed up secret
@@ -199,18 +187,30 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_secrets_recover_purge(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
-        created_secret = await secret_client.set_secret('secret-name', 'secret-value')
+        created_secret = await secret_client.set_secret("secret-name", "secret-value")
         await secret_client.delete_secret(created_secret.name)
-        if self.is_live:
-            # wait a second to ensure the secret has been deleted
-            time.sleep(50)
+
+        try:
+            if self.is_live:
+                await self._poll_until_no_exception(
+                    secret_client.get_deleted_secret, created_secret.name, expected_exception=ResourceNotFoundError
+                )
+
+            # [START get_deleted_secret]
+            # gets a deleted secret (requires soft-delete enabled for the vault)
+            deleted_secret = await secret_client.get_deleted_secret("secret-name")
+            print(deleted_secret.name)
+
+            # [END get_deleted_secret]
+
+        except KeyVaultErrorException:
+            pass
 
         try:
             # [START recover_deleted_secret]
 
             # recover deleted secret to the latest version
-            recover_deleted_secret = await secret_client.recover_deleted_secret(
-                'secret-name')
+            recover_deleted_secret = await secret_client.recover_deleted_secret("secret-name")
             print(recover_deleted_secret.id)
             print(recover_deleted_secret.name)
 
@@ -220,17 +220,22 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         try:
             if self.is_live:
-                # wait a second to ensure the secret has been recovered
-                time.sleep(50)
+                await self._poll_until_no_exception(
+                    secret_client.get_secret, created_secret.name, expected_exception=ResourceNotFoundError
+                )
+
             await secret_client.delete_secret(created_secret.name)
+
             if self.is_live:
-                # wait a second to ensure the secret has been deleted
-                time.sleep(50)
+                await self._poll_until_no_exception(
+                    secret_client.get_deleted_secret, created_secret.name, expected_exception=ResourceNotFoundError
+                )
+
             # [START purge_deleted_secret]
 
             # if the vault has soft-delete enabled, purge permanently deletes the secret
             # (without soft-delete, an ordinary delete is permanent)
-            await secret_client.purge_deleted_secret('secret-name')
+            await secret_client.purge_deleted_secret("secret-name")
 
             # [END purge_deleted_secret]
         except KeyVaultErrorException:
