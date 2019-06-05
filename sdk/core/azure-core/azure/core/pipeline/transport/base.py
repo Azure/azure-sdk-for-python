@@ -179,7 +179,7 @@ class HttpRequest(object):
 
     def set_json_body(self, data):
         """Set a JSON-friendly object as the body of the request.
-        
+
         :param data: The request field data.
         """
         if data is None:
@@ -207,7 +207,7 @@ class HttpRequest(object):
 
     def set_bytes_body(self, data):
         """Set generic bytes as the body of the request.
-        
+
         :param data: The request field data.
         """
         if data:

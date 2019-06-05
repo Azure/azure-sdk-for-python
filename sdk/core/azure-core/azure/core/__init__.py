@@ -24,7 +24,8 @@
 #
 # --------------------------------------------------------------------------
 
-__version__ = "0.0.1"
+from .version import VERSION
+__version__ = VERSION
 
 from .configuration import Configuration
 from .pipeline_client import PipelineClient

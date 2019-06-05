@@ -19,6 +19,7 @@ class ServerVersion(str, Enum):
     one_zero = "10"
     one_zero_full_stop_zero = "10.0"
     one_zero_full_stop_two = "10.2"
+    one_one = "11"
 
 
 class SslEnforcementEnum(str, Enum):
@@ -35,6 +36,12 @@ class ServerState(str, Enum):
 
 
 class GeoRedundantBackup(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class StorageAutogrow(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"
