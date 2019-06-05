@@ -61,7 +61,7 @@ class HeadersPolicy(SansIOHTTPPolicy):
     :param dict base_headers: Headers to send with the request.
 
     Example:
-        .. literalinclude:: ../../../../examples/examples_sansio.py
+        .. literalinclude:: ../examples/examples_sansio.py
             :start-after: [START headers_policy]
             :end-before: [END headers_policy]
             :language: python
@@ -103,11 +103,15 @@ class UserAgentPolicy(SansIOHTTPPolicy):
     """User-Agent Policy. Allows custom values to be added to the User-Agent header.
 
     :param str base_user_agent: Sets the base user agent value.
-    :param bool user_agent_overwrite: Keyword argument that overwrites User-Agent when True. Defaults to False.
-    :param bool user_agent_use_env: Keyword argument that gets user-agent from environment. Defaults to True.
+
+    **Keyword arguments:**
+
+    *user_agent_overwrite (bool)* - Overwrites User-Agent when True. Defaults to False.
+
+    *user_agent_use_env (bool)* - Gets user-agent from environment. Defaults to True.
 
     Example:
-        .. literalinclude:: ../../../../examples/examples_sansio.py
+        .. literalinclude:: ../examples/examples_sansio.py
             :start-after: [START user_agent_policy]
             :end-before: [END user_agent_policy]
             :language: python
@@ -175,12 +179,9 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
     This accepts both global configuration, and per-request level with "enable_http_logger"
 
     :param bool logging_enable: Use to enable per operation. Defaults to False.
-     Keyword argument.
-    :param bool enable_http_logger: Enables network trace logging at DEBUG level.
-     Defaults to False.
 
     Example:
-        .. literalinclude:: ../../../../examples/examples_sansio.py
+        .. literalinclude:: ../examples/examples_sansio.py
             :start-after: [START network_trace_logging_policy]
             :end-before: [END network_trace_logging_policy]
             :language: python
@@ -278,6 +279,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         """Decode response data according to content-type.
         Accept a stream of data as well, but will be load at once in memory for now.
         If no content-type, will return the string version (not bytes, not stream)
+
         :param response: The HTTP response.
         :type response: ~azure.core.pipeline.transport.HttpResponse
         :param str content_type: The content type.
@@ -385,11 +387,13 @@ class ProxyPolicy(SansIOHTTPPolicy):
 
     :param dict proxies: Maps protocol or protocol and hostname to the URL
      of the proxy.
-    :param bool proxies_use_env_settings: Keyword argument that uses proxy settings
-     from environment. Defaults to True.
+
+    **Keyword argument:**
+
+    *proxies_use_env_settings (bool)* - Uses proxy settings from environment. Defaults to True.
 
     Example:
-        .. literalinclude:: ../../../../examples/examples_sansio.py
+        .. literalinclude:: ../examples/examples_sansio.py
             :start-after: [START proxy_policy]
             :end-before: [END proxy_policy]
             :language: python

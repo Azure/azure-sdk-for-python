@@ -31,7 +31,9 @@ _LOGGER = logging.getLogger(__name__)
 class AsyncPagedMixin(AsyncIterator):
     """Bring async to Paging.
 
-    :param async_command: Mandatory keyword argument for this mixin to work.
+    **Keyword argument:**
+
+    *async_command* - Mandatory keyword argument for this mixin to work.
     """
     def __init__(self, *args, **kwargs): # pylint: disable=unused-argument
         self._async_get_next = kwargs.get("async_command")
