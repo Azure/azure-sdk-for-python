@@ -100,7 +100,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         )
         return Secret._from_secret_bundle(bundle)
 
-    async def update_secret_attributes(
+    async def update_secret(
         self,
         name: str,
         version: str,
@@ -134,8 +134,8 @@ class SecretClient(_AsyncKeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_keyvault_async.py
-                :start-after: [START update_secret_attributes]
-                :end-before: [END update_secret_attributes]
+                :start-after: [START update_secret]
+                :end-before: [END update_secret]
                 :language: python
                 :dedent: 4
                 :caption: Updates the attributes associated with a specified secret in the key vault

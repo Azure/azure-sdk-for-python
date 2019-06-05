@@ -59,14 +59,14 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             pass
 
         try:
-            # [START update_secret_attributes]
+            # [START update_secret]
 
             # update attributes of an existing secret
 
             content_type = 'text/plain'
             tags = {'foo': 'updated tag'}
             secret_version = secret.version
-            updated_secret = await secret_client.update_secret_attributes(
+            updated_secret = await secret_client.update_secret(
                 'secret-name', secret_version,
                 content_type=content_type,
                 tags=tags)
@@ -76,7 +76,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(updated_secret.content_type)
             print(updated_secret.tags)
 
-            # [END update_secret_attributes]
+            # [END update_secret]
         except KeyVaultErrorException:
             pass
 

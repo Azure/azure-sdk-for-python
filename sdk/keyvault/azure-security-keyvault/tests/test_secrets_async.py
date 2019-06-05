@@ -86,7 +86,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             content_type = "text/plain"
             expires = date_parse.parse("2050-02-02T08:00:00.000Z")
             tags = {"foo": "updated tag"}
-            secret_bundle = await client.update_secret_attributes(
+            secret_bundle = await client.update_secret(
                 secret.name, secret.version, content_type=content_type, expires=expires, tags=tags
             )
             self.assertEqual(tags, secret_bundle.tags)

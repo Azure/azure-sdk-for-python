@@ -98,7 +98,7 @@ class SecretClient(_KeyVaultClientBase):
         )
         return Secret._from_secret_bundle(bundle)
 
-    def update_secret_attributes(
+    def update_secret(
         self, name, version, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
     ):
         # type: (str, str, Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> SecretAttributes
@@ -125,8 +125,8 @@ class SecretClient(_KeyVaultClientBase):
 
         Example:
             .. literalinclude:: ../tests/test_examples_keyvault.py
-                :start-after: [START update_secret_attributes]
-                :end-before: [END update_secret_attributes]
+                :start-after: [START update_secret]
+                :end-before: [END update_secret]
                 :language: python
                 :dedent: 4
                 :caption: Updates the attributes associated with a specified secret in the key vault
