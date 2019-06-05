@@ -56,6 +56,9 @@ class Run(ProxyResource):
     :param source_trigger: The source trigger that caused the run.
     :type source_trigger:
      ~azure.mgmt.containerregistry.v2019_04_01.models.SourceTriggerDescriptor
+    :param timer_trigger: The timer trigger that caused the run.
+    :type timer_trigger:
+     ~azure.mgmt.containerregistry.v2019_04_01.models.TimerTriggerDescriptor
     :param platform: The platform properties against which the run will
      happen.
     :type platform:
@@ -72,6 +75,8 @@ class Run(ProxyResource):
     :ivar run_error_message: The error message received from backend systems
      after the run is scheduled.
     :vartype run_error_message: str
+    :param update_trigger_token: The update trigger token passed for the Run.
+    :type update_trigger_token: str
     :param provisioning_state: The provisioning state of a run. Possible
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
      'Canceled'
@@ -104,11 +109,13 @@ class Run(ProxyResource):
         'task': {'key': 'properties.task', 'type': 'str'},
         'image_update_trigger': {'key': 'properties.imageUpdateTrigger', 'type': 'ImageUpdateTrigger'},
         'source_trigger': {'key': 'properties.sourceTrigger', 'type': 'SourceTriggerDescriptor'},
+        'timer_trigger': {'key': 'properties.timerTrigger', 'type': 'TimerTriggerDescriptor'},
         'platform': {'key': 'properties.platform', 'type': 'PlatformProperties'},
         'agent_configuration': {'key': 'properties.agentConfiguration', 'type': 'AgentProperties'},
         'source_registry_auth': {'key': 'properties.sourceRegistryAuth', 'type': 'str'},
         'custom_registries': {'key': 'properties.customRegistries', 'type': '[str]'},
         'run_error_message': {'key': 'properties.runErrorMessage', 'type': 'str'},
+        'update_trigger_token': {'key': 'properties.updateTriggerToken', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'is_archive_enabled': {'key': 'properties.isArchiveEnabled', 'type': 'bool'},
     }
@@ -126,10 +133,12 @@ class Run(ProxyResource):
         self.task = kwargs.get('task', None)
         self.image_update_trigger = kwargs.get('image_update_trigger', None)
         self.source_trigger = kwargs.get('source_trigger', None)
+        self.timer_trigger = kwargs.get('timer_trigger', None)
         self.platform = kwargs.get('platform', None)
         self.agent_configuration = kwargs.get('agent_configuration', None)
         self.source_registry_auth = kwargs.get('source_registry_auth', None)
         self.custom_registries = kwargs.get('custom_registries', None)
         self.run_error_message = None
+        self.update_trigger_token = kwargs.get('update_trigger_token', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.is_archive_enabled = kwargs.get('is_archive_enabled', False)

@@ -56,6 +56,7 @@ try:
     from .image_descriptor_py3 import ImageDescriptor
     from .image_update_trigger_py3 import ImageUpdateTrigger
     from .source_trigger_descriptor_py3 import SourceTriggerDescriptor
+    from .timer_trigger_descriptor_py3 import TimerTriggerDescriptor
     from .platform_properties_py3 import PlatformProperties
     from .agent_properties_py3 import AgentProperties
     from .run_py3 import Run
@@ -147,6 +148,7 @@ except (SyntaxError, ImportError):
     from .image_descriptor import ImageDescriptor
     from .image_update_trigger import ImageUpdateTrigger
     from .source_trigger_descriptor import SourceTriggerDescriptor
+    from .timer_trigger_descriptor import TimerTriggerDescriptor
     from .platform_properties import PlatformProperties
     from .agent_properties import AgentProperties
     from .run import Run
@@ -275,6 +277,7 @@ __all__ = [
     'ImageDescriptor',
     'ImageUpdateTrigger',
     'SourceTriggerDescriptor',
+    'TimerTriggerDescriptor',
     'PlatformProperties',
     'AgentProperties',
     'Run',

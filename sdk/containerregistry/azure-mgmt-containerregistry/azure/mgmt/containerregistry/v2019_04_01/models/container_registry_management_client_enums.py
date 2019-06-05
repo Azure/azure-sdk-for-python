@@ -124,6 +124,7 @@ class Architecture(str, Enum):
     amd64 = "amd64"
     x86 = "x86"
     arm = "arm"
+    arm64 = "arm64"
 
 
 class Variant(str, Enum):

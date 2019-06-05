@@ -19,7 +19,7 @@ class PlatformUpdateParameters(Model):
      include: 'Windows', 'Linux'
     :type os: str or ~azure.mgmt.containerregistry.v2019_05_01.models.OS
     :param architecture: The OS architecture. Possible values include:
-     'amd64', 'x86', 'arm'
+     'amd64', 'x86', 'arm', 'arm64'
     :type architecture: str or
      ~azure.mgmt.containerregistry.v2019_05_01.models.Architecture
     :param variant: Variant of the CPU. Possible values include: 'v6', 'v7',
