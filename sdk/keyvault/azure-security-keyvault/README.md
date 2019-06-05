@@ -99,8 +99,7 @@ logging.basicConfig(level=logging.DEBUG)
 Http request and response details are printed to stdout with this logging config.
 
 ## Next steps
-* Set and retrieve a secret [TODO: add link]
-* Set and retrieve a key [TODO: add link]
+[Quickstart: Set and retrieve a secret from Azure Key Vault using the Azure portal](https://docs.microsoft.com/en-us/azure/key-vault/quick-create-portal)
 
 ###  Documentation
 Reference documentation is available at docs.microsoft.com/python/api/azure-security-keyvault
