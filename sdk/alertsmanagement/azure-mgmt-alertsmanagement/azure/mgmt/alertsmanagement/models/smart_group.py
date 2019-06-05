@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class SmartGroup(Resource):
+class SmartGroup(ProxyResource):
     """Set of related alerts grouped together smartly by AMS.
 
     Variables are only populated by the server, and will be ignored when
