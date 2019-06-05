@@ -23,12 +23,17 @@ class StorageProfile(Model):
      ~azure.mgmt.rdbms.postgresql.models.GeoRedundantBackup
     :param storage_mb: Max storage allowed for a server.
     :type storage_mb: int
+    :param storage_autogrow: Enable Storage Auto Grow. Possible values
+     include: 'Enabled', 'Disabled'
+    :type storage_autogrow: str or
+     ~azure.mgmt.rdbms.postgresql.models.StorageAutogrow
     """
 
     _attribute_map = {
         'backup_retention_days': {'key': 'backupRetentionDays', 'type': 'int'},
         'geo_redundant_backup': {'key': 'geoRedundantBackup', 'type': 'str'},
         'storage_mb': {'key': 'storageMB', 'type': 'int'},
+        'storage_autogrow': {'key': 'storageAutogrow', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -36,3 +41,4 @@ class StorageProfile(Model):
         self.backup_retention_days = kwargs.get('backup_retention_days', None)
         self.geo_redundant_backup = kwargs.get('geo_redundant_backup', None)
         self.storage_mb = kwargs.get('storage_mb', None)
+        self.storage_autogrow = kwargs.get('storage_autogrow', None)
