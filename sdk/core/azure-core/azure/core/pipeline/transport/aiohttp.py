@@ -117,7 +117,7 @@ class AioHttpTransport(AsyncHttpTransport):
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
-        pass stream=True to avoid this behavior.
+        Pass stream=True to avoid this behavior.
 
         :param request: The HttpRequest object
         :type request: ~azure.core.pipeline.transport.HttpRequest
@@ -125,8 +125,9 @@ class AioHttpTransport(AsyncHttpTransport):
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
 
-        Keyword arguments:
-        stream - Defaults to False.
+        **Keyword argument:**
+
+        *stream (bool)* - Defaults to False.
         """
         await self.open()
         error = None
