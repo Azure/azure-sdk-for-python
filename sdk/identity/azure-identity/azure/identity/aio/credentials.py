@@ -1,8 +1,8 @@
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 import os
 from typing import Any, Dict, Mapping, Optional, Union
 
@@ -173,10 +173,6 @@ class AsyncManagedIdentityCredential(object):
 
 class AsyncTokenCredentialChain(TokenCredentialChain):
     """A sequence of token credentials"""
-
-    @classmethod
-    def default(cls):
-        return cls(AsyncEnvironmentCredential(), AsyncManagedIdentityCredential())
 
     async def get_token(self, *scopes: str) -> str:
         """Attempts to get a token from each credential, in order, returning the first token.

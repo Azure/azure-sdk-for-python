@@ -1,8 +1,8 @@
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
+# ------------------------------------------------------------------------
 import os
 
 from azure.core import Configuration
@@ -189,7 +189,7 @@ class ManagedIdentityCredential(object):
         pass
 
 
-class TokenCredentialChain:
+class TokenCredentialChain(object):
     """A sequence of token credentials"""
 
     def __init__(self, *credentials):
@@ -197,10 +197,6 @@ class TokenCredentialChain:
         if not credentials:
             raise ValueError("at least one credential is required")
         self._credentials = credentials
-
-    @classmethod
-    def default(cls):
-        return cls(EnvironmentCredential(), ManagedIdentityCredential())
 
     def get_token(self, *scopes):
         # type: (*str) -> str

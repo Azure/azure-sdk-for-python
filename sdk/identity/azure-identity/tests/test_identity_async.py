@@ -15,6 +15,7 @@ import requests
 from azure.identity import (
     AuthenticationError,
     AsyncClientSecretCredential,
+    AsyncDefaultAzureCredential,
     AsyncEnvironmentCredential,
     AsyncImdsCredential,
     AsyncMsiCredential,
@@ -237,3 +238,7 @@ async def test_msi_credential(monkeypatch):
     with pytest.raises(Exception) as ex:
         await AsyncMsiCredential(transport=Mock(send=validate_request)).get_token("https://scope")
     assert ex.value.message is success_message
+
+
+def test_default_credential():
+    AsyncDefaultAzureCredential()
