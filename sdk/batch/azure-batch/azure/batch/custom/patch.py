@@ -277,9 +277,8 @@ def build_new_add_collection(original_add_collection):
         # Only define error if all threads have finished and there were failures
         if task_workflow_manager.failure_tasks or task_workflow_manager.errors:
             raise CreateTasksErrorException(
-                    "One or more tasks failed to be added",
-                    task_workflow_manager.failure_tasks,
                     task_workflow_manager.tasks_to_add,
+                    task_workflow_manager.failure_tasks,
                     task_workflow_manager.errors)
         else:
             submitted_tasks = _handle_output(results_queue)
