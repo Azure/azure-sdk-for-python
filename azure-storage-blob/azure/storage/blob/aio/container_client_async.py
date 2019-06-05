@@ -60,11 +60,6 @@ class ContainerClient(object):
         :returns: ContainerProperties
         """
 
-    async def get_container_metadata(self, lease=None, timeout=None):
-        """
-        :returns: A dict of metadata.
-        """
-
     async def set_container_metadata(self, metadata=None, lease=None, if_modified_since=None, timeout=None):
         """
         :returns: Container-updated property dict (Etag and last modified).

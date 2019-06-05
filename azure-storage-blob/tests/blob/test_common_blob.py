@@ -205,101 +205,6 @@ class StorageCommonBlobTest(StorageTestCase):
             blob.get_blob_properties()
 
     @record
-    def test_make_blob_url(self):
-        # Arrange
-
-        # Act
-        blob = self.bsc.get_blob_client("vhds", "my.vhd")
-        res = blob.make_url()
-
-        # Assert
-        self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
-                         + '.blob.core.windows.net/vhds/my.vhd')
-
-    @record
-    def test_make_blob_url_with_protocol(self):
-        # Arrange
-
-        # Act
-        blob = self.bsc.get_blob_client("vhds", "my.vhd")
-        res = blob.make_url(protocol='http')
-
-        # Assert
-        self.assertEqual(res, 'http://' + self.settings.STORAGE_ACCOUNT_NAME
-                         + '.blob.core.windows.net/vhds/my.vhd')
-
-    @record
-    def test_make_blob_url_with_sas(self):
-        # Arrange
-
-        # Act
-        blob = self.bsc.get_blob_client("vhds", "my.vhd")
-        res = blob.make_url(sas_token='sas')
-
-        # Assert
-        self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
-                         + '.blob.core.windows.net/vhds/my.vhd?sas')
-
-    @record
-    def test_make_blob_url_with_snapshot(self):
-        # Arrange
-
-        # Act
-        blob = self.bsc.get_blob_client("vhds", "my.vhd", snapshot='2016-11-09T14:11:07.6175300Z')
-        res = blob.make_url()
-
-        # Assert
-        self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
-                         + '.blob.core.windows.net/vhds/my.vhd?'
-                           'snapshot=2016-11-09T14:11:07.6175300Z')
-
-    @record
-    def test_make_blob_url_with_snapshot_and_sas(self):
-        # Arrange
-
-        # Act
-        blob = self.bsc.get_blob_client("vhds", "my.vhd", snapshot='2016-11-09T14:11:07.6175300Z')
-        res = blob.make_url(sas_token='sas')
-
-        # Assert
-        self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
-                         + '.blob.core.windows.net/vhds/my.vhd?'
-                           'snapshot=2016-11-09T14:11:07.6175300Z&sas')
-
-    def test_make_container_url(self):
-        pytest.skip("not yet supported")
-        # Arrange
-
-        # Act
-        res = self.bs.make_container_url('vhds')
-
-        # Assert
-        self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
-                         + '.blob.core.windows.net/vhds?restype=container')
-
-    def test_make_container_url_with_protocol(self):
-        pytest.skip("not yet supported")
-        # Arrange
-
-        # Act
-        res = self.bs.make_container_url('vhds', protocol='http')
-
-        # Assert
-        self.assertEqual(res, 'http://' + self.settings.STORAGE_ACCOUNT_NAME
-                         + '.blob.core.windows.net/vhds?restype=container')
-
-    def test_make_container_url_with_sas(self):
-        pytest.skip("not yet supported")
-        # Arrange
-
-        # Act
-        res = self.bs.make_container_url('vhds', sas_token='sas')
-
-        # Assert
-        self.assertEqual(res, 'https://' + self.settings.STORAGE_ACCOUNT_NAME
-                         + '.blob.core.windows.net/vhds?restype=container&sas')
-
-    @record
     def test_create_blob_with_question_mark(self):
         # Arrange
         blob_name = '?ques?tion?'
@@ -361,7 +266,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(resp.get('ETag'))
-        md = blob.get_blob_metadata()
+        md = blob.get_blob_properties().metadata
         self.assertDictEqual(md, metadata)
 
     @record
@@ -508,6 +413,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=1)
+
         with self.assertRaises(HttpResponseError) as e:
             blob.get_blob_properties() # Invalid snapshot value of 1
 
@@ -518,14 +424,14 @@ class StorageCommonBlobTest(StorageTestCase):
     # GET request. This is preferred to relying on the ErrorCode in the body.
     @ record
     def test_get_blob_metadata_fail(self):
-        # Arrange
         pytest.skip("Failing with no error code")  # TODO
+        # Arrange
         blob_name = self._create_block_blob()
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=1)
         with self.assertRaises(HttpResponseError) as e:
-            blob.get_blob_metadata() # Invalid snapshot value of 1
+            blob.get_blob_properties().metadata # Invalid snapshot value of 1
 
         # Assert
         self.assertEqual('InvalidQueryParameterValue', e.exception.error_code)
@@ -627,7 +533,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        md = blob.get_blob_metadata()
+        md = blob.get_blob_properties().metadata
 
         # Assert
         self.assertIsNotNone(md)
@@ -643,7 +549,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob.set_blob_metadata(metadata)
 
         # Assert
-        md = blob.get_blob_metadata()
+        md = blob.get_blob_properties().metadata
         self.assertEqual(3, len(md))
         self.assertEqual(md['hello'], 'world')
         self.assertEqual(md['number'], '42')

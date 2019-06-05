@@ -134,7 +134,7 @@ class StorageAppendBlobTest(StorageTestCase):
         blob.create_blob(metadata=metadata)
 
         # Assert
-        md = blob.get_blob_metadata()
+        md = blob.get_blob_properties().metadata
         self.assertDictEqual(md, metadata)
 
     @record

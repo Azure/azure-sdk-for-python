@@ -191,13 +191,16 @@ class ContainerClient(object):
         """
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
-        return self._client.container.create(
-            timeout=timeout,
-            access=public_access,
-            cls=return_response_headers,
-            headers=headers,
-            error_map=basic_error_map(),
-            **kwargs)
+        try:
+            return self._client.container.create(
+                timeout=timeout,
+                access=public_access,
+                cls=return_response_headers,
+                headers=headers,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def delete_container(
             self, lease=None,  # type: Optional[Union[Lease, str]]
@@ -236,12 +239,15 @@ class ContainerClient(object):
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
-        self._client.container.delete(
-            timeout=timeout,
-            lease_access_conditions=access_conditions,
-            modified_access_conditions=mod_conditions,
-            error_map=basic_error_map(),
-            **kwargs)
+        try:
+            self._client.container.delete(
+                timeout=timeout,
+                lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def acquire_lease(
             self, lease_duration=-1,  # type: int
@@ -285,14 +291,17 @@ class ContainerClient(object):
         """
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
-        response = self._client.container.acquire_lease(
-            timeout=timeout,
-            duration=lease_duration,
-            proposed_lease_id=lease_id,
-            modified_access_conditions=mod_conditions,
-            cls=return_response_headers,
-            error_map=basic_error_map(),
-            **kwargs)
+        try:
+            response = self._client.container.acquire_lease(
+                timeout=timeout,
+                duration=lease_duration,
+                proposed_lease_id=lease_id,
+                modified_access_conditions=mod_conditions,
+                cls=return_response_headers,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
         return Lease(self._client.container, **response)
 
     def break_lease(
@@ -340,13 +349,16 @@ class ContainerClient(object):
         """
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since)
-        response = self._client.container.break_lease(
-            timeout=timeout,
-            break_period=lease_break_period,
-            modified_access_conditions=mod_conditions,
-            cls=return_response_headers,
-            error_map=basic_error_map(),
-            **kwargs)
+        try:
+            response = self._client.container.break_lease(
+                timeout=timeout,
+                break_period=lease_break_period,
+                modified_access_conditions=mod_conditions,
+                cls=return_response_headers,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
         return response.get('x-ms-lease-time')
 
     def get_account_information(self, timeout=None, **kwargs):
@@ -354,11 +366,14 @@ class ContainerClient(object):
         """
         :returns: A dict of account information (SKU and account type).
         """
-        response = self._client.container.get_account_info(
-            cls=return_response_headers,
-            timeout=timeout,
-            error_map=basic_error_map(),
-            **kwargs)
+        try:
+            response = self._client.container.get_account_info(
+                cls=return_response_headers,
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
         return {
             'SKU': response.get('x-ms-sku-name'),
             'AccountType': response.get('x-ms-account-kind')
@@ -379,32 +394,17 @@ class ContainerClient(object):
         :rtype: ~azure.storage.blob.models.ContainerProperties
         """
         access_conditions = get_access_conditions(lease)
-        response = self._client.container.get_properties(
-            timeout=timeout,
-            lease_access_conditions=access_conditions,
-            cls=deserialize_container_properties,
-            error_map=basic_error_map(),
-            **kwargs)
-        response.name = self.name
-        return response
-
-    def get_container_metadata(self, lease=None, timeout=None, **kwargs):
-        # type: (Optional[Union[Lease, str]], Optional[int]) -> Dict[str, str]
-        """
-        :returns: A dict of metadata.
-        """
-        access_conditions = get_access_conditions(lease)
         try:
-            return self._client.container.get_properties(
-                comp='metadata',
+            response = self._client.container.get_properties(
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
-                cls=deserialize_metadata,
+                cls=deserialize_container_properties,
                 error_map=basic_error_map(),
-                **kwargs
-                )
+                **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
+        response.name = self.name
+        return response
 
     def set_container_metadata(
             self, metadata=None,  # type: Optional[Dict[str, str]]
@@ -421,15 +421,17 @@ class ContainerClient(object):
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(if_modified_since)
-        return self._client.container.set_metadata(
-            timeout=timeout,
-            lease_access_conditions=access_conditions,
-            modified_access_conditions=mod_conditions,
-            cls=return_response_headers,
-            headers=headers,
-            error_map=basic_error_map(),
-            **kwargs
-        )
+        try:
+            return self._client.container.set_metadata(
+                timeout=timeout,
+                lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
+                cls=return_response_headers,
+                headers=headers,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def get_container_acl(self, lease=None, timeout=None, **kwargs):
         # type: (Optional[Union[Lease, str]], Optional[int]) -> Dict[str, str]
@@ -437,13 +439,15 @@ class ContainerClient(object):
         :returns: Access policy information in a dict.
         """
         access_conditions = get_access_conditions(lease)
-        response = self._client.container.get_access_policy(
-            timeout=timeout,
-            lease_access_conditions=access_conditions,
-            cls=return_response_and_deserialized,
-            error_map=basic_error_map(),
-            **kwargs
-        )
+        try:
+            response = self._client.container.get_access_policy(
+                timeout=timeout,
+                lease_access_conditions=access_conditions,
+                cls=return_response_and_deserialized,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
         return {
             'public_access': response.get('header').get('x-ms-blob-public-access'),
             'signed_identifiers': response.get('deserialized', [])
@@ -455,7 +459,8 @@ class ContainerClient(object):
             lease=None,  # type: Optional[Union[str, Lease]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
-            timeout=None  # type: Optional[int]
+            timeout=None,  # type: Optional[int]
+            **kwargs
         ):
         """
         :returns: Container-updated property dict (Etag and last modified).
@@ -473,15 +478,18 @@ class ContainerClient(object):
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since)
         access_conditions = get_access_conditions(lease)
-        response = self._client.container.set_access_policy(
-            container_acl=signed_identifiers or None,
-            timeout=timeout,
-            access=public_access,
-            lease_access_conditions=access_conditions,
-            modified_access_conditions=mod_conditions,
-            cls=return_response_headers,
-            error_map=basic_error_map(),
-        )
+        try:
+            response = self._client.container.set_access_policy(
+                container_acl=signed_identifiers or None,
+                timeout=timeout,
+                access=public_access,
+                lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
+                cls=return_response_headers,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
         return {
             'ETag': response.get('ETag'),
             'Last-Modified': response.get('Last-Modified')

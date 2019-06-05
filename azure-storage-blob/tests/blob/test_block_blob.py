@@ -114,12 +114,11 @@ class StorageBlockBlobTest(StorageTestCase):
     @record
     def test_put_block_unicode(self):
         # Arrange
-        pytest.skip("We don't reject unicode")  # TODO
         blob = self._create_blob()
 
         # Act
-        with self.assertRaises(TypeError):
-            resp = blob.stage_block('1', u'啊齄丂狛狜')
+        resp = blob.stage_block('1', u'啊齄丂狛狜')
+        self.assertIsNone(resp)
 
         # Assert
 
@@ -300,17 +299,19 @@ class StorageBlockBlobTest(StorageTestCase):
 
     @record
     def test_create_from_bytes_blob_unicode(self):
-        pytest.skip("We don't reject unicode")  # TODO
         # Arrange
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         data = u'hello world'
-        with self.assertRaises(TypeError):
-            create_resp = blob.upload_blob(data)
+        create_resp = blob.upload_blob(data)
+        props = blob.get_blob_properties()
 
         # Assert
+        self.assertBlobEqual(self.container_name, blob_name, data.encode('utf-8'))
+        self.assertEqual(props.etag, create_resp.get('ETag'))
+        self.assertEqual(props.last_modified, create_resp.get('Last-Modified'))
 
     def test_create_from_bytes_blob_with_lease_id(self):
         # parallel tests introduce random order of requests, can only run live
@@ -347,7 +348,7 @@ class StorageBlockBlobTest(StorageTestCase):
         blob.upload_blob(data, metadata=metadata)
 
         # Assert
-        md = blob.get_blob_metadata()
+        md = blob.get_blob_properties().metadata
         self.assertDictEqual(md, metadata)
 
 

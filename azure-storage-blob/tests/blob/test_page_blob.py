@@ -18,7 +18,7 @@ from azure.storage.blob.common import (
     BlobType,
     PremiumPageBlobTier,
     SequenceNumberAction)
-from azure.storage.blob.models import BlobProperties
+from azure.storage.blob.models import BlobProperties, BlobPermissions
 from azure.storage.blob import (
     SharedKeyCredentials,
     BlobServiceClient,
@@ -101,19 +101,6 @@ class StoragePageBlobTest(StorageTestCase):
         actual_data = blob.download_blob(offset=start_range, length=end_range)
         self.assertEqual(b"".join(list(actual_data)), expected_data)
 
-    def _wait_for_async_copy(self, container_name, blob_name):
-        count = 0
-        blob = self.bs.get_blob_client(container_name, blob_name, blob_type=BlobType.PageBlob)
-        props = blob.get_blob_properties()
-        while props.copy.status.value != 'success':
-            count = count + 1
-            if count > 5:
-                self.assertTrue(
-                    False, 'Timed out waiting for async copy to complete.')
-            self.sleep(5)
-            props = blob.get_blob_properties()
-        self.assertEqual(props.copy.status.value, 'success')
-
     class NonSeekableFile(object):
         def __init__(self, wrapped_file):
             self.wrapped_file = wrapped_file
@@ -148,8 +135,8 @@ class StoragePageBlobTest(StorageTestCase):
         resp = blob.create_blob(512, metadata=metadata)
 
         # Assert
-        md = blob.get_blob_metadata()
-        self.assertDictEqual(md, metadata)
+        md = blob.get_blob_properties()
+        self.assertDictEqual(md.metadata, metadata)
 
     @record
     def test_put_page_with_lease_id(self):
@@ -342,16 +329,16 @@ class StoragePageBlobTest(StorageTestCase):
 
     @record
     def test_update_page_unicode(self):
-        pytest.skip("We don't reject unicode")
         # Arrange
         blob = self._create_blob()
 
         # Act
         data = u'abcdefghijklmnop' * 32
-        with self.assertRaises(TypeError):
-            blob.upload_page(data, 0, 511)
+        resp = blob.upload_page(data, 0, 511)
 
         # Assert
+        self.assertIsNotNone(resp.get('ETag'))
+        self.assertIsNotNone(resp.get('Last-Modified'))
 
     @record
     def test_get_page_ranges_no_pages(self):
@@ -780,7 +767,6 @@ class StoragePageBlobTest(StorageTestCase):
         # Assert
 
     def test_incremental_copy_blob(self):
-        pytest.skip("copy not supported")
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -792,35 +778,33 @@ class StoragePageBlobTest(StorageTestCase):
         resp2 = source_blob.upload_page(data, 1024, 1535)
         source_snapshot_blob = source_blob.create_snapshot()
 
-        sas_token = self.bs.generate_blob_shared_access_signature(
-            self.container_name,
-            source_blob_name,
+        snapshot_blob = self.bs.get_blob_client(self.container_name, source_snapshot_blob)
+        sas_token = snapshot_blob.generate_shared_access_signature(
             permission=BlobPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
+        print("SAS token: ", sas_token)
+
 
         # Act
-        source_blob_url = self.bs.make_blob_url(
-            self.container_name,
-            source_blob_name, # + '?snapshot=' + source_snapshot_blob.snapshot,
-            sas_token=sas_token,
-            snapshot=source_snapshot_blob.snapshot)
+        snapshot_blob_url = snapshot_blob.make_url(sas_token=sas_token)
+        print("Snapshot URL: ", snapshot_blob_url)
 
-        dest_blob_name = 'dest_blob'
-        copy = self.bs.incremental_copy_blob(self.container_name, dest_blob_name, source_blob_url)
+        dest_blob = self.bs.get_blob_client(self.container_name, 'dest_blob')
+        copy = dest_blob.copy_blob_from_url(snapshot_blob_url, incremental_copy=True)
 
         # Assert
-        self.assertEqual(copy.status, 'pending')
-        self._wait_for_async_copy(self.container_name, dest_blob_name)
         self.assertIsNotNone(copy)
-        self.assertIsNotNone(copy.id)
+        self.assertIsNotNone(copy.copy_id())
+        self.assertEqual(copy.status(), 'pending')
+        copy.wait()
 
-        copy_blob = self.bs.get_blob_properties(self.container_name, dest_blob_name)
-        self.assertEqual(copy_blob.properties.copy.status, 'success')
-        self.assertIsNotNone(copy_blob.properties.copy.destination_snapshot_time)
+        copy_blob = dest_blob.get_blob_properties()
+        self.assertEqual(copy_blob.copy.status, 'success')
+        self.assertIsNotNone(copy_blob.copy.destination_snapshot)
 
         # strip off protocol
-        self.assertTrue(copy_blob.properties.copy.source.endswith(source_blob_url[5:]))
+        self.assertTrue(copy_blob.copy.source.endswith(snapshot_blob_url[5:]))
 
     @record
     def test_blob_tier_on_create(self):
@@ -879,7 +863,13 @@ class StoragePageBlobTest(StorageTestCase):
             container = pbs.get_container_client(container_name)
 
             if not self.is_playback():
-                container.create_container()
+                try:
+                    container.create_container()
+                except HttpResponseError as error:
+                    if error.error_code == 'ContainerAlreadyExists':
+                        pass
+                    else:
+                        raise
 
             blob = self._get_blob_reference()
             pblob = pbs.get_blob_client(container_name, blob.name, blob_type=BlobType.PageBlob)
@@ -918,60 +908,74 @@ class StoragePageBlobTest(StorageTestCase):
 
     @record
     def test_blob_tier_copy_blob(self):
-        pytest.skip("Copy not supported")
         url = self._get_premium_account_url()
         credentials = SharedKeyCredentials(*self._get_premium_shared_key_credentials())
         pbs = BlobServiceClient(url, credentials=credentials)
 
-        ps = self._create_premium_storage_service(PageBlobService, self.settings)
         try:
             container_name = self.get_resource_name('utpremiumcontainer')
             container = pbs.get_container_client(container_name)
 
             if not self.is_playback():
-                container.create_container()
+                try:
+                    container.create_container()
+                except HttpResponseError as error:
+                    if error.error_code == 'ContainerAlreadyExists':
+                        pass
+                    else:
+                        raise
 
             # Arrange
-            source_blob_name = self._get_blob_reference()
-            ps.create_blob(container_name, source_blob_name, 1024, premium_page_blob_tier=PremiumPageBlobTier.P10)
+            source_blob = pbs.get_blob_client(
+                container_name,
+                self.get_resource_name(TEST_BLOB_PREFIX),
+                blob_type=BlobType.PageBlob)
+            source_blob.create_blob(1024, premium_page_blob_tier=PremiumPageBlobTier.P10)
 
             # Act
-            source_blob = '/{0}/{1}/{2}'.format(self.settings.PREMIUM_STORAGE_ACCOUNT_NAME,
+            source_blob_url = '/{0}/{1}/{2}'.format(self.settings.PREMIUM_STORAGE_ACCOUNT_NAME,
                                                container_name,
-                                               source_blob_name)
-            copy = ps.copy_blob(container_name, 'blob1copy', source_blob, premium_page_blob_tier=PremiumPageBlobTier.P30)
+                                               source_blob.name)
+
+            copy_blob = pbs.get_blob_client(container_name, 'blob1copy')
+            copy = copy_blob.copy_blob_from_url(source_blob_url, premium_page_blob_tier=PremiumPageBlobTier.P30)
 
             # Assert
             self.assertIsNotNone(copy)
-            self.assertEqual(copy.status, 'success')
-            self.assertIsNotNone(copy.id)
+            self.assertEqual(copy.status(), 'success')
+            self.assertIsNotNone(copy.copy_id())
 
-            copy_ref = ps.get_blob_properties(container_name, 'blob1copy')
-            self.assertEqual(copy_ref.properties.blob_tier, PremiumPageBlobTier.P30)
+            copy_ref = copy_blob.get_blob_properties()
+            self.assertEqual(copy_ref.blob_tier, PremiumPageBlobTier.P30)
 
-            source_blob_name2 = self._get_blob_reference()
-            ps.create_blob(container_name, source_blob_name2, 1024)
-            source_blob2 = '/{0}/{1}/{2}'.format(self.settings.STORAGE_ACCOUNT_NAME,
-                                                container_name,
-                                                source_blob_name2)
+            source_blob2 = pbs.get_blob_client(
+               container_name,
+               self.get_resource_name(TEST_BLOB_PREFIX),
+               blob_type=BlobType.PageBlob)
 
-            copy2 = ps.copy_blob(container_name, 'blob2copy', source_blob2, premium_page_blob_tier=PremiumPageBlobTier.P60)
+            source_blob2.create_blob(1024)
+            source_blob2_url = '/{0}/{1}/{2}'.format(
+                self.settings.PREMIUM_STORAGE_ACCOUNT_NAME, source_blob2.container, source_blob2.name)
+
+            copy_blob2 = pbs.get_blob_client(container_name, 'blob2copy', blob_type=BlobType.PageBlob)
+            copy2 = copy_blob2.copy_blob_from_url(source_blob2_url, premium_page_blob_tier=PremiumPageBlobTier.P60)
             self.assertIsNotNone(copy2)
-            self.assertEqual(copy2.status, 'success')
-            self.assertIsNotNone(copy2.id)
+            self.assertEqual(copy2.status(), 'success')
+            self.assertIsNotNone(copy2.copy_id())
 
-            copy_ref2 = ps.get_blob_properties(container_name, 'blob2copy')
-            self.assertEqual(copy_ref2.properties.blob_tier, PremiumPageBlobTier.P60)
-            self.assertFalse(copy_ref2.properties.blob_tier_inferred)
+            copy_ref2 = copy_blob2.get_blob_properties()
+            self.assertEqual(copy_ref2.blob_tier, PremiumPageBlobTier.P60)
+            self.assertFalse(copy_ref2.blob_tier_inferred)
 
-            copy3 = ps.copy_blob(container_name, 'blob3copy', source_blob2)
+            copy_blob3 = pbs.get_blob_client(container_name, 'blob3copy', blob_type=BlobType.PageBlob)
+            copy3 = copy_blob3.copy_blob_from_url(source_blob2_url)
             self.assertIsNotNone(copy3)
-            self.assertEqual(copy3.status, 'success')
-            self.assertIsNotNone(copy3.id)
+            self.assertEqual(copy3.status(), 'success')
+            self.assertIsNotNone(copy3.copy_id())
 
-            copy_ref3 = ps.get_blob_properties(container_name, 'blob3copy')
-            self.assertEqual(copy_ref3.properties.blob_tier, PremiumPageBlobTier.P10)
-            self.assertTrue(copy_ref3.properties.blob_tier_inferred)
+            copy_ref3 = copy_blob3.get_blob_properties()
+            self.assertEqual(copy_ref3.blob_tier, PremiumPageBlobTier.P10)
+            self.assertTrue(copy_ref3.blob_tier_inferred)
         finally:
             container.delete_container()
 

@@ -15,7 +15,8 @@ from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import StorageServiceProperties
 from ._generated.models import BlobProperties as GenBlobProps
 from ._generated.models import AccessPolicy as GenAccessPolicy
-from ._utils import decode_base64, serialize_iso
+from ._generated.models import StorageErrorException
+from ._utils import decode_base64, serialize_iso, process_storage_error
 from .common import BlockState, BlobType
 
 
@@ -234,9 +235,12 @@ class ContainerPropertiesPaged(Paged):
         if self.next_marker is None:
             raise StopIteration("End of paging")
         self._current_page_iter_index = 0
-        self._response = self._get_next(
-            marker=self.next_marker or None,
-            maxresults=self.results_per_page)
+        try:
+            self._response = self._get_next(
+                marker=self.next_marker or None,
+                maxresults=self.results_per_page)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
@@ -393,9 +397,12 @@ class BlobPropertiesPaged(Paged):
         if self.next_marker is None:
             raise StopIteration("End of paging")
         self._current_page_iter_index = 0
-        self._response = self._get_next(
-            marker=self.next_marker or None,
-            maxresults=self.results_per_page)
+        try:
+            self._response = self._get_next(
+                marker=self.next_marker or None,
+                maxresults=self.results_per_page)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix

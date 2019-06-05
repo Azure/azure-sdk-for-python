@@ -8,7 +8,7 @@ import sys
 from datetime import date
 
 from .constants import X_MS_VERSION
-from ._utils import _sign_string, url_quote
+from ._utils import _sign_string, url_quote, _QueryStringConstants
 
 
 if sys.version_info < (3,):
@@ -95,29 +95,6 @@ class SharedAccessSignature(object):
         sas.add_account_signature(self.account_name, self.account_key)
 
         return sas.get_token()
-
-
-class _QueryStringConstants(object):
-    SIGNED_SIGNATURE = 'sig'
-    SIGNED_PERMISSION = 'sp'
-    SIGNED_START = 'st'
-    SIGNED_EXPIRY = 'se'
-    SIGNED_RESOURCE = 'sr'
-    SIGNED_IDENTIFIER = 'si'
-    SIGNED_IP = 'sip'
-    SIGNED_PROTOCOL = 'spr'
-    SIGNED_VERSION = 'sv'
-    SIGNED_CACHE_CONTROL = 'rscc'
-    SIGNED_CONTENT_DISPOSITION = 'rscd'
-    SIGNED_CONTENT_ENCODING = 'rsce'
-    SIGNED_CONTENT_LANGUAGE = 'rscl'
-    SIGNED_CONTENT_TYPE = 'rsct'
-    START_PK = 'spk'
-    START_RK = 'srk'
-    END_PK = 'epk'
-    END_RK = 'erk'
-    SIGNED_RESOURCE_TYPES = 'srt'
-    SIGNED_SERVICES = 'ss'
 
 
 class _SharedAccessHelper(object):

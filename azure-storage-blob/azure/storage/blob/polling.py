@@ -107,7 +107,10 @@ class CopyBlobPolling(CopyBlob):
         """Return the current status as a string.
         :rtype: str
         """
-        return self._status
+        try:
+            return self._status.value
+        except AttributeError:
+            return self._status
 
     def resource(self):
         # type: () -> Any

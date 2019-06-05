@@ -190,7 +190,10 @@ class BlobServiceClient(object):
         :returns: A dict of account information (SKU and account type).
         :rtype: dict(str, str)
         """
-        response = self._client.service.get_account_info(cls=return_response_headers)
+        try:
+            response = self._client.service.get_account_info(cls=return_response_headers)
+        except StorageErrorException as error:
+            process_storage_error(error)
         return {
             'SKU': response.get('x-ms-sku-name'),
             'AccountType': response.get('x-ms-account-kind')
@@ -221,7 +224,10 @@ class BlobServiceClient(object):
         :return: The blob service stats.
         :rtype: ~azure.storage.blob._generated.models.StorageServiceStats
         """
-        return self._client.service.get_statistics(timeout=timeout, secondary_storage=True, **kwargs)
+        try:
+            return self._client.service.get_statistics(timeout=timeout, secondary_storage=True, **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def get_service_properties(self, timeout=None, **kwargs):
         # type(Optional[int]) -> Dict[str, Any]
@@ -346,6 +352,7 @@ class BlobServiceClient(object):
             prefix=starts_with,
             include=include,
             timeout=timeout,
+            error_map=basic_error_map(),
             **kwargs)
         return ContainerPropertiesPaged(
             command, prefix=starts_with, results_per_page=results_per_page, marker=marker)

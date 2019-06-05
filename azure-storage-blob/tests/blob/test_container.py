@@ -139,7 +139,7 @@ class StorageContainerTest(StorageTestCase):
 
         # Assert
         self.assertTrue(created)
-        md = container.get_container_metadata()
+        md = container.get_container_properties().metadata
         self.assertDictEqual(md, metadata)
 
     @record
@@ -270,7 +270,7 @@ class StorageContainerTest(StorageTestCase):
 
         # Act
         container.set_container_metadata(metadata)
-        metadata_from_response = container.get_container_metadata()
+        metadata_from_response = container.get_container_properties().metadata
         # Assert
         self.assertDictEqual(metadata_from_response, metadata)
 
@@ -285,7 +285,7 @@ class StorageContainerTest(StorageTestCase):
         container.set_container_metadata(metadata, lease_id)
 
         # Assert
-        md = container.get_container_metadata()
+        md = container.get_container_properties().metadata
         self.assertDictEqual(md, metadata)
 
     @record
@@ -308,7 +308,7 @@ class StorageContainerTest(StorageTestCase):
         container.set_container_metadata(metadata)
 
         # Act
-        md = container.get_container_metadata()
+        md = container.get_container_properties().metadata
 
         # Assert
         self.assertDictEqual(md, metadata)
@@ -322,7 +322,7 @@ class StorageContainerTest(StorageTestCase):
         lease_id = container.acquire_lease()
 
         # Act
-        md = container.get_container_metadata(lease_id)
+        md = container.get_container_properties(lease_id).metadata
 
         # Assert
         self.assertDictEqual(md, metadata)
@@ -1008,8 +1008,14 @@ class StorageContainerTest(StorageTestCase):
         # create the web container in case it does not exist yet
         container = self.bsc.get_container_client(web_container)
         try:
-            created = container.create_container()
-            self.assertIsNotNone(created)
+            try:
+                created = container.create_container()
+                self.assertIsNotNone(created)
+            except HttpResponseError as error:
+                if error.error_code == 'ContainerAlreadyExists':
+                    pass
+                else:
+                    raise
 
             # test if web container exists
             exist = container.get_container_properties()

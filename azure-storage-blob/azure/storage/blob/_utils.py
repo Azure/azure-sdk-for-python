@@ -17,10 +17,12 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 try:
-    from urllib.parse import urlparse, quote, unquote
+    from urllib.parse import urlparse, quote, unquote, parse_qs
 except ImportError:
-    from urlparse import urlparse
+    from urlparse import urlparse, parse_qs
     from urllib2 import quote, unquote
+
+import six
 
 from azure.core import Configuration
 from azure.core.exceptions import raise_with_traceback
@@ -58,12 +60,55 @@ if TYPE_CHECKING:
     from .lease import Lease
 
 
-try:
-    _unicode_type = unicode
-except NameError:
-    _unicode_type = str
-
 _LOGGER = logging.getLogger(__name__)
+
+
+class _QueryStringConstants(object):
+    SIGNED_SIGNATURE = 'sig'
+    SIGNED_PERMISSION = 'sp'
+    SIGNED_START = 'st'
+    SIGNED_EXPIRY = 'se'
+    SIGNED_RESOURCE = 'sr'
+    SIGNED_IDENTIFIER = 'si'
+    SIGNED_IP = 'sip'
+    SIGNED_PROTOCOL = 'spr'
+    SIGNED_VERSION = 'sv'
+    SIGNED_CACHE_CONTROL = 'rscc'
+    SIGNED_CONTENT_DISPOSITION = 'rscd'
+    SIGNED_CONTENT_ENCODING = 'rsce'
+    SIGNED_CONTENT_LANGUAGE = 'rscl'
+    SIGNED_CONTENT_TYPE = 'rsct'
+    START_PK = 'spk'
+    START_RK = 'srk'
+    END_PK = 'epk'
+    END_RK = 'erk'
+    SIGNED_RESOURCE_TYPES = 'srt'
+    SIGNED_SERVICES = 'ss'
+
+    @staticmethod
+    def to_list():
+        return [
+            _QueryStringConstants.SIGNED_SIGNATURE,
+            _QueryStringConstants.SIGNED_PERMISSION,
+            _QueryStringConstants.SIGNED_START,
+            _QueryStringConstants.SIGNED_EXPIRY,
+            _QueryStringConstants.SIGNED_RESOURCE,
+            _QueryStringConstants.SIGNED_IDENTIFIER,
+            _QueryStringConstants.SIGNED_IP,
+            _QueryStringConstants.SIGNED_PROTOCOL,
+            _QueryStringConstants.SIGNED_VERSION,
+            _QueryStringConstants.SIGNED_CACHE_CONTROL,
+            _QueryStringConstants.SIGNED_CONTENT_DISPOSITION,
+            _QueryStringConstants.SIGNED_CONTENT_ENCODING,
+            _QueryStringConstants.SIGNED_CONTENT_LANGUAGE,
+            _QueryStringConstants.SIGNED_CONTENT_TYPE,
+            _QueryStringConstants.START_PK,
+            _QueryStringConstants.START_RK,
+            _QueryStringConstants.END_PK,
+            _QueryStringConstants.END_RK,
+            _QueryStringConstants.SIGNED_RESOURCE_TYPES,
+            _QueryStringConstants.SIGNED_SERVICES,
+        ]
 
 
 def parse_connection_str(conn_str, credentials):
@@ -89,21 +134,21 @@ def url_unquote(url):
 
 
 def encode_base64(data):
-    if isinstance(data, _unicode_type):
+    if isinstance(data, six.text_type):
         data = data.encode('utf-8')
     encoded = base64.b64encode(data)
     return encoded.decode('utf-8')
 
 
 def decode_base64(data):
-    if isinstance(data, _unicode_type):
+    if isinstance(data, six.text_type):
         data = data.encode('utf-8')
     decoded = base64.b64decode(data)
     return decoded.decode('utf-8')
 
 
 def _decode_base64_to_bytes(data):
-    if isinstance(data, _unicode_type):
+    if isinstance(data, six.text_type):
         data = data.encode('utf-8')
     return base64.b64decode(data)
 
@@ -112,9 +157,9 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
     if key_is_base64:
         key = _decode_base64_to_bytes(key)
     else:
-        if isinstance(key, _unicode_type):
+        if isinstance(key, six.text_type):
             key = key.encode('utf-8')
-    if isinstance(string_to_sign, _unicode_type):
+    if isinstance(string_to_sign, six.text_type):
         string_to_sign = string_to_sign.encode('utf-8')
     signed_hmac_sha256 = hmac.HMAC(key, string_to_sign, hashlib.sha256)
     digest = signed_hmac_sha256.digest()
@@ -238,6 +283,27 @@ def basic_error_map():
     return {
         404: ResourceNotFoundError
     }
+
+
+def parse_query(query_str):
+    sas_values = _QueryStringConstants.to_list()
+    parsed_query = {k: v[0] for k, v in parse_qs(query_str).items()}
+    sas_params = ["{}={}".format(k, v) for k, v in parsed_query.items() if k in sas_values]
+    sas_token = None
+    if sas_params:
+        sas_token = '&'.join(sas_params)
+
+    return parsed_query.get('snapshot'), sas_token
+
+
+def is_credential_sastoken(credential):
+    if credential or not isinstance(credential, six.string_types):
+        return False
+
+    parsed_query = parse_qs(credential)
+    if parsed_query and all([k in sas_values for k in parsed_query.keys()]):
+        return True
+    return False
 
 
 def process_storage_error(error):
