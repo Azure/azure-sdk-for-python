@@ -103,7 +103,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
     async def update_secret(
         self,
         name: str,
-        version: str,
+        version: Optional[str] = None,
         content_type: Optional[str] = None,
         enabled: Optional[bool] = None,
         not_before: Optional[datetime] = None,
@@ -147,7 +147,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
         bundle = await self._client.update_secret(
             self.vault_url,
             name,
-            secret_version=version,
+            secret_version=version or "",
             content_type=content_type,
             tags=tags,
             secret_attributes=attributes,
