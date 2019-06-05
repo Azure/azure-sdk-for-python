@@ -490,10 +490,10 @@ class FaceOperations(object):
         :param return_recognition_model: A value indicating whether the
          operation should return 'recognitionModel' in response.
         :type return_recognition_model: bool
-        :param detection_model: Name of detection model. Detection model' is
+        :param detection_model: Name of detection model. Detection model is
          used to detect faces in the submitted image. A detection model name
-         can be provided when performing Face - Detect or (Large)FaceList -
-         Create or (Large)PersonGroup - Create. The default value is
+         can be provided when performing Face - Detect or (Large)FaceList - Add
+         Face or (Large)PersonGroup - Add Face. The default value is
          'detection_01', if another model is needed, please explicitly specify
          it. Possible values include: 'detection_01', 'detection_02'
         :type detection_model: str or
@@ -729,10 +729,10 @@ class FaceOperations(object):
         :param return_recognition_model: A value indicating whether the
          operation should return 'recognitionModel' in response.
         :type return_recognition_model: bool
-        :param detection_model: Name of detection model. Detection model' is
+        :param detection_model: Name of detection model. Detection model is
          used to detect faces in the submitted image. A detection model name
-         can be provided when performing Face - Detect or (Large)FaceList -
-         Create or (Large)PersonGroup - Create. The default value is
+         can be provided when performing Face - Detect or (Large)FaceList - Add
+         Face or (Large)PersonGroup - Add Face. The default value is
          'detection_01', if another model is needed, please explicitly specify
          it. Possible values include: 'detection_01', 'detection_02'
         :type detection_model: str or

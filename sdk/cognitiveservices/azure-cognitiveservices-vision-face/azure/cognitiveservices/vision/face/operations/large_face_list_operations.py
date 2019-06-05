@@ -701,10 +701,10 @@ class LargeFaceListOperations(object):
          image, targetFace is required to specify which face to add. No
          targetFace means there is only one face detected in the entire image.
         :type target_face: list[int]
-        :param detection_model: Name of detection model. Detection model' is
+        :param detection_model: Name of detection model. Detection model is
          used to detect faces in the submitted image. A detection model name
-         can be provided when performing Face - Detect or (Large)FaceList -
-         Create or (Large)PersonGroup - Create. The default value is
+         can be provided when performing Face - Detect or (Large)FaceList - Add
+         Face or (Large)PersonGroup - Add Face. The default value is
          'detection_01', if another model is needed, please explicitly specify
          it. Possible values include: 'detection_01', 'detection_02'
         :type detection_model: str or
@@ -855,10 +855,10 @@ class LargeFaceListOperations(object):
          image, targetFace is required to specify which face to add. No
          targetFace means there is only one face detected in the entire image.
         :type target_face: list[int]
-        :param detection_model: Name of detection model. Detection model' is
+        :param detection_model: Name of detection model. Detection model is
          used to detect faces in the submitted image. A detection model name
-         can be provided when performing Face - Detect or (Large)FaceList -
-         Create or (Large)PersonGroup - Create. The default value is
+         can be provided when performing Face - Detect or (Large)FaceList - Add
+         Face or (Large)PersonGroup - Add Face. The default value is
          'detection_01', if another model is needed, please explicitly specify
          it. Possible values include: 'detection_01', 'detection_02'
         :type detection_model: str or
