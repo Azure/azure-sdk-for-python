@@ -111,9 +111,10 @@ class Database(object):
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
-        request_options=None
+        request_options=None,
+        response_hook=None
     ):
-        # type: (str, Dict[str, str], bool, Dict[str, Any]) -> Dict[str, Any]
+        # type: (str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> Dict[str, Any]
         """
         Read the database properties
 
@@ -122,6 +123,7 @@ class Database(object):
         :param initial_headers: Initial headers to be sent as part of the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: Dict[Str, Any]
         :raise `HTTPFailure`: If the given database couldn't be retrieved.
 
@@ -141,6 +143,9 @@ class Database(object):
         self._properties = self.client_connection.ReadDatabase(
             database_link, options=request_options
         )
+
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
 
         return self._properties
 
@@ -278,35 +283,11 @@ class Database(object):
     def get_container(
         self,
         container,
-<<<<<<< HEAD
     ):
         # type: (Union[str, Container, Dict[str, Any]]) -> Container
         """ Get the specified `Container`, or a container with specified ID (name).
 
         :param container: The ID (name) of the container, a :class:`Container` instance, or a dict representing the properties of the container to be retrieved.
-=======
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        populate_partition_key_range_statistics=None,
-        populate_quota_info=None,
-        request_options=None, 
-        response_hook=None
-    ):
-        # type: (Union[str, Container, Dict[str, Any]], str, Dict[str, str], bool, bool, bool, Dict[str, Any], Optional[Callable]) -> Container
-        """ Get the specified `Container`, or a container with specified ID (name).
-
-        :param container: The ID (name) of the container, a :class:`Container` instance, or a dict representing the properties of the container to be retrieved.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param populate_partition_key_range_statistics: Enable returning partition key range statistics in response headers.
-        :param populate_quota_info: Enable returning collection storage quota information in response headers.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :raise `HTTPFailure`: Raised if the container couldn't be retrieved. This includes if the container does not exist.
-        :returns: :class:`Container` instance representing the retrieved container.
->>>>>>> add response_hook to Database methods
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START get_container]
@@ -575,22 +556,12 @@ class Database(object):
     def get_user(
             self,
             user,
-<<<<<<< HEAD
-=======
-            request_options=None, 
-            response_hook=None
->>>>>>> add response_hook to Database methods
     ):
         # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Optional[Callable]) -> User
         """
         Get the user identified by `id`.
 
         :param user: The ID (name), dict representing the properties or :class:`User` instance of the user to be retrieved.
-<<<<<<< HEAD
-=======
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
->>>>>>> add response_hook to Database methods
         :returns: A :class:`User` instance representing the retrieved user.
         :raise `HTTPFailure`: If the given user couldn't be retrieved.
         
@@ -602,16 +573,6 @@ class Database(object):
         else:
             id_value = user
 
-<<<<<<< HEAD
-=======
-        user = self.client_connection.ReadUser(
-            user_link=self._get_user_link(user_or_id=user),
-            options=request_options
-        )
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers)
-
->>>>>>> add response_hook to Database methods
         return User(
             client_connection=self.client_connection,
             id=id_value,

@@ -104,9 +104,10 @@ class Container:
         populate_query_metrics=None,
         populate_partition_key_range_statistics=None,
         populate_quota_info=None,
-        request_options=None
+        request_options=None,
+        response_hook=None
     ):
-        # type: (str, Dict[str, str], bool, bool, bool, Dict[str, Any]) -> Container
+        # type: (str, Dict[str, str], bool, bool, bool, Dict[str, Any], Optional[Callable]) -> Container
         """ Read the container properties
 
         :param session_token: Token for use with Session consistency.
@@ -115,6 +116,7 @@ class Container:
         :param populate_partition_key_range_statistics: Enable returning partition key range statistics in response headers.
         :param populate_quota_info: Enable returning collection storage quota information in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :raise `HTTPFailure`: Raised if the container couldn't be retrieved. This includes if the container does not exist.
         :returns: :class:`Container` instance representing the retrieved container.
 
@@ -136,6 +138,9 @@ class Container:
         self._properties = self.client_connection.ReadContainer(
             collection_link, options=request_options
         )
+
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
         
         return self._properties
 
