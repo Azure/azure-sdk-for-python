@@ -58,9 +58,9 @@ class AuthnClientBase(object):
         except Exception as ex:
             raise AuthenticationError("Authentication failed: {}".format(str(ex)))
 
-    def _prepare_request(self, method="POST", form_data=None, params=None):
-        # type: (Optional[str], Optional[Mapping[str, str]], Optional[Dict[str, str]]) -> HttpRequest
-        request = HttpRequest(method, self._auth_url)
+    def _prepare_request(self, method="POST", headers=None, form_data=None, params=None):
+        # type: (Optional[str], Optional[Mapping[str, str]], Optional[Mapping[str, str]], Optional[Dict[str, str]]) -> HttpRequest
+        request = HttpRequest(method, self._auth_url, headers=headers)
         if form_data:
             request.headers["Content-Type"] = "application/x-www-form-urlencoded"
             request.set_formdata_body(form_data)
@@ -81,9 +81,9 @@ class AuthnClient(AuthnClientBase):
         self._pipeline = Pipeline(transport=transport, policies=policies)
         super(AuthnClient, self).__init__(auth_url, **kwargs)
 
-    def request_token(self, scopes, method="POST", form_data=None, params=None):
-        # type: (Iterable[str], Optional[str], Optional[Mapping[str, str]], Optional[Dict[str, str]]) -> str
-        request = self._prepare_request(method, form_data, params)
+    def request_token(self, scopes, method="POST", headers=None, form_data=None, params=None):
+        # type: (Iterable[str], Optional[str], Optional[Mapping[str, str]], Optional[Mapping[str, str]], Optional[Dict[str, str]]) -> str
+        request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
         response = self._pipeline.run(request, stream=False)
         token = self._deserialize_and_cache_token(response, scopes)
         return token
