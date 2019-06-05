@@ -43,11 +43,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         expires = date_parse.parse("2050-02-02T08:00:00.000Z")
 
         # create a secret, setting optional arguments
-        secret = secret_client.set_secret("secret-name", "secret-value", enabled=True, expires=expires)
+        secret = secret_client.set_secret("secret-name", "secret-value", expires=expires)
 
+        print(secret.name)
         print(secret.version)
-        print(secret.created)
-        print(secret.enabled)
         print(secret.expires)
 
         # [END set_secret]
@@ -85,10 +84,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         deleted_secret = secret_client.delete_secret("secret-name")
 
         print(deleted_secret.name)
-        print(deleted_secret.deleted_date)
 
-        # if the vault has soft-delete enabled, the secret's
+        # if the vault has soft-delete enabled, the secret's, deleted_date
         # scheduled purge date and recovery id are set
+        print(deleted_secret.deleted_date)
         print(deleted_secret.scheduled_purge_date)
         print(deleted_secret.recovery_id)
 
@@ -118,7 +117,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # pylint: disable=unused-variable
 
         # [START list_secret_versions]
-        # list a secret's versions
         secret_versions = secret_client.list_secret_versions("secret-name")
 
         for secret in secrets:
@@ -130,7 +128,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [END list_secret_versions]
         # [START list_deleted_secrets]
 
-        # get a list of deleted secrets (requires soft-delete enabled for the vault)
+        # gets an iterator of deleted secrets (requires soft-delete enabled for the vault)
         deleted_secrets = secret_client.list_deleted_secrets()
 
         for secret in deleted_secrets:
@@ -142,6 +140,30 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(secret.deleted_date)
 
         # [END list_deleted_secrets]
+
+    @ResourceGroupPreparer()
+    @VaultClientPreparer()
+    def test_example_secrets_backup_restore(self, vault_client, **kwargs):
+        secret_client = vault_client.secrets
+        created_secret = secret_client.set_secret("secret-name", "secret-value")
+        secret_name = created_secret.name
+        # [START backup_secret]
+        # backup secret
+        secret_backup = secret_client.backup_secret("secret-name")
+
+        # returns the raw bytes of the backed up secret
+        print(secret_backup)
+
+        # [END backup_secret]
+        deleted_secret = secret_client.delete_secret("secret-name")
+        # [START restore_secret]
+
+        # restores a backed up secret
+        restored_secret = secret_client.restore_secret(secret_backup)
+        print(restored_secret.id)
+        print(restored_secret.version)
+
+        # [END restore_secret]
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)

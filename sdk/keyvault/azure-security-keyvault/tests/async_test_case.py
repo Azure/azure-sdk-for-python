@@ -31,7 +31,7 @@ class AsyncKeyVaultTestCase(KeyVaultTestCase):
             for i in range(max_retries):
                 try:
                     # TODO: better for caller to apply args to fn; could also gather
-                    await fn(name, version="")
+                    await fn(name)
                     break
                 except expected_exception:
                     if i == max_retries - 1:
@@ -46,7 +46,7 @@ class AsyncKeyVaultTestCase(KeyVaultTestCase):
             for _ in range(max_retries):
                 try:
                     # TODO: better for caller to apply args to fn; could also gather
-                    await fn(name, version="")
+                    await fn(name)
                     if self.is_live:
                         await asyncio.sleep(retry_delay)
                 except expected_exception:

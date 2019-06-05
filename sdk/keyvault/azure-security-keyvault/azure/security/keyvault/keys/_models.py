@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from datetime import datetime
+import datetime
 from typing import Any, Dict, Mapping, Optional
 from collections import namedtuple
 from .._internal import _parse_vault_id
@@ -27,13 +27,13 @@ class KeyBase(object):
     @classmethod
     def _from_key_bundle(cls, key_bundle):
         # type: (models.KeyBundle) -> KeyBase
-        """Construct a key from an autorest-generated KeyBundle"""
+        """Construct a KeyBase from an autorest-generated KeyBundle"""
         return cls(key_bundle.attributes, key_bundle.key.kid, managed=key_bundle.managed, tags=key_bundle.tags)
 
     @classmethod
     def _from_key_item(cls, key_item):
         # type: (models.KeyItem) -> KeyBase
-        """Construct a Key from an autorest-generated KeyItem"""
+        """Construct a KeyBase from an autorest-generated KeyItem"""
         return cls(key_item.attributes, key_item.kid, managed=key_item.managed, tags=key_item.tags)
 
     @property
@@ -126,14 +126,19 @@ class Key(KeyBase):
     @classmethod
     def _from_key_bundle(cls, key_bundle):
         # type: (models.KeyBundle) -> Key
-        """Construct a key from an autorest-generated KeyBundle"""
+        """Construct a Key from an autorest-generated KeyBundle"""
         return cls(
-            attributes=key_bundle.attributes, vault_id=key_bundle.key.kid, key_material=key_bundle.key, managed=key_bundle.managed, tags=key_bundle.tags
+            attributes=key_bundle.attributes,
+            vault_id=key_bundle.key.kid,
+            key_material=key_bundle.key,
+            managed=key_bundle.managed,
+            tags=key_bundle.tags,
         )
 
     @property
     def key_material(self):
         # type: () -> models.JsonWebKey
+        """The Json web key"""
         return self._key_material
 
 

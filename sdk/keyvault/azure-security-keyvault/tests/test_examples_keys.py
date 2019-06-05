@@ -1,8 +1,8 @@
-# -------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
+# Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
-# -------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 from __future__ import print_function
 import functools
 
@@ -44,13 +44,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         expires = date_parse.parse("2050-02-02T08:00:00.000Z")
 
         # create a key with optional arguments
-        key = key_client.create_key("key-name", "RSA-HSM", enabled=True, expires=expires)
+        key = key_client.create_key("key-name", "RSA-HSM", expires=expires)
 
         print(key.name)
         print(key.id)
-        print(key.version)
         print(key.key_material.kty)
-        print(key.enabled)
         print(key.expires)
 
         # [END create_key]
@@ -61,20 +59,18 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # create an rsa key with size specification
         # RSA key can be created with default size of '2048'
-        key = key_client.create_rsa_key("key-name", hsm=True, size=key_size, enabled=True, key_operations=key_ops)
+        key = key_client.create_rsa_key("key-name", hsm=True, size=key_size, key_operations=key_ops)
 
         print(key.id)
-        print(key.version)
+        print(key.name)
         print(key.key_material.kty)
         print(key.key_material.key_ops)
 
         # [END create_rsa_key]
         # [START create_ec_key]
-        from dateutil import parser as date_parse
-
         key_curve = "P-256"
 
-        # create an ec (Elliptic curve) key with curve specification
+        # create an EC (Elliptic curve) key with curve specification
         # EC key can be created with default curve of 'P-256'
         ec_key = key_client.create_ec_key("key-name", hsm=False, curve=key_curve)
 
@@ -105,8 +101,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # update attributes of an existing key
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        key_version = key.version
-        updated_key = key_client.update_key(key.name, key_version, expires=expires, tags=tags)
+        updated_key = key_client.update_key(key.name, expires=expires, tags=tags)
 
         print(updated_key.version)
         print(updated_key.updated)
@@ -121,10 +116,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         deleted_key = key_client.delete_key("key-name")
 
         print(deleted_key.name)
-        print(deleted_key.deleted_date)
 
-        # if the vault has soft-delete enabled, the key's
+        # if the vault has soft-delete enabled, the key's deleted_date,
         # scheduled purge date and recovery id are set
+        print(deleted_key.deleted_date)
         print(deleted_key.scheduled_purge_date)
         print(deleted_key.recovery_id)
 
@@ -148,9 +143,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         for key in keys:
             print(key.id)
             print(key.name)
-            print(key.created)
-            print(key.updated)
-            print(key.enabled)
 
         # [END list_keys]
 
@@ -161,9 +153,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         for key in key_versions:
             print(key.id)
-            print(key.updated)
-            print(key.version)
-            print(key.expires)
+            print(key.name)
 
         # [END list_key_versions]
 
@@ -222,7 +212,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # get a deleted key (requires soft-delete enabled for the vault)
         deleted_key = key_client.get_deleted_key("key-name")
         print(deleted_key.name)
+
+        # if the vault has soft-delete enabled, the key's deleted_date
+        # scheduled purge date and recovery id are set
         print(deleted_key.deleted_date)
+        print(deleted_key.scheduled_purge_date)
+        print(deleted_key.recovery_id)
 
         # [END get_deleted_key]
         # [START recover_deleted_key]

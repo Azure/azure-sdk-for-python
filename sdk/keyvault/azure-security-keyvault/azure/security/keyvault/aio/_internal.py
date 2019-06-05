@@ -3,15 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Callable, Mapping, Optional, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    try:
-        from azure.core.credentials import TokenCredential
-    except ImportError:
-        # TokenCredential is a typing_extensions.Protocol; we don't depend on that package
-        pass
-
+from typing import Any, Callable, Mapping, TYPE_CHECKING
 from azure.core.async_paging import AsyncPagedMixin
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
@@ -21,6 +13,14 @@ from msrest.serialization import Model
 
 from .._generated import KeyVaultClient
 from .._internal import KEY_VAULT_SCOPE
+
+
+if TYPE_CHECKING:
+    try:
+        from azure.core.credentials import TokenCredential
+    except ImportError:
+        # TokenCredential is a typing_extensions.Protocol; we don't depend on that package
+        pass
 
 
 class AsyncPagingAdapter:
@@ -39,6 +39,7 @@ class AsyncPagingAdapter:
         if not item:
             raise StopAsyncIteration
         return self._fn(item)
+        # TODO: expected type Model got Coroutine instead?
 
 
 class _AsyncKeyVaultClientBase:

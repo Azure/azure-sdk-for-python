@@ -95,12 +95,11 @@ The following section provides several code snippets using the above created `se
 ### Create a Secret
 `set_secret` creates a Secret to be stored in the Azure Key Vault. If a secret with the same name already exists, then a new version of the secret is created.
 ```python
-    secret = secret_client.set_secret("secret-name", "secret-value", enabled=True)
+    secret = secret_client.set_secret("secret-name", "secret-value")
 
     print(secret.name)
     print(secret.value)
     print(secret.version)
-    print(secret.enabled)
 ```
 
 ### Retrieve a Secret
@@ -166,12 +165,11 @@ This example creates a secret in the Key Vault with the specified optional argum
     # Create a new secret client using the default credential
     secret_client = SecretClient(vault_url=vault_url, credential=credential)
 
-    secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True)
+    secret = await secret_client.set_secret("secret-name", "secret-value")
 
     print(secret.name)
     print(secret.value)
     print(secret.version)
-    print(secret.enabled)
 ```
 ### Async list secrets
 This example lists all the secrets in the specified Key Vault.
@@ -196,14 +194,32 @@ except ResourceNotFoundError as e:
 
 Output: "Secret not found:deleted_secret"
 ```
-### Logging [TODO]
-This SDK uses Python standard logging library. You can configure logging print out debugging information to the stdout or anywhere you want.
+### Logging
+This library by default has network trace logging enabled. This will be logged at DEBUG level. The logging policy in the pipeline is used to output HTTP network trace to the configured logger. You can configure logging to print out debugging information to the stdout or write it to a file using the following example:
 
-```python
+ ```python
+import sys
 import logging
-logging.basicConfig(level=logging.DEBUG)
+ # Create a logger for the 'azure' SDK
+logger = logging.getLogger("azure.security.keyvault")
+logger.setLevel(logging.DEBUG)
+ # Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+ # Configure a file output
+file_handler = logging.FileHandler(filename)
+logger.addHandler(file_handler)
+
+# Enable network trace logging. This will be logged at DEBUG level.
+# By default, network trace logging is disabled.
+config = SecretClient.create_config()
+config.logging_policy = NetworkTraceLoggingPolicy(logging_enable=True, **kwargs)
 ```
-Http request and response details are printed to stdout with this logging config.
+The logger can also be enabled per operation.
+
+ ```python
+key = secret_client.get_secret("secret-name", logging_enable=True)
+```
 
 ## Next steps
 Several KeyVault Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Key Vault:
