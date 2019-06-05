@@ -184,7 +184,7 @@ def ExplicitlyExcludeFromIndex(db):
                 }
         QueryDocumentsWithCustomQuery(created_Container, query)
 
-        docRead = created_Container.get_item(item="doc2", partition_key="doc2")
+        docRead = created_Container.read_item(item="doc2", partition_key="doc2")
         print("Document read by ID: \n", docRead["id"])
 
         # Cleanup
@@ -233,7 +233,7 @@ def UseManualIndexing(db):
             }
         QueryDocumentsWithCustomQuery(created_Container, query)
 
-        docRead = created_Container.get_item(item="doc1", partition_key="doc1")
+        docRead = created_Container.read_item(item="doc1", partition_key="doc1")
         print("Document read by ID: \n", docRead["id"])
 
         # Now create a document, passing in an IndexingDirective saying we want to specifically index this document

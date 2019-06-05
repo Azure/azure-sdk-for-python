@@ -34,11 +34,11 @@ class SessionTests(unittest.TestCase):
         self._OriginalRequest = synchronized_request._Request
         synchronized_request._Request = self._MockRequest
         created_document = self.created_collection.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
-        self.created_collection.get_item(item=created_document['id'], partition_key='mypk')
+        self.created_collection.read_item(item=created_document['id'], partition_key='mypk')
         self.assertNotEqual(self.last_session_token_sent, None)
         self.created_db.get_container(container=self.created_collection).read()
         self.assertEqual(self.last_session_token_sent, None)
-        self.created_collection.get_item(item=created_document['id'], partition_key='mypk')
+        self.created_collection.read_item(item=created_document['id'], partition_key='mypk')
         self.assertNotEqual(self.last_session_token_sent, None)
         synchronized_request._Request = self._OriginalRequest
 
@@ -51,7 +51,7 @@ class SessionTests(unittest.TestCase):
         self.OriginalExecuteFunction = retry_utility._ExecuteFunction
         retry_utility._ExecuteFunction = self._MockExecuteFunctionSessionReadFailureOnce
         try:
-            self.created_collection.get_item(item=created_document['id'], partition_key='mypk')
+            self.created_collection.read_item(item=created_document['id'], partition_key='mypk')
         except errors.HTTPFailure as e:
             self.assertEqual(self.client.client_connection.session.get_session_token(
                 'dbs/' + self.created_db.id + '/colls/' + self.created_collection.id), "")

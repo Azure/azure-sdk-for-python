@@ -143,7 +143,7 @@ class Test_ttl_tests(unittest.TestCase):
         # the created document should be gone now as it's ttl value would be same as defaultTtl value of the collection
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
-            created_collection.get_item,
+            created_collection.read_item,
             document_definition['id'],
             document_definition['id']
         )
@@ -155,7 +155,7 @@ class Test_ttl_tests(unittest.TestCase):
         time.sleep(5)
 
         # the created document should NOT be gone as it's ttl value is set to -1(never expire) which overrides the collections's defaultTtl value
-        read_document = created_collection.get_item(item=document_definition['id'], partition_key=document_definition['id'])
+        read_document = created_collection.read_item(item=document_definition['id'], partition_key=document_definition['id'])
         self.assertEqual(created_document['id'], read_document['id'])
 
         document_definition['id'] = 'doc3' + str(uuid.uuid4())
@@ -167,7 +167,7 @@ class Test_ttl_tests(unittest.TestCase):
         # the created document should be gone now as it's ttl value is set to 2 which overrides the collections's defaultTtl value(5)
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
-            created_collection.get_item,
+            created_collection.read_item,
             created_document['id'],
             created_document['id']
         )
@@ -179,7 +179,7 @@ class Test_ttl_tests(unittest.TestCase):
         time.sleep(6)
 
         # the created document should NOT be gone as it's ttl value is set to 8 which overrides the collections's defaultTtl value(5)
-        read_document = created_collection.get_item(item=created_document['id'], partition_key=created_document['id'])
+        read_document = created_collection.read_item(item=created_document['id'], partition_key=created_document['id'])
         self.assertEqual(created_document['id'], read_document['id'])
 
         time.sleep(4)
@@ -187,7 +187,7 @@ class Test_ttl_tests(unittest.TestCase):
         # the created document should be gone now as we have waited for (6+4) secs which is greater than documents's ttl value of 8
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
-            created_collection.get_item,
+            created_collection.read_item,
             created_document['id'],
             created_document['id']
         )
@@ -222,16 +222,16 @@ class Test_ttl_tests(unittest.TestCase):
         # the created document should be gone now as it's ttl value is set to 2 which overrides the collections's defaultTtl value(-1)
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
-            created_collection.get_item,
+            created_collection.read_item,
             created_document3['id'],
             created_document3['id']
         )
 
         # The documents with id doc1 and doc2 will never expire
-        read_document = created_collection.get_item(item=created_document1['id'], partition_key=created_document1['id'])
+        read_document = created_collection.read_item(item=created_document1['id'], partition_key=created_document1['id'])
         self.assertEqual(created_document1['id'], read_document['id'])
 
-        read_document = created_collection.get_item(item=created_document2['id'], partition_key=created_document2['id'])
+        read_document = created_collection.read_item(item=created_document2['id'], partition_key=created_document2['id'])
         self.assertEqual(created_document2['id'], read_document['id'])
 
         self.created_db.delete_container(container=created_collection)
@@ -252,7 +252,7 @@ class Test_ttl_tests(unittest.TestCase):
         time.sleep(7)
 
         # Created document still exists even after ttl time has passed since the TTL is disabled at collection level(no defaultTtl property defined)
-        read_document = created_collection.get_item(item=created_document['id'], partition_key=created_document['id'])
+        read_document = created_collection.read_item(item=created_document['id'], partition_key=created_document['id'])
         self.assertEqual(created_document['id'], read_document['id'])
 
         self.created_db.delete_container(container=created_collection)
@@ -275,7 +275,7 @@ class Test_ttl_tests(unittest.TestCase):
         # the created document cannot be deleted since it should already be gone now
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
-            created_collection.get_item,
+            created_collection.read_item,
             created_document['id'],
             created_document['id']
         )
@@ -293,7 +293,7 @@ class Test_ttl_tests(unittest.TestCase):
         time.sleep(7)
 
         # Upserted document still exists after 10 secs from document creation time(with collection's defaultTtl set to 8) since it's ttl was reset after 3 secs by upserting it
-        read_document = created_collection.get_item(item=upserted_docment['id'], partition_key=upserted_docment['id'])
+        read_document = created_collection.read_item(item=upserted_docment['id'], partition_key=upserted_docment['id'])
         self.assertEqual(upserted_docment['id'], read_document['id'])
 
         time.sleep(3)
@@ -301,7 +301,7 @@ class Test_ttl_tests(unittest.TestCase):
         # the upserted document should be gone now after 10 secs from the last write(upsert) of the document
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
-            created_collection.get_item,
+            created_collection.read_item,
             upserted_docment['id'],\
             upserted_docment['id']
         )
@@ -326,7 +326,7 @@ class Test_ttl_tests(unittest.TestCase):
         time.sleep(5)
 
         # Created document still exists even after ttl time has passed since the TTL is disabled at collection level
-        read_document = created_collection.get_item(item=created_document['id'], partition_key=created_document['id'])
+        read_document = created_collection.read_item(item=created_document['id'], partition_key=created_document['id'])
         self.assertEqual(created_document['id'], read_document['id'])
 
         self.created_db.delete_container(container=created_collection)

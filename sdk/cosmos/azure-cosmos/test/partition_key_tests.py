@@ -125,14 +125,14 @@ class PartitionKeyTests(unittest.TestCase):
         created_container = self.created_db.get_container(self.created_collection_id)
 
         # Pass partitionKey.Empty as partition key to access documents from a single partition collection with v 2018-12-31 SDK
-        read_item = created_container.get_item(self.created_document['id'], partition_key=partition_key.NonePartitionKeyValue)
+        read_item = created_container.read_item(self.created_document['id'], partition_key=partition_key.NonePartitionKeyValue)
         self.assertEquals(read_item['id'], self.created_document['id'])
 
         document_definition = {'id': str(uuid.uuid4())}
         created_item = created_container.create_item(body=document_definition)
         self.assertEquals(created_item['id'], document_definition['id'])
 
-        read_item = created_container.get_item(created_item['id'], partition_key=partition_key.NonePartitionKeyValue)
+        read_item = created_container.read_item(created_item['id'], partition_key=partition_key.NonePartitionKeyValue)
         self.assertEquals(read_item['id'], created_item['id'])
 
         document_definition_for_replace = {'id': str(uuid.uuid4())}
@@ -181,7 +181,7 @@ class PartitionKeyTests(unittest.TestCase):
     def test_multi_partition_collection_read_document_with_no_pk(self):
         document_definition = {'id': str(uuid.uuid4())}
         self.created_collection.create_item(body=document_definition)
-        read_item = self.created_collection.get_item(item=document_definition['id'], partition_key=partition_key.NonePartitionKeyValue)
+        read_item = self.created_collection.read_item(item=document_definition['id'], partition_key=partition_key.NonePartitionKeyValue)
         self.assertEquals(read_item['id'], document_definition['id'])
         self.created_collection.delete_item(item=document_definition['id'], partition_key=partition_key.NonePartitionKeyValue)
 

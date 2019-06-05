@@ -58,7 +58,7 @@ class ItemManagement:
         print('\n1.2 Reading Item by Id\n')
 
         # Note that Reads require a partition key to be spcified.
-        response = container.get_item(item=doc_id, partition_key=doc_id)
+        response = container.read_item(item=doc_id, partition_key=doc_id)
 
         print('Item read by Id {0}'.format(doc_id))
         print('Account Number: {0}'.format(response.get('account_number')))
@@ -97,7 +97,7 @@ class ItemManagement:
     def ReplaceItem(container, doc_id):
         print('\n1.5 Replace an Item\n')
 
-        read_item = container.get_item(item=doc_id, partition_key=doc_id)
+        read_item = container.read_item(item=doc_id, partition_key=doc_id)
         read_item['subtotal'] = read_item['subtotal'] + 1
         response = container.replace_item(item=read_item, body=read_item)
 
@@ -107,7 +107,7 @@ class ItemManagement:
     def UpsertItem(container, doc_id):
         print('\n1.6 Upserting an item\n')
 
-        read_item = container.get_item(item=doc_id, partition_key=doc_id)
+        read_item = container.read_item(item=doc_id, partition_key=doc_id)
         read_item['subtotal'] = read_item['subtotal'] + 1
         response = container.upsert_item(body=read_item)
 

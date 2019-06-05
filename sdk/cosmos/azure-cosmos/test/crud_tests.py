@@ -417,7 +417,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(created_document.get('key'), document_definition.get('key'))
 
         # read document
-        read_document = created_collection.get_item(
+        read_document = created_collection.read_item(
             item=created_document.get('id'),
             partition_key=created_document.get('id')
         )
@@ -819,7 +819,7 @@ class CRUDTests(unittest.TestCase):
                          replaced_document['id'],
                          'document id should stay the same')
         # read document
-        one_document_from_read = created_collection.get_item(
+        one_document_from_read = created_collection.read_item(
             item=replaced_document['id'],
             partition_key=replaced_document['id']
         )
@@ -832,7 +832,7 @@ class CRUDTests(unittest.TestCase):
         )
         # read documents after deletion
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
-                                           created_collection.get_item,
+                                           created_collection.read_item,
                                            replaced_document['id'],
                                            replaced_document['id'])
 
@@ -1374,7 +1374,7 @@ class CRUDTests(unittest.TestCase):
                          2,
                          'Expected 2 Documents to be succesfully read')
         # 4. Success-- Use Col1 Permission to Read Col1Doc1
-        success_doc = success_coll1.get_item(
+        success_doc = success_coll1.read_item(
             item=entities['doc1']['id'],
             partition_key=entities['doc1']['id']
         )
@@ -2399,11 +2399,11 @@ class CRUDTests(unittest.TestCase):
         created_item = created_container.create_item({'id':'1' + str(uuid.uuid4())})
 
         # read item with id
-        read_item = created_container.get_item(item=created_item['id'], partition_key=created_item['id'])
+        read_item = created_container.read_item(item=created_item['id'], partition_key=created_item['id'])
         self.assertEquals(read_item['id'], created_item['id'])
 
         # read item with properties
-        read_item = created_container.get_item(item=created_item, partition_key=created_item['id'])
+        read_item = created_container.read_item(item=created_item, partition_key=created_item['id'])
         self.assertEquals(read_item['id'], created_item['id'])
 
         created_sproc = created_container.scripts.create_stored_procedure({

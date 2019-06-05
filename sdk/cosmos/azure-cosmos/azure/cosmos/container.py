@@ -137,7 +137,7 @@ class Container:
         
         return self._properties
 
-    def get_item(
+    def read_item(
         self,
         item,
         partition_key,
