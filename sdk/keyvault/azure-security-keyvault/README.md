@@ -10,7 +10,7 @@ Use the Key Vault client library to:
 * Provision, manage, and deploy public and private Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificates for use with Azure and your internal connected resources.
 * Use either software or FIPS 140-2 Level 2 validated HSMs to help protect secrets and keys.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault) | [Package (Pypi)](https://pypi.org/project/azure-security-keyvault/) | [API reference documentation](https://docs.microsoft.com/python/api/azure-security-keyvault) | [Product documentation](https://docs.microsoft.com/en-gb/azure/key-vault/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault) | [Package (Pypi)](TODO) | [API reference documentation](TODO) | [Product documentation](TODO)
 ## Getting started
 ### Install the package
 Install the Azure Key Vault client library for Python with pip:
@@ -25,7 +25,7 @@ Install the Azure Key Vault client library for Python with pip:
 * An existing Key Vault. You can create this by following the instructions on [this article](https://docs.microsoft.com/en-gb/azure/key-vault/quick-create-portal).
 
 ### Authenticate the client
-In order to interact with the Key Vault service, you'll need to create an instance of the [KeyVaultClient](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault) class. For this, you will need a vault url, azure credentials, client id, client secret, tenant id and resource url.
+In order to interact with the Key Vault service, you'll need to create an instance of the [KeyVaultClient](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault) class. For this, you will need a vault url,  client secret credentials (client id, client secret, tenant id) and a [resource url](https://vault.azure.net).
 
 ### Get credentials
 You can find credential information in [Azure Portal](https://portal.azure.com/).
@@ -34,21 +34,19 @@ You can find credential information in [Azure Portal](https://portal.azure.com/)
 The following code snippet demonstrates a way you can instantiate the KeyVaultClient object:
 ```python
     from azure.security.keyvault import VaultClient
-    from azure.common.credentials import ServicePrincipalCredentials
+    from azure.identity import AsyncClientSecretCredential
 
-    credentials = ServicePrincipalCredentials(
-        client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
-    )
+    credential = AsyncClientSecretCredential(client_id=client_id, secret=client_secret, tenant_id=tenant_id)
 
-    # Create a new Vault client using Azure credentials
-    vault_client = VaultClient(vault_url=vault_url, credentials=credentials)
+    # Create a new Vault client using a client secret credential
+    vault_client = VaultClient(vault_url=vault_url, credential=credential)
 ```
 ## Key concepts
 ### Vault
-  A user can create a key vault and gain full access and control over it. When using Key Vault, application developers no longer need to store security information in their application. Not having to store security information in applications eliminates the need to make this information part of the code.
+  A user can create a key vault to safeguard and manage cryptographic keys and secrets used by cloud applications and services. When using a Key Vault, application developers no longer need to store security information in their application. Azure key vaults may be created and managed through the Azure portal.
 
 ### Vault Client:
-A vault client performs interactions with the Keys and Secrets client for creating and getting an instance of the Keys/Secrets client. An asynchronous and synchronous, VaultClient, client exists in the SDK allowing for selection of a client based on an application's use case.
+A vault client performs interactions with the Keys and Secrets client for creating and getting an instance of the Keys/Secrets client. An asynchronous and synchronous, VaultClient, client exists in the SDK allowing for selection of a client based on an application's use case. The key vault client library performs cryptographic key operations and vault operations against the Key Vault service.
 
 ## Examples
 The following sections provide several code snippets covering some of the most common Key Vault related tasks, including:
@@ -57,30 +55,26 @@ The following sections provide several code snippets covering some of the most c
 
 ### Create a Secret Client
 ```python
-    from azure.common.credentials import ServicePrincipalCredentials
     from azure.security.keyvault import VaultClient
+    from azure.identity import AsyncClientSecretCredential
 
-    credentials = ServicePrincipalCredentials(
-        client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
-    )
+    credential = AsyncClientSecretCredential(client_id=client_id, secret=client_secret, tenant_id=tenant_id)
 
-    # Create a new Vault client using Azure credentials
-    vault_client = VaultClient(vault_url=vault_url, credentials=credentials)
+    # Create a new Vault client using a client secret credential
+    vault_client = VaultClient(vault_url=vault_url, credential=credential)
     # retrieves an instance of Secret Client
     secret_client = vault_client.secrets
 ```
 
 ### Create a Key Client
 ```python
-    from azure.common.credentials import ServicePrincipalCredentials
     from azure.security.keyvault import VaultClient
+    from azure.identity import AsyncClientSecretCredential
 
-    credentials = ServicePrincipalCredentials(
-        client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
-    )
+    credential = AsyncClientSecretCredential(client_id=client_id, secret=client_secret, tenant_id=tenant_id)
 
-    # Create a new Vault client using Azure credentials
-    vault_client = VaultClient(vault_url=vault_url, credentials=credentials)
+    # Create a new Vault client using a client secret credential
+    vault_client = VaultClient(vault_url=vault_url, credential=credential)
     # retrieves an instance of Key Client
     key_client = vault_client.keys
 ```
@@ -102,7 +96,7 @@ Http request and response details are printed to stdout with this logging config
 [Quickstart: Set and retrieve a secret from Azure Key Vault using the Azure portal](https://docs.microsoft.com/en-us/azure/key-vault/quick-create-portal)
 
 ###  Documentation
-Reference documentation is available at docs.microsoft.com/python/api/azure-security-keyvault
+Reference documentation is available at docs.microsoft.com/python/api/azure-security-keyvault--TODO
 
 ## Provide Feedback
 If you encounter any bugs or have suggestions, please file an issue in the Issues section of the project.
