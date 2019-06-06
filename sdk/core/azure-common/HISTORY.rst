@@ -3,6 +3,11 @@
 Release History
 ===============
 
+1.1.22 (2019-06-06)
++++++++++++++++++++
+
+- Fix KeyVaultClient support for get_client_from_auth_file
+
 1.1.21 (2019-05-21)
 +++++++++++++++++++
 
