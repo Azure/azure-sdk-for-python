@@ -297,7 +297,7 @@ class Database(object):
             id_value
         )
 
-    def get_all_containers(
+    def read_all_containers(
         self,
         max_item_count=None,
         session_token=None,
@@ -458,7 +458,7 @@ class Database(object):
             properties=container_properties,
         )
 
-    def get_all_users(
+    def read_all_users(
             self,
             max_item_count=None,
             feed_options=None

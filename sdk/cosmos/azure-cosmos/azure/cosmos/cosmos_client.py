@@ -156,7 +156,7 @@ class CosmosClient:
             id_value
         )
 
-    def get_all_databases(
+    def read_all_databases(
         self,
         max_item_count=None,
         session_token=None,

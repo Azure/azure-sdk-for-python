@@ -189,7 +189,7 @@ class Container:
             document_link=doc_link, options=request_options
         )
 
-    def list_item_properties(
+    def read_all_items(
         self,
         max_item_count=None,
         session_token=None,
@@ -596,7 +596,7 @@ class Container:
             offer_throughput=data['content']['offerThroughput'],
             properties=data)
 
-    def list_conflicts(
+    def read_all_conflicts(
             self,
             max_item_count=None,
             feed_options=None

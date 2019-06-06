@@ -81,7 +81,7 @@ class User:
         )
         return self._properties
 
-    def list_permission_properties(
+    def read_all_permissions(
             self,
             max_item_count=None,
             feed_options=None

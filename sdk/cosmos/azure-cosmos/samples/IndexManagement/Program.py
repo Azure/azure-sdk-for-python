@@ -56,19 +56,19 @@ def Query_Entities(parent, entity_type, id = None):
     try:
         if entity_type == 'database':
             if id == None:
-                entities = list(parent.get_all_databases())
+                entities = list(parent.read_all_databases())
             else:
                 entities = list(parent.query_databases(find_entity_by_id_query))
 
         elif entity_type == 'collection':
             if id == None:
-                entities = list(parent.get_all_containers())
+                entities = list(parent.read_all_containers())
             else:
                 entities = list(parent.query_containers(find_entity_by_id_query))
 
         elif entity_type == 'document':
             if id == None:
-                entities = list(parent.list_item_properties())
+                entities = list(parent.read_all_items())
             else:
                 entities = list(parent.query_items(find_entity_by_id_query))
     except errors.CosmosError as e:
