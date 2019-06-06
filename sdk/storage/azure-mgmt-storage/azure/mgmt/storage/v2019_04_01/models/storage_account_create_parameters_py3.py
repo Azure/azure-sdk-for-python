@@ -58,7 +58,8 @@ class StorageAccountCreateParameters(Model):
      Integration for SMB if sets to true.
     :type enable_azure_files_aad_integration: bool
     :param enable_https_traffic_only: Allows https traffic only to storage
-     service if sets to true.
+     service if sets to true. The default value is true since API version
+     2019-04-01.
     :type enable_https_traffic_only: bool
     :param is_hns_enabled: Account HierarchicalNamespace enabled if sets to
      true.
