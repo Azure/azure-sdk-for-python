@@ -178,7 +178,7 @@ class AsyncManagedIdentityCredential(object):
 class AsyncTokenCredentialChain(TokenCredentialChain):
     """A sequence of token credentials"""
 
-    async def get_token(self, *scopes: str) -> str:
+    async def get_token(self, *scopes: str) -> str:  # type: ignore
         """Attempts to get a token from each credential, in order, returning the first token.
            If no token is acquired, raises an exception listing error messages.
         """
