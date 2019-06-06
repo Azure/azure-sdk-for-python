@@ -9,14 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dimensions_operations import DimensionsOperations
-from .query_operations import QueryOperations
-from .exports_operations import ExportsOperations
+from .views_operations import ViewsOperations
+from .budgets_operations import BudgetsOperations
+from .budget_operations import BudgetOperations
 from .operations import Operations
 
 __all__ = [
-    'DimensionsOperations',
-    'QueryOperations',
-    'ExportsOperations',
+    'ViewsOperations',
+    'BudgetsOperations',
+    'BudgetOperations',
     'Operations',
 ]

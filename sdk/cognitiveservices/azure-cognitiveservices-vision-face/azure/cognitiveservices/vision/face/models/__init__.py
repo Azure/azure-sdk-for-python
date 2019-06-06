@@ -114,6 +114,7 @@ from .face_client_enums import (
     SnapshotObjectType,
     OperationStatusType,
     FaceAttributeType,
+    DetectionModel,
 )
 
 __all__ = [
@@ -175,4 +176,5 @@ __all__ = [
     'SnapshotObjectType',
     'OperationStatusType',
     'FaceAttributeType',
+    'DetectionModel',
 ]

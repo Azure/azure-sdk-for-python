@@ -15,7 +15,7 @@ from msrest.serialization import Model
 class EHNamespaceIdContainer(Model):
     """The full ARM ID of an Event Hubs Namespace.
 
-    :param id:
+    :param id: id parameter
     :type id: str
     """
 

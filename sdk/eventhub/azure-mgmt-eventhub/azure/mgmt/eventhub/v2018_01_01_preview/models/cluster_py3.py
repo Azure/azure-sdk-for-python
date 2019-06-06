@@ -37,6 +37,8 @@ class Cluster(TrackedResource):
     :ivar metric_id: The metric ID of the cluster resource. Provided by the
      service and not modifiable by the user.
     :vartype metric_id: str
+    :ivar status: Status of the Cluster resource
+    :vartype status: str
     """
 
     _validation = {
@@ -46,6 +48,7 @@ class Cluster(TrackedResource):
         'created': {'readonly': True},
         'updated': {'readonly': True},
         'metric_id': {'readonly': True},
+        'status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -58,6 +61,7 @@ class Cluster(TrackedResource):
         'created': {'key': 'properties.created', 'type': 'str'},
         'updated': {'key': 'properties.updated', 'type': 'str'},
         'metric_id': {'key': 'properties.metricId', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
     }
 
     def __init__(self, *, location: str=None, tags=None, sku=None, **kwargs) -> None:
@@ -66,3 +70,4 @@ class Cluster(TrackedResource):
         self.created = None
         self.updated = None
         self.metric_id = None
+        self.status = None

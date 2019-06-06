@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .proxy_resource import ProxyResource
 
 
-class AlertsSummary(Resource):
+class AlertsSummary(ProxyResource):
     """Summary of alerts based on the input filters and 'groupby' parameters.
 
     Variables are only populated by the server, and will be ignored when

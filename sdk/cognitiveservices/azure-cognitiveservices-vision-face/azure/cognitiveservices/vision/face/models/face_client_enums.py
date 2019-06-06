@@ -123,3 +123,9 @@ class FaceAttributeType(str, Enum):
     blur = "blur"
     exposure = "exposure"
     noise = "noise"
+
+
+class DetectionModel(str, Enum):
+
+    detection_01 = "detection_01"
+    detection_02 = "detection_02"

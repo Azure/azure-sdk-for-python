@@ -17,11 +17,12 @@ class AvailableClustersList(Model):
 
     :param value: The count of readily available and pre-provisioned Event
      Hubs Clusters per region.
-    :type value: list[dict[str, int]]
+    :type value:
+     list[~azure.mgmt.eventhub.v2018_01_01_preview.models.AvailableCluster]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[{int}]'},
+        'value': {'key': 'value', 'type': '[AvailableCluster]'},
     }
 
     def __init__(self, **kwargs):

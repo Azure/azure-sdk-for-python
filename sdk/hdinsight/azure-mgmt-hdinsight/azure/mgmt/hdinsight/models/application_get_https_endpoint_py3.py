@@ -23,6 +23,12 @@ class ApplicationGetHttpsEndpoint(Model):
     :type destination_port: int
     :param public_port: The public port to connect to.
     :type public_port: int
+    :param sub_domain_suffix: The subDomainSuffix of the application and can
+     not greater than 3 characters.
+    :type sub_domain_suffix: str
+    :param disable_gateway_auth: The value indicates whether to disable
+     GatewayAuth.
+    :type disable_gateway_auth: bool
     """
 
     _attribute_map = {
@@ -30,11 +36,15 @@ class ApplicationGetHttpsEndpoint(Model):
         'location': {'key': 'location', 'type': 'str'},
         'destination_port': {'key': 'destinationPort', 'type': 'int'},
         'public_port': {'key': 'publicPort', 'type': 'int'},
+        'sub_domain_suffix': {'key': 'subDomainSuffix', 'type': 'str'},
+        'disable_gateway_auth': {'key': 'disableGatewayAuth', 'type': 'bool'},
     }
 
-    def __init__(self, *, access_modes=None, location: str=None, destination_port: int=None, public_port: int=None, **kwargs) -> None:
+    def __init__(self, *, access_modes=None, location: str=None, destination_port: int=None, public_port: int=None, sub_domain_suffix: str=None, disable_gateway_auth: bool=None, **kwargs) -> None:
         super(ApplicationGetHttpsEndpoint, self).__init__(**kwargs)
         self.access_modes = access_modes
         self.location = location
         self.destination_port = destination_port
         self.public_port = public_port
+        self.sub_domain_suffix = sub_domain_suffix
+        self.disable_gateway_auth = disable_gateway_auth

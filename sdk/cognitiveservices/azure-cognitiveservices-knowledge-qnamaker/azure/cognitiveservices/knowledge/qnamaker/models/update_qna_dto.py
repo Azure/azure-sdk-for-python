@@ -28,6 +28,9 @@ class UpdateQnaDTO(Model):
     :param metadata: List of metadata associated with the answer to be updated
     :type metadata:
      ~azure.cognitiveservices.knowledge.qnamaker.models.UpdateQnaDTOMetadata
+    :param context: Context associated with Qna to be updated.
+    :type context:
+     ~azure.cognitiveservices.knowledge.qnamaker.models.UpdateQnaDTOContext
     """
 
     _validation = {
@@ -41,6 +44,7 @@ class UpdateQnaDTO(Model):
         'source': {'key': 'source', 'type': 'str'},
         'questions': {'key': 'questions', 'type': 'UpdateQnaDTOQuestions'},
         'metadata': {'key': 'metadata', 'type': 'UpdateQnaDTOMetadata'},
+        'context': {'key': 'context', 'type': 'UpdateQnaDTOContext'},
     }
 
     def __init__(self, **kwargs):
@@ -50,3 +54,4 @@ class UpdateQnaDTO(Model):
         self.source = kwargs.get('source', None)
         self.questions = kwargs.get('questions', None)
         self.metadata = kwargs.get('metadata', None)
+        self.context = kwargs.get('context', None)

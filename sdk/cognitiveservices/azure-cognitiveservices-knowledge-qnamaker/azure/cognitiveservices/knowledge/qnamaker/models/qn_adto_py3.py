@@ -29,6 +29,9 @@ class QnADTO(Model):
     :param metadata: List of metadata associated with the answer.
     :type metadata:
      list[~azure.cognitiveservices.knowledge.qnamaker.models.MetadataDTO]
+    :param context: Context of a QnA
+    :type context:
+     ~azure.cognitiveservices.knowledge.qnamaker.models.QnADTOContext
     """
 
     _validation = {
@@ -43,12 +46,14 @@ class QnADTO(Model):
         'source': {'key': 'source', 'type': 'str'},
         'questions': {'key': 'questions', 'type': '[str]'},
         'metadata': {'key': 'metadata', 'type': '[MetadataDTO]'},
+        'context': {'key': 'context', 'type': 'QnADTOContext'},
     }
 
-    def __init__(self, *, answer: str, questions, id: int=None, source: str=None, metadata=None, **kwargs) -> None:
+    def __init__(self, *, answer: str, questions, id: int=None, source: str=None, metadata=None, context=None, **kwargs) -> None:
         super(QnADTO, self).__init__(**kwargs)
         self.id = id
         self.answer = answer
         self.source = source
         self.questions = questions
         self.metadata = metadata
+        self.context = context

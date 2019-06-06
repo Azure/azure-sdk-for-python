@@ -26,6 +26,17 @@ try:
     from .extracted_table_py3 import ExtractedTable
     from .extracted_page_py3 import ExtractedPage
     from .analyze_result_py3 import AnalyzeResult
+    from .word_py3 import Word
+    from .line_py3 import Line
+    from .text_recognition_result_py3 import TextRecognitionResult
+    from .element_reference_py3 import ElementReference
+    from .field_value_py3 import FieldValue
+    from .understanding_result_py3 import UnderstandingResult
+    from .read_receipt_result_py3 import ReadReceiptResult
+    from .string_value_py3 import StringValue
+    from .number_value_py3 import NumberValue
+    from .computer_vision_error_py3 import ComputerVisionError, ComputerVisionErrorException
+    from .image_url_py3 import ImageUrl
 except (SyntaxError, ImportError):
     from .train_request import TrainRequest
     from .form_document_report import FormDocumentReport
@@ -43,6 +54,22 @@ except (SyntaxError, ImportError):
     from .extracted_table import ExtractedTable
     from .extracted_page import ExtractedPage
     from .analyze_result import AnalyzeResult
+    from .word import Word
+    from .line import Line
+    from .text_recognition_result import TextRecognitionResult
+    from .element_reference import ElementReference
+    from .field_value import FieldValue
+    from .understanding_result import UnderstandingResult
+    from .read_receipt_result import ReadReceiptResult
+    from .string_value import StringValue
+    from .number_value import NumberValue
+    from .computer_vision_error import ComputerVisionError, ComputerVisionErrorException
+    from .image_url import ImageUrl
+from .form_recognizer_client_enums import (
+    TextOperationStatusCodes,
+    TextRecognitionResultDimensionUnit,
+    TextRecognitionResultConfidenceClass,
+)
 
 __all__ = [
     'TrainRequest',
@@ -61,4 +88,18 @@ __all__ = [
     'ExtractedTable',
     'ExtractedPage',
     'AnalyzeResult',
+    'Word',
+    'Line',
+    'TextRecognitionResult',
+    'ElementReference',
+    'FieldValue',
+    'UnderstandingResult',
+    'ReadReceiptResult',
+    'StringValue',
+    'NumberValue',
+    'ComputerVisionError', 'ComputerVisionErrorException',
+    'ImageUrl',
+    'TextOperationStatusCodes',
+    'TextRecognitionResultDimensionUnit',
+    'TextRecognitionResultConfidenceClass',
 ]
