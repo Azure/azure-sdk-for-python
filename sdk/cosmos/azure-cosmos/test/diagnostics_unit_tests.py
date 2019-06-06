@@ -28,6 +28,14 @@ class BaseUnitTests(unittest.TestCase):
         assert rh.headers == _headers
         assert rh.headers is not _headers
 
+    def test_headers_case(self):
+        rh = m.RecordHeaders()
+        rh(_headers)
+        rh_headers = rh.headers
+        for key in rh.headers.keys():
+            assert key.upper() in rh_headers
+            assert key.lower() in rh_headers 
+
     def test_common_attrs(self):
         rh = m.RecordHeaders()
         rh(_headers)

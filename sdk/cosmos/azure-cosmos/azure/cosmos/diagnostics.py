@@ -22,6 +22,8 @@
 """Diagnostic tools for Cosmos 
 """
 
+from requests.structures import CaseInsensitiveDict
+
 class RecordHeaders(object):
     """ Record Response headers from Cosmos read operations.
 
@@ -68,11 +70,11 @@ class RecordHeaders(object):
     }
 
     def __init__(self):
-        self._headers = {}
+        self._headers = CaseInsensitiveDict()
         
     @property
     def headers(self):
-        return dict(self._headers)
+        return CaseInsensitiveDict(self._headers)
     
     def __call__(self, headers):
         self._headers = headers
