@@ -30,7 +30,8 @@ class PublishingState(str, Enum):
 
 class ConfigurationState(str, Enum):
 
-    not_applicable = "NotApplicable"  #: User either hasn't started configuring their template or they haven't started the configuration process.
+    not_applicable = "NotApplicable"  #: User either hasn't started configuring their template
+or they haven't started the configuration process.
     completed = "Completed"  #: User is finished modifying the template.
 
 
