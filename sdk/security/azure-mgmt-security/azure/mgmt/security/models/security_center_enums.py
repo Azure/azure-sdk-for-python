@@ -12,6 +12,14 @@
 from enum import Enum
 
 
+class ResourceStatus(str, Enum):
+
+    healthy = "Healthy"  #: This assessment on the resource is healthy
+    not_applicable = "NotApplicable"  #: This assessment is not applicable to this resource
+    off_by_policy = "OffByPolicy"  #: This assessment is turned off by policy on this subscription
+    not_healthy = "NotHealthy"  #: This assessment on the resource is not healthy
+
+
 class PricingTier(str, Enum):
 
     free = "Free"  #: Get free Azure security center experience with basic security features
@@ -90,6 +98,14 @@ class AlertsToAdmins(str, Enum):
 
     on = "On"  #: Send notification on new alerts to the subscription's admins
     off = "Off"  #: Don't send notification on new alerts to the subscription's admins
+
+
+class State(str, Enum):
+
+    passed = "Passed"  #: All supported regulatory compliance controls in the given standard have a passed state
+    failed = "Failed"  #: At least one supported regulatory compliance control in the given standard has a state of failed
+    skipped = "Skipped"  #: All supported regulatory compliance controls in the given standard have a state of skipped
+    unsupported = "Unsupported"  #: No supported regulatory compliance data for the given standard
 
 
 class ConnectionType(str, Enum):
