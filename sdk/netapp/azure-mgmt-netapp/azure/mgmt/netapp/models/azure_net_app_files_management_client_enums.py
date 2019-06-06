@@ -20,10 +20,10 @@ class InAvailabilityReasonType(str, Enum):
 
 class CheckNameResourceTypes(str, Enum):
 
-    microsoft_net_appnet_app_account = "Microsoft.NetApp/netAppAccount"
-    microsoft_net_appnet_app_accountcapacity_pools = "Microsoft.NetApp/netAppAccount/capacityPools"
-    microsoft_net_appnet_app_accountcapacity_poolsvolumes = "Microsoft.NetApp/netAppAccount/capacityPools/volumes"
-    microsoft_net_appnet_app_accountcapacity_poolsvolumessnapshots = "Microsoft.NetApp/netAppAccount/capacityPools/volumes/snapshots"
+    microsoft_net_appnet_app_accounts = "Microsoft.NetApp/netAppAccounts"
+    microsoft_net_appnet_app_accountscapacity_pools = "Microsoft.NetApp/netAppAccounts/capacityPools"
+    microsoft_net_appnet_app_accountscapacity_poolsvolumes = "Microsoft.NetApp/netAppAccounts/capacityPools/volumes"
+    microsoft_net_appnet_app_accountscapacity_poolsvolumessnapshots = "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots"
 
 
 class ServiceLevel(str, Enum):
