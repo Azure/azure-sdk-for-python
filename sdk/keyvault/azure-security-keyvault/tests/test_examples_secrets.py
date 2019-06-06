@@ -197,10 +197,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         try:
             deleted_secret = secret_client.delete_secret(secret_name)
-            if self.is_live:
-                self._poll_until_no_exception(
-                    functools.partial(secret_client.get_deleted_secret, secret_name), ResourceNotFoundError
-                )
+            self._poll_until_no_exception(
+                functools.partial(secret_client.get_deleted_secret, secret_name), ResourceNotFoundError
+            )
 
             # [START get_deleted_secret]
             # gets a deleted secret (requires soft-delete enabled for the vault)
@@ -230,10 +229,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         secret_client = vault_client.secrets
         created_secret = secret_client.set_secret("secret-name", "secret-value")
         secret_client.delete_secret(created_secret.name)
-        if self.is_live:
-            self._poll_until_no_exception(
-                functools.partial(secret_client.get_deleted_secret, created_secret.name), ResourceNotFoundError
-            )
+        self._poll_until_no_exception(
+            functools.partial(secret_client.get_deleted_secret, created_secret.name), ResourceNotFoundError
+        )
 
         try:
             # [START recover_deleted_secret]
@@ -248,17 +246,15 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             pass
 
         try:
-            if self.is_live:
-                self._poll_until_no_exception(
-                    functools.partial(secret_client.get_secret, created_secret.name), ResourceNotFoundError
-                )
+            self._poll_until_no_exception(
+                functools.partial(secret_client.get_secret, created_secret.name), ResourceNotFoundError
+            )
 
             secret_client.delete_secret(created_secret.name)
 
-            if self.is_live:
-                self._poll_until_no_exception(
-                    functools.partial(secret_client.get_deleted_secret, created_secret.name), ResourceNotFoundError
-                )
+            self._poll_until_no_exception(
+                functools.partial(secret_client.get_deleted_secret, created_secret.name), ResourceNotFoundError
+            )
 
             # [START purge_deleted_secret]
 

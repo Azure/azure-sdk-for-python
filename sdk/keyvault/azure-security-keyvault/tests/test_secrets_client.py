@@ -106,8 +106,7 @@ class SecretClientTests(KeyVaultTestCase):
         deleted = client.delete_secret(updated.name)
         self.assertIsNotNone(deleted)
 
-        if self.is_live:
-            self._poll_until_no_exception(functools.partial(client.get_deleted_secret, created.name), ResourceNotFoundError)
+        self._poll_until_no_exception(functools.partial(client.get_deleted_secret, created.name), ResourceNotFoundError)
 
         # get the deleted secret
         deleted_secret = client.get_deleted_secret(deleted.name)
@@ -194,8 +193,10 @@ class SecretClientTests(KeyVaultTestCase):
         # delete all secrets
         for secret_name in expected.keys():
             client.delete_secret(secret_name)
-            if self.is_live:
-                self._poll_until_no_exception(functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError)
+        for secret_name in expected.keys():
+            self._poll_until_no_exception(
+                functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError
+            )
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         self._validate_secret_list(list(client.list_deleted_secrets()), expected)
@@ -246,8 +247,10 @@ class SecretClientTests(KeyVaultTestCase):
         # delete all secrets
         for secret_name in secrets.keys():
             client.delete_secret(secret_name)
-            if self.is_live:
-                self._poll_until_no_exception(functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError)
+        for secret_name in secrets.keys():
+            self._poll_until_no_exception(
+                functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError
+            )
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         deleted = [s.name for s in client.list_deleted_secrets()]

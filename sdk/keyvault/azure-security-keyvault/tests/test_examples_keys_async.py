@@ -228,10 +228,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             # [END backup_key]
 
             await key_client.delete_key("keyrec")
-            if self.is_live:
-                await self._poll_until_no_exception(
-                    key_client.get_deleted_key, created_key.name, expected_exception=ResourceNotFoundError
-                )
+            await self._poll_until_exception(
+                key_client.get_key, created_key.name, expected_exception=ResourceNotFoundError
+            )
 
             # [START restore_key]
 
@@ -250,17 +249,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     async def test_example_keys_recover_purge(self, vault_client, **kwargs):
         key_client = vault_client.keys
         created_key = await key_client.create_key("key-name", "RSA")
-        if self.is_live:
-            await self._poll_until_no_exception(
-                key_client.get_key, created_key.name, expected_exception=ResourceNotFoundError
-            )
+        await self._poll_until_no_exception(
+            key_client.get_key, created_key.name, expected_exception=ResourceNotFoundError
+        )
 
         await key_client.delete_key(created_key.name)
 
-        if self.is_live:
-            await self._poll_until_no_exception(
-                key_client.get_deleted_key, created_key.name, expected_exception=ResourceNotFoundError
-            )
+        await self._poll_until_no_exception(
+            key_client.get_deleted_key, created_key.name, expected_exception=ResourceNotFoundError
+        )
 
         try:
             # [START get_deleted_key]
@@ -285,17 +282,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             pass
 
         try:
-            if self.is_live:
-                await self._poll_until_no_exception(
-                    key_client.get_key, created_key.name, expected_exception=ResourceNotFoundError
-                )
+            await self._poll_until_no_exception(
+                key_client.get_key, created_key.name, expected_exception=ResourceNotFoundError
+            )
 
             await key_client.delete_key("key-name")
 
-            if self.is_live:
-                await self._poll_until_no_exception(
-                    key_client.get_deleted_key, created_key.name, expected_exception=ResourceNotFoundError
-                )
+            await self._poll_until_no_exception(
+                key_client.get_deleted_key, created_key.name, expected_exception=ResourceNotFoundError
+            )
 
             # [START purge_deleted_key]
 

@@ -24,36 +24,31 @@ class AsyncKeyVaultTestCase(KeyVaultTestCase):
 
         return run
 
-    async def _poll_until_no_exception(self, fn, *resource_names, expected_exception, max_retries=20, retry_delay=6):
+    async def _poll_until_no_exception(self, fn, *resource_names, expected_exception, max_retries=20, retry_delay=3):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""
 
-        if not self.is_live:
-            return
-
-        for i in range(max_retries):
-            try:
-                for name in resource_names:
-                    # TODO: this enables polling get_secret but it'd be better if caller applied args to fn
+        for name in resource_names:
+            for i in range(max_retries):
+                try:
+                    # TODO: better for caller to apply args to fn
                     await fn(name, version="")
-                break
-            except expected_exception:
-                if i == max_retries - 1:
-                    raise
-                await asyncio.sleep(retry_delay)
+                    break
+                except expected_exception:
+                    if i == max_retries - 1:
+                        raise
+                    if self.is_live:
+                        await asyncio.sleep(retry_delay)
 
-    async def _poll_until_exception(self, fn, *resource_names, expected_exception, max_retries=20, retry_delay=6):
+    async def _poll_until_exception(self, fn, *resource_names, expected_exception, max_retries=20, retry_delay=3):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""
 
-        if not self.is_live:
-            return
-
-        for _ in range(max_retries):
-            try:
-                for name in resource_names:
-                    # TODO: this enables polling get_secret but it'd be better if caller applied args to fn
+        for name in resource_names:
+            for _ in range(max_retries):
+                try:
+                    # TODO: better for caller to apply args to fn
                     await fn(name, version="")
-                await asyncio.sleep(retry_delay)
-            except expected_exception:
-                return
-
+                    if self.is_live:
+                        await asyncio.sleep(retry_delay)
+                except expected_exception:
+                    return
         self.fail("expected exception {expected_exception} was not raised")

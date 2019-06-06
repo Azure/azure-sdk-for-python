@@ -155,6 +155,7 @@ class KeyClientTests(KeyVaultTestCase):
         if self.is_live:
             # wait to ensure the key's update time won't equal its creation time
             time.sleep(1)
+
         self._update_key(client, created_rsa_key)
 
         # delete the new key
@@ -167,10 +168,9 @@ class KeyClientTests(KeyVaultTestCase):
             "Missing required deleted key attributes.",
         )
 
-        if self.is_live:
-            self._poll_until_no_exception(
-                functools.partial(client.get_deleted_key, created_rsa_key.name), ResourceNotFoundError
-            )
+        self._poll_until_no_exception(
+            functools.partial(client.get_deleted_key, created_rsa_key.name), ResourceNotFoundError
+        )
 
         # get the deleted key when soft deleted enabled
         deleted_key = client.get_deleted_key(created_rsa_key.name)
@@ -270,11 +270,10 @@ class KeyClientTests(KeyVaultTestCase):
         for key_name in keys.keys():
             client.delete_key(key_name)
 
-        if self.is_live:
-            for key_name in keys.keys():
-                self._poll_until_no_exception(
-                    functools.partial(client.get_deleted_key, key_name), expected_exception=ResourceNotFoundError
-                )
+        for key_name in keys.keys():
+            self._poll_until_no_exception(
+                functools.partial(client.get_deleted_key, key_name), expected_exception=ResourceNotFoundError
+            )
 
         # validate all our deleted keys are returned by list_deleted_keys
         deleted = [s.name for s in client.list_deleted_keys()]
@@ -292,21 +291,20 @@ class KeyClientTests(KeyVaultTestCase):
         keys_to_purge = [s for s in keys.keys() if s.startswith("keyprg")]
         for key_name in keys_to_purge:
             client.purge_deleted_key(key_name)
-
-        if self.is_live:
-            for key_name in keys_to_purge:
-                self._poll_until_exception(
-                    functools.partial(client.get_deleted_key, key_name), expected_exception=ResourceNotFoundError
-                )
+        for key_name in keys_to_purge:
+            self._poll_until_exception(
+                functools.partial(client.get_deleted_key, key_name), expected_exception=ResourceNotFoundError
+            )
 
         # validate none of our purged keys are returned by list_deleted_keys
         deleted = [s.name for s in client.list_deleted_keys()]
         self.assertTrue(not any(s in deleted for s in keys.keys()))
 
-        # validate the recovered keys
-        expected = {k: v for k, v in keys.items() if k.startswith("keyrec")}
-        actual = {k: client.get_key(k, "") for k in expected.keys()}
-        self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
+        # ensure the keys are recovered
+        for key_name in keys_to_recover:
+            self._poll_until_no_exception(
+                functools.partial(client.get_key, key_name), expected_exception=ResourceNotFoundError
+            )
 
     @ResourceGroupPreparer()
     @VaultClientPreparer()

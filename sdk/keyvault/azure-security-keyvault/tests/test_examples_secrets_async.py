@@ -6,15 +6,13 @@
 import asyncio
 import functools
 
-from devtools_testutils import ResourceGroupPreparer
-from async_preparer import AsyncVaultClientPreparer
-from async_test_case import AsyncKeyVaultTestCase
+from azure.core.exceptions import ResourceNotFoundError
 from azure.security.keyvault._generated.v7_0.models import KeyVaultErrorException
 from azure.security.keyvault.aio.vault_client import VaultClient
 from devtools_testutils import ResourceGroupPreparer
 
+from async_preparer import AsyncVaultClientPreparer
 from async_test_case import AsyncKeyVaultTestCase
-from preparer import VaultClientPreparer
 
 
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):
@@ -146,7 +144,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             pass
 
     @ResourceGroupPreparer()
-    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_secrets_backup_restore(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
@@ -166,10 +164,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         try:
             await secret_client.delete_secret(created_secret.name)
-            if self.is_live:
-                await self._poll_until_exception(
-                    secret_client.get_secret, created_secret.name, expected_exception=ResourceNotFoundError
-                )
+            await self._poll_until_exception(
+                secret_client.get_secret, created_secret.name, expected_exception=ResourceNotFoundError
+            )
 
             # [START restore_secret]
 
@@ -191,10 +188,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         await secret_client.delete_secret(created_secret.name)
 
         try:
-            if self.is_live:
-                await self._poll_until_no_exception(
-                    secret_client.get_deleted_secret, created_secret.name, expected_exception=ResourceNotFoundError
-                )
+            await self._poll_until_no_exception(
+                secret_client.get_deleted_secret, created_secret.name, expected_exception=ResourceNotFoundError
+            )
 
             # [START get_deleted_secret]
             # gets a deleted secret (requires soft-delete enabled for the vault)
@@ -219,17 +215,15 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             pass
 
         try:
-            if self.is_live:
-                await self._poll_until_no_exception(
-                    secret_client.get_secret, created_secret.name, expected_exception=ResourceNotFoundError
-                )
+            await self._poll_until_no_exception(
+                secret_client.get_secret, created_secret.name, expected_exception=ResourceNotFoundError
+            )
 
             await secret_client.delete_secret(created_secret.name)
 
-            if self.is_live:
-                await self._poll_until_no_exception(
-                    secret_client.get_deleted_secret, created_secret.name, expected_exception=ResourceNotFoundError
-                )
+            await self._poll_until_no_exception(
+                secret_client.get_deleted_secret, created_secret.name, expected_exception=ResourceNotFoundError
+            )
 
             # [START purge_deleted_secret]
 

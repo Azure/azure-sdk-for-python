@@ -156,6 +156,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         if self.is_live:
             # wait to ensure the key's update time won't equal its creation time
             await asyncio.sleep(1)
+
         await self._update_key(client, created_rsa_key)
 
         # delete the new key
@@ -168,10 +169,9 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             "Missing required deleted key attributes.",
         )
 
-        if self.is_live:
-            await self._poll_until_no_exception(
-                client.get_deleted_key, created_rsa_key.name, expected_exception=ResourceNotFoundError
-            )
+        await self._poll_until_no_exception(
+            client.get_deleted_key, created_rsa_key.name, expected_exception=ResourceNotFoundError
+        )
 
         # get the deleted key when soft deleted enabled
         deleted_key = await client.get_deleted_key(created_rsa_key.name)

@@ -230,10 +230,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # [END backup_key]
 
             key_client.delete_key("keyrec")
-            if self.is_live:
-                self._poll_until_no_exception(
-                    functools.partial(key_client.get_deleted_key, key_name), ResourceNotFoundError
-                )
+            self._poll_until_no_exception(
+                functools.partial(key_client.get_deleted_key, key_name), ResourceNotFoundError
+            )
 
             # [START restore_key]
 
@@ -252,10 +251,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         key_client = vault_client.keys
         created_key = key_client.create_key("key-name", "RSA")
         key_client.delete_key(created_key.name)
-        if self.is_live:
-            self._poll_until_no_exception(
-                functools.partial(key_client.get_deleted_key, created_key.name), ResourceNotFoundError
-            )
+        self._poll_until_no_exception(
+            functools.partial(key_client.get_deleted_key, created_key.name), ResourceNotFoundError
+        )
 
         try:
             # [START get_deleted_key]
@@ -281,10 +279,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         try:
             key_client.delete_key(created_key.name)
-            if self.is_live:
-                self._poll_until_no_exception(
-                    functools.partial(key_client.get_deleted_key, created_key.name), ResourceNotFoundError
-                )
+            self._poll_until_no_exception(
+                functools.partial(key_client.get_deleted_key, created_key.name), ResourceNotFoundError
+            )
 
             # [START purge_deleted_key]
 
