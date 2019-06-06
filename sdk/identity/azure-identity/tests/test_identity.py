@@ -221,7 +221,7 @@ def test_msi_credential(monkeypatch):
 
     def validate_request(req, *args, **kwargs):
         assert req.url.startswith(os.environ[MSI_ENDPOINT])
-        assert req.headers["secret"] is msi_secret
+        assert req.headers["secret"] == msi_secret
         exception = Exception()
         exception.message = success_message
         raise exception
