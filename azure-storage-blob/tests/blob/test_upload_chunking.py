@@ -8,8 +8,6 @@
 
 import pytest
 
-pytestmark = pytest.mark.skip
-
 import os
 
 from azure.storage.blob._upload_chunking import _SubStream

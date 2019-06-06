@@ -17,7 +17,11 @@ from cryptography.hazmat.primitives.ciphers.algorithms import AES
 from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.padding import PKCS7
 
+from azure.storage.blob import __version__
+from .authentication import _encode_base64
 
+
+_ENCRYPTION_PROTOCOL_V1 = '1.0'
 _ERROR_VALUE_NONE = '{0} should not be None.'
 _ERROR_OBJECT_INVALID = \
     '{0} does not define a complete interface. Value of {1} is either missing or invalid.'

@@ -70,6 +70,11 @@ class BlobServiceClient(object):
             self.scheme,
             parsed_url.hostname
         )
+
+        self.require_encryption = kwargs.get('require_encryption', False)
+        self.key_encryption_key = kwargs.get('key_encryption_key')
+        self.key_resolver_function = kwargs.get('key_resolver_function')
+
         self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
         self._client = create_client(self.url, self._pipeline)
 
@@ -370,7 +375,9 @@ class BlobServiceClient(object):
         :rtype: ~azure.core.blob.container_client.ContainerClient
         """
         return ContainerClient(self.url, container=container,
-            credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline)
+            credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline,
+            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function)
 
     def get_blob_client(
             self, container,  # type: Union[ContainerProperties, str]
@@ -397,4 +404,6 @@ class BlobServiceClient(object):
         """
         return BlobClient(
             self.url, container=container, blob=blob, blob_type=blob_type, snapshot=snapshot,
-            credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline)
+            credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline,
+            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function)

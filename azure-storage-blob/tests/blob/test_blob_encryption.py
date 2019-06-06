@@ -38,6 +38,8 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
+    SharedKeyCredentials,
+    BlobType
 )
 from tests.encryption_test_helper import (
     KeyWrapper,
@@ -52,8 +54,8 @@ from tests.testcase import (
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'encryption_container'
-TEST_BLOB_PREFIXES = {'block_blob':'encryption_block_blob',
-                      'page_blob':'encryption_page_blob'}
+TEST_BLOB_PREFIXES = {'BlockBlob':'encryption_block_blob',
+                      'PageBlob':'encryption_page_blob'}
 FILE_PATH = 'blob_input.temp.dat'
 #------------------------------------------------------------------------------
 
@@ -62,24 +64,38 @@ class StorageBlobEncryptionTest(StorageTestCase):
     def setUp(self):
         super(StorageBlobEncryptionTest, self).setUp()
 
-        self.bbs = self._create_storage_service(BlockBlobService, self.settings)
-        self.pbs = self._create_storage_service(PageBlobService, self.settings)
-        self.service_dict = {'block_blob':self.bbs,
-                             'page_blob':self.pbs}
+        url = self._get_account_url()
+        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
+
+        # test chunking functionality by reducing the threshold
+        # for chunking and the size of each chunk, otherwise
+        # the tests would take too long to execute
+        self.config = BlobServiceClient.create_configuration()
+        self.config.blob_settings.max_single_put_size = 32 * 1024
+        self.config.blob_settings.max_block_size = 4 * 1024
+        self.config.blob_settings.max_page_size = 4 * 1024
+
+        self.bsc = BlobServiceClient(url, credentials=credentials, configuration=self.config)
+        self.container_name = self.get_resource_name('utcontainer')
+
+
+        # self.bbs = self._create_storage_service(BlockBlobService, self.settings)
+        # self.pbs = self._create_storage_service(PageBlobService, self.settings)
+        # self.service_dict = {'block_blob':self.bbs,
+        #                      'page_blob':self.pbs}
         self.container_name = self.get_resource_name('utcontainer')
         self.bytes = b'Foo'
 
         if not self.is_playback():
-            self.bbs.create_container(self.container_name)
+            container = self.bsc.get_container_client(self.container_name)
+            container.create_container()
 
-        self.bbs.MAX_BLOCK_SIZE = 4 * 1024
-        self.bbs.MAX_SINGLE_PUT_SIZE = 32 * 1024
-        self.pbs.MAX_PAGE_SIZE = 4 * 1024
 
     def tearDown(self):
         if not self.is_playback():
             try:
-                self.bbs.delete_container(self.container_name)
+                container = self.bsc.get_container_client(self.container_name)
+                container.delete_container()
             except:
                 pass
         if path.isfile(FILE_PATH):
@@ -94,13 +110,14 @@ class StorageBlobEncryptionTest(StorageTestCase):
     def _get_container_reference(self):
         return self.get_resource_name(TEST_CONTAINER_PREFIX)
 
-    def _get_blob_reference(self, type):
-        return self.get_resource_name(TEST_BLOB_PREFIXES[type])
+    def _get_blob_reference(self, blob_type):
+        return self.get_resource_name(TEST_BLOB_PREFIXES[blob_type.value])
 
-    def _create_small_blob(self, type):
-        blob_name = self._get_blob_reference(type)
-        self.service_dict[type].create_blob_from_bytes(self.container_name, blob_name, self.bytes)
-        return blob_name
+    def _create_small_blob(self, blob_type):
+        blob_name = self._get_blob_reference(blob_type)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name, blob_type=blob_type)
+        blob.upload_blob(self.bytes)
+        return blob
         
     #--Test cases for blob encryption ----------------------------------------
 
@@ -108,7 +125,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
     def test_missing_attribute_kek_wrap(self):
         # In the shared method _generate_blob_encryption_key
         # Arrange
-        self.bbs.require_encryption = True
+        self.bsc.require_encryption = True
         valid_key = KeyWrapper('key1')
 
         # Act
@@ -116,57 +133,57 @@ class StorageBlobEncryptionTest(StorageTestCase):
         invalid_key_1.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_1.get_kid = valid_key.get_kid
         # No attribute wrap_key
-        self.bbs.key_encryption_key = invalid_key_1
+        self.bsc.key_encryption_key = invalid_key_1
         with self.assertRaises(AttributeError):
-            self._create_small_blob('block_blob')
+            self._create_small_blob(BlobType.BlockBlob)
 
         invalid_key_2 = lambda: None #functions are objects, so this effectively creates an empty object
         invalid_key_2.wrap_key = valid_key.wrap_key
         invalid_key_2.get_kid = valid_key.get_kid
         # No attribute get_key_wrap_algorithm
-        self.bbs.key_encryption_key = invalid_key_2
+        self.bsc.key_encryption_key = invalid_key_2
         with self.assertRaises(AttributeError):
-            self._create_small_blob('block_blob')
+            self._create_small_blob(BlobType.BlockBlob)
         
         invalid_key_3 = lambda: None #functions are objects, so this effectively creates an empty object
         invalid_key_3.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_3.wrap_key = valid_key.wrap_key
         # No attribute get_kid
-        self.bbs.key_encryption_key = invalid_key_2
+        self.bsc.key_encryption_key = invalid_key_2
         with self.assertRaises(AttributeError):
-            self._create_small_blob('block_blob')
+            self._create_small_blob(BlobType.BlockBlob)
 
     @record
     def test_invalid_value_kek_wrap(self):
         # Arrange
-        self.bbs.require_encryption = True
-        self.bbs.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
 
-        self.bbs.key_encryption_key.get_key_wrap_algorithm = None
+        self.bsc.key_encryption_key.get_key_wrap_algorithm = None
         try:
-            self._create_small_blob('block_blob')
+            self._create_small_blob(BlobType.BlockBlob)
             self.fail()
         except AttributeError as e:
             self.assertEqual(str(e), _ERROR_OBJECT_INVALID.format('key encryption key', 'get_key_wrap_algorithm'))
 
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        self.bbs.key_encryption_key.get_kid = None
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.key_encryption_key.get_kid = None
         with self.assertRaises(AttributeError):
-            self._create_small_blob('block_blob')
+            self._create_small_blob(BlobType.BlockBlob)
 
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        self.bbs.key_encryption_key.wrap_key = None
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.key_encryption_key.wrap_key = None
         with self.assertRaises(AttributeError):
-            self._create_small_blob('block_blob')
+            self._create_small_blob(BlobType.BlockBlob)
 
     @record
     def test_missing_attribute_kek_unwrap(self):
         # Shared between all services in _decrypt_blob
         # Arrange
-        self.bbs.require_encryption = True
+        self.bsc.require_encryption = True
         valid_key = KeyWrapper('key1')
-        self.bbs.key_encryption_key = valid_key
-        blob_name = self._create_small_blob('block_blob')
+        self.bsc.key_encryption_key = valid_key
+        blob = self._create_small_blob(BlobType.BlockBlob)
 
         # Act
         # Note that KeyWrapper has a default value for key_id, so these Exceptions
@@ -174,15 +191,15 @@ class StorageBlobEncryptionTest(StorageTestCase):
         invalid_key_1 = lambda: None #functions are objects, so this effectively creates an empty object
         invalid_key_1.get_kid = valid_key.get_kid
         #No attribute unwrap_key
-        self.bbs.key_encryption_key = invalid_key_1
+        self.bsc.key_encryption_key = invalid_key_1
         with self.assertRaises(AzureException):
-            self.bbs.get_blob_to_bytes(self.container_name, blob_name)
+            blob.download_blob()
 
         invalid_key_2 = lambda: None #functions are objects, so this effectively creates an empty object
         invalid_key_2.unwrap_key = valid_key.unwrap_key
         #No attribute get_kid
         with self.assertRaises(AzureException):
-            self.bbs.get_blob_to_bytes(self.container_name, blob_name)
+            blob.download_blob()
 
     @record
     def test_invalid_value_kek_unwrap(self):
@@ -203,15 +220,15 @@ class StorageBlobEncryptionTest(StorageTestCase):
     @record
     def test_get_blob_kek(self):
         # Arrange
-        self.bbs.require_encryption = True
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        blob_name = self._create_small_blob('block_blob')
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        blob = self._create_small_blob(BlobType.BlockBlob)
 
         # Act
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name)
+        content = blob.download_blob()
 
         # Assert
-        self.assertEqual(blob.content, self.bytes)
+        self.assertEqual(b"".join(list(content)), self.bytes)
         
 
     @record
@@ -238,15 +255,15 @@ class StorageBlobEncryptionTest(StorageTestCase):
             return 
 
         # Arrange
-        self.bbs.require_encryption = True
-        self.bbs.key_encryption_key = RSAKeyWrapper('key2')
-        blob_name = self._create_small_blob('block_blob')
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = RSAKeyWrapper('key2')
+        blob = self._create_small_blob(BlobType.BlockBlob)
 
         # Act
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name)
+        content = blob.download_blob()
 
         # Assert
-        self.assertEqual(blob.content, self.bytes)
+        self.assertEqual(b"".join(list(content)), self.bytes)
 
     @record
     def test_get_blob_nonmatching_kid(self):

@@ -8,6 +8,7 @@ import base64
 import hashlib
 import sys
 from time import time
+from io import SEEK_SET
 import logging
 from wsgiref.handlers import format_date_time
 try:

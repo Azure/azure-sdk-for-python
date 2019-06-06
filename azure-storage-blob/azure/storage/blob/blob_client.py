@@ -23,6 +23,7 @@ from .lease import Lease
 from .models import SnapshotProperties, BlobBlock
 from .polling import CopyBlob, CopyStatusPoller
 from ._shared_access_signature import BlobSharedAccessSignature
+from ._encryption import _generate_blob_encryption_data, _encrypt_blob
 from ._utils import (
     create_client,
     create_configuration,
@@ -147,9 +148,9 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             credentials = None
         self.url = self.url.rstrip('?&')
 
-        self.require_encryption = False
-        self.key_encryption_key = None
-        self.key_resolver_function = None
+        self.require_encryption = kwargs.get('require_encryption', False)
+        self.key_encryption_key = kwargs.get('key_encryption_key')
+        self.key_resolver_function = kwargs.get('key_resolver_function')
 
         self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
         self._client = create_client(self.url, self._pipeline)
@@ -436,6 +437,10 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
 
                 # Do single put if the size is smaller than config.max_single_put_size
                 if adjusted_count is not None and (adjusted_count < self._config.blob_settings.max_single_put_size):
+                    if self.key_encryption_key:
+                        print("Encrypting data")
+                        encryption_data, data = _encrypt_blob(data, self.key_encryption_key)
+                        headers['x-ms-meta-encryptiondata'] = encryption_data
                     return self._client.block_blob.upload(
                         data,
                         content_length=adjusted_count,
@@ -605,6 +610,24 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             initial_request_end = initial_request_start + first_get_size - 1
         range_header = 'bytes={0}-{1}'.format(initial_request_start, initial_request_end)
 
+        start_offset, end_offset = 0, 0
+        if self.key_encryption_key is not None or self.key_resolver_function is not None:
+            if start_range is not None:
+                # Align the start of the range along a 16 byte block
+                start_offset = start_range % 16
+                start_range -= start_offset
+
+                # Include an extra 16 bytes for the IV if necessary
+                # Because of the previous offsetting, start_range will always
+                # be a multiple of 16.
+                if start_range > 0:
+                    start_offset += 16
+                    start_range -= 16
+
+            if end_range is not None:
+                # Align the end of the range along a 16 byte block
+                end_offset = 15 - (end_range % 16)
+                end_range += end_offset
         try:
             stream = self._client.blob.download(
                 timeout=timeout,
@@ -631,6 +654,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 process_storage_error(error)
         stream.properties.name = self.name
         stream.properties.container = self.container
+        # TODO validate content
         return stream
 
     def delete_blob(

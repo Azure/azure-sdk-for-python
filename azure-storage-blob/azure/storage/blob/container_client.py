@@ -102,6 +102,11 @@ class ContainerClient(object):
             parsed_url.hostname,
             quote(self.name)
         )
+
+        self.require_encryption = kwargs.get('require_encryption', False)
+        self.key_encryption_key = kwargs.get('key_encryption_key')
+        self.key_resolver_function = kwargs.get('key_resolver_function')
+
         self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
         self._client = create_client(self.url, self._pipeline)
 
@@ -583,4 +588,6 @@ class ContainerClient(object):
         """
         return BlobClient(
             self.url, container=self.name, blob=blob, blob_type=blob_type, snapshot=snapshot,
-            credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline)
+            credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline,
+            require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function)
