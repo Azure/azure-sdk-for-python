@@ -43,7 +43,7 @@ class RateLimitRule(CustomRule):
         'priority': {'required': True},
         'match_conditions': {'required': True},
         'action': {'required': True},
-        'rate_limit_threshold': {'required': True},
+        'rate_limit_threshold': {'required': True, 'minimum': 0},
         'rate_limit_duration_in_minutes': {'required': True, 'maximum': 60, 'minimum': 0},
     }
 
