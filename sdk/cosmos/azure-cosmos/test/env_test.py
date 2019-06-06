@@ -1,5 +1,5 @@
 #The MIT License (MIT)
-#Copyright (c) 2014 Microsoft Corporation
+#Copyright (c) 2019 Microsoft Corporation
 
 #Permission is hereby granted, free of charge, to any person obtaining a copy
 #of this software and associated documentation files (the "Software"), to deal
@@ -20,12 +20,12 @@
 #SOFTWARE.
 
 import unittest
+import uuid
 import pytest
 import azure.cosmos.documents as documents
 import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.routing.routing_map_provider import _PartitionKeyRangeCache
-from azure.cosmos.routing import routing_range as routing_range
 import test_config
+import os
 
 pytestmark = pytest.mark.cosmosEmulator
 
@@ -38,38 +38,71 @@ pytestmark = pytest.mark.cosmosEmulator
 #   associated with your Azure Cosmos account.
 
 @pytest.mark.usefixtures("teardown")
-class RoutingMapEndToEndTests(unittest.TestCase):
-    """Routing Map Functionalities end to end Tests.
+class EnvTest(unittest.TestCase):
+    """Env Tests.
     """
-
+    
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
 
     @classmethod
     def setUpClass(cls):
+        # creates the database, collection, and insert all the documents
+        # we will gain some speed up in running the tests by creating the database, collection and inserting all the docs only once
+        
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        
-        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
-        cls.collection_link = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(cls.client)['_self']
 
-    def test_read_partition_key_ranges(self):
-        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(self.collection_link))
-        #"the number of expected partition ranges returned from the emulator is 5."
-        self.assertEqual(5, len(partition_key_ranges))
-        
-    def test_routing_map_provider(self):
-        partition_key_ranges = list(self.client._ReadPartitionKeyRanges(self.collection_link))
+        os.environ["COSMOS_ENDPOINT"] = cls.host
+        os.environ["COSMOS_KEY"] = cls.masterKey
+        cls.client = cosmos_client.CosmosClient(None, None, cls.connectionPolicy)
+        cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
+        cls.created_collection = test_config._test_config.create_single_partition_collection_if_not_exist(cls.client)
+        cls.collection_link = cls.GetDocumentCollectionLink(cls.created_db, cls.created_collection)
 
-        routing_mp = _PartitionKeyRangeCache(self.client)
-        overlapping_partition_key_ranges = routing_mp.get_overlapping_ranges(self.collection_link, routing_range._Range("", "FF", True, False))
-        self.assertEqual(len(overlapping_partition_key_ranges), len(partition_key_ranges))
-        self.assertEqual(overlapping_partition_key_ranges, partition_key_ranges)
+    @classmethod
+    def tearDownClass(cls):
+        del os.environ['COSMOS_ENDPOINT']
+        del os.environ['COSMOS_KEY']
+
+    def test_insert(self):
+        # create a document using the document definition
+        d = {'id': '1',
+                 'name': 'sample document',
+                 'spam': 'eggs',
+                 'cnt': '1',
+                 'key': 'value',
+                 'spam2': 'eggs',
+                 }
+
+        self.client.CreateItem(self.collection_link, d)
+
+    @classmethod
+    def GetDatabaseLink(cls, database, is_name_based=True):
+        if is_name_based:
+            return 'dbs/' + database['id']
+        else:
+            return database['_self']
+
+    @classmethod
+    def GetDocumentCollectionLink(cls, database, document_collection, is_name_based=True):
+        if is_name_based:
+            return cls.GetDatabaseLink(database) + '/colls/' + document_collection['id']
+        else:
+            return document_collection['_self']
+
+    @classmethod
+    def GetDocumentLink(cls, database, document_collection, document, is_name_based=True):
+        if is_name_based:
+            return cls.GetDocumentCollectionLink(database, document_collection) + '/docs/' + document['id']
+        else:
+            return document['_self']
+
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

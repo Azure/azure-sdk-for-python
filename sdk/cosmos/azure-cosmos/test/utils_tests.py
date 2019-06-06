@@ -25,6 +25,8 @@ import azure.cosmos.utils as utils
 import platform
 import azure.cosmos.http_constants as http_constants
 
+pytestmark = pytest.mark.cosmosEmulator
+
 @pytest.mark.usefixtures("teardown")
 class UtilsTests(unittest.TestCase):
     """Utils Tests

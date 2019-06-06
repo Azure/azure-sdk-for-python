@@ -22,6 +22,8 @@ import samples.Shared.config as cfg
 #    2.2 - Create collection with custom IndexPolicy
 #    2.3 - Create collection with offer throughput set
 #    2.4 - Create collection with unique key
+#    2.5 - Create Collection with partition key
+#    2.6 - Create Collection with partition key V2
 #
 # 3. Manage Collection Offer Throughput
 #    3.1 - Get Collection performance tier
@@ -165,12 +167,37 @@ class CollectionManagement:
 
             collection = client.CreateContainer(database_link, coll)
             print('Collection with id \'{0}\' created'.format(collection['id']))
+            print('Partition Key - \'{0}\''.format(collection['partitionKey']))
             
         except errors.CosmosError as e:
             if e.status_code == 409:
                print('A collection with id \'{0}\' already exists'.format(collection['id']))
             else: 
-                raise errors.HTTPFailure(e.status_code) 
+                raise errors.HTTPFailure(e.status_code)
+
+        print("\n2.6 Create Collection - With Partition key V2")
+
+        try:
+            coll = {
+                "id": "collection_partition_key_v2",
+                "partitionKey": {
+                    "paths": [
+                        "/field1"
+                    ],
+                    "kind": "Hash",
+                    "version": 2
+                }
+            }
+
+            collection = client.CreateContainer(database_link, coll)
+            print('Collection with id \'{0}\' created'.format(collection['id']))
+            print('Partition Key - \'{0}\''.format(collection['partitionKey']))
+
+        except errors.CosmosError as e:
+            if e.status_code == 409:
+                print('A collection with id \'{0}\' already exists'.format(collection['id']))
+            else:
+                raise errors.HTTPFailure(e.status_code)
 
     @staticmethod
     def manage_offer_throughput(client, id):

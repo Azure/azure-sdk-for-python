@@ -33,6 +33,8 @@ import azure.cosmos.documents as documents
 import test_config
 from azure.cosmos.errors import HTTPFailure
 
+pytestmark = pytest.mark.cosmosEmulator
+
 class _config:
     host = test_config._test_config.host
     master_key = test_config._test_config.masterKey
@@ -199,15 +201,18 @@ class AggregateQueryTestSequenceMeta(type):
 
         _all_tests = []
 
-        _setup()
-        _generate_test_configs()
-        _run_all()
-
         return type.__new__(mcs, name, bases, dict)
 
 
 @pytest.mark.usefixtures("teardown")
 class AggregationQueryTest(with_metaclass(AggregateQueryTestSequenceMeta, unittest.TestCase)):
+
+    @classmethod
+    def setUpClass(cls):
+        cls._setup()
+        cls._generate_test_configs()
+        cls._run_all()
+
     def _execute_query_and_validate_results(self, client, collection_link, query, expected):
         print('Running test with query: ' + query)
 

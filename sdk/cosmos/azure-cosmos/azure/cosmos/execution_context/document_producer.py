@@ -108,6 +108,8 @@ class _DocumentProducer(object):
         return self._doc_producer_comp.compare(self, other) < 0
 
 def _compare_helper(a, b):
+    if a is None and b is None:
+        return 0
     return (a > b) - (a < b)
 
 class _PartitionKeyRangeDocumentProduerComparator(object):
