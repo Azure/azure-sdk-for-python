@@ -157,6 +157,9 @@ Http request and response details are printed to stdout with this logging config
 ###  Documentation
 Reference documentation is available at docs.microsoft.com/python/api/azure-security-keyvault [TODO: update link]
 
+## Next steps
+[Quickstart: Set, retrieve and update a secret from Azure Key Vault using the SecretClient Library](TODO)
+
 ## Provide Feedback
 If you encounter any bugs or have suggestions, please file an issue in the Issues section of the project.
 
