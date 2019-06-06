@@ -26,7 +26,7 @@ class QueryTest(unittest.TestCase):
                 "tests.")
         
         cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
-        cls.created_db = config.create_database_if_not_exist(cls.client)
+        cls.created_db = cls.config.create_database_if_not_exist(cls.client)
 
     def test_first_and_last_slashes_trimmed_for_query_string (self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
