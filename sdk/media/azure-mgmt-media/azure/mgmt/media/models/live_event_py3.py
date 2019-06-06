@@ -82,10 +82,10 @@ class LiveEvent(TrackedResource):
         'preview': {'key': 'properties.preview', 'type': 'LiveEventPreview'},
         'encoding': {'key': 'properties.encoding', 'type': 'LiveEventEncoding'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'LiveEventResourceState'},
+        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'cross_site_access_policies': {'key': 'properties.crossSiteAccessPolicies', 'type': 'CrossSiteAccessPolicies'},
         'vanity_url': {'key': 'properties.vanityUrl', 'type': 'bool'},
-        'stream_options': {'key': 'properties.streamOptions', 'type': '[StreamOptionsFlag]'},
+        'stream_options': {'key': 'properties.streamOptions', 'type': '[str]'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
     }
