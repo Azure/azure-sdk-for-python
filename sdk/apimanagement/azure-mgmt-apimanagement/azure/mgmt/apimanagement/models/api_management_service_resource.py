@@ -84,9 +84,16 @@ class ApiManagementServiceResource(ApimResource):
      will disable the cipher TLS_RSA_WITH_3DES_EDE_CBC_SHA for all TLS(1.0, 1.1
      and 1.2). Setting
      `Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls11`
-     can be used to disable just TLS 1.1 and setting
+     can be used to disable just TLS 1.1. Setting
      `Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls10`
-     can be used to disable TLS 1.0 on an API Management service.
+     can be used to disable TLS 1.0 on an API Management service. Setting
+     `Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls11`
+     can be used to disable just TLS 1.1 for communications with backends.
+     Setting
+     `Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls10`
+     can be used to disable TLS 1.0 for communications with backends. Setting
+     `Microsoft.WindowsAzure.ApiManagement.Gateway.Protocols.Server.Http2` can
+     be used to enable HTTP2 protocol on an API Management service.
     :type custom_properties: dict[str, str]
     :param certificates: List of Certificates that need to be installed in the
      API Management service. Max supported certificates that can be installed
