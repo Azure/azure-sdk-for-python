@@ -18,22 +18,20 @@ class OSProfile(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar computer_name: Specifies the host OS name of the HANA instance.
-    :vartype computer_name: str
+    :param computer_name: Specifies the host OS name of the HANA instance.
+    :type computer_name: str
     :ivar os_type: This property allows you to specify the type of the OS.
     :vartype os_type: str
     :ivar version: Specifies version of operating system.
     :vartype version: str
-    :ivar ssh_public_key: Specifies the SSH public key used to access the
+    :param ssh_public_key: Specifies the SSH public key used to access the
      operating system.
-    :vartype ssh_public_key: str
+    :type ssh_public_key: str
     """
 
     _validation = {
-        'computer_name': {'readonly': True},
         'os_type': {'readonly': True},
         'version': {'readonly': True},
-        'ssh_public_key': {'readonly': True},
     }
 
     _attribute_map = {
@@ -43,9 +41,9 @@ class OSProfile(Model):
         'ssh_public_key': {'key': 'sshPublicKey', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, computer_name: str=None, ssh_public_key: str=None, **kwargs) -> None:
         super(OSProfile, self).__init__(**kwargs)
-        self.computer_name = None
+        self.computer_name = computer_name
         self.os_type = None
         self.version = None
-        self.ssh_public_key = None
+        self.ssh_public_key = ssh_public_key
