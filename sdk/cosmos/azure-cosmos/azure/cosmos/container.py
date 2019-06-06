@@ -57,11 +57,31 @@ class Container:
         # type: (CosmosClientConnection, str, str, Dict[str, Any]) -> None
         self.client_connection = client_connection
         self.id = id
-        self.properties = properties
+        self._properties = properties
         self.container_link = u"{}/colls/{}".format(database_link, self.id)
-        self.is_system_key = (self.properties['partitionKey']['systemKey']
-                              if 'systemKey' in self.properties['partitionKey'] else False)
-        self.scripts = Scripts(self.client_connection, self.container_link, self.is_system_key)
+        self._is_system_key = None
+        self._scripts = None
+
+    def _get_properties(self):
+        # type: () -> Dict[str, Any]
+        if self._properties is None:
+            self.read()
+        return self._properties
+
+    @property
+    def is_system_key(self):
+        if self._is_system_key is None:
+            properties = self._get_properties()
+            self._is_system_key = (properties['partitionKey']['systemKey'] 
+                                    if 'systemKey' in properties['partitionKey'] else False)
+        return self._is_system_key
+
+    @property
+    def scripts(self):
+        if self._scripts is None:
+            properties = self._get_properties()
+            self._scripts = Scripts(self.client_connection, self.container_link, self.is_system_key)
+        return self._scripts
 
     def _get_document_link(self, item_or_link):
         # type: (Union[Dict[str, Any], str]) -> str
@@ -75,7 +95,49 @@ class Container:
             return u"{}/conflicts/{}".format(self.container_link, conflict_or_link)
         return conflict_or_link["_self"]
 
-    def get_item(
+    def read(
+        self,
+        session_token=None,
+        initial_headers=None,
+        populate_query_metrics=None,
+        populate_partition_key_range_statistics=None,
+        populate_quota_info=None,
+        request_options=None
+    ):
+        # type: (str, Dict[str, str], bool, bool, bool, Dict[str, Any]) -> Container
+        """ Read the container properties
+
+        :param session_token: Token for use with Session consistency.
+        :param initial_headers: Initial headers to be sent as part of the request.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param populate_partition_key_range_statistics: Enable returning partition key range statistics in response headers.
+        :param populate_quota_info: Enable returning collection storage quota information in response headers.
+        :param request_options: Dictionary of additional properties to be used for the request.
+        :raise `HTTPFailure`: Raised if the container couldn't be retrieved. This includes if the container does not exist.
+        :returns: :class:`Container` instance representing the retrieved container.
+
+        """
+        if not request_options:
+            request_options = {} # type: Dict[str, Any]
+        if session_token:
+            request_options["sessionToken"] = session_token
+        if initial_headers:
+            request_options["initialHeaders"] = initial_headers
+        if populate_query_metrics is not None:
+            request_options["populateQueryMetrics"] = populate_query_metrics
+        if populate_partition_key_range_statistics is not None:
+            request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
+        if populate_quota_info is not None:
+            request_options["populateQuotaInfo"] = populate_quota_info
+
+        collection_link = self.container_link
+        self._properties = self.client_connection.ReadContainer(
+            collection_link, options=request_options
+        )
+        
+        return self._properties
+
+    def read_item(
         self,
         item,
         partition_key,
@@ -127,7 +189,7 @@ class Container:
             document_link=doc_link, options=request_options
         )
 
-    def list_item_properties(
+    def read_all_items(
         self,
         max_item_count=None,
         session_token=None,
@@ -485,8 +547,8 @@ class Container:
         :raise HTTPFailure: If no offer exists for the container or if the offer could not be retrieved.
 
         """
-
-        link = self.properties['_self']
+        properties = self._get_properties()
+        link = properties['_self']
         query_spec = {
                         'query': 'SELECT * FROM root r WHERE r.resource=@link',
                         'parameters': [
@@ -513,7 +575,8 @@ class Container:
         :raise HTTPFailure: If no offer exists for the container or if the offer could not be updated.
 
         """
-        link = self.properties['_self']
+        properties = self._get_properties()
+        link = properties['_self']
         query_spec = {
                         'query': 'SELECT * FROM root r WHERE r.resource=@link',
                         'parameters': [
@@ -533,7 +596,7 @@ class Container:
             offer_throughput=data['content']['offerThroughput'],
             properties=data)
 
-    def list_conflicts(
+    def read_all_conflicts(
             self,
             max_item_count=None,
             feed_options=None

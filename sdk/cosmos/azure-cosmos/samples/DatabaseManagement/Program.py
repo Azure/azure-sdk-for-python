@@ -94,7 +94,7 @@ class DatabaseManagement:
         
         print('Databases:')
         
-        databases = list(client.list_database_properties())
+        databases = list(client.read_all_databases())
         
         if not databases:
             return

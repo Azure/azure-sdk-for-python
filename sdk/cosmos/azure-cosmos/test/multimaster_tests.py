@@ -58,7 +58,7 @@ class MultiMasterTests(unittest.TestCase):
             partition_key='pk'
         )
 
-        created_collection.get_item(
+        created_collection.read_item(
             item=created_document,
             partition_key='pk'
         )

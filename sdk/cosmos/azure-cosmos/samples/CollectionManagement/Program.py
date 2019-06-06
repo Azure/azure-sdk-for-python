@@ -245,7 +245,7 @@ class ContainerManagement:
         
         print('Containers:')
         
-        containers = list(db.list_container_properties())
+        containers = list(db.read_all_containers())
         
         if not containers:
             return

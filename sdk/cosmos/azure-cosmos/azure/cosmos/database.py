@@ -36,6 +36,7 @@ from typing import (
     Any,
     List,
     Dict,
+    Mapping,
     Union,
     cast
 )
@@ -52,7 +53,6 @@ class Database(object):
     triggers, user defined functions, or items.
 
     :ivar id: The ID (name) of the database.
-    :ivar properties: A dictionary of system-generated properties for this database. See below for the list of keys.
 
     An Azure Cosmos DB SQL API database has the following system-generated properties; these properties are read-only:
 
@@ -72,8 +72,8 @@ class Database(object):
         """
         self.client_connection = client_connection
         self.id = id
-        self.properties = properties
         self.database_link = u"dbs/{}".format(self.id)
+        self._properties = properties
 
     @staticmethod
     def _get_container_id(container_or_id):
@@ -81,7 +81,7 @@ class Database(object):
         if isinstance(container_or_id, six.string_types):
             return container_or_id
         try:
-            return cast("Container", container_or_id).properties['id']
+            return cast("Container", container_or_id).id
         except AttributeError:
             pass
         return cast("Dict[str, str]", container_or_id)["id"]
@@ -99,6 +99,50 @@ class Database(object):
         except AttributeError:
             pass
         return u"{}/users/{}".format(self.database_link, cast("Dict[str, str]", user_or_id)["id"])
+
+    def _get_properties(self):
+        # type: () -> Dict[str, Any]
+        if self._properties is None:
+            self.read()
+        return self._properties
+
+    def read(
+        self,
+        session_token=None,
+        initial_headers=None,
+        populate_query_metrics=None,
+        request_options=None
+    ):
+        # type: (str, Dict[str, str], bool, Dict[str, Any]) -> Dict[str, Any]
+        """
+        Read the database properties
+
+        :param database: The ID (name), dict representing the properties or :class:`Database` instance of the database to read.
+        :param session_token: Token for use with Session consistency.
+        :param initial_headers: Initial headers to be sent as part of the request.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param request_options: Dictionary of additional properties to be used for the request.
+        :returns: Dict[Str, Any]
+        :raise `HTTPFailure`: If the given database couldn't be retrieved.
+
+        """
+        # TODO this helper function should be extracted from CosmosClient
+        from .cosmos_client import CosmosClient 
+        database_link = CosmosClient._get_database_link(self)
+        if not request_options:
+            request_options = {} # type: Dict[str, Any]
+        if session_token:
+            request_options["sessionToken"] = session_token
+        if initial_headers:
+            request_options["initialHeaders"] = initial_headers
+        if populate_query_metrics is not None:
+            request_options["populateQueryMetrics"] = populate_query_metrics
+
+        self._properties = self.client_connection.ReadDatabase(
+            database_link, options=request_options
+        )
+
+        return self._properties
 
     def create_container(
         self,
@@ -225,25 +269,11 @@ class Database(object):
     def get_container(
         self,
         container,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        populate_partition_key_range_statistics=None,
-        populate_quota_info=None,
-        request_options=None
     ):
-        # type: (Union[str, Container, Dict[str, Any]], str, Dict[str, str], bool, bool, bool, Dict[str, Any]) -> Container
+        # type: (Union[str, Container, Dict[str, Any]]) -> Container
         """ Get the specified `Container`, or a container with specified ID (name).
 
         :param container: The ID (name) of the container, a :class:`Container` instance, or a dict representing the properties of the container to be retrieved.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param populate_partition_key_range_statistics: Enable returning partition key range statistics in response headers.
-        :param populate_quota_info: Enable returning collection storage quota information in response headers.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :raise `HTTPFailure`: Raised if the container couldn't be retrieved. This includes if the container does not exist.
-        :returns: :class:`Container` instance representing the retrieved container.
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START get_container]
@@ -254,31 +284,20 @@ class Database(object):
             :name: get_container
 
         """
-        if not request_options:
-            request_options = {} # type: Dict[str, Any]
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if populate_query_metrics is not None:
-            request_options["populateQueryMetrics"] = populate_query_metrics
-        if populate_partition_key_range_statistics is not None:
-            request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
-        if populate_quota_info is not None:
-            request_options["populateQuotaInfo"] = populate_quota_info
+        if isinstance(container, Container):
+            id_value = container.id
+        elif isinstance(container, Mapping):
+            id_value = container['id']
+        else:
+            id_value = container
 
-        collection_link = self._get_container_link(container)
-        container_properties = self.client_connection.ReadContainer(
-            collection_link, options=request_options
-        )
         return Container(
             self.client_connection,
             self.database_link,
-            container_properties["id"],
-            properties=container_properties,
+            id_value
         )
 
-    def list_container_properties(
+    def read_all_containers(
         self,
         max_item_count=None,
         session_token=None,
@@ -439,7 +458,7 @@ class Database(object):
             properties=container_properties,
         )
 
-    def list_user_properties(
+    def read_all_users(
             self,
             max_item_count=None,
             feed_options=None
@@ -495,30 +514,27 @@ class Database(object):
     def get_user(
             self,
             user,
-            request_options=None
     ):
         # type: (Union[str, User, Dict[str, Any]], Dict[str, Any]) -> User
         """
         Get the user identified by `id`.
 
         :param user: The ID (name), dict representing the properties or :class:`User` instance of the user to be retrieved.
-        :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A :class:`User` instance representing the retrieved user.
         :raise `HTTPFailure`: If the given user couldn't be retrieved.
-
+        
         """
-        if not request_options:
-            request_options = {} # type: Dict[str, Any]
+        if isinstance(user, User):
+            id_value = user.id
+        elif isinstance(user, Mapping):
+            id_value = user['id']
+        else:
+            id_value = user
 
-        user = self.client_connection.ReadUser(
-            user_link=self._get_user_link(user_or_id=user),
-            options=request_options
-        )
         return User(
             client_connection=self.client_connection,
-            id=user['id'],
+            id=id_value,
             database_link=self.database_link,
-            properties=user
         )
 
     def create_user(
@@ -654,7 +670,8 @@ class Database(object):
         :raise HTTPFailure: If no offer exists for the database or if the offer could not be retrieved.
 
         """
-        link = self.properties['_self']
+        properties = self._get_properties()
+        link = properties['_self']
         query_spec = {
                         'query': 'SELECT * FROM root r WHERE r.resource=@link',
                         'parameters': [
@@ -680,8 +697,8 @@ class Database(object):
         :raise HTTPFailure: If no offer exists for the database or if the offer could not be updated.
 
         """
-
-        link = self.properties['_self']
+        properties = self._get_properties()
+        link = properties['_self']
         query_spec = {
                         'query': 'SELECT * FROM root r WHERE r.resource=@link',
                         'parameters': [
