@@ -122,10 +122,12 @@ class MsiCredential:
             raise ValueError("this credential supports only one scope per request")
         token = self._client.get_cached_token(scopes)
         if not token:
-            resource = scopes[0].rstrip("/.default")
             secret = os.environ.get(MSI_SECRET)
             if not secret:
                 raise AuthenticationError("{} environment variable has no value".format(MSI_SECRET))
+            resource = scopes[0]
+            if resource.endswith("/.default"):
+                resource = resource[:-len("/.default")]
             # TODO: support user-assigned client id
             token = self._client.request_token(
                 scopes,
@@ -161,10 +163,12 @@ class ImdsCredential:
     def get_token(self, *scopes):
         # type: (*str) -> str
         if len(scopes) != 1:
-            raise ValueError("Managed identity credential supports one scope per request")
+            raise ValueError("this credential supports one scope per request")
         token = self._client.get_cached_token(scopes)
         if not token:
-            resource = scopes[0].rstrip("/.default")
+            resource = scopes[0]
+            if resource.endswith("/.default"):
+                resource = resource[:-len("/.default")]
             token = self._client.request_token(
                 scopes, method="GET", params={"api-version": "2018-02-01", "resource": resource}
             )
