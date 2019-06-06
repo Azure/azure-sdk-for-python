@@ -29,6 +29,8 @@ import azure.cosmos.base as base
 from six.moves import xrange
 import test_config
 
+pytestmark = pytest.mark.cosmosEmulator
+
 #IMPORTANT NOTES:
   
 #      Most test cases in this file create collections in your Azure Cosmos account.

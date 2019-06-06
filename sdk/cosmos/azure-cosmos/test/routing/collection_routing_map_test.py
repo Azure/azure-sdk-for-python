@@ -25,6 +25,8 @@ from azure.cosmos.routing.collection_routing_map import _CollectionRoutingMap
 import azure.cosmos.routing.routing_range as routing_range
 from azure.cosmos.routing.routing_map_provider import _PartitionKeyRangeCache
 
+pytestmark = pytest.mark.cosmosEmulator
+
 @pytest.mark.usefixtures("teardown")
 class CollectionRoutingMapTests(unittest.TestCase):
 

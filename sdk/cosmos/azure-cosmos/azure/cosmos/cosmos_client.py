@@ -37,6 +37,7 @@ import azure.cosmos.global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.routing.routing_map_provider as routing_map_provider
 import azure.cosmos.session as session
 import azure.cosmos.utils as utils
+import os
 
 class CosmosClient(object):
     """Represents a document client.
@@ -80,12 +81,15 @@ class CosmosClient(object):
         :param documents.ConsistencyLevel consistency_level:
             The default consistency policy for client operations.
 
+        if url_connection and auth are not provided,
+            COSMOS_ENDPOINT and COSMOS_KEY environment variables will be used.
         """
-        self.url_connection = url_connection
+
+        self.url_connection = url_connection or os.environ.get('COSMOS_ENDPOINT')
 
         self.master_key = None
         self.resource_tokens = None
-        if auth != None:
+        if auth is not None:
             self.master_key = auth.get('masterKey')
             self.resource_tokens = auth.get('resourceTokens')
 
@@ -95,6 +99,8 @@ class CosmosClient(object):
                     resource_parts = permission_feed['resource'].split('/')
                     id = resource_parts[-1]
                     self.resource_tokens[id] = permission_feed['_token']
+        else:
+            self.master_key = os.environ.get('COSMOS_KEY')
 
         self.connection_policy = (connection_policy or
                                   documents.ConnectionPolicy())
