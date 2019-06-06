@@ -104,7 +104,9 @@ try:
     from .transform_output_py3 import TransformOutput
     from .transform_py3 import Transform
     from .job_input_py3 import JobInput
+    from .clip_time_py3 import ClipTime
     from .job_input_clip_py3 import JobInputClip
+    from .absolute_clip_time_py3 import AbsoluteClipTime
     from .job_inputs_py3 import JobInputs
     from .job_input_asset_py3 import JobInputAsset
     from .job_input_http_py3 import JobInputHttp
@@ -247,7 +249,9 @@ except (SyntaxError, ImportError):
     from .transform_output import TransformOutput
     from .transform import Transform
     from .job_input import JobInput
+    from .clip_time import ClipTime
     from .job_input_clip import JobInputClip
+    from .absolute_clip_time import AbsoluteClipTime
     from .job_inputs import JobInputs
     from .job_input_asset import JobInputAsset
     from .job_input_http import JobInputHttp
@@ -447,7 +451,9 @@ __all__ = [
     'TransformOutput',
     'Transform',
     'JobInput',
+    'ClipTime',
     'JobInputClip',
+    'AbsoluteClipTime',
     'JobInputs',
     'JobInputAsset',
     'JobInputHttp',

@@ -37,11 +37,16 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
      clearly discernable speech. If automatic detection fails to find the
      language, transcription would fallback to 'en-US'."
     :type audio_language: str
-    :param insights_to_extract: The type of insights to be extracted. If not
-     set then based on the content the type will selected.  If the content is
-     audio only then only audio insights are extracted and if it is video only.
-     Possible values include: 'AudioInsightsOnly', 'VideoInsightsOnly',
-     'AllInsights'
+    :param insights_to_extract: Defines the type of insights that you want the
+     service to generate. The allowed values are 'AudioInsightsOnly',
+     'VideoInsightsOnly', and 'AllInsights'. The default is AllInsights. If you
+     set this to AllInsights and the input is audio only, then only audio
+     insights are generated. Similarly if the input is video only, then only
+     video insights are generated. It is recommended that you not use
+     AudioInsightsOnly if you expect some of your inputs to be video only; or
+     use VideoInsightsOnly if you expect some of your inputs to be audio only.
+     Your Jobs in such conditions would error out. Possible values include:
+     'AudioInsightsOnly', 'VideoInsightsOnly', 'AllInsights'
     :type insights_to_extract: str or ~azure.mgmt.media.models.InsightsType
     """
 
