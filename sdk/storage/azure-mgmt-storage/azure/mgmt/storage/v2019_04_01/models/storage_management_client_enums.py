@@ -85,6 +85,12 @@ class DefaultAction(str, Enum):
     deny = "Deny"
 
 
+class DirectoryServiceOptions(str, Enum):
+
+    none = "None"
+    aadds = "AADDS"
+
+
 class AccessTier(str, Enum):
 
     hot = "Hot"

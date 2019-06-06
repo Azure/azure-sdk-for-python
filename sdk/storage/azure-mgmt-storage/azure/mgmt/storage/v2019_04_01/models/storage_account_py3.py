@@ -93,9 +93,10 @@ class StorageAccount(TrackedResource):
      The access tier used for billing. Possible values include: 'Hot', 'Cool'
     :vartype access_tier: str or
      ~azure.mgmt.storage.v2019_04_01.models.AccessTier
-    :param enable_azure_files_aad_integration: Enables Azure Files AAD
-     Integration for SMB if sets to true.
-    :type enable_azure_files_aad_integration: bool
+    :param azure_files_identity_based_authentication: Provides the identity
+     based authentication settings for Azure Files.
+    :type azure_files_identity_based_authentication:
+     ~azure.mgmt.storage.v2019_04_01.models.AzureFilesIdentityBasedAuthentication
     :param enable_https_traffic_only: Allows https traffic only to storage
      service if sets to true.
     :type enable_https_traffic_only: bool
@@ -158,7 +159,7 @@ class StorageAccount(TrackedResource):
         'secondary_endpoints': {'key': 'properties.secondaryEndpoints', 'type': 'Endpoints'},
         'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'access_tier': {'key': 'properties.accessTier', 'type': 'AccessTier'},
-        'enable_azure_files_aad_integration': {'key': 'properties.azureFilesAadIntegration', 'type': 'bool'},
+        'azure_files_identity_based_authentication': {'key': 'properties.azureFilesIdentityBasedAuthentication', 'type': 'AzureFilesIdentityBasedAuthentication'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
@@ -166,7 +167,7 @@ class StorageAccount(TrackedResource):
         'failover_in_progress': {'key': 'properties.failoverInProgress', 'type': 'bool'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, enable_azure_files_aad_integration: bool=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, **kwargs) -> None:
         super(StorageAccount, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = None
         self.kind = None
@@ -183,7 +184,7 @@ class StorageAccount(TrackedResource):
         self.secondary_endpoints = None
         self.encryption = None
         self.access_tier = None
-        self.enable_azure_files_aad_integration = enable_azure_files_aad_integration
+        self.azure_files_identity_based_authentication = azure_files_identity_based_authentication
         self.enable_https_traffic_only = enable_https_traffic_only
         self.network_rule_set = None
         self.is_hns_enabled = is_hns_enabled
