@@ -32,6 +32,7 @@ from six.moves import xrange
 from struct import unpack, pack
 # from six.moves.builtins import *
 import time
+from typing import Mapping
 import six
 
 if six.PY2:
@@ -193,7 +194,7 @@ class CRUDTests(unittest.TestCase):
                                                          partition_key=PartitionKey(path="/pk", kind="Hash"), 
                                                          response_hook=created_recorder)
         self.assertEqual(collection_id, created_collection.id)
-        assert isinstance(created_recorder.headers, dict)
+        assert isinstance(created_recorder.headers, Mapping)
         assert 'Content-Type' in created_recorder.headers
 
         created_properties = created_collection.read()
