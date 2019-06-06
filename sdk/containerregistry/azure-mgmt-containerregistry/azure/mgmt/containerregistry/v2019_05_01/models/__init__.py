@@ -56,9 +56,9 @@ try:
     from .image_descriptor_py3 import ImageDescriptor
     from .image_update_trigger_py3 import ImageUpdateTrigger
     from .source_trigger_descriptor_py3 import SourceTriggerDescriptor
-    from .timer_trigger_descriptor_py3 import TimerTriggerDescriptor
     from .platform_properties_py3 import PlatformProperties
     from .agent_properties_py3 import AgentProperties
+    from .timer_trigger_descriptor_py3 import TimerTriggerDescriptor
     from .run_py3 import Run
     from .source_upload_definition_py3 import SourceUploadDefinition
     from .run_filter_py3 import RunFilter
@@ -148,9 +148,9 @@ except (SyntaxError, ImportError):
     from .image_descriptor import ImageDescriptor
     from .image_update_trigger import ImageUpdateTrigger
     from .source_trigger_descriptor import SourceTriggerDescriptor
-    from .timer_trigger_descriptor import TimerTriggerDescriptor
     from .platform_properties import PlatformProperties
     from .agent_properties import AgentProperties
+    from .timer_trigger_descriptor import TimerTriggerDescriptor
     from .run import Run
     from .source_upload_definition import SourceUploadDefinition
     from .run_filter import RunFilter
@@ -277,9 +277,9 @@ __all__ = [
     'ImageDescriptor',
     'ImageUpdateTrigger',
     'SourceTriggerDescriptor',
-    'TimerTriggerDescriptor',
     'PlatformProperties',
     'AgentProperties',
+    'TimerTriggerDescriptor',
     'Run',
     'SourceUploadDefinition',
     'RunFilter',

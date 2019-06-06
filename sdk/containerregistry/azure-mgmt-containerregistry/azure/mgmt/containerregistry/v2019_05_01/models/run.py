@@ -56,9 +56,6 @@ class Run(ProxyResource):
     :param source_trigger: The source trigger that caused the run.
     :type source_trigger:
      ~azure.mgmt.containerregistry.v2019_05_01.models.SourceTriggerDescriptor
-    :param timer_trigger: The timer trigger that caused the run.
-    :type timer_trigger:
-     ~azure.mgmt.containerregistry.v2019_05_01.models.TimerTriggerDescriptor
     :param platform: The platform properties against which the run will
      happen.
     :type platform:
@@ -85,6 +82,9 @@ class Run(ProxyResource):
     :param is_archive_enabled: The value that indicates whether archiving is
      enabled or not. Default value: False .
     :type is_archive_enabled: bool
+    :param timer_trigger: The timer trigger that caused the run.
+    :type timer_trigger:
+     ~azure.mgmt.containerregistry.v2019_05_01.models.TimerTriggerDescriptor
     """
 
     _validation = {
@@ -109,7 +109,6 @@ class Run(ProxyResource):
         'task': {'key': 'properties.task', 'type': 'str'},
         'image_update_trigger': {'key': 'properties.imageUpdateTrigger', 'type': 'ImageUpdateTrigger'},
         'source_trigger': {'key': 'properties.sourceTrigger', 'type': 'SourceTriggerDescriptor'},
-        'timer_trigger': {'key': 'properties.timerTrigger', 'type': 'TimerTriggerDescriptor'},
         'platform': {'key': 'properties.platform', 'type': 'PlatformProperties'},
         'agent_configuration': {'key': 'properties.agentConfiguration', 'type': 'AgentProperties'},
         'source_registry_auth': {'key': 'properties.sourceRegistryAuth', 'type': 'str'},
@@ -118,6 +117,7 @@ class Run(ProxyResource):
         'update_trigger_token': {'key': 'properties.updateTriggerToken', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'is_archive_enabled': {'key': 'properties.isArchiveEnabled', 'type': 'bool'},
+        'timer_trigger': {'key': 'properties.timerTrigger', 'type': 'TimerTriggerDescriptor'},
     }
 
     def __init__(self, **kwargs):
@@ -133,7 +133,6 @@ class Run(ProxyResource):
         self.task = kwargs.get('task', None)
         self.image_update_trigger = kwargs.get('image_update_trigger', None)
         self.source_trigger = kwargs.get('source_trigger', None)
-        self.timer_trigger = kwargs.get('timer_trigger', None)
         self.platform = kwargs.get('platform', None)
         self.agent_configuration = kwargs.get('agent_configuration', None)
         self.source_registry_auth = kwargs.get('source_registry_auth', None)
@@ -142,3 +141,4 @@ class Run(ProxyResource):
         self.update_trigger_token = kwargs.get('update_trigger_token', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.is_archive_enabled = kwargs.get('is_archive_enabled', False)
+        self.timer_trigger = kwargs.get('timer_trigger', None)

@@ -56,9 +56,6 @@ class Run(ProxyResource):
     :param source_trigger: The source trigger that caused the run.
     :type source_trigger:
      ~azure.mgmt.containerregistry.v2019_05_01.models.SourceTriggerDescriptor
-    :param timer_trigger: The timer trigger that caused the run.
-    :type timer_trigger:
-     ~azure.mgmt.containerregistry.v2019_05_01.models.TimerTriggerDescriptor
     :param platform: The platform properties against which the run will
      happen.
     :type platform:
@@ -85,6 +82,9 @@ class Run(ProxyResource):
     :param is_archive_enabled: The value that indicates whether archiving is
      enabled or not. Default value: False .
     :type is_archive_enabled: bool
+    :param timer_trigger: The timer trigger that caused the run.
+    :type timer_trigger:
+     ~azure.mgmt.containerregistry.v2019_05_01.models.TimerTriggerDescriptor
     """
 
     _validation = {
@@ -109,7 +109,6 @@ class Run(ProxyResource):
         'task': {'key': 'properties.task', 'type': 'str'},
         'image_update_trigger': {'key': 'properties.imageUpdateTrigger', 'type': 'ImageUpdateTrigger'},
         'source_trigger': {'key': 'properties.sourceTrigger', 'type': 'SourceTriggerDescriptor'},
-        'timer_trigger': {'key': 'properties.timerTrigger', 'type': 'TimerTriggerDescriptor'},
         'platform': {'key': 'properties.platform', 'type': 'PlatformProperties'},
         'agent_configuration': {'key': 'properties.agentConfiguration', 'type': 'AgentProperties'},
         'source_registry_auth': {'key': 'properties.sourceRegistryAuth', 'type': 'str'},
@@ -118,9 +117,10 @@ class Run(ProxyResource):
         'update_trigger_token': {'key': 'properties.updateTriggerToken', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'is_archive_enabled': {'key': 'properties.isArchiveEnabled', 'type': 'bool'},
+        'timer_trigger': {'key': 'properties.timerTrigger', 'type': 'TimerTriggerDescriptor'},
     }
 
-    def __init__(self, *, run_id: str=None, status=None, last_updated_time=None, run_type=None, create_time=None, start_time=None, finish_time=None, output_images=None, task: str=None, image_update_trigger=None, source_trigger=None, timer_trigger=None, platform=None, agent_configuration=None, source_registry_auth: str=None, custom_registries=None, update_trigger_token: str=None, provisioning_state=None, is_archive_enabled: bool=False, **kwargs) -> None:
+    def __init__(self, *, run_id: str=None, status=None, last_updated_time=None, run_type=None, create_time=None, start_time=None, finish_time=None, output_images=None, task: str=None, image_update_trigger=None, source_trigger=None, platform=None, agent_configuration=None, source_registry_auth: str=None, custom_registries=None, update_trigger_token: str=None, provisioning_state=None, is_archive_enabled: bool=False, timer_trigger=None, **kwargs) -> None:
         super(Run, self).__init__(**kwargs)
         self.run_id = run_id
         self.status = status
@@ -133,7 +133,6 @@ class Run(ProxyResource):
         self.task = task
         self.image_update_trigger = image_update_trigger
         self.source_trigger = source_trigger
-        self.timer_trigger = timer_trigger
         self.platform = platform
         self.agent_configuration = agent_configuration
         self.source_registry_auth = source_registry_auth
@@ -142,3 +141,4 @@ class Run(ProxyResource):
         self.update_trigger_token = update_trigger_token
         self.provisioning_state = provisioning_state
         self.is_archive_enabled = is_archive_enabled
+        self.timer_trigger = timer_trigger
