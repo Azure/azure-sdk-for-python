@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 import json
 import os
 import time
@@ -14,7 +14,6 @@ except ImportError:  # python < 3.3
     from mock import Mock
 
 import pytest
-import requests
 from azure.identity import (
     AuthenticationError,
     ClientSecretCredential,
@@ -27,7 +26,7 @@ from azure.identity import (
 from azure.identity.constants import EnvironmentVariables, MSI_ENDPOINT, MSI_SECRET
 
 
-def test_client_secret_credential_cache(monkeypatch):
+def test_client_secret_credential_cache():
     expired = "this token's expired"
     now = time.time()
     token_payload = {
@@ -40,12 +39,17 @@ def test_client_secret_credential_cache(monkeypatch):
         "resource": str(uuid.uuid1()),
     }
 
-    # monkeypatch requests so we can test pipeline configuration
-    mock_response = Mock(text=json.dumps(token_payload), headers={"content-type": "application/json"}, status_code=200)
+    mock_response = Mock(
+        text=lambda: json.dumps(token_payload),
+        headers={"content-type": "application/json"},
+        status_code=200,
+        content_type=["application/json"],
+    )
     mock_send = Mock(return_value=mock_response)
-    monkeypatch.setattr(requests.Session, "send", value=mock_send)
 
-    credential = ClientSecretCredential("client_id", "secret", tenant_id=str(uuid.uuid1()))
+    credential = ClientSecretCredential(
+        "client_id", "secret", tenant_id=str(uuid.uuid1()), transport=Mock(send=mock_send)
+    )
     scopes = ("https://foo.bar/.default", "https://bar.qux/.default")
     token = credential.get_token(*scopes)
     assert token == expired
@@ -153,7 +157,7 @@ def test_chain_returns_first_token():
     assert second_credential.get_token.call_count == 0
 
 
-def test_imds_credential_cache(monkeypatch):
+def test_imds_credential_cache():
     scope = "https://foo.bar"
     expired = "this token's expired"
     now = int(time.time())
@@ -167,12 +171,15 @@ def test_imds_credential_cache(monkeypatch):
         "token_type": "Bearer",
     }
 
-    # monkeypatch requests so we can test pipeline configuration
-    mock_response = Mock(text=json.dumps(token_payload), headers={"content-type": "application/json"}, status_code=200)
+    mock_response = Mock(
+        text=lambda: json.dumps(token_payload),
+        headers={"content-type": "application/json"},
+        status_code=200,
+        content_type=["application/json"],
+    )
     mock_send = Mock(return_value=mock_response)
-    monkeypatch.setattr(requests.Session, "send", value=mock_send)
 
-    credential = ImdsCredential()
+    credential = ImdsCredential(transport=Mock(send=mock_send))
     token = credential.get_token(scope)
     assert token == expired
     assert mock_send.call_count == 1
@@ -182,7 +189,6 @@ def test_imds_credential_cache(monkeypatch):
     token_payload["expires_on"] = int(time.time()) + 3600
     token_payload["expires_in"] = 3600
     token_payload["access_token"] = good_for_an_hour
-    mock_response.text = json.dumps(token_payload)
     token = credential.get_token(scope)
     assert token == good_for_an_hour
     assert mock_send.call_count == 2
@@ -193,14 +199,17 @@ def test_imds_credential_cache(monkeypatch):
     assert mock_send.call_count == 2
 
 
-def test_imds_credential_retries(monkeypatch):
-    # monkeypatch requests so we can test pipeline configuration
-    mock_response = Mock(headers={"Retry-After": "0"}, text=b"")
+def test_imds_credential_retries():
+    mock_response = Mock(
+        text=lambda: b"",
+        headers={"content-type": "application/json", "Retry-After": "0"},
+        status_code=200,
+        content_type=["application/json"],
+    )
     mock_send = Mock(return_value=mock_response)
-    monkeypatch.setattr(requests.Session, "send", value=mock_send)
 
     retry_total = 1
-    credential = ImdsCredential(retry_total=retry_total)
+    credential = ImdsCredential(retry_total=retry_total, transport=Mock(send=mock_send))
 
     for status_code in (404, 429, 500):
         mock_response.status_code = status_code
