@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 from time import time
 
 from azure.core import Configuration, HttpRequest
@@ -51,6 +51,14 @@ class AuthnClientBase(object):
             else:
                 payload = response.http_response.text()
             token = payload["access_token"]
+
+            # these values are strings in IMDS responses but msal.TokenCache requires they be integers
+            # https://github.com/AzureAD/microsoft-authentication-library-for-python/pull/55
+            if payload.get("expires_in"):
+                payload["expires_in"] = int(payload["expires_in"])
+            if payload.get("ext_expires_in"):
+                payload["ext_expires_in"] = int(payload["ext_expires_in"])
+
             self._cache.add({"response": payload, "scope": scopes})
             return token
         except KeyError:
