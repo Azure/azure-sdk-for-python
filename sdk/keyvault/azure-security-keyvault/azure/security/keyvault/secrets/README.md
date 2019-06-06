@@ -68,6 +68,9 @@ The following sections provide several code snippets covering some of the most c
     print(secret.enabled)
 ```
 
+### Async create a secret
+Sends a secret data and asynchronously waits until acknowledgement is received and returned with object creation or operation times out.
+
 ### Retrieve a Secret
 `get_secret` retrieves a secret previously stored in the Key Vault.
 ```python
@@ -121,7 +124,7 @@ The following sections provide several code snippets covering some of the most c
 
 ## Troubleshooting
 ### General
-The Key Vault APIs generate exceptions that can fall into one of the azure-core defined [exceptions](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/azure/core/exceptions.py).
+The Key Vault APIs generate exceptions that can fall into one of the azure-core defined exceptions. For more detailed infromation about excpetions and how to deal with them , see [Azure Core exceptions](TODO).
 
 ### Logging
 This SDK uses Python standard logging library. You can configure logging print out debugging information to the stdout or anywhere you want.
