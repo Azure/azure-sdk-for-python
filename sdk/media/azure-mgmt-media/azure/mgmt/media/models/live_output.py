@@ -78,7 +78,7 @@ class LiveOutput(ProxyResource):
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'LiveOutputResourceState'},
+        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):

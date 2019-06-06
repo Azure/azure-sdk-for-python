@@ -290,6 +290,7 @@ class LiveEventEncodingType(str, Enum):
     none = "None"
     basic = "Basic"
     standard = "Standard"
+    premium1080p = "Premium1080p"
 
 
 class LiveEventResourceState(str, Enum):

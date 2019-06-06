@@ -26,7 +26,7 @@ class PresentationTimeRange(Model):
     :type live_backoff_duration: long
     :param timescale: The time scale of time stamps.
     :type timescale: long
-    :param force_end_timestamp: The indicator of forcing exsiting of end time
+    :param force_end_timestamp: The indicator of forcing existing of end time
      stamp.
     :type force_end_timestamp: bool
     """
