@@ -204,7 +204,7 @@ class TestCommon(unittest.TestCase):
 
             client = get_client_from_auth_file(KeyVaultClient, temp_auth_file.name)
             assert client.credentials._args == (
-                'https://management.azure.com/',
+                "https://vault.azure.net",
                 'a2ab11af-01aa-4759-8345-7803287dbd39',
                 'password'
             )
