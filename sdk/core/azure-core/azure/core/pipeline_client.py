@@ -48,14 +48,14 @@ class PipelineClient(PipelineClientBase):
     :return: A pipeline object.
     :rtype: ~azure.core.pipeline.Pipeline
 
-    Keyword arguments:
-    pipeline - A Pipeline object. If omitted, a Pipeline object is created
-     and returned.
-    transport - The HTTP Transport type. If omitted, RequestsTransport is used
-     for synchronous transport.
+    **Keyword arguments:**
+
+    *pipeline* - A Pipeline object. If omitted, a Pipeline object is created and returned.
+
+    *transport* - The HTTP Transport type. If omitted, RequestsTransport is used for synchronous transport.
 
     Example:
-        .. literalinclude:: ../../examples/examples_sync.py
+        .. literalinclude:: ../examples/examples_sync.py
             :start-after: [START build_pipeline_client]
             :end-before: [END build_pipeline_client]
             :language: python
@@ -102,4 +102,3 @@ class PipelineClient(PipelineClientBase):
             transport,
             policies
         )
-
