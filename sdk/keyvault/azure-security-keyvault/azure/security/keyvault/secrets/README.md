@@ -1,9 +1,9 @@
 # Azure Key Vault Secret client library for Python
-Azure Key Vault is a cloud service that provides a secure storage of secrets, such as passwords and database connection strings. Secret client library allows you to securely store and tightly control the access to tokens, passwords, API keys, and other secrets. This library offers operations to create, retrieve, update, delete, purge, backup, restore and and list the secrets.
+Azure Key Vault is a cloud service that provides a secure storage of secrets, such as passwords and database connection strings. Secret client library allows you to securely store and tightly control the access to tokens, passwords, API keys, and other secrets. This library offers operations to create, retrieve, update, delete, purge, backup, restore and and list the secrets and its versions.
 
 Use the secret client library to create and manage secrets.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets) | [Package (Pypi)](https://pypi.org/project/azure-security-keyvault/) | [API reference documentation](https://docs.microsoft.com/python/api/azure-security-keyvault) | [Product documentation](https://docs.microsoft.com/en-gb/azure/key-vault/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets) | [Package (Pypi)](TODO) | [API reference documentation](TODO) | [Product documentation](TODO)
 ## Getting started
 ### Install the package
 Install the Azure Key Vault client library for Python with pip:
@@ -18,7 +18,7 @@ Install the Azure Key Vault client library for Python with pip:
 * An existing Key Vault. You can create this by following the instructions on [this article](https://docs.microsoft.com/en-gb/azure/key-vault/quick-create-portal).
 
 ### Authenticate the client
-In order to interact with the Key Vault service, you'll need to create an instance of the VaultClient class. You need the vault url, azure credentials, and the client configuration to instantiate the client object.
+In order to interact with the Key Vault service for managing secrets, you'll need to create an instance of the SecretClient class. For this you will need a vault url, client secret credentials (client id, client secret, tenant id) and a [resource url](https://vault.azure.net).
 
 ### Get credentials
 You can find credential information in [Azure Portal](https://portal.azure.com/).
@@ -27,20 +27,16 @@ You can find credential information in [Azure Portal](https://portal.azure.com/)
 The following code snippet demonstrates a way you can instantiate the KeyVaultClient object:
 ```python
     from azure.security.keyvault import VaultClient
-    from azure.common.credentials import ServicePrincipalCredentials
+    from azure.security.keyvault import SecretClient
 
-    credentials = ServicePrincipalCredentials(
-        client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
-    )
+    credential = AsyncClientSecretCredential(client_id=client_id, secret=client_secret, tenant_id=tenant_id)
 
-    # Create a new Vault client using Azure credentials
-    vault_client = VaultClient(vault_url=vault_url, credentials=credentials)
-    # retrieves an instance of Secret Client
-    secret_client = vault_client.secrets
+    # Create a new secret client using a client secret credential
+    secret_client = SecretClient(vault_url=vault_url, credential=credential)
 ```
 ## Key concepts
 ### Secret
-  A secret is the fundamental resource within an Azure KeyVault. From a developer's perspective, Key Vault APIs accept and return secret values as strings. In addition to the secret data, the following attributes may be specified:
+  A secret is the fundamental resource within Azure KeyVault. From a developer's perspective, Key Vault APIs accept and return secret values as strings. In addition to the secret data, the following attributes may be specified:
 * expires: Identifies the expiration time on or after which the secret data should not be retrieved.
 * nbf: Identifies the time after which the secret will be active.
 * enabled: Specifies whether the secret data can be retrieved.
@@ -48,7 +44,7 @@ The following code snippet demonstrates a way you can instantiate the KeyVaultCl
 * updated: Indicates when this version of the secret was updated.(read-only)
 
 ### Secret Client:
-The Secret client performs the interactions with the Azure Key Vault service for getting, setting, updating, deleting, and listing secrets. An asynchronous and synchronous, SecretClient, client exists in the SDK allowing for selection of a client based on an application's use case.
+The Secret client performs the interactions with the Azure Key Vault service for getting, setting, updating,deleting, and listing secrets and its versions. An asynchronous and synchronous, SecretClient, client exists in the SDK allowing for selection of a client based on an application's use case.
 
 ## Examples
 The following sections provide several code snippets covering some of the most common Azure Key Vault Secret service related tasks, including:
@@ -60,17 +56,12 @@ The following sections provide several code snippets covering some of the most c
 ### Create a Secret
 `set_secret` creates a Secret to be stored in the Azure Key Vault. If a secret with the same name already exists then a new version of the secret is created.
 ```python
-    from azure.common.credentials import ServicePrincipalCredentials
     from azure.security.keyvault import VaultClient
+    from azure.security.keyvault import SecretClient
 
-    credentials = ServicePrincipalCredentials(
-        client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
-    )
-
-    # Create a new Vault client using Azure credentials
-    vault_client = VaultClient(vault_url=vault_url, credentials=credentials)
-    # retrieves an instance of Secret Client
-    secret_client = vault_client.secrets
+    credential = AsyncClientSecretCredential(client_id=client_id, secret=client_secret, tenant_id=tenant_id)
+    # Create a new secret client using a client secret credential
+    secret_client = SecretClient(vault_url=vault_url, credential=credential)
 
     secret = secret_client.set_secret("secret-name", "secret-value", enabled=True)
     print(secret.version)
@@ -80,17 +71,12 @@ The following sections provide several code snippets covering some of the most c
 ### Retrieve a Secret
 `get_secret` retrieves a secret previously stored in the Key Vault.
 ```python
-    from azure.common.credentials import ServicePrincipalCredentials
     from azure.security.keyvault import VaultClient
+    from azure.security.keyvault import SecretClient
 
-    credentials = ServicePrincipalCredentials(
-        client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
-    )
-
-    # Create a new Vault client using Azure credentials
-    vault_client = VaultClient(vault_url=vault_url, credentials=credentials)
-    # retrieves an instance of Secret Client
-    secret_client = vault_client.secrets
+    credential = AsyncClientSecretCredential(client_id=client_id, secret=client_secret, tenant_id=tenant_id)
+    # Create a new secret client using a client secret credential
+    secret_client = SecretClient(vault_url=vault_url, credential=credential)
 
     secret = secret_client.get_secret("secret-name")
     print(secret.version)
@@ -99,24 +85,17 @@ The following sections provide several code snippets covering some of the most c
 ### Update an existing Secret
 `update_secret` updates a secret previously stored in the Key Vault.
 ```python
-    from azure.common.credentials import ServicePrincipalCredentials
     from azure.security.keyvault import VaultClient
+    from azure.security.keyvault import SecretClient
 
-    credentials = ServicePrincipalCredentials(
-        client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
-    )
-
-    # Create a new Vault client using Azure credentials
-    vault_client = VaultClient(vault_url=vault_url, credentials=credentials)
-    # retrieves an instance of Secret Client
-    secret_client = vault_client.secrets
+    credential = AsyncClientSecretCredential(client_id=client_id, secret=client_secret, tenant_id=tenant_id)
+    # Create a new secret client using a client secret credential
+    secret_client = SecretClient(vault_url=vault_url, credential=credential)
 
     content_type = "text/plain"
     tags = {"foo": "updated tag"}
-    secret_version = secret.version
-    updated_secret = secret_client.update_secret_attributes(
-        "secret-name", secret_version, content_type=content_type, tags=tags
-    )
+
+    updated_secret = secret_client.update_secret("secret-name", content_type=content_type, tags=tags)
 
     print(updated_secret.version)
     print(updated_secret.updated)
@@ -127,24 +106,18 @@ The following sections provide several code snippets covering some of the most c
 ### Delete a Secret
 `delete_secret` deletes a secret previously stored in the Key Vault.
 ```python
-    from azure.common.credentials import ServicePrincipalCredentials
     from azure.security.keyvault import VaultClient
+    from azure.security.keyvault import SecretClient
 
-    credentials = ServicePrincipalCredentials(
-        client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
-    )
-
-    # Create a new Vault client using Azure credentials
-    vault_client = VaultClient(vault_url=vault_url, credentials=credentials)
-    # retrieves an instance of Secret Client
-    secret_client = vault_client.secrets
+    credential = AsyncClientSecretCredential(client_id=client_id, secret=client_secret, tenant_id=tenant_id)
+    # Create a new secret client using a client secret credential
+    secret_client = SecretClient(vault_url=vault_url, credential=credential)
 
     secret = secret_client.delete_secret("secret-name")
+    
     print(deleted_secret.name)
     print(deleted_secret.deleted_date)
 ```
-
-For async examples we just have to add await, can we just add one example and use that as the only example for async?
 
 ## Troubleshooting
 ### General
@@ -160,7 +133,7 @@ logging.basicConfig(level=logging.DEBUG)
 Http request and response details are printed to stdout with this logging config.
 
 ###  Documentation
-Reference documentation is available at docs.microsoft.com/python/api/azure-security-keyvault
+Reference documentation is available at docs.microsoft.com/python/api/azure-security-keyvault [TODO: update link]
 
 ## Provide Feedback
 If you encounter any bugs or have suggestions, please file an issue in the Issues section of the project.
