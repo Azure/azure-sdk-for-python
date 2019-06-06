@@ -16,6 +16,7 @@ from .version import VERSION
 from .operations.operations import Operations
 from .operations.alerts_operations import AlertsOperations
 from .operations.smart_groups_operations import SmartGroupsOperations
+from .operations.smart_detector_alert_rules_operations import SmartDetectorAlertRulesOperations
 from . import models
 
 
@@ -33,11 +34,15 @@ class AlertsManagementClientConfiguration(AzureConfiguration):
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
+    :param subscription_id1: The Azure subscription id.
+    :type subscription_id1: str
+    :param api_version1: Client Api Version.
+    :type api_version1: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, scope, subscription_id, base_url=None):
+            self, credentials, scope, subscription_id, subscription_id1, api_version1, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -45,6 +50,10 @@ class AlertsManagementClientConfiguration(AzureConfiguration):
             raise ValueError("Parameter 'scope' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if subscription_id1 is None:
+            raise ValueError("Parameter 'subscription_id1' must not be None.")
+        if api_version1 is None:
+            raise ValueError("Parameter 'api_version1' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -56,6 +65,8 @@ class AlertsManagementClientConfiguration(AzureConfiguration):
         self.credentials = credentials
         self.scope = scope
         self.subscription_id = subscription_id
+        self.subscription_id1 = subscription_id1
+        self.api_version1 = api_version1
 
 
 class AlertsManagementClient(SDKClient):
@@ -70,6 +81,8 @@ class AlertsManagementClient(SDKClient):
     :vartype alerts: azure.mgmt.alertsmanagement.operations.AlertsOperations
     :ivar smart_groups: SmartGroups operations
     :vartype smart_groups: azure.mgmt.alertsmanagement.operations.SmartGroupsOperations
+    :ivar smart_detector_alert_rules: SmartDetectorAlertRules operations
+    :vartype smart_detector_alert_rules: azure.mgmt.alertsmanagement.operations.SmartDetectorAlertRulesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -80,13 +93,17 @@ class AlertsManagementClient(SDKClient):
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
+    :param subscription_id1: The Azure subscription id.
+    :type subscription_id1: str
+    :param api_version1: Client Api Version.
+    :type api_version1: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, scope, subscription_id, base_url=None):
+            self, credentials, scope, subscription_id, subscription_id1, api_version1, base_url=None):
 
-        self.config = AlertsManagementClientConfiguration(credentials, scope, subscription_id, base_url)
+        self.config = AlertsManagementClientConfiguration(credentials, scope, subscription_id, subscription_id1, api_version1, base_url)
         super(AlertsManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -99,4 +116,6 @@ class AlertsManagementClient(SDKClient):
         self.alerts = AlertsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.smart_groups = SmartGroupsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.smart_detector_alert_rules = SmartDetectorAlertRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
