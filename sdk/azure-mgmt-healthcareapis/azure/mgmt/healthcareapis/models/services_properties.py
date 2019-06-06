@@ -33,6 +33,14 @@ class ServicesProperties(Model):
      backing the service.
     :type cosmos_db_configuration:
      ~azure.mgmt.healthcareapis.models.ServiceCosmosDbConfigurationInfo
+    :param authentication_configuration: The authentication configuration for
+     the service instance.
+    :type authentication_configuration:
+     ~azure.mgmt.healthcareapis.models.ServiceAuthenticationConfigurationInfo
+    :param cors_configuration: The settings for the CORS configuration of the
+     service instance.
+    :type cors_configuration:
+     ~azure.mgmt.healthcareapis.models.ServiceCorsConfigurationInfo
     """
 
     _validation = {
@@ -44,6 +52,8 @@ class ServicesProperties(Model):
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
         'access_policies': {'key': 'accessPolicies', 'type': '[ServiceAccessPolicyEntry]'},
         'cosmos_db_configuration': {'key': 'cosmosDbConfiguration', 'type': 'ServiceCosmosDbConfigurationInfo'},
+        'authentication_configuration': {'key': 'authenticationConfiguration', 'type': 'ServiceAuthenticationConfigurationInfo'},
+        'cors_configuration': {'key': 'corsConfiguration', 'type': 'ServiceCorsConfigurationInfo'},
     }
 
     def __init__(self, **kwargs):
@@ -51,3 +61,5 @@ class ServicesProperties(Model):
         self.provisioning_state = None
         self.access_policies = kwargs.get('access_policies', None)
         self.cosmos_db_configuration = kwargs.get('cosmos_db_configuration', None)
+        self.authentication_configuration = kwargs.get('authentication_configuration', None)
+        self.cors_configuration = kwargs.get('cors_configuration', None)

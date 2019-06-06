@@ -12,11 +12,9 @@
 from .services_operations import ServicesOperations
 from .operations import Operations
 from .operation_results_operations import OperationResultsOperations
-from .move_resources_status_operations import MoveResourcesStatusOperations
 
 __all__ = [
     'ServicesOperations',
     'Operations',
     'OperationResultsOperations',
-    'MoveResourcesStatusOperations',
 ]
