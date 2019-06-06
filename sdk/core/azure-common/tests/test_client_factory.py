@@ -148,6 +148,13 @@ class TestCommon(unittest.TestCase):
                 self.tenant_id = tenant_id
                 self.base_url = base_url
 
+        class KeyVaultClient(object):
+            def __init__(self, credentials):
+                if credentials is None:
+                    raise ValueError("Parameter 'credentials' must not be None.")
+
+                self.credentials = credentials
+
         for encoding in ['utf-8', 'utf-8-sig', 'ascii']:
 
             temp_auth_file = tempfile.NamedTemporaryFile(delete=False)
@@ -191,6 +198,13 @@ class TestCommon(unittest.TestCase):
             assert client.tenant_id == "c81da1d8-65ca-11e7-b1d1-ecb1d756380e"
             assert client.credentials._args == (
                 "https://graph.windows.net/",
+                'a2ab11af-01aa-4759-8345-7803287dbd39',
+                'password'
+            )
+
+            client = get_client_from_auth_file(KeyVaultClient, temp_auth_file.name)
+            assert client.credentials._args == (
+                "https://vault.azure.net",
                 'a2ab11af-01aa-4759-8345-7803287dbd39',
                 'password'
             )
