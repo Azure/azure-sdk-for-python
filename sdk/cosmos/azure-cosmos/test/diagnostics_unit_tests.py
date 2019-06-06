@@ -19,17 +19,17 @@ _headers['other'] = 'other'
 class BaseUnitTests(unittest.TestCase):
 
     def test_init(self):
-        rh = m.RecordHeaders()
+        rh = m.RecordDiagnostics()
         assert rh.headers == {}
 
     def test_headers(self):
-        rh = m.RecordHeaders()
+        rh = m.RecordDiagnostics()
         rh(_headers)
         assert rh.headers == _headers
         assert rh.headers is not _headers
 
     def test_headers_case(self):
-        rh = m.RecordHeaders()
+        rh = m.RecordDiagnostics()
         rh(_headers)
         rh_headers = rh.headers
         for key in rh.headers.keys():
@@ -37,7 +37,7 @@ class BaseUnitTests(unittest.TestCase):
             assert key.lower() in rh_headers 
 
     def test_common_attrs(self):
-        rh = m.RecordHeaders()
+        rh = m.RecordDiagnostics()
         rh(_headers)
         for name in _common:
             assert rh.headers[name] == name
@@ -45,7 +45,7 @@ class BaseUnitTests(unittest.TestCase):
             assert getattr(rh, attr) == name
 
     def test_other_attrs(self):
-        rh = m.RecordHeaders()
+        rh = m.RecordDiagnostics()
         rh(_headers)
         assert rh.headers['other'] == 'other'
         with pytest.raises(AttributeError):

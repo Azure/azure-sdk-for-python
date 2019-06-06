@@ -24,34 +24,21 @@
 
 from requests.structures import CaseInsensitiveDict
 
-class RecordHeaders(object):
+class RecordDiagnostics(object):
     """ Record Response headers from Cosmos read operations.
 
-    The full response headers are stored in the ``headers`` property. Common 
-    Cosmos-specific headers that are prefixed with ``'x-ms-'``:
-
-    * x-ms-activity-id
-    * x-ms-request-charge
-    * x-ms-session-token
-    * x-ms-item-count
-    * x-ms-request-quota
-    * x-ms-resource-usage
-    * x-ms-retry-after-ms
+    The full response headers are stored in the ``headers`` property.
     
-    may also be accessed by using snake cased attribute names. For instance, 
-    the header ``'x-ms-request-charge'`` is accessible by a ``request_charge`` 
-    attribute.
-
     Examples:
 
-        >>> rh = RecordHeaders()
+        >>> rh = RecordDiagnostics()
 
         >>> col = b.create_container(
-        ...     id="some_comtainer",
+        ...     id="some_container",
         ...     partition_key=PartitionKey(path='/id', kind='Hash'),
         ...     response_hook=rh)
 
-        >>> rh.activity_id
+        >>> rh.headers['x-ms-activity-id']
         '6243eeed-f06a-413d-b913-dcf8122d0642'
 
 
