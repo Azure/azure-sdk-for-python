@@ -24,8 +24,8 @@ class Resource(Model):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :ivar location: Resource location
-    :vartype location: str
+    :param location: Resource location
+    :type location: str
     :ivar tags: Resource tags
     :vartype tags: dict[str, str]
     """
@@ -34,7 +34,6 @@ class Resource(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
         'tags': {'readonly': True},
     }
 
@@ -46,10 +45,10 @@ class Resource(Model):
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, location: str=None, **kwargs) -> None:
         super(Resource, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.location = None
+        self.location = location
         self.tags = None

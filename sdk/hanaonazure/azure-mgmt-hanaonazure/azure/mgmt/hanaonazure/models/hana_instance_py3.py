@@ -24,8 +24,8 @@ class HanaInstance(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :ivar location: Resource location
-    :vartype location: str
+    :param location: Resource location
+    :type location: str
     :ivar tags: Resource tags
     :vartype tags: dict[str, str]
     :param hardware_profile: Specifies the hardware settings for the HANA
@@ -50,9 +50,9 @@ class HanaInstance(Resource):
     :vartype proximity_placement_group: str
     :ivar hw_revision: Hardware revision of a HANA instance
     :vartype hw_revision: str
-    :ivar partner_node_id: ARM ID of another HanaInstance that will share a
+    :param partner_node_id: ARM ID of another HanaInstance that will share a
      network with this HanaInstance
-    :vartype partner_node_id: str
+    :type partner_node_id: str
     :ivar provisioning_state: State of provisioning of the HanaInstance.
      Possible values include: 'Accepted', 'Creating', 'Updating', 'Failed',
      'Succeeded', 'Deleting', 'Migrating'
@@ -64,13 +64,11 @@ class HanaInstance(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
         'tags': {'readonly': True},
         'hana_instance_id': {'readonly': True},
         'power_state': {'readonly': True},
         'proximity_placement_group': {'readonly': True},
         'hw_revision': {'readonly': True},
-        'partner_node_id': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -92,8 +90,8 @@ class HanaInstance(Resource):
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, **kwargs) -> None:
-        super(HanaInstance, self).__init__(**kwargs)
+    def __init__(self, *, location: str=None, hardware_profile=None, storage_profile=None, os_profile=None, network_profile=None, partner_node_id: str=None, **kwargs) -> None:
+        super(HanaInstance, self).__init__(location=location, **kwargs)
         self.hardware_profile = hardware_profile
         self.storage_profile = storage_profile
         self.os_profile = os_profile
@@ -102,5 +100,5 @@ class HanaInstance(Resource):
         self.power_state = None
         self.proximity_placement_group = None
         self.hw_revision = None
-        self.partner_node_id = None
+        self.partner_node_id = partner_node_id
         self.provisioning_state = None
