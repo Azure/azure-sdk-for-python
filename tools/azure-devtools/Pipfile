@@ -1,0 +1,14 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+"e1839a8" = {path = ".", extras = ["ci_tools"], editable = true}
+
+[dev-packages]
+pytest = "*"
+codecov = "*"
+mock = "*"
+pylint = "*"
+pytest-cov = "*"
