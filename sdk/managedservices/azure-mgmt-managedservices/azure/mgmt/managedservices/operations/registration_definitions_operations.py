@@ -11,6 +11,8 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -113,9 +115,8 @@ class RegistrationDefinitionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: RegistrationDefinition or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.managedservices.models.RegistrationDefinition or
-         ~msrest.pipeline.ClientRawResponse
+        :return: None or ClientRawResponse if raw=true
+        :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.managedservices.models.ErrorResponseException>`
         """
@@ -133,7 +134,6 @@ class RegistrationDefinitionsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -148,45 +148,14 @@ class RegistrationDefinitionsOperations(object):
         if response.status_code not in [200, 204]:
             raise models.ErrorResponseException(self._deserialize, response)
 
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('RegistrationDefinition', response)
-
         if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
+            client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-
-        return deserialized
     delete.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationDefinitions/{registrationDefinitionId}'}
 
-    def create_or_update(
-            self, registration_definition_id, api_version, scope, properties=None, plan=None, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates a registration definition.
 
-        :param registration_definition_id: Guid of the registration
-         definition.
-        :type registration_definition_id: str
-        :param api_version: The API version to use for this operation.
-        :type api_version: str
-        :param scope: Scope of the resource.
-        :type scope: str
-        :param properties: Properties of a registration definition.
-        :type properties:
-         ~azure.mgmt.managedservices.models.RegistrationDefinitionProperties
-        :param plan: Plan details for the managed services.
-        :type plan: ~azure.mgmt.managedservices.models.Plan
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: RegistrationDefinition or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.managedservices.models.RegistrationDefinition or
-         ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.managedservices.models.ErrorResponseException>`
-        """
+    def _create_or_update_initial(
+            self, registration_definition_id, api_version, scope, properties=None, plan=None, custom_headers=None, raw=False, **operation_config):
         request_body = models.RegistrationDefinition(properties=properties, plan=plan)
 
         # Construct URL
@@ -234,6 +203,64 @@ class RegistrationDefinitionsOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def create_or_update(
+            self, registration_definition_id, api_version, scope, properties=None, plan=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates or updates a registration definition.
+
+        :param registration_definition_id: Guid of the registration
+         definition.
+        :type registration_definition_id: str
+        :param api_version: The API version to use for this operation.
+        :type api_version: str
+        :param scope: Scope of the resource.
+        :type scope: str
+        :param properties: Properties of a registration definition.
+        :type properties:
+         ~azure.mgmt.managedservices.models.RegistrationDefinitionProperties
+        :param plan: Plan details for the managed services.
+        :type plan: ~azure.mgmt.managedservices.models.Plan
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns RegistrationDefinition
+         or ClientRawResponse<RegistrationDefinition> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.managedservices.models.RegistrationDefinition]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.managedservices.models.RegistrationDefinition]]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.managedservices.models.ErrorResponseException>`
+        """
+        raw_result = self._create_or_update_initial(
+            registration_definition_id=registration_definition_id,
+            api_version=api_version,
+            scope=scope,
+            properties=properties,
+            plan=plan,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            deserialized = self._deserialize('RegistrationDefinition', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create_or_update.metadata = {'url': '/{scope}/providers/Microsoft.ManagedServices/registrationDefinitions/{registrationDefinitionId}'}
 
     def list(
