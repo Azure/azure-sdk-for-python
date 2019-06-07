@@ -19,10 +19,9 @@ from azure.identity import (
     ClientSecretCredential,
     DefaultAzureCredential,
     EnvironmentCredential,
-    ImdsCredential,
-    MsiCredential,
     TokenCredentialChain,
 )
+from azure.identity._internal import ImdsCredential, MsiCredential
 from azure.identity.constants import EnvironmentVariables, MSI_ENDPOINT, MSI_SECRET
 
 

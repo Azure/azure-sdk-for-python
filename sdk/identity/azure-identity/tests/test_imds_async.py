@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import pytest
 
-from azure.identity.aio.credentials import AsyncImdsCredential
+from azure.identity.aio._internal import AsyncImdsCredential
 
 
 @pytest.mark.asyncio

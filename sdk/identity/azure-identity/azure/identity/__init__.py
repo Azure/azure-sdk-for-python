@@ -8,9 +8,7 @@ from .credentials import (
     CertificateCredential,
     ClientSecretCredential,
     EnvironmentCredential,
-    ImdsCredential,
     ManagedIdentityCredential,
-    MsiCredential,
     TokenCredentialChain,
 )
 
@@ -30,9 +28,7 @@ __all__ = [
     "ClientSecretCredential",
     "DefaultAzureCredential",
     "EnvironmentCredential",
-    "ImdsCredential",
     "ManagedIdentityCredential",
-    "MsiCredential",
     "TokenCredentialChain",
 ]
 
@@ -42,9 +38,7 @@ try:
         AsyncClientSecretCredential,
         AsyncDefaultAzureCredential,
         AsyncEnvironmentCredential,
-        AsyncImdsCredential,
         AsyncManagedIdentityCredential,
-        AsyncMsiCredential,
         AsyncTokenCredentialChain,
     )
 
@@ -54,9 +48,7 @@ try:
             "AsyncClientSecretCredential",
             "AsyncDefaultAzureCredential",
             "AsyncEnvironmentCredential",
-            "AsyncImdsCredential",
             "AsyncManagedIdentityCredential",
-            "AsyncMsiCredential",
             "AsyncTokenCredentialChain",
         ]
     )

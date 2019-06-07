@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.identity.credentials import ImdsCredential
+from azure.identity._internal import ImdsCredential
 
 
 def test_imds_credential():

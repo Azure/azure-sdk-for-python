@@ -16,10 +16,9 @@ from azure.identity import (
     AsyncClientSecretCredential,
     AsyncDefaultAzureCredential,
     AsyncEnvironmentCredential,
-    AsyncImdsCredential,
-    AsyncMsiCredential,
     AsyncTokenCredentialChain,
 )
+from azure.identity.aio._internal import AsyncImdsCredential, AsyncMsiCredential
 from azure.identity.constants import EnvironmentVariables, MSI_ENDPOINT, MSI_SECRET
 
 
