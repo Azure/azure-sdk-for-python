@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
-from azure.core.pipeline.policies.credentials import _BearerTokenCredentialPolicyBase
+from azure.core.pipeline.policies.authentication import _BearerTokenCredentialPolicyBase
 
 
 class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, AsyncHTTPPolicy):
