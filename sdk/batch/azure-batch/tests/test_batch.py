@@ -164,12 +164,12 @@ class BatchTest(AzureMgmtTestCase):
     def test_batch_create_pools(self, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
         # Test List Node Agent SKUs
-        response = client.account.list_node_agent_skus()
+        response = client.account.list_supported_images()
         response = list(response)
         self.assertTrue(len(response) > 1)
-        self.assertEqual(response[-1].id, "batch.node.windows amd64")
-        self.assertEqual(response[-1].os_type.value, "windows")
-        self.assertTrue(len(response[-1].verified_image_references) > 1)
+        self.assertEqual(response[-1].node_agent_sku_id, "batch.node.centos 7")
+        self.assertEqual(response[-1].os_type.value, "linux")
+        self.assertIsNotNone(response[-1].image_reference)
 
         # Test Create Iaas Pool
         users = [
