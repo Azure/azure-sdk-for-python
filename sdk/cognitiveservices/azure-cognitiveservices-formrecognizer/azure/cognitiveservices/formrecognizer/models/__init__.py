@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .train_source_filter_py3 import TrainSourceFilter
     from .train_request_py3 import TrainRequest
     from .form_document_report_py3 import FormDocumentReport
     from .form_operation_error_py3 import FormOperationError
@@ -38,6 +39,7 @@ try:
     from .computer_vision_error_py3 import ComputerVisionError, ComputerVisionErrorException
     from .image_url_py3 import ImageUrl
 except (SyntaxError, ImportError):
+    from .train_source_filter import TrainSourceFilter
     from .train_request import TrainRequest
     from .form_document_report import FormDocumentReport
     from .form_operation_error import FormOperationError
@@ -72,6 +74,7 @@ from .form_recognizer_client_enums import (
 )
 
 __all__ = [
+    'TrainSourceFilter',
     'TrainRequest',
     'FormDocumentReport',
     'FormOperationError',

@@ -73,7 +73,7 @@ class FormRecognizerClient(SDKClient):
 
 
     def train_custom_model(
-            self, source, custom_headers=None, raw=False, **operation_config):
+            self, source, source_filter=None, custom_headers=None, raw=False, **operation_config):
         """Train Model.
 
         Create and train a custom model. The train request must include a
@@ -92,6 +92,10 @@ class FormRecognizerClient(SDKClient):
 
         :param source: Get or set source path.
         :type source: str
+        :param source_filter: Get or set filter to further search the
+         source path for content.
+        :type source_filter:
+         ~azure.cognitiveservices.formrecognizer.models.TrainSourceFilter
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -103,7 +107,7 @@ class FormRecognizerClient(SDKClient):
         :raises:
          :class:`ErrorResponseException<azure.cognitiveservices.formrecognizer.models.ErrorResponseException>`
         """
-        train_request = models.TrainRequest(source=source)
+        train_request = models.TrainRequest(source=source, source_filter=source_filter)
 
         # Construct URL
         url = self.train_custom_model.metadata['url']
