@@ -289,13 +289,14 @@ def build_new_add_collection(original_add_collection):
 
 
 def batch_error_exception_string(self):
-    ret = """Request encountered an exception.\n
-    Code: {}\n
-    Message: {}\n""".format(self.error.code, self.error.message)
+    ret = "Request encountered an exception.\nCode: {}\nMessage: {}\n".format(
+        self.error.code,
+        self.error.message)
     if self.error.values:
         ret += "Additional Information:\n"
         for error_detail in self.error.values:
-            ret += "\t{}: {}".format(error_detail.key, error_detail.value)
+            ret += "{}: {}\n".format(error_detail.key, error_detail.value)
+    return ret
 
 
 
