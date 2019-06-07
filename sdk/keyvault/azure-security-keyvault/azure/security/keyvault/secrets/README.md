@@ -6,7 +6,7 @@ Use the secret client library to create and manage secrets.
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets) | [Package (Pypi)](TODO) | [API reference documentation](TODO) | [Product documentation](TODO)
 ## Getting started
 ### Install the package
-Install the Azure Key Vault client library for Python with pip:
+Install the Azure Key Vault client library for Python with [pip](https://pypi.org/project/pip/):
 
 `$ pip install azure-security-keyvault
 `
@@ -16,7 +16,7 @@ Install the Azure Key Vault client library for Python with pip:
 * Python 2.7, 3.4 or later to use this package.
 * An existing Key Vault. If you need to create a Key Vault, you can use the [Azure Cloud Shell](https://shell.azure.com/bash) to create one with this Azure CLI command:
 
-`az keyvault create --resource-group <resource-group-name> --name <key-vault-name>`
+    `az keyvault create --resource-group <resource-group-name> --name <key-vault-name>`
 
 ### Authenticate the client
 In order to interact with the Key Vault service, you'll need to create an instance of the [KeyVaultClient](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault) class. You need a vault url, client secret credentials (client id, client secret, tenant id) and a [resource url](https://vault.azure.net) to instantiate a client object.
@@ -46,7 +46,7 @@ Once you have the `client_id`, `client_secret` and `tenant_id` from above, you c
 ### Secret
   A secret is the fundamental resource within Azure KeyVault. From a developer's perspective, Key Vault APIs accept and return secret values as strings. In addition to the secret data, the following attributes may be specified:
 * expires: Identifies the expiration time on or after which the secret data should not be retrieved.
-* nbf: Identifies the time after which the secret will be active.
+* not_before: Identifies the time after which the secret will be active.
 * enabled: Specifies whether the secret data can be retrieved.
 * created: Indicates when this version of the secret was created.(read-only)
 * updated: Indicates when this version of the secret was updated.(read-only)
@@ -122,7 +122,7 @@ The following sections provide several code snippets covering some of the most c
 ```
 
 ### Delete a Secret
-`delete_secret` deletes a secret previously stored in the Key Vault.
+`delete_secret` deletes a secret previously stored in the Key Vault. When [soft-delete](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete) is not enabled for the Key Vault, this operation permanently deletes the secret.
 ```python
     from azure.identity import AsyncClientSecretCredential
     from azure.security.keyvault import SecretClient
@@ -216,7 +216,7 @@ except HttpResponseError as e:
     
 Output: "Secret not found:deleted_secret"
 ```
-### Logging
+### Logging [TODO]
 This SDK uses Python standard logging library. You can configure logging print out debugging information to the stdout or anywhere you want.
 
 ```python 
