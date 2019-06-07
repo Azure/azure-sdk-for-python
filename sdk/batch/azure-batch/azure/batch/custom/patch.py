@@ -293,7 +293,6 @@ def batch_error_exception_string(self):
         self.error.code,
         self.error.message)
     if self.error.values:
-        ret += "Additional Information:\n"
         for error_detail in self.error.values:
             ret += "{}: {}\n".format(error_detail.key, error_detail.value)
     return ret
