@@ -23,6 +23,12 @@ class PipelineRun(Model):
     :type additional_properties: dict[str, object]
     :ivar run_id: Identifier of a run.
     :vartype run_id: str
+    :ivar run_group_id: Identifier that correlates all the recovery runs of a
+     pipeline run.
+    :vartype run_group_id: str
+    :ivar is_latest: Indicates if the recovered pipeline run is the latest in
+     its group.
+    :vartype is_latest: bool
     :ivar pipeline_name: The pipeline name.
     :vartype pipeline_name: str
     :ivar parameters: The full or partial list of parameter name, value pair
@@ -47,6 +53,8 @@ class PipelineRun(Model):
 
     _validation = {
         'run_id': {'readonly': True},
+        'run_group_id': {'readonly': True},
+        'is_latest': {'readonly': True},
         'pipeline_name': {'readonly': True},
         'parameters': {'readonly': True},
         'invoked_by': {'readonly': True},
@@ -61,6 +69,8 @@ class PipelineRun(Model):
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'run_id': {'key': 'runId', 'type': 'str'},
+        'run_group_id': {'key': 'runGroupId', 'type': 'str'},
+        'is_latest': {'key': 'isLatest', 'type': 'bool'},
         'pipeline_name': {'key': 'pipelineName', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': '{str}'},
         'invoked_by': {'key': 'invokedBy', 'type': 'PipelineRunInvokedBy'},
@@ -76,6 +86,8 @@ class PipelineRun(Model):
         super(PipelineRun, self).__init__(**kwargs)
         self.additional_properties = kwargs.get('additional_properties', None)
         self.run_id = None
+        self.run_group_id = None
+        self.is_latest = None
         self.pipeline_name = None
         self.parameters = None
         self.invoked_by = None

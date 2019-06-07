@@ -29,7 +29,7 @@ class AmazonS3LinkedService(LinkedService):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset.
+     linked service.
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
@@ -40,6 +40,11 @@ class AmazonS3LinkedService(LinkedService):
     :param secret_access_key: The secret access key of the Amazon S3 Identity
      and Access Management (IAM) user.
     :type secret_access_key: ~azure.mgmt.datafactory.models.SecretBase
+    :param service_url: This value specifies the endpoint to access with the
+     S3 Connector. This is an optional property; change it only if you want to
+     try a different service endpoint or want to switch between https and http.
+     Type: string (or Expression with resultType string).
+    :type service_url: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -59,12 +64,14 @@ class AmazonS3LinkedService(LinkedService):
         'type': {'key': 'type', 'type': 'str'},
         'access_key_id': {'key': 'typeProperties.accessKeyId', 'type': 'object'},
         'secret_access_key': {'key': 'typeProperties.secretAccessKey', 'type': 'SecretBase'},
+        'service_url': {'key': 'typeProperties.serviceUrl', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, access_key_id=None, secret_access_key=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, access_key_id=None, secret_access_key=None, service_url=None, encrypted_credential=None, **kwargs) -> None:
         super(AmazonS3LinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.access_key_id = access_key_id
         self.secret_access_key = secret_access_key
+        self.service_url = service_url
         self.encrypted_credential = encrypted_credential
         self.type = 'AmazonS3'

@@ -49,6 +49,12 @@ class FileShareDataset(Dataset):
     :param file_name: The name of the on-premises file system. Type: string
      (or Expression with resultType string).
     :type file_name: object
+    :param modified_datetime_start: The start of file's modified datetime.
+     Type: string (or Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of file's modified datetime. Type:
+     string (or Expression with resultType string).
+    :type modified_datetime_end: object
     :param format: The format of the files.
     :type format: ~azure.mgmt.datafactory.models.DatasetStorageFormat
     :param file_filter: Specify a filter to be used to select a subset of
@@ -76,15 +82,19 @@ class FileShareDataset(Dataset):
         'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'typeProperties.folderPath', 'type': 'object'},
         'file_name': {'key': 'typeProperties.fileName', 'type': 'object'},
+        'modified_datetime_start': {'key': 'typeProperties.modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'typeProperties.modifiedDatetimeEnd', 'type': 'object'},
         'format': {'key': 'typeProperties.format', 'type': 'DatasetStorageFormat'},
         'file_filter': {'key': 'typeProperties.fileFilter', 'type': 'object'},
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, folder_path=None, file_name=None, format=None, file_filter=None, compression=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, folder_path=None, file_name=None, modified_datetime_start=None, modified_datetime_end=None, format=None, file_filter=None, compression=None, **kwargs) -> None:
         super(FileShareDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.folder_path = folder_path
         self.file_name = file_name
+        self.modified_datetime_start = modified_datetime_start
+        self.modified_datetime_end = modified_datetime_end
         self.format = format
         self.file_filter = file_filter
         self.compression = compression

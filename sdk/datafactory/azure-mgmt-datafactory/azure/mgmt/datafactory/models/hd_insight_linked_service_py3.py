@@ -29,7 +29,7 @@ class HDInsightLinkedService(LinkedService):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset.
+     linked service.
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
@@ -55,6 +55,10 @@ class HDInsightLinkedService(LinkedService):
     :param is_esp_enabled: Specify if the HDInsight is created with ESP
      (Enterprise Security Package). Type: Boolean.
     :type is_esp_enabled: object
+    :param file_system: Specify the FileSystem if the main storage for the
+     HDInsight is ADLS Gen2. Type: string (or Expression with resultType
+     string).
+    :type file_system: object
     """
 
     _validation = {
@@ -76,9 +80,10 @@ class HDInsightLinkedService(LinkedService):
         'hcatalog_linked_service_name': {'key': 'typeProperties.hcatalogLinkedServiceName', 'type': 'LinkedServiceReference'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
         'is_esp_enabled': {'key': 'typeProperties.isEspEnabled', 'type': 'object'},
+        'file_system': {'key': 'typeProperties.fileSystem', 'type': 'object'},
     }
 
-    def __init__(self, *, cluster_uri, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, user_name=None, password=None, linked_service_name=None, hcatalog_linked_service_name=None, encrypted_credential=None, is_esp_enabled=None, **kwargs) -> None:
+    def __init__(self, *, cluster_uri, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, user_name=None, password=None, linked_service_name=None, hcatalog_linked_service_name=None, encrypted_credential=None, is_esp_enabled=None, file_system=None, **kwargs) -> None:
         super(HDInsightLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
         self.cluster_uri = cluster_uri
         self.user_name = user_name
@@ -87,4 +92,5 @@ class HDInsightLinkedService(LinkedService):
         self.hcatalog_linked_service_name = hcatalog_linked_service_name
         self.encrypted_credential = encrypted_credential
         self.is_esp_enabled = is_esp_enabled
+        self.file_system = file_system
         self.type = 'HDInsight'
