@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Dict, Mapping, Optional, Generator, Iterable
+from typing import Any, Dict, Mapping, Optional, Iterable, List
 from datetime import datetime
 from .._generated.v7_0 import models
 from ._models import (
@@ -31,7 +31,7 @@ class CertificateClient:
         # type: () -> str
         pass
 
-    def create_certificate(self, name, policy=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
+    def create_certificate(self, name, policy, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
         # type: (str, models.CertificatePolicy, Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> CertificateOperation
         pass
 
@@ -85,7 +85,7 @@ class CertificateClient:
     def merge_certificate(
         self, name, x509_certificates, enabled=True, not_before=None, expires=None, tags=None, **kwargs
     ):
-        # type: (str, list[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Certificate
+        # type: (str, List[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Certificate
         pass
 
     def backup_certificate(self, name, **kwargs):
@@ -97,28 +97,28 @@ class CertificateClient:
         pass
 
     def list_deleted_certificates(self, include_pending=None, **kwargs):
-        # type: (Optional[bool], Mapping[str, Any]) -> Generator[DeletedCertificate]
+        # type: (Optional[bool], Mapping[str, Any]) -> Iterable[DeletedCertificate]
         pass
 
     def list_certificates(self, include_pending=None, **kwargs):
-        # type: (Optional[bool], Mapping[str, Any]) -> Generator[CertificateBase]
+        # type: (Optional[bool], Mapping[str, Any]) -> Iterable[CertificateBase]
         pass
 
     def list_certificate_versions(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> Generator[CertificateBase]
+        # type: (str, Mapping[str, Any]) -> Iterable[CertificateBase]
         pass
 
     def create_contacts(self, contacts, **kwargs):
-        # type: (Iterable[Contact], Mapping[str, Any]) -> Generator[Contact]
+        # type: (Iterable[Contact], Mapping[str, Any]) -> Iterable[Contact]
         # TODO: rest api includes an id should it be returned?
         pass
 
     def list_contacts(self, **kwargs):
-        # type: (Mapping[str, Any]) -> Generator[Contact]
+        # type: (Mapping[str, Any]) -> Iterable[Contact]
         pass
 
     def delete_contacts(self, **kwargs):
-        # type: (Mapping[str, Any]) -> Generator[Contact]
+        # type: (Mapping[str, Any]) -> Iterable[Contact]
         pass
 
     def get_certificate_operation(self, name, **kwargs):
@@ -141,7 +141,6 @@ class CertificateClient:
         # type: (str, Mapping[str, Any]) -> Issuer
         pass
 
-    #   TODO: params first_name, last_name, email, phone may change on how we want to handle admin_details
     def create_issuer(
         self,
         name,
@@ -149,17 +148,14 @@ class CertificateClient:
         account_id=None,
         password=None,
         organization_id=None,
-        first_name=None,
-        last_name=None,
-        email=None,
-        phone=None,
+        admin_details=None,
         enabled=None,
         not_before=None,
         expires=None,
         tags=None,
         **kwargs
     ):
-        # type: (str, str, Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Issuer
+        # type: (str, str, Optional[str], Optional[str], Optional[str], Optional[List[models.AdministratorDetails]], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Issuer
         pass
 
     def update_issuer(
@@ -187,5 +183,5 @@ class CertificateClient:
         pass
 
     def list_issuers(self, **kwargs):
-        # type: (Mapping[str, Any]) -> Generator[IssuerBase]
+        # type: (Mapping[str, Any]) -> Iterable[IssuerBase]
         pass

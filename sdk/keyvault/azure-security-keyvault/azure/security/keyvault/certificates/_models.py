@@ -5,9 +5,60 @@
 # --------------------------------------------------------------------------
 
 from datetime import datetime
-from typing import Any, Dict, Mapping, Optional
+from typing import Any, Dict, Mapping, Optional, List
 from .._internal import _parse_vault_id
 from .._generated.v7_0 import models
+
+
+class AdministratorDetails(object):
+    """Details of the organization administrator of the certificate issuer.
+    :param first_name: First name.
+    :type first_name: str
+    :param last_name: Last name.
+    :type last_name: str
+    :param email: Email address.
+    :type email: str
+    :param phone: Phone number.
+    :type phone: str
+    """
+
+    def __init__(self, first_name, last_name, email, phone):
+        # type: (str, str, str, str) -> None
+        self._first_name = first_name
+        self._last_name = last_name
+        self._phone = phone
+        self._email = email
+
+    @classmethod
+    def _from_admin_details_bundle(cls, admin_details_bundle):
+        # type: (models.AdministratorDetails) -> AdministratorDetails
+        """Construct a AdministratorDetails from an autorest-generated AdministratorDetailsBundle"""
+        return cls(
+            email=admin_details_bundle.email_address,
+            first_name=admin_details_bundle.first_name,
+            last_name=admin_details_bundle.last_name,
+            phone=admin_details_bundle.phone,
+        )
+
+    @property
+    def email(self):
+        # type: () -> str
+        return self._email
+
+    @property
+    def first_name(self):
+        # type: () -> str
+        return self._first_name
+
+    @property
+    def last_name(self):
+        # type: () -> str
+        return self._last_name
+
+    @property
+    def phone(self):
+        # type: () -> str
+        return self._phone
 
 
 class Error(object):
@@ -113,7 +164,7 @@ class CertificateBase(object):
 
 class Certificate(CertificateBase):
     def __init__(self, attributes, cert_id, thumbprint, kid, sid, policy, cer, **kwargs):
-        # type: (models.CertificateAttributes, str, bytes, str, str, models.CertificatePolicy, bytes, Mapping[str, Any]) -> None
+        # type: (models.CertificateAttributes, str, bytes, str, str, CertificatePolicy, bytes, Mapping[str, Any]) -> None
         super(Certificate, self).__init__(attributes, cert_id, thumbprint, **kwargs)
         self._kid = kid
         self._sid = sid
@@ -172,6 +223,7 @@ class CertificateOperation(object):
         error,
         target,
         request_id,
+        **kwargs,
     ):
         # type: (str, str, str, bool, str, bool, str, str, models.Error, str, str, Mapping[str, Any]) -> None
         pass
@@ -249,6 +301,7 @@ class CertificatePolicy(object):
         issuer_name,
         certificate_type,
         certificate_transparency,
+        **kwargs,
     ):
         # type: (str, models.KeyProperties, str, str, list[str], list[str], list[str], int, list[models.LifetimeAction], str, str, bool, Mapping[str, Any]) -> None
         pass
@@ -411,28 +464,13 @@ class IssuerBase(object):
 
 
 class Issuer(IssuerBase):
-    def __init__(
-        self,
-        attributes,
-        issuer_id,
-        provider,
-        account_id,
-        password,
-        organization_id=None,
-        email=None,
-        first_name=None,
-        last_name=None,
-        phone=None,
-    ):
-        # type: (models.IssuerAttributes, str, str, str, str, Optional[str], Optional[str], Optional[str], Optional[str], Optional[str]) -> None
+    def __init__(self, attributes, issuer_id, provider, account_id, password, organization_id=None, admin_details=None):
+        # type: (models.IssuerAttributes, str, str, str, str, Optional[str], Optional[str], Optional[List[AdministratorDetails]]) -> None
         super(Issuer, self).__init__(attributes, issuer_id, provider)
         self._account_id = account_id
         self._password = password
         self._organization_id = organization_id
-        self._email = email
-        self._first_name = first_name
-        self._last_name = last_name
-        self._phone = phone
+        self._admin_details = admin_details
 
     @classmethod
     def _from_issuer_bundle(cls, issuer_bundle):
@@ -445,10 +483,10 @@ class Issuer(IssuerBase):
             account_id=issuer_bundle.credentials.account_id,
             password=issuer_bundle.credentials.password,
             organization_id=issuer_bundle.organization_details.id,
-            email=issuer_bundle.organization_details.admin_details.email,
-            first_name=issuer_bundle.organization_details.admin_details.first_name,
-            last_name=issuer_bundle.issuer_bundle.organization_details.admin_details.last_name,
-            phone=issuer_bundle.organization_details.admin_details.phone,
+            admin_details=[
+                AdministratorDetails._from_admin_details_bundle(item)
+                for item in issuer_bundle.organization_details.admin_details
+            ],
         )
 
     @property
@@ -466,31 +504,10 @@ class Issuer(IssuerBase):
         # type: () -> str
         return self._organization_id
 
-    # TODO: rest api docs mention this as a list, do we still want to flatten it
-    # @property
-    # def admin_details(self):
-    #     # type: () -> datetime
-    #     return self._admin_details
-
     @property
-    def email(self):
-        # type: () -> str
-        return self._email
-
-    @property
-    def first_name(self):
-        # type: () -> str
-        return self._first_name
-
-    @property
-    def last_name(self):
-        # type: () -> str
-        return self._last_name
-
-    @property
-    def phone(self):
-        # type: () -> str
-        return self._phone
+    def admin_details(self):
+        # type: () -> List[AdministratorDetails]
+        return self._admin_details
 
 
 class KeyProperties(object):
@@ -572,7 +589,7 @@ class DeletedCertificate(Certificate):
         deleted_date=None,
         recovery_id=None,
         scheduled_purge_date=None,
-        **kwargs
+        **kwargs,
     ):
         # type: (models.CertificateAttributes, str, bytes, Optional[str], Optional[str], Optional[models.CertificatePolicy], Optional[bytes], Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
         super(DeletedCertificate, self).__init__(attributes, cert_id, thumbprint, kid, sid, policy, cer, **kwargs)
