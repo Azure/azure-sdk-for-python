@@ -20,6 +20,7 @@ from logging.handlers import RotatingFileHandler
 
 from azure.eventhub import EventPosition
 from azure.eventhub import EventHubClient
+from azure.eventhub import EventHubSharedKeyCredential
 
 def get_logger(filename, level=logging.INFO):
     azure_logger = logging.getLogger("azure.eventhub")
@@ -97,12 +98,13 @@ def test_long_running_receive(connection_str):
     if args.conn_str:
         client = EventHubClient.from_connection_string(
             args.conn_str,
-            eventhub=args.eventhub, network_tracing=False)
+            event_hub_path=args.eventhub, network_tracing=False)
     elif args.address:
-        client = EventHubClient(
-            args.address,
-            username=args.sas_policy,
-            password=args.sas_key)
+        client = EventHubClient(host=args.address,
+                                event_hub_path=args.eventhub,
+                                credential=EventHubSharedKeyCredential(args.sas_policy, args.sas_key),
+                                auth_timeout=240,
+                                network_tracing=False)
     else:
         try:
             import pytest

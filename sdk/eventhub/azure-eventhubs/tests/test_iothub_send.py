@@ -20,7 +20,5 @@ def test_iothub_send_single_event(iot_connection_str, device_id):
     sender = client.create_sender(operation='/messages/devicebound')
     try:
         sender.send(EventData(b"A single event", to_device=device_id))
-    except:
-        raise
     finally:
         sender.close()

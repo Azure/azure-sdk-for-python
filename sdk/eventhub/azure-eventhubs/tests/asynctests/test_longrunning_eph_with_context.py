@@ -130,13 +130,15 @@ async def pump(pid, sender, duration):
 
     try:
         async with sender:
+            list = []
             while time.time() < deadline:
                 data = EventData(body=b"D" * 512)
-                sender.queue_message(data)
+                list.append(data)
                 total += 1
                 if total % 100 == 0:
-                    await sender.send_pending_messages()
-                    #logger.info("{}: Send total {}".format(pid, total))
+                    await sender.send(list)
+                    list = []
+                    logger.info("{}: Send total {}".format(pid, total))
     except Exception as err:
         logger.error("{}: Send failed {}".format(pid, err))
         raise
@@ -144,7 +146,8 @@ async def pump(pid, sender, duration):
 
 
 @pytest.mark.liveTest
-def test_long_running_context_eph(live_eventhub):
+@pytest.mark.asyncio
+async def test_long_running_context_eph(live_eventhub):
     parser = argparse.ArgumentParser()
     parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
     parser.add_argument("--storage-account", help="Storage account name", default=os.environ.get('AZURE_STORAGE_ACCOUNT'))
@@ -174,9 +177,9 @@ def test_long_running_context_eph(live_eventhub):
     send_client = EventHubClient.from_connection_string(conn_str)
     pumps = []
     for pid in ["0", "1"]:
-        sender = send_client.add_async_sender(partition_id=pid, send_timeout=0)
+        sender = send_client.create_sender(partition_id=pid, send_timeout=0)
         pumps.append(pump(pid, sender, 15))
-    results = loop.run_until_complete(asyncio.gather(*pumps, return_exceptions=True))
+    results = await asyncio.gather(*pumps, return_exceptions=True)
     assert not any(results)
 
     # Eventhub config and storage manager 
@@ -210,7 +213,7 @@ def test_long_running_context_eph(live_eventhub):
     tasks = asyncio.gather(
         host.open_async(),
         wait_and_close(host, args.duration), return_exceptions=True)
-    results = loop.run_until_complete(tasks)
+    results = await tasks
     assert not any(results)
 
 
@@ -223,4 +226,5 @@ if __name__ == '__main__':
     config['namespace'] = os.environ['EVENT_HUB_NAMESPACE']
     config['consumer_group'] = "$Default"
     config['partition'] = "0"
-    test_long_running_context_eph(config)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(test_long_running_context_eph(config))

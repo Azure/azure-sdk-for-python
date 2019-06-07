@@ -16,6 +16,6 @@ class Configuration(object):
             else kwargs.get("transport_type", TransportType.Amqp)
         self.auth_timeout = kwargs.get("auth_timeout", 60)
         self.prefetch = kwargs.get("prefetch", 300)
-        self.max_batch_size = kwargs.get("max_batch_size")
+        self.max_batch_size = kwargs.get("max_batch_size", self.prefetch)
         self.receive_timeout = kwargs.get("receive_timeout", 0)
         self.send_timeout = kwargs.get("send_timeout", 60)

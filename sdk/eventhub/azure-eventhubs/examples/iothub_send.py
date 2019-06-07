@@ -11,22 +11,19 @@ An example to show receiving events from an IoT Hub partition.
 import os
 import logging
 
-from azure.eventhub import EventHubClient
+from azure.eventhub import EventData, EventHubClient
 
 
 logger = logging.getLogger('azure.eventhub')
 
-iot_connection_str = 'HostName=iothubfortrack2py.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=glF9a2n0D9fgmWpfTqjjmvkYt0WaTNqZx9GV/UKwDkQ=' #  os.environ['IOTHUB_CONNECTION_STR']
+iot_device_id = os.environ['IOTHUB_DEVICE']
+iot_connection_str = os.environ['IOTHUB_CONNECTION_STR']
 
 client = EventHubClient.from_iothub_connection_string(iot_connection_str, network_tracing=True)
-receiver = client.create_receiver(partition_id="0", operation='/messages/events')
 try:
-    with receiver:
-        received = receiver.receive(timeout=5)
-        print(received)
-
-        eh_info = client.get_properties()
-        print(eh_info)
+    sender = client.create_sender(operation='/messages/devicebound')
+    with sender:
+        sender.send(EventData(b"A single event", to_device=iot_device_id))
 
 except KeyboardInterrupt:
     pass

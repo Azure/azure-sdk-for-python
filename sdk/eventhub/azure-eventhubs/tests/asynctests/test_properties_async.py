@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------
 
 import pytest
-from azure.eventhub import SharedKeyCredentials
+from azure.eventhub import EventHubSharedKeyCredential
 from azure.eventhub.aio import EventHubClient
 
 
@@ -13,7 +13,7 @@ from azure.eventhub.aio import EventHubClient
 @pytest.mark.asyncio
 async def test_get_properties(live_eventhub):
     client = EventHubClient(live_eventhub['hostname'], live_eventhub['event_hub'],
-        SharedKeyCredentials(live_eventhub['key_name'], live_eventhub['access_key'])
+        EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
     )
     properties = await client.get_properties()
     assert properties['path'] == live_eventhub['event_hub'] and properties['partition_ids'] == ['0', '1']
@@ -23,7 +23,7 @@ async def test_get_properties(live_eventhub):
 @pytest.mark.asyncio
 async def test_get_partition_ids(live_eventhub):
     client = EventHubClient(live_eventhub['hostname'], live_eventhub['event_hub'],
-        SharedKeyCredentials(live_eventhub['key_name'], live_eventhub['access_key'])
+        EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
     )
     partition_ids = await client.get_partition_ids()
     assert partition_ids == ['0', '1']
@@ -33,7 +33,7 @@ async def test_get_partition_ids(live_eventhub):
 @pytest.mark.asyncio
 async def test_get_partition_properties(live_eventhub):
     client = EventHubClient(live_eventhub['hostname'], live_eventhub['event_hub'],
-        SharedKeyCredentials(live_eventhub['key_name'], live_eventhub['access_key'])
+        EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
     )
     properties = await client.get_partition_properties('0')
     assert properties['event_hub_path'] == live_eventhub['event_hub'] \

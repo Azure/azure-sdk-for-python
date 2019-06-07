@@ -163,8 +163,16 @@ def device_id():
 
 
 @pytest.fixture()
+def aad_credential():
+    try:
+        return os.environ['AAD_CLIENT_ID'], os.environ['AAD_SECRET'], os.environ['AAD_TENANT_ID']
+    except KeyError:
+        pytest.skip('No Azure Active Directory credential found')
+
+
+@pytest.fixture()
 def connstr_receivers(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, debug=False)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
     partitions = client.get_partition_ids()
     receivers = []
     for p in partitions:
@@ -180,7 +188,7 @@ def connstr_receivers(connection_str):
 
 @pytest.fixture()
 def connstr_senders(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, debug=True)
+    client = EventHubClient.from_connection_string(connection_str, network_tracing=True)
     partitions = client.get_partition_ids()
 
     senders = []

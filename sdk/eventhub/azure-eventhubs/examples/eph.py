@@ -109,7 +109,7 @@ try:
         EventProcessor,
         eh_config,
         storage_manager,
-        ep_params=["param1","param2"],
+        ep_params=["param1", "param2"],
         eph_options=eh_options,
         loop=loop)
 
