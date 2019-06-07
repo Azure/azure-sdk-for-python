@@ -4,7 +4,10 @@
 # --------------------------------------------------------------------------------------------
 
 import unittest
-import mock
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 from azure_devtools.scenario_tests.utilities import (create_random_name, get_sha1_hash,
                                                      is_text_payload, is_json_payload)
 
@@ -74,7 +77,7 @@ Turning again toward childish treble, pipes
 And whistles in his sound. Last scene of all,
 That ends this strange eventful history,
 Is second childishness and mere oblivion,
-Sans teeth, sans eyes, sans taste, sans everything. 
+Sans teeth, sans eyes, sans taste, sans everything.
 
 William Shakespeare
             """
