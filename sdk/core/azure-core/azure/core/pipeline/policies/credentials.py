@@ -13,7 +13,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Iterable, Mapping
-    from azure.core.credentials import SupportsGetToken
+    from azure.core.credentials import TokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
@@ -22,12 +22,12 @@ class _BearerTokenCredentialPolicyBase(object):
     """Base class for a Bearer Token Credential Policy.
 
     :param credential: The credential.
-    :type credential: ~azure.core.SupportsGetToken
+    :type credential: ~azure.core.credentials.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
     """
 
     def __init__(self, credential, scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (SupportsGetToken, Iterable[str], Mapping[str, Any]) -> None
+        # type: (TokenCredential, Iterable[str], Mapping[str, Any]) -> None
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
         self._credential = credential
@@ -47,7 +47,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
     """Adds a bearer token Authorization header to requests.
 
     :param credential: The credential.
-    :type credential: ~azure.core.SupportsGetToken
+    :type credential: ~azure.core.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
     """
 

@@ -15,8 +15,14 @@ class EnvironmentVariables:
     CERT_VARS = (AZURE_CLIENT_ID, AZURE_CLIENT_CERTIFICATE_PATH, AZURE_TENANT_ID)
 
 
-# https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http
-IMDS_ENDPOINT = "http://169.254.169.254/metadata/identity/oauth2/token"
+class Endpoints:
+    # https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http
+    IMDS = "http://169.254.169.254/metadata/identity/oauth2/token"
 
-# TODO: other clouds have other endpoints
-OAUTH_ENDPOINT = "https://login.microsoftonline.com/{}/oauth2/v2.0/token"
+    # TODO: other clouds have other endpoints
+    AAD_OAUTH2_V2_FORMAT = "https://login.microsoftonline.com/{}/oauth2/v2.0/token"
+
+    # https://docs.microsoft.com/en-us/azure/app-service/overview-managed-identity#obtaining-tokens-for-azure-resources
+
+MSI_ENDPOINT = "MSI_ENDPOINT"
+MSI_SECRET = "MSI_SECRET"
