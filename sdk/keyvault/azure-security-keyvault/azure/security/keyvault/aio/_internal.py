@@ -6,9 +6,9 @@
 from typing import Any, Callable, Mapping, Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     try:
-        from azure.core.credentials import SupportsGetToken
+        from azure.core.credentials import TokenCredential
     except ImportError:
-        # SupportsGetToken is a typing_extensions.Protocol; we don't depend on that package
+        # TokenCredential is a typing_extensions.Protocol; we don't depend on that package
         pass
 
 from azure.core.async_paging import AsyncPagedMixin
@@ -52,7 +52,7 @@ class _AsyncKeyVaultClientBase:
 
     @staticmethod
     def create_config(
-        credential: "SupportsGetToken", api_version: str = None, **kwargs: Mapping[str, Any]
+        credential: "TokenCredential", api_version: str = None, **kwargs: Mapping[str, Any]
     ) -> Configuration:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
@@ -63,7 +63,7 @@ class _AsyncKeyVaultClientBase:
     def __init__(
         self,
         vault_url: str,
-        credential: "SupportsGetToken",
+        credential: "TokenCredential",
         config: Configuration = None,
         transport: HttpTransport = None,
         api_version: str = None,

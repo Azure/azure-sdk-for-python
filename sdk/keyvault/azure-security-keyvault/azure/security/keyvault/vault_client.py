@@ -11,7 +11,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from azure.core import Configuration
-    from azure.core.credentials import SupportsGetToken
+    from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpTransport
     from typing import Any, Mapping, Optional
 
@@ -22,7 +22,7 @@ from .secrets._client import SecretClient
 
 class VaultClient(_KeyVaultClientBase):
     def __init__(self, vault_url, credential, config=None, transport=None, api_version=None, **kwargs):
-        # type: (str, SupportsGetToken, Configuration, Optional[HttpTransport], Optional[str], **Any) -> None
+        # type: (str, TokenCredential, Configuration, Optional[HttpTransport], Optional[str], **Any) -> None
         super(VaultClient, self).__init__(
             vault_url, credential, config=config, transport=transport, api_version=api_version, **kwargs
         )

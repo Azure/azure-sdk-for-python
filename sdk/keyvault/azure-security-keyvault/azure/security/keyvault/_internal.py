@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Mapping, Optional
-    from azure.core.credentials import SupportsGetToken
+    from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpTransport
 
 try:
@@ -55,7 +55,7 @@ class _KeyVaultClientBase(object):
     """
     :param credential:  A credential or credential provider which can be used to authenticate to the vault,
         a ValueError will be raised if the entity is not provided
-    :type credential: azure.core.credentials.SupportsGetToken
+    :type credential: azure.core.credentials.TokenCredential
     :param str vault_url: The url of the vault to which the client will connect,
         a ValueError will be raised if the entity is not provided
     :param ~azure.core.configuration.Configuration config:  The configuration for the KeyClient
@@ -63,7 +63,7 @@ class _KeyVaultClientBase(object):
 
     @staticmethod
     def create_config(credential, api_version=None, **kwargs):
-        # type: (SupportsGetToken, Optional[str], Mapping[str, Any]) -> Configuration
+        # type: (TokenCredential, Optional[str], Mapping[str, Any]) -> Configuration
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=False)(credential, **kwargs)
@@ -71,7 +71,7 @@ class _KeyVaultClientBase(object):
         return config
 
     def __init__(self, vault_url, credential, config=None, transport=None, api_version=None, **kwargs):
-        # type: (str, SupportsGetToken, Configuration, Optional[HttpTransport], Optional[str], **Any) -> None
+        # type: (str, TokenCredential, Configuration, Optional[HttpTransport], Optional[str], **Any) -> None
         if not credential:
             raise ValueError("credential should be a credential object from azure-identity")
         if not vault_url:
