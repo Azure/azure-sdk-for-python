@@ -94,7 +94,11 @@ class ApiManagementServiceResource(ApimResource):
      can be used to disable TLS 1.0 for communications with
      backends.</br>Setting
      `Microsoft.WindowsAzure.ApiManagement.Gateway.Protocols.Server.Http2` can
-     be used to enable HTTP2 protocol on an API Management service.
+     be used to enable HTTP2 protocol on an API Management service.</br>Not
+     specifying any of these properties on PATCH operation will reset omitted
+     properties' values to their defaults. For all the settings except Http2
+     the default value is `True` if the service was created on or before April
+     1st 2018 and `False` otherwise. Http2 setting's default value is `False`.
     :type custom_properties: dict[str, str]
     :param certificates: List of Certificates that need to be installed in the
      API Management service. Max supported certificates that can be installed
