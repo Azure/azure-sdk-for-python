@@ -49,7 +49,7 @@ class RedirectPolicy(HTTPPolicy):
 
     **Keyword arguments:**
 
-    *redirects_allow (int)* - Whether the client allows redirects. Defaults to True.
+    *redirects_allow (bool)* - Whether the client allows redirects. Defaults to True.
 
     *redirect_max (int)* - The maximum allowed redirects. Defaults to 30.
 
@@ -90,7 +90,7 @@ class RedirectPolicy(HTTPPolicy):
         :rtype: dict
         """
         return {
-            'allow': options.pop("redirects_allow", self.max_redirects),
+            'allow': options.pop("redirects_allow", self.allow),
             'redirects': options.pop("redirect_max", self.max_redirects),
             'history': []
         }

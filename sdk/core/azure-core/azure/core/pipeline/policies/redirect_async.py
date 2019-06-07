@@ -37,7 +37,7 @@ class AsyncRedirectPolicy(RedirectPolicy, AsyncHTTPPolicy):  # type: ignore
 
     **Keyword arguments:**
 
-    *redirects_allow (int)* - Whether the client allows redirects. Defaults to True.
+    *redirects_allow (bool)* - Whether the client allows redirects. Defaults to True.
 
     *redirect_max (int)* - The maximum allowed redirects. Defaults to 30.
 
