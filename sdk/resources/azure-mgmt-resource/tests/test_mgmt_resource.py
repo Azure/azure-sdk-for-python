@@ -390,9 +390,6 @@ class MgmtResourceTest(AzureMgmtTestCase):
         self.resource_client.providers.register('Microsoft.Search')
 
     def test_providers(self):
-        self.resource_client.config.enable_http_logger = True
-        import logging
-        logging.basicConfig(level=logging.DEBUG)
         result_list = self.resource_client.providers.list()
         for provider in result_list:
             break
