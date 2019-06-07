@@ -6,6 +6,8 @@ variables:
 
 jobs:
   - job: 'DocGen'
+    variables:
+      skipComponentGovernanceDetection: true
     timeoutInMinutes: 120
     pool:
       vmImage: 'vs2017-win2016'
