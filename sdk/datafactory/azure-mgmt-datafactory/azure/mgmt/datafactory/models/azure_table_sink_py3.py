@@ -34,6 +34,10 @@ class AzureTableSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the sink data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param azure_table_default_partition_key_value: Azure Table default
@@ -60,6 +64,7 @@ class AzureTableSink(CopySink):
         'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'azure_table_default_partition_key_value': {'key': 'azureTableDefaultPartitionKeyValue', 'type': 'object'},
         'azure_table_partition_key_name': {'key': 'azureTablePartitionKeyName', 'type': 'object'},
@@ -67,8 +72,8 @@ class AzureTableSink(CopySink):
         'azure_table_insert_type': {'key': 'azureTableInsertType', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, azure_table_default_partition_key_value=None, azure_table_partition_key_name=None, azure_table_row_key_name=None, azure_table_insert_type=None, **kwargs) -> None:
-        super(AzureTableSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, **kwargs)
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, azure_table_default_partition_key_value=None, azure_table_partition_key_name=None, azure_table_row_key_name=None, azure_table_insert_type=None, **kwargs) -> None:
+        super(AzureTableSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.azure_table_default_partition_key_value = azure_table_default_partition_key_value
         self.azure_table_partition_key_name = azure_table_partition_key_name
         self.azure_table_row_key_name = azure_table_row_key_name

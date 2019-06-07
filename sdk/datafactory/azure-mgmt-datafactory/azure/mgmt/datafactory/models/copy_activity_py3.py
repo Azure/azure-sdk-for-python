@@ -65,6 +65,8 @@ class CopyActivity(ExecutionActivity):
      settings when EnableSkipIncompatibleRow is true.
     :type redirect_incompatible_row_settings:
      ~azure.mgmt.datafactory.models.RedirectIncompatibleRowSettings
+    :param preserve_rules: Preserve Rules.
+    :type preserve_rules: list[object]
     :param inputs: List of inputs for the activity.
     :type inputs: list[~azure.mgmt.datafactory.models.DatasetReference]
     :param outputs: List of outputs for the activity.
@@ -96,11 +98,12 @@ class CopyActivity(ExecutionActivity):
         'data_integration_units': {'key': 'typeProperties.dataIntegrationUnits', 'type': 'object'},
         'enable_skip_incompatible_row': {'key': 'typeProperties.enableSkipIncompatibleRow', 'type': 'object'},
         'redirect_incompatible_row_settings': {'key': 'typeProperties.redirectIncompatibleRowSettings', 'type': 'RedirectIncompatibleRowSettings'},
+        'preserve_rules': {'key': 'typeProperties.preserveRules', 'type': '[object]'},
         'inputs': {'key': 'inputs', 'type': '[DatasetReference]'},
         'outputs': {'key': 'outputs', 'type': '[DatasetReference]'},
     }
 
-    def __init__(self, *, name: str, source, sink, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, translator=None, enable_staging=None, staging_settings=None, parallel_copies=None, data_integration_units=None, enable_skip_incompatible_row=None, redirect_incompatible_row_settings=None, inputs=None, outputs=None, **kwargs) -> None:
+    def __init__(self, *, name: str, source, sink, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, translator=None, enable_staging=None, staging_settings=None, parallel_copies=None, data_integration_units=None, enable_skip_incompatible_row=None, redirect_incompatible_row_settings=None, preserve_rules=None, inputs=None, outputs=None, **kwargs) -> None:
         super(CopyActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.source = source
         self.sink = sink
@@ -111,6 +114,7 @@ class CopyActivity(ExecutionActivity):
         self.data_integration_units = data_integration_units
         self.enable_skip_incompatible_row = enable_skip_incompatible_row
         self.redirect_incompatible_row_settings = redirect_incompatible_row_settings
+        self.preserve_rules = preserve_rules
         self.inputs = inputs
         self.outputs = outputs
         self.type = 'Copy'

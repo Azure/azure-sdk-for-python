@@ -16,9 +16,9 @@ class ControlActivity(Activity):
     """Base class for all control activities like IfCondition, ForEach , Until.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AppendVariableActivity, SetVariableActivity,
-    FilterActivity, UntilActivity, WaitActivity, ForEachActivity,
-    IfConditionActivity, ExecutePipelineActivity
+    sub-classes are: WebHookActivity, AppendVariableActivity,
+    SetVariableActivity, FilterActivity, ValidationActivity, UntilActivity,
+    WaitActivity, ForEachActivity, IfConditionActivity, ExecutePipelineActivity
 
     All required parameters must be populated in order to send to Azure.
 
@@ -52,7 +52,7 @@ class ControlActivity(Activity):
     }
 
     _subtype_map = {
-        'type': {'AppendVariable': 'AppendVariableActivity', 'SetVariable': 'SetVariableActivity', 'Filter': 'FilterActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
+        'type': {'WebHook': 'WebHookActivity', 'AppendVariable': 'AppendVariableActivity', 'SetVariable': 'SetVariableActivity', 'Filter': 'FilterActivity', 'Validation': 'ValidationActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
     }
 
     def __init__(self, **kwargs):
