@@ -61,13 +61,15 @@ class User:
 
     def read(
             self,
-            request_options=None
+            request_options=None,
+            response_hook=None
     ):
-        # type: (Dict[str, Any]) -> User
+        # type: (Dict[str, Any], Optional[Callable]) -> User
         """
         Read user propertes.
 
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`User` instance representing the retrieved user.
         :raise `HTTPFailure`: If the given user couldn't be retrieved.
 
@@ -79,18 +81,24 @@ class User:
             user_link=self.user_link,
             options=request_options
         )
+
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+
         return self._properties
 
     def read_all_permissions(
             self,
             max_item_count=None,
-            feed_options=None
+            feed_options=None,
+            response_hook=None
     ):
-        # type: (int, Dict[str, Any]) -> QueryIterable
+        # type: (int, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """ List all permission for the user.
 
         :param max_item_count: Max number of permissions to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`QueryIterable` instance representing an iterable of permissions (dicts).
 
         """
@@ -99,25 +107,32 @@ class User:
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        return self.client_connection.ReadPermissions(
+        result = self.client_connection.ReadPermissions(
             user_link=self.user_link,
             options=feed_options
         )
+
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+
+        return result
 
     def query_permissions(
             self,
             query,
             parameters=None,
             max_item_count=None,
-            feed_options=None
+            feed_options=None,
+            response_hook=None
     ):
-        # type: (str, List, int, Dict[str, Any]) -> QueryIterable
+        # type: (str, List, int, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """Return all permissions matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of permissions to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`QueryIterable` instance representing an iterable of permissions (dicts).
 
         """
@@ -126,7 +141,7 @@ class User:
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        return self.client_connection.QueryPermissions(
+        result = self.client_connection.QueryPermissions(
             user_link=self.user_link,
             query=query
             if parameters is None
@@ -134,17 +149,24 @@ class User:
             options=feed_options,
         )
 
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+
+        return result
+
     def get_permission(
             self,
             permission,
-            request_options=None
+            request_options=None,
+            response_hook=None
     ):
-        # type: (str, Dict[str, Any]) -> Permission
+        # type: (str, Dict[str, Any], Optional[Callable]) -> Permission
         """
         Get the permission identified by `id`.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission` instance of the permission to be retrieved.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the retrieved permission.
         :raise `HTTPFailure`: If the given permission couldn't be retrieved.
 
@@ -157,6 +179,9 @@ class User:
             options=request_options
         )
 
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+
         return Permission(
             id=permission['id'],
             user_link=self.user_link,
@@ -168,13 +193,15 @@ class User:
     def create_permission(
             self,
             body,
-            request_options=None
+            request_options=None,
+            response_hook=None
     ):
-        # type: (Dict[str, Any], Dict[str, Any]) -> Permission
+        # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Permission
         """ Create a permission for the user.
 
         :param body: A dict-like object representing the permission to create.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the new permission.
         :raise `HTTPFailure`: If the given permission couldn't be created.
 
@@ -190,6 +217,9 @@ class User:
             options=request_options
         )
 
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+
         return Permission(
             id=permission['id'],
             user_link=self.user_link,
@@ -201,13 +231,15 @@ class User:
     def upsert_permission(
             self,
             body,
-            request_options=None
+            request_options=None,
+            response_hook=None
     ):
-        # type: (Dict[str, Any], Dict[str, Any]) -> Permission
+        # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Permission
         """ Insert or update the specified permission.
 
         :param body: A dict-like object representing the permission to update or insert.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the upserted permission.
         :raise `HTTPFailure`: If the given permission could not be upserted.
 
@@ -223,6 +255,9 @@ class User:
             options=request_options
         )
 
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+
         return Permission(
             id=permission['id'],
             user_link=self.user_link,
@@ -235,14 +270,16 @@ class User:
             self,
             permission,
             body,
-            request_options=None
+            request_options=None,
+            response_hook=None
     ):
-        # type: (str, Dict[str, Any], Dict[str, Any]) -> Permission
+        # type: (str, Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Permission
         """ Replaces the specified permission if it exists for the user.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission` instance of the permission to be replaced.
         :param body: A dict-like object representing the permission to replace.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the permission after replace went through.
         :raise `HTTPFailure`: If the replace failed or the permission with given id does not exist.
 
@@ -256,6 +293,9 @@ class User:
             options=request_options
         )
 
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
+
         return Permission(
             id=permission['id'],
             user_link=self.user_link,
@@ -267,13 +307,15 @@ class User:
     def delete_permission(
             self,
             permission,
-            request_options=None
+            request_options=None,
+            response_hook=None
     ):
-        # type: (str, Dict[str, Any]) -> None
+        # type: (str, Dict[str, Any], Optional[Callable]) -> None
         """ Delete the specified permission from the user.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission` instance of the permission to be replaced.
         :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
         :raises `HTTPFailure`: The permission wasn't deleted successfully. If the permission does not exist for the user, a `404` error is returned.
 
         """
@@ -285,4 +327,7 @@ class User:
             permission_link=self._get_permission_link(permission),
             options=request_options
         )
+
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
 

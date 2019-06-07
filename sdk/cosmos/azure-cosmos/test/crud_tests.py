@@ -32,6 +32,7 @@ from six.moves import xrange
 from struct import unpack, pack
 # from six.moves.builtins import *
 import time
+from typing import Mapping
 import six
 
 if six.PY2:
@@ -48,6 +49,7 @@ import azure.cosmos.murmur_hash as murmur_hash
 import test_config
 import azure.cosmos.base as base
 import azure.cosmos.cosmos_client as cosmos_client
+from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
 import conftest
 import azure.cosmos.retry_utility as retry_utility
@@ -186,10 +188,15 @@ class CRUDTests(unittest.TestCase):
         before_create_collections_count = len(collections)
         collection_id = 'test_collection_crud ' + str(uuid.uuid4())
         collection_indexing_policy = {'indexingMode': 'consistent'}
+        created_recorder = RecordDiagnostics()
         created_collection = created_db.create_container(id=collection_id,
                                                          indexing_policy=collection_indexing_policy,
-                                                         partition_key=PartitionKey(path="/pk", kind="Hash"))
+                                                         partition_key=PartitionKey(path="/pk", kind="Hash"), 
+                                                         response_hook=created_recorder)
         self.assertEqual(collection_id, created_collection.id)
+        assert isinstance(created_recorder.headers, Mapping)
+        assert 'Content-Type' in created_recorder.headers
+
         created_properties = created_collection.read()
         self.assertEqual('consistent', created_properties['indexingPolicy']['indexingMode'])
 
