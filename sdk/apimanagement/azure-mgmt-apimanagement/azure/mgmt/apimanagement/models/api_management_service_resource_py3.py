@@ -78,20 +78,21 @@ class ApiManagementServiceResource(ApimResource):
      Management service.
     :type additional_locations:
      list[~azure.mgmt.apimanagement.models.AdditionalLocation]
-    :param custom_properties: Custom properties of the API Management service.
-     Setting
+    :param custom_properties: Custom properties of the API Management
+     service.</br>Setting
      `Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Ciphers.TripleDes168`
      will disable the cipher TLS_RSA_WITH_3DES_EDE_CBC_SHA for all TLS(1.0, 1.1
-     and 1.2). Setting
+     and 1.2).</br>Setting
      `Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls11`
-     can be used to disable just TLS 1.1. Setting
+     can be used to disable just TLS 1.1.</br>Setting
      `Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls10`
-     can be used to disable TLS 1.0 on an API Management service. Setting
+     can be used to disable TLS 1.0 on an API Management service.</br>Setting
      `Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls11`
-     can be used to disable just TLS 1.1 for communications with backends.
-     Setting
+     can be used to disable just TLS 1.1 for communications with
+     backends.</br>Setting
      `Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Backend.Protocols.Tls10`
-     can be used to disable TLS 1.0 for communications with backends. Setting
+     can be used to disable TLS 1.0 for communications with
+     backends.</br>Setting
      `Microsoft.WindowsAzure.ApiManagement.Gateway.Protocols.Server.Http2` can
      be used to enable HTTP2 protocol on an API Management service.
     :type custom_properties: dict[str, str]
