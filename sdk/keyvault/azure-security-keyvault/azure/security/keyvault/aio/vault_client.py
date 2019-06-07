@@ -3,10 +3,15 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
+if TYPE_CHECKING:
+    try:
+        from azure.core.credentials import SupportsGetToken
+    except ImportError:
+        # SupportsGetToken is a typing_extensions.Protocol; we don't depend on that package
+        pass
 
 from azure.core import Configuration
-from azure.core.credentials import SupportsGetToken
 from azure.core.pipeline.transport import HttpTransport
 
 from ._internal import _AsyncKeyVaultClientBase
@@ -18,7 +23,7 @@ class VaultClient(_AsyncKeyVaultClientBase):
     def __init__(
         self,
         vault_url: str,
-        credential: SupportsGetToken,
+        credential: "SupportsGetToken",
         config: Configuration = None,
         transport: HttpTransport = None,
         api_version: str = None,
