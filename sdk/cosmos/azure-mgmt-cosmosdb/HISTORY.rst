@@ -3,6 +3,30 @@
 Release History
 ===============
 
+0.7.0 (2019-06-07)
+++++++++++++++++++
+
+**Features**
+
+- Added operation DatabaseAccountsOperations.get_gremlin_graph_throughput
+- Added operation DatabaseAccountsOperations.get_sql_database_throughput
+- Added operation DatabaseAccountsOperations.update_gremlin_database_throughput
+- Added operation DatabaseAccountsOperations.get_sql_container_throughput
+- Added operation DatabaseAccountsOperations.update_sql_container_throughput
+- Added operation DatabaseAccountsOperations.get_gremlin_database_throughput
+- Added operation DatabaseAccountsOperations.get_cassandra_table_throughput
+- Added operation DatabaseAccountsOperations.update_cassandra_keyspace_throughput
+- Added operation DatabaseAccountsOperations.update_mongo_db_collection_throughput
+- Added operation DatabaseAccountsOperations.update_cassandra_table_throughput
+- Added operation DatabaseAccountsOperations.update_table_throughput
+- Added operation DatabaseAccountsOperations.update_mongo_db_database_throughput
+- Added operation DatabaseAccountsOperations.get_mongo_db_database_throughput
+- Added operation DatabaseAccountsOperations.update_sql_database_throughput
+- Added operation DatabaseAccountsOperations.get_table_throughput
+- Added operation DatabaseAccountsOperations.get_mongo_db_collection_throughput
+- Added operation DatabaseAccountsOperations.update_gremlin_graph_throughput
+- Added operation DatabaseAccountsOperations.get_cassandra_keyspace_throughput
+
 0.6.1 (2019-05-31)
 ++++++++++++++++++
 
