@@ -34,9 +34,7 @@ parser.add_argument('--packageList', '-p',
     help='Comma separated list of targeted packages. Used to limit the number of packages that dependencies will be installed for.')
 args = parser.parse_args()
 
-packages = {('./tools', os.path.dirname(p)) for p in glob.glob('tools/azure*/setup.py')}
-# Handle the SDK folder as well
-packages.update({tuple(os.path.dirname(f).rsplit(os.sep, 1)) for f in glob.glob('sdk/*/azure*/setup.py')})
+packages = {tuple(os.path.dirname(f).rsplit(os.sep, 1)) for f in glob.glob('sdk/*/azure*/setup.py') + glob.glob('tools/azure*/setup.py')}
 # [(base_folder, package_name), ...] to {package_name: base_folder, ...}
 packages = {package_name: base_folder for (base_folder, package_name) in packages}
 
