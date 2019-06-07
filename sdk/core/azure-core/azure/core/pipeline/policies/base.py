@@ -46,7 +46,7 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]): # type: ignor
 
     :param next: Use to process the next policy in the pipeline. Set when pipeline is
      instantiated and all policies chained.
-    :type next: HTTPPolicy or HTTPTransport
+    :type next: ~azure.core.pipeline.policies.HTTPPolicy or ~azure.core.pipeline.transport.HTTPTransport
     """
     def __init__(self):
         self.next = None
@@ -108,7 +108,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         :rtype: bool
 
         Example:
-            .. literalinclude:: ../../../../examples/examples_sansio.py
+            .. literalinclude:: ../examples/examples_sansio.py
                 :start-after: [START on_exception]
                 :end-before: [END on_exception]
                 :language: python

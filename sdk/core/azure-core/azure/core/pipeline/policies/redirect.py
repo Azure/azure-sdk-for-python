@@ -47,12 +47,14 @@ class RedirectPolicy(HTTPPolicy):
 
     A redirect policy in the pipeline can be configured directly or per operation.
 
-    Keyword arguments:
-    :param redirects_allow: Whether the client allows redirects. Defaults to True.
-    :param redirect_max: The maximum allowed redirects. Defaults to 30.
+    **Keyword arguments:**
+
+    *redirects_allow (int)* - Whether the client allows redirects. Defaults to True.
+
+    *redirect_max (int)* - The maximum allowed redirects. Defaults to 30.
 
     Example:
-        .. literalinclude:: ../../../../examples/examples_sync.py
+        .. literalinclude:: ../examples/examples_sync.py
             :start-after: [START redirect_policy]
             :end-before: [END redirect_policy]
             :language: python
@@ -142,8 +144,8 @@ class RedirectPolicy(HTTPPolicy):
         return settings['redirects'] > 0 or not settings['allow']
 
     def send(self, request):
-        """Sends the PipelineRequest object to the next policy. Uses redirect settings
-         to send request to redirect endpoint if necessary.
+        """Sends the PipelineRequest object to the next policy.
+        Uses redirect settings to send request to redirect endpoint if necessary.
 
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest

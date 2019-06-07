@@ -192,14 +192,15 @@ class RequestsTransport(HttpTransport):
         # type: (HttpRequest, Any) -> HttpResponse
         """Send request object according to configuration.
 
-        Allowed kwargs are:
-        - session : will override the driver session and use yours. Should NOT be done unless really required.
-        - anything else is sent straight to requests.
-
         :param request: The request object to be sent.
         :type request: ~azure.core.pipeline.transport.HttpRequest
         :return: An HTTPResponse object.
         :rtype: ~azure.core.pipeline.transport.HttpResponse
+
+        **Keyword arguments:**
+
+        *session* - will override the driver session and use yours. Should NOT be done unless really required.
+        Anything else is sent straight to requests.
         """
         self.open()
         response = None

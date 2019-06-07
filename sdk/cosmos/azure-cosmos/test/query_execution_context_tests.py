@@ -29,6 +29,8 @@ from azure.cosmos.execution_context import base_execution_context as base_execut
 import azure.cosmos.base as base
 import test_config
 
+pytestmark = pytest.mark.cosmosEmulator
+
 #IMPORTANT NOTES:
   
 #      Most test cases in this file create collections in your Azure Cosmos account.
