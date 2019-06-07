@@ -328,7 +328,7 @@ class BlobProperties(object):
         self.last_modified = kwargs.get('Last-Modified')
         self.etag = kwargs.get('ETag')
         self.content_length = kwargs.get('Content-Length')
-        self.content_range = kwargs.get('Accept-Ranges')
+        self.content_range = kwargs.get('Content-Range')
         self.append_blob_committed_block_count = kwargs.get('x-ms-blob-committed-block-count')
         self.page_blob_sequence_number = kwargs.get('x-ms-blob-sequence-number')
         self.server_encrypted = kwargs.get('x-ms-server-encrypted')

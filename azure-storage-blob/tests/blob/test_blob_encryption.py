@@ -6,7 +6,7 @@
 
 import pytest
 
-pytestmark = pytest.mark.skip
+#pytestmark = pytest.mark.skip
 
 import unittest
 from io import (

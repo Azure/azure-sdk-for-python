@@ -339,12 +339,16 @@ def _decrypt_blob(require_encryption, key_encryption_key, key_resolver,
     :return: The decrypted blob content.
     :rtype: bytes
     '''
-    _validate_not_none('response', response)
-    content = response.body
-    _validate_not_none('content', content)
+    if response is None:
+        raise ValueError("Response cannot be None.")
+    content = response.content
+    if content is None:
+        raise ValueError("Response data content cannot be None.")
+    elif not content:
+        return content
 
     try:
-        encryption_data = _dict_to_encryption_data(loads(response.headers['x-ms-meta-encryptiondata']))
+        encryption_data = _dict_to_encryption_data(loads(response.response.headers['x-ms-meta-encryptiondata']))
     except:
         if require_encryption:
             raise ValueError(_ERROR_DATA_NOT_ENCRYPTED)
@@ -354,13 +358,13 @@ def _decrypt_blob(require_encryption, key_encryption_key, key_resolver,
     if not (encryption_data.encryption_agent.encryption_algorithm == _EncryptionAlgorithm.AES_CBC_256):
         raise ValueError(_ERROR_UNSUPPORTED_ENCRYPTION_ALGORITHM)
 
-    blob_type = response.headers['x-ms-blob-type']
+    blob_type = response.response.headers['x-ms-blob-type']
 
     iv = None
     unpad = False
     start_range, end_range = 0, len(content)
-    if 'content-range' in response.headers:
-        content_range = response.headers['content-range']
+    if 'content-range' in response.response.headers:
+        content_range = response.response.headers['content-range']
         # Format: 'bytes x-y/size'
 
         # Ignore the word 'bytes'

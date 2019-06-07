@@ -34,8 +34,7 @@ from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
     NetworkTraceLoggingPolicy,
-    ProxyPolicy,
-    CustomHookPolicy
+    ProxyPolicy
 )
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -44,7 +43,8 @@ from ._policies import (
     StorageBlobSettings,
     StorageHeadersPolicy,
     StorageContentValidation,
-    StorageSecondaryAccount)
+    StorageSecondaryAccount,
+    StorageResponseHook)
 from ._generated import AzureBlobStorage
 from ._generated.models import (
     LeaseAccessConditions,
@@ -227,6 +227,54 @@ def get_length(data):
 
     return length
 
+def parse_length_from_content_range(content_range):
+    '''
+    Parses the blob length from the content range header: bytes 1-3/65537
+    '''
+    if content_range is None:
+        return None
+
+    # First, split in space and take the second half: '1-3/65537'
+    # Next, split on slash and take the second half: '65537'
+    # Finally, convert to an int: 65537
+    return int(content_range.split(' ', 1)[1].split('/', 1)[1])
+
+
+def validate_and_format_range_headers(start_range, end_range, start_range_required=True,
+                                       end_range_required=True, check_content_md5=False, align_to_page=False):
+    # If end range is provided, start range must be provided
+    if (start_range_required or end_range is not None) and start_range is None:
+        raise ValueError("start_range value cannot be None.")
+    if end_range_required and end_range is None:
+        raise ValueError("end_range value cannot be None.")
+
+    # Page ranges must be 512 aligned
+    if align_to_page:
+        if start_range is not None and start_range % 512 != 0:
+            raise ValueError("Invalid page blob start_range: {0}. "
+                             "The size must be aligned to a 512-byte boundary.".format(start_range))
+        if end_range is not None and end_range % 512 != 511:
+            raise ValueError("Invalid page blob end_range: {0}. "
+                             "The size must be aligned to a 512-byte boundary.".format(end_range))
+
+    # Format based on whether end_range is present
+    range_header = None
+    if end_range is not None:
+        range_header = 'bytes={0}-{1}'.format(start_range, end_range)
+    elif start_range is not None:
+        range_header = "bytes={0}-".format(start_range)
+
+    # Content MD5 can only be provided for a complete range less than 4MB in size
+    range_validation = None
+    if check_content_md5:
+        if start_range is None or end_range is None:
+            raise ValueError("Both start and end range requied for MD5 content validation.")
+        if end_range - start_range > 4 * 1024 * 1024:
+            raise ValueError("Getting content MD5 for a range greater than 4MB is not supported.")
+        range_validation = 'true'
+
+    return range_header, range_validation
+
 
 def return_response_headers(response, deserialized, response_headers):
     return response_headers
@@ -250,7 +298,7 @@ def create_configuration(**kwargs):
     config.redirect_policy = RedirectPolicy(**kwargs)
     config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
-    config.custom_hook_policy = CustomHookPolicy(**kwargs)
+    config.custom_hook_policy = StorageResponseHook(**kwargs)
     config.blob_settings = StorageBlobSettings(**kwargs)
     return config
 

@@ -16,7 +16,10 @@ try:
 except ImportError:
     from urlparse import urlparse
 
-from azure.core.pipeline.policies import HeadersPolicy, SansIOHTTPPolicy
+from azure.core.pipeline.policies import (
+    HeadersPolicy,
+    SansIOHTTPPolicy,
+    HTTPPolicy)
 from azure.core.exceptions import AzureError
 
 try:
@@ -66,6 +69,31 @@ class StorageSecondaryAccount(SansIOHTTPPolicy):
             account = parsed_url.hostname.split(".blob.core.")[0]
             secondary_account = account if account.endswith('-secondary') else account + '-secondary'
             request.http_request.url = request.http_request.url.replace(account, secondary_account, 1)
+
+
+class StorageResponseHook(HTTPPolicy):
+
+    def send(self, request):
+        # type: (PipelineRequest) -> PipelineResponse
+        data_stream_total = request.context.options.pop('data_stream_total', None)
+        data_stream_current = request.context.options.pop('data_stream_current', None)
+        callback = request.context.options.pop('raw_response_hook', None)
+
+        response = self.next.send(request)
+        if data_stream_current is not None:
+            data_stream_current += int(response.http_response.headers.get('Content-Length', 0))
+            if data_stream_total is None:
+                content_range = response.http_response.headers.get('Content-Range')
+                if content_range:
+                    data_stream_total = int(content_range.split(' ', 1)[1].split('/', 1)[1])
+                else:
+                    data_stream_total = data_stream_current
+            response.context['data_stream_total'] = data_stream_total
+            response.context['data_stream_current'] = data_stream_current
+        if callback:
+            callback(response)
+            response.context['callback'] = callback
+        return response
 
 
 class StorageContentValidation(SansIOHTTPPolicy):

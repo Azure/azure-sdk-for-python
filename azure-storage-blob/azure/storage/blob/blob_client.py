@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import sys
 from io import BytesIO
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
@@ -39,7 +40,9 @@ from ._utils import (
     get_length,
     parse_connection_str,
     parse_query,
-    is_credential_sastoken
+    is_credential_sastoken,
+    validate_and_format_range_headers,
+    parse_length_from_content_range
 )
 from ._deserialize import (
     deserialize_blob_properties,
@@ -51,6 +54,7 @@ from ._generated.models import (
     StorageErrorException,
     BlockLookupList,
     AppendPositionAccessConditions)
+from ._download_chunking import StorageStreamDownloader
 from ._upload_chunking import (
     _upload_blob_chunks,
     _upload_blob_substream_blocks,
@@ -589,73 +593,28 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         """
         :returns: A iterable data generator (stream)
         """
-        # TODO: Full download chunking needed.
+        if length is not None and offset is None:
+            raise ValueError("Offset value must not be None is length is set.")
+
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
 
-        # The service only provides transactional MD5s for chunks under 4MB.
-        # If validate_content is on, get only max_chunk_get_size for the first
-        # chunk so a transactional MD5 can be retrieved.
-        first_get_size = self._config.blob_settings.max_single_get_size \
-            if not validate_content else self._config.blob_settings.max_chunk_get_size
-
-        range_header = None
-        #if length or offset:
-        initial_request_start = offset if offset is not None else 0
-
-        if length is not None and length - offset < first_get_size:
-            initial_request_end = length
-        else:
-            initial_request_end = initial_request_start + first_get_size - 1
-        range_header = 'bytes={0}-{1}'.format(initial_request_start, initial_request_end)
-
-        start_offset, end_offset = 0, 0
-        if self.key_encryption_key is not None or self.key_resolver_function is not None:
-            if start_range is not None:
-                # Align the start of the range along a 16 byte block
-                start_offset = start_range % 16
-                start_range -= start_offset
-
-                # Include an extra 16 bytes for the IV if necessary
-                # Because of the previous offsetting, start_range will always
-                # be a multiple of 16.
-                if start_range > 0:
-                    start_offset += 16
-                    start_range -= 16
-
-            if end_range is not None:
-                # Align the end of the range along a 16 byte block
-                end_offset = 15 - (end_range % 16)
-                end_range += end_offset
-        try:
-            stream = self._client.blob.download(
-                timeout=timeout,
-                snapshot=self.snapshot,
-                range=range_header,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
-                error_map=basic_error_map(),
-                validate_content=validate_content,
-                cls=deserialize_blob_stream,
-                **kwargs)
-        except StorageErrorException as error:
-            if error.response.status_code == 416:
-                stream = self._client.blob.download(
-                    timeout=timeout,
-                    snapshot=self.snapshot,
-                    range=None,
-                    lease_access_conditions=access_conditions,
-                    modified_access_conditions=mod_conditions,
-                    error_map=basic_error_map(),
-                    cls=deserialize_blob_stream,
-                    **kwargs)
-            else:
-                process_storage_error(error)
-        stream.properties.name = self.name
-        stream.properties.container = self.container
-        # TODO validate content
-        return stream
+        return StorageStreamDownloader(
+            name=self.name,
+            container=self.container,
+            service=self._client.blob,
+            config=self._config.blob_settings,
+            offset=offset,
+            length=length,
+            validate_content=validate_content,
+            access_conditions=access_conditions,
+            mod_conditions=mod_conditions,
+            timeout=timeout,
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function,
+            **kwargs)
 
     def delete_blob(
             self, lease=None,  # type: Optional[Union[str, Lease]]
