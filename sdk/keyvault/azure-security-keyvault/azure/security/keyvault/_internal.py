@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from collections import namedtuple
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Mapping, Optional
@@ -73,7 +74,9 @@ class _KeyVaultClientBase(object):
     def __init__(self, vault_url, credential, config=None, transport=None, api_version=None, **kwargs):
         # type: (str, TokenCredential, Configuration, Optional[HttpTransport], Optional[str], **Any) -> None
         if not credential:
-            raise ValueError("credential should be a credential object from azure-identity")
+            raise ValueError(
+                "credential should be an object supporting the TokenCredential protocol, such as a credential from azure-identity"
+            )
         if not vault_url:
             raise ValueError("vault_url must be the URL of an Azure Key Vault")
 

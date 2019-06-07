@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Mapping, Optional, TYPE_CHECKING
+
 if TYPE_CHECKING:
     try:
         from azure.core.credentials import TokenCredential
@@ -70,7 +71,9 @@ class _AsyncKeyVaultClientBase:
         **kwargs: Any
     ) -> None:
         if not credential:
-            raise ValueError("credential should be a credential object from azure-identity")
+            raise ValueError(
+                "credential should be an object supporting the TokenCredential protocol, such as a credential from azure-identity"
+            )
         if not vault_url:
             raise ValueError("vault_url must be the URL of an Azure Key Vault")
 
