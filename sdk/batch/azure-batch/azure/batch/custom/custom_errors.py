@@ -17,3 +17,4 @@ class CreateTasksErrorException(Exception):
         self.pending_tasks = list(pending_task_list)
         self.failure_tasks = list(failure_tasks)
         self.errors = list(errors)
+        super(CreateTasksErrorException, self).__init__(self.message)
