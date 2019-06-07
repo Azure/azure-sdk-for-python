@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from msal.oauth2cli import JwtSigner
 
-from .constants import OAUTH_ENDPOINT
+from .constants import Endpoints
 
 try:
     from typing import TYPE_CHECKING
@@ -38,7 +38,7 @@ class CertificateCredentialBase(object):
             raise ValueError("certificate_path must be the path to a PEM-encoded private key file")
 
         super(CertificateCredentialBase, self).__init__()
-        auth_url = OAUTH_ENDPOINT.format(tenant_id)
+        auth_url = Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id)
 
         with open(certificate_path) as pem:
             private_key = pem.read()
