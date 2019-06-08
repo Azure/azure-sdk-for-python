@@ -3,31 +3,18 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, AsyncIterable, Mapping, Optional, Dict, List
 from datetime import datetime
+from typing import Any, AsyncIterable, Mapping, Optional, Dict, List
 
-from azure.core.configuration import Configuration
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.core.pipeline.transport import AsyncioRequestsTransport
-from azure.core.pipeline import AsyncPipeline
 
-from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
-from azure.security.keyvault._generated import KeyVaultClient
-from azure.security.keyvault.aio._internal import AsyncPagingAdapter
-
+from .._internal import _AsyncKeyVaultClientBase, AsyncPagingAdapter
 from ...keys._models import Key, DeletedKey, KeyBase, KeyOperationResult
 
 
-class KeyClient:
+class KeyClient(_AsyncKeyVaultClientBase):
     """The KeyClient class defines a high level interface for managing keys in the specified vault.
-    
-    :param credentials: A credential or credential provider which can be used to authenticate to the vault,
-     a ValueError will be raised if the entity is not provided
-    :type credentials: azure.authentication.Credential or azure.authentication.CredentialProvider
-    :param str vault_url: The url of the vault to which the client will connect,
-     a ValueError will be raised if the entity is not provided
-    :param ~azure.core.configuration.Configuration config: The configuration for the KeyClient
-    
+
     Example:
         .. literalinclude:: ../tests/test_examples_keys_async.py
             :start-after: [START create_key_client]
@@ -36,38 +23,6 @@ class KeyClient:
             :dedent: 4
             :caption: Creates a new instance of the Key client
     """
-
-    @staticmethod
-    def create_config(**kwargs):
-        pass  # TODO
-
-    def __init__(self, vault_url, credentials, config=None, api_version=None, **kwargs):
-        if not credentials:
-            raise ValueError("credentials")
-        if not vault_url:
-            raise ValueError("vault_url")
-        self._vault_url = vault_url
-        if api_version is None:
-            api_version = KeyVaultClient.DEFAULT_API_VERSION
-        # TODO: need config to get default policies, config requires credentials but doesn't do anything with them
-        config = config or KeyVaultClient.get_configuration_class(api_version, aio=True)(credentials)
-        # TODO generated default pipeline should be fine when token policy isn't necessary
-        policies = [
-            config.headers_policy,
-            config.user_agent_policy,
-            config.proxy_policy,
-            _BearerTokenCredentialPolicy(credentials),
-            config.redirect_policy,
-            config.retry_policy,
-            config.logging_policy,
-        ]
-        transport = AsyncioRequestsTransport(config)
-        pipeline = AsyncPipeline(transport, policies=policies)
-        self._client = KeyVaultClient(credentials, api_version=api_version, pipeline=pipeline, aio=True)
-
-    @property
-    def vault_url(self) -> str:
-        return self._vault_url
 
     async def get_key(self, name: str, version: Optional[str] = None, **kwargs: Mapping[str, Any]) -> Key:
         """Gets the public part of a stored key.
@@ -146,7 +101,7 @@ class KeyClient:
         :type tags: Dict[str, str]
         :returns: The created key
         :rtype: ~azure.security.keyvault.keys._models.Key
-        
+
         Example:
             .. literalinclude:: ../tests/test_examples_keys_async.py
                 :start-after: [START create_key]
@@ -204,7 +159,7 @@ class KeyClient:
         :type tags: Dict[str, str]
         :returns: The created key
         :rtype: ~azure.security.keyvault.keys._models.Key
-        
+
         Example:
             .. literalinclude:: ../tests/test_examples_keys_async.py
                 :start-after: [START create_rsa_key]
@@ -356,7 +311,7 @@ class KeyClient:
 
     def list_keys(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[KeyBase]:
         """List keys in the specified vault.
-        
+
         Retrieves a list of the keys in the Key Vault as JSON Web Key
         structures that contain the public part of a stored key. The LIST
         operation is applicable to all key types, however only the base key
@@ -367,7 +322,7 @@ class KeyClient:
         :returns: An iterator like instance of KeyBase
         :rtype:
          typing.AsyncIterable[~azure.security.keyvault.keys._models.KeyBase]
-        
+
         Example:
             .. literalinclude:: ../tests/test_examples_keys_async.py
                 :start-after: [START list_keys]
@@ -383,7 +338,7 @@ class KeyClient:
 
     def list_key_versions(self, name: str, **kwargs: Mapping[str, Any]) -> AsyncIterable[KeyBase]:
         """Retrieves a list of individual key versions with the same key name.
-        
+
         The full key identifier, attributes, and tags are provided in the
         response. This operation requires the keys/list permission.
 
@@ -392,7 +347,7 @@ class KeyClient:
         :returns: An iterator like instance of KeyBase
         :rtype:
          typing.AsyncIterable[~azure.security.keyvault.keys._models.KeyBase]
-        
+
         Example:
             .. literalinclude:: ../tests/test_examples_keys_async.py
                 :start-after: [START list_key_versions]
@@ -409,7 +364,7 @@ class KeyClient:
     async def backup_key(self, name: str, **kwargs: Mapping[str, Any]) -> bytes:
         """Requests that a backup of the specified key be downloaded to the
         client.
-        
+
         The Key Backup operation exports a key from Azure Key Vault in a
         protected form. Note that this operation does NOT return key material
         in a form that can be used outside the Azure Key Vault system, the
@@ -424,7 +379,7 @@ class KeyClient:
         another geographical area. For example, a backup from the US
         geographical area cannot be restored in an EU geographical area. This
         operation requires the key/backup permission.
-        
+
         :param name: The name of the key.
         :type name
         :return: The raw bytes of the key backup.
@@ -444,7 +399,7 @@ class KeyClient:
 
     async def restore_key(self, backup: bytes, **kwargs: Mapping[str, Any]) -> Key:
         """Restores a backed up key to a vault.
-        
+
         Imports a previously backed up key into Azure Key Vault, restoring the
         key, its key identifier, attributes and access control policies. The
         RESTORE operation may be used to import a previously backed up key.
@@ -465,7 +420,7 @@ class KeyClient:
         :returns: The restored key
         :rtype: ~azure.security.keyvault.keys._models.Key
         :raises: ~azure.core.exceptions.ResourceExistsError if the client failed to retrieve the key
-        
+
         Example:
             .. literalinclude:: ../tests/test_examples_keys_async.py
                 :start-after: [START restore_key]
@@ -529,7 +484,7 @@ class KeyClient:
 
     def list_deleted_keys(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[DeletedKey]:
         """Lists the deleted keys in the specified vault.
-        
+
         Retrieves a list of the keys in the Key Vault as JSON Web Key
         structures that contain the public part of a deleted key. This
         operation includes deletion-specific information. The Get Deleted Keys
@@ -556,12 +511,12 @@ class KeyClient:
 
     async def purge_deleted_key(self, name: str, **kwargs: Mapping[str, Any]) -> None:
         """Permanently deletes the specified key.
-        
+
         The Purge Deleted Key operation is applicable for soft-delete enabled
         vaults. While the operation can be invoked on any vault, it will return
         an error if invoked on a non soft-delete enabled vault. This operation
         requires the keys/purge permission.
-        
+
         :param name: The name of the key
         :type name
         :returns: None
@@ -579,7 +534,7 @@ class KeyClient:
 
     async def recover_deleted_key(self, name: str, **kwargs: Mapping[str, Any]) -> Key:
         """Recovers the deleted key to its latest version.
-        
+
         The Recover Deleted Key operation is applicable for deleted keys in
         soft-delete enabled vaults. It recovers the deleted key back to its
         latest version under /keys. An attempt to recover an non-deleted key
@@ -591,7 +546,7 @@ class KeyClient:
         :type name: str
         :returns: The recovered deleted key
         :rtype: ~azure.security.keyvault.keys._models.Key
-        
+
         Example:
             .. literalinclude:: ../tests/test_examples_keys_async.py
                 :start-after: [START recover_deleted_key]
