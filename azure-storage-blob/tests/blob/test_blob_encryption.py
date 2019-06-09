@@ -614,7 +614,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         with self.assertRaises(ValueError) as e:
-            blob.create_blob()
+            blob.create_append_blob()
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         # All append_from operations funnel into append_from_stream, so testing one is sufficient
@@ -635,7 +635,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         with self.assertRaises(ValueError) as e:
-            blob.create_blob(512)
+            blob.create_page_blob(512)
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
     @record

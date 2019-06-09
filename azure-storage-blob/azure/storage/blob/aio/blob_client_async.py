@@ -33,9 +33,6 @@ class BlobClient:  # pylint: disable=too-many-public-methods
     def create_configuration(**kwargs):
         pass
 
-    def make_url(self, protocol=None, sas_token=None):
-        pass
-
     def generate_shared_access_signature(
             self, resource_types, permission, expiry,
             start=None, ip=None, protocol=None):
@@ -78,18 +75,11 @@ class BlobClient:  # pylint: disable=too-many-public-methods
         :returns: BlobProperties
         """
 
-    async def set_blob_properties(
+    async def set_http_headers(
             self, content_settings=None, lease=None, if_modified_since=None,
             if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None):
         """
         :returns: Blob-updated property dict (Etag and last modified)
-        """
-
-    async def get_blob_metadata(
-            self, lease=None, if_modified_since=None, if_unmodified_since=None,
-            if_match=None, if_none_match=None, timeout=None):
-        """
-        :returns: A dict of metadata
         """
 
     async def set_blob_metadata(
@@ -99,10 +89,18 @@ class BlobClient:  # pylint: disable=too-many-public-methods
         :returns: Blob-updated property dict (Etag and last modified)
         """
 
-    async def create_blob(
-            self, content_length=None, content_settings=None, sequence_number=None,
+    async def create_page_blob(
+            self, content_length, content_settings=None, sequence_number=None,
             metadata=None, lease_id=None, if_modified_since=None, if_unmodified_since=None,
             if_match=None, if_none_match=None, timeout=None, premium_page_blob_tier=None):
+        """
+        :returns: Blob-updated property dict (Etag and last modified).
+        """
+
+    async def create_append_blob(
+            self, content_length=None, content_settings=None, metadata=None,
+            lease_id=None, if_modified_since=None, if_unmodified_since=None,
+            if_match=None, if_none_match=None, timeout=None):
         """
         :returns: Blob-updated property dict (Etag and last modified).
         """

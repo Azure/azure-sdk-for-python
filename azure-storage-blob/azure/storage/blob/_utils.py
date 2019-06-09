@@ -345,9 +345,10 @@ def parse_query(query_str):
 
 
 def is_credential_sastoken(credential):
-    if credential or not isinstance(credential, six.string_types):
+    if credential and not isinstance(credential, six.string_types):
         return False
 
+    sas_values = _QueryStringConstants.to_list()
     parsed_query = parse_qs(credential)
     if parsed_query and all([k in sas_values for k in parsed_query.keys()]):
         return True

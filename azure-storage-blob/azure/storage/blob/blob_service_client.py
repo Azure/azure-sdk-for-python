@@ -108,30 +108,6 @@ class BlobServiceClient(object):
         """
         return create_configuration(**kwargs)
 
-    def make_url(self, protocol=None, sas_token=None):
-        # type: (Optional[str], Optional[str]) -> str
-        """
-        Creates the url to access this account.
-
-        :param str protocol:
-            Protocol to use: 'http' or 'https'. If not specified, uses the
-            protocol specified in the URL when the client was created..
-        :param str sas_token:
-            Shared access signature token created with
-            generate_shared_access_signature.
-        :return: blob access URL.
-        :rtype: str
-        """
-        parsed_url = urlparse(self.url)
-        new_scheme = protocol or parsed_url.scheme
-        new_url = "{}://{}{}".format(
-            new_scheme,
-            parsed_url.netloc,
-            parsed_url.path)
-        if sas_token:
-            new_url += "?{}".format(sas_token)
-        return new_url
-
     def generate_shared_access_signature(
             self, resource_types,  # type: Union[ResourceTypes, str]
             permission,  # type: Union[AccountPermissions, str]
@@ -323,8 +299,8 @@ class BlobServiceClient(object):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def list_container_properties(
-            self, starts_with=None,  # type: Optional[str]
+    def list_containers(
+            self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
             marker=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
@@ -336,7 +312,7 @@ class BlobServiceClient(object):
         The generator will lazily follow the continuation tokens returned by
         the service and stop when all containers have been returned.
 
-        :param str starts_with:
+        :param str name_starts_with:
             Filters the results to return only containers whose names
             begin with the specified prefix.
         :param bool include_metadata:
@@ -354,13 +330,13 @@ class BlobServiceClient(object):
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.service.list_containers_segment,
-            prefix=starts_with,
+            prefix=name_starts_with,
             include=include,
             timeout=timeout,
             error_map=basic_error_map(),
             **kwargs)
         return ContainerPropertiesPaged(
-            command, prefix=starts_with, results_per_page=results_per_page, marker=marker)
+            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
     def get_container_client(self, container):
         # type: (Union[ContainerProperties, str]) -> ContainerClient

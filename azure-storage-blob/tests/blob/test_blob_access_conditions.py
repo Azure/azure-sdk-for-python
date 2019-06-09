@@ -85,13 +85,13 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                                         content_length):
         container = self._create_container(container_name)
         blob = self.bsc.get_blob_client(container_name, blob_name, blob_type=BlobType.PageBlob)
-        resp = blob.create_blob(str(content_length))
+        resp = blob.create_page_blob(str(content_length))
         return container, blob
 
     def _create_container_and_append_blob(self, container_name, blob_name):
         container = self._create_container(container_name)
         blob = self.bsc.get_blob_client(container_name, blob_name, blob_type=BlobType.AppendBlob)
-        resp = blob.create_blob()
+        resp = blob.create_append_blob()
         return container, blob
 
     # --Test cases for blob service --------------------------------------------
@@ -527,7 +527,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             content_language='spanish',
             content_disposition='inline')
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        blob.set_blob_properties(content_settings, if_modified_since=test_datetime)
+        blob.set_http_headers(content_settings, if_modified_since=test_datetime)
 
         # Assert
         properties = blob.get_blob_properties()
@@ -547,7 +547,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                 content_language='spanish',
                 content_disposition='inline')
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-            blob.set_blob_properties(content_settings, if_modified_since=test_datetime)
+            blob.set_http_headers(content_settings, if_modified_since=test_datetime)
 
         # Assert
         self.assertEqual('ConditionNotMet', e.exception.error_code)
@@ -564,7 +564,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             content_language='spanish',
             content_disposition='inline')
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        blob.set_blob_properties(content_settings, if_unmodified_since=test_datetime)
+        blob.set_http_headers(content_settings, if_unmodified_since=test_datetime)
 
         # Assert
         properties = blob.get_blob_properties()
@@ -584,7 +584,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                 content_language='spanish',
                 content_disposition='inline')
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-            blob.set_blob_properties(content_settings, if_unmodified_since=test_datetime)
+            blob.set_http_headers(content_settings, if_unmodified_since=test_datetime)
 
         # Assert
         self.assertEqual('ConditionNotMet', e.exception.error_code)
@@ -601,7 +601,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         content_settings = ContentSettings(
             content_language='spanish',
             content_disposition='inline')
-        blob.set_blob_properties(content_settings, if_match=etag)
+        blob.set_http_headers(content_settings, if_match=etag)
 
         # Assert
         properties = blob.get_blob_properties()
@@ -620,7 +620,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                 content_language='spanish',
                 content_disposition='inline')
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-            blob.set_blob_properties(content_settings, if_match='0x111111111111111')
+            blob.set_http_headers(content_settings, if_match='0x111111111111111')
 
         # Assert
         self.assertEqual('ConditionNotMet', e.exception.error_code)
@@ -636,7 +636,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             content_language='spanish',
             content_disposition='inline')
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        blob.set_blob_properties(content_settings, if_none_match='0x111111111111111')
+        blob.set_http_headers(content_settings, if_none_match='0x111111111111111')
 
         # Assert
         properties = blob.get_blob_properties()
@@ -656,7 +656,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             content_settings = ContentSettings(
                 content_language='spanish',
                 content_disposition='inline')
-            blob.set_blob_properties(content_settings, if_none_match=etag)
+            blob.set_http_headers(content_settings, if_none_match=etag)
 
         # Assert
         self.assertEqual('ConditionNotMet', e.exception.error_code)

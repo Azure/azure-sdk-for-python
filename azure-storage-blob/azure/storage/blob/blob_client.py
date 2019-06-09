@@ -119,7 +119,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         path_blob = ""
         path_snapshot = None
         if parsed_url.path:
-            path_container, _, path_blob = parsed_url.path.partition('/')
+            path_container, _, path_blob = parsed_url.path.lstrip('/').partition('/')
         path_snapshot, sas_token = parse_query(parsed_url.query)
 
         try:
@@ -187,35 +187,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             account_url, container=container, blob=blob,
             snapshot=snapshot, blob_type=blob_type,
             credentials=creds, configuration=configuration, **kwargs)
-
-    def make_url(self, protocol=None, sas_token=None):
-        # type: (Optional[str], Optional[str]) -> str
-        """
-        Creates the url to access this blob.
-
-        :param str protocol:
-            Protocol to use: 'http' or 'https'. If not specified, uses the
-            protocol specified in the URL when the client was created..
-        :param str sas_token:
-            Shared access signature token created with
-            generate_shared_access_signature.
-        :return: blob access URL.
-        :rtype: str
-        """
-        parsed_url = urlparse(self.url)
-        new_scheme = protocol or parsed_url.scheme
-        query = []
-        if self.snapshot:
-            query.append("snapshot={}".format(self.snapshot))
-        if sas_token:
-            query.append(sas_token)
-        new_url = "{}://{}{}".format(
-            new_scheme,
-            parsed_url.netloc,
-            parsed_url.path)
-        if query:
-            new_url += "?{}".format('&'.join(query))
-        return new_url
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[BlobPermissions, str]]
@@ -746,7 +717,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         blob_props.container = self.container
         return blob_props
 
-    def set_blob_properties(
+    def set_http_headers(
             self, content_settings=None,  # type: Optional[ContentSettings]
             lease=None,  # type: Optional[Union[Lease, str]]
             if_modified_since=None,  # type: Optional[datetime]
@@ -847,8 +818,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def create_blob(
-            self, content_length=None,  # type: Optional[int]
+    def create_page_blob(
+            self, content_length,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
             sequence_number=None,  # type: Optional[int]
             metadata=None, # type: Optional[Dict[str, str]]
@@ -929,42 +900,104 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 blob_content_disposition=content_settings.content_disposition
             )
         try:
-            if self.blob_type == BlobType.PageBlob:
-                if content_length is None:
-                    raise ValueError("A content length must be specified for a Page Blob.")
-                if premium_page_blob_tier:
-                    try:
-                        headers['x-ms-access-tier'] = premium_page_blob_tier.value
-                    except AttributeError:
-                        headers['x-ms-access-tier'] = premium_page_blob_tier
-                return self._client.page_blob.create(
-                    content_length=0,
-                    blob_content_length=content_length,
-                    blob_sequence_number=sequence_number,
-                    blob_http_headers=blob_headers,
-                    timeout=timeout,
-                    lease_access_conditions=access_conditions,
-                    modified_access_conditions=mod_conditions,
-                    cls=return_response_headers,
-                    headers=headers,
-                    error_map=basic_error_map(),
-                    **kwargs
-                )
-            elif self.blob_type == BlobType.AppendBlob:
-                if content_length or premium_page_blob_tier or sequence_number:
-                    raise ValueError("The following options cannot be used with Append Blobs: {}".format(
-                        "\n".join("content_length", "premium_page_blob_tier", "sequence_number")))
-                return self._client.append_blob.create(
-                    content_length=0,
-                    blob_http_headers=blob_headers,
-                    timeout=timeout,
-                    lease_access_conditions=access_conditions,
-                    modified_access_conditions=mod_conditions,
-                    cls=return_response_headers,
-                    headers=headers,
-                    error_map=basic_error_map(),
-                    **kwargs
-                )
+            if premium_page_blob_tier:
+                try:
+                    headers['x-ms-access-tier'] = premium_page_blob_tier.value
+                except AttributeError:
+                    headers['x-ms-access-tier'] = premium_page_blob_tier
+            return self._client.page_blob.create(
+                content_length=0,
+                blob_content_length=content_length,
+                blob_sequence_number=sequence_number,
+                blob_http_headers=blob_headers,
+                timeout=timeout,
+                lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
+                cls=return_response_headers,
+                headers=headers,
+                error_map=basic_error_map(),
+                **kwargs
+            )
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    def create_append_blob(
+            self, content_settings=None,  # type: Optional[ContentSettings]
+            metadata=None, # type: Optional[Dict[str, str]]
+            lease=None,  # type: Optional[Union[Lease, str]]
+            if_modified_since=None,  # type: Optional[datetime]
+            if_unmodified_since=None,  # type: Optional[datetime]
+            if_match=None,  # type: Optional[str]
+            if_none_match=None,  # type: Optional[str]
+            timeout=None,  # type: Optional[int]
+            **kwargs
+        ):
+        # type: (...) -> Dict[str, Union[str, datetime]]
+        """
+        Creates a new Append Blob.
+
+        :param ~azure.storage.blob.models.ContentSettings content_settings:
+            ContentSettings object used to set properties on the blob.
+        :param metadata:
+            Name-value pairs associated with the blob as metadata.
+        :type metadata: dict(str, str)
+        :param ~azure.storage.blob.lease.Lease lease:
+            Required if the blob has an active lease.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC. 
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: Blob-updated property dict (Etag and last modified).
+        :rtype: dict(str, Any)
+        """
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        blob_headers = None
+        if content_settings:
+            blob_headers = BlobHTTPHeaders(
+                blob_cache_control=content_settings.cache_control,
+                blob_content_type=content_settings.content_type,
+                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_encoding=content_settings.content_encoding,
+                blob_content_language=content_settings.content_language,
+                blob_content_disposition=content_settings.content_disposition
+            )
+        try:
+            return self._client.append_blob.create(
+                content_length=0,
+                blob_http_headers=blob_headers,
+                timeout=timeout,
+                lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
+                cls=return_response_headers,
+                headers=headers,
+                error_map=basic_error_map(),
+                **kwargs
+            )
         except StorageErrorException as error:
             process_storage_error(error)
 

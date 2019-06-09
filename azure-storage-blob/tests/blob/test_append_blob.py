@@ -73,7 +73,7 @@ class StorageAppendBlobTest(StorageTestCase):
             self.container_name,
             blob_name,
             blob_type=BlobType.AppendBlob)
-        blob.create_blob()
+        blob.create_append_blob()
         return blob
 
     def assertBlobEqual(self, blob, expected_data):
@@ -100,7 +100,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name, blob_type=BlobType.AppendBlob)
-        create_resp = blob.create_blob()
+        create_resp = blob.create_append_blob()
 
         # Assert
         blob_properties = blob.get_blob_properties()
@@ -115,7 +115,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Act
         lease = blob.acquire_lease()
-        create_resp = blob.create_blob(lease=lease)
+        create_resp = blob.create_append_blob(lease=lease)
 
         # Assert
         blob_properties = blob.get_blob_properties()
@@ -131,7 +131,7 @@ class StorageAppendBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name, blob_type=BlobType.AppendBlob)
 
         # Act
-        blob.create_blob(metadata=metadata)
+        blob.create_append_blob(metadata=metadata)
 
         # Assert
         md = blob.get_blob_properties().metadata

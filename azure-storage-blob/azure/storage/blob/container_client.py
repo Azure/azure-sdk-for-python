@@ -131,21 +131,6 @@ class ContainerClient(object):
             account_url, container=container,
             credentials=creds, configuration=configuration, **kwargs)
 
-    def make_url(self, protocol=None, sas_token=None):
-        # type: (Optional[str], Optional[str]) -> str
-        parsed_url = urlparse(self.url)
-        new_scheme = protocol or parsed_url.scheme
-        query = []
-        if sas_token:
-            query.append(sas_token)
-        new_url = "{}://{}{}".format(
-            new_scheme,
-            parsed_url.netloc,
-            parsed_url.path)
-        if query:
-            new_url += "?{}".format('&'.join(query))
-        return new_url
-
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[ContainerPermissions, str]]
             expiry=None,  # type: Optional[Union[datetime, str]]
@@ -500,14 +485,14 @@ class ContainerClient(object):
             'Last-Modified': response.get('Last-Modified')
         }
 
-    def list_blob_properties(self, starts_with=None, include=None, marker=None, timeout=None, **kwargs):
+    def list_blobs(self, name_starts_with=None, include=None, marker=None, timeout=None, **kwargs):
         # type: (Optional[str], Optional[Include], Optional[int]) -> Iterable[BlobProperties]
         """
         Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
         the service.
 
-        :param str starts_with:
+        :param str name_starts_with:
             Filters the results to return only blobs whose names
             begin with the specified prefix.
         :param ~azure.storage.blob.models.Include include:
@@ -526,21 +511,21 @@ class ContainerClient(object):
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.container.list_blob_flat_segment,
-            prefix=starts_with,
+            prefix=name_starts_with,
             include=include,
             timeout=timeout,
             error_map=basic_error_map(),
             **kwargs)
-        return BlobPropertiesPaged(command, prefix=starts_with, results_per_page=results_per_page,  marker=marker)
+        return BlobPropertiesPaged(command, prefix=name_starts_with, results_per_page=results_per_page,  marker=marker)
 
-    # def walk_blob_properties(self, starts_with=None, include=None, delimiter="/", timeout=None, **kwargs):
+    # def walk_blob_properties(self, name_starts_with=None, include=None, delimiter="/", timeout=None, **kwargs):
     #     # type: (Optional[str], Optional[Include], Optional[int]) -> Iterable[BlobProperties]
     #     """
     #     Returns a generator to list the blobs under the specified container.
     #     The generator will lazily follow the continuation tokens returned by
     #     the service.
 
-    #     :param str starts_with:
+    #     :param str name_starts_with:
     #         Filters the results to return only blobs whose names
     #         begin with the specified prefix.
     #     :param ~azure.storage.blob.models.Include include:
@@ -561,11 +546,11 @@ class ContainerClient(object):
     #     command = functools.partial(
     #         self._client.container.list_blob_hierarchy_segment(
     #         delimiter,
-    #         prefix=starts_with,
+    #         prefix=name_starts_with,
     #         include=include,
     #         timeout=timeout,
     #         **kwargs)
-    #     return BlobPropertiesWalked(command, prefix=starts_with, results_per_page=results_per_page,  marker=marker)
+    #     return BlobPropertiesWalked(command, prefix=name_starts_with, results_per_page=results_per_page,  marker=marker)
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]

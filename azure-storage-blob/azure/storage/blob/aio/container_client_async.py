@@ -16,9 +16,6 @@ class ContainerClient(object):
     def create_configuration(**kwargs):
         pass
 
-    def make_url(self, protocol=None, sas_token=None):
-        pass
-
     def generate_shared_access_signature(
             self, resource_types, permission, expiry,
             start=None, ip=None, protocol=None):
@@ -77,7 +74,7 @@ class ContainerClient(object):
         :returns: Container-updated property dict (Etag and last modified).
         """
 
-    async def list_blob_properties(self, prefix=None, include=None, timeout=None):
+    async def list_blobs(self, prefix=None, include=None, timeout=None):
         """
         :returns: An iterable (auto-paging) response of BlobProperties.
         """

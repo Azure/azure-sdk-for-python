@@ -173,7 +173,7 @@ class StorageContainerTest(StorageTestCase):
         container = self._create_container()
 
         # Act
-        containers = list(self.bsc.list_container_properties())
+        containers = list(self.bsc.list_containers())
 
         # Assert
         self.assertIsNotNone(containers)
@@ -189,7 +189,7 @@ class StorageContainerTest(StorageTestCase):
         container = self._create_container()
 
         # Act
-        containers = list(self.bsc.list_container_properties(starts_with=container.name))
+        containers = list(self.bsc.list_containers(name_starts_with=container.name))
 
         # Assert
         self.assertIsNotNone(containers)
@@ -206,7 +206,7 @@ class StorageContainerTest(StorageTestCase):
         resp = container.set_container_metadata(metadata)
 
         # Act
-        containers = list(self.bsc.list_container_properties(starts_with=container.name, include_metadata=True))
+        containers = list(self.bsc.list_containers(name_starts_with=container.name, include_metadata=True))
 
         # Assert
         self.assertIsNotNone(containers)
@@ -222,7 +222,7 @@ class StorageContainerTest(StorageTestCase):
         resp = container.set_container_acl(public_access=PublicAccess.Blob)
 
         # Act
-        containers = list(self.bsc.list_container_properties(starts_with=container.name))
+        containers = list(self.bsc.list_containers(name_starts_with=container.name))
 
         # Assert
         self.assertIsNotNone(containers)
@@ -242,11 +242,11 @@ class StorageContainerTest(StorageTestCase):
         container_names.sort()
 
         # Act
-        generator1 = self.bsc.list_container_properties(starts_with=prefix, results_per_page=2)
+        generator1 = self.bsc.list_containers(name_starts_with=prefix, results_per_page=2)
         next(generator1)
 
-        generator2 = self.bsc.list_container_properties(
-            starts_with=prefix, marker=generator1.next_marker, results_per_page=2)
+        generator2 = self.bsc.list_containers(
+            name_starts_with=prefix, marker=generator1.next_marker, results_per_page=2)
         next(generator2)
 
         containers1 = list(generator1.current_page)
@@ -732,7 +732,7 @@ class StorageContainerTest(StorageTestCase):
 
 
         # Act
-        blobs = [b.name for b in container.list_blob_properties()]
+        blobs = [b.name for b in container.list_blobs()]
 
         self.assertEqual(blobs, ['blob1', 'blob2'])
 
@@ -746,7 +746,7 @@ class StorageContainerTest(StorageTestCase):
         container.get_blob_client('blob2').upload_blob(data)
 
         # Act
-        blobs = list(container.list_blob_properties())
+        blobs = list(container.list_blobs())
 
         # Assert
         self.assertIsNotNone(blobs)
@@ -769,7 +769,7 @@ class StorageContainerTest(StorageTestCase):
         lease = blob1.acquire_lease()
 
         # Act
-        resp = list(container.list_blob_properties())
+        resp = list(container.list_blobs())
 
         # Assert
         self.assertIsNotNone(resp)
@@ -791,7 +791,7 @@ class StorageContainerTest(StorageTestCase):
         container.get_blob_client('blob_b1').upload_blob(data)
 
         # Act
-        resp = list(container.list_blob_properties(starts_with='blob_a'))
+        resp = list(container.list_blobs(name_starts_with='blob_a'))
 
         # Assert
         self.assertIsNotNone(resp)
@@ -811,7 +811,7 @@ class StorageContainerTest(StorageTestCase):
 
 
         # Act
-        blobs = container.list_blob_properties(results_per_page=2)
+        blobs = container.list_blobs(results_per_page=2)
         next(blobs)
 
         # Assert
@@ -831,7 +831,7 @@ class StorageContainerTest(StorageTestCase):
         container.get_blob_client('blob2').upload_blob(data)
 
         # Act
-        blobs = list(container.list_blob_properties(include="snapshots"))
+        blobs = list(container.list_blobs(include="snapshots"))
 
         # Assert
         self.assertEqual(len(blobs), 3)
@@ -853,7 +853,7 @@ class StorageContainerTest(StorageTestCase):
         container.get_blob_client('blob2').upload_blob(data, metadata={'number': '2', 'name': 'car'})
 
         # Act
-        blobs =list(container.list_blob_properties(include="metadata"))
+        blobs =list(container.list_blobs(include="metadata"))
 
         # Assert
         self.assertEqual(len(blobs), 2)
@@ -878,7 +878,7 @@ class StorageContainerTest(StorageTestCase):
         blob2.upload_blob(data, metadata={'number': '2', 'name': 'car'})
 
         # Act
-        blobs = list(container.list_blob_properties(include="uncommittedblobs"))
+        blobs = list(container.list_blobs(include="uncommittedblobs"))
 
         # Assert
         self.assertEqual(len(blobs), 2)
@@ -899,7 +899,7 @@ class StorageContainerTest(StorageTestCase):
         blobcopy.copy_blob_from_url(sourceblob, metadata={'status': 'copy'})
 
         # Act
-        blobs = list(container.list_blob_properties(include="copy"))
+        blobs = list(container.list_blobs(include="copy"))
 
         # Assert
         self.assertEqual(len(blobs), 2)
@@ -956,7 +956,7 @@ class StorageContainerTest(StorageTestCase):
         container.get_blob_client('blob2').upload_blob(data, metadata={'number': '2', 'name': 'car'})
 
         # Act
-        blobs = list(container.list_blob_properties(include=["snapshots", "metadata"]))
+        blobs = list(container.list_blobs(include=["snapshots", "metadata"]))
 
         # Assert
         self.assertEqual(len(blobs), 3)
@@ -992,10 +992,10 @@ class StorageContainerTest(StorageTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
             permission=ContainerPermissions.READ,
         )
-        url = blob.make_url(sas_token=token)
+        blob = BlobClient(blob.url, credentials=token)
 
         # Act
-        response = requests.get(url)
+        response = requests.get(blob.url)
 
         # Assert
         self.assertTrue(response.ok)

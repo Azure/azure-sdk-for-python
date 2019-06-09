@@ -845,7 +845,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
         props = blob.get_blob_properties()
         props.content_settings.content_md5 = b'MDAwMDAwMDA='
-        blob.set_blob_properties(props.content_settings)
+        blob.set_http_headers(props.content_settings)
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
@@ -867,7 +867,7 @@ class StorageGetBlobTest(StorageTestCase):
         # Arrange
         props = blob.get_blob_properties()
         props.content_settings.content_md5 = b'MDAwMDAwMDA='
-        blob.set_blob_properties(props.content_settings)
+        blob.set_http_headers(props.content_settings)
 
         # Act
         content = blob.download_blob(offset=0, length=1024, validate_content=True)
@@ -886,7 +886,7 @@ class StorageGetBlobTest(StorageTestCase):
         # Arrange
         props = blob.get_blob_properties()
         props.content_settings.content_md5 = None
-        blob.set_blob_properties(props.content_settings)
+        blob.set_http_headers(props.content_settings)
 
         # Act
         content = blob.download_blob(offset=0, length=1024, validate_content=True)

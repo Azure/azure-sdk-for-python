@@ -14,9 +14,6 @@ class BlobServiceClient(object):
     def create_configuration(**kwargs):
         pass
 
-    def make_url(self, protocol=None, sas_token=None):
-        pass
-
     def generate_shared_access_signature(
             self, resource_types, permission, expiry,
             start=None, ip=None, protocol=None):
@@ -45,7 +42,7 @@ class BlobServiceClient(object):
         :returns: None
         """
 
-    async def list_container_properties(
+    async def list_containers(
             self, prefix=None, num_results=None, include_metadata=False,
             marker=None, timeout=None):
         """

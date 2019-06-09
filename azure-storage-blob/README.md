@@ -85,9 +85,6 @@ ContainerClient.get_account_infomation(timeout=None)
 # Returns ContainerProperties
 ContainerClient.get_container_properties(lease=None, timeout=None)
 
-# Returns metadata as dict
-ContainerClient.get_container_metadata(lease=None, timeout=None)
-
 # Returns container-updated property dict (Etag and last modified)
 ContainerClient.set_container_metadata(metadata=None, lease=None, if_modified_since=None, timeout=None)
 
@@ -154,10 +151,6 @@ BlobClient.get_blob_properties(
 # Returns blob-updated property dict (Etag and last modified)
 BlobClient.set_blob_properties(
     content_settings=None, lease=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)
-
-# Returns a dict of metadata
-BlobClient.get_blob_metadata(
-    lease=None, if_modified_since=None, if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None)
 
 # Returns blob-updated property dict (Etag and last modified)
 BlobClient.set_blob_metadata(
