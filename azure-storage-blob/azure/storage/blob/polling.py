@@ -7,6 +7,9 @@
 import logging
 import time
 
+from ._utils import process_storage_error, basic_error_map
+from ._generated.models import StorageErrorException
+from ._deserialize import deserialize_blob_properties
 from azure.core.exceptions import AzureError
 from azure.core.polling import PollingMethod, LROPoller, NoPolling
 
@@ -47,7 +50,13 @@ class CopyBlob(PollingMethod):
         self.blob = None
 
     def _update_status(self):
-        self.blob = self._client.get_blob_properties(**self.kwargs)
+        try:
+            self.blob = self._client._client.blob.get_properties(
+                cls=deserialize_blob_properties,
+                error_map=basic_error_map(),
+                **self.kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
         self._status = self.blob.copy.status
         self.etag = self.blob.etag
         self.last_modified = self.blob.last_modified
@@ -71,9 +80,10 @@ class CopyBlob(PollingMethod):
         pass
 
     def abort(self):
-        if not self.finished():
+        try:
             return self._client._client.blob.abort_copy_from_url(self.id, **self.kwargs)
-        raise ValueError("Copy operation already complete.")
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def status(self):
         self._update_status()
@@ -96,11 +106,17 @@ class CopyBlobPolling(CopyBlob):
 
     def run(self):
         # type: () -> None
-        while not self.finished():
-            self._update_status()
-            time.sleep(self.polling_interval)
-        if str(self.status()).lower() in ['failed', 'aborted']:
-            raise ValueError("Copy operation failed: {}".format(self.blob.copy.status_description))
+        try:
+            while not self.finished():
+                self._update_status()
+                time.sleep(self.polling_interval)
+            if str(self.status()).lower() == 'aborted':
+                raise ValueError("Copy operation aborted.")
+            if str(self.status()).lower() == 'failed':
+                raise ValueError("Copy operation failed: {}".format(self.blob.copy.status_description))
+        except Exception as e:
+            logger.warning(str(e))
+            raise
 
     def status(self):
         # type: () -> str

@@ -1207,7 +1207,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             self, start_copy,
             polling=polling,
             configuration=self._config,
-            lease=destination_lease,
+            lease_access_conditions=destination_lease,
             timeout=timeout)
         return poller
 

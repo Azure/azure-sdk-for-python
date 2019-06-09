@@ -383,6 +383,7 @@ class _BlobChunkDownloader(object):
         download_range, offset = _process_range_and_offset(
             chunk_start,
             chunk_end,
+            chunk_end,
             self.key_encryption_key,
             self.key_resolver_function,
         )

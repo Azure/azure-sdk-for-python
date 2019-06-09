@@ -827,35 +827,47 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_copy_blob_with_existing_blob(self):
-        pytest.skip("in progress")
         # Arrange
-        # blob_name = self._create_block_blob()
-        # blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob_name = self._create_block_blob()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
-        # # # Act
-        # source_blob = '/{0}/{1}/{2}'.format(self.settings.STORAGE_ACCOUNT_NAME,
-        #                                    self.container_name,
-        #                                    blob_name)
-        import logging
-        logger = logging.getLogger(__name__)
+        # Act
+        sourceblob = '/{0}/{1}/{2}'.format(self.settings.STORAGE_ACCOUNT_NAME,
+                                           self.container_name,
+                                           blob_name)
 
-        source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
-        copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
-        copy = copied_blob.copy_blob_from_url(source_blob)
-        self.assertEqual(copy.status(), 'pending')
-        copy.wait()
+        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        copy = copyblob.copy_blob_from_url(sourceblob)
 
         # Assert
         self.assertIsNotNone(copy)
         self.assertEqual(copy.status(), 'success')
-        self.assertIsNotNone(copy.id())
-    
-        #copy_blob = copied_blob.download_blob()
-        #self.assertEqual(b"".join(list(copy_blob)), self.byte_data)
+        self.assertIsNotNone(copy.copy_id())
+
+        copy_content = copyblob.download_blob().content_as_bytes()
+        self.assertEqual(copy_content, self.byte_data)
+
+    @record
+    def test_copy_blob_with_external_blob_fails(self):
+
+        # Arrange
+        source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
+        copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
+
+        # Act
+        copy = copied_blob.copy_blob_from_url(source_blob)
+        self.assertEqual(copy.status(), 'pending')
+
+        with self.assertRaises(ValueError) as e:
+            copy.wait()
+
+        # Assert
+        self.assertTrue('500 InternalServerError' in str(e.exception))
+        self.assertEqual(copy.status(), 'failed')
+        self.assertIsNotNone(copy.copy_id())
 
     @record
     def test_copy_blob_async_private_blob(self):
-        pytest.skip("in progress")
         # Arrange
         self._create_remote_container()
         source_blob = self._create_remote_block_blob()
@@ -863,15 +875,15 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         target_blob_name = 'targetblob'
-        with self.assertRaises(ResourceNotFoundError):
-            target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
-            target_blob.copy_blob_from_url(source_blob_url)
+        target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
+        copy = target_blob.copy_blob_from_url(source_blob_url)
+        copy.wait()
 
         # Assert
+        self.assertEqual(copy.status(), 'success')
 
     @record
     def test_copy_blob_async_private_blob_with_sas(self):
-        pytest.skip("in progress")
         # Arrange
         data = b'12345678' * 1024 * 1024
         self._create_remote_container()
@@ -883,7 +895,6 @@ class StorageCommonBlobTest(StorageTestCase):
         )
 
         source_blob_url = source_blob.make_url(sas_token=sas_token)
-        #raise Exception(source_blob_url)
 
         # Act
         target_blob_name = 'targetblob'
@@ -891,7 +902,6 @@ class StorageCommonBlobTest(StorageTestCase):
         copy_resp = target_blob.copy_blob_from_url(source_blob_url)
 
         # Assert
-        #self.assertEqual(copy_resp.status(), 'pending')
         copy_resp.wait()
         self.assertEqual(copy_resp.status(), 'success')
         actual_data = target_blob.download_blob()
@@ -899,54 +909,41 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_abort_copy_blob(self):
-        pytest.skip("in progress")
-        import logging
-        logger = logging.getLogger(__name__)
         # Arrange
-        data = b'12345678' * 1024 * 1024
-        self._create_remote_container()
-        source_blob = self._create_remote_block_blob(blob_data=data)
-        logger.warning("blob uploaded")
-        sas_token = source_blob.generate_shared_access_signature(
-            permission=BlobPermissions.READ,
-            expiry=datetime.utcnow() + timedelta(hours=1),
-        )
-
-        source_blob_url = source_blob.make_url(sas_token=sas_token)
+        source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
+        copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
 
         # Act
-        target_blob_name = 'targetblob'
-        target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
-        copy_resp = target_blob.copy_blob_from_url(source_blob_url)
+        copy = copied_blob.copy_blob_from_url(source_blob)
+        self.assertEqual(copy.status(), 'pending')
 
-        #self.assertEqual(copy_resp.status(), 'pending')
-        copy_resp.abort()
+        copy.abort()
+        with self.assertRaises(ValueError):
+            copy.wait()
+        self.assertEqual(copy.status(), 'aborted')
 
         # Assert
-        actual_data = target_blob.download_blob()
-        self.assertEqual(b"".join(list(actual_data)), data)
+        actual_data = copied_blob.download_blob()
+        self.assertEqual(b"".join(list(actual_data)), b"")
         self.assertEqual(actual_data.properties.copy.status, 'aborted')
 
     @record
     def test_abort_copy_blob_with_synchronous_copy_fails(self):
-        pytest.skip("copy not yet supported")
         # Arrange
         source_blob_name = self._create_block_blob()
-        source_blob_url = self.bs.make_blob_url(
-            self.container_name, source_blob_name)
+        source_blob = self.bsc.get_blob_client(self.container_name, source_blob_name)
 
         # Act
         target_blob_name = 'targetblob'
-        copy_resp = self.bs.copy_blob(
-            self.container_name, target_blob_name, source_blob_url)
-        with self.assertRaises(AzureHttpError):
-            self.bs.abort_copy_blob(
-                self.container_name,
-                target_blob_name,
-                copy_resp.id)
+        target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
+        print(source_blob.url)
+        copy_resp = target_blob.copy_blob_from_url(source_blob.url) #, requires_sync=True)
+
+        with self.assertRaises(HttpResponseError):
+            copy_resp.abort()
 
         # Assert
-        self.assertEqual(copy_resp.status, 'success')
+        self.assertEqual(copy_resp.status(), 'success')
 
     @record
     def test_snapshot_blob(self):
@@ -1091,8 +1088,8 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        data = u'hello world啊齄丂狛狜'.encode('utf-8')
-        resp = blob.upload_blob(data, len(data))
+        data = u'hello world啊齄丂狛狜'
+        resp = blob.upload_blob(data)
 
         # Assert
         self.assertIsNotNone(resp.get('ETag'))
