@@ -151,7 +151,7 @@ class Receiver(object):
 
     def _check_closed(self):
         if self.error:
-            raise EventHubError("This receiver has been closed. Please create a new receiver to send event data.",
+            raise EventHubError("This receiver has been closed. Please create a new receiver to receive event data.",
                                 self.error)
 
     def _open(self):
