@@ -75,6 +75,10 @@ if TYPE_CHECKING:
         BlobBlock,
     )
 
+_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
+    'The require_encryption flag is set, but encryption is not supported'
+    ' for this method.')
+
 
 class BlobClient(object):  # pylint: disable=too-many-public-methods
 
@@ -441,8 +445,13 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
 
                 # Do single put if the size is smaller than config.max_single_put_size
                 if adjusted_count is not None and (adjusted_count < self._config.blob_settings.max_single_put_size):
+                    try:
+                        data = data.read(length)
+                        if not isinstance(data, six.binary_type):
+                            raise TypeError('blob data should be of type bytes.')
+                    except AttributeError:
+                        pass
                     if self.key_encryption_key:
-                        print("Encrypting data")
                         encryption_data, data = _encrypt_blob(data, self.key_encryption_key)
                         headers['x-ms-meta-encryptiondata'] = encryption_data
                     return self._client.block_blob.upload(
@@ -458,7 +467,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                         **kwargs)
                 else:
                     cek, iv, encryption_data = None, None, None
-
                     blob_settings = self._config.blob_settings
                     use_original_upload_path = blob_settings.use_byte_buffer or \
                         validate_content or self.require_encryption or \
@@ -469,6 +477,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                     if use_original_upload_path:
                         if self.key_encryption_key:
                             cek, iv, encryption_data = _generate_blob_encryption_data(self.key_encryption_key)
+                            headers['x-ms-meta-encryptiondata'] = encryption_data
                         block_ids = _upload_blob_chunks(
                             blob_service=self._client.block_blob,
                             blob_size=length,
@@ -555,6 +564,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                     **kwargs
                 )
             elif self.blob_type == BlobType.AppendBlob:
+                if self.require_encryption or (self.key_encryption_key is not None):
+                    raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
                 if length == 0:
                     return {}
                 append_conditions = AppendPositionAccessConditions(
@@ -593,6 +604,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         """
         :returns: A iterable data generator (stream)
         """
+        if self.require_encryption and not self.key_encryption_key:
+            raise ValueError("Encryption required but no key was provided.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None is length is set.")
 
@@ -898,6 +911,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(lease)
@@ -1286,6 +1301,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         """
         if self.blob_type != BlobType.BlockBlob:
             raise TypeError("This operation is only available for BlockBlob type blobs.")
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         block_id = encode_base64(str(block_id))
         if isinstance(data, six.text_type):
             data = data.encode(encoding)
@@ -1428,14 +1445,19 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         """
         if self.blob_type != BlobType.BlockBlob:
             raise TypeError("This operation is only available for BlockBlob type blobs.")
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
         for block in block_list:
-            if block.state.value == 'committed':
-                block_lookup.committed.append(encode_base64(str(block.id)))
-            elif block.state.value == 'uncommitted':
-                block_lookup.uncommitted.append(encode_base64(str(block.id)))
-            else:
-                block_lookup.latest.append(encode_base64(str(block.id)))
+            try:
+                if block.state.value == 'committed':
+                    block_lookup.committed.append(encode_base64(str(block.id)))
+                elif block.state.value == 'uncommitted':
+                    block_lookup.uncommitted.append(encode_base64(str(block.id)))
+                else:
+                    block_lookup.latest.append(encode_base64(str(block.id)))
+            except AttributeError:
+                block_lookup.latest.append(encode_base64(str(block)))
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         blob_headers = None
@@ -1821,14 +1843,9 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             raise TypeError("This operation is only available for PageBlob type blobs.")
         if isinstance(page, six.text_type):
             page = page.encode(encoding)
-        if self.require_encryption and not self.key_encryption_key:
-            raise ValueError("Encryption required but no key was provided.")
-        cek, iv, encryption_data = None, None, None
-        if self.key_encryption_key is not None:
-            cek, iv, encryption_data = _generate_blob_encryption_data(self.key_encryption_key)
-        headers = kwargs.pop('headers', {})
-        if encryption_data is not None:
-                headers['x-ms-meta-encryptiondata'] = encryption_data
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+
         if not length:
             try:
                 length = get_length(page)
@@ -1894,6 +1911,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         """
         if self.blob_type != BlobType.PageBlob:
             raise TypeError("This operation is only available for PageBlob type blobs.")
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         access_conditions = get_access_conditions(lease)
         seq_conditions = get_sequence_conditions(
             if_sequence_number_lte=if_sequence_number_lte,
@@ -1942,14 +1961,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         """
         if self.blob_type != BlobType.AppendBlob:
             raise TypeError("This operation is only available for AppendBlob type blobs.")
-        if self.require_encryption and not self.key_encryption_key:
-            raise ValueError("Encryption required but no key was provided.")
-        cek, iv, encryption_data = None, None, None
-        if self.key_encryption_key is not None:
-            cek, iv, encryption_data = _generate_blob_encryption_data(self.key_encryption_key)
-        headers = kwargs.pop('headers', {})
-        if encryption_data is not None:
-                headers['x-ms-meta-encryptiondata'] = encryption_data
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         if isinstance(data, six.text_type):
             data = data.encode(encoding)

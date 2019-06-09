@@ -5,6 +5,10 @@
 # --------------------------------------------------------------------------
 import threading
 import sys
+if sys.version_info >= (3,):
+    from io import BytesIO
+else:
+    from cStringIO import StringIO as BytesIO
 
 from azure.core.exceptions import HttpResponseError
 
@@ -18,7 +22,7 @@ from ._deserialize import deserialize_blob_stream
 from ._encryption import _decrypt_blob
 
 
-def _process_range_and_offset(start_range, end_range, key_encryption_key, key_resolver_function):
+def _process_range_and_offset(start_range, end_range, length, key_encryption_key, key_resolver_function):
     start_offset, end_offset = 0, 0
     if key_encryption_key is not None or key_resolver_function is not None:
         if start_range is not None:
@@ -33,11 +37,13 @@ def _process_range_and_offset(start_range, end_range, key_encryption_key, key_re
                 start_offset += 16
                 start_range -= 16
 
-        if end_range is not None:
+        if length is not None:
             # Align the end of the range along a 16 byte block
             end_offset = 15 - (end_range % 16)
             end_range += end_offset
+
     return (start_range, end_range), (start_offset, end_offset)
+
 
 def _process_content(blob, start_offset, end_offset, require_encryption, key_encryption_key, key_resolver_function):
     if key_encryption_key is not None or key_resolver_function is not None:
@@ -51,11 +57,12 @@ def _process_content(blob, start_offset, end_offset, require_encryption, key_enc
                 end_offset)
         except Exception as error:
             raise HttpResponseError(
-                message="Failed to decrypt blob data.",
+                message="Decryption failed.",
                 response=blob.response,
                 error=error)
     else:
         return b"".join(list(blob))
+
 
 class StorageStreamDownloader(object):
 
@@ -92,8 +99,10 @@ class StorageStreamDownloader(object):
         self.initial_range, self.initial_offset = _process_range_and_offset(
             initial_request_start,
             initial_request_end,
+            self.length,
             self.key_encryption_key,
             self.key_resolver_function)
+
         self.download_size = None
         self.blob_size = None
         self.blob = self._initial_request()
@@ -230,11 +239,13 @@ class StorageStreamDownloader(object):
         return blob
 
 
-    def content_as_bytes(self):
-        return b"".join(list(self.blob))
+    def content_as_bytes(self, max_connections=1):
+        stream = BytesIO()
+        self.download_to_stream(stream, max_connections=max_connections)
+        return stream.getvalue()
 
-    def content_as_text(self, encoding='UTF-8'):
-        content = self.content_as_bytes()
+    def content_as_text(self, max_connections=1, encoding='UTF-8'):
+        content = self.content_as_bytes(max_connections=max_connections)
         return content.decode(encoding)
 
     def download_to_stream(self, stream, max_connections=1):

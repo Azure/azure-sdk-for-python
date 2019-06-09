@@ -18,7 +18,7 @@ from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.padding import PKCS7
 
 from azure.storage.blob import __version__
-from .authentication import _encode_base64
+from .authentication import _encode_base64, _decode_base64_to_bytes
 
 
 _ENCRYPTION_PROTOCOL_V1 = '1.0'
@@ -232,7 +232,8 @@ def _validate_and_unwrap_cek(encryption_data, key_encryption_key=None, key_resol
     _validate_not_none('content_encryption_IV', encryption_data.content_encryption_IV)
     _validate_not_none('encrypted_key', encryption_data.wrapped_content_key.encrypted_key)
 
-    _validate_encryption_protocol_version(encryption_data.encryption_agent.protocol)
+    if not (_ENCRYPTION_PROTOCOL_V1 == encryption_data.encryption_agent.protocol):
+        raise ValueError('Encryption version is not supported.')
 
     content_encryption_key = None
 
@@ -241,9 +242,12 @@ def _validate_and_unwrap_cek(encryption_data, key_encryption_key=None, key_resol
         key_encryption_key = key_resolver(encryption_data.wrapped_content_key.key_id)
 
     _validate_not_none('key_encryption_key', key_encryption_key)
-    _validate_key_encryption_key_unwrap(key_encryption_key)
-    _validate_kek_id(encryption_data.wrapped_content_key.key_id, key_encryption_key.get_kid())
-
+    if not hasattr(key_encryption_key, 'get_kid') or not callable(key_encryption_key.get_kid):
+        raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'get_kid'))
+    if not hasattr(key_encryption_key, 'unwrap_key') or not callable(key_encryption_key.unwrap_key):
+        raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'unwrap_key'))
+    if not (encryption_data.wrapped_content_key.key_id == key_encryption_key.get_kid()):
+        raise ValueError('Provided or resolved key-encryption-key does not match the id of key used to encrypt.')
     # Will throw an exception if the specified algorithm is not supported.
     content_encryption_key = key_encryption_key.unwrap_key(encryption_data.wrapped_content_key.encrypted_key,
                                                            encryption_data.wrapped_content_key.algorithm)

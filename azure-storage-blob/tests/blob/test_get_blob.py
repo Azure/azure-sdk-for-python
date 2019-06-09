@@ -13,6 +13,7 @@ import os
 import unittest
 
 from azure.common import AzureHttpError
+from azure.core.exceptions import HttpResponseError
 
 from azure.storage.blob import (
     BlobServiceClient,
@@ -93,6 +94,9 @@ class StorageGetBlobTest(StorageTestCase):
         def read(self, count):
             return self.wrapped_file.read(count)
 
+        def seekable(self):
+            return False
+
     # -- Get test cases for blobs ----------------------------------------------
 
     @record
@@ -100,14 +104,15 @@ class StorageGetBlobTest(StorageTestCase):
         # Arrange
         blob_data = u'hello world啊齄丂狛狜'.encode('utf-8')
         blob_name = self._get_blob_reference()
-        self.bs.create_blob_from_bytes(self.container_name, blob_name, blob_data)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(blob_data)
 
         # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, blob_name)
+        content = blob.download_blob()
 
         # Assert
-        self.assertIsInstance(blob, Blob)
-        self.assertEqual(blob.content, blob_data)
+        self.assertIsInstance(content.properties, BlobProperties)
+        self.assertEqual(content.content_as_bytes(), blob_data)
 
     @record
     def test_unicode_get_blob_binary_data(self):
@@ -116,28 +121,30 @@ class StorageGetBlobTest(StorageTestCase):
         binary_data = base64.b64decode(base64_data)
 
         blob_name = self._get_blob_reference()
-        self.bs.create_blob_from_bytes(self.container_name, blob_name, binary_data)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(binary_data)
 
         # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, blob_name)
+        content = blob.download_blob()
 
         # Assert
-        self.assertIsInstance(blob, Blob)
-        self.assertEqual(blob.content, binary_data)
+        self.assertIsInstance(content.properties, BlobProperties)
+        self.assertEqual(content.content_as_bytes(), binary_data)
 
     @record
     def test_get_blob_no_content(self):
         # Arrange
         blob_data = b''
         blob_name = self._get_blob_reference()
-        self.bs.create_blob_from_bytes(self.container_name, blob_name, blob_data)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(blob_data)
 
         # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, blob_name)
+        content = blob.download_blob()
 
         # Assert
-        self.assertEqual(blob_data, blob.content)
-        self.assertEqual(0, blob.properties.content_length)
+        self.assertEqual(blob_data, content.content_as_bytes())
+        self.assertEqual(0, content.properties.content_length)
 
     def test_get_blob_to_bytes(self):
         # parallel tests introduce random order of requests, can only run live
@@ -145,12 +152,13 @@ class StorageGetBlobTest(StorageTestCase):
             return
 
         # Arrange
+        blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, self.byte_blob)
+        content = blob.download_blob().content_as_bytes(max_connections=2)
 
         # Assert
-        self.assertEqual(self.byte_data, blob.content)
+        self.assertEqual(self.byte_data, content)
 
     def test_ranged_get_blob_to_bytes_with_single_byte(self):
         # parallel tests introduce random order of requests, can only run live
@@ -158,45 +166,50 @@ class StorageGetBlobTest(StorageTestCase):
             return
 
         # Arrange
+        blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, self.byte_blob, start_range=0, end_range=0)
+        content = blob.download_blob(offset=0, length=0).content_as_bytes()
 
         # Assert
-        self.assertEqual(1, len(blob.content))
-        self.assertEqual(self.byte_data[0], blob.content[0])
+        self.assertEqual(1, len(content))
+        self.assertEqual(self.byte_data[0], content[0])
 
         # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, self.byte_blob, start_range=5, end_range=5)
+        content = blob.download_blob(offset=5, length=5).content_as_bytes()
 
         # Assert
-        self.assertEqual(1, len(blob.content))
-        self.assertEqual(self.byte_data[5], blob.content[0])
+        self.assertEqual(1, len(content))
+        self.assertEqual(self.byte_data[5], content[0])
 
     @record
     def test_ranged_get_blob_to_bytes_with_zero_byte(self):
         blob_data = b''
         blob_name = self._get_blob_reference()
-        self.bs.create_blob_from_bytes(self.container_name, blob_name, blob_data)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(blob_data)
 
         # Act
         # the get request should fail in this case since the blob is empty and yet there is a range specified
-        with self.assertRaises(AzureHttpError):
-            self.bs.get_blob_to_bytes(self.container_name, blob_name, start_range=0, end_range=5)
+        with self.assertRaises(HttpResponseError) as e:
+            blob.download_blob(offset=0, length=5)
+        self.assertEqual('InvalidRange', e.exception.error_code)
 
-        with self.assertRaises(AzureHttpError):
-            self.bs.get_blob_to_bytes(self.container_name, blob_name, start_range=3, end_range=5)
+        with self.assertRaises(HttpResponseError) as e:
+            blob.download_blob(offset=3, length=5)
+        self.assertEqual('InvalidRange', e.exception.error_code)
 
     @record
     def test_ranged_get_blob_with_missing_start_range(self):
         blob_data = b'foobar'
         blob_name = self._get_blob_reference()
-        self.bs.create_blob_from_bytes(self.container_name, blob_name, blob_data)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(blob_data)
 
         # Act
         # the get request should fail fast in this case since start_range is missing while end_range is specified
         with self.assertRaises(ValueError):
-            self.bs.get_blob_to_bytes(self.container_name, blob_name, end_range=3)
+            blob.download_blob(length=3)
 
     def test_get_blob_to_bytes_snapshot(self):
         # parallel tests introduce random order of requests, can only run live
@@ -204,14 +217,17 @@ class StorageGetBlobTest(StorageTestCase):
             return
 
         # Arrange
-        snapshot = self.bs.snapshot_blob(self.container_name, self.byte_blob)
-        self.bs.create_blob_from_bytes(self.container_name, self.byte_blob, self.byte_data) # Modify the blob so the Etag no longer matches
+        blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
+        snapshot_ref = blob.create_snapshot()
+        snapshot = self.bsc.get_blob_client(self.container_name, snapshot_ref)
+        
+        blob.upload_blob(self.byte_data) # Modify the blob so the Etag no longer matches
 
         # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, self.byte_blob, snapshot.snapshot)
+        content = snapshot.download_blob().content_as_bytes(max_connections=2)
 
         # Assert
-        self.assertEqual(self.byte_data, blob.content)
+        self.assertEqual(self.byte_data, content)
 
     def test_get_blob_to_bytes_with_progress(self):
         # parallel tests introduce random order of requests, can only run live
@@ -220,53 +236,71 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Arrange
         progress = []
+        blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
-        def callback(current, total):
+        def callback(response):
+            current = response.context['data_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, self.byte_blob, progress_callback=callback)
+        content = blob.download_blob(raw_response_hook=callback).content_as_bytes(max_connections=2)
 
         # Assert
-        self.assertEqual(self.byte_data, blob.content)
-        self.assert_download_progress(len(self.byte_data), self.bs.MAX_CHUNK_GET_SIZE, self.bs.MAX_SINGLE_GET_SIZE,
-                                      progress)
+        self.assertEqual(self.byte_data, content)
+        self.assert_download_progress(
+            len(self.byte_data),
+            self.config.blob_settings.max_chunk_get_size,
+            self.config.blob_settings.max_single_get_size,
+            progress)
 
     @record
     def test_get_blob_to_bytes_non_parallel(self):
         # Arrange
         progress = []
+        blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
-        def callback(current, total):
+        def callback(response):
+            current = response.context['data_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, self.byte_blob, max_connections=1,
-                                         progress_callback=callback)
+        content = blob.download_blob(raw_response_hook=callback).content_as_bytes(max_connections=1)
 
         # Assert
-        self.assertEqual(self.byte_data, blob.content)
-        self.assert_download_progress(len(self.byte_data), self.bs.MAX_CHUNK_GET_SIZE, self.bs.MAX_SINGLE_GET_SIZE,
-                                      progress)
+        self.assertEqual(self.byte_data, content)
+        self.assert_download_progress(
+            len(self.byte_data),
+            self.config.blob_settings.max_chunk_get_size,
+            self.config.blob_settings.max_single_get_size,
+            progress)
 
     @record
     def test_get_blob_to_bytes_small(self):
         # Arrange
         blob_data = self.get_random_bytes(1024)
         blob_name = self._get_blob_reference()
-        self.bs.create_blob_from_bytes(self.container_name, blob_name, blob_data)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(blob_data)
 
         progress = []
 
-        def callback(current, total):
+        def callback(response):
+            current = response.context['data_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, blob_name, progress_callback=callback)
+        content = blob.download_blob(raw_response_hook=callback).content_as_bytes()
 
         # Assert
-        self.assertEqual(blob_data, blob.content)
-        self.assert_download_progress(len(blob_data), self.bs.MAX_CHUNK_GET_SIZE, self.bs.MAX_SINGLE_GET_SIZE, progress)
+        self.assertEqual(blob_data, content)
+        self.assert_download_progress(
+            len(blob_data),
+            self.config.blob_settings.max_chunk_get_size,
+            self.config.blob_settings.max_single_get_size,
+            progress)
 
     def test_get_blob_to_stream(self):
         # parallel tests introduce random order of requests, can only run live
@@ -518,14 +552,15 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Arrange
         text_blob = self.get_resource_name('textblob')
-        text_data = self.get_random_text_data(self.bs.MAX_SINGLE_GET_SIZE + 1)
-        self.bs.create_blob_from_text(self.container_name, text_blob, text_data)
+        text_data = self.get_random_text_data(self.config.blob_settings.max_single_get_size + 1)
+        blob = self.bsc.get_blob_client(self.container_name, text_blob)
+        blob.upload_blob(text_data)
 
         # Act
-        blob = self.bs.get_blob_to_text(self.container_name, text_blob)
+        content = blob.download_blob().content_as_text(max_connections=2)
 
         # Assert
-        self.assertEqual(text_data, blob.content)
+        self.assertEqual(text_data, content)
 
     def test_get_blob_to_text_with_progress(self):
         # parallel tests introduce random order of requests, can only run live
@@ -534,95 +569,119 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Arrange
         text_blob = self.get_resource_name('textblob')
-        text_data = self.get_random_text_data(self.bs.MAX_SINGLE_GET_SIZE + 1)
-        self.bs.create_blob_from_text(self.container_name, text_blob, text_data)
+        text_data = self.get_random_text_data(self.config.blob_settings.max_single_get_size + 1)
+        blob = self.bsc.get_blob_client(self.container_name, text_blob)
+        blob.upload_blob(text_data)
 
         progress = []
 
-        def callback(current, total):
+        def callback(response):
+            current = response.context['data_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
-        blob = self.bs.get_blob_to_text(self.container_name, text_blob, progress_callback=callback)
+        content = blob.download_blob(raw_response_hook=callback).content_as_text(max_connections=2)
 
         # Assert
-        self.assertEqual(text_data, blob.content)
-        self.assert_download_progress(len(text_data.encode('utf-8')), self.bs.MAX_CHUNK_GET_SIZE,
-                                      self.bs.MAX_SINGLE_GET_SIZE, progress)
+        self.assertEqual(text_data, content)
+        self.assert_download_progress(
+            len(text_data.encode('utf-8')),
+            self.config.blob_settings.max_chunk_get_size,
+            self.config.blob_settings.max_single_get_size,
+            progress)
 
     @record
     def test_get_blob_to_text_non_parallel(self):
         # Arrange
         text_blob = self._get_blob_reference()
-        text_data = self.get_random_text_data(self.bs.MAX_SINGLE_GET_SIZE + 1)
-        self.bs.create_blob_from_text(self.container_name, text_blob, text_data)
+        text_data = self.get_random_text_data(self.config.blob_settings.max_single_get_size + 1)
+        blob = self.bsc.get_blob_client(self.container_name, text_blob)
+        blob.upload_blob(text_data)
 
         progress = []
 
-        def callback(current, total):
+        def callback(response):
+            current = response.context['data_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
-        blob = self.bs.get_blob_to_text(self.container_name, text_blob, max_connections=1, progress_callback=callback)
+        content = blob.download_blob(raw_response_hook=callback).content_as_text(max_connections=1)
 
         # Assert
-        self.assertEqual(text_data, blob.content)
-        self.assert_download_progress(len(text_data), self.bs.MAX_CHUNK_GET_SIZE, self.bs.MAX_SINGLE_GET_SIZE,
-                                      progress)
+        self.assertEqual(text_data, content)
+        self.assert_download_progress(
+            len(text_data),
+            self.config.blob_settings.max_chunk_get_size,
+            self.config.blob_settings.max_single_get_size,
+            progress)
 
     @record
     def test_get_blob_to_text_small(self):
         # Arrange
         blob_data = self.get_random_text_data(1024)
         blob_name = self._get_blob_reference()
-        self.bs.create_blob_from_text(self.container_name, blob_name, blob_data)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(blob_data)
 
         progress = []
 
-        def callback(current, total):
+        def callback(response):
+            current = response.context['data_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
-        blob = self.bs.get_blob_to_text(self.container_name, blob_name, progress_callback=callback)
+        content = blob.download_blob(raw_response_hook=callback).content_as_text()
 
         # Assert
-        self.assertEqual(blob_data, blob.content)
-        self.assert_download_progress(len(blob_data), self.bs.MAX_CHUNK_GET_SIZE, self.bs.MAX_SINGLE_GET_SIZE, progress)
+        self.assertEqual(blob_data, content)
+        self.assert_download_progress(
+            len(blob_data),
+            self.config.blob_settings.max_chunk_get_size,
+            self.config.blob_settings.max_single_get_size,
+            progress)
 
     @record
     def test_get_blob_to_text_with_encoding(self):
         # Arrange
         text = u'hello 啊齄丂狛狜 world'
-        data = text.encode('utf-16')
         blob_name = self._get_blob_reference()
-        self.bs.create_blob_from_bytes(self.container_name, blob_name, data)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(text, encoding='utf-16')
 
         # Act
-        blob = self.bs.get_blob_to_text(self.container_name, blob_name, 'utf-16')
+        content = blob.download_blob().content_as_text(encoding='utf-16')
 
         # Assert
-        self.assertEqual(text, blob.content)
+        self.assertEqual(text, content)
 
     @record
     def test_get_blob_to_text_with_encoding_and_progress(self):
         # Arrange
         text = u'hello 啊齄丂狛狜 world'
-        data = text.encode('utf-16')
         blob_name = self._get_blob_reference()
-        self.bs.create_blob_from_bytes(self.container_name, blob_name, data)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(text, encoding='utf-16')
 
         # Act
         progress = []
 
-        def callback(current, total):
+        def callback(response):
+            current = response.context['data_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
-        blob = self.bs.get_blob_to_text(
-            self.container_name, blob_name, 'utf-16', progress_callback=callback)
+        content = blob.download_blob(raw_response_hook=callback).content_as_text(encoding='utf-16')
 
         # Assert
-        self.assertEqual(text, blob.content)
-        self.assert_download_progress(len(data), self.bs.MAX_CHUNK_GET_SIZE, self.bs.MAX_SINGLE_GET_SIZE, progress)
+        self.assertEqual(text, content)
+        self.assert_download_progress(
+            len(text.encode('utf-8')),
+            self.config.blob_settings.max_chunk_get_size,
+            self.config.blob_settings.max_single_get_size,
+            progress)
 
     @record
     def test_get_blob_non_seekable(self):
@@ -691,20 +750,27 @@ class StorageGetBlobTest(StorageTestCase):
     def test_get_blob_exact_get_size(self):
         # Arrange
         blob_name = self._get_blob_reference()
-        byte_data = self.get_random_bytes(self.bs.MAX_SINGLE_GET_SIZE)
-        self.bs.create_blob_from_bytes(self.container_name, blob_name, byte_data)
+        byte_data = self.get_random_bytes(self.config.blob_settings.max_single_get_size)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(byte_data)
 
         progress = []
 
-        def callback(current, total):
+        def callback(response):
+            current = response.context['data_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, blob_name, progress_callback=callback)
+        content = blob.download_blob(raw_response_hook=callback).content_as_bytes()
 
         # Assert
-        self.assertEqual(byte_data, blob.content)
-        self.assert_download_progress(len(byte_data), self.bs.MAX_CHUNK_GET_SIZE, self.bs.MAX_SINGLE_GET_SIZE, progress)
+        self.assertEqual(byte_data, content)
+        self.assert_download_progress(
+            len(byte_data),
+            self.config.blob_settings.max_chunk_get_size,
+            self.config.blob_settings.max_single_get_size,
+            progress)
 
     def test_get_blob_exact_chunk_size(self):
         # parallel tests introduce random order of requests, can only run live
@@ -713,20 +779,29 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Arrange
         blob_name = self._get_blob_reference()
-        byte_data = self.get_random_bytes(self.bs.MAX_SINGLE_GET_SIZE + self.bs.MAX_CHUNK_GET_SIZE)
-        self.bs.create_blob_from_bytes(self.container_name, blob_name, byte_data)
+        byte_data = self.get_random_bytes(
+            self.config.blob_settings.max_single_get_size + 
+            self.config.blob_settings.max_chunk_get_size)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(byte_data)
 
         progress = []
 
-        def callback(current, total):
+        def callback(response):
+            current = response.context['data_stream_current']
+            total = response.context['data_stream_total']
             progress.append((current, total))
 
         # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, blob_name, progress_callback=callback)
+        content = blob.download_blob(raw_response_hook=callback).content_as_bytes()
 
         # Assert
-        self.assertEqual(byte_data, blob.content)
-        self.assert_download_progress(len(byte_data), self.bs.MAX_CHUNK_GET_SIZE, self.bs.MAX_SINGLE_GET_SIZE, progress)
+        self.assertEqual(byte_data, content)
+        self.assert_download_progress(
+            len(byte_data),
+            self.config.blob_settings.max_chunk_get_size,
+            self.config.blob_settings.max_single_get_size,
+            progress)
 
     def test_get_blob_to_stream_with_md5(self):
         # parallel tests introduce random order of requests, can only run live
@@ -753,12 +828,13 @@ class StorageGetBlobTest(StorageTestCase):
             return
 
         # Arrange
+        blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, self.byte_blob, validate_content=True)
+        content = blob.download_blob(validate_content=True).content_as_bytes(max_connections=2)
 
         # Assert
-        self.assertEqual(self.byte_data, blob.content)
+        self.assertEqual(self.byte_data, content)
 
     def test_get_blob_range_to_stream_with_overall_md5(self):
         # parallel tests introduce random order of requests, can only run live
@@ -778,56 +854,46 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Assert
         self.assertIsInstance(properties, BlobProperties)
-        self.assertEqual(bytearray(b'MDAwMDAwMDA='), properties.content_settings.content_md5)
+        self.assertEqual(b'MDAwMDAwMDA=', properties.content_settings.content_md5)
 
     def test_get_blob_range_with_overall_md5(self):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
 
-        blob = self.bs.get_blob_to_bytes(self.container_name, self.byte_blob, start_range=0,
-                                         end_range=1024, validate_content=True)
+        blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
+        content = blob.download_blob(offset=0, length=1024, validate_content=True)
 
         # Arrange
-        props = self.bs.get_blob_properties(self.container_name, self.byte_blob)
-        props.properties.content_settings.content_md5 = 'MDAwMDAwMDA='
-        self.bs.set_blob_properties(self.container_name, self.byte_blob, props.properties.content_settings)
+        props = blob.get_blob_properties()
+        props.content_settings.content_md5 = b'MDAwMDAwMDA='
+        blob.set_blob_properties(props.content_settings)
 
         # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, self.byte_blob, start_range=0,
-                                         end_range=1024, validate_content=True)
+        content = blob.download_blob(offset=0, length=1024, validate_content=True)
 
         # Assert
-        self.assertEqual('MDAwMDAwMDA=', blob.properties.content_settings.content_md5)
+        self.assertEqual(b'MDAwMDAwMDA=', content.properties.content_settings.content_md5)
 
     def test_get_blob_range_with_range_md5(self):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
 
-        blob = self.bs.get_blob_to_bytes(self.container_name, self.byte_blob, start_range=0,
-                                         end_range=1024, validate_content=True)
+        blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
+        content = blob.download_blob(offset=0, length=1024, validate_content=True)
 
         # Arrange
-        props = self.bs.get_blob_properties(self.container_name, self.byte_blob)
-        props.properties.content_settings.content_md5 = None;
-        self.bs.set_blob_properties(self.container_name, self.byte_blob, props.properties.content_settings)
+        props = blob.get_blob_properties()
+        props.content_settings.content_md5 = None
+        blob.set_blob_properties(props.content_settings)
 
         # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, self.byte_blob, start_range=0,
-                                         end_range=1024, validate_content=True)
+        content = blob.download_blob(offset=0, length=1024, validate_content=True)
 
         # Assert
-        self.assertTrue(hasattr(blob.properties.content_settings, "content_type"));
-        self.assertFalse(hasattr(blob.properties.content_settings, "content_md5"));
-
-        # Act
-        blob = self.bs.get_blob_to_bytes(self.container_name, self.byte_blob, start_range=0,
-                                         end_range=1024, validate_content=True)
-
-        # Assert
-        self.assertTrue(hasattr(blob.properties.content_settings, "content_type"));
-        self.assertFalse(hasattr(blob.properties.content_settings, "content_md5"));
+        self.assertIsNotNone(content.properties.content_settings.content_type)
+        self.assertIsNone(content.properties.content_settings.content_md5)
 
 
 # ------------------------------------------------------------------------------

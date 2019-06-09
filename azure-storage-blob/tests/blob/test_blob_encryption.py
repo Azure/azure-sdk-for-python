@@ -21,6 +21,7 @@ from os import (
 )
 
 from azure.common import AzureException
+from azure.core.exceptions import HttpResponseError
 from azure.storage.common._encryption import (
     _dict_to_encryption_data,
     _validate_and_unwrap_cek,
@@ -28,7 +29,6 @@ from azure.storage.common._encryption import (
 )
 from azure.storage.common._error import (
     _ERROR_OBJECT_INVALID,
-    _ERROR_DECRYPTION_FAILURE,
     _ERROR_VALUE_SHOULD_BE_BYTES,
     _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION,
 )
@@ -55,8 +55,11 @@ from tests.testcase import (
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'encryption_container'
 TEST_BLOB_PREFIXES = {'BlockBlob':'encryption_block_blob',
-                      'PageBlob':'encryption_page_blob'}
+                      'PageBlob':'encryption_page_blob',
+                      'AppendBlob': 'foo'}
 FILE_PATH = 'blob_input.temp.dat'
+_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = 'The require_encryption flag is set, but encryption is not supported' + \
+                                           ' for this method.'
 #------------------------------------------------------------------------------
 
 class StorageBlobEncryptionTest(StorageTestCase):
@@ -77,12 +80,8 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         self.bsc = BlobServiceClient(url, credentials=credentials, configuration=self.config)
         self.container_name = self.get_resource_name('utcontainer')
+        self.blob_types = (BlobType.BlockBlob, BlobType.PageBlob, BlobType.AppendBlob)
 
-
-        # self.bbs = self._create_storage_service(BlockBlobService, self.settings)
-        # self.pbs = self._create_storage_service(PageBlobService, self.settings)
-        # self.service_dict = {'block_blob':self.bbs,
-        #                      'page_blob':self.pbs}
         self.container_name = self.get_resource_name('utcontainer')
         self.bytes = b'Foo'
 
@@ -191,31 +190,31 @@ class StorageBlobEncryptionTest(StorageTestCase):
         invalid_key_1 = lambda: None #functions are objects, so this effectively creates an empty object
         invalid_key_1.get_kid = valid_key.get_kid
         #No attribute unwrap_key
-        self.bsc.key_encryption_key = invalid_key_1
-        with self.assertRaises(AzureException):
-            blob.download_blob()
+        blob.key_encryption_key = invalid_key_1
+        with self.assertRaises(HttpResponseError):
+            blob.download_blob().content_as_bytes()
 
         invalid_key_2 = lambda: None #functions are objects, so this effectively creates an empty object
         invalid_key_2.unwrap_key = valid_key.unwrap_key
+        blob.key_encryption_key = invalid_key_2
         #No attribute get_kid
-        with self.assertRaises(AzureException):
-            blob.download_blob()
+        with self.assertRaises(HttpResponseError):
+            blob.download_blob().content_as_bytes()
 
     @record
     def test_invalid_value_kek_unwrap(self):
         # Arrange
-        self.bbs.require_encryption = True
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        blob_name = self._create_small_blob('block_blob')
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        blob = self._create_small_blob(BlobType.BlockBlob)
 
         # Act
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        self.bbs.key_encryption_key.unwrap_key = None
-        try:
-            self.bbs.get_blob_to_bytes(self.container_name, blob_name)
-            self.fail()
-        except AzureException as e:
-            self.assertEqual(str(e), _ERROR_DECRYPTION_FAILURE)
+        blob.key_encryption_key = KeyWrapper('key1')
+        blob.key_encryption_key.unwrap_key = None
+
+        with self.assertRaises(HttpResponseError) as e:
+            blob.download_blob().content_as_bytes()
+        self.assertEqual(str(e.exception), 'Decryption failed.')
 
     @record
     def test_get_blob_kek(self):
@@ -234,19 +233,19 @@ class StorageBlobEncryptionTest(StorageTestCase):
     @record
     def test_get_blob_resolver(self):
         # Arrange
-        self.bbs.require_encryption = True
-        self.bbs.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
         key_resolver = KeyResolver()
-        key_resolver.put_key(self.bbs.key_encryption_key)
-        self.bbs.key_resolver_function = key_resolver.resolve_key
-        blob_name = self._create_small_blob('block_blob')
+        key_resolver.put_key(self.bsc.key_encryption_key)
+        self.bsc.key_resolver_function = key_resolver.resolve_key
+        blob = self._create_small_blob(BlobType.BlockBlob)
 
         # Act
-        self.bbs.key_encryption_key = None
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name)
+        self.bsc.key_encryption_key = None
+        content = blob.download_blob().content_as_bytes()
 
         # Assert
-        self.assertEqual(blob.content, self.bytes)
+        self.assertEqual(content, self.bytes)
 
     def test_get_blob_kek_RSA(self):
         # We can only generate random RSA keys, so this must be run live or 
@@ -268,40 +267,38 @@ class StorageBlobEncryptionTest(StorageTestCase):
     @record
     def test_get_blob_nonmatching_kid(self):
         # Arrange
-        self.bbs.require_encryption = True
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        blob_name = self._create_small_blob('block_blob')
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        blob = self._create_small_blob(BlobType.BlockBlob)
 
         # Act
-        self.bbs.key_encryption_key.kid = 'Invalid'
+        self.bsc.key_encryption_key.kid = 'Invalid'
 
         # Assert
-        try:
-            self.bbs.get_blob_to_bytes(self.container_name, blob_name)
-            self.fail()
-        except AzureException as e:
-            self.assertEqual(str(e), _ERROR_DECRYPTION_FAILURE)
+        with self.assertRaises(HttpResponseError) as e:
+            blob.download_blob().content_as_bytes()
+        self.assertEqual(str(e.exception), 'Decryption failed.')
 
     @record
     def test_put_blob_invalid_stream_type(self):
         # Arrange
-        self.bbs.require_encryption = True
-        self.bbs.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
         small_stream = StringIO(u'small')
-        large_stream = StringIO(u'large' * self.bbs.MAX_SINGLE_PUT_SIZE)
-        blob_name = self._get_blob_reference('block_blob')
+        large_stream = StringIO(u'large' * self.config.blob_settings.max_single_put_size)
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Assert
         # Block blob specific single shot
-        try:
-            self.bbs.create_blob_from_stream(self.container_name, blob_name, small_stream, count=5)
-            self.fail()
-        except TypeError as e:
-            self.assertEqual(str(e), _ERROR_VALUE_SHOULD_BE_BYTES.format('blob'))
+        with self.assertRaises(TypeError) as e:
+            blob.upload_blob(small_stream, length=5)
+        self.assertTrue('blob data should be of type bytes.' in str(e.exception))
 
         # Generic blob chunked
-        with self.assertRaises(TypeError):
-            self.bbs.create_blob_from_stream(self.container_name, blob_name, large_stream)
+        with self.assertRaises(TypeError) as e:
+            blob.upload_blob(large_stream)
+        self.assertTrue('blob data should be of type bytes.' in str(e.exception))
 
     def test_put_blob_chunking_required_mult_of_block_size(self):
         # parallel tests introduce random order of requests, can only run live
@@ -309,17 +306,19 @@ class StorageBlobEncryptionTest(StorageTestCase):
             return
 
         # Arrange
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        self.bbs.require_encryption = True
-        content = self.get_random_bytes(self.bbs.MAX_SINGLE_PUT_SIZE + self.bbs.MAX_BLOCK_SIZE)
-        blob_name = self._get_blob_reference('block_blob')
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
+        content = self.get_random_bytes(
+            self.config.blob_settings.max_single_put_size + self.config.blob_settings.max_block_size)
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        self.bbs.create_blob_from_bytes(self.container_name, blob_name, content, max_connections=3)
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name)
+        blob.upload_blob(content, max_connections=3)
+        blob_content = blob.download_blob().content_as_bytes(max_connections=3)
 
         # Assert
-        self.assertEqual(content, blob.content)
+        self.assertEqual(content, blob_content)
 
     def test_put_blob_chunking_required_non_mult_of_block_size(self):
         # parallel tests introduce random order of requests, can only run live
@@ -327,17 +326,18 @@ class StorageBlobEncryptionTest(StorageTestCase):
             return
 
         # Arrange
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        self.bbs.require_encryption = True
-        content = urandom(self.bbs.MAX_SINGLE_PUT_SIZE + 1)
-        blob_name = self._get_blob_reference('block_blob')
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
+        content = urandom(self.config.blob_settings.max_single_put_size + 1)
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        self.bbs.create_blob_from_bytes(self.container_name, blob_name, content, max_connections=3)
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name)
+        blob.upload_blob(content, max_connections=3)
+        blob_content = blob.download_blob().content_as_bytes(max_connections=3)
 
         # Assert
-        self.assertEqual(content, blob.content)
+        self.assertEqual(content, blob_content)
 
     def test_put_blob_chunking_required_range_specified(self):
         # parallel tests introduce random order of requests, can only run live
@@ -345,379 +345,385 @@ class StorageBlobEncryptionTest(StorageTestCase):
             return
 
         # Arrange
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        self.bbs.require_encryption = True
-        content = self.get_random_bytes(self.bbs.MAX_SINGLE_PUT_SIZE * 2)
-        blob_name = self._get_blob_reference('block_blob')
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
+        content = self.get_random_bytes(self.config.blob_settings.max_single_put_size * 2)
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        self.bbs.create_blob_from_bytes(self.container_name, blob_name, content, max_connections=3,
-                                        count=self.bbs.MAX_SINGLE_PUT_SIZE+53)
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name)
+        blob.upload_blob(
+            content,
+            length=self.config.blob_settings.max_single_put_size + 53,
+            max_connections=3)
+        blob_content = blob.download_blob().content_as_bytes(max_connections=3)
 
         # Assert
-        self.assertEqual(content[:self.bbs.MAX_SINGLE_PUT_SIZE+53], blob.content)
+        self.assertEqual(content[:self.config.blob_settings.max_single_put_size+53], blob_content)
 
     @record
     def test_put_block_blob_single_shot(self):
         # Arrange
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        self.bbs.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
         content = b'small'
-        blob_name = self._get_blob_reference('block_blob')
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        self.bbs.create_blob_from_bytes(self.container_name, blob_name, content)
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name)
+        blob.upload_blob(content)
+        blob_content = blob.download_blob().content_as_bytes()
 
         # Assert
-        self.assertEqual(content, blob.content)
+        self.assertEqual(content, blob_content)
 
     @record
     def test_put_blob_range(self):
         # Arrange
-        self.bbs.require_encryption = True
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        content = b'Random repeats' * self.bbs.MAX_SINGLE_PUT_SIZE * 5
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        content = b'Random repeats' * self.config.blob_settings.max_single_put_size * 5
 
         # All page blob uploads call _upload_chunks, so this will test the ability
         # of that function to handle ranges even though it's a small blob
-        blob_name = self._get_blob_reference('block_blob')
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        self.bbs.create_blob_from_bytes(self.container_name, blob_name, content, index=2,
-                                        count=self.bbs.MAX_SINGLE_PUT_SIZE + 5,
-                                        max_connections=1)
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name)
+        blob.upload_blob(
+            content[2:],
+            length=self.config.blob_settings.max_single_put_size + 5,
+            max_connections=2)
+        blob_content = blob.download_blob().content_as_bytes(max_connections=2)
 
         # Assert
-        self.assertEqual(content[2:2 + self.bbs.MAX_SINGLE_PUT_SIZE + 5], blob.content)
+        self.assertEqual(content[2:2 + self.config.blob_settings.max_single_put_size + 5], blob_content)
 
     @record
     def test_put_blob_empty(self):
         # Arrange
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        self.bbs.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
         content = b''
-        blob_name = self._get_blob_reference('block_blob')
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        self.bbs.create_blob_from_bytes(self.container_name, blob_name, content)
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name)
+        blob.upload_blob(content)
+        blob_content = blob.download_blob().content_as_bytes(max_connections=2)
 
         # Assert
-        self.assertEqual(content, blob.content)
+        self.assertEqual(content, blob_content)
 
     @record
     def test_put_blob_serial_upload_chunking(self):
         # Arrange
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        self.bbs.require_encryption = True
-        content = self.get_random_bytes(self.bbs.MAX_SINGLE_PUT_SIZE + 1)
-        blob_name = self._get_blob_reference('block_blob')
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
+        content = self.get_random_bytes(self.config.blob_settings.max_single_put_size + 1)
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        self.bbs.create_blob_from_bytes(self.container_name, blob_name, content, max_connections=1)
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name, max_connections=1)
+        blob.upload_blob(content, max_connections=1)
+        blob_content = blob.download_blob().content_as_bytes(max_connections=1)
 
         # Assert
-        self.assertEqual(content, blob.content)
+        self.assertEqual(content, blob_content)
 
     @record
     def test_get_blob_range_beginning_to_middle(self):
         # Arrange
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        self.bbs.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
         content = self.get_random_bytes(128)
-        blob_name = self._get_blob_reference('block_blob')
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        self.bbs.create_blob_from_bytes(self.container_name, blob_name, content)
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name, start_range=0, end_range=50)
+        blob.upload_blob(content, max_connections=1)
+        blob_content = blob.download_blob(offset=0, length=50).content_as_bytes(max_connections=1)
 
         # Assert
-        self.assertEqual(content[:51], blob.content)
+        self.assertEqual(content[:51], blob_content)
 
     @record
     def test_get_blob_range_middle_to_end(self):
         # Arrange
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        self.bbs.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
         content = self.get_random_bytes(128)
-        blob_name = self._get_blob_reference('block_blob')
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        self.bbs.create_blob_from_bytes(self.container_name, blob_name, content)
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name, start_range=50, end_range=127)
-        blob2 = self.bbs.get_blob_to_bytes(self.container_name, blob_name, start_range=50)
+        blob.upload_blob(content, max_connections=1)
+        blob_content = blob.download_blob(offset=50, length=127).content_as_bytes()
+        blob_content2 = blob.download_blob(offset=50).content_as_bytes()
 
         # Assert
-        self.assertEqual(content[50:], blob.content)
-        self.assertEqual(content[50:], blob.content)
+        self.assertEqual(content[50:], blob_content)
+        self.assertEqual(content[50:], blob_content2)
 
     @record
     def test_get_blob_range_middle_to_middle(self):
         # Arrange
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        self.bbs.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
         content = self.get_random_bytes(128)
-        blob_name = self._get_blob_reference('block_blob')
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        self.bbs.create_blob_from_bytes(self.container_name, blob_name, content)
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name, start_range=50, end_range=93)
+        blob.upload_blob(content)
+        blob_content = blob.download_blob(offset=50, length=93).content_as_bytes()
 
         # Assert
-        self.assertEqual(content[50:94], blob.content)
+        self.assertEqual(content[50:94], blob_content)
 
     @record
     def test_get_blob_range_aligns_on_16_byte_block(self):
         # Arrange
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        self.bbs.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
         content = self.get_random_bytes(128)
-        blob_name = self._get_blob_reference('block_blob')
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        self.bbs.create_blob_from_bytes(self.container_name, blob_name, content)
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name, start_range=48, end_range=63,
-                                          max_connections=1)
+        blob.upload_blob(content)
+        blob_content = blob.download_blob(offset=48, length=63).content_as_bytes()
 
         # Assert
-        self.assertEqual(content[48:64], blob.content)
+        self.assertEqual(content[48:64], blob_content)
 
     @record
     def test_get_blob_range_expanded_to_beginning_block_align(self):
         # Arrange
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        self.bbs.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
         content = self.get_random_bytes(128)
-        blob_name = self._get_blob_reference('block_blob')
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        self.bbs.create_blob_from_bytes(self.container_name, blob_name, content)
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name, start_range=5, end_range=50)
+        blob.upload_blob(content)
+        blob_content = blob.download_blob(offset=5, length=50).content_as_bytes()
 
         # Assert
-        self.assertEqual(content[5:51], blob.content)
+        self.assertEqual(content[5:51], blob_content)
 
     @record
     def test_get_blob_range_expanded_to_beginning_iv(self):
         # Arrange
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        self.bbs.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        self.bsc.require_encryption = True
         content = self.get_random_bytes(128)
-        blob_name = self._get_blob_reference('block_blob')
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        self.bbs.create_blob_from_bytes(self.container_name, blob_name, content)
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name, start_range=22, end_range=42)
+        blob.upload_blob(content)
+        blob_content = blob.download_blob(offset=22, length=42).content_as_bytes()
 
         # Assert
-        self.assertEqual(content[22:43], blob.content)
+        self.assertEqual(content[22:43], blob_content)
 
     @record
     def test_put_blob_strict_mode(self):
         # Arrange
-        blob_name = self._get_blob_reference('block_blob')
-        for service in self.service_dict.values():
-            service.require_encryption = True
+        self.bsc.require_encryption = True
         content = urandom(512)
 
         # Assert
-        for service in self.service_dict.values():
+        for service in self.blob_types:
+            blob_name = self._get_blob_reference(service)
+            blob = self.bsc.get_blob_client(self.container_name, blob_name, blob_type=service)
+
             with self.assertRaises(ValueError):
-                service.create_blob_from_bytes(self.container_name, blob_name, content)
+                blob.upload_blob(content)
 
             stream = BytesIO(content)
             with self.assertRaises(ValueError):
-                service.create_blob_from_stream(self.container_name, blob_name, stream, count=512)
+                blob.upload_blob(stream, length=512)
 
             FILE_PATH = 'blob_input.temp.dat'
             with open(FILE_PATH, 'wb') as stream:
                 stream.write(content)
-            with self.assertRaises(ValueError):
-                service.create_blob_from_path(self.container_name, blob_name, FILE_PATH)
-
-            if not isinstance(service, PageBlobService):
+            with open(FILE_PATH, 'rb') as stream:
                 with self.assertRaises(ValueError):
-                    service.create_blob_from_text(self.container_name, blob_name, 'To encrypt')
+                    blob.upload_blob(stream)
 
+            with self.assertRaises(ValueError):
+                blob.upload_blob('To encrypt')
 
     @record
     def test_get_blob_strict_mode_no_policy(self):
         # Arrange
-        self.bbs.require_encryption = True
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        blob_name = self._create_small_blob('block_blob')
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        blob = self._create_small_blob(BlobType.BlockBlob)
 
         # Act
-        self.bbs.key_encryption_key = None
+        blob.key_encryption_key = None
 
         # Assert
         with self.assertRaises(ValueError):
-            self.bbs.get_blob_to_bytes(self.container_name, blob_name)
+            blob.download_blob().content_as_bytes()
 
 
     @record
     def test_get_blob_strict_mode_unencrypted_blob(self):
         # Arrange
-        blob_name = self._create_small_blob('block_blob')
+        blob = self._create_small_blob(BlobType.BlockBlob)
 
         # Act
-        self.bbs.require_encryption = True
-        self.bbs.key_encryption_key = KeyWrapper('key1')
+        blob.require_encryption = True
+        blob.key_encryption_key = KeyWrapper('key1')
 
         # Assert
-        with self.assertRaises(AzureException):
-            self.bbs.get_blob_to_bytes(self.container_name, blob_name)
+        with self.assertRaises(HttpResponseError):
+            blob.download_blob().content_as_bytes()
 
     @record
     def test_invalid_methods_fail_block(self):
         # Arrange
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        blob_name = self._get_blob_reference('block_blob')
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        blob_name = self._get_blob_reference(BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name, blob_type=BlobType.BlockBlob)
 
         # Assert
-        try:
-            self.bbs.put_block(self.container_name, blob_name, urandom(32), 'block1')
-            self.fail()
-        except ValueError as e:
-            self.assertEqual(str(e), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        with self.assertRaises(ValueError) as e:
+            blob.stage_block('block1', urandom(32))
+        self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-        try:
-            self.bbs.put_block_list(self.container_name, blob_name, ['block1'])
-            self.fail()
-        except ValueError as e:
-            self.assertEqual(str(e), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        with self.assertRaises(ValueError) as e:
+            blob.commit_block_list(['block1'])
+        self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
     @record
     def test_invalid_methods_fail_append(self):
         # Arrange
-        abs = self._create_storage_service(AppendBlobService, self.settings)
-        abs.key_encryption_key = KeyWrapper('key1')
-        blob_name = self._get_blob_reference('block_blob')
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        blob_name = self._get_blob_reference(BlobType.AppendBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name, blob_type=BlobType.AppendBlob)
 
         # Assert
-        try:
-            abs.append_block(self.container_name, blob_name, urandom(32), 'block1')
-            self.fail()
-        except ValueError as e:
-            self.assertEqual(str(e), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        with self.assertRaises(ValueError) as e:
+            blob.append_block(urandom(32))
+        self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-        try:
-            abs.create_blob(self.container_name, blob_name)
-            self.fail()
-        except ValueError as e:
-            self.assertEqual(str(e), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        with self.assertRaises(ValueError) as e:
+            blob.create_blob()
+        self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         # All append_from operations funnel into append_from_stream, so testing one is sufficient
-        with self.assertRaises(ValueError):
-            abs.append_blob_from_bytes(self.container_name, blob_name, b'To encrypt')
+        with self.assertRaises(ValueError) as e:
+            blob.upload_blob(b'To encrypt')
+        self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
     @record
     def test_invalid_methods_fail_page(self):
         # Arrange
-        self.pbs.key_encryption_key = KeyWrapper('key1')
-        blob_name = self._get_blob_reference('page_blob')
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        blob_name = self._get_blob_reference(BlobType.PageBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name, blob_type=BlobType.PageBlob)
 
         # Assert
-        try:
-            self.pbs.update_page(self.container_name, blob_name, urandom(512), 0, 511)
-            self.fail()
-        except ValueError as e:
-            self.assertEqual(str(e), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        with self.assertRaises(ValueError) as e:
+            blob.upload_page(urandom(512), 0, 511)
+        self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-        try:
-            self.pbs.create_blob(self.container_name, blob_name, 512)
-            self.fail()
-        except ValueError as e:
-            self.assertEqual(str(e), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        with self.assertRaises(ValueError) as e:
+            blob.create_blob(512)
+        self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
     @record
     def test_validate_encryption(self):
         # Arrange
-        self.bbs.require_encryption = True
+        self.bsc.require_encryption = True
         kek = KeyWrapper('key1')
-        self.bbs.key_encryption_key = kek
-        blob_name = self._create_small_blob('block_blob')
+        self.bsc.key_encryption_key = kek
+        blob = self._create_small_blob(BlobType.BlockBlob)
 
         # Act
-        self.bbs.require_encryption = False
-        self.bbs.key_encryption_key = None
-        blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name)
+        blob.require_encryption = False
+        blob.key_encryption_key = None
+        content = blob.download_blob()
+        data = content.content_as_bytes()
 
-        encryption_data = _dict_to_encryption_data(loads(blob.metadata['encryptiondata']))
+        encryption_data = _dict_to_encryption_data(loads(content.properties.metadata['encryptiondata']))
         iv = encryption_data.content_encryption_IV
         content_encryption_key = _validate_and_unwrap_cek(encryption_data, kek, None)
         cipher = _generate_AES_CBC_cipher(content_encryption_key, iv)
         decryptor = cipher.decryptor()
         unpadder = PKCS7(128).unpadder()
 
-        content = decryptor.update(blob.content) + decryptor.finalize()
+        content = decryptor.update(data) + decryptor.finalize()
         content = unpadder.update(content) + unpadder.finalize()
         
         self.assertEqual(self.bytes, content)
 
     @record
     def test_create_block_blob_from_star(self):
-        self._create_blob_from_star('block_blob', self.bytes, self.bbs.create_blob_from_bytes, self.bytes)
+        self._create_blob_from_star(BlobType.BlockBlob, self.bytes, self.bytes)
 
         stream = BytesIO(self.bytes)
-        self._create_blob_from_star('block_blob', self.bytes, self.bbs.create_blob_from_stream, stream)
+        self._create_blob_from_star(BlobType.BlockBlob, self.bytes, stream)
 
         FILE_PATH = 'blob_input.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(self.bytes)
-        self._create_blob_from_star('block_blob', self.bytes, self.bbs.create_blob_from_path, FILE_PATH)
+        with open(FILE_PATH, 'rb') as stream:
+            self._create_blob_from_star(BlobType.BlockBlob, self.bytes, stream)
 
-        self._create_blob_from_star('block_blob', b'To encrypt', self.bbs.create_blob_from_text, 'To encrypt')
+        self._create_blob_from_star(BlobType.BlockBlob, b'To encrypt', 'To encrypt')
 
     @record
     def test_create_page_blob_from_star(self):
         content = self.get_random_bytes(512)
-        self._create_blob_from_star('page_blob', content, self.pbs.create_blob_from_bytes, content)
+        self._create_blob_from_star(BlobType.PageBlob, content, content)
 
         stream = BytesIO(content)
-        self._create_blob_from_star('page_blob', content, self.pbs.create_blob_from_stream, stream, count=512)
+        self._create_blob_from_star(BlobType.PageBlob, content, stream, length=512)
 
         FILE_PATH = 'blob_input.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(content)
-        self._create_blob_from_star('page_blob', content, self.pbs.create_blob_from_path, FILE_PATH)
-            
-    def _create_blob_from_star(self, type, content, create_method, data, **kwargs):
-        self.service_dict[type].key_encryption_key = KeyWrapper('key1')
-        self.service_dict[type].require_encryption = True
-        blob_name = self._get_blob_reference(type)
 
-        create_method(self.container_name, blob_name, data, **kwargs)
+        with open(FILE_PATH, 'rb') as stream:
+            self._create_blob_from_star(BlobType.PageBlob, content, stream)
 
-        blob = self.service_dict[type].get_blob_to_bytes(self.container_name, blob_name)
+    def _create_blob_from_star(self, blob_type, content, data, **kwargs):
+        blob_name = self._get_blob_reference(blob_type)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name, blob_type=blob_type)
+        blob.key_encryption_key = KeyWrapper('key1')
+        blob.require_encryption = True
+        blob.upload_blob(data, **kwargs)
 
-        self.assertEqual(content, blob.content)
+        blob_content = blob.download_blob().content_as_bytes()
+        self.assertEqual(content, blob_content)
 
     @record
     def test_get_blob_to_star(self):
         # Arrange
-        self.bbs.require_encryption = True
-        self.bbs.key_encryption_key = KeyWrapper('key1')
-        blob_name = self._create_small_blob('block_blob')
+        self.bsc.require_encryption = True
+        self.bsc.key_encryption_key = KeyWrapper('key1')
+        blob = self._create_small_blob(BlobType.BlockBlob)
 
         # Act
-        bytes_blob = self.bbs.get_blob_to_bytes(self.container_name, blob_name)
-        stream = BytesIO()
-        self.bbs.get_blob_to_stream(self.container_name, blob_name, stream)
-        stream.seek(0)
-        text_blob = self.bbs.get_blob_to_text(self.container_name, blob_name, encoding='utf-8')
-        self.bbs.get_blob_to_path(self.container_name, blob_name, FILE_PATH)
+        iter_blob = b"".join(list(blob.download_blob()))
+        bytes_blob = blob.download_blob().content_as_bytes()
+        stream_blob = BytesIO()
+        blob.download_blob().download_to_stream(stream_blob)
+        stream_blob.seek(0)
+        text_blob = blob.download_blob().content_as_text()
 
         # Assert
-        self.assertEqual(self.bytes, bytes_blob.content)
-        self.assertEqual(self.bytes, stream.read())
-        self.assertEqual(self.bytes.decode(), text_blob.content)
-        with open(FILE_PATH, 'rb') as stream:
-            self.assertEqual(self.bytes, stream.read()) 
+        self.assertEqual(self.bytes, iter_blob)
+        self.assertEqual(self.bytes, bytes_blob)
+        self.assertEqual(self.bytes, stream_blob.read())
+        self.assertEqual(self.bytes.decode(), text_blob)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

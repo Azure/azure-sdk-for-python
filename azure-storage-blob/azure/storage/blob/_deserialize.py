@@ -19,7 +19,7 @@ def deserialize_blob_properties(response, obj, headers):
         metadata=metadata,
         **headers
     )
-    if 'content-range' in headers:
+    if 'Content-Range' in headers:
         if 'x-ms-blob-content-md5' in headers:
             blob_properties.content_settings.content_md5 = headers['x-ms-blob-content-md5']
         else:

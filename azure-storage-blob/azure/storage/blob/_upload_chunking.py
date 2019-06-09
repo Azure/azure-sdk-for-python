@@ -165,6 +165,8 @@ class _BlobChunkUploader(object):
                 if self.blob_size:
                     read_size = min(self.chunk_size - len(data), self.blob_size - (index + len(data)))
                 temp = self.stream.read(read_size)
+                if not isinstance(temp, six.binary_type):
+                    raise TypeError('blob data should be of type bytes.')
                 data += temp or b""
 
                 # We have read an empty string and so are at the end
