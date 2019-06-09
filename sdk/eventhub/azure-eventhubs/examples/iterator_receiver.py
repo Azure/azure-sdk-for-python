@@ -31,22 +31,15 @@ class PartitionReceiverThread(Thread):
         self.receiver = receiver
 
     def run(self):
-        with receiver:
+        with self.receiver:
             for item in self.receiver:
-                print(item.body_as_str() + " " + self.receiver.name)
-
-    def stop_receive(self):
-        self.receiver.close() # TODO: how to stop receiver elegantly
+                print(item)
 
 
 client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
-                        network_tracing=True)
-
+                    network_tracing=True)
 receiver = client.create_receiver(partition_id="0", event_position=EVENT_POSITION)
-
 with receiver:
     thread = PartitionReceiverThread(receiver)
     thread.start()
-    time.sleep(5)
-    thread.stop_receive()
     thread.join()

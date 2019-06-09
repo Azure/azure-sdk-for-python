@@ -34,30 +34,16 @@ async def iter_receiver(receiver):
     async with receiver:
         async for item in receiver:
             print(item.body_as_str(), item.offset.value, receiver.name)
-            # TODO: how to stop iterator receiver elegantly, if will cause AttributeError: 'NoneType'
-            #  object has no attribute '_conn' in uamqp if the connection is closed first
 
 
 async def main():
-
-    loop = asyncio.get_event_loop()
-
     if not HOSTNAME:
         raise ValueError("No EventHubs URL supplied.")
-
     client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
                             network_tracing=False)
-
     receiver = client.create_receiver(partition_id="0", event_position=EVENT_POSITION)
+    await iter_receiver(receiver)
 
-    task = asyncio.gather(iter_receiver(receiver))
-    await asyncio.sleep(5)
+if __name__ == '__main__':
+    asyncio.run(main())
 
-    await receiver.close()
-    task.cancel()
-
-try:
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
-except KeyboardInterrupt:
-    pass
