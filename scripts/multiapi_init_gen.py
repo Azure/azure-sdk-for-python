@@ -7,6 +7,7 @@ import os
 import pkgutil
 import re
 import sys
+import shutil
 import types
 import glob
 from pathlib import Path
@@ -283,6 +284,20 @@ def main(input_str):
 
     client_file = find_client_file(package_name, module_name)
     client_folder = find_module_folder(package_name, module_name)
+    last_api_version = sorted(mod_to_api_version.keys())[-1]
+
+    _LOGGER.info("Copy _configuration.py if possible")
+
+    if (client_folder / last_api_version).exists():
+        _LOGGER.warning("I got a configuration file")
+        shutil.copy(
+            client_folder / last_api_version / "_configuration.py",
+            client_folder / "_configuration.py"
+        )
+        shutil.copy(
+            client_folder / last_api_version / "__init__.py",
+            client_folder / "__init__.py"
+        )
 
     with open(client_folder / Path("models.py"), "w", newline='\n') as write_models:
         write_models.write(build_models_file(mod_to_api_version))
