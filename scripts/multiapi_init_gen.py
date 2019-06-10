@@ -12,6 +12,8 @@ import glob
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+from typing import List, Tuple, Any
+
 try:
     import msrestazure
 except:  # Install msrestazure. Would be best to mock it, since we don't need it, but all scenarios I know are fine with a pip install for now
@@ -21,8 +23,7 @@ except:  # Install msrestazure. Would be best to mock it, since we don't need it
 try:
     import azure.common
 except:
-    sdk_root = Path(__file__).parents[1]
-    sys.path.append(str((sdk_root / "sdk" / "core" / "azure-common").resolve()))
+    sys.path.append(str((Path(__file__).parents[1] / "sdk" / "core" / "azure-common").resolve()))
     import azure.common
 
 import pkg_resources
@@ -45,8 +46,8 @@ def parse_input(input_parameter):
     return package_name, module_name
 
 # given an input of a name, we need to return the appropriate relative diff between the sdk_root and the actual package directory
-def resolve_package_directory(package_name, sdk_root):
-    packages = [os.path.dirname(p) for p in (glob.glob('{}/setup.py'.format(package_name)) + glob.glob('sdk/*/{}/setup.py'.format(package_name)))]
+def resolve_package_directory(package_name, sdk_root=None):
+    packages = [os.path.dirname(p) for p in (list(sdk_root.glob('{}/setup.py'.format(package_name))) + list(sdk_root.glob('sdk/*/{}/setup.py'.format(package_name))))]
 
     if len(packages) > 1:
         print('There should only be a single package matched in either repository structure. The following were found: {}'.format(packages))
@@ -55,7 +56,9 @@ def resolve_package_directory(package_name, sdk_root):
     return os.path.relpath(packages[0], sdk_root)
 
 
-def get_versioned_modules(package_name, module_name, sdk_root=None):
+def get_versioned_modules(package_name: str, module_name:str, sdk_root : Path = None) -> List[Tuple[str, Any]]:
+    """Get (label, submodule) where label starts with "v20" and submodule is the corresponding imported module.
+    """
     if not sdk_root:
         sdk_root = Path(__file__).parents[1]
 
@@ -186,7 +189,22 @@ def build_models_string(module_name, mod_to_api_version):
     return result
 
 
-def build_operation_group(module_name, operation_name, versions):
+def build_models_file(mod_to_api_version):
+    result = """# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+"""
+    template_import = "from .{api_version_module}.models import *\n"
+    for attr in sorted(mod_to_api_version.keys()):
+        result += template_import.format(
+            api_version_module=attr)
+    return result
+
+
+def build_operation_group(module_name, operation_name, versions, mod_to_api_version):
 
     template_def = "    @property\n    def {attr}(self):\n"
     template_intro_doc= '        """Instance depends on the API version:\n\n'
@@ -222,11 +240,20 @@ def build_operation_group(module_name, operation_name, versions):
     result += template_end_def
     return result
 
-def find_client_file(package_name, module_name):
-    path_to_package = resolve_package_directory(package_name, Path(__file__).parents[1])
-    module_path = Path(path_to_package) / Path(module_name.replace(".", os.sep))
 
+def find_module_folder(package_name, module_name):
+    sdk_root = Path(__file__).parents[1]
+    _LOGGER.debug("SDK root is: %s", sdk_root)
+    path_to_package = resolve_package_directory(package_name, sdk_root)
+    module_path = sdk_root / Path(path_to_package) / Path(module_name.replace(".", os.sep))
+    _LOGGER.debug("Module path is: %s", module_path)
+    return module_path
+
+
+def find_client_file(package_name, module_name):
+    module_path = find_module_folder(package_name, module_name)
     return next(module_path.glob('*_client.py'))
+
 
 _CODE_PREFIX = """
     @classmethod
@@ -235,10 +262,16 @@ _CODE_PREFIX = """
 
 """
 
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+_MODELS_FILE = """# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+"""
 
-    package_name, module_name = parse_input(sys.argv[1])
+def main(input_str):
+    package_name, module_name = parse_input(input_str)
     versioned_modules = get_versioned_modules(package_name, module_name)
     version_dict, mod_to_api_version = build_operation_meta(versioned_modules)
     model_string = build_models_string(module_name, mod_to_api_version)
@@ -246,9 +279,14 @@ if __name__ == "__main__":
     operations_string = []
     for attr in sorted(version_dict.keys()):
         versions = version_dict[attr]
-        operations_string.append(build_operation_group(module_name, attr, versions))
+        operations_string.append(build_operation_group(module_name, attr, versions, mod_to_api_version))
 
     client_file = find_client_file(package_name, module_name)
+    client_folder = find_module_folder(package_name, module_name)
+
+    with open(client_folder / Path("models.py"), "w", newline='\n') as write_models:
+        write_models.write(build_models_file(mod_to_api_version))
+
     with open(client_file, "r") as read_client:
         lines = read_client.readlines()
     with open(client_file, "w", newline='\n') as write_client:
@@ -265,3 +303,6 @@ if __name__ == "__main__":
             write_client.write("\n")
             write_client.write(operation)
 
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    main(sys.argv[1])
