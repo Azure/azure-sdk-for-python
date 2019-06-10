@@ -15,6 +15,10 @@ from async_preparer import AsyncVaultClientPreparer
 from async_test_case import AsyncKeyVaultTestCase
 
 
+def print(*args):
+    assert all(arg is not None for arg in args)
+
+
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer(enable_soft_delete=True)

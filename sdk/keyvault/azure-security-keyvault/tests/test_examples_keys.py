@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from __future__ import print_function
 import codecs
 import functools
 import time
@@ -12,6 +13,10 @@ from azure.security.keyvault._generated.v7_0.models import JsonWebKey
 from devtools_testutils import ResourceGroupPreparer
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
+
+
+def print(*args):
+    assert all(arg is not None for arg in args)
 
 
 def create_vault_client():
@@ -56,7 +61,7 @@ def create_key_client():
 
 class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer()
-    @VaultClientPreparer()
+    @VaultClientPreparer(enable_soft_delete=True)
     def test_example_key_crud_operations(self, vault_client, **kwargs):
         from dateutil import parser as date_parse
 
@@ -247,7 +252,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
-    def test_example_keys_recover_purge(self, vault_client, **kwargs):
+    def test_example_keys_recover_purge_async(self, vault_client, **kwargs):
         key_client = vault_client.keys
         created_key = key_client.create_key("key-name", "RSA")
         key_client.delete_key(created_key.name)

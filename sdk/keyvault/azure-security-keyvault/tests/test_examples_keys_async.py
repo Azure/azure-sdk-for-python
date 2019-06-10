@@ -1,6 +1,6 @@
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
+# Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
 import functools
@@ -10,6 +10,10 @@ from devtools_testutils import ResourceGroupPreparer
 from async_preparer import AsyncVaultClientPreparer
 from async_test_case import AsyncKeyVaultTestCase
 from azure.security.keyvault.aio import VaultClient
+
+
+def print(*args):
+    assert all(arg is not None for arg in args)
 
 
 def create_vault_client():

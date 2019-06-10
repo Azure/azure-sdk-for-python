@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from __future__ import print_function
 import functools
 import time
 
@@ -10,6 +11,10 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
+
+
+def print(*args):
+    assert all(arg is not None for arg in args)
 
 
 def create_vault_client():
