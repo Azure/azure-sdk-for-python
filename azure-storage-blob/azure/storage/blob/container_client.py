@@ -36,6 +36,8 @@ from ._utils import (
     encode_base64,
     parse_connection_str,
     serialize_iso,
+    parse_query,
+    is_credential_sastoken,
     return_response_and_deserialized)
 from ._deserialize import (
     deserialize_container_properties,
@@ -86,7 +88,8 @@ class ContainerClient(object):
             raise ValueError("Please specify a container name.")
         path_container = ""
         if parsed_url.path:
-            path_container = parsed_url.path.partition('/')[0]
+            path_container = parsed_url.path.lstrip('/').partition('/')[0]
+        _, sas_token = parse_query(parsed_url.query)
         try:
             self.container_name = container.name
         except AttributeError:
@@ -95,11 +98,17 @@ class ContainerClient(object):
         self.scheme = parsed_url.scheme
         self.credentials = credentials
         self.account = parsed_url.hostname.split(".blob.core.")[0]
-        self.url = url if parsed_url.path else "{}://{}/{}".format(
+        self.url = "{}://{}/{}?".format(
             self.scheme,
             parsed_url.hostname,
             quote(self.container_name)
         )
+        if sas_token and not credentials:
+            self.url += sas_token
+        elif is_credential_sastoken(credentials):
+            self.url += credentials
+            credentials = None
+        self.url = self.url.rstrip('?&')
 
         self.require_encryption = kwargs.get('require_encryption', False)
         self.key_encryption_key = kwargs.get('key_encryption_key')
@@ -292,10 +301,7 @@ class ContainerClient(object):
         :returns: A dict of account information (SKU and account type).
         """
         try:
-            response = self._client.container.get_account_info(
-                cls=return_response_headers,
-                timeout=timeout,
-                **kwargs)
+            response = self._client.container.get_account_info(cls=return_response_headers, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
         return {

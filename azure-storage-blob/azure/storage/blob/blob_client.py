@@ -274,7 +274,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :returns: A dict of account information (SKU and account type).
         """
         try:
-            response = self._client.service.get_account_info(cls=return_response_headers)
+            response = self._client.blob.get_account_info(cls=return_response_headers)
             return {
                 'SKU': response.get('x-ms-sku-name'),
                 'AccountType': response.get('x-ms-account-kind')

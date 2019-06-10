@@ -345,10 +345,8 @@ def _decrypt_blob(require_encryption, key_encryption_key, key_resolver,
     '''
     if response is None:
         raise ValueError("Response cannot be None.")
-    content = response.content
-    if content is None:
-        raise ValueError("Response data content cannot be None.")
-    elif not content:
+    content = b"".join(list(response))
+    if not content:
         return content
 
     try:

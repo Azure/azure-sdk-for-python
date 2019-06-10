@@ -31,7 +31,9 @@ from ._utils import (
     get_access_conditions,
     process_storage_error,
     return_response_headers,
-    parse_connection_str
+    parse_connection_str,
+    parse_query,
+    is_credential_sastoken,
 )
 
 if TYPE_CHECKING:
@@ -66,10 +68,18 @@ class BlobServiceClient(object):
         self.scheme = parsed_url.scheme
         self.account = parsed_url.hostname.split(".blob.core.")[0]
         self.credentials = credentials
-        self.url = account_url if not parsed_url.path else "{}://{}".format(
+
+        _, sas_token = parse_query(parsed_url.query)
+        self.url = "{}://{}/?".format(
             self.scheme,
             parsed_url.hostname
         )
+        if sas_token and not credentials:
+            self.url += sas_token
+        elif is_credential_sastoken(credentials):
+            self.url += credentials
+            credentials = None
+        self.url = self.url.rstrip('?&')
 
         self.require_encryption = kwargs.get('require_encryption', False)
         self.key_encryption_key = kwargs.get('key_encryption_key')

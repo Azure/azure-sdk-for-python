@@ -32,11 +32,10 @@ from azure.storage.blob import (
 )
 from azure.storage.blob.models import (
     BlobPermissions,
+    ContainerPermissions,
     ContentSettings,
     BlobProperties,
     RetentionPolicy,
-    # Include,
-    # ContainerPermissions,
 )
 from tests.testcase import (
     StorageTestCase,
@@ -1377,28 +1376,26 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_get_account_information(self):
-        pytest.skip("not yet supported")
-        # Act)
-        info = self.bs.get_blob_account_information()
+        # Act
+        info = self.bsc.get_account_information()
 
         # Assert
-        self.assertIsNotNone(info.sku_name)
-        self.assertIsNotNone(info.account_kind)
+        self.assertIsNotNone(info.get('SKU'))
+        self.assertIsNotNone(info.get('AccountType'))
 
     @record
     def test_get_account_information_with_container_name(self):
-        pytest.skip("not yet supported")
         # Act
         # Container name gets ignored
-        info = self.bs.get_blob_account_information("missing")
+        container = self.bsc.get_container_client("missing")
+        info = container.get_account_information()
 
         # Assert
-        self.assertIsNotNone(info.sku_name)
-        self.assertIsNotNone(info.account_kind)
+        self.assertIsNotNone(info.get('SKU'))
+        self.assertIsNotNone(info.get('AccountType'))
 
     @record
     def test_get_account_information_with_blob_name(self):
-        pytest.skip("not yet supported")
         # Act
         # Both container and blob names get ignored
         blob = self.bsc.get_blob_client("missing", "missing")
@@ -1411,31 +1408,27 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_get_account_information_with_container_sas(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        pytest.skip("not yet supported")
         if TestMode.need_recording_file(self.test_mode):
             return
 
         # Arrange
-        token = self.bs.generate_container_shared_access_signature(
-            self.container_name,
+        container = self.bsc.get_container_client(self.container_name)
+        token = container.generate_shared_access_signature(
             permission=ContainerPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-
-        bs_with_sas = BlockBlobService(account_name=self.settings.STORAGE_ACCOUNT_NAME, sas_token=token,
-                                       protocol=self.settings.PROTOCOL)
+        sas_container = ContainerClient(container.url, credentials=token)
 
         # Act
-        info = bs_with_sas.get_blob_account_information(self.container_name)
+        info = sas_container.get_account_information()
 
         # Assert
-        self.assertIsNotNone(info.sku_name)
-        self.assertIsNotNone(info.account_kind)
+        self.assertIsNotNone(info.get('SKU'))
+        self.assertIsNotNone(info.get('AccountType'))
 
     @record
     def test_get_account_information_with_blob_sas(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        pytest.skip("Not yet working - auth error")
         if TestMode.need_recording_file(self.test_mode):
             return
 
@@ -1447,10 +1440,10 @@ class StorageCommonBlobTest(StorageTestCase):
             permission=BlobPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        bs_with_sas = BlobClient(blob.url, credentials=token)
-        print("URL: ", bs_with_sas.url)
+        sas_blob = BlobClient(blob.url, credentials=token)
+
         # Act
-        info = bs_with_sas.get_account_information()
+        info = sas_blob.get_account_information()
 
         # Assert
         self.assertIsNotNone(info.get('SKU'))
