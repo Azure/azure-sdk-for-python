@@ -9,5 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.9.0"
+from msrest.serialization import Model
 
+
+class InstancePoolUpdate(Model):
+    """An update to an Instance pool.
+
+    :param tags: Resource tags.
+    :type tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, *, tags=None, **kwargs) -> None:
+        super(InstancePoolUpdate, self).__init__(**kwargs)
+        self.tags = tags

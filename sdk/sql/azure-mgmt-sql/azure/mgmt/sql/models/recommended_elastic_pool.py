@@ -26,7 +26,8 @@ class RecommendedElasticPool(ProxyResource):
     :vartype type: str
     :ivar database_edition: The edition of the recommended elastic pool. The
      ElasticPoolEdition enumeration contains all the valid editions. Possible
-     values include: 'Basic', 'Standard', 'Premium'
+     values include: 'Basic', 'Standard', 'Premium', 'GeneralPurpose',
+     'BusinessCritical'
     :vartype database_edition: str or
      ~azure.mgmt.sql.models.ElasticPoolEdition
     :param dtu: The DTU for the recommended elastic pool.

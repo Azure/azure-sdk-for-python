@@ -32,12 +32,17 @@ class SensitivityLabel(ProxyResource):
     :type information_type: str
     :param information_type_id: The information type ID.
     :type information_type_id: str
+    :ivar is_disabled: Is sensitivity recommendation disabled. Applicable for
+     recommended sensitivity label only. Specifies whether the sensitivity
+     recommendation on this column is disabled (dismissed) or not.
+    :vartype is_disabled: bool
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'is_disabled': {'readonly': True},
     }
 
     _attribute_map = {
@@ -48,6 +53,7 @@ class SensitivityLabel(ProxyResource):
         'label_id': {'key': 'properties.labelId', 'type': 'str'},
         'information_type': {'key': 'properties.informationType', 'type': 'str'},
         'information_type_id': {'key': 'properties.informationTypeId', 'type': 'str'},
+        'is_disabled': {'key': 'properties.isDisabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
@@ -56,3 +62,4 @@ class SensitivityLabel(ProxyResource):
         self.label_id = kwargs.get('label_id', None)
         self.information_type = kwargs.get('information_type', None)
         self.information_type_id = kwargs.get('information_type_id', None)
+        self.is_disabled = None

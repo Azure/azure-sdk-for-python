@@ -37,9 +37,19 @@ class ImportRequest(ExportRequest):
     :param database_name: Required. The name of the database to import.
     :type database_name: str
     :param edition: Required. The edition for the database being created.
-     Possible values include: 'Web', 'Business', 'Basic', 'Standard',
+     The list of SKUs may vary by region and support offer. To determine the
+     SKUs (including the SKU name, tier/edition, family, and capacity) that are
+     available to your subscription in an Azure region, use the
+     `Capabilities_ListByLocation` REST API or one of the following commands:
+     ```azurecli
+     az sql db list-editions -l <location> -o table
+     ````
+     ```powershell
+     Get-AzSqlServerServiceObjective -Location <location>
+     ````
+     . Possible values include: 'Web', 'Business', 'Basic', 'Standard',
      'Premium', 'PremiumRS', 'Free', 'Stretch', 'DataWarehouse', 'System',
-     'System2'
+     'System2', 'GeneralPurpose', 'BusinessCritical', 'Hyperscale'
     :type edition: str or ~azure.mgmt.sql.models.DatabaseEdition
     :param service_objective_name: Required. The name of the service objective
      to assign to the database. Possible values include: 'System', 'System0',
