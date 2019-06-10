@@ -92,6 +92,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                 if retry_total <= 0:
                     retry_active = False
                 else:
+                    await trio.sleep(1000)
                     headers = {'range': 'bytes=' + self.downloaded + '-'}
                     resp = self.pipeline.run(self.request, stream=True, headers=headers)
                     if resp.status_code == 416:

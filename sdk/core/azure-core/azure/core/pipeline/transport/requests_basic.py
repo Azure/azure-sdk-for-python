@@ -26,10 +26,10 @@
 from __future__ import absolute_import
 import logging
 from typing import Iterator, Optional, Any, Union, TypeVar
+import time
 import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
 import requests
-
 
 from azure.core.configuration import Configuration
 from azure.core.exceptions import (
@@ -122,6 +122,7 @@ class StreamDownloadGenerator(object):
                 if retry_total <= 0:
                     retry_active = False
                 else:
+                    time.sleep(1000)
                     headers = {'range': 'bytes=' + self.downloaded + '-'}
                     resp = self.pipeline.run(self.request, stream=True, headers=headers)
                     if resp.status_code == 416:

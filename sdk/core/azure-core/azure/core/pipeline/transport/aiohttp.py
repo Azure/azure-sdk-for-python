@@ -27,6 +27,7 @@ from typing import Any, Optional, AsyncIterator as AsyncIteratorType
 from collections.abc import AsyncIterator
 
 import logging
+import asyncio
 import aiohttp
 
 from azure.core.configuration import Configuration
@@ -196,6 +197,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 if retry_total <= 0:
                     retry_active = False
                 else:
+                    await asyncio.sleep(1000)
                     headers = {'range': 'bytes=' + self.downloaded + '-'}
                     resp = self.pipeline.run(self.request, stream=True, headers=headers)
                     if resp.status_code == 416:
