@@ -4,6 +4,8 @@ trigger:
 jobs:
 
   - job: Validate_Nightly_Python_Build
+    variables:
+      skipComponentGovernanceDetection: true
 
     timeoutInMinutes: 90
 
