@@ -13,7 +13,7 @@ from .resource import Resource
 
 
 class IoTSecurityAggregatedAlert(Resource):
-    """Security Solution.
+    """Security Solution Aggregated Alert information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,12 +24,6 @@ class IoTSecurityAggregatedAlert(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :ivar io_tsecurity_aggregated_alert_id: Resource Id
-    :vartype io_tsecurity_aggregated_alert_id: str
-    :ivar io_tsecurity_aggregated_alert_name: Resource name
-    :vartype io_tsecurity_aggregated_alert_name: str
-    :ivar io_tsecurity_aggregated_alert_type: Resource type
-    :vartype io_tsecurity_aggregated_alert_type: str
     :ivar alert_type: Name of the alert type
     :vartype alert_type: str
     :ivar alert_display_name: Display name of the alert type
@@ -66,9 +60,6 @@ class IoTSecurityAggregatedAlert(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'io_tsecurity_aggregated_alert_id': {'readonly': True},
-        'io_tsecurity_aggregated_alert_name': {'readonly': True},
-        'io_tsecurity_aggregated_alert_type': {'readonly': True},
         'alert_type': {'readonly': True},
         'alert_display_name': {'readonly': True},
         'aggregated_date_utc': {'readonly': True},
@@ -87,28 +78,22 @@ class IoTSecurityAggregatedAlert(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'io_tsecurity_aggregated_alert_id': {'key': 'properties.id', 'type': 'str'},
-        'io_tsecurity_aggregated_alert_name': {'key': 'properties.name', 'type': 'str'},
-        'io_tsecurity_aggregated_alert_type': {'key': 'properties.type', 'type': 'str'},
-        'alert_type': {'key': 'properties.alertType', 'type': 'str'},
-        'alert_display_name': {'key': 'properties.alertDisplayName', 'type': 'str'},
-        'aggregated_date_utc': {'key': 'properties.aggregatedDateUtc', 'type': 'date'},
-        'vendor_name': {'key': 'properties.vendorName', 'type': 'str'},
-        'reported_severity': {'key': 'properties.reportedSeverity', 'type': 'str'},
-        'remediation_steps': {'key': 'properties.remediationSteps', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'count': {'key': 'properties.count', 'type': 'int'},
-        'effected_resource_type': {'key': 'properties.effectedResourceType', 'type': 'str'},
-        'system_source': {'key': 'properties.systemSource', 'type': 'str'},
-        'action_taken': {'key': 'properties.actionTaken', 'type': 'str'},
-        'log_analytics_query': {'key': 'properties.logAnalyticsQuery', 'type': 'str'},
+        'alert_type': {'key': 'alertType', 'type': 'str'},
+        'alert_display_name': {'key': 'alertDisplayName', 'type': 'str'},
+        'aggregated_date_utc': {'key': 'aggregatedDateUtc', 'type': 'date'},
+        'vendor_name': {'key': 'vendorName', 'type': 'str'},
+        'reported_severity': {'key': 'reportedSeverity', 'type': 'str'},
+        'remediation_steps': {'key': 'remediationSteps', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'count': {'key': 'count', 'type': 'int'},
+        'effected_resource_type': {'key': 'effectedResourceType', 'type': 'str'},
+        'system_source': {'key': 'systemSource', 'type': 'str'},
+        'action_taken': {'key': 'actionTaken', 'type': 'str'},
+        'log_analytics_query': {'key': 'logAnalyticsQuery', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(IoTSecurityAggregatedAlert, self).__init__(**kwargs)
-        self.io_tsecurity_aggregated_alert_id = None
-        self.io_tsecurity_aggregated_alert_name = None
-        self.io_tsecurity_aggregated_alert_type = None
         self.alert_type = None
         self.alert_display_name = None
         self.aggregated_date_utc = None
