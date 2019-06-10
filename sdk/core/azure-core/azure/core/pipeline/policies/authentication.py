@@ -26,8 +26,8 @@ class _BearerTokenCredentialPolicyBase(object):
     :param str scopes: Lets you specify the type of access needed.
     """
 
-    def __init__(self, credential, scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (TokenCredential, Iterable[str], Mapping[str, Any]) -> None
+    def __init__(self, credential, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (TokenCredential, *str, Mapping[str, Any]) -> None
         super(_BearerTokenCredentialPolicyBase, self).__init__()
         self._scopes = scopes
         self._credential = credential
@@ -60,6 +60,6 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         :return: The pipeline response object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        token = self._credential.get_token(self._scopes)
-        self._update_headers(request.http_request.headers, token) # type: ignore
+        token = self._credential.get_token(*self._scopes)
+        self._update_headers(request.http_request.headers, token)
         return self.next.send(request)
