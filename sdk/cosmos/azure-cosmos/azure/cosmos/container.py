@@ -233,7 +233,7 @@ class Container:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
         items = self.client_connection.ReadItems(
-            collection_link=self.container_link, feed_options=feed_options
+            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
@@ -355,6 +355,7 @@ class Container:
             else dict(query=query, parameters=parameters),
             options=feed_options,
             partition_key=partition_key,
+            response_hook=response_hook
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers)

@@ -818,7 +818,7 @@ class CosmosClientConnection(object):
                                    None,
                                    options)
 
-    def ReadItems(self, collection_link, feed_options=None):
+    def ReadItems(self, collection_link, feed_options=None, response_hook=None):
         """Reads all documents in a collection.
 
         :param str collection_link:
@@ -834,9 +834,9 @@ class CosmosClientConnection(object):
         if feed_options is None:
             feed_options = {}
 
-        return self.QueryItems(collection_link, None, feed_options)
+        return self.QueryItems(collection_link, None, feed_options, response_hook=response_hook)
 
-    def QueryItems(self, database_or_Container_link, query, options=None, partition_key=None):
+    def QueryItems(self, database_or_Container_link, query, options=None, partition_key=None, response_hook=None):
         """Queries documents in a collection.
 
         :param str database_or_Container_link:
@@ -846,6 +846,8 @@ class CosmosClientConnection(object):
             The request options for the request.
         :param str partition_key:
             Partition key for the query(default value None)
+        :param response_hook: 
+            A callable invoked with the response metadata
 
         :return:
             Query Iterable of Documents.
@@ -871,7 +873,8 @@ class CosmosClientConnection(object):
                                         lambda r: r['Documents'],
                                         lambda _, b: b,
                                         query,
-                                        options), self.last_response_headers
+                                        options, 
+                                        response_hook=response_hook), self.last_response_headers
             return query_iterable.QueryIterable(self, query, options, fetch_fn, database_or_Container_link)
 
     def QueryItemsChangeFeed(self, collection_link, options=None):
@@ -2735,7 +2738,8 @@ class CosmosClientConnection(object):
                     create_fn,
                     query,
                     options=None,
-                    partition_key_range_id=None):
+                    partition_key_range_id=None,
+                    response_hook=None):
         """Query for more than one Azure Cosmos resources.
 
         :param str path:
@@ -2786,6 +2790,8 @@ class CosmosClientConnection(object):
             result, self.last_response_headers = self.__Get(path,
                                                             request,
                                                             headers)
+            if response_hook:
+                response_hook(self.last_response_headers)
             return __GetBodiesFromQueryResult(result)
         else:
             query = self.__CheckAndUnifyQueryFormat(query)
@@ -2813,6 +2819,11 @@ class CosmosClientConnection(object):
                                                              request,
                                                              query,
                                                              headers)
+
+
+            if response_hook:
+                response_hook(self.last_response_headers)
+
             return __GetBodiesFromQueryResult(result)
 
     def __CheckAndUnifyQueryFormat(self, query_body):
