@@ -30,9 +30,11 @@ import logging
 import aiohttp
 
 from azure.core.configuration import Configuration
-from azure.core.exceptions import (
-    ServiceRequestError,
-    ServiceResponseError)
+from azure.core.exceptions import ServiceRequestError
+
+from requests.exceptions import (
+    ChunkedEncodingError,
+    StreamConsumedError)
 
 from .base import HttpRequest
 from .base_async import (
@@ -158,15 +160,20 @@ class AioHttpTransport(AsyncHttpTransport):
 class AioHttpStreamDownloadGenerator(AsyncIterator):
     """Streams the response body data.
 
+    :param pipeline: The pipeline object
+    :param request: The request object
     :param response: The client response object.
     :type response: aiohttp.ClientResponse
     :param block_size: block size of data sent over connection.
     :type block_size: int
     """
-    def __init__(self, response: aiohttp.ClientResponse, block_size: int) -> None:
+    def __init__(self, pipeline, request, response: aiohttp.ClientResponse, block_size: int) -> None:
+        self.pipeline = pipeline
+        self.request = request
         self.response = response
         self.block_size = block_size
         self.content_length = int(response.headers.get('Content-Length', 0))
+        self.downloaded = 0
 
     def __len__(self):
         return self.content_length
@@ -179,15 +186,28 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 chunk = await self.response.content.read(self.block_size)
                 if not chunk:
                     raise _ResponseStopIteration()
+                self.downloaded += chunk
                 return chunk
             except _ResponseStopIteration:
                 self.response.close()
                 raise StopAsyncIteration()
-            except ServiceResponseError:
+            except (ChunkedEncodingError, ConnectionError):
                 retry_total -= 1
                 if retry_total <= 0:
                     retry_active = False
+                else:
+                    headers = {'range': 'bytes=' + self.downloaded + '-'}
+                    resp = self.pipeline.run(self.request, stream=True, headers=headers)
+                    if resp.status_code == 416:
+                        raise
+                    chunk = await self.response.content.read(self.block_size)
+                    if not chunk:
+                        raise StopIteration()
+                    self.downloaded += chunk
+                    return chunk
                 continue
+            except StreamConsumedError:
+                raise
             except Exception as err:
                 _LOGGER.warning("Unable to stream download: %s", err)
                 self.response.close()
@@ -223,7 +243,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         """Load in memory the body, so it could be accessible from sync methods."""
         self._body = await self.internal_response.read()
 
-    def stream_download(self) -> AsyncIteratorType[bytes]:
+    def stream_download(self, pipeline) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
         """
-        return AioHttpStreamDownloadGenerator(self.internal_response, self.block_size)
+        return AioHttpStreamDownloadGenerator(pipeline, self.request, self.internal_response, self.block_size)

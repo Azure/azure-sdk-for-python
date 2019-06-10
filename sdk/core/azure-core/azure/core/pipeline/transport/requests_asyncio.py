@@ -121,16 +121,21 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
 class AsyncioStreamDownloadGenerator(AsyncIterator):
     """Streams the response body data.
 
+    :param pipeline: The pipeline object
+    :param request: The request object
     :param response: The response object.
     :param int block_size: block size of data sent over connection.
     :param generator iter_content_func: Iterator for response data.
     :param int content_length: size of body in bytes.
     """
-    def __init__(self, response: requests.Response, block_size: int) -> None:
+    def __init__(self, pipeline, request, response: requests.Response, block_size: int) -> None:
+        self.pipeline = pipeline
+        self.request = request
         self.response = response
         self.block_size = block_size
         self.iter_content_func = self.response.iter_content(self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
+        self.downloaded = 0
 
     def __len__(self):
         return self.content_length
@@ -148,15 +153,33 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
                 )
                 if not chunk:
                     raise _ResponseStopIteration()
+                self.downloaded += chunk
                 return chunk
             except _ResponseStopIteration:
                 self.response.close()
                 raise StopAsyncIteration()
-            except ServiceResponseError:
+            except (requests.exceptions.ChunkedEncodingError,
+                    requests.exceptions.ConnectionError):
                 retry_total -= 1
                 if retry_total <= 0:
                     retry_active = False
+                else:
+                    headers = {'range': 'bytes=' + self.downloaded + '-'}
+                    resp = self.pipeline.run(self.request, stream=True, headers=headers)
+                    if resp.status_code == 416:
+                        raise
+                    chunk = await loop.run_in_executor(
+                        None,
+                        _iterate_response_content,
+                        self.iter_content_func,
+                    )
+                    if not chunk:
+                        raise StopIteration()
+                    self.downloaded += chunk
+                    return chunk
                 continue
+            except requests.exceptions.StreamConsumedError:
+                raise
             except Exception as err:
                 _LOGGER.warning("Unable to stream download: %s", err)
                 self.response.close()
@@ -166,6 +189,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
 class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse): # type: ignore
     """Asynchronous streaming of data from the response.
     """
-    def stream_download(self) -> AsyncIteratorType[bytes]: # type: ignore
+    def stream_download(self, pipeline) -> AsyncIteratorType[bytes]: # type: ignore
         """Generator for streaming request body data."""
-        return AsyncioStreamDownloadGenerator(self.internal_response, self.block_size) # type: ignore
+        return AsyncioStreamDownloadGenerator(pipeline, self.request,
+                                              self.internal_response, self.block_size) # type: ignore

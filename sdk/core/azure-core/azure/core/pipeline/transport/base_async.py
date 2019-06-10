@@ -70,7 +70,7 @@ class AsyncHttpResponse(_HttpResponseBase):
 
     Allows for the asynchronous streaming of data from the response.
     """
-    def stream_download(self) -> AsyncIterator[bytes]:
+    def stream_download(self, pipeline) -> AsyncIterator[bytes]:
         """Generator for streaming response body data.
 
         Should be implemented by sub-classes if streaming download
