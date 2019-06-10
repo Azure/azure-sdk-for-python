@@ -3,9 +3,10 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Dict, Mapping, Optional, Iterable, List
+from typing import Any, Dict, Mapping, Optional, Iterator, List
 from datetime import datetime
 from .._generated.v7_0 import models
+from .._internal import _KeyVaultClientBase
 from ._models import (
     Certificate,
     CertificateBase,
@@ -18,18 +19,7 @@ from ._models import (
 )
 
 
-class CertificateClient:
-    @staticmethod
-    def create_config(**kwargs):
-        pass  # TODO
-
-    def __init__(self, vault_url, credentials, config=None, api_version=None, **kwargs):
-        pass
-
-    @property
-    def vault_url(self):
-        # type: () -> str
-        pass
+class CertificateClient(_KeyVaultClientBase):
 
     def create_certificate(self, name, policy, enabled=None, not_before=None, expires=None, tags=None, **kwargs):
         # type: (str, models.CertificatePolicy, Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> CertificateOperation
@@ -97,28 +87,28 @@ class CertificateClient:
         pass
 
     def list_deleted_certificates(self, include_pending=None, **kwargs):
-        # type: (Optional[bool], Mapping[str, Any]) -> Iterable[DeletedCertificate]
+        # type: (Optional[bool], Mapping[str, Any]) -> Iterator[DeletedCertificate]
         pass
 
     def list_certificates(self, include_pending=None, **kwargs):
-        # type: (Optional[bool], Mapping[str, Any]) -> Iterable[CertificateBase]
+        # type: (Optional[bool], Mapping[str, Any]) -> Iterator[CertificateBase]
         pass
 
     def list_certificate_versions(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> Iterable[CertificateBase]
+        # type: (str, Mapping[str, Any]) -> Iterator[CertificateBase]
         pass
 
     def create_contacts(self, contacts, **kwargs):
-        # type: (Iterable[Contact], Mapping[str, Any]) -> Iterable[Contact]
+        # type: (Iterator[Contact], Mapping[str, Any]) -> Iterator[Contact]
         # TODO: rest api includes an id should it be returned?
         pass
 
     def list_contacts(self, **kwargs):
-        # type: (Mapping[str, Any]) -> Iterable[Contact]
+        # type: (Mapping[str, Any]) -> Iterator[Contact]
         pass
 
     def delete_contacts(self, **kwargs):
-        # type: (Mapping[str, Any]) -> Iterable[Contact]
+        # type: (Mapping[str, Any]) -> Iterator[Contact]
         pass
 
     def get_certificate_operation(self, name, **kwargs):
@@ -183,5 +173,5 @@ class CertificateClient:
         pass
 
     def list_issuers(self, **kwargs):
-        # type: (Mapping[str, Any]) -> Iterable[IssuerBase]
+        # type: (Mapping[str, Any]) -> Iterator[IssuerBase]
         pass

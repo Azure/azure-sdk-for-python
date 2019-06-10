@@ -22,8 +22,8 @@ class AdministratorDetails(object):
     :type phone: str
     """
 
-    def __init__(self, first_name, last_name, email, phone):
-        # type: (str, str, str, str) -> None
+    def __init__(self, first_name=None, last_name=None, email=None, phone=None):
+        # type: (Optional[str], Optional[str], Optional[str], Optional[str]) -> None
         self._first_name = first_name
         self._last_name = last_name
         self._phone = phone
@@ -64,8 +64,8 @@ class AdministratorDetails(object):
 class Error(object):
     """The key vault server error."""
 
-    def __init__(self, code, message, inner_error):
-        # type: (str, str, models.Error) -> None
+    def __init__(self, code=None, message=None, inner_error=None):
+        # type: (Optional[str], Optional[str], Optional[models.Error]) -> None
         self._code = code
         self._message = message
         self._inner_error = inner_error
@@ -464,8 +464,8 @@ class IssuerBase(object):
 
 
 class Issuer(IssuerBase):
-    def __init__(self, attributes, issuer_id, provider, account_id, password, organization_id=None, admin_details=None):
-        # type: (models.IssuerAttributes, str, str, str, str, Optional[str], Optional[str], Optional[List[AdministratorDetails]]) -> None
+    def __init__(self, attributes, issuer_id, provider=None, account_id=None, password=None, organization_id=None, admin_details=None):
+        # type: (models.IssuerAttributes, str, Optional[str], Optional[str], Optional[str], Optional[str], Optional[str], Optional[List[AdministratorDetails]]) -> None
         super(Issuer, self).__init__(attributes, issuer_id, provider)
         self._account_id = account_id
         self._password = password
