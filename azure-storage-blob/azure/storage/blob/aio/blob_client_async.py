@@ -89,7 +89,7 @@ class BlobClient:  # pylint: disable=too-many-public-methods
         """
 
     async def create_page_blob(
-            self, content_length, content_settings=None, sequence_number=None,
+            self, size, content_settings=None, sequence_number=None,
             metadata=None, lease_id=None, if_modified_since=None, if_unmodified_since=None,
             if_match=None, if_none_match=None, timeout=None, premium_page_blob_tier=None):
         """
@@ -97,7 +97,7 @@ class BlobClient:  # pylint: disable=too-many-public-methods
         """
 
     async def create_append_blob(
-            self, content_length=None, content_settings=None, metadata=None,
+            self, content_settings=None, metadata=None,
             lease_id=None, if_modified_since=None, if_unmodified_since=None,
             if_match=None, if_none_match=None, timeout=None):
         """
@@ -194,7 +194,7 @@ class BlobClient:  # pylint: disable=too-many-public-methods
         """
 
     async def resize_blob(
-            self, content_length, lease=None, if_modified_since=None, if_unmodified_since=None,
+            self, size, lease=None, if_modified_since=None, if_unmodified_since=None,
             if_match=None, if_none_match=None, timeout=None):
         """
         :raises: TypeError when blob client type is not PageBlob.

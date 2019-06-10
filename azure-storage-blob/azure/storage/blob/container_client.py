@@ -28,7 +28,6 @@ from ._utils import (
     create_client,
     create_configuration,
     create_pipeline,
-    basic_error_map,
     get_access_conditions,
     get_modification_conditions,
     return_response_headers,
@@ -37,7 +36,6 @@ from ._utils import (
     encode_base64,
     parse_connection_str,
     serialize_iso,
-    basic_error_map,
     return_response_and_deserialized)
 from ._deserialize import (
     deserialize_container_properties,
@@ -187,7 +185,6 @@ class ContainerClient(object):
                 access=public_access,
                 cls=return_response_headers,
                 headers=headers,
-                error_map=basic_error_map(),
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -234,7 +231,6 @@ class ContainerClient(object):
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
-                error_map=basic_error_map(),
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -299,7 +295,6 @@ class ContainerClient(object):
             response = self._client.container.get_account_info(
                 cls=return_response_headers,
                 timeout=timeout,
-                error_map=basic_error_map(),
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -328,7 +323,6 @@ class ContainerClient(object):
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 cls=deserialize_container_properties,
-                error_map=basic_error_map(),
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -357,7 +351,6 @@ class ContainerClient(object):
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 headers=headers,
-                error_map=basic_error_map(),
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -373,7 +366,6 @@ class ContainerClient(object):
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 cls=return_response_and_deserialized,
-                error_map=basic_error_map(),
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -415,7 +407,6 @@ class ContainerClient(object):
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
-                error_map=basic_error_map(),
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -453,7 +444,6 @@ class ContainerClient(object):
             prefix=name_starts_with,
             include=include,
             timeout=timeout,
-            error_map=basic_error_map(),
             **kwargs)
         return BlobPropertiesPaged(command, prefix=name_starts_with, results_per_page=results_per_page,  marker=marker)
 

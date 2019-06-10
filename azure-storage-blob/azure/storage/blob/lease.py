@@ -14,7 +14,6 @@ from typing import (  # pylint: disable=unused-import
 from ._utils import (
     get_modification_conditions,
     return_response_headers,
-    basic_error_map,
     process_storage_error)
 from ._generated.models import StorageErrorException
 
@@ -87,7 +86,6 @@ class LeaseClient(object):
                 proposed_lease_id=self.id,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
-                error_map=basic_error_map(),
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -220,7 +218,6 @@ class LeaseClient(object):
                 break_period=lease_break_period,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
-                error_map=basic_error_map(),
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)

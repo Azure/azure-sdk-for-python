@@ -7,8 +7,8 @@
 import logging
 import time
 
-from ._utils import process_storage_error, basic_error_map
 from ._generated.models import StorageErrorException
+from ._utils import process_storage_error
 from ._deserialize import deserialize_blob_properties
 from azure.core.exceptions import AzureError
 from azure.core.polling import PollingMethod, LROPoller, NoPolling
@@ -51,10 +51,7 @@ class CopyBlob(PollingMethod):
 
     def _update_status(self):
         try:
-            self.blob = self._client._client.blob.get_properties(
-                cls=deserialize_blob_properties,
-                error_map=basic_error_map(),
-                **self.kwargs)
+            self.blob = self._client._client.blob.get_properties(cls=deserialize_blob_properties, **self.kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
         self._status = self.blob.copy.status

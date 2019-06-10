@@ -17,7 +17,7 @@ except ImportError:
     from urllib2 import quote, unquote
 
 import six
-from azure.core import Configuration, HttpResponseError
+from azure.core import Configuration
 
 from .common import BlobType
 from .lease import LeaseClient
@@ -29,7 +29,6 @@ from ._utils import (
     create_client,
     create_configuration,
     create_pipeline,
-    basic_error_map,
     get_access_conditions,
     get_modification_conditions,
     get_sequence_conditions,
@@ -51,8 +50,8 @@ from ._deserialize import (
 )
 from ._generated.models import (
     BlobHTTPHeaders,
-    StorageErrorException,
     BlockLookupList,
+    StorageErrorException,
     AppendPositionAccessConditions)
 from ._download_chunking import StorageStreamDownloader
 from ._upload_chunking import (
@@ -508,7 +507,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                     modified_access_conditions=mod_conditions,
                     cls=return_response_headers,
                     headers=headers,
-                    error_map=basic_error_map(),
                     **kwargs)
                 if length == 0:
                     return response
@@ -663,7 +661,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 delete_snapshots=delete_snapshots,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
-                error_map=basic_error_map(),
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -674,10 +671,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :returns: None
         """
         try:
-            self._client.blob.undelete(
-                timeout=timeout,
-                error_map=basic_error_map(),
-                **kwargs)
+            self._client.blob.undelete(timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -704,7 +698,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 cls=deserialize_blob_properties,
-                error_map=basic_error_map(),
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -777,7 +770,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
-                error_map=basic_error_map(),
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -808,13 +800,12 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 headers=headers,
-                error_map=basic_error_map(),
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
     def create_page_blob(
-            self, content_length,  # type: int
+            self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
             sequence_number=None,  # type: Optional[int]
             metadata=None, # type: Optional[Dict[str, str]]
@@ -832,8 +823,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         Creates a new Page or Append Blob depending on the current blob type
         of the client.
 
-        :param int content_length:
-            Required only for Page blobs. This header specifies the maximum size
+        :param int size:
+            This header specifies the maximum size
             for the page blob, up to 1 TB. The page blob size must be aligned
             to a 512-byte boundary.
         :param ~azure.storage.blob.models.ContentSettings content_settings:
@@ -871,7 +862,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :param ~azure.storage.blob.common.PremiumPageBlobTier premium_page_blob_tier:
-            Only for Page blobs. A page blob tier value to set the blob to. The tier correlates to the size of the
+            A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -902,7 +893,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                     headers['x-ms-access-tier'] = premium_page_blob_tier
             return self._client.page_blob.create(
                 content_length=0,
-                blob_content_length=content_length,
+                blob_content_length=size,
                 blob_sequence_number=sequence_number,
                 blob_http_headers=blob_headers,
                 timeout=timeout,
@@ -910,7 +901,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 headers=headers,
-                error_map=basic_error_map(),
                 **kwargs
             )
         except StorageErrorException as error:
@@ -990,7 +980,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 headers=headers,
-                error_map=basic_error_map(),
                 **kwargs
             )
         except StorageErrorException as error:
@@ -1207,7 +1196,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                     source_url,
                     timeout=None,
                     modified_access_conditions=dest_mod_conditions,
-                    error_map=basic_error_map(),
                     headers=headers,
                     cls=return_response_headers,
                     **kwargs)
@@ -1225,7 +1213,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                     lease_access_conditions=dest_access_conditions,
                     headers=headers,
                     cls=return_response_headers,
-                    error_map=basic_error_map(),
                     **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -1318,21 +1305,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-
-    def stage_block_from_url(
-            self, block_id,  # type: str
-            copy_source_url,  # type: str
-            source_range_start,  # type: int
-            source_range_end,  # type: int
-            source_content_md5=None,  #type: Optional[str]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
-            timeout=None # type: int
-        ):
-        # type: (...) -> None
-        """
-        :raises: TypeError when blob client type is not BlockBlob.
-        :returns: None
-        """
 
     def get_block_list(
             self, block_list_type="committed",  # type: Optional[str]
@@ -1672,7 +1644,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             process_storage_error(error)
 
     def resize_blob(
-            self, content_length,  # type: int
+            self, size,  # type: int
             lease=None,  # type: Optional[Union[LeaseClient, str]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
@@ -1687,7 +1659,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         than the current size of the blob, then all pages above the specified value
         are cleared.
 
-        :param int content_length:
+        :param int size:
             Size to resize blob to.
         :param str lease:
             Required if the blob has an active lease.
@@ -1719,11 +1691,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
-        if content_length is None:
+        if size is None:
             raise ValueError("A content length must be specified for a Page Blob.")
         try:
             return self._client.page_blob.resize(
-                blob_content_length=content_length,
+                blob_content_length=size,
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,

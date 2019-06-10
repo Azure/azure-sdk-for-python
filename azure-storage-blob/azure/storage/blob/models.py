@@ -28,6 +28,7 @@ def _get_enum_value(value):
     except AttributeError:
         return value
 
+
 class DictMixin(object):
 
     def __setitem__(self, key, item):
@@ -43,7 +44,7 @@ class DictMixin(object):
         return len(self.__dict__)
 
     def __delitem__(self, key):
-        del self.__dict__[key]
+        self.__dict__[key] = None
 
     def __eq__(self, other):
         """Compare objects by comparing all attributes."""
@@ -66,6 +67,12 @@ class DictMixin(object):
 
     def keys(self):
         return self.__dict__.keys()
+
+    def values(self):
+        return self.__dict__.values()
+
+    def items(self):
+        return self.__dict__.items()
 
 
 class Logging(GeneratedLogging):
@@ -210,7 +217,7 @@ class CorsRule(GeneratedCorsRule):
         self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
 
 
-class ContainerProperties(object):
+class ContainerProperties(DictMixin):
     """
     Blob container's properties class.
 
@@ -296,7 +303,7 @@ class ContainerPropertiesPaged(Paged):
         return ContainerProperties._from_generated(item)
 
 
-class SnapshotProperties(object):
+class SnapshotProperties(DictMixin):
 
     def __init__(self, **kwargs):
         self.name = None
@@ -318,8 +325,8 @@ class BlobProperties(DictMixin):
     :ivar str etag:
         The ETag contains a value that you can use to perform operations
         conditionally.
-    :ivar int content_length:
-        The length of the content returned. If the entire blob was requested,
+    :ivar int size:
+        The size of the content returned. If the entire blob was requested,
         the length of blob in bytes. If a subset of the blob was requested, the
         length of the returned subset.
     :ivar str content_range:
@@ -366,7 +373,7 @@ class BlobProperties(DictMixin):
         self.metadata = kwargs.get('metadata')
         self.last_modified = kwargs.get('Last-Modified')
         self.etag = kwargs.get('ETag')
-        self.content_length = kwargs.get('Content-Length')
+        self.size = kwargs.get('Content-Length')
         self.content_range = kwargs.get('Content-Range')
         self.append_blob_committed_block_count = kwargs.get('x-ms-blob-committed-block-count')
         self.page_blob_sequence_number = kwargs.get('x-ms-blob-sequence-number')
@@ -397,7 +404,7 @@ class BlobProperties(DictMixin):
         blob.last_modified = generated.properties.last_modified
         blob.creation_time = generated.properties.creation_time
         blob.content_settings = ContentSettings._from_generated(generated)
-        blob.content_length = generated.properties.content_length
+        blob.size = generated.properties.content_length
         blob.page_blob_sequence_number = generated.properties.blob_sequence_number
         blob.server_encrypted = generated.properties.server_encrypted
         blob.deleted_time = generated.properties.deleted_time
@@ -505,7 +512,7 @@ class BlobPropertiesWalked(BlobPropertiesPaged):
             return self.__next__()
 
 
-class LeaseProperties(object):
+class LeaseProperties(DictMixin):
     """
     Blob Lease Properties.
 
@@ -533,7 +540,7 @@ class LeaseProperties(object):
         return lease
 
 
-class ContentSettings(object):
+class ContentSettings(DictMixin):
     """
     Used to store the content settings of a blob.
 
@@ -584,7 +591,7 @@ class ContentSettings(object):
         return settings
 
 
-class CopyProperties(object):
+class CopyProperties(DictMixin):
     """
     Blob Copy Properties.
 
@@ -648,7 +655,7 @@ class CopyProperties(object):
         return copy
 
 
-class BlobBlock(object):
+class BlobBlock(DictMixin):
     """
     BlockBlob Block class.
 
@@ -677,7 +684,7 @@ class BlobBlock(object):
         return block
 
 
-class PageRange(object):
+class PageRange(DictMixin):
     """
     Page Range for page blob.
 

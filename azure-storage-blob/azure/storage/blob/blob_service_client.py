@@ -14,6 +14,7 @@ try:
 except ImportError:
     from urlparse import urlparse
 
+from ._generated.models import StorageErrorException
 from ._shared_access_signature import SharedAccessSignature
 from .container_client import ContainerClient
 from .blob_client import BlobClient
@@ -22,7 +23,6 @@ from .models import (
     StorageServiceProperties,
     ContainerPropertiesPaged
 )
-from ._generated.models import StorageErrorException
 from .common import BlobType
 from ._utils import (
     create_client,
@@ -30,7 +30,6 @@ from ._utils import (
     create_configuration,
     get_access_conditions,
     process_storage_error,
-    basic_error_map,
     return_response_headers,
     parse_connection_str
 )
@@ -222,10 +221,7 @@ class BlobServiceClient(object):
         :rtype: ~azure.storage.blob._generated.models.StorageServiceProperties
         """
         try:
-            return self._client.service.get_properties(
-                timeout=timeout,
-                error_map=basic_error_map(),
-                **kwargs)
+            return self._client.service.get_properties(timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -292,11 +288,7 @@ class BlobServiceClient(object):
             static_website=static_website
         )
         try:
-            return self._client.service.set_properties(
-                props,
-                timeout=timeout,
-                error_map=basic_error_map(),
-                **kwargs)
+            return self._client.service.set_properties(props, timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -334,7 +326,6 @@ class BlobServiceClient(object):
             prefix=name_starts_with,
             include=include,
             timeout=timeout,
-            error_map=basic_error_map(),
             **kwargs)
         return ContainerPropertiesPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)

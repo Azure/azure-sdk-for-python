@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
+from ._generated.models import StorageErrorCode
 
 
 class BlobType(str, Enum):

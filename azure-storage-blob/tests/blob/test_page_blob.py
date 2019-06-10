@@ -12,7 +12,7 @@ import os
 import unittest
 from datetime import datetime, timedelta
 from azure.common import AzureHttpError
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
 from azure.storage.blob.common import (
     BlobType,
@@ -23,7 +23,8 @@ from azure.storage.blob import (
     SharedKeyCredentials,
     BlobServiceClient,
     ContainerClient,
-    BlobClient)
+    BlobClient,
+    StorageErrorCode)
 
 from tests.testcase import (
     StorageTestCase,
@@ -85,7 +86,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     def _create_blob(self, length=512):
         blob = self._get_blob_reference()
-        blob.create_page_blob(content_length=length)
+        blob.create_page_blob(size=length)
         return blob
 
     def assertBlobEqual(self, container_name, blob_name, expected_data):
@@ -178,7 +179,7 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsNotNone(resp.get('ETag'))
         self.assertIsNotNone(resp.get('Last-Modified'))
         self.assertIsInstance(props, BlobProperties)
-        self.assertEqual(props.content_length, EIGHT_TB)
+        self.assertEqual(props.size, EIGHT_TB)
         self.assertEqual(0, len(page_ranges))
 
     @record
@@ -209,7 +210,7 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsNotNone(resp.get('Last-Modified'))
         self.assertIsNotNone(resp.get('x-ms-blob-sequence-number'))
         self.assertRangeEqual(self.container_name, blob.blob_name, data, start_range, end_range)
-        self.assertEqual(props.content_length, EIGHT_TB)
+        self.assertEqual(props.size, EIGHT_TB)
         self.assertEqual(1, len(page_ranges))
         self.assertEqual(page_ranges[0]['start'], start_range)
         self.assertEqual(page_ranges[0]['end'], end_range)
@@ -438,7 +439,7 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertIsNotNone(resp.get('x-ms-blob-sequence-number'))
         props = blob.get_blob_properties()
         self.assertIsInstance(props, BlobProperties)
-        self.assertEqual(props.content_length, 512)
+        self.assertEqual(props.size, 512)
 
     @record
     def test_set_sequence_number_blob(self):
@@ -869,11 +870,8 @@ class StoragePageBlobTest(StorageTestCase):
             if not self.is_playback():
                 try:
                     container.create_container()
-                except HttpResponseError as error:
-                    if error.error_code == 'ContainerAlreadyExists':
-                        pass
-                    else:
-                        raise
+                except ResourceExistsError:
+                    pass
 
             blob = self._get_blob_reference()
             pblob = pbs.get_blob_client(container_name, blob.blob_name)
@@ -923,11 +921,8 @@ class StoragePageBlobTest(StorageTestCase):
             if not self.is_playback():
                 try:
                     container.create_container()
-                except HttpResponseError as error:
-                    if error.error_code == 'ContainerAlreadyExists':
-                        pass
-                    else:
-                        raise
+                except ResourceExistsError:
+                    pass
 
             # Arrange
             source_blob = pbs.get_blob_client(

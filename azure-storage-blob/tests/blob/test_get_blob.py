@@ -19,7 +19,8 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    SharedKeyCredentials
+    SharedKeyCredentials,
+    StorageErrorCode
 )
 from azure.storage.blob.models import BlobProperties
 from tests.testcase import (
@@ -143,7 +144,7 @@ class StorageGetBlobTest(StorageTestCase):
 
         # Assert
         self.assertEqual(blob_data, content.content_as_bytes())
-        self.assertEqual(0, content.properties.content_length)
+        self.assertEqual(0, content.properties.size)
 
     def test_get_blob_to_bytes(self):
         # parallel tests introduce random order of requests, can only run live
@@ -192,11 +193,11 @@ class StorageGetBlobTest(StorageTestCase):
         # the get request should fail in this case since the blob is empty and yet there is a range specified
         with self.assertRaises(HttpResponseError) as e:
             blob.download_blob(offset=0, length=5)
-        self.assertEqual('InvalidRange', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.invalid_range, e.exception.error_code)
 
         with self.assertRaises(HttpResponseError) as e:
             blob.download_blob(offset=3, length=5)
-        self.assertEqual('InvalidRange', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.invalid_range, e.exception.error_code)
 
     @record
     def test_ranged_get_blob_with_missing_start_range(self):

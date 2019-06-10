@@ -13,14 +13,15 @@ import unittest
 
 from azure.common import AzureHttpError
 from azure.storage.blob.models import BlobBlock
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
 
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
     SharedKeyCredentials,
-    LeaseClient
+    LeaseClient,
+    StorageErrorCode,
 )
 from azure.storage.blob.common import BlobType
 from azure.storage.blob.models import(
@@ -117,12 +118,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             metadata = {'hello': 'world', 'number': '43'}
             container.set_container_metadata(metadata, if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_set_container_acl_with_if_modified(self):
@@ -144,11 +145,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_datetime = (datetime.datetime.utcnow() +
                          datetime.timedelta(minutes=15))
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             container.set_container_acl(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_set_container_acl_with_if_unmodified(self):
@@ -170,11 +171,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_datetime = (datetime.datetime.utcnow() -
                          datetime.timedelta(minutes=15))
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             container.set_container_acl(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_lease_container_acquire_with_if_modified(self):
@@ -197,11 +198,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             container.acquire_lease(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_lease_container_acquire_with_if_unmodified(self):
@@ -224,11 +225,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             container.acquire_lease(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_delete_container_with_if_modified(self):
@@ -251,11 +252,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_datetime = (datetime.datetime.utcnow() +
                          datetime.timedelta(minutes=15))
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             container.delete_container(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_delete_container_with_if_unmodified(self):
@@ -277,10 +278,10 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_datetime = (datetime.datetime.utcnow() -
                          datetime.timedelta(minutes=15))
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             container.delete_container(if_unmodified_since=test_datetime)
 
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_put_blob_with_if_modified(self):
@@ -307,11 +308,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.upload_blob(data, length=len(data), if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_put_blob_with_if_unmodified(self):
@@ -338,11 +339,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.upload_blob(data, length=len(data), if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_put_blob_with_if_match(self):
@@ -366,11 +367,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.container_name, 'blob1', data)
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.upload_blob(data, length=len(data), if_match='0x111111111111111')
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_put_blob_with_if_none_match(self):
@@ -394,11 +395,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.upload_blob(data, length=len(data), if_none_match=etag)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_blob_with_if_modified(self):
@@ -424,11 +425,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.download_blob(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_blob_with_if_unmodified(self):
@@ -454,11 +455,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.download_blob(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_blob_with_if_match(self):
@@ -481,11 +482,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.container_name, 'blob1', b'hello world')
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.download_blob(if_match='0x111111111111111')
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_blob_with_if_none_match(self):
@@ -508,11 +509,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.download_blob(if_none_match=etag)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_set_blob_properties_with_if_modified(self):
@@ -541,7 +542,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_datetime = (datetime.datetime.utcnow() +
                          datetime.timedelta(minutes=15))
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             content_settings = ContentSettings(
                 content_language='spanish',
                 content_disposition='inline')
@@ -549,7 +550,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             blob.set_http_headers(content_settings, if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_set_blob_properties_with_if_unmodified(self):
@@ -578,7 +579,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_datetime = (datetime.datetime.utcnow() -
                          datetime.timedelta(minutes=15))
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             content_settings = ContentSettings(
                 content_language='spanish',
                 content_disposition='inline')
@@ -586,7 +587,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             blob.set_http_headers(content_settings, if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_set_blob_properties_with_if_match(self):
@@ -614,7 +615,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.container_name, 'blob1', b'hello world')
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             content_settings = ContentSettings(
                 content_language='spanish',
                 content_disposition='inline')
@@ -622,7 +623,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             blob.set_http_headers(content_settings, if_match='0x111111111111111')
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_set_blob_properties_with_if_none_match(self):
@@ -651,14 +652,14 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             content_settings = ContentSettings(
                 content_language='spanish',
                 content_disposition='inline')
             blob.set_http_headers(content_settings, if_none_match=etag)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_blob_properties_with_if_modified(self):
@@ -674,7 +675,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsInstance(properties, BlobProperties)
         self.assertEqual(properties.blob_type.value, 'BlockBlob')
-        self.assertEqual(properties.content_length, 11)
+        self.assertEqual(properties.size, 11)
         self.assertEqual(properties.lease.status, 'unlocked')
 
     @record
@@ -685,12 +686,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_datetime = (datetime.datetime.utcnow() +
                          datetime.timedelta(minutes=15))
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
             blob.get_blob_properties(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_blob_properties_with_if_unmodified(self):
@@ -706,7 +707,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(properties)
         self.assertEqual(properties.blob_type.value, 'BlockBlob')
-        self.assertEqual(properties.content_length, 11)
+        self.assertEqual(properties.size, 11)
         self.assertEqual(properties.lease.status, 'unlocked')
 
     @record
@@ -717,12 +718,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_datetime = (datetime.datetime.utcnow() -
                          datetime.timedelta(minutes=15))
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
             blob.get_blob_properties(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_blob_properties_with_if_match(self):
@@ -738,7 +739,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(properties)
         self.assertEqual(properties.blob_type.value, 'BlockBlob')
-        self.assertEqual(properties.content_length, 11)
+        self.assertEqual(properties.size, 11)
         self.assertEqual(properties.lease.status, 'unlocked')
 
     @record
@@ -748,12 +749,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.container_name, 'blob1', b'hello world')
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
             blob.get_blob_properties(if_match='0x111111111111111')
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_blob_properties_with_if_none_match(self):
@@ -768,7 +769,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(properties)
         self.assertEqual(properties.blob_type.value, 'BlockBlob')
-        self.assertEqual(properties.content_length, 11)
+        self.assertEqual(properties.size, 11)
         self.assertEqual(properties.lease.status, 'unlocked')
 
     @record
@@ -780,11 +781,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.get_blob_properties(if_none_match=etag)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_blob_metadata_with_if_modified(self):
@@ -810,12 +811,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
             blob.get_blob_properties(if_modified_since=test_datetime).metadata
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_blob_metadata_with_if_unmodified(self):
@@ -841,12 +842,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
             blob.get_blob_properties(if_unmodified_since=test_datetime).metadata
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_blob_metadata_with_if_match(self):
@@ -869,12 +870,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.container_name, 'blob1', b'hello world')
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
             blob.get_blob_properties(if_match='0x111111111111111').metadata
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_blob_metadata_with_if_none_match(self):
@@ -898,11 +899,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.get_blob_properties(if_none_match=etag).metadata
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_set_blob_metadata_with_if_modified(self):
@@ -930,13 +931,13 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             metadata = {'hello': 'world', 'number': '42'}
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
             blob.set_blob_metadata(metadata, if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_set_blob_metadata_with_if_unmodified(self):
@@ -964,13 +965,13 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             metadata = {'hello': 'world', 'number': '42'}
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
             blob.set_blob_metadata(metadata, if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_set_blob_metadata_with_if_match(self):
@@ -995,13 +996,13 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.container_name, 'blob1', b'hello world')
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             metadata = {'hello': 'world', 'number': '42'}
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
             blob.set_blob_metadata(metadata, if_match='0x111111111111111')
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_set_blob_metadata_with_if_none_match(self):
@@ -1027,12 +1028,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             metadata = {'hello': 'world', 'number': '42'}
             blob.set_blob_metadata(metadata, if_none_match=etag)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_delete_blob_with_if_modified(self):
@@ -1059,11 +1060,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.delete_blob(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_delete_blob_with_if_unmodified(self):
@@ -1090,11 +1091,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.delete_blob(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_delete_blob_with_if_match(self):
@@ -1119,11 +1120,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.delete_blob(if_match='0x111111111111111')
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_delete_blob_with_if_none_match(self):
@@ -1147,11 +1148,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.delete_blob(if_none_match=etag)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_snapshot_blob_with_if_modified(self):
@@ -1178,12 +1179,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
             blob.create_snapshot(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_snapshot_blob_with_if_unmodified(self):
@@ -1210,12 +1211,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
             blob.create_snapshot(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_snapshot_blob_with_if_match(self):
@@ -1239,12 +1240,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             self.container_name, 'blob1', b'hello world')
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
             blob.create_snapshot(if_match='0x111111111111111')
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_snapshot_blob_with_if_none_match(self):
@@ -1269,11 +1270,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.create_snapshot(if_none_match=etag)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_lease_blob_with_if_modified(self):
@@ -1305,12 +1306,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob = self.bsc.get_blob_client(self.container_name, 'blob1')
             blob.acquire_lease(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_lease_blob_with_if_unmodified(self):
@@ -1343,11 +1344,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.acquire_lease(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_lease_blob_with_if_match(self):
@@ -1377,11 +1378,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.acquire_lease(if_match='0x111111111111111')
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_lease_blob_with_if_none_match(self):
@@ -1411,11 +1412,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.acquire_lease(if_none_match=etag)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_put_block_list_with_if_modified(self):
@@ -1448,13 +1449,13 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.commit_block_list(
                 [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')],
                 if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_put_block_list_with_if_unmodified(self):
@@ -1487,13 +1488,13 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.commit_block_list(
                 [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')],
                 if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_put_block_list_with_if_match(self):
@@ -1523,13 +1524,13 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         blob.stage_block('3', b'CCC')
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.commit_block_list(
                 [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')],
                 if_match='0x111111111111111')
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_put_block_list_with_if_none_match(self):
@@ -1559,12 +1560,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
             blob.commit_block_list(block_list, if_none_match=etag)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_update_page_with_if_modified(self):
@@ -1592,11 +1593,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.upload_page(data, 0, 511, if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_update_page_with_if_unmodified(self):
@@ -1624,11 +1625,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.upload_page(data, 0, 511, if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_update_page_with_if_match(self):
@@ -1653,11 +1654,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, 'blob1')
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.upload_page(data, 0, 511, if_match='0x111111111111111')
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_update_page_with_if_none_match(self):
@@ -1682,11 +1683,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.upload_page(data, 0, 511, if_none_match=etag)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_page_ranges_iter_with_if_modified(self):
@@ -1719,11 +1720,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         blob.upload_page(data, 1024, 1535)
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.get_page_ranges(if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_page_ranges_iter_with_if_unmodified(self):
@@ -1756,11 +1757,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         blob.upload_page(data, 1024, 1535)
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.get_page_ranges(if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_page_ranges_iter_with_if_match(self):
@@ -1790,11 +1791,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         blob.upload_page(data, 1024, 1535)
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.get_page_ranges(if_match='0x111111111111111')
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_get_page_ranges_iter_with_if_none_match(self):
@@ -1825,11 +1826,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             blob.get_page_ranges(if_none_match=etag)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_append_block_with_if_modified(self):
@@ -1853,12 +1854,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_datetime = (datetime.datetime.utcnow() +
                          datetime.timedelta(minutes=15))
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             for i in range(5):
                 resp = blob.append_block(u'block {0}'.format(i), if_modified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_append_block_with_if_unmodified(self):
@@ -1882,12 +1883,12 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_datetime = (datetime.datetime.utcnow() -
                          datetime.timedelta(minutes=15))
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             for i in range(5):
                 resp = blob.append_block(u'block {0}'.format(i), if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_append_block_with_if_match(self):
@@ -1915,7 +1916,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                 resp = blob.append_block(u'block {0}'.format(i), if_match='0x111111111111111')
 
         # Assert
-        # self.assertEqual('ConditionNotMet', e.exception.error_code) TODO: wat
+        #self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_append_block_with_if_none_match(self):
@@ -1937,13 +1938,13 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         container, blob = self._create_container_and_append_blob(self.container_name, 'blob1')
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             for i in range(5):
                 etag = blob.get_blob_properties().etag
                 resp = blob.append_block(u'block {0}'.format(i), if_none_match=etag)
 
         # Assert
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_append_blob_from_bytes_with_if_modified(self):
@@ -1968,11 +1969,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_datetime = (datetime.datetime.utcnow() + datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
             blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_modified_since=test_datetime)
 
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_append_blob_from_bytes_with_if_unmodified(self):
@@ -1997,11 +1998,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_datetime = (datetime.datetime.utcnow() - datetime.timedelta(minutes=15))
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
             blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_unmodified_since=test_datetime)
 
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_append_blob_from_bytes_with_if_match(self):
@@ -2026,11 +2027,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_etag = '0x8D2C9167D53FC2C'
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
             blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_match=test_etag)
 
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
     @record
     def test_append_blob_from_bytes_with_if_none_match(self):
@@ -2055,11 +2056,11 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_etag = blob.get_blob_properties().etag
 
         # Act
-        with self.assertRaises(HttpResponseError) as e:
+        with self.assertRaises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
             blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_none_match=test_etag)
 
-        self.assertEqual('ConditionNotMet', e.exception.error_code)
+        self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
 
 
 # ------------------------------------------------------------------------------

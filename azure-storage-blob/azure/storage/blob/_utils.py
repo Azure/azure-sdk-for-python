@@ -11,6 +11,7 @@ import sys
 import isodate
 import logging
 from os import fstat
+import xml.etree.ElementTree as ET
 from io import (BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation)
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List, Type,
@@ -34,10 +35,17 @@ from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
     NetworkTraceLoggingPolicy,
-    ProxyPolicy
-)
-from azure.core.exceptions import ResourceNotFoundError
+    ProxyPolicy)
+from azure.core.exceptions import (
+    HttpResponseError,
+    ResourceNotFoundError,
+    ResourceModifiedError,
+    ResourceExistsError,
+    ClientAuthenticationError,
+    ResourceModifiedError,
+    DecodeError)
 
+from .common import StorageErrorCode
 from .authentication import SharedKeyCredentials
 from ._policies import (
     StorageBlobSettings,
@@ -49,7 +57,8 @@ from ._generated import AzureBlobStorage
 from ._generated.models import (
     LeaseAccessConditions,
     ModifiedAccessConditions,
-    SequenceNumberAccessConditions
+    SequenceNumberAccessConditions,
+    StorageErrorException
 )
 
 if TYPE_CHECKING:
@@ -326,13 +335,6 @@ def create_pipeline(configuration, credentials, **kwargs):
     return config, Pipeline(transport, policies=policies)
 
 
-def basic_error_map():
-    # type: () -> Dict[int, Type]
-    return {
-        404: ResourceNotFoundError
-    }
-
-
 def parse_query(query_str):
     sas_values = _QueryStringConstants.to_list()
     parsed_query = {k: v[0] for k, v in parse_qs(query_str).items()}
@@ -355,10 +357,55 @@ def is_credential_sastoken(credential):
     return False
 
 
-def process_storage_error(error):
-    error.error_code = error.response.headers.get('x-ms-error-code')
-    if error.error_code:
-        error.message += "\nErrorCode: {}".format(error.error_code)
+def process_storage_error(storage_error):
+    raise_error = HttpResponseError
+    error_code = storage_error.response.headers.get('x-ms-error-code')
+    error_message = storage_error.message
+    additional_data = {}
+    try:
+        error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
+        if error_body:
+            for info in error_body.getchildren():
+                if info.tag.lower() == 'code':
+                    error_code = info.text
+                elif info.tag.lower() == 'message':
+                    error_message = info.text
+                else:
+                    additional_data[info.tag] = info.text
+    except DecodeError:
+        pass
+
+    if error_code:
+        error_code = StorageErrorCode(error_code)
+        if error_code in [StorageErrorCode.condition_not_met,
+                          StorageErrorCode.blob_overwritten]:
+            raise_error = ResourceModifiedError
+        if error_code in [StorageErrorCode.invalid_authentication_info,
+                          StorageErrorCode.authentication_failed]:
+            raise_error = ClientAuthenticationError
+        if error_code in [StorageErrorCode.resource_not_found,
+                          StorageErrorCode.blob_not_found,
+                          StorageErrorCode.container_not_found]:
+            raise_error = ResourceNotFoundError
+        if error_code in [StorageErrorCode.account_already_exists,
+                          StorageErrorCode.account_being_created,
+                          StorageErrorCode.resource_already_exists,
+                          StorageErrorCode.resource_type_mismatch,
+                          StorageErrorCode.blob_already_exists,
+                          StorageErrorCode.container_already_exists,
+                          StorageErrorCode.container_being_deleted]:
+            raise_error = ResourceExistsError
+
+    try:
+        error_message += "\nErrorCode:{}".format(error_code.value)
+    except AttributeError:
+        pass  # No error code.
+    for name, info in additional_data.items():
+        error_message += "\n{}:{}".format(name, info)
+
+    error = raise_error(message=error_message, response=storage_error.response)
+    error.error_code = error_code
+    error.additional_info = additional_data
     raise error
 
 

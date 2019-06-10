@@ -14,7 +14,7 @@ import requests
 from datetime import datetime, timedelta
 from azure.common import (AzureConflictHttpError, AzureException,
                           AzureHttpError, AzureMissingResourceHttpError)
-from azure.core import HttpResponseError, ResourceNotFoundError
+from azure.core import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.storage.blob.models import ContainerPermissions
 from azure.storage.blob.common import PublicAccess
 from azure.storage.blob import (
@@ -22,7 +22,7 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    LeaseClient
+    LeaseClient,
 )
 
 from tests.testcase import StorageTestCase, TestMode, record, LogCaptured
@@ -758,7 +758,7 @@ class StorageContainerTest(StorageTestCase):
         self.assertIsNotNone(blobs[0])
         self.assertNamedItemInContainer(blobs, 'blob1')
         self.assertNamedItemInContainer(blobs, 'blob2')
-        self.assertEqual(blobs[0].content_length, 11)
+        self.assertEqual(blobs[0].size, 11)
         self.assertEqual(blobs[1].content_settings.content_type,
                          'application/octet-stream')
         self.assertIsNotNone(blobs[0].creation_time)
@@ -780,7 +780,7 @@ class StorageContainerTest(StorageTestCase):
         self.assertGreaterEqual(len(resp), 1)
         self.assertIsNotNone(resp[0])
         self.assertNamedItemInContainer(resp, 'blob1')
-        self.assertEqual(resp[0].content_length, 11)
+        self.assertEqual(resp[0].size, 11)
         self.assertEqual(resp[0].lease.duration, 'infinite')
         self.assertEqual(resp[0].lease.status, 'locked')
         self.assertEqual(resp[0].lease.state, 'leased')
@@ -910,7 +910,7 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(blobs[0].name, 'blob1')
         self.assertEqual(blobs[1].name, 'blob1copy')
         self.assertEqual(blobs[1].blob_type, blobs[0].blob_type)
-        self.assertEqual(blobs[1].content_length, 11)
+        self.assertEqual(blobs[1].size, 11)
         self.assertEqual(blobs[1].content_settings.content_type,
                          'application/octet-stream')
         self.assertEqual(blobs[1].content_settings.cache_control, None)
@@ -1015,11 +1015,8 @@ class StorageContainerTest(StorageTestCase):
             try:
                 created = container.create_container()
                 self.assertIsNotNone(created)
-            except HttpResponseError as error:
-                if error.error_code == 'ContainerAlreadyExists':
-                    pass
-                else:
-                    raise
+            except ResourceExistsError:
+                pass
 
             # test if web container exists
             exist = container.get_container_properties()
