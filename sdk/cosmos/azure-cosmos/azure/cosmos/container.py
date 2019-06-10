@@ -232,6 +232,9 @@ class Container:
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
+        if hasattr(response_hook, 'clear'):
+            response_hook.clear()
+
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook
         )
@@ -271,6 +274,9 @@ class Container:
             feed_options["maxItemCount"] = max_item_count
         if continuation is not None:
             feed_options["continuation"] = continuation
+
+        if hasattr(response_hook, 'clear'):
+            response_hook.clear()
 
         result = self.client_connection.QueryItemsChangeFeed(
             self.container_link, options=feed_options, response_hook=response_hook
@@ -347,6 +353,9 @@ class Container:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
+
+        if hasattr(response_hook, 'clear'):
+            response_hook.clear()
 
         items = self.client_connection.QueryItems(
             database_or_Container_link=self.container_link,

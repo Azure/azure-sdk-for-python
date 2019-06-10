@@ -47,7 +47,6 @@ class RecordDiagnostics(object):
 
     _common = {
         'x-ms-activity-id',
-        'x-ms-request-charge',
         'x-ms-session-token',
 
         'x-ms-item-count',
@@ -59,6 +58,7 @@ class RecordDiagnostics(object):
     def __init__(self):
         self._headers = CaseInsensitiveDict()
         self._body = None
+        self._request_charge = 0
 
     @property
     def headers(self):
@@ -67,10 +67,19 @@ class RecordDiagnostics(object):
     @property
     def body(self):
         return self._body
+
+    @property
+    def request_charge(self):
+        return self._request_charge
+
+    def clear(self):
+        self._request_charge = 0
     
     def __call__(self, headers, body):
         self._headers = headers
         self._body = body
+        
+        self._request_charge += float(headers.get('x-ms-request-charge' , 0))
         
     def __getattr__(self, name):
         key = "x-ms-" + name.replace("_", "-")
