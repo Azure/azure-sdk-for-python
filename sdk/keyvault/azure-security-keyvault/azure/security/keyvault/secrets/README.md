@@ -55,7 +55,7 @@ Once you have the `client_id`, `client_secret` and `tenant_id` from above, you c
 The Secret client performs the interactions with the Azure Key Vault service for getting, setting, updating,deleting, and listing secrets and its versions. An asynchronous and synchronous, SecretClient, client exists in the SDK allowing for selection of a client based on an application's use case.
 
 ## Examples
-The following sections provide several code snippets covering some of the most common Azure Key Vault Secret service related tasks, including:
+The following section provides several code snippets covering some of the most common Azure Key Vault Secret service related tasks, including:
 * [Create a Secret](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault#create-a-secret)
 * [Retrieve a Secret](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault#retrieve-a-secret)
 * [Update an existing Secret](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault#update-an-existing-secret)
@@ -157,7 +157,7 @@ This example lists all the secrets in the specified Key Vault.
 
 ### Async operations
 Python’s asyncio package (introduced in Python 3.4) and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
-The following examples provides a code snippets for performing async operations in the Secret Client library:
+The following examples provide code snippets for performing async operations in the Secret Client library:
 
 ### Async create a secret
 This example creates a secret in the specified Key Vault with the specified optional arguments.
@@ -208,7 +208,7 @@ For example, if you try to retrieve a secret after it is deleted a `404` error i
 ```python
 try:
     client.get_secret("deleted_secret")
-except HttpResponseError as e:
+except ResourceNotFoundError as e:
     if e.code == 404:
         print(e.message)
     else:
@@ -234,14 +234,12 @@ Several KeyVault Python SDK samples are available to you in the SDK's GitHub rep
     * Update an existing secret
     * List secret versions
     * Delete secret
-* [test_examples_keys_sync.py](TODO) -  Python code for working with Key Vault keys, including:
-    * Create a key
-    * Get an existing key
-    * Update an existing key
-    * List key versions
-    * Delete key
-* [Sample 1](TODO)
-* [Sample 2](TODO)
+* [test_examples_secrets_async.py](TODO) -  Python code for working with async Key Vault secrets, including:
+    * Create a secret
+    * Get an existing secret
+    * Update an existing secret
+    * List secret versions
+    * Delete secret
 
  ###  Additional Documentation
 For more extensive documentation on Azure Key Vault, see the reference documentation available at docs.microsoft.com/python/api/azure-security-keyvault--TODO
