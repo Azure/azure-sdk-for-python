@@ -26,7 +26,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
             :caption: Creates a new instance of the Secret client
     """
 
-    async def get_secret(self, name: str, version: str, **kwargs: Mapping[str, Any]) -> Secret:
+    async def get_secret(self, name: str, version: Optional[str] = None, **kwargs: Mapping[str, Any]) -> Secret:
         """Get a specified secret from the vault.
 
         The GET operation is applicable to any secret stored in Azure Key
@@ -48,7 +48,7 @@ class SecretClient(_AsyncKeyVaultClientBase):
                 :dedent: 4
                 :caption: Get secret from the key vault
         """
-        bundle = await self._client.get_secret(self.vault_url, name, version, error_map={404: ResourceNotFoundError})
+        bundle = await self._client.get_secret(self.vault_url, name, version or "", error_map={404: ResourceNotFoundError})
         return Secret._from_secret_bundle(bundle)
 
     async def set_secret(
