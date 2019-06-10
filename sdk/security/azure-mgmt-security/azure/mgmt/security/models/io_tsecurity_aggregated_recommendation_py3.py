@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from msrest.serialization import Model
 
 
-class IoTSecurityAggregatedRecommendation(Resource):
+class IoTSecurityAggregatedRecommendation(Model):
     """Security Solution Recommendation Information.
 
     Variables are only populated by the server, and will be ignored when
@@ -24,6 +24,10 @@ class IoTSecurityAggregatedRecommendation(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
+    :param tags: Resource tags
+    :type tags: dict[str, str]
+    :param location: The resource location.
+    :type location: str
     :param recommendation_name: Name of the alert type
     :type recommendation_name: str
     :ivar recommendation_display_name: Display name of the alert type
@@ -66,19 +70,26 @@ class IoTSecurityAggregatedRecommendation(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'recommendation_name': {'key': 'recommendationName', 'type': 'str'},
-        'recommendation_display_name': {'key': 'recommendationDisplayName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'recommendation_type_id': {'key': 'recommendationTypeId', 'type': 'str'},
-        'detected_by': {'key': 'detectedBy', 'type': 'str'},
-        'reported_severity': {'key': 'reportedSeverity', 'type': 'str'},
-        'healthy_devices': {'key': 'healthyDevices', 'type': 'int'},
-        'unhealthy_devices': {'key': 'unhealthyDevices', 'type': 'int'},
-        'log_analytics_query': {'key': 'logAnalyticsQuery', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'location': {'key': 'location', 'type': 'str'},
+        'recommendation_name': {'key': 'properties.recommendationName', 'type': 'str'},
+        'recommendation_display_name': {'key': 'properties.recommendationDisplayName', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'recommendation_type_id': {'key': 'properties.recommendationTypeId', 'type': 'str'},
+        'detected_by': {'key': 'properties.detectedBy', 'type': 'str'},
+        'reported_severity': {'key': 'properties.reportedSeverity', 'type': 'str'},
+        'healthy_devices': {'key': 'properties.healthyDevices', 'type': 'int'},
+        'unhealthy_devices': {'key': 'properties.unhealthyDevices', 'type': 'int'},
+        'log_analytics_query': {'key': 'properties.logAnalyticsQuery', 'type': 'str'},
     }
 
-    def __init__(self, *, recommendation_name: str=None, recommendation_type_id: str=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, location: str=None, recommendation_name: str=None, recommendation_type_id: str=None, **kwargs) -> None:
         super(IoTSecurityAggregatedRecommendation, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.tags = tags
+        self.location = location
         self.recommendation_name = recommendation_name
         self.recommendation_display_name = None
         self.description = None
