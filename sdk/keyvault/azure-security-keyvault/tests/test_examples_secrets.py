@@ -68,7 +68,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
             expires = date_parse.parse("2050-02-02T08:00:00.000Z")
 
-            # create a secret with optional arguments
+            # create a secret, setting optional arguments
             secret = secret_client.set_secret("secret-name", "secret-value", enabled=True, expires=expires)
 
             print(secret.version)
@@ -84,18 +84,17 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # [START get_secret]
             secret_version = secret.version
 
-            # get secret with version
+            # get the latest version of a secret
+            secret = secret_client.get_secret("secret-name")
+
+            # alternatively, specify a version
             secret = secret_client.get_secret("secret-name", secret_version)
 
-            # if the version argument is the empty string or None, the latest
-            # version of the secret will be returned
-            secret = secret_client.get_secret("secret-name", "")
-
-            # gets a secret properties
             print(secret.id)
             print(secret.name)
             print(secret.version)
             print(secret.vault_url)
+
             # [END get_secret]
         except HttpResponseError:
             pass
@@ -107,10 +106,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
             content_type = "text/plain"
             tags = {"foo": "updated tag"}
-            secret_version = secret.version
-            updated_secret = secret_client.update_secret(
-                "secret-name", secret_version, content_type=content_type, tags=tags
-            )
+            updated_secret = secret_client.update_secret("secret-name", content_type=content_type, tags=tags)
 
             print(updated_secret.version)
             print(updated_secret.updated)
@@ -129,6 +125,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
             print(deleted_secret.name)
             print(deleted_secret.deleted_date)
+
+            # if the vault has soft-delete enabled, the secret's
+            # scheduled purge date and recovery id are set
+            print(deleted_secret.scheduled_purge_date)
+            print(deleted_secret.recovery_id)
 
             # [END delete_secret]
         except HttpResponseError:
@@ -156,11 +157,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # pylint: disable=unused-variable
         try:
             # [START list_secret_versions]
-            # gets a list of all versions of a secret
+            # list a secret's versions
             secret_versions = secret_client.list_secret_versions("secret-name")
 
             for secret in secrets:
-                # the list doesn't include secret values
+                # the list doesn't include the values at each version
                 print(secret.version)
 
             # [END list_secret_versions]
@@ -190,7 +191,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         secret_name = created_secret.name
         try:
             # [START backup_secret]
-            # backup secret
+            # backup a secret
             secret_backup = secret_client.backup_secret(secret_name)
 
             # returns the raw bytes of the backed up secret

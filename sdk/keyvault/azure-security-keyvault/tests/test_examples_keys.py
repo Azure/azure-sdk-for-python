@@ -75,6 +75,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # create a key with optional arguments
             key = key_client.create_key("key-name", "RSA-HSM", enabled=True, expires=expires)
 
+            print(key.name)
             print(key.id)
             print(key.version)
             print(key.key_material.kty)
@@ -121,11 +122,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         try:
             # [START get_key]
 
-            # if no version is specified the latest
-            # version of the key will be returned
+            # get the latest version of a key
             key = key_client.get_key("key-name")
 
-            # get key with version
+            # alternatively, specify a version
             key_version = key.version
             key = key_client.get_key("key-name", key_version)
 
@@ -134,6 +134,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             print(key.version)
             print(key.key_material.kty)
             print(key.vault_url)
+
             # [END get_key]
 
             # [START update_key]
@@ -161,11 +162,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             deleted_key = key_client.delete_key("key-name")
 
             print(deleted_key.name)
-            # when vault has soft-delete enabled, deleted_key exposes the purge date, recover id
-            # and deleted date of the key
             print(deleted_key.deleted_date)
-            print(deleted_key.recovery_id)
+
+            # if the vault has soft-delete enabled, the key's
+            # scheduled purge date and recovery id are set
             print(deleted_key.scheduled_purge_date)
+            print(deleted_key.recovery_id)
 
             # [END delete_key]
         except ResourceNotFoundError:
@@ -192,7 +194,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         try:
             # [START list_key_versions]
-            # get an iterator of all versions of a key
+
+            # get an iterator of a key's versions
             key_versions = key_client.list_key_versions("key-name")
 
             for key in key_versions:
@@ -265,6 +268,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # gets a deleted key (requires soft-delete enabled for the vault)
             deleted_key = key_client.get_deleted_key("key-name")
             print(deleted_key.name)
+            print(deleted_key.deleted_date)
 
             # [END get_deleted_key]
         except ResourceNotFoundError:
@@ -274,9 +278,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             # [START recover_deleted_key]
 
             # recover deleted key to its latest version
-            recover_deleted_key = key_client.recover_deleted_key("key-name")
-            print(recover_deleted_key.id)
-            print(recover_deleted_key.name)
+            recovered_key = key_client.recover_deleted_key("key-name")
+            print(recovered_key.id)
+            print(recovered_key.name)
 
             # [END recover_deleted_key]
         except HttpResponseError:
@@ -290,9 +294,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
             # [START purge_deleted_key]
 
-            # if the vault has soft-delete enabled, purge permanently deletes the key
-            # (without soft-delete, an ordinary delete is permanent)
-            # key must be deleted prior to be purged
+            # when the vault has soft-delete enabled, purge permanently deletes a deleted key
+            # (with soft-delete disabled, delete is permanent)
             key_client.purge_deleted_key("key-name")
 
             # [END purge_deleted_key]

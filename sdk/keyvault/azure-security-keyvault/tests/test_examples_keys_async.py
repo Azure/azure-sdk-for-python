@@ -48,6 +48,7 @@ def create_key_client():
 
     # Create a new key client using a client secret credential
     key_client = KeyClient(vault_url=vault_url, credential=credential)
+
     # [END create_key_client]
     return key_client
 
@@ -57,8 +58,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_key_crud_operations(self, vault_client, **kwargs):
-        from dateutil import parser as date_parse
-
         key_client = vault_client.keys
         try:
             # [START create_key]
@@ -82,12 +81,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             # [END create_key]
             # [START create_rsa_key]
 
-            key_size = 2048
-            key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
-
-            # create an rsa key with size specification
-            # RSA key can be created with default size of '2048'
-            key = await key_client.create_rsa_key("key-name", hsm=True, size=key_size, enabled=True, key_ops=key_ops)
+            # create an rsa key in a hardware security module
+            key = await key_client.create_rsa_key("key-name", hsm=True, size=2048, enabled=True, key_ops=key_ops)
 
             print(key.id)
             print(key.version)
@@ -97,12 +92,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             # [END create_rsa_key]
 
             # [START create_ec_key]
-            from dateutil import parser as date_parse
 
+            # create an elliptic curve (ec) key
             key_curve = "P-256"
-
-            # create an ec (Elliptic curve) key with curve specification
-            # EC key can be created with default curve of 'P-256'
             ec_key = await key_client.create_ec_key("key-name", hsm=False, curve=key_curve)
 
             print(ec_key.id)
@@ -117,11 +109,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         try:
             # [START get_key]
 
-            # if no version is specified the latest
-            # version of the key will be returned
+            # get the latest version of a key
             key = await key_client.get_key("key-name")
 
-            # get key with version
+            # alternatively, specify a version
             key_version = key.version
             key = await key_client.get_key("key-name", key_version)
 
@@ -130,6 +121,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(key.version)
             print(key.key_material.kty)
             print(key.vault_url)
+
             # [END get_key]
             # [START update_key]
 
@@ -143,7 +135,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(updated_key.updated)
             print(updated_key.expires)
             print(updated_key.tags)
-            print(key.key_material.kty)
+            print(updated_key.key_material.kty)
 
             # [END update_key]
         except ResourceNotFoundError:
@@ -156,11 +148,12 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             deleted_key = await key_client.delete_key("key-name")
 
             print(deleted_key.name)
-            # when vault has soft-delete enabled, deleted_key exposes the purge date, recover id
-            # and deleted date of the key
             print(deleted_key.deleted_date)
-            print(deleted_key.recovery_id)
+
+            # if the vault has soft-delete enabled, the key's
+            # scheduled purge date and recovery id are set
             print(deleted_key.scheduled_purge_date)
+            print(deleted_key.recovery_id)
 
             # [END delete_key]
         except ResourceNotFoundError:
@@ -179,6 +172,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
             async for key in keys:
                 print(key.id)
+                print(key.created)
                 print(key.name)
                 print(key.key_material.kty)
 
@@ -193,8 +187,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
             async for key in key_versions:
                 print(key.id)
+                print(key.updated)
                 print(key.version)
-                print(key.key_material.kty)
+                print(key.expires)
 
             # [END list_key_versions]
         except HttpResponseError:
@@ -203,12 +198,14 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         try:
             # [START list_deleted_keys]
 
-            # get an iterator of DeletedKey (requires soft-delete enabled for the vault)
+            # get an iterator of deleted keys (requires soft-delete enabled for the vault)
             deleted_keys = key_client.list_deleted_keys()
 
             async for key in deleted_keys:
-                print(key.id)
                 print(key.name)
+                print(key.scheduled_purge_date)
+                print(key.recovery_id)
+                print(key.deleted_date)
 
             # [END list_deleted_keys]
         except HttpResponseError:
@@ -219,28 +216,30 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_keys_backup_restore(self, vault_client, **kwargs):
         key_client = vault_client.keys
-        created_key = await key_client.create_key("keyrec", "RSA")
-        key_name = created_key.name
+        key_name = "keyrec"
+        created_key = await key_client.create_key(key_name, "RSA")
         try:
             # [START backup_key]
+
             # backup key
             key_backup = await key_client.backup_key(key_name)
 
-            # returns the raw bytes of the backed up key
+            # returns the raw bytes of the backup
             print(key_backup)
 
             # [END backup_key]
 
-            await key_client.delete_key("keyrec")
+            await key_client.delete_key(key_name)
             await self._poll_until_exception(
                 key_client.get_key, created_key.name, expected_exception=ResourceNotFoundError
             )
 
             # [START restore_key]
 
-            # restores a backed up key
+            # restores a backup
             restored_key = await key_client.restore_key(key_backup)
             print(restored_key.id)
+            print(restored_key.name)
             print(restored_key.version)
 
             # [END restore_key]
@@ -265,7 +264,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         try:
             # [START get_deleted_key]
-            # gets a deleted key (requires soft-delete enabled for the vault)
+
+            # get a deleted key (requires soft-delete enabled for the vault)
             deleted_key = await key_client.get_deleted_key("key-name")
             print(deleted_key.name)
 
