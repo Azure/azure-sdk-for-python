@@ -44,25 +44,31 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
 
     The async retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
 
-    Keyword arguments:
-    :param int retry_total: Total number of retries to allow. Takes precedence over other counts.
-     Default value is 10.
-    :param int retry_connect: How many connection-related errors to retry on.
-     These are errors raised before the request is sent to the remote server,
-     which we assume has not triggered the server to process the request. Default value is 3.
-    :param int retry_read: How many times to retry on read errors.
-     These errors are raised after the request was sent to the server, so the
-     request may have side-effects. Default value is 3.
-    :param int retry_status: How many times to retry on bad status codes. Default value is 3.
-    :param int retry_backoff_factor: A backoff factor to apply between attempts after the second try
-     (most errors are resolved immediately by a second try without a delay).
-     Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
-     seconds. If the backoff_factor is 0.1, then the retry will sleep
-     for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
-    :param int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+    **Keyword arguments:**
+
+    *retry_total (int)* - Total number of retries to allow. Takes precedence over other counts.
+    Default value is 10.
+
+    *retry_connect (int)* - How many connection-related errors to retry on.
+    These are errors raised before the request is sent to the remote server,
+    which we assume has not triggered the server to process the request. Default value is 3.
+
+    *retry_read (int)* - How many times to retry on read errors.
+    These errors are raised after the request was sent to the server, so the
+    request may have side-effects. Default value is 3.
+
+    *retry_status (int)* - How many times to retry on bad status codes. Default value is 3.
+
+    *retry_backoff_factor (float)* - A backoff factor to apply between attempts after the second try
+    (most errors are resolved immediately by a second try without a delay).
+    Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
+    seconds. If the backoff_factor is 0.1, then the retry will sleep
+    for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
+
+    *retry_backoff_max (int)* - The maximum back off time. Default value is 120 seconds (2 minutes).
 
     Example:
-        .. literalinclude:: ../../../../examples/examples_async.py
+        .. literalinclude:: ../examples/examples_async.py
             :start-after: [START async_retry_policy]
             :end-before: [END async_retry_policy]
             :language: python
@@ -114,14 +120,13 @@ class AsyncRetryPolicy(RetryPolicy, AsyncHTTPPolicy):  # type: ignore
         await self._sleep_backoff(settings, transport)
 
     async def send(self, request):
-        """Uses the configured retry policy to send the request
-         to the next policy in the pipeline.
+        """Uses the configured retry policy to send the request to the next policy in the pipeline.
 
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
         :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
         :rtype: ~azure.core.pipeline.PipelineResponse
-        :raises: ~azure.core.exceptions.AzureError if maximum retries exceeded.
+        :raise: ~azure.core.exceptions.AzureError if maximum retries exceeded.
         """
         retry_active = True
         response = None

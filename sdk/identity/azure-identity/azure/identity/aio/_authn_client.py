@@ -36,10 +36,11 @@ class AsyncAuthnClient(AuthnClientBase):
         self,
         scopes: Iterable[str],
         method: Optional[str] = "POST",
+        headers: Optional[Mapping[str, str]] = None,
         form_data: Optional[Mapping[str, str]] = None,
         params: Optional[Dict[str, str]] = None,
     ) -> str:
-        request = self._prepare_request(method, form_data, params)
+        request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
         response = await self._pipeline.run(request, stream=False)
         token = self._deserialize_and_cache_token(response, scopes)
         return token

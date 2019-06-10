@@ -9,26 +9,9 @@ import functools
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError, HttpResponseError
 from devtools_testutils import ResourceGroupPreparer
-from preparer import VaultClientPreparer
-from test_case import KeyVaultTestCase
+from async_preparer import AsyncVaultClientPreparer
+from async_test_case import AsyncKeyVaultTestCase
 from azure.security.keyvault.aio import VaultClient
-
-
-def await_prepared_test(test_fn):
-    """Synchronous wrapper for async test methods. Used to avoid making changes
-       upstream to AbstractPreparer (which doesn't await the functions it wraps)
-    """
-
-    @functools.wraps(test_fn)
-    def run(test_class_instance, *args, **kwargs):
-        # TODO: this is a workaround for VaultClientPreparer creating a sync client; let's obviate it
-        vault_client = kwargs.get("vault_client")
-        credentials = test_class_instance.settings.get_credentials(resource="https://vault.azure.net")
-        aio_client = VaultClient(vault_client.vault_url, credentials)
-        loop = asyncio.get_event_loop()
-        return loop.run_until_complete(test_fn(test_class_instance, vault_client=aio_client))
-
-    return run
 
 
 def create_vault_client():
@@ -38,15 +21,13 @@ def create_vault_client():
     vault_url = ""
 
     # [START create_vault_client]
+    from azure.identity import AsyncClientSecretCredential
     from azure.security.keyvault.aio import VaultClient
-    from azure.common.credentials import ServicePrincipalCredentials
 
-    credentials = ServicePrincipalCredentials(
-        client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
-    )
+    credential = AsyncClientSecretCredential(client_id=client_id, secret=client_secret, tenant_id=tenant_id)
 
-    # Create a new Vault client using Azure credentials
-    vault_client = VaultClient(vault_url=vault_url, credentials=credentials)
+    # Create a new Vault client using a client secret credential
+    vault_client = VaultClient(vault_url=vault_url, credential=credential)
     # [END create_vault_client]
     return vault_client
 
@@ -58,23 +39,21 @@ def create_key_client():
     vault_url = ""
 
     # [START create_key_client]
-    from azure.common.credentials import ServicePrincipalCredentials
+    from azure.identity import AsyncClientSecretCredential
     from azure.security.keyvault.aio import KeyClient
 
-    credentials = ServicePrincipalCredentials(
-        client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
-    )
+    credential = AsyncClientSecretCredential(client_id=client_id, secret=client_secret, tenant_id=tenant_id)
 
-    # Create a new key client using Azure credentials
-    key_client = KeyClient(vault_url=vault_url, credentials=credentials)
+    # Create a new key client using a client secret credential
+    key_client = KeyClient(vault_url=vault_url, credential=credential)
     # [END create_key_client]
     return key_client
 
 
-class TestExamplesKeyVault(KeyVaultTestCase):
+class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @ResourceGroupPreparer()
-    @VaultClientPreparer()
-    @await_prepared_test
+    @AsyncVaultClientPreparer()
+    @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_key_crud_operations(self, vault_client, **kwargs):
         from dateutil import parser as date_parse
 
@@ -186,8 +165,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             pass
 
     @ResourceGroupPreparer()
-    @VaultClientPreparer(enable_soft_delete=True)
-    @await_prepared_test
+    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_key_list_operations(self, vault_client, **kwargs):
         key_client = vault_client.keys
         try:
@@ -234,8 +213,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             pass
 
     @ResourceGroupPreparer()
-    @VaultClientPreparer()
-    @await_prepared_test
+    @AsyncVaultClientPreparer()
+    @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_keys_backup_restore(self, vault_client, **kwargs):
         key_client = vault_client.keys
         created_key = await key_client.create_key("keyrec", "RSA")
@@ -266,8 +245,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
             pass
 
     @ResourceGroupPreparer()
-    @VaultClientPreparer(enable_soft_delete=True)
-    @await_prepared_test
+    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_keys_recover_purge(self, vault_client, **kwargs):
         key_client = vault_client.keys
         created_key = await key_client.create_key("key-name", "RSA")

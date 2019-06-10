@@ -50,7 +50,7 @@ class Configuration(object):
      TrioRequestsTransport, AioHttpTransport.
 
     Example:
-        .. literalinclude:: ../../examples/examples_config.py
+        .. literalinclude:: ../examples/examples_config.py
             :start-after: [START configuration]
             :end-before: [END configuration]
             :language: python
@@ -92,7 +92,7 @@ class Configuration(object):
 class ConnectionConfiguration(object):
     """HTTP transport connection configuration settings.
 
-    Common properies that can be configured on all transports. Found in the
+    Common properties that can be configured on all transports. Found in the
     Configuration object.
 
     :param int connection_timeout: The connect and read timeout value. Defaults to 100 seconds.
@@ -103,7 +103,7 @@ class ConnectionConfiguration(object):
     :param int connection_data_block_size: The block size of data sent over the connection. Defaults to 4096 bytes.
 
     Example:
-        .. literalinclude:: ../../examples/examples_config.py
+        .. literalinclude:: ../examples/examples_config.py
             :start-after: [START connection_configuration]
             :end-before: [END connection_configuration]
             :language: python
