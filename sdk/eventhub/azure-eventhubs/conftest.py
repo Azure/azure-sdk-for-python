@@ -29,7 +29,7 @@ else:
     from azure.eventprocessorhost.partition_pump import PartitionPump
     from azure.eventprocessorhost.partition_manager import PartitionManager
 
-from azure.eventhub import EventHubClient, Receiver, EventPosition
+from azure.eventhub import EventHubClient, EventReceiver, EventPosition
 
 
 def get_logger(filename, level=logging.INFO):

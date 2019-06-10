@@ -77,7 +77,7 @@ def pump(receivers, duration):
                                 batch[-1].offset.value))
             print("Total received {}".format(total))
     except Exception as e:
-        print("Receiver failed: {}".format(e))
+        print("EventReceiver failed: {}".format(e))
         raise
 
 

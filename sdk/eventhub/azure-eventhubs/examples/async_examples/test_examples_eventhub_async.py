@@ -115,7 +115,7 @@ async def test_example_eventhub_async_sender_ops(live_eventhub_config, connectio
     client = EventHubClientAsync.from_connection_string(connection_str)
     sender = client.add_async_sender(partition="0")
     try:
-        # Open the Async Sender using the supplied conneciton.
+        # Open the Async EventSender using the supplied conneciton.
         await sender.open_async()
         # Start sending
     except:
@@ -129,7 +129,7 @@ async def test_example_eventhub_async_sender_ops(live_eventhub_config, connectio
     client = EventHubClientAsync.from_connection_string(connection_str)
     sender = client.add_async_sender(partition="0")
     try:
-        # Open the Async Sender using the supplied conneciton.
+        # Open the Async EventSender using the supplied conneciton.
         await sender.open_async()
         # Start sending
     except:
@@ -154,7 +154,7 @@ async def test_example_eventhub_async_receiver_ops(live_eventhub_config, connect
     client = EventHubClientAsync.from_connection_string(connection_str)
     receiver = client.add_async_receiver(consumer_group="$default", partition="0", offset=Offset('@latest'))
     try:
-        # Open the Async Receiver using the supplied conneciton.
+        # Open the Async EventReceiver using the supplied conneciton.
         await receiver.open_async()
         # Start receiving
     except:
@@ -168,7 +168,7 @@ async def test_example_eventhub_async_receiver_ops(live_eventhub_config, connect
     client = EventHubClientAsync.from_connection_string(connection_str)
     receiver = client.add_async_receiver(consumer_group="$default", partition="0", offset=Offset('@latest'))
     try:
-        # Open the Async Receiver using the supplied conneciton.
+        # Open the Async EventReceiver using the supplied conneciton.
         await receiver.open_async()
         # Start receiving
     except:

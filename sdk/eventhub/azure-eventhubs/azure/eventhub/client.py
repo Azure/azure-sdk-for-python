@@ -22,8 +22,8 @@ from uamqp import authentication
 from uamqp import constants
 
 from azure.eventhub import __version__
-from azure.eventhub.sender import Sender
-from azure.eventhub.receiver import Receiver
+from azure.eventhub.sender import EventSender
+from azure.eventhub.receiver import EventReceiver
 from azure.eventhub.common import parse_sas_token
 from azure.eventhub.error import EventHubError
 from .client_abstract import EventHubClientAbstract
@@ -180,6 +180,7 @@ class EventHubClient(EventHubClientAbstract):
                 output['last_enqueued_time_utc'] = datetime.datetime.utcfromtimestamp(
                     float(partition_info[b'last_enqueued_time_utc'] / 1000))
                 output['is_empty'] = partition_info[b'is_partition_empty']
+                # TODO: add retrieval time. May need uamqp change
             return output
         finally:
             mgmt_client.close()
@@ -205,7 +206,7 @@ class EventHubClient(EventHubClientAbstract):
         :type operation: str
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
-        :rtype: ~azure.eventhub.receiver.Receiver
+        :rtype: ~azure.eventhub.receiver.EventReceiver
 
         Example:
             .. literalinclude:: ../examples/test_examples_eventhub.py
@@ -221,7 +222,7 @@ class EventHubClient(EventHubClientAbstract):
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition_id)
-        handler = Receiver(
+        handler = EventReceiver(
             self, source_url, event_position=event_position, exclusive_receiver_priority=exclusive_receiver_priority,
             prefetch=prefetch)
         return handler
@@ -240,7 +241,7 @@ class EventHubClient(EventHubClientAbstract):
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: int
-        :rtype: ~azure.eventhub.sender.Sender
+        :rtype: ~azure.eventhub.sender.EventSender
 
         Example:
             .. literalinclude:: ../examples/test_examples_eventhub.py
@@ -256,6 +257,6 @@ class EventHubClient(EventHubClientAbstract):
             target = target + operation
         send_timeout = self.config.send_timeout if send_timeout is None else send_timeout
 
-        handler = Sender(
+        handler = EventSender(
             self, target, partition=partition_id, send_timeout=send_timeout)
         return handler

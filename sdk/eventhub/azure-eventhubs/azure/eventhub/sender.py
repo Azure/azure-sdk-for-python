@@ -20,15 +20,15 @@ from azure.eventhub.error import EventHubError, ConnectError, \
 log = logging.getLogger(__name__)
 
 
-class Sender(object):
+class EventSender(object):
     """
-    Implements a Sender.
+    Implements a EventSender.
 
     """
 
     def __init__(self, client, target, partition=None, send_timeout=60, keep_alive=None, auto_reconnect=True):
         """
-        Instantiate an EventHub event Sender handler.
+        Instantiate an EventHub event EventSender handler.
 
         :param client: The parent EventHubClient.
         :type client: ~azure.eventhub.client.EventHubClient.
@@ -84,7 +84,7 @@ class Sender(object):
 
     def _open(self):
         """
-        Open the Sender using the supplied connection.
+        Open the EventSender using the supplied connection.
         If the handler has previously been redirected, the redirect
         context will be used to create a new handler before opening it.
 
@@ -139,43 +139,43 @@ class Sender(object):
             return True
         except errors.AuthenticationException as shutdown:
             if is_reconnect:
-                log.info("Sender couldn't authenticate. Shutting down. (%r)", shutdown)
+                log.info("EventSender couldn't authenticate. Shutting down. (%r)", shutdown)
                 error = AuthenticationError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
             else:
-                log.info("Sender couldn't authenticate. Attempting reconnect.")
+                log.info("EventSender couldn't authenticate. Attempting reconnect.")
                 return False
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry:
-                log.info("Sender detached. Attempting reconnect.")
+                log.info("EventSender detached. Attempting reconnect.")
                 return False
             else:
-                log.info("Sender detached. Shutting down.")
+                log.info("EventSender detached. Shutting down.")
                 error = ConnectError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
         except errors.MessageHandlerError as shutdown:
             if is_reconnect:
-                log.info("Sender detached. Shutting down.")
+                log.info("EventSender detached. Shutting down.")
                 error = ConnectError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
             else:
-                log.info("Sender detached. Attempting reconnect.")
+                log.info("EventSender detached. Attempting reconnect.")
                 return False
         except errors.AMQPConnectionError as shutdown:
             if is_reconnect:
-                log.info("Sender connection error (%r). Shutting down.", shutdown)
+                log.info("EventSender connection error (%r). Shutting down.", shutdown)
                 error = AuthenticationError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
             else:
-                log.info("Sender couldn't authenticate. Attempting reconnect.")
+                log.info("EventSender couldn't authenticate. Attempting reconnect.")
                 return False
         except Exception as e:
             log.info("Unexpected error occurred (%r). Shutting down.", e)
-            error = EventHubError("Sender Reconnect failed: {}".format(e))
+            error = EventHubError("EventSender Reconnect failed: {}".format(e))
             self.close(exception=error)
             raise error
 
@@ -225,7 +225,7 @@ class Sender(object):
                     self._handler.wait()
                 self.unsent_events = self._handler.pending_messages
                 if self._outcome != constants.MessageSendResult.Ok:
-                    Sender._error(self._outcome, self._condition)
+                    EventSender._error(self._outcome, self._condition)
             except (errors.MessageAccepted,
                     errors.MessageAlreadySettled,
                     errors.MessageModified,
@@ -240,46 +240,46 @@ class Sender(object):
                 raise error
             except errors.AuthenticationException as auth_error:
                 if connecting_count < 3:
-                    log.info("Sender disconnected due to token error. Attempting reconnect.")
+                    log.info("EventSender disconnected due to token error. Attempting reconnect.")
                     self._reconnect()
                 else:
-                    log.info("Sender authentication failed. Shutting down.")
+                    log.info("EventSender authentication failed. Shutting down.")
                     error = AuthenticationError(str(auth_error), auth_error)
                     self.close(auth_error)
                     raise error
             except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
                 if shutdown.action.retry:
-                    log.info("Sender detached. Attempting reconnect.")
+                    log.info("EventSender detached. Attempting reconnect.")
                     self._reconnect()
                 else:
-                    log.info("Sender detached. Shutting down.")
+                    log.info("EventSender detached. Shutting down.")
                     error = ConnectionLostError(str(shutdown), shutdown)
                     self.close(exception=error)
                     raise error
             except errors.MessageHandlerError as shutdown:
                 if connecting_count < 3:
-                    log.info("Sender detached. Attempting reconnect.")
+                    log.info("EventSender detached. Attempting reconnect.")
                     self._reconnect()
                 else:
-                    log.info("Sender detached. Shutting down.")
+                    log.info("EventSender detached. Shutting down.")
                     error = ConnectionLostError(str(shutdown), shutdown)
                     self.close(error)
                     raise error
             except errors.AMQPConnectionError as shutdown:
                 if connecting_count < 3:
-                    log.info("Sender connection lost. Attempting reconnect.")
+                    log.info("EventSender connection lost. Attempting reconnect.")
                     self._reconnect()
                 else:
-                    log.info("Sender connection lost. Shutting down.")
+                    log.info("EventSender connection lost. Shutting down.")
                     error = ConnectionLostError(str(shutdown), shutdown)
                     self.close(error)
                     raise error
             except compat.TimeoutException as toe:
                 if connecting_count < 3:
-                    log.info("Sender timed out sending event data. Attempting reconnect.")
+                    log.info("EventSender timed out sending event data. Attempting reconnect.")
                     self._reconnect()
                 else:
-                    log.info("Sender timed out. Shutting down.")
+                    log.info("EventSender timed out. Shutting down.")
                     self.close(toe)
                     raise TimeoutError(str(toe), toe)
             except Exception as e:

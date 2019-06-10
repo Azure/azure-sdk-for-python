@@ -20,8 +20,8 @@ from azure.eventhub import (
     EventHubError)
 from ..client_abstract import EventHubClientAbstract
 
-from .sender_async import Sender
-from .receiver_async import Receiver
+from .sender_async import EventSender
+from .receiver_async import EventReceiver
 
 
 log = logging.getLogger(__name__)
@@ -196,7 +196,7 @@ class EventHubClient(EventHubClientAbstract):
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
         :param loop: An event loop. If not specified the default event loop will be used.
-        :rtype: ~azure.eventhub.aio.receiver_async.Receiver
+        :rtype: ~azure.eventhub.aio.receiver_async.EventReceiver
 
         Example:
             .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
@@ -212,7 +212,7 @@ class EventHubClient(EventHubClientAbstract):
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition_id)
-        handler = Receiver(
+        handler = EventReceiver(
             self, source_url, offset=event_position, exclusive_receiver_priority=exclusive_receiver_priority,
             prefetch=prefetch, loop=loop)
         return handler
@@ -234,7 +234,7 @@ class EventHubClient(EventHubClientAbstract):
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: int
         :param loop: An event loop. If not specified the default event loop will be used.
-        :rtype ~azure.eventhub.aio.sender_async.Sender
+        :rtype ~azure.eventhub.aio.sender_async.EventSender
 
 
         Example:
@@ -252,6 +252,6 @@ class EventHubClient(EventHubClientAbstract):
             target = target + operation
         send_timeout = self.config.send_timeout if send_timeout is None else send_timeout
 
-        handler = Sender(
+        handler = EventSender(
             self, target, partition=partition_id, send_timeout=send_timeout, loop=loop)
         return handler

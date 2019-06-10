@@ -9,8 +9,8 @@ from azure.eventhub.common import EventData, EventPosition
 from azure.eventhub.error import EventHubError, EventDataError, ConnectError, \
     AuthenticationError, EventDataSendError, ConnectionLostError
 from azure.eventhub.client import EventHubClient
-from azure.eventhub.sender import Sender
-from azure.eventhub.receiver import Receiver
+from azure.eventhub.sender import EventSender
+from azure.eventhub.receiver import EventReceiver
 from .constants import MessageSendResult
 from .constants import TransportType
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential
@@ -26,8 +26,8 @@ __all__ = [
     "AuthenticationError",
     "EventPosition",
     "EventHubClient",
-    "Sender",
-    "Receiver",
+    "EventSender",
+    "EventReceiver",
     "MessageSendResult",
     "TransportType",
     "EventHubSharedKeyCredential",

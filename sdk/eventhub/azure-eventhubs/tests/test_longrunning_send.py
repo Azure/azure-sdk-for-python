@@ -17,7 +17,7 @@ import logging
 import pytest
 from logging.handlers import RotatingFileHandler
 
-from azure.eventhub import EventHubClient, Sender, EventData
+from azure.eventhub import EventHubClient, EventSender, EventData
 
 
 def get_logger(filename, level=logging.INFO):

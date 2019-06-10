@@ -103,7 +103,7 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
     sender = client.add_sender(partition="0")
     receiver = client.add_receiver(consumer_group="$default", partition="0", offset=Offset('@latest'))
     try:
-        # Opens the connection and starts running all Sender/Receiver clients.
+        # Opens the connection and starts running all EventSender/EventReceiver clients.
         client.run()
         # Start sending and receiving
 
@@ -153,31 +153,6 @@ def test_example_eventhub_sync_send_and_receive(live_eventhub_config):
     # [END eventhub_client_stop]
 
 
-def test_example_eventhub_transfer(connection_str):
-    import os
-    from azure.eventhub import EventHubClient, EventData
-
-    client = EventHubClient.from_connection_string(connection_str)
-    sender = client.add_sender()
-
-    try:
-        client.run()
-        # [START eventhub_client_transfer]
-        logger = logging.getLogger("azure.eventhub")
-        def callback(outcome, condition):
-            logger.info("Message sent. Outcome: {}, Condition: {}".format(
-                outcome, condition))
-
-        event_data = EventData(b"A single event")
-        sender.transfer(event_data, callback=callback)
-        sender.wait()
-        # [END eventhub_client_transfer]
-    except:
-        raise
-    finally:
-        client.stop()
-
-
 def test_example_eventhub_sync_sender_ops(live_eventhub_config, connection_str):
     import os
     # [START create_eventhub_client_sender_instance]
@@ -191,7 +166,7 @@ def test_example_eventhub_sync_sender_ops(live_eventhub_config, connection_str):
     client = EventHubClient.from_connection_string(connection_str)
     sender = client.add_sender(partition="0")
     try:
-        # Open the Sender using the supplied conneciton.
+        # Open the EventSender using the supplied conneciton.
         sender.open()
         # Start sending
     except:
@@ -205,7 +180,7 @@ def test_example_eventhub_sync_sender_ops(live_eventhub_config, connection_str):
     client = EventHubClient.from_connection_string(connection_str)
     sender = client.add_sender(partition="0")
     try:
-        # Open the Sender using the supplied conneciton.
+        # Open the EventSender using the supplied conneciton.
         sender.open()
         # Start sending
     except:
@@ -229,7 +204,7 @@ def test_example_eventhub_sync_receiver_ops(live_eventhub_config, connection_str
     client = EventHubClient.from_connection_string(connection_str)
     receiver = client.add_receiver(consumer_group="$default", partition="0", offset=Offset('@latest'))
     try:
-        # Open the Receiver using the supplied conneciton.
+        # Open the EventReceiver using the supplied conneciton.
         receiver.open()
         # Start receiving
     except:
@@ -243,7 +218,7 @@ def test_example_eventhub_sync_receiver_ops(live_eventhub_config, connection_str
     client = EventHubClient.from_connection_string(connection_str)
     receiver = client.add_receiver(consumer_group="$default", partition="0", offset=Offset('@latest'))
     try:
-        # Open the Receiver using the supplied conneciton.
+        # Open the EventReceiver using the supplied conneciton.
         receiver.open()
         # Start receiving
     except:
