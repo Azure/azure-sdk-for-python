@@ -49,7 +49,7 @@ class RedirectPolicy(HTTPPolicy):
 
     **Keyword arguments:**
 
-    *redirects_allow (int)* - Whether the client allows redirects. Defaults to True.
+    *permit_redirects (bool)* - Whether the client allows redirects. Defaults to True.
 
     *redirect_max (int)* - The maximum allowed redirects. Defaults to 30.
 
@@ -67,7 +67,7 @@ class RedirectPolicy(HTTPPolicy):
     REDIRECT_HEADERS_BLACKLIST = frozenset(['Authorization'])
 
     def __init__(self, **kwargs):
-        self.allow = kwargs.get('redirects_allow', True)
+        self.allow = kwargs.get('permit_redirects', True)
         self.max_redirects = kwargs.get('redirect_max', 30)
 
         remove_headers = set(kwargs.get('redirect_remove_headers', []))
@@ -80,7 +80,7 @@ class RedirectPolicy(HTTPPolicy):
     def no_redirects(cls):
         """Disable redirects.
         """
-        return cls(redirects_allow=False)
+        return cls(permit_redirects=False)
 
     def configure_redirects(self, options):
         """Configures the redirect settings.
@@ -90,7 +90,7 @@ class RedirectPolicy(HTTPPolicy):
         :rtype: dict
         """
         return {
-            'allow': options.pop("redirects_allow", self.max_redirects),
+            'allow': options.pop("permit_redirects", self.allow),
             'redirects': options.pop("redirect_max", self.max_redirects),
             'history': []
         }
