@@ -54,9 +54,10 @@ class StorageAccountCreateParameters(Model):
      'Hot', 'Cool'
     :type access_tier: str or
      ~azure.mgmt.storage.v2019_04_01.models.AccessTier
-    :param enable_azure_files_aad_integration: Enables Azure Files AAD
-     Integration for SMB if sets to true.
-    :type enable_azure_files_aad_integration: bool
+    :param azure_files_identity_based_authentication: Provides the identity
+     based authentication settings for Azure Files.
+    :type azure_files_identity_based_authentication:
+     ~azure.mgmt.storage.v2019_04_01.models.AzureFilesIdentityBasedAuthentication
     :param enable_https_traffic_only: Allows https traffic only to storage
      service if sets to true. The default value is true since API version
      2019-04-01.
@@ -82,7 +83,7 @@ class StorageAccountCreateParameters(Model):
         'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
         'access_tier': {'key': 'properties.accessTier', 'type': 'AccessTier'},
-        'enable_azure_files_aad_integration': {'key': 'properties.azureFilesAadIntegration', 'type': 'bool'},
+        'azure_files_identity_based_authentication': {'key': 'properties.azureFilesIdentityBasedAuthentication', 'type': 'AzureFilesIdentityBasedAuthentication'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
     }
@@ -98,6 +99,6 @@ class StorageAccountCreateParameters(Model):
         self.encryption = kwargs.get('encryption', None)
         self.network_rule_set = kwargs.get('network_rule_set', None)
         self.access_tier = kwargs.get('access_tier', None)
-        self.enable_azure_files_aad_integration = kwargs.get('enable_azure_files_aad_integration', None)
+        self.azure_files_identity_based_authentication = kwargs.get('azure_files_identity_based_authentication', None)
         self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', None)
         self.is_hns_enabled = kwargs.get('is_hns_enabled', None)

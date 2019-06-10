@@ -28,6 +28,7 @@ try:
     from .virtual_network_rule_py3 import VirtualNetworkRule
     from .ip_rule_py3 import IPRule
     from .network_rule_set_py3 import NetworkRuleSet
+    from .azure_files_identity_based_authentication_py3 import AzureFilesIdentityBasedAuthentication
     from .identity_py3 import Identity
     from .storage_account_create_parameters_py3 import StorageAccountCreateParameters
     from .endpoints_py3 import Endpoints
@@ -91,6 +92,7 @@ except (SyntaxError, ImportError):
     from .virtual_network_rule import VirtualNetworkRule
     from .ip_rule import IPRule
     from .network_rule_set import NetworkRuleSet
+    from .azure_files_identity_based_authentication import AzureFilesIdentityBasedAuthentication
     from .identity import Identity
     from .storage_account_create_parameters import StorageAccountCreateParameters
     from .endpoints import Endpoints
@@ -150,6 +152,7 @@ from .storage_management_client_enums import (
     State,
     Bypass,
     DefaultAction,
+    DirectoryServiceOptions,
     AccessTier,
     GeoReplicationStatus,
     ProvisioningState,
@@ -189,6 +192,7 @@ __all__ = [
     'VirtualNetworkRule',
     'IPRule',
     'NetworkRuleSet',
+    'AzureFilesIdentityBasedAuthentication',
     'Identity',
     'StorageAccountCreateParameters',
     'Endpoints',
@@ -247,6 +251,7 @@ __all__ = [
     'State',
     'Bypass',
     'DefaultAction',
+    'DirectoryServiceOptions',
     'AccessTier',
     'GeoReplicationStatus',
     'ProvisioningState',

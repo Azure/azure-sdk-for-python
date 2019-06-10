@@ -41,9 +41,10 @@ class StorageAccountUpdateParameters(Model):
      'Hot', 'Cool'
     :type access_tier: str or
      ~azure.mgmt.storage.v2019_04_01.models.AccessTier
-    :param enable_azure_files_aad_integration: Enables Azure Files AAD
-     Integration for SMB if sets to true.
-    :type enable_azure_files_aad_integration: bool
+    :param azure_files_identity_based_authentication: Provides the identity
+     based authentication settings for Azure Files.
+    :type azure_files_identity_based_authentication:
+     ~azure.mgmt.storage.v2019_04_01.models.AzureFilesIdentityBasedAuthentication
     :param enable_https_traffic_only: Allows https traffic only to storage
      service if sets to true.
     :type enable_https_traffic_only: bool
@@ -63,7 +64,7 @@ class StorageAccountUpdateParameters(Model):
         'custom_domain': {'key': 'properties.customDomain', 'type': 'CustomDomain'},
         'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
         'access_tier': {'key': 'properties.accessTier', 'type': 'AccessTier'},
-        'enable_azure_files_aad_integration': {'key': 'properties.azureFilesAadIntegration', 'type': 'bool'},
+        'azure_files_identity_based_authentication': {'key': 'properties.azureFilesIdentityBasedAuthentication', 'type': 'AzureFilesIdentityBasedAuthentication'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
         'kind': {'key': 'kind', 'type': 'str'},
@@ -77,7 +78,7 @@ class StorageAccountUpdateParameters(Model):
         self.custom_domain = kwargs.get('custom_domain', None)
         self.encryption = kwargs.get('encryption', None)
         self.access_tier = kwargs.get('access_tier', None)
-        self.enable_azure_files_aad_integration = kwargs.get('enable_azure_files_aad_integration', None)
+        self.azure_files_identity_based_authentication = kwargs.get('azure_files_identity_based_authentication', None)
         self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', None)
         self.network_rule_set = kwargs.get('network_rule_set', None)
         self.kind = kwargs.get('kind', None)
