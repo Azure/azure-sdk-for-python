@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .log_analytics_management_client import LogAnalyticsManagementClient
+from .operational_insights_management_client import OperationalInsightsManagementClient
 from .version import VERSION
 
-__all__ = ['LogAnalyticsManagementClient']
+__all__ = ['OperationalInsightsManagementClient']
 
 __version__ = VERSION
 

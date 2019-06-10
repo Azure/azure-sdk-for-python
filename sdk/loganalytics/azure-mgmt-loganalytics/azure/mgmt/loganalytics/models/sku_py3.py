@@ -18,8 +18,7 @@ class Sku(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. The name of the SKU. Possible values include:
-     'Free', 'Standard', 'Premium', 'Unlimited', 'PerNode', 'PerGB2018',
-     'Standalone'
+     'Free', 'Standard', 'Premium', 'PerNode', 'PerGB2018', 'Standalone'
     :type name: str or ~azure.mgmt.loganalytics.models.SkuNameEnum
     """
 
