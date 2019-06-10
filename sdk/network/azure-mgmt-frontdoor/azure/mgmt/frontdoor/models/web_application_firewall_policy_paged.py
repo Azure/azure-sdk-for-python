@@ -9,20 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class ManagedRuleSets(Model):
-    """Defines ManagedRuleSets - array of managedRuleSet.
-
-    :param rule_sets: List of rules
-    :type rule_sets: list[~azure.mgmt.frontdoor.models.ManagedRuleSet]
+class WebApplicationFirewallPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`WebApplicationFirewallPolicy <azure.mgmt.frontdoor.models.WebApplicationFirewallPolicy>` object
     """
 
     _attribute_map = {
-        'rule_sets': {'key': 'ruleSets', 'type': '[ManagedRuleSet]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[WebApplicationFirewallPolicy]'}
     }
 
-    def __init__(self, **kwargs):
-        super(ManagedRuleSets, self).__init__(**kwargs)
-        self.rule_sets = kwargs.get('rule_sets', None)
+    def __init__(self, *args, **kwargs):
+
+        super(WebApplicationFirewallPolicyPaged, self).__init__(*args, **kwargs)

@@ -13,22 +13,44 @@ from msrest.serialization import Model
 
 
 class PolicySettings(Model):
-    """Defines contents of a web application firewall global configuration.
+    """Defines top-level WebApplicationFirewallPolicy configuration settings.
 
-    :param enabled_state: describes if the policy is in enabled state or
-     disabled state. Possible values include: 'Disabled', 'Enabled'
-    :type enabled_state: str or ~azure.mgmt.frontdoor.models.EnabledState
-    :param mode: Describes if it is in detection mode  or prevention mode at
+    :param enabled_state: Describes if the policy is in enabled or disabled
+     state. Defaults to Enabled if not specified. Possible values include:
+     'Disabled', 'Enabled'
+    :type enabled_state: str or
+     ~azure.mgmt.frontdoor.models.PolicyEnabledState
+    :param mode: Describes if it is in detection mode or prevention mode at
      policy level. Possible values include: 'Prevention', 'Detection'
-    :type mode: str or ~azure.mgmt.frontdoor.models.Mode
+    :type mode: str or ~azure.mgmt.frontdoor.models.PolicyMode
+    :param redirect_url: If action type is redirect, this field represents
+     redirect URL for the client.
+    :type redirect_url: str
+    :param custom_block_response_status_code: If the action type is block,
+     customer can override the response status code.
+    :type custom_block_response_status_code: int
+    :param custom_block_response_body: If the action type is block, customer
+     can override the response body. The body must be specified in base64
+     encoding.
+    :type custom_block_response_body: str
     """
+
+    _validation = {
+        'custom_block_response_body': {'pattern': r'^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$'},
+    }
 
     _attribute_map = {
         'enabled_state': {'key': 'enabledState', 'type': 'str'},
         'mode': {'key': 'mode', 'type': 'str'},
+        'redirect_url': {'key': 'redirectUrl', 'type': 'str'},
+        'custom_block_response_status_code': {'key': 'customBlockResponseStatusCode', 'type': 'int'},
+        'custom_block_response_body': {'key': 'customBlockResponseBody', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(PolicySettings, self).__init__(**kwargs)
         self.enabled_state = kwargs.get('enabled_state', None)
         self.mode = kwargs.get('mode', None)
+        self.redirect_url = kwargs.get('redirect_url', None)
+        self.custom_block_response_status_code = kwargs.get('custom_block_response_status_code', None)
+        self.custom_block_response_body = kwargs.get('custom_block_response_body', None)

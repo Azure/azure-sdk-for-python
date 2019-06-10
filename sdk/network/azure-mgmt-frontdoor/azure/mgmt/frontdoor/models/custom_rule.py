@@ -15,66 +15,62 @@ from msrest.serialization import Model
 class CustomRule(Model):
     """Defines contents of a web application rule.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Gets name of the resource that is unique within a policy.
-     This name can be used to access the resource.
+    :param name: Describes the name of the rule.
     :type name: str
-    :ivar etag: Gets a unique read-only string that changes whenever the
-     resource is updated.
-    :vartype etag: str
     :param priority: Required. Describes priority of the rule. Rules with a
-     lower value will be evaluated before rules with a higher value
+     lower value will be evaluated before rules with a higher value.
     :type priority: int
+    :param enabled_state: Describes if the custom rule is in enabled or
+     disabled state. Defaults to Enabled if not specified. Possible values
+     include: 'Disabled', 'Enabled'
+    :type enabled_state: str or
+     ~azure.mgmt.frontdoor.models.CustomRuleEnabledState
     :param rule_type: Required. Describes type of rule. Possible values
      include: 'MatchRule', 'RateLimitRule'
     :type rule_type: str or ~azure.mgmt.frontdoor.models.RuleType
-    :param rate_limit_duration_in_minutes: Defines rate limit duration.
-     Default - 1 minute
+    :param rate_limit_duration_in_minutes: Time window for resetting the rate
+     limit count. Default is 1 minute.
     :type rate_limit_duration_in_minutes: int
-    :param rate_limit_threshold: Defines rate limit threshold
+    :param rate_limit_threshold: Number of allowed requests per client within
+     the time window.
     :type rate_limit_threshold: int
-    :param match_conditions: Required. List of match conditions
-    :type match_conditions: list[~azure.mgmt.frontdoor.models.MatchCondition1]
-    :param action: Required. Type of Actions. Possible values include:
-     'Allow', 'Block', 'Log'
-    :type action: str or ~azure.mgmt.frontdoor.models.Action
-    :param transforms: List of transforms
-    :type transforms: list[str or ~azure.mgmt.frontdoor.models.Transform]
+    :param match_conditions: Required. List of match conditions.
+    :type match_conditions: list[~azure.mgmt.frontdoor.models.MatchCondition]
+    :param action: Required. Describes what action to be applied when rule
+     matches. Possible values include: 'Allow', 'Block', 'Log', 'Redirect'
+    :type action: str or ~azure.mgmt.frontdoor.models.ActionType
     """
 
     _validation = {
         'name': {'max_length': 128},
-        'etag': {'readonly': True},
         'priority': {'required': True},
         'rule_type': {'required': True},
+        'rate_limit_duration_in_minutes': {'maximum': 5, 'minimum': 0},
+        'rate_limit_threshold': {'minimum': 0},
         'match_conditions': {'required': True},
         'action': {'required': True},
     }
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'priority': {'key': 'priority', 'type': 'int'},
+        'enabled_state': {'key': 'enabledState', 'type': 'str'},
         'rule_type': {'key': 'ruleType', 'type': 'str'},
         'rate_limit_duration_in_minutes': {'key': 'rateLimitDurationInMinutes', 'type': 'int'},
         'rate_limit_threshold': {'key': 'rateLimitThreshold', 'type': 'int'},
-        'match_conditions': {'key': 'matchConditions', 'type': '[MatchCondition1]'},
+        'match_conditions': {'key': 'matchConditions', 'type': '[MatchCondition]'},
         'action': {'key': 'action', 'type': 'str'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
         super(CustomRule, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.etag = None
         self.priority = kwargs.get('priority', None)
+        self.enabled_state = kwargs.get('enabled_state', None)
         self.rule_type = kwargs.get('rule_type', None)
         self.rate_limit_duration_in_minutes = kwargs.get('rate_limit_duration_in_minutes', None)
         self.rate_limit_threshold = kwargs.get('rate_limit_threshold', None)
         self.match_conditions = kwargs.get('match_conditions', None)
         self.action = kwargs.get('action', None)
-        self.transforms = kwargs.get('transforms', None)

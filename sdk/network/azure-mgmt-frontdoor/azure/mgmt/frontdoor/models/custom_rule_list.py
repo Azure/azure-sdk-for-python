@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class CustomRules(Model):
+class CustomRuleList(Model):
     """Defines contents of custom rules.
 
     :param rules: List of rules
@@ -24,5 +24,5 @@ class CustomRules(Model):
     }
 
     def __init__(self, **kwargs):
-        super(CustomRules, self).__init__(**kwargs)
+        super(CustomRuleList, self).__init__(**kwargs)
         self.rules = kwargs.get('rules', None)

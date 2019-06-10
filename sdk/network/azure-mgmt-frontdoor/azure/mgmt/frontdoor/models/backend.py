@@ -25,7 +25,7 @@ class Backend(Model):
      values are 'Enabled' or 'Disabled'. Possible values include: 'Enabled',
      'Disabled'
     :type enabled_state: str or
-     ~azure.mgmt.frontdoor.models.FrontDoorEnabledState
+     ~azure.mgmt.frontdoor.models.BackendEnabledState
     :param priority: Priority to use for load balancing. Higher priorities
      will not be used for load balancing if any lower priority backend is
      healthy.
