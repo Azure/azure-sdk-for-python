@@ -57,6 +57,7 @@ try:
     from .source_trigger_descriptor_py3 import SourceTriggerDescriptor
     from .platform_properties_py3 import PlatformProperties
     from .agent_properties_py3 import AgentProperties
+    from .timer_trigger_descriptor_py3 import TimerTriggerDescriptor
     from .run_py3 import Run
     from .source_upload_definition_py3 import SourceUploadDefinition
     from .run_filter_py3 import RunFilter
@@ -147,6 +148,7 @@ except (SyntaxError, ImportError):
     from .source_trigger_descriptor import SourceTriggerDescriptor
     from .platform_properties import PlatformProperties
     from .agent_properties import AgentProperties
+    from .timer_trigger_descriptor import TimerTriggerDescriptor
     from .run import Run
     from .source_upload_definition import SourceUploadDefinition
     from .run_filter import RunFilter
@@ -274,6 +276,7 @@ __all__ = [
     'SourceTriggerDescriptor',
     'PlatformProperties',
     'AgentProperties',
+    'TimerTriggerDescriptor',
     'Run',
     'SourceUploadDefinition',
     'RunFilter',

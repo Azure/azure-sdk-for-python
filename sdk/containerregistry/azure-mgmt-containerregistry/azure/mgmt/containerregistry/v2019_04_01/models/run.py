@@ -80,6 +80,9 @@ class Run(ProxyResource):
     :param is_archive_enabled: The value that indicates whether archiving is
      enabled or not. Default value: False .
     :type is_archive_enabled: bool
+    :param timer_trigger: The timer trigger that caused the run.
+    :type timer_trigger:
+     ~azure.mgmt.containerregistry.v2019_04_01.models.TimerTriggerDescriptor
     """
 
     _validation = {
@@ -111,6 +114,7 @@ class Run(ProxyResource):
         'run_error_message': {'key': 'properties.runErrorMessage', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'is_archive_enabled': {'key': 'properties.isArchiveEnabled', 'type': 'bool'},
+        'timer_trigger': {'key': 'properties.timerTrigger', 'type': 'TimerTriggerDescriptor'},
     }
 
     def __init__(self, **kwargs):
@@ -133,3 +137,4 @@ class Run(ProxyResource):
         self.run_error_message = None
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.is_archive_enabled = kwargs.get('is_archive_enabled', False)
+        self.timer_trigger = kwargs.get('timer_trigger', None)

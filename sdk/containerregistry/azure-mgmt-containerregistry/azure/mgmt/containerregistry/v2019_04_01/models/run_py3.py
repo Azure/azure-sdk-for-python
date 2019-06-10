@@ -80,6 +80,9 @@ class Run(ProxyResource):
     :param is_archive_enabled: The value that indicates whether archiving is
      enabled or not. Default value: False .
     :type is_archive_enabled: bool
+    :param timer_trigger: The timer trigger that caused the run.
+    :type timer_trigger:
+     ~azure.mgmt.containerregistry.v2019_04_01.models.TimerTriggerDescriptor
     """
 
     _validation = {
@@ -111,9 +114,10 @@ class Run(ProxyResource):
         'run_error_message': {'key': 'properties.runErrorMessage', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'is_archive_enabled': {'key': 'properties.isArchiveEnabled', 'type': 'bool'},
+        'timer_trigger': {'key': 'properties.timerTrigger', 'type': 'TimerTriggerDescriptor'},
     }
 
-    def __init__(self, *, run_id: str=None, status=None, last_updated_time=None, run_type=None, create_time=None, start_time=None, finish_time=None, output_images=None, task: str=None, image_update_trigger=None, source_trigger=None, platform=None, agent_configuration=None, source_registry_auth: str=None, custom_registries=None, provisioning_state=None, is_archive_enabled: bool=False, **kwargs) -> None:
+    def __init__(self, *, run_id: str=None, status=None, last_updated_time=None, run_type=None, create_time=None, start_time=None, finish_time=None, output_images=None, task: str=None, image_update_trigger=None, source_trigger=None, platform=None, agent_configuration=None, source_registry_auth: str=None, custom_registries=None, provisioning_state=None, is_archive_enabled: bool=False, timer_trigger=None, **kwargs) -> None:
         super(Run, self).__init__(**kwargs)
         self.run_id = run_id
         self.status = status
@@ -133,3 +137,4 @@ class Run(ProxyResource):
         self.run_error_message = None
         self.provisioning_state = provisioning_state
         self.is_archive_enabled = is_archive_enabled
+        self.timer_trigger = timer_trigger
