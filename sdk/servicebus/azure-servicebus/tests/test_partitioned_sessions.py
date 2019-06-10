@@ -581,7 +581,7 @@ def test_qsession_schedule_message(live_servicebus_config, partitioned_session_q
     import uuid
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(partitioned_session_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
     with queue_client.get_receiver(session=session_id) as receiver:
         with queue_client.get_sender(session=session_id) as sender:
             content = str(uuid.uuid4())
@@ -615,7 +615,7 @@ def test_qsession_schedule_multiple_messages(live_servicebus_config, partitioned
     import uuid
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(partitioned_session_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
 
     with queue_client.get_receiver(session=session_id, prefetch=20) as receiver:
         with queue_client.get_sender(session=session_id) as sender:
@@ -651,7 +651,7 @@ def test_qsession_cancel_scheduled_messages(live_servicebus_config, partitioned_
 
     session_id = str(uuid.uuid4())
     queue_client = client.get_queue(partitioned_session_queue)
-    enqueue_time = (datetime.now() + timedelta(minutes=2)).replace(microsecond=0)
+    enqueue_time = (datetime.utcnow() + timedelta(minutes=2)).replace(microsecond=0)
 
     with queue_client.get_sender(session=session_id) as sender:
         message_id = uuid.uuid4()
