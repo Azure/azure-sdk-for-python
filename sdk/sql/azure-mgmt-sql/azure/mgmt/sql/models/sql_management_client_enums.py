@@ -678,12 +678,6 @@ class InstanceFailoverGroupReplicationRole(str, Enum):
     secondary = "Secondary"
 
 
-class InstancePoolLicenseType(str, Enum):
-
-    license_included = "LicenseIncluded"
-    base_price = "BasePrice"
-
-
 class LongTermRetentionDatabaseState(str, Enum):
 
     all = "All"
