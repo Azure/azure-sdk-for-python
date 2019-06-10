@@ -18,8 +18,6 @@ class IoTSecurityAggregatedAlert(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: Resource Id
     :vartype id: str
     :ivar name: Resource name
@@ -30,7 +28,7 @@ class IoTSecurityAggregatedAlert(Model):
     :type tags: dict[str, str]
     :param location: The resource location.
     :type location: str
-    :ivar alert_type: Required. Name of the alert type
+    :ivar alert_type: Name of the alert type
     :vartype alert_type: str
     :ivar alert_display_name: Display name of the alert type
     :vartype alert_display_name: str
@@ -66,7 +64,7 @@ class IoTSecurityAggregatedAlert(Model):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'alert_type': {'required': True, 'readonly': True},
+        'alert_type': {'readonly': True},
         'alert_display_name': {'readonly': True},
         'aggregated_date_utc': {'readonly': True},
         'vendor_name': {'readonly': True},
