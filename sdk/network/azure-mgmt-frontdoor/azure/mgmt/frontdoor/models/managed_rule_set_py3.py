@@ -13,37 +13,34 @@ from msrest.serialization import Model
 
 
 class ManagedRuleSet(Model):
-    """Base class for all types of ManagedRuleSet.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureManagedRuleSet
+    """Defines a managed rule set.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param priority: Describes priority of the rule
-    :type priority: int
-    :param version: defines version of the rule set
-    :type version: int
-    :param rule_set_type: Required. Constant filled by server.
+    :param rule_set_type: Required. Defines the rule set type to use.
     :type rule_set_type: str
+    :param rule_set_version: Required. Defines the version of the rule set to
+     use.
+    :type rule_set_version: str
+    :param rule_group_overrides: Defines the rule group overrides to apply to
+     the rule set.
+    :type rule_group_overrides:
+     list[~azure.mgmt.frontdoor.models.ManagedRuleGroupOverride]
     """
 
     _validation = {
         'rule_set_type': {'required': True},
+        'rule_set_version': {'required': True},
     }
 
     _attribute_map = {
-        'priority': {'key': 'priority', 'type': 'int'},
-        'version': {'key': 'version', 'type': 'int'},
         'rule_set_type': {'key': 'ruleSetType', 'type': 'str'},
+        'rule_set_version': {'key': 'ruleSetVersion', 'type': 'str'},
+        'rule_group_overrides': {'key': 'ruleGroupOverrides', 'type': '[ManagedRuleGroupOverride]'},
     }
 
-    _subtype_map = {
-        'rule_set_type': {'AzureManagedRuleSet': 'AzureManagedRuleSet'}
-    }
-
-    def __init__(self, *, priority: int=None, version: int=None, **kwargs) -> None:
+    def __init__(self, *, rule_set_type: str, rule_set_version: str, rule_group_overrides=None, **kwargs) -> None:
         super(ManagedRuleSet, self).__init__(**kwargs)
-        self.priority = priority
-        self.version = version
-        self.rule_set_type = None
+        self.rule_set_type = rule_set_type
+        self.rule_set_version = rule_set_version
+        self.rule_group_overrides = rule_group_overrides
