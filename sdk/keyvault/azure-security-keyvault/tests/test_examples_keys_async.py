@@ -54,7 +54,7 @@ def create_key_client():
 
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @ResourceGroupPreparer()
-    @AsyncVaultClientPreparer()
+    @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_key_crud_operations(self, vault_client, **kwargs):
         from dateutil import parser as date_parse
