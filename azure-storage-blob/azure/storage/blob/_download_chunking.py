@@ -16,7 +16,7 @@ from ._utils import (
     validate_and_format_range_headers,
     parse_length_from_content_range,
     process_storage_error)
-from ._generated.models import ModifiedAccessConditions
+from ._generated.models import ModifiedAccessConditions, StorageErrorException
 from ._deserialize import deserialize_blob_stream
 from ._encryption import _decrypt_blob
 
@@ -200,7 +200,7 @@ class StorageStreamDownloader(object):
             else:
                 self.download_size = self.blob_size
 
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             if self.offset is None and error.response.status_code == 416:
                 # Get range will fail on an empty blob. If the user did not
                 # request a range, do a regular get request in order to get
@@ -215,7 +215,7 @@ class StorageStreamDownloader(object):
                         data_stream_total=0,
                         data_stream_current=0,
                         **self.request_options)
-                except HttpResponseError as error:
+                except StorageErrorException as error:
                     process_storage_error(error)
 
                 # Set the download size to empty
@@ -401,7 +401,7 @@ class _BlobChunkDownloader(object):
                 data_stream_total=self.download_size,
                 data_stream_current=self.progress_total,
                 **self.request_options)
-        except HttpResponseError as error:
+        except StorageErrorException as error:
             process_storage_error(error)
 
         chunk_data = _process_content(

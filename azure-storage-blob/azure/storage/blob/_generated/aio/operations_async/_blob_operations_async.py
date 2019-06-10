@@ -305,7 +305,7 @@ class BlobOperations:
             header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
 
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
+        request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 

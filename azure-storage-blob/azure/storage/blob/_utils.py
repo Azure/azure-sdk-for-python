@@ -375,31 +375,35 @@ def process_storage_error(storage_error):
     except DecodeError:
         pass
 
-    if error_code:
-        error_code = StorageErrorCode(error_code)
-        if error_code in [StorageErrorCode.condition_not_met,
-                          StorageErrorCode.blob_overwritten]:
-            raise_error = ResourceModifiedError
-        if error_code in [StorageErrorCode.invalid_authentication_info,
-                          StorageErrorCode.authentication_failed]:
-            raise_error = ClientAuthenticationError
-        if error_code in [StorageErrorCode.resource_not_found,
-                          StorageErrorCode.blob_not_found,
-                          StorageErrorCode.container_not_found]:
-            raise_error = ResourceNotFoundError
-        if error_code in [StorageErrorCode.account_already_exists,
-                          StorageErrorCode.account_being_created,
-                          StorageErrorCode.resource_already_exists,
-                          StorageErrorCode.resource_type_mismatch,
-                          StorageErrorCode.blob_already_exists,
-                          StorageErrorCode.container_already_exists,
-                          StorageErrorCode.container_being_deleted]:
-            raise_error = ResourceExistsError
+    try:
+        if error_code:
+            error_code = StorageErrorCode(error_code)
+            if error_code in [StorageErrorCode.condition_not_met,
+                            StorageErrorCode.blob_overwritten]:
+                raise_error = ResourceModifiedError
+            if error_code in [StorageErrorCode.invalid_authentication_info,
+                            StorageErrorCode.authentication_failed]:
+                raise_error = ClientAuthenticationError
+            if error_code in [StorageErrorCode.resource_not_found,
+                            StorageErrorCode.blob_not_found,
+                            StorageErrorCode.container_not_found]:
+                raise_error = ResourceNotFoundError
+            if error_code in [StorageErrorCode.account_already_exists,
+                            StorageErrorCode.account_being_created,
+                            StorageErrorCode.resource_already_exists,
+                            StorageErrorCode.resource_type_mismatch,
+                            StorageErrorCode.blob_already_exists,
+                            StorageErrorCode.container_already_exists,
+                            StorageErrorCode.container_being_deleted]:
+                raise_error = ResourceExistsError
+    except ValueError:
+        # Got an unknown error code
+        pass
 
     try:
         error_message += "\nErrorCode:{}".format(error_code.value)
     except AttributeError:
-        pass  # No error code.
+        error_message += "\nErrorCode:{}".format(error_code)
     for name, info in additional_data.items():
         error_message += "\n{}:{}".format(name, info)
 

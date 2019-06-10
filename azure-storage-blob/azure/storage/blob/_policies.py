@@ -10,6 +10,7 @@ import sys
 from time import time
 from io import SEEK_SET
 import logging
+import uuid
 from wsgiref.handlers import format_date_time
 try:
     from urllib.parse import urlparse
@@ -57,6 +58,9 @@ class StorageHeadersPolicy(HeadersPolicy):
         super(StorageHeadersPolicy, self).on_request(request)
         current_time = format_date_time(time())
         request.http_request.headers['x-ms-date'] = current_time
+
+        custom_id = request.context.options.pop('client_request_id', None)
+        request.http_request.headers['x-ms-client-request-id'] = custom_id or str(uuid.uuid1())
 
 
 class StorageSecondaryAccount(SansIOHTTPPolicy):
