@@ -20,7 +20,7 @@ from azure.storage.blob import (
     ContainerClient,
     BlobClient,
     SharedKeyCredentials,
-    Lease
+    LeaseClient
 )
 from azure.storage.blob.common import BlobType
 from azure.storage.blob.models import(
@@ -60,8 +60,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
     def tearDown(self):
         if not self.is_playback():
             try:
-                container = self.bsc.get_container_client(self.container_name)
-                container.delete_container()
+                self.bsc.delete_container(self.container_name)
             except:
                 pass
 
@@ -185,8 +184,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        container.acquire_lease(if_modified_since=test_datetime)
-        container.break_lease()
+        lease = container.acquire_lease(if_modified_since=test_datetime)
+        lease.break_lease()
 
         # Assert
 
@@ -212,8 +211,8 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
 
         # Act
-        container.acquire_lease(if_unmodified_since=test_datetime)
-        container.break_lease()
+        lease = container.acquire_lease(if_unmodified_since=test_datetime)
+        lease.break_lease()
 
         # Assert
 
@@ -1291,10 +1290,10 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             if_modified_since=test_datetime,
             lease_id=test_lease_id)
 
-        blob.break_lease()
+        lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, Lease)
+        self.assertIsInstance(lease, LeaseClient)
         self.assertIsNotNone(lease.id)
 
     @record
@@ -1328,10 +1327,10 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             if_unmodified_since=test_datetime,
             lease_id=test_lease_id)
 
-        blob.break_lease()
+        lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, Lease)
+        self.assertIsInstance(lease, LeaseClient)
         self.assertIsNotNone(lease.id)
 
     @record
@@ -1364,10 +1363,10 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             lease_id=test_lease_id,
             if_match=etag)
 
-        blob.break_lease()
+        lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, Lease)
+        self.assertIsInstance(lease, LeaseClient)
         self.assertIsNotNone(lease.id)
 
     @record
@@ -1397,10 +1396,10 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
             lease_id=test_lease_id,
             if_none_match='0x111111111111111')
 
-        blob.break_lease()
+        lease.break_lease()
 
         # Assert
-        self.assertIsInstance(lease, Lease)
+        self.assertIsInstance(lease, LeaseClient)
         self.assertIsNotNone(lease.id)
 
     @record

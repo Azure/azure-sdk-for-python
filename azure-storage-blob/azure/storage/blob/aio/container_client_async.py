@@ -37,7 +37,7 @@ class ContainerClient(object):
             self, lease_duration=-1, proposed_lease_id=None, if_modified_since=None,
             if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None):
         """
-        :returns: A Lease object, that can be run in a context manager.
+        :returns: A LeaseClient object, that can be run in a context manager.
         """
 
     async def break_lease(

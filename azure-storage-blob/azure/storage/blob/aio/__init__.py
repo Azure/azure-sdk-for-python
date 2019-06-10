@@ -10,12 +10,12 @@ from ..common import BlobType
 from .blob_service_client_async import BlobServiceClient
 from .container_client_async import ContainerClient
 from .blob_client_async import BlobClient
-from .lease_async import Lease
+from .lease_async import LeaseClient
 
 __all__ = [
     'BlobServiceClient',
     'ContainerClient',
     'BlobClient',
     'BlobType',
-    'Lease'
+    'LeaseClient'
 ]

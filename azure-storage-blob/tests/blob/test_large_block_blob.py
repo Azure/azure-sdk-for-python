@@ -58,15 +58,13 @@ class StorageLargeBlockBlobTest(StorageTestCase):
         self.container_name = self.get_resource_name('utcontainer')
 
         if not self.is_playback():
-            container = self.bsc.get_container_client(self.container_name)
-            container.create_container()
+            self.bsc.create_container(self.container_name)
 
 
     def tearDown(self):
         if not self.is_playback():
             try:
-                container = self.bsc.get_container_client(self.container_name)
-                container.delete_container()
+                self.bsc.delete_container(self.container_name)
             except:
                 pass
 

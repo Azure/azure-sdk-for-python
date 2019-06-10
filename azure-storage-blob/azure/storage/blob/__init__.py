@@ -10,7 +10,7 @@ from .common import BlobType
 from .blob_client import BlobClient
 from .container_client import ContainerClient
 from .blob_service_client import BlobServiceClient
-from .lease import Lease
+from .lease import LeaseClient
 from .authentication import SharedKeyCredentials
 
 __all__ = [
@@ -18,6 +18,6 @@ __all__ = [
     'ContainerClient',
     'BlobClient',
     'BlobType',
-    'Lease',
+    'LeaseClient',
     'SharedKeyCredentials',
 ]

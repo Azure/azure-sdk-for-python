@@ -22,6 +22,7 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
+    LeaseClient
 )
 
 from tests.testcase import StorageTestCase, TestMode, record, LogCaptured
@@ -47,7 +48,8 @@ class StorageContainerTest(StorageTestCase):
                     container.delete_container()
                 except AzureHttpError:
                     try:
-                        container.break_lease(0)
+                        lease = LeaseClient(container)
+                        lease.break_lease(0)
                         container.delete_container()
                     except:
                         pass
@@ -179,7 +181,7 @@ class StorageContainerTest(StorageTestCase):
         self.assertIsNotNone(containers)
         self.assertGreaterEqual(len(containers), 1)
         self.assertIsNotNone(containers[0])
-        self.assertNamedItemInContainer(containers, container.name)
+        self.assertNamedItemInContainer(containers, container.container_name)
         self.assertIsNotNone(containers[0].has_immutability_policy)
         self.assertIsNotNone(containers[0].has_legal_hold)
 
@@ -189,13 +191,13 @@ class StorageContainerTest(StorageTestCase):
         container = self._create_container()
 
         # Act
-        containers = list(self.bsc.list_containers(name_starts_with=container.name))
+        containers = list(self.bsc.list_containers(name_starts_with=container.container_name))
 
         # Assert
         self.assertIsNotNone(containers)
         self.assertEqual(len(containers), 1)
         self.assertIsNotNone(containers[0])
-        self.assertEqual(containers[0].name, container.name)
+        self.assertEqual(containers[0].name, container.container_name)
         self.assertIsNone(containers[0].metadata)
 
     @record
@@ -206,13 +208,15 @@ class StorageContainerTest(StorageTestCase):
         resp = container.set_container_metadata(metadata)
 
         # Act
-        containers = list(self.bsc.list_containers(name_starts_with=container.name, include_metadata=True))
+        containers = list(self.bsc.list_containers(
+            name_starts_with=container.container_name,
+            include_metadata=True))
 
         # Assert
         self.assertIsNotNone(containers)
         self.assertGreaterEqual(len(containers), 1)
         self.assertIsNotNone(containers[0])
-        self.assertNamedItemInContainer(containers, container.name)
+        self.assertNamedItemInContainer(containers, container.container_name)
         self.assertDictEqual(containers[0].metadata, metadata)
 
     @record
@@ -222,13 +226,13 @@ class StorageContainerTest(StorageTestCase):
         resp = container.set_container_acl(public_access=PublicAccess.Blob)
 
         # Act
-        containers = list(self.bsc.list_containers(name_starts_with=container.name))
+        containers = list(self.bsc.list_containers(name_starts_with=container.container_name))
 
         # Assert
         self.assertIsNotNone(containers)
         self.assertGreaterEqual(len(containers), 1)
         self.assertIsNotNone(containers[0])
-        self.assertNamedItemInContainer(containers, container.name)
+        self.assertNamedItemInContainer(containers, container.container_name)
         self.assertEqual(containers[0].public_access, PublicAccess.Blob)
 
     @record
@@ -237,7 +241,7 @@ class StorageContainerTest(StorageTestCase):
         prefix = 'listcontainer'
         container_names = []
         for i in range(0, 4):
-            container_names.append(self._create_container(prefix + str(i)).name)
+            container_names.append(self._create_container(prefix + str(i)).container_name)
 
         container_names.sort()
 
@@ -357,7 +361,7 @@ class StorageContainerTest(StorageTestCase):
 
         # Act
         props = container.get_container_properties(lease_id)
-        container.break_lease()
+        lease_id.break_lease()
 
         # Assert
         self.assertIsNotNone(props)
@@ -605,7 +609,7 @@ class StorageContainerTest(StorageTestCase):
         lease = container.acquire_lease(lease_duration=15)
 
         # Assert
-        container.break_lease(lease_break_period=5)
+        lease.break_lease(lease_break_period=5)
         self.sleep(6)
         with self.assertRaises(HttpResponseError):
             container.delete_container(lease=lease)
@@ -619,7 +623,7 @@ class StorageContainerTest(StorageTestCase):
 
         # Act
         with self.assertRaises(HttpResponseError):
-            container.break_lease()
+            lease.break_lease()
 
         # Assert
 
@@ -893,7 +897,7 @@ class StorageContainerTest(StorageTestCase):
         container.get_blob_client('blob1').upload_blob(data, metadata={'status': 'original'})
         sourceblob = 'https://{0}.blob.core.windows.net/{1}/blob1'.format(
             self.settings.STORAGE_ACCOUNT_NAME,
-            container.name)
+            container.container_name)
 
         blobcopy = container.get_blob_client('blob1copy')
         blobcopy.copy_blob_from_url(sourceblob, metadata={'status': 'copy'})

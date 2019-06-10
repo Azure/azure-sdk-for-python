@@ -57,7 +57,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
     from azure.core.exceptions import AzureError
-    from .lease import Lease
+    from .lease import LeaseClient
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -372,7 +372,7 @@ def add_metadata_headers(metadata):
 
 
 def get_access_conditions(lease):
-    # type: (Optional[Union[Lease, str]]) -> Union[LeaseAccessConditions, None]
+    # type: (Optional[Union[LeaseClient, str]]) -> Union[LeaseAccessConditions, None]
     try:
         lease_id = lease.id
     except AttributeError:

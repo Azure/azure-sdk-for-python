@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 
-class Lease(object):
+class LeaseClient(object):
 
     def __init__(self):
         pass

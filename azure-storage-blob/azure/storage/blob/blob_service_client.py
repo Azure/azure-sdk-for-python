@@ -40,6 +40,7 @@ if TYPE_CHECKING:
     from azure.core import Configuration
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
+    from .lease import LeaseClient
     from .models import (
         AccountPermissions,
         ResourceTypes,
@@ -338,26 +339,102 @@ class BlobServiceClient(object):
         return ContainerPropertiesPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
-    def get_container_client(self, container):
+    def create_container(
+            self, container_name,  # type: Union[ContainerProperties, str]
+            metadata=None,  # type: Optional[Dict[str, str]]
+            public_access=None,  # type: Optional[Union[PublicAccess, str]]
+            timeout=None,  # type: Optional[int]
+            **kwargs
+        ):
+        # type: (...) -> ContainerClient
+        """
+        Creates a new container under the specified account. If the container
+        with the same name already exists, the operation fails.
+
+        :param container_name: The container for the blob. If specified, this value will override
+         a container value specified in the blob URL.
+        :type container_name: str or ~azure.storage.blob.models.ContainerProperties
+        :param metadata:
+            A dict with name_value pairs to associate with the
+            container as metadata. Example:{'Category':'test'}
+        :type metadata: dict(str, str)
+        :param ~azure.storage.blob.models.PublicAccess public_access:
+            Possible values include: container, blob.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        container = self.get_container_client(container_name)
+        container.create_container(metadata=None, public_access=None, timeout=None, **kwargs)
+        return container
+
+    def delete_container(
+            self, container_name,  # type: Union[ContainerProperties, str]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
+            if_modified_since=None,  # type: Optional[datetime]
+            if_unmodified_since=None,  # type: Optional[datetime]
+            if_match=None,  # type: Optional[str]
+            if_none_match=None,  # type: Optional[str]
+            timeout=None,  # type: Optional[int]
+            **kwargs
+        ):
+        # type: (...) -> None
+        """
+        Marks the specified container for deletion. The container and any blobs
+        contained within it are later deleted during garbage collection.
+
+        :param container_name: The container for the blob. If specified, this value will override
+         a container value specified in the blob URL.
+        :param ~azure.storage.blob.lease.LeaseClient lease:
+            If specified, delete_container only succeeds if the
+            container's lease is active and matches this ID.
+            Required if the container has an active lease.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC. 
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        container = self.get_container_client(container_name)
+        container.delete_container(
+            lease=lease,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            timeout=timeout,
+            **kwargs)
+
+    def get_container_client(self, container_name):
         # type: (Union[ContainerProperties, str]) -> ContainerClient
         """
         Get a client to interact with the specified container.
         The container need not already exist.
 
-        :param container: The container for the blob. If specified, this value will override
+        :param container_name: The container for the blob. If specified, this value will override
          a container value specified in the blob URL.
-        :type container: str or ~azure.storage.blob.models.ContainerProperties
+        :type container_name: str or ~azure.storage.blob.models.ContainerProperties
         :returns: A ContainerClient.
         :rtype: ~azure.core.blob.container_client.ContainerClient
         """
-        return ContainerClient(self.url, container=container,
+        return ContainerClient(self.url, container=container_name,
             credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
 
     def get_blob_client(
-            self, container,  # type: Union[ContainerProperties, str]
-            blob,  # type: Union[BlobProperties, str]
+            self, container_name,  # type: Union[ContainerProperties, str]
+            blob_name,  # type: Union[BlobProperties, str]
             snapshot=None  # type: Optional[Union[SnapshotProperties, str]]
         ):
         # type: (...) -> BlobClient
@@ -376,7 +453,7 @@ class BlobServiceClient(object):
         :rtype: ~azure.core.blob.blob_client.BlobClient
         """
         return BlobClient(
-            self.url, container=container, blob=blob, snapshot=snapshot,
+            self.url, container=container_name, blob=blob_name, snapshot=snapshot,
             credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)

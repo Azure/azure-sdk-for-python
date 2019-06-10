@@ -53,14 +53,12 @@ class StorageBlockBlobTest(StorageTestCase):
         self.container_name = self.get_resource_name('utcontainer')
 
         if not self.is_playback():
-            container = self.bsc.get_container_client(self.container_name)
-            container.create_container()
+            self.bsc.create_container(self.container_name)
 
     def tearDown(self):
         if not self.is_playback():
             try:
-                container = self.bsc.get_container_client(self.container_name)
-                container.delete_container()
+                self.bsc.delete_container(self.container_name)
             except:
                 pass
 
@@ -319,8 +317,7 @@ class StorageBlockBlobTest(StorageTestCase):
             return
 
         # Arrange
-        blob_name = self._create_blob()
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = self._create_blob()
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         lease = blob.acquire_lease()
 
@@ -458,7 +455,7 @@ class StorageBlockBlobTest(StorageTestCase):
         blob.upload_blob(data, length=LARGE_BLOB_SIZE, max_connections=1)
 
         # Assert
-        self.assertBlobEqual(self.container_name, blob.name, data)
+        self.assertBlobEqual(self.container_name, blob.blob_name, data)
 
     def test_create_blob_from_path(self):
         # parallel tests introduce random order of requests, can only run live

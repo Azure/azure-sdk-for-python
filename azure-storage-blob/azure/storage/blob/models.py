@@ -28,6 +28,46 @@ def _get_enum_value(value):
     except AttributeError:
         return value
 
+class DictMixin(object):
+
+    def __setitem__(self, key, item):
+        self.__dict__[key] = item
+
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
+    def __repr__(self):
+        return repr(self.__dict__)
+
+    def __len__(self):
+        return len(self.__dict__)
+
+    def __delitem__(self, key):
+        del self.__dict__[key]
+
+    def __eq__(self, other):
+        """Compare objects by comparing all attributes."""
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+    def __ne__(self, other):
+        """Compare objects by comparing all attributes."""
+        return not self.__eq__(other)
+
+    def __str__(self):
+        return str(self.__dict__)
+
+    def has_key(self, k):
+        return k in self.__dict__
+
+    def update(self, *args, **kwargs):
+        return self.__dict__.update(*args, **kwargs)
+
+    def keys(self):
+        return self.__dict__.keys()
+
+
 class Logging(GeneratedLogging):
     """Azure Analytics Logging settings.
 
@@ -126,7 +166,6 @@ class StaticWebsite(GeneratedStaticWebsite):
         else:
             self.index_document = None
             self.error_document404_path = None
-
 
 
 class CorsRule(GeneratedCorsRule):
@@ -268,7 +307,7 @@ class SnapshotProperties(object):
         self.etag = kwargs.get('ETag')
 
 
-class BlobProperties(object):
+class BlobProperties(DictMixin):
     """
     Blob Properties
 
@@ -368,7 +407,6 @@ class BlobProperties(object):
         blob.archive_status = generated.properties.archive_status
         blob.blob_tier_change_time = generated.properties.access_tier_change_time
         return blob
-
 
 
 class BlobPropertiesPaged(Paged):

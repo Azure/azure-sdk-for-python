@@ -93,8 +93,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
     def tearDown(self):
         if not self.is_playback():
             try:
-                container = self.bsc.get_container_client(self.container_name)
-                container.delete_container()
+                self.bsc.delete_container(self.container_name)
             except:
                 pass
         if path.isfile(FILE_PATH):

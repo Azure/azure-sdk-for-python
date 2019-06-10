@@ -125,7 +125,7 @@ class BlobClient:  # pylint: disable=too-many-public-methods
             self, lease_duration=-1, proposed_lease_id=None, if_modified_since=None,
             if_unmodified_since=None, if_match=None, if_none_match=None, timeout=None):
         """
-        :returns: A Lease object.
+        :returns: A LeaseClient object.
         """
 
     async def break_lease(

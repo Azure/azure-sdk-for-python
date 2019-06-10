@@ -20,7 +20,7 @@ import six
 from azure.core import Configuration, HttpResponseError
 
 from .common import BlobType
-from .lease import Lease
+from .lease import LeaseClient
 from .models import SnapshotProperties, BlobBlock
 from .polling import CopyBlob, CopyStatusPoller
 from ._shared_access_signature import BlobSharedAccessSignature
@@ -128,11 +128,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         except AttributeError:
             self.snapshot = snapshot or path_snapshot
         try:
-            self.name = blob.name
+            self.blob_name = blob.name
             if not snapshot:
                 self.snapshot = blob.snapshot
         except AttributeError:
-            self.name = blob or unquote(path_blob)
+            self.blob_name = blob or unquote(path_blob)
 
         self.scheme = parsed_url.scheme
         self.account = parsed_url.hostname.split(".blob.core.")[0]
@@ -141,7 +141,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             self.scheme,
             parsed_url.hostname,
             quote(self.container),
-            self.name.replace(' ', '%20').replace('?', '%3F'))  # TODO: Confirm why recordings don't urlencode chars
+            self.blob_name.replace(' ', '%20').replace('?', '%3F'))  # TODO: Confirm why recordings don't urlencode chars
         if self.snapshot:
             self.url += 'snapshot={}&'.format(self.snapshot)
         if sas_token and not credentials:
@@ -255,7 +255,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         sas = BlobSharedAccessSignature(self.account, self.credentials.account_key)
         return sas.generate_blob(
             self.container,
-            self.name,
+            self.blob_name,
             permission,
             expiry,
             start=start,
@@ -290,7 +290,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             metadata=None,  # type: Optional[Dict[str, str]]
             content_settings=None,  # type: Optional[ContentSettings]
             validate_content=False,  # type: Optional[bool]
-            lease=None,  # type: Optional[Union[Lease, str]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
@@ -558,7 +558,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             self, offset=None,  # type: Optional[int]
             length=None,  # type: Optional[int]
             validate_content=False,  # type: bool
-            lease=None,  # type: Union[Lease, str]
+            lease=None,  # type: Union[LeaseClient, str]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
@@ -580,7 +580,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_modified_since, if_unmodified_since, if_match, if_none_match)
 
         return StorageStreamDownloader(
-            name=self.name,
+            name=self.blob_name,
             container=self.container,
             service=self._client.blob,
             config=self._config.blob_settings,
@@ -596,7 +596,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             **kwargs)
 
     def delete_blob(
-            self, lease=None,  # type: Optional[Union[str, Lease]]
+            self, lease=None,  # type: Optional[Union[str, LeaseClient]]
             delete_snapshots=None,  # type: Optional[str]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
@@ -621,9 +621,9 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         Soft-deleted blob or snapshot can be restored using Undelete API.
 
         :param lease:
-            Required if the blob has an active lease. Value can be a Lease object
+            Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.Lease or str
+        :type lease: ~azure.storage.blob.lease.LeaseClient or str
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -682,7 +682,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             process_storage_error(error)
 
     def get_blob_properties(
-            self, lease=None,  # type: Optional[Union[Lease, str]]
+            self, lease=None,  # type: Optional[Union[LeaseClient, str]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
@@ -708,13 +708,13 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        blob_props.name = self.name
+        blob_props.name = self.blob_name
         blob_props.container = self.container
         return blob_props
 
     def set_http_headers(
             self, content_settings=None,  # type: Optional[ContentSettings]
-            lease=None,  # type: Optional[Union[Lease, str]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
@@ -730,9 +730,9 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :param ~azure.storage.blob.models.ContentSettings content_settings:
             ContentSettings object used to set blob properties.
         :param lease:
-            Required if the blob has an active lease. Value can be a Lease object
+            Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
-        :type lease: ~azure.storage.blob.lease.Lease or str
+        :type lease: ~azure.storage.blob.lease.LeaseClient or str
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -784,7 +784,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
 
     def set_blob_metadata(
             self, metadata=None,  # type: Optional[Dict[str, str]]
-            lease=None,  # type: Optional[Union[Lease, str]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
@@ -818,7 +818,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             content_settings=None,  # type: Optional[ContentSettings]
             sequence_number=None,  # type: Optional[int]
             metadata=None, # type: Optional[Dict[str, str]]
-            lease=None,  # type: Optional[Union[Lease, str]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
@@ -845,7 +845,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :param ~azure.storage.blob.lease.Lease lease:
+        :param ~azure.storage.blob.lease.LeaseClient lease:
             Required if the blob has an active lease.
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
@@ -919,7 +919,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
     def create_append_blob(
             self, content_settings=None,  # type: Optional[ContentSettings]
             metadata=None, # type: Optional[Dict[str, str]]
-            lease=None,  # type: Optional[Union[Lease, str]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
@@ -936,7 +936,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :type metadata: dict(str, str)
-        :param ~azure.storage.blob.lease.Lease lease:
+        :param ~azure.storage.blob.lease.LeaseClient lease:
             Required if the blob has an active lease.
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
@@ -1002,7 +1002,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
-            lease=None,  # type: Optional[Union[Lease, str]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -1026,7 +1026,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         except StorageErrorException as error:
             process_storage_error(error)
         snapshot = SnapshotProperties(**properties)
-        snapshot.name = self.name
+        snapshot.name = self.blob_name
         snapshot.container = self.container
         return snapshot
 
@@ -1041,8 +1041,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             destination_if_unmodified_since=None,  # type: Optional[datetime]
             destination_if_match=None,  # type: Optional[str]
             destination_if_none_match=None,  # type: Optional[str]
-            destination_lease=None,  # type: Optional[Union[Lease, str]]
-            source_lease=None,  # type: Optional[Union[Lease, str]]
+            destination_lease=None,  # type: Optional[Union[LeaseClient, str]]
+            source_lease=None,  # type: Optional[Union[LeaseClient, str]]
             timeout=None,  # type: Optional[int]
             incremental_copy=False, # type bool,
             premium_page_blob_tier=None,
@@ -1248,52 +1248,23 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> Lease
+        # type: (...) -> LeaseClient
         """
-        :returns: A Lease object.
+        :returns: A LeaseClient object.
         """
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
-        try:
-            response = self._client.blob.acquire_lease(
-                timeout=timeout,
-                duration=lease_duration,
-                proposed_lease_id=lease_id,
-                modified_access_conditions=mod_conditions,
-                cls=return_response_headers,
-                **kwargs)
-        except StorageErrorException as error:
-            process_storage_error(error)
-        return Lease(self._client.blob, **response)
-
-    def break_lease(
-            self, lease_break_period=None,  # type: Optional[int]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> int
-        """
-        :returns: Approximate time remaining in the lease period, in seconds.
-        """
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
-        try:
-            response = self._client.blob.break_lease(
-                timeout=timeout,
-                break_period=lease_break_period,
-                modified_access_conditions=mod_conditions,
-                cls=return_response_headers,
-                **kwargs)
-        except StorageErrorException as error:
-            process_storage_error(error)
-        return response.get('x-ms-lease-time')
+        lease = LeaseClient(self, lease_id=lease_id)
+        lease.acquire(
+            lease_duration=lease_duration,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            timeout=timeout,
+            **kwargs)
+        return lease
 
     def set_standard_blob_tier(self, standard_blob_tier, timeout=None, lease=None):
-        # type: (Union[str, StandardBlobTier], Optional[int], Optional[Union[Lease, str]]) -> None
+        # type: (Union[str, StandardBlobTier], Optional[int], Optional[Union[LeaseClient, str]]) -> None
         """
         :raises: TypeError when blob client type is not BlockBlob.
         :returns: None
@@ -1314,7 +1285,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             validate_content=False,  # type: Optional[bool]
-            lease=None,  # type: Optional[Union[Lease, str]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
             encoding='UTF-8',  # type: str
             timeout=None,  # type: Optional[int]
             **kwargs
@@ -1354,7 +1325,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             source_range_start,  # type: int
             source_range_end,  # type: int
             source_content_md5=None,  #type: Optional[str]
-            lease=None,  # type: Optional[Union[Lease, str]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
             timeout=None # type: int
         ):
         # type: (...) -> None
@@ -1365,7 +1336,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
 
     def get_block_list(
             self, block_list_type="committed",  # type: Optional[str]
-            lease=None,  # type: Optional[Union[Lease, str]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
             timeout=None,  # type: int
             **kwargs
         ):
@@ -1404,7 +1375,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
 
     def commit_block_list(
             self, block_list,  # type: List[BlobBlock]
-            lease=None,  # type: Optional[Union[Lease, str]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
             content_settings=None,  # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
             validate_content=False,  # type: Optional[bool]
@@ -1502,7 +1473,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             process_storage_error(error)
 
     def set_premium_page_blob_tier(self, premium_page_blob_tier, timeout=None, lease=None, **kwargs):
-        # type: (Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[Lease, str]]) -> None
+        # type: (Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[LeaseClient, str]]) -> None
         """
         Sets the page blob tiers on the blob. This API is only supported for page blobs on premium accounts.
 
@@ -1533,7 +1504,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
     def get_page_ranges(
             self, start_range=None, # type: Optional[int]
             end_range=None, # type: Optional[int]
-            lease=None,  # type: Optional[Union[Lease, str]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
             previous_snapshot_diff=None,  # type: Optional[str]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
@@ -1637,7 +1608,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
     def set_sequence_number(
             self, sequence_number_action,  # type: Union[str, SequenceNumberAction]
             sequence_number=None,  # type: Optional[str]
-            lease=None,  # type: Optional[Union[Lease, str]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
@@ -1702,7 +1673,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
 
     def resize_blob(
             self, content_length,  # type: int
-            lease=None,  # type: Optional[Union[Lease, str]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
@@ -1766,7 +1737,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             start_range,  # type: int
             end_range,  # type: int
             length=None,  # type: Optional[int]
-            lease=None,  # type: Optional[Union[Lease, str]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
             validate_content=False,  # type: Optional[bool]
             if_sequence_number_lte=None, # type: Optional[int]
             if_sequence_number_lt=None, # type: Optional[int]
@@ -1882,7 +1853,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
     def clear_page(
             self, start_range,  # type: int
             end_range,  # type: int
-            lease=None,  # type: Optional[Union[Lease, str]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
             if_sequence_number_lte=None, # type: Optional[int]
             if_sequence_number_lt=None, # type: Optional[int]
             if_sequence_number_eq=None, # type: Optional[int]
@@ -1941,7 +1912,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             validate_content=False,  # type: Optional[bool]
             maxsize_condition=None,  # type: Optional[int]
             appendpos_condition=None,  # type: Optional[int]
-            lease=None, # type: Optional[Union[Lease, str]]
+            lease=None, # type: Optional[Union[LeaseClient, str]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]

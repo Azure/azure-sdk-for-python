@@ -73,15 +73,13 @@ class StorageCommonBlobTest(StorageTestCase):
     def tearDown(self):
         if not self.is_playback():
             try:
-                container = self.bsc.get_container_client(self.container_name)
-                container.delete_container()
+                self.bsc.delete_container(self.container_name)
             except:
                 pass
 
             if self.remote_container_name:
                 try:
-                    container = self.bsc2.get_container_client(self.remote_container_name)
-                    container.delete_container()
+                    self.bsc2.delete_container(self.remote_container_name)
                 except:
                     pass
 
@@ -1025,7 +1023,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = blob.acquire_lease(lease_duration=15)
-        lease_time = blob.break_lease(lease_break_period=5)
+        lease_time = lease.break_lease(lease_break_period=5)
 
         resp = blob.upload_blob(b'hello 2', length=7, lease=lease)
         self.sleep(5)
