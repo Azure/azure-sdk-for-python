@@ -300,22 +300,22 @@ class EventSender(object):
                                 self.error)
 
     @staticmethod
-    def _set_batching_label(event_datas, batching_label):
+    def _set_partition_key(event_datas, partition_key):
         ed_iter = iter(event_datas)
         for ed in ed_iter:
-            ed._batching_label = batching_label
+            ed._set_partition_key(partition_key)
             yield ed
 
-    async def send(self, event_data, batching_label=None):
+    async def send(self, event_data, partition_key=None):
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
 
         :param event_data: The event to be sent.
         :type event_data: ~azure.eventhub.common.EventData
-        :param batching_label: With the given batching_label, event data will land to
+        :param partition_key: With the given partition_key, event data will land to
          a particular partition of the Event Hub decided by the service.
-        :type batching_label: str
+        :type partition_key: str
         :raises: ~azure.eventhub.common.EventHubError if the message fails to
          send.
 
@@ -330,13 +330,13 @@ class EventSender(object):
         """
         self._check_closed()
         if isinstance(event_data, EventData):
-            if batching_label:
-                event_data._batching_label = batching_label
+            if partition_key:
+                event_data._set_partition_key(partition_key)
             wrapper_event_data = event_data
         else:
             wrapper_event_data = _BatchSendEventData(
-                self._set_batching_label(event_data, batching_label),
-                batching_label=batching_label) if batching_label else _BatchSendEventData(event_data)
+                self._set_partition_key(event_data, partition_key),
+                partition_key=partition_key) if partition_key else _BatchSendEventData(event_data)
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]
         await self._send_event_data()

@@ -105,8 +105,8 @@ class EventData(object):
             dic['enqueued_time'] = str(self.enqueued_time)
         if self.device_id:
             dic['device_id'] = str(self.device_id)
-        if self._batching_label:
-            dic['_batching_label'] = str(self._batching_label)
+        if self.partition_key:
+            dic['partition_key'] = str(self.partition_key)
         return str(dic)
 
 
@@ -155,7 +155,7 @@ class EventData(object):
         return self._annotations.get(EventData.PROP_DEVICE_ID, None)
 
     @property
-    def _batching_label(self):
+    def partition_key(self):
         """
         The partition key of the event data object.
 
@@ -166,8 +166,7 @@ class EventData(object):
         except KeyError:
             return self._annotations.get(EventData.PROP_PARTITION_KEY, None)
 
-    @_batching_label.setter
-    def _batching_label(self, value):
+    def _set_partition_key(self, value):
         """
         Set the partition key of the event data object.
 
@@ -256,11 +255,11 @@ class EventData(object):
 
 
 class _BatchSendEventData(EventData):
-    def __init__(self, batch_event_data, batching_label=None):
+    def __init__(self, batch_event_data, partition_key=None):
         self.message = BatchMessage(data=batch_event_data, multi_messages=False, properties=None)
-        self.set_batching_label(batching_label)
+        self._set_partition_key(partition_key)
 
-    def set_batching_label(self, value):
+    def _set_partition_key(self, value):
         if value:
             annotations = self.message.annotations
             if annotations is None:
