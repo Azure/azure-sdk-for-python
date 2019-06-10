@@ -6,7 +6,7 @@
 from __future__ import print_function
 import functools
 
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
+from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
@@ -31,7 +31,7 @@ def create_vault_client():
     )
 
     # Create a new Vault client using Azure credentials
-    vault_client = VaultClient(vault_url=vault_url, credentials=credentials)
+    vault_client = VaultClient(vault_url=vault_url, credential=credentials)
     # [END create_vault_client]
     return vault_client
 
@@ -51,7 +51,7 @@ def create_key_client():
     )
 
     # Create a new key client using Azure credentials
-    key_client = KeyClient(vault_url=vault_url, credentials=credentials)
+    key_client = KeyClient(vault_url=vault_url, credential=credentials)
     # [END create_key_client]
     return key_client
 
@@ -63,192 +63,163 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         from dateutil import parser as date_parse
 
         key_client = vault_client.keys
-        try:
-            # [START create_key]
-            from dateutil import parser as date_parse
+        # [START create_key]
+        from dateutil import parser as date_parse
 
-            expires = date_parse.parse("2050-02-02T08:00:00.000Z")
+        expires = date_parse.parse("2050-02-02T08:00:00.000Z")
 
-            # create a key with optional arguments
-            key = key_client.create_key("key-name", "RSA-HSM", enabled=True, expires=expires)
+        # create a key with optional arguments
+        key = key_client.create_key("key-name", "RSA-HSM", enabled=True, expires=expires)
 
-            print(key.name)
-            print(key.id)
-            print(key.version)
-            print(key.key_material.kty)
-            print(key.enabled)
-            print(key.expires)
+        print(key.name)
+        print(key.id)
+        print(key.version)
+        print(key.key_material.kty)
+        print(key.enabled)
+        print(key.expires)
 
-            # [END create_key]
+        # [END create_key]
+        # [START create_rsa_key]
 
-            # [START create_rsa_key]
+        key_size = 2048
+        key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
 
-            key_size = 2048
-            key_ops = ["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"]
+        # create an rsa key with size specification
+        # RSA key can be created with default size of '2048'
+        key = key_client.create_rsa_key("key-name", hsm=True, size=key_size, enabled=True, key_operations=key_ops)
 
-            # create an rsa key with size specification
-            # RSA key can be created with default size of '2048'
-            key = key_client.create_rsa_key("key-name", hsm=True, size=key_size, enabled=True, key_operations=key_ops)
+        print(key.id)
+        print(key.version)
+        print(key.key_material.kty)
+        print(key.key_material.key_ops)
 
-            print(key.id)
-            print(key.version)
-            print(key.key_material.kty)
-            print(key.key_material.key_ops)
+        # [END create_rsa_key]
+        # [START create_ec_key]
+        from dateutil import parser as date_parse
 
-            # [END create_rsa_key]
+        key_curve = "P-256"
 
-            # [START create_ec_key]
-            from dateutil import parser as date_parse
+        # create an ec (Elliptic curve) key with curve specification
+        # EC key can be created with default curve of 'P-256'
+        ec_key = key_client.create_ec_key("key-name", hsm=False, curve=key_curve)
 
-            key_curve = "P-256"
+        print(ec_key.id)
+        print(ec_key.version)
+        print(ec_key.key_material.kty)
+        print(ec_key.key_material.crv)
 
-            # create an ec (Elliptic curve) key with curve specification
-            # EC key can be created with default curve of 'P-256'
-            ec_key = key_client.create_ec_key("key-name", hsm=False, curve=key_curve)
+        # [END create_ec_key]
+        # [START get_key]
 
-            print(ec_key.id)
-            print(ec_key.version)
-            print(ec_key.key_material.kty)
-            print(ec_key.key_material.crv)
+        # get the latest version of a key
+        key = key_client.get_key("key-name")
 
-            # [END create_ec_key]
+        # alternatively, specify a version
+        key_version = key.version
+        key = key_client.get_key("key-name", key_version)
 
-        except HttpResponseError:
-            pass
+        print(key.id)
+        print(key.name)
+        print(key.version)
+        print(key.key_material.kty)
+        print(key.vault_url)
 
-        try:
-            # [START get_key]
+        # [END get_key]
+        # [START update_key]
 
-            # get the latest version of a key
-            key = key_client.get_key("key-name")
+        # update attributes of an existing key
+        expires = date_parse.parse("2050-01-02T08:00:00.000Z")
+        tags = {"foo": "updated tag"}
+        key_version = key.version
+        updated_key = key_client.update_key(key.name, key_version, expires=expires, tags=tags)
 
-            # alternatively, specify a version
-            key_version = key.version
-            key = key_client.get_key("key-name", key_version)
+        print(updated_key.version)
+        print(updated_key.updated)
+        print(updated_key.expires)
+        print(updated_key.tags)
+        print(key.key_material.kty)
 
-            print(key.id)
-            print(key.name)
-            print(key.version)
-            print(key.key_material.kty)
-            print(key.vault_url)
+        # [END update_key]
+        # [START delete_key]
 
-            # [END get_key]
+        # delete a key
+        deleted_key = key_client.delete_key("key-name")
 
-            # [START update_key]
+        print(deleted_key.name)
+        print(deleted_key.deleted_date)
 
-            # update attributes of an existing key
-            expires = date_parse.parse("2050-01-02T08:00:00.000Z")
-            tags = {"foo": "updated tag"}
-            key_version = key.version
-            updated_key = key_client.update_key(key.name, key_version, expires=expires, tags=tags)
+        # if the vault has soft-delete enabled, the key's
+        # scheduled purge date and recovery id are set
+        print(deleted_key.scheduled_purge_date)
+        print(deleted_key.recovery_id)
 
-            print(updated_key.version)
-            print(updated_key.updated)
-            print(updated_key.expires)
-            print(updated_key.tags)
-            print(key.key_material.kty)
-
-            # [END update_key]
-        except ResourceNotFoundError:
-            pass
-
-        try:
-            # [START delete_key]
-
-            # delete a key
-            deleted_key = key_client.delete_key("key-name")
-
-            print(deleted_key.name)
-            print(deleted_key.deleted_date)
-
-            # if the vault has soft-delete enabled, the key's
-            # scheduled purge date and recovery id are set
-            print(deleted_key.scheduled_purge_date)
-            print(deleted_key.recovery_id)
-
-            # [END delete_key]
-        except ResourceNotFoundError:
-            pass
+        # [END delete_key]
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_key_list_operations(self, vault_client, **kwargs):
         key_client = vault_client.keys
-        try:
-            # [START list_keys]
+        # [START list_keys]
 
-            # get an iterator of keys
-            keys = key_client.list_keys()
+        # get an iterator of keys
+        keys = key_client.list_keys()
 
-            for key in keys:
-                print(key.id)
-                print(key.name)
-                print(key.key_material.kty)
+        for key in keys:
+            print(key.id)
+            print(key.name)
+            print(key.key_material.kty)
 
-            # [END list_keys]
-        except HttpResponseError:
-            pass
+        # [END list_keys]
 
-        try:
-            # [START list_key_versions]
+        # [START list_key_versions]
 
-            # get an iterator of a key's versions
-            key_versions = key_client.list_key_versions("key-name")
+        # get an iterator of a key's versions
+        key_versions = key_client.list_key_versions("key-name")
 
-            for key in key_versions:
-                print(key.id)
-                print(key.version)
-                print(key.key_material.kty)
+        for key in key_versions:
+            print(key.id)
+            print(key.version)
+            print(key.key_material.kty)
 
-            # [END list_key_versions]
-        except HttpResponseError:
-            pass
+        # [END list_key_versions]
 
-        try:
-            # [START list_deleted_keys]
+        # [START list_deleted_keys]
 
-            # get an iterator of deleted keys (requires soft-delete enabled for the vault)
-            deleted_keys = key_client.list_deleted_keys()
+        # get an iterator of deleted keys (requires soft-delete enabled for the vault)
+        deleted_keys = key_client.list_deleted_keys()
 
-            for key in deleted_keys:
-                print(key.id)
-                print(key.name)
+        for key in deleted_keys:
+            print(key.id)
+            print(key.name)
 
-            # [END list_deleted_keys]
-        except HttpResponseError:
-            pass
+        # [END list_deleted_keys]
 
     @ResourceGroupPreparer()
-    @VaultClientPreparer(enable_soft_delete=True)
+    @VaultClientPreparer()
     def test_example_keys_backup_restore(self, vault_client, **kwargs):
         key_client = vault_client.keys
         created_key = key_client.create_key("keyrec", "RSA")
         key_name = created_key.name
-        try:
-            # [START backup_key]
-            # backup key
-            key_backup = key_client.backup_key(key_name)
+        # [START backup_key]
 
-            # returns the raw bytes of the backed up key
-            print(key_backup)
+        # backup key
+        key_backup = key_client.backup_key(key_name)
 
-            # [END backup_key]
+        # returns the raw bytes of the backed up key
+        print(key_backup)
 
-            key_client.delete_key("keyrec")
-            self._poll_until_no_exception(
-                functools.partial(key_client.get_deleted_key, key_name), ResourceNotFoundError
-            )
+        # [END backup_key]
 
-            # [START restore_key]
+        key_client.delete_key(key_name)
 
-            # restores a backed up key
-            restored_key = key_client.restore_key(key_backup)
-            print(restored_key.id)
-            print(restored_key.version)
+        # [START restore_key]
 
-            # [END restore_key]
-        except ResourceExistsError:
-            pass
+        # restore a key backup
+        restored_key = key_client.restore_key(key_backup)
+        print(restored_key.id)
+        print(restored_key.version)
+
+        # [END restore_key]
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
@@ -267,7 +238,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(deleted_key.deleted_date)
 
         # [END get_deleted_key]
-
         # [START recover_deleted_key]
 
         # recover a deleted key to its latest version (requires soft-delete enabled for the vault)

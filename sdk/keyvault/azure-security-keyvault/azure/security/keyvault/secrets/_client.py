@@ -21,7 +21,6 @@ class SecretClient(_KeyVaultClientBase):
             :start-after: [START create_secret_client]
             :end-before: [END create_secret_client]
             :language: python
-            :dedent: 4
             :caption: Creates a new instance of the Secret client
     """
 
@@ -48,7 +47,6 @@ class SecretClient(_KeyVaultClientBase):
                 :start-after: [START get_secret]
                 :end-before: [END get_secret]
                 :language: python
-                :dedent: 4
                 :caption: Get secret from the key vault
         """
         bundle = self._client.get_secret(self._vault_url, name, version or "", error_map={404: ResourceNotFoundError})
@@ -84,7 +82,6 @@ class SecretClient(_KeyVaultClientBase):
                 :start-after: [START set_secret]
                 :end-before: [END set_secret]
                 :language: python
-                :dedent: 4
                 :caption: Set a secret in the key vault
 
         """
@@ -127,7 +124,6 @@ class SecretClient(_KeyVaultClientBase):
                 :start-after: [START update_secret]
                 :end-before: [END update_secret]
                 :language: python
-                :dedent: 4
                 :caption: Updates the attributes associated with a specified secret in the key vault
 
         """
@@ -164,7 +160,6 @@ class SecretClient(_KeyVaultClientBase):
                 :start-after: [START list_secrets]
                 :end-before: [END list_secrets]
                 :language: python
-                :dedent: 4
                 :caption: Lists all the secrets in the vault
 
         """
@@ -190,7 +185,6 @@ class SecretClient(_KeyVaultClientBase):
                 :start-after: [START list_secret_versions]
                 :end-before: [END list_secret_versions]
                 :language: python
-                :dedent: 4
                 :caption: List all versions of the specified secret
 
         """
@@ -216,7 +210,6 @@ class SecretClient(_KeyVaultClientBase):
                 :start-after: [START backup_secret]
                 :end-before: [END backup_secret]
                 :language: python
-                :dedent: 4
                 :caption: Backs up the specified secret
 
         """
@@ -240,7 +233,6 @@ class SecretClient(_KeyVaultClientBase):
                 :start-after: [START restore_secret]
                 :end-before: [END restore_secret]
                 :language: python
-                :dedent: 4
                 :caption: Restores a backed up secret to the vault
 
         """
@@ -265,7 +257,6 @@ class SecretClient(_KeyVaultClientBase):
                 :start-after: [START delete_secret]
                 :end-before: [END delete_secret]
                 :language: python
-                :dedent: 4
                 :caption: Deletes a secret
 
         """
@@ -289,7 +280,6 @@ class SecretClient(_KeyVaultClientBase):
                 :start-after: [START get_deleted_secret]
                 :end-before: [END get_deleted_secret]
                 :language: python
-                :dedent: 4
                 :caption: Gets the deleted secret
 
         """
@@ -313,7 +303,6 @@ class SecretClient(_KeyVaultClientBase):
                 :start-after: [START list_deleted_secrets]
                 :end-before: [END list_deleted_secrets]
                 :language: python
-                :dedent: 4
                 :caption: Lists the deleted secrets of the vault
 
         """
@@ -362,7 +351,6 @@ class SecretClient(_KeyVaultClientBase):
                 :start-after: [START recover_deleted_secret]
                 :end-before: [END recover_deleted_secret]
                 :language: python
-                :dedent: 4
                 :caption: Restores a backed up secret to the vault
 
         """

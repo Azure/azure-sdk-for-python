@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core.exceptions import ResourceNotFoundError
-from azure.security.keyvault._generated.v7_0.models import KeyVaultErrorException
 from devtools_testutils import ResourceGroupPreparer
 
 from async_preparer import AsyncVaultClientPreparer
@@ -21,129 +20,104 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_secret_crud_operations(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
-        try:
-            # [START set_secret]
-            from dateutil import parser as date_parse
 
-            expires = date_parse.parse("2050-02-02T08:00:00.000Z")
+        # [START set_secret]
+        from dateutil import parser as date_parse
 
-            # create a secret, setting optional arguments
-            secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True, expires=expires)
+        expires = date_parse.parse("2050-02-02T08:00:00.000Z")
 
-            print(secret.version)
-            print(secret.created)
-            print(secret.enabled)
-            print(secret.expires)
+        # create a secret, setting optional arguments
+        secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True, expires=expires)
 
-            # [END set_secret]
-        except KeyVaultErrorException:
-            pass
+        print(secret.version)
+        print(secret.created)
+        print(secret.enabled)
+        print(secret.expires)
 
-        try:
-            secret_version = secret.version
-            # [START get_secret]
+        # [END set_secret]
 
-            # get the latest version of a secret
-            secret = await secret_client.get_secret("secret-name")
+        secret_version = secret.version
+        # [START get_secret]
 
-            # alternatively, specify a version
-            secret = await secret_client.get_secret("secret-name", secret_version)
+        # get the latest version of a secret
+        secret = await secret_client.get_secret("secret-name")
 
-            print(secret.id)
-            print(secret.name)
-            print(secret.version)
-            print(secret.vault_url)
+        # alternatively, specify a version
+        secret = await secret_client.get_secret("secret-name", secret_version)
 
-            # [END get_secret]
-        except KeyVaultErrorException:
-            pass
+        print(secret.id)
+        print(secret.name)
+        print(secret.version)
+        print(secret.vault_url)
 
-        try:
-            # [START update_secret]
+        # [END get_secret]
+        # [START update_secret]
 
-            # update attributes of an existing secret
+        # update attributes of an existing secret
+        content_type = "text/plain"
+        tags = {"foo": "updated tag"}
+        updated_secret = await secret_client.update_secret("secret-name", content_type=content_type, tags=tags)
 
-            content_type = "text/plain"
-            tags = {"foo": "updated tag"}
-            updated_secret = await secret_client.update_secret("secret-name", content_type=content_type, tags=tags)
+        print(updated_secret.version)
+        print(updated_secret.updated)
+        print(updated_secret.content_type)
+        print(updated_secret.tags)
 
-            print(updated_secret.version)
-            print(updated_secret.updated)
-            print(updated_secret.content_type)
-            print(updated_secret.tags)
+        # [END update_secret]
+        # [START delete_secret]
 
-            # [END update_secret]
-        except KeyVaultErrorException:
-            pass
+        # delete a secret
+        deleted_secret = await secret_client.delete_secret("secret-name")
 
-        try:
-            # [START delete_secret]
+        print(deleted_secret.name)
+        print(deleted_secret.deleted_date)
 
-            # delete a secret
-            deleted_secret = await secret_client.delete_secret("secret-name")
+        # if the vault has soft-delete enabled, the secret's
+        # scheduled purge date and recovery id are set
+        print(deleted_secret.scheduled_purge_date)
+        print(deleted_secret.recovery_id)
 
-            print(deleted_secret.name)
-            print(deleted_secret.deleted_date)
-
-            # if the vault has soft-delete enabled, the secret's
-            # scheduled purge date and recovery id are set
-            print(deleted_secret.scheduled_purge_date)
-            print(deleted_secret.recovery_id)
-
-            # [END delete_secret]
-        except KeyVaultErrorException:
-            pass
+        # [END delete_secret]
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_secret_list_operations(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
-        try:
-            # [START list_secrets]
 
-            # gets a list of secrets in the vault
-            secrets = secret_client.list_secrets()
+        # [START list_secrets]
 
-            async for secret in secrets:
-                # the list doesn't include values or versions of the secrets
-                print(secret.id)
-                print(secret.name)
+        # gets a list of secrets in the vault
+        secrets = secret_client.list_secrets()
 
-            # [END list_secrets]
-        except KeyVaultErrorException:
-            pass
+        async for secret in secrets:
+            # the list doesn't include values or versions of the secrets
+            print(secret.id)
+            print(secret.name)
 
-        try:
-            # [START list_secret_versions]
-            from azure.security.keyvault.vault_client import VaultClient
+        # [END list_secrets]
+        # [START list_secret_versions]
 
-            # gets a list of all versions of a secret
-            secret_versions = secret_client.list_secret_versions("secret-name")
+        # gets a list of all versions of a secret
+        secret_versions = secret_client.list_secret_versions("secret-name")
 
-            async for secret in secret_versions:
-                # the list doesn't include the versions' values
-                print(secret.id)
-                print(secret.name)
+        async for secret in secret_versions:
+            # the list doesn't include the versions' values
+            print(secret.id)
+            print(secret.name)
 
-            # [END list_secret_versions]
-        except KeyVaultErrorException:
-            pass
+        # [END list_secret_versions]
+        # [START list_deleted_secrets]
 
-        try:
-            # [START list_deleted_secrets]
+        # gets a list of deleted secrets (requires soft-delete enabled for the vault)
+        deleted_secrets = secret_client.list_deleted_secrets()
 
-            # gets a list of deleted secrets (requires soft-delete enabled for the vault)
-            deleted_secrets = secret_client.list_deleted_secrets()
+        async for secret in deleted_secrets:
+            # the list doesn't include values or versions of the deleted secrets
+            print(secret.id)
+            print(secret.name)
 
-            async for secret in deleted_secrets:
-                # the list doesn't include values or versions of the deleted secrets
-                print(secret.id)
-                print(secret.name)
-
-            # [END list_deleted_secrets]
-        except KeyVaultErrorException:
-            pass
+        # [END list_deleted_secrets]
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer()
@@ -152,34 +126,29 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         secret_client = vault_client.secrets
         created_secret = await secret_client.set_secret("secret-name", "secret-value")
         secret_name = created_secret.name
-        try:
-            # [START backup_secret]
-            # backup secret
-            secret_backup = await secret_client.backup_secret(secret_name)
+        # [START backup_secret]
 
-            # returns the raw bytes of the backed up secret
-            print(secret_backup)
+        # backup secret
+        secret_backup = await secret_client.backup_secret(secret_name)
 
-            # [END backup_secret]
-        except KeyVaultErrorException:
-            pass
+        # returns the raw bytes of the backed up secret
+        print(secret_backup)
 
-        try:
-            await secret_client.delete_secret(created_secret.name)
-            await self._poll_until_exception(
-                secret_client.get_secret, created_secret.name, expected_exception=ResourceNotFoundError
-            )
+        # [END backup_secret]
 
-            # [START restore_secret]
+        await secret_client.delete_secret(created_secret.name)
+        await self._poll_until_exception(
+            secret_client.get_secret, created_secret.name, expected_exception=ResourceNotFoundError
+        )
 
-            # restores a backed up secret
-            restored_secret = await secret_client.restore_secret(secret_backup)
-            print(restored_secret.id)
-            print(restored_secret.version)
+        # [START restore_secret]
 
-            # [END restore_secret]
-        except KeyVaultErrorException:
-            pass
+        # restores a backed up secret
+        restored_secret = await secret_client.restore_secret(secret_backup)
+        print(restored_secret.id)
+        print(restored_secret.version)
+
+        # [END restore_secret]
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer(enable_soft_delete=True)
@@ -199,7 +168,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(deleted_secret.name)
 
         # [END get_deleted_secret]
-
         # [START recover_deleted_secret]
 
         # recover deleted secret to the latest version
