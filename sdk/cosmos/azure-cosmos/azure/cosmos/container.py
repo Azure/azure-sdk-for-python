@@ -140,7 +140,7 @@ class Container:
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, self._properties)
         
         return self._properties
 
@@ -198,7 +198,7 @@ class Container:
             document_link=doc_link, options=request_options
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
         return result
 
     def read_all_items(
@@ -236,7 +236,7 @@ class Container:
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, items)
         return items
 
     def query_items_change_feed(
@@ -246,7 +246,7 @@ class Container:
             continuation=None,
             max_item_count=None,
             feed_options=None, 
-            response_hook=None
+            response_hook=None, 
     ):
         """ Get a sorted list of items that were changed, in the order in which they were modified.
 
@@ -273,10 +273,10 @@ class Container:
             feed_options["continuation"] = continuation
 
         result = self.client_connection.QueryItemsChangeFeed(
-            self.container_link, options=feed_options
+            self.container_link, options=feed_options, response_hook=response_hook
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
         return result
 
     def query_items(
@@ -358,7 +358,7 @@ class Container:
             response_hook=response_hook
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, items)
         return items
 
     def replace_item(
@@ -414,7 +414,7 @@ class Container:
             options=request_options
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
         return result
 
     def upsert_item(
@@ -468,7 +468,7 @@ class Container:
             document=body
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
         return result
 
     def create_item(
@@ -528,7 +528,7 @@ class Container:
             options=request_options
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
         return result
 
     def delete_item(
@@ -578,11 +578,11 @@ class Container:
             request_options["postTriggerInclude"] = post_trigger_include
 
         document_link = self._get_document_link(item)
-        self.client_connection.DeleteItem(
+        result = self.client_connection.DeleteItem(
             document_link=document_link, options=request_options
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result) 
 
     def read_offer(self, response_hook=None):
         # type: (Optional[Callable]) -> Offer
@@ -606,7 +606,7 @@ class Container:
             raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for container " + self.container_link)
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, offers)
 
         return Offer(
             offer_throughput=offers[0]['content']['offerThroughput'],
@@ -645,7 +645,7 @@ class Container:
         )
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, data)
 
         return Offer(
             offer_throughput=data['content']['offerThroughput'],
@@ -676,7 +676,7 @@ class Container:
             feed_options=feed_options
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
         return result
 
     def query_conflicts(
@@ -720,7 +720,7 @@ class Container:
             options=feed_options,
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
         return result
 
     def get_conflict(
@@ -751,7 +751,7 @@ class Container:
             options=request_options
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
         return result
 
     def delete_conflict(
@@ -776,12 +776,12 @@ class Container:
         if partition_key:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
-        self.client_connection.DeleteConflict(
+        result = self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict),
             options=request_options
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+            response_hook(self.client_connection.last_response_headers, result)
 
     def _set_partition_key(self, partition_key):
         if partition_key == NonePartitionKeyValue:

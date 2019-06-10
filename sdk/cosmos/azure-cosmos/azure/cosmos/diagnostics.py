@@ -58,19 +58,19 @@ class RecordDiagnostics(object):
 
     def __init__(self):
         self._headers = CaseInsensitiveDict()
-        self._history = []
-        
+        self._body = None
+
     @property
     def headers(self):
         return CaseInsensitiveDict(self._headers)
-
-    @property
-    def history(self):
-        return [CaseInsensitiveDict(x) for x in self._history]
     
-    def __call__(self, headers):
+    @property
+    def body(self):
+        return self._body
+    
+    def __call__(self, headers, body):
         self._headers = headers
-        self._history.append(headers)
+        self._body = body
         
     def __getattr__(self, name):
         key = "x-ms-" + name.replace("_", "-")

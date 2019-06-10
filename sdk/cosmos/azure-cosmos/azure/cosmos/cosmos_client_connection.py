@@ -877,7 +877,7 @@ class CosmosClientConnection(object):
                                         response_hook=response_hook), self.last_response_headers
             return query_iterable.QueryIterable(self, query, options, fetch_fn, database_or_Container_link)
 
-    def QueryItemsChangeFeed(self, collection_link, options=None):
+    def QueryItemsChangeFeed(self, collection_link, options=None, response_hook=None):
         """Queries documents change feed in a collection.
 
         :param str collection_link:
@@ -885,6 +885,8 @@ class CosmosClientConnection(object):
         :param dict options:
             The request options for the request.
             options may also specify partition key range id.
+        :param response_hook: 
+            A callable invoked with the response metadata
 
         :return:
             Query Iterable of Documents.
@@ -897,9 +899,9 @@ class CosmosClientConnection(object):
         if options is not None and 'partitionKeyRangeId' in options:
             partition_key_range_id = options['partitionKeyRangeId']
 
-        return self._QueryChangeFeed(collection_link, "Documents" , options, partition_key_range_id)
+        return self._QueryChangeFeed(collection_link, "Documents" , options, partition_key_range_id, response_hook=response_hook)
         
-    def _QueryChangeFeed(self, collection_link, resource_type, options=None, partition_key_range_id=None):
+    def _QueryChangeFeed(self, collection_link, resource_type, options=None, partition_key_range_id=None, response_hook=None):
         """Queries change feed of a resource in a collection.
 
         :param str collection_link:
@@ -910,6 +912,8 @@ class CosmosClientConnection(object):
             The request options for the request.
         :param str partition_key_range_id:
             Specifies partition key range id.
+        :param response_hook: 
+            A callable invoked with the response metadata
 
         :return:
             Query Iterable of Documents.
@@ -938,7 +942,8 @@ class CosmosClientConnection(object):
                                     lambda _, b: b,
                                     None,
                                     options,
-                                    partition_key_range_id), self.last_response_headers
+                                    partition_key_range_id,
+                                    response_hook=response_hook), self.last_response_headers
         return query_iterable.QueryIterable(self, None, options, fetch_fn, collection_link)
 
     def _ReadPartitionKeyRanges(self, collection_link, feed_options=None):
@@ -2791,7 +2796,7 @@ class CosmosClientConnection(object):
                                                             request,
                                                             headers)
             if response_hook:
-                response_hook(self.last_response_headers)
+                response_hook(self.last_response_headers, result)
             return __GetBodiesFromQueryResult(result)
         else:
             query = self.__CheckAndUnifyQueryFormat(query)
@@ -2822,7 +2827,7 @@ class CosmosClientConnection(object):
 
 
             if response_hook:
-                response_hook(self.last_response_headers)
+                response_hook(self.last_response_headers, result)
 
             return __GetBodiesFromQueryResult(result)
 
