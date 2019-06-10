@@ -5,17 +5,19 @@
 # --------------------------------------------------------------------------
 import pytest
 
-pytestmark = pytest.mark.xfail
 from datetime import datetime, timedelta
-from azure.common import AzureHttpError
+from azure.core import HttpResponseError
 from azure.storage.blob import (
-    #BlobBlock,  # TODO
+    SharedKeyCredentials,
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    #BlobPermissions,
+    StorageErrorCode
 )
-#from azure.storage.common._common_conversion import _get_content_md5
+from azure.storage.blob.models import (
+    BlobPermissions
+)
+from azure.storage.blob._policies import StorageContentValidation
 from tests.testcase import (
     StorageTestCase,
     record,
@@ -31,32 +33,40 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def setUp(self):
         super(StorageBlockBlobTest, self).setUp()
+        url = self._get_account_url()
+        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
 
-        self.bs = self._create_storage_service(BlockBlobService, self.settings)
+        # test chunking functionality by reducing the size of each chunk,
+        # otherwise the tests would take too long to execute
+        self.config = BlobServiceClient.create_configuration()
+        self.config.connection.data_block_size = 4 * 1024
+        self.config.blob_settings.max_single_put_size = 32 * 1024
+        self.config.blob_settings.max_block_size = 4 * 1024
+
+        self.bsc = BlobServiceClient(url, credentials=credentials, configuration=self.config)
         self.container_name = self.get_resource_name('utcontainer')
 
         # create source blob to be copied from
         self.source_blob_name = self.get_resource_name('srcblob')
         self.source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
 
+        blob = self.bsc.get_blob_client(self.container_name, self.source_blob_name)
         if not self.is_playback():
-            self.bs.create_container(self.container_name)
-            self.bs.create_blob_from_bytes(self.container_name, self.source_blob_name, self.source_blob_data)
+            self.bsc.create_container(self.container_name)
+            blob.upload_blob(self.source_blob_data)
 
         # generate a SAS so that it is accessible with a URL
-        sas_token = self.bs.generate_blob_shared_access_signature(
-            self.container_name,
-            self.source_blob_name,
+        sas_token = blob.generate_shared_access_signature(
             permission=BlobPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        self.source_blob_url = self.bs.make_blob_url(self.container_name, self.source_blob_name, sas_token=sas_token)
+        self.source_blob_url = BlobClient(blob.url, credentials=sas_token).url
 
     def tearDown(self):
         if not self.is_playback():
             try:
-                self.bs.delete_container(self.container_name)
-            except AzureHttpError:
+                self.bsc.delete_container(self.container_name)
+            except HttpResponseError:
                 pass
 
         return super(StorageBlockBlobTest, self).tearDown()
@@ -65,65 +75,82 @@ class StorageBlockBlobTest(StorageTestCase):
     def test_put_block_from_url_and_commit(self):
         # Arrange
         dest_blob_name = self.get_resource_name('destblob')
+        dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # Act part 1: make put block from url calls
-        self.bs.put_block_from_url(self.container_name, dest_blob_name, self.source_blob_url,
-                                   source_range_start=0, source_range_end=4 * 1024 - 1, block_id=1)
-        self.bs.put_block_from_url(self.container_name, dest_blob_name, self.source_blob_url,
-                                   source_range_start=4 * 1024, source_range_end=8 * 1024, block_id=2)
+        dest_blob.stage_block_from_url(
+            block_id=1,
+            source_url=self.source_blob_url,
+            source_offset=0,
+            source_length=4 * 1024 - 1)
+        dest_blob.stage_block_from_url(
+            block_id=2,
+            source_url=self.source_blob_url,
+            source_offset=4 * 1024,
+            source_length=8 * 1024)
 
         # Assert blocks
-        block_list = self.bs.get_block_list(self.container_name, dest_blob_name, None, 'all')
-        self.assertEqual(len(block_list.uncommitted_blocks), 2)
-        self.assertEqual(len(block_list.committed_blocks), 0)
+        committed, uncommitted = dest_blob.get_block_list('all')
+        self.assertEqual(len(uncommitted), 2)
+        self.assertEqual(len(committed), 0)
 
         # Act part 2: commit the blocks
-        block_list = [BlobBlock(id='1'), BlobBlock(id='2')]
-        self.bs.put_block_list(self.container_name, dest_blob_name, block_list)
+        dest_blob.commit_block_list(['1', '2'])
 
         # Assert destination blob has right content
-        blob = self.bs.get_blob_to_bytes(self.container_name, dest_blob_name)
-        self.assertEqual(blob.content, self.source_blob_data)
+        content = dest_blob.download_blob().content_as_bytes()
+        self.assertEqual(content, self.source_blob_data)
 
     @record
     def test_put_block_from_url_and_validate_content_md5(self):
         # Arrange
         dest_blob_name = self.get_resource_name('destblob')
-        src_md5 = _get_content_md5(self.source_blob_data)
+        dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
+        src_md5 = StorageContentValidation.get_content_md5(self.source_blob_data)
 
         # Act part 1: put block from url with md5 validation
-        self.bs.put_block_from_url(self.container_name, dest_blob_name, self.source_blob_url,
-                                   source_range_start=0, source_range_end=8 * 1024, block_id=1, source_content_md5=src_md5)
+        dest_blob.stage_block_from_url(
+            block_id=1,
+            source_url=self.source_blob_url,
+            source_content_md5=src_md5,
+            source_offset=0,
+            source_length=8 * 1024)
 
         # Assert block was staged
-        block_list = self.bs.get_block_list(self.container_name, dest_blob_name, None, 'all')
-        self.assertEqual(len(block_list.uncommitted_blocks), 1)
-        self.assertEqual(len(block_list.committed_blocks), 0)
+        committed, uncommitted = dest_blob.get_block_list('all')
+        self.assertEqual(len(uncommitted), 1)
+        self.assertEqual(len(committed), 0)
 
         # Act part 2: put block from url with wrong md5
-        with self.assertRaises(AzureHttpError):
-            self.bs.put_block_from_url(self.container_name, dest_blob_name, self.source_blob_url,
-                                       source_range_start=0, source_range_end=8 * 1024, block_id=2,
-                                       source_content_md5=_get_content_md5(b"POTATO"))
+        fake_md5 = StorageContentValidation.get_content_md5(b"POTATO")
+        with self.assertRaises(HttpResponseError) as error:
+            dest_blob.stage_block_from_url(
+                block_id=2,
+                source_url=self.source_blob_url,
+                source_content_md5=fake_md5,
+                source_offset=0,
+                source_length=8 * 1024)
+        self.assertEqual(error.exception.error_code, StorageErrorCode.md5_mismatch)
 
         # Assert block was not staged
-        block_list = self.bs.get_block_list(self.container_name, dest_blob_name, None, 'all')
-        self.assertEqual(len(block_list.uncommitted_blocks), 1)
-        self.assertEqual(len(block_list.committed_blocks), 0)
+        committed, uncommitted = dest_blob.get_block_list('all')
+        self.assertEqual(len(uncommitted), 1)
+        self.assertEqual(len(committed), 0)
 
     @record
     def test_copy_blob_sync(self):
         # Arrange
         dest_blob_name = self.get_resource_name('destblob')
+        dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # Act
-        copy_props = self.bs.copy_blob(self.container_name, dest_blob_name, self.source_blob_url, requires_sync=True)
+        copy_props = dest_blob.copy_blob_from_url(self.source_blob_url, requires_sync=True)
 
         # Assert
         self.assertIsNotNone(copy_props)
-        self.assertIsNotNone(copy_props.id)
-        self.assertEqual('success', copy_props.status)
+        self.assertIsNotNone(copy_props.copy_id())
+        self.assertEqual('success', copy_props.status())
 
         # Verify content
-        dest_blob = self.bs.get_blob_to_bytes(self.container_name, dest_blob_name)
-        self.assertEqual(self.source_blob_data, dest_blob.content)
+        content = dest_blob.download_blob().content_as_bytes()
+        self.assertEqual(self.source_blob_data, content)

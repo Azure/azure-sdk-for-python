@@ -32,6 +32,13 @@ except NameError:
 logger = logging.getLogger(__name__)
 
 
+def encode_base64(data):
+    if isinstance(data, _unicode_type):
+        data = data.encode('utf-8')
+    encoded = base64.b64encode(data)
+    return encoded.decode('utf-8')
+
+
 class StorageBlobSettings(object):
 
     def __init__(self, **kwargs):
@@ -108,13 +115,8 @@ class StorageContentValidation(SansIOHTTPPolicy):
     """
     header_name = 'Content-MD5'
 
-    def encode_base64(self, data):
-        if isinstance(data, _unicode_type):
-            data = data.encode('utf-8')
-        encoded = base64.b64encode(data)
-        return encoded.decode('utf-8')
-
-    def get_content_md5(self, data):
+    @staticmethod
+    def get_content_md5(data):
         md5 = hashlib.md5()
         if isinstance(data, bytes):
             md5.update(data)
@@ -133,13 +135,13 @@ class StorageContentValidation(SansIOHTTPPolicy):
         else:
             raise ValueError("Data should be bytes or a seekable file-like object.")
 
-        return self.encode_base64(md5.digest())
+        return md5.digest()
 
     def on_request(self, request):
         # type: (PipelineRequest, Any) -> None
         validate_content = request.context.options.pop('validate_content', False)
         if validate_content and request.http_request.method != 'GET':
-            computed_md5 = self.get_content_md5(request.http_request.data)
+            computed_md5 = encode_base64(StorageContentValidation.get_content_md5(request.http_request.data))
             request.http_request.headers[self.header_name] = computed_md5
             request.context['validate_content_md5'] = computed_md5
         request.context['validate_content'] = validate_content
@@ -147,7 +149,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
     def on_response(self, request, response):
         if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
             computed_md5 = request.context.get('validate_content_md5') or \
-                self.get_content_md5(response.http_response.body())
+                encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
             if response.http_response.headers['content-md5'] != computed_md5:
                raise AzureError(
                    'MD5 mismatch. Expected value is \'{0}\', computed value is \'{1}\'.'.format(

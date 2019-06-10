@@ -1306,6 +1306,41 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def stage_block_from_url(
+            self, block_id,  # type: str
+            source_url,  # type: str
+            source_offset=None,  # type: Optional[int]
+            source_length=None,  # type: Optional[int]
+            source_content_md5=None,  # type: Optional[Union[bytes, bytearray]]
+            lease=None,  # type: Optional[Union[LeaseClient, str]]
+            timeout=None,  # type: Optional[int]
+            **kwargs
+        ):
+        # type: (...) -> None
+        """
+        :returns: None
+        """
+        if source_length is not None and source_offset is None:
+            raise ValueError("Source offset value must not be None is length is set.")
+        block_id = encode_base64(str(block_id))
+        access_conditions = get_access_conditions(lease)
+        range_header = None
+        if source_offset is not None:
+            range_header, _ = validate_and_format_range_headers(source_offset, source_length)
+        try:
+            self._client.block_blob.stage_block_from_url(
+                block_id,
+                content_length=0,
+                source_url=source_url,
+                source_range=range_header,
+                source_content_md5=bytearray(source_content_md5) if source_content_md5 else None,
+                timeout=timeout,
+                lease_access_conditions=access_conditions,
+                cls=return_response_headers,
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
     def get_block_list(
             self, block_list_type="committed",  # type: Optional[str]
             lease=None,  # type: Optional[Union[LeaseClient, str]]

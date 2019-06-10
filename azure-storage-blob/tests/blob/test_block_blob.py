@@ -14,7 +14,6 @@ import pytest
 from azure.common import AzureHttpError
 from azure.core import HttpResponseError
 from azure.storage.blob import (
-    #BlobBlockList,
     SharedKeyCredentials,
     BlobServiceClient,
     ContainerClient,
