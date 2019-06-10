@@ -9,5 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "0.9.0"
+from msrest.paging import Paged
 
+
+class InstancePoolPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`InstancePool <azure.mgmt.sql.models.InstancePool>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[InstancePool]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(InstancePoolPaged, self).__init__(*args, **kwargs)

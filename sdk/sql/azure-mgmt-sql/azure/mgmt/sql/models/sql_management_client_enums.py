@@ -85,6 +85,9 @@ class DatabaseEdition(str, Enum):
     data_warehouse = "DataWarehouse"
     system = "System"
     system2 = "System2"
+    general_purpose = "GeneralPurpose"
+    business_critical = "BusinessCritical"
+    hyperscale = "Hyperscale"
 
 
 class ServiceObjectiveName(str, Enum):
@@ -203,6 +206,8 @@ class ElasticPoolEdition(str, Enum):
     basic = "Basic"
     standard = "Standard"
     premium = "Premium"
+    general_purpose = "GeneralPurpose"
+    business_critical = "BusinessCritical"
 
 
 class ReplicationRole(str, Enum):
@@ -323,6 +328,18 @@ class FailoverGroupReplicationRole(str, Enum):
 class IdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
+
+
+class ManagedServerCreateMode(str, Enum):
+
+    default = "Default"
+    point_in_time_restore = "PointInTimeRestore"
+
+
+class ManagedInstanceLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
 
 
 class ManagedInstanceProxyOverride(str, Enum):
@@ -612,6 +629,8 @@ class DatabaseStatus(str, Enum):
     paused = "Paused"
     resuming = "Resuming"
     scaling = "Scaling"
+    offline_changing_dw_performance_tiers = "OfflineChangingDwPerformanceTiers"
+    online_changing_dw_performance_tiers = "OnlineChangingDwPerformanceTiers"
 
 
 class DatabaseLicenseType(str, Enum):
@@ -657,6 +676,12 @@ class InstanceFailoverGroupReplicationRole(str, Enum):
 
     primary = "Primary"
     secondary = "Secondary"
+
+
+class InstancePoolLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
 
 
 class LongTermRetentionDatabaseState(str, Enum):
