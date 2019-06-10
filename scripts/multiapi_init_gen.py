@@ -22,6 +22,14 @@ except:  # Install msrestazure. Would be best to mock it, since we don't need it
     subprocess.call(sys.executable + " -m pip install msrestazure", shell=True)  # Use shell to use venv if available
 
 try:
+    from jinja2 import Template, FileSystemLoader, Environment
+except:
+    import subprocess
+    subprocess.call(sys.executable + " -m pip install jinja2", shell=True)  # Use shell to use venv if available
+    from jinja2 import Template, FileSystemLoader, Environment
+
+
+try:
     import azure.common
 except:
     sys.path.append(str((Path(__file__).parents[1] / "sdk" / "core" / "azure-common").resolve()))
@@ -190,21 +198,6 @@ def build_models_string(module_name, mod_to_api_version):
     return result
 
 
-def build_models_file(mod_to_api_version):
-    result = """# coding=utf-8
-# --------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
-"""
-    template_import = "from .{api_version_module}.models import *\n"
-    for attr in sorted(mod_to_api_version.keys()):
-        result += template_import.format(
-            api_version_module=attr)
-    return result
-
-
 def build_operation_group(module_name, operation_name, versions, mod_to_api_version):
 
     template_def = "    @property\n    def {attr}(self):\n"
@@ -299,8 +292,23 @@ def main(input_str):
             client_folder / "__init__.py"
         )
 
-    with open(client_folder / Path("models.py"), "w", newline='\n') as write_models:
-        write_models.write(build_models_file(mod_to_api_version))
+    env = Environment(
+        loader=FileSystemLoader(str(Path(__file__).parents[0] / 'templates')),
+        keep_trailing_newline=True
+    )
+
+    conf = {
+        'api_version_modules': sorted(mod_to_api_version.keys())
+    }
+
+    for template_name in env.list_templates():
+        future_filepath = client_folder / template_name
+
+        template = env.get_template(template_name)
+        result = template.render(**conf)
+
+        with open(future_filepath, "w") as fd:
+            fd.write(result)
 
     with open(client_file, "r") as read_client:
         lines = read_client.readlines()
