@@ -1,0 +1,17 @@
+trigger: none
+
+variables:
+  ReleaseTag: 'RELEASE_CANDIDATE'
+  TestMarkArgument: 'not cosmosEmulator'
+  PythonVersion: '3.6'
+  skipComponentGovernanceDetection: true
+
+jobs:
+  - template: templates/jobs/archetype-sdk-client.yml
+    parameters:
+      ServiceDirectory: ''
+      TestMarkArgument: $(TestMarkArgument)
+      BeforeBuildJobPublishBuildArtifacts:
+        - script: 'echo "##vso[build.addbuildtag]$(ReleaseTag)"'
+          displayName: 'Tag The Build'
+          condition: eq(variables['CandidateForRelease'], True)

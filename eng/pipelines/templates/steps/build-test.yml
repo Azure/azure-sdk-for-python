@@ -1,6 +1,12 @@
 parameters:
-  coverageParam: ''
-  testMarkArgument: ''
+  CoverageParam: ''
+  TestMarkArgument: ''
+  EnvVars: {}
+  ServiceDirectory: ''
+  PythonVersion: ''
+  OSName: ''
+  BeforeTestSteps: []
+
 steps:
   - powershell: |
         Invoke-WebRequest -Uri "https://github.com/Azure/azure-sdk-tools/releases/download/sdk-tools_14793/sdk-tools.zip" `
@@ -9,28 +15,31 @@ steps:
     displayName: 'Download Tools Archive From Github Release and Extract it'
 
   - task: UsePythonVersion@0
-    displayName: 'Use Python $(PythonVersion)'
+    displayName: 'Use Python ${{ parameters.PythonVersion }}'
     inputs:
-      versionSpec: '$(PythonVersion)'
+      versionSpec: '${{ parameters.PythonVersion }}'
 
   - task: PythonScript@0
     displayName: 'Run VerifyAgentOS script'
     inputs:
       scriptPath: '$(Build.BinariesDirectory)/sdk-tools/scripts/python/verify_agent_os.py'
-      arguments: $(OSName)
+      arguments: ${{ parameters.OSName }}
 
   - script: |
       pip install pathlib twine codecov beautifulsoup4
     displayName: 'Prep Environment'
 
+  - ${{ parameters.BeforeTestSteps }}
+
   - task: PythonScript@0
     displayName: 'Setup and Run Tests'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: '"$(BuildTargetingString)" --junitxml="junit/test-results.xml" ${{ parameters.coverageParam }} --mark_arg="${{ parameters.testMarkArgument }}"'
+      arguments: '"azure-*" --junitxml="junit/test-results.xml" ${{ parameters.CoverageParam }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}"'
+    env: ${{ parameters.EnvVars }}
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     inputs:
       testResultsFiles: 'junit/test-results.xml'
-      testRunTitle: '$(OSName) Python $(PythonVersion)'
+      testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
