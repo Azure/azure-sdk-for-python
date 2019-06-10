@@ -83,8 +83,7 @@ class StoragePageBlobTest(StorageTestCase):
     def _get_blob_reference(self):
         return self.bs.get_blob_client(
             self.container_name,
-            self.get_resource_name(TEST_BLOB_PREFIX),
-            blob_type=BlobType.PageBlob)
+            self.get_resource_name(TEST_BLOB_PREFIX))
 
     def _create_blob(self, length=512):
         blob = self._get_blob_reference()
@@ -92,12 +91,12 @@ class StoragePageBlobTest(StorageTestCase):
         return blob
 
     def assertBlobEqual(self, container_name, blob_name, expected_data):
-        blob = self.bs.get_blob_client(container_name, blob_name, blob_type=BlobType.PageBlob)
+        blob = self.bs.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob()
         self.assertEqual(b"".join(list(actual_data)), expected_data)
 
     def assertRangeEqual(self, container_name, blob_name, expected_data, start_range, end_range):
-        blob = self.bs.get_blob_client(container_name, blob_name, blob_type=BlobType.PageBlob)
+        blob = self.bs.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob(offset=start_range, length=end_range)
         self.assertEqual(b"".join(list(actual_data)), expected_data)
 
@@ -469,7 +468,7 @@ class StoragePageBlobTest(StorageTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        create_resp = blob.upload_blob(data)
+        create_resp = blob.upload_blob(data, blob_type=BlobType.PageBlob)
         props = blob.get_blob_properties()
 
         # Assert
@@ -487,7 +486,7 @@ class StoragePageBlobTest(StorageTestCase):
         data = self.get_random_bytes(0)
 
         # Act
-        create_resp = blob.upload_blob(data)
+        create_resp = blob.upload_blob(data, blob_type=BlobType.PageBlob)
         props = blob.get_blob_properties()
 
         # Assert
@@ -511,7 +510,7 @@ class StoragePageBlobTest(StorageTestCase):
         #def callback(current, total):
         #    progress.append((current, total))
 
-        create_resp = blob.upload_blob(data)
+        create_resp = blob.upload_blob(data, blob_type=BlobType.PageBlob)
         props = blob.get_blob_properties()
 
         # Assert
@@ -530,7 +529,7 @@ class StoragePageBlobTest(StorageTestCase):
         index = 1024
 
         # Act
-        blob.upload_blob(data[index:])
+        blob.upload_blob(data[index:], blob_type=BlobType.PageBlob)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.name, data[1024:])
@@ -544,7 +543,7 @@ class StoragePageBlobTest(StorageTestCase):
         count = 1024
 
         # Act
-        create_resp = blob.upload_blob(data[index:], length=count)
+        create_resp = blob.upload_blob(data[index:], length=count, blob_type=BlobType.PageBlob)
         props = blob.get_blob_properties()
 
         # Assert
@@ -566,7 +565,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            create_resp = blob.upload_blob(stream)
+            create_resp = blob.upload_blob(stream, blob_type=BlobType.PageBlob)
         props = blob.get_blob_properties()
 
         # Assert
@@ -592,7 +591,7 @@ class StoragePageBlobTest(StorageTestCase):
             progress.append((current, total))
 
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream)
+            blob.upload_blob(stream, blob_type=BlobType.PageBlob)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.name, data)
@@ -612,7 +611,7 @@ class StoragePageBlobTest(StorageTestCase):
         # Act
         blob_size = len(data)
         with open(FILE_PATH, 'rb') as stream:
-            create_resp = blob.upload_blob(stream, length=blob_size)
+            create_resp = blob.upload_blob(stream, length=blob_size, blob_type=BlobType.PageBlob)
         props = blob.get_blob_properties()
 
         # Assert
@@ -637,7 +636,7 @@ class StoragePageBlobTest(StorageTestCase):
         # Act
         blob_size = len(data)
         with open(FILE_PATH, 'rb') as stream:
-            create_resp = blob.upload_blob(stream, length=blob_size)
+            create_resp = blob.upload_blob(stream, length=blob_size, blob_type=BlobType.PageBlob)
         props = blob.get_blob_properties()
 
         # Assert
@@ -667,7 +666,11 @@ class StoragePageBlobTest(StorageTestCase):
         blob_size = len(data)
         with open(FILE_PATH, 'rb') as stream:
             non_seekable_file = StoragePageBlobTest.NonSeekableFile(stream)
-            blob.upload_blob(non_seekable_file, length=blob_size, max_connections=1)
+            blob.upload_blob(
+                non_seekable_file,
+                length=blob_size,
+                max_connections=1,
+                blob_type=BlobType.PageBlob)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.name, data[:blob_size])
@@ -691,7 +694,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         blob_size = len(data)
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, length=blob_size)
+            blob.upload_blob(stream, length=blob_size, blob_type=BlobType.PageBlob)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.name, data[:blob_size])
@@ -711,7 +714,7 @@ class StoragePageBlobTest(StorageTestCase):
         # Act
         blob_size = len(data) - 512
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, blob_size)
+            blob.upload_blob(stream, length=blob_size, blob_type=BlobType.PageBlob)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.name, data[:blob_size])
@@ -735,7 +738,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         blob_size = len(data) - 512
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, blob_size)  #, progress_callback=callback)
+            blob.upload_blob(stream, length=blob_size, blob_type=BlobType.PageBlob)  #, progress_callback=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.name, data[:blob_size])
@@ -748,7 +751,7 @@ class StoragePageBlobTest(StorageTestCase):
         data = self.get_random_bytes(512)
 
         # Act
-        blob.upload_blob(data, validate_content=True)
+        blob.upload_blob(data, validate_content=True, blob_type=BlobType.PageBlob)
 
         # Assert
 
@@ -762,7 +765,7 @@ class StoragePageBlobTest(StorageTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        blob.upload_blob(data, validate_content=True)
+        blob.upload_blob(data, validate_content=True, blob_type=BlobType.PageBlob)
 
         # Assert
 
@@ -817,7 +820,7 @@ class StoragePageBlobTest(StorageTestCase):
 
             # test create_blob API
             blob = self._get_blob_reference()
-            pblob = pbs.get_blob_client(container_name, blob.name, blob_type=BlobType.PageBlob)
+            pblob = pbs.get_blob_client(container_name, blob.name)
             pblob.create_page_blob(1024, premium_page_blob_tier=PremiumPageBlobTier.P4)
 
             props = pblob.get_blob_properties()
@@ -826,9 +829,12 @@ class StoragePageBlobTest(StorageTestCase):
 
             # test create_blob_from_bytes API
             blob2 = self._get_blob_reference()
-            pblob2 = pbs.get_blob_client(container_name, blob2.name, blob_type=BlobType.PageBlob)
+            pblob2 = pbs.get_blob_client(container_name, blob2.name)
             byte_data = self.get_random_bytes(1024)
-            pblob2.upload_blob(byte_data, premium_page_blob_tier=PremiumPageBlobTier.P6)
+            pblob2.upload_blob(
+                byte_data,
+                premium_page_blob_tier=PremiumPageBlobTier.P6,
+                blob_type=BlobType.PageBlob)
 
             props2 = pblob2.get_blob_properties()
             self.assertEqual(props2.blob_tier, PremiumPageBlobTier.P6)
@@ -836,11 +842,14 @@ class StoragePageBlobTest(StorageTestCase):
 
             # test create_blob_from_path API
             blob3 = self._get_blob_reference()
-            pblob3 = pbs.get_blob_client(container_name, blob3.name, blob_type=BlobType.PageBlob)
+            pblob3 = pbs.get_blob_client(container_name, blob3.name)
             with open(FILE_PATH, 'wb') as stream:
                 stream.write(byte_data)
             with open(FILE_PATH, 'rb') as stream:
-                pblob3.upload_blob(stream, premium_page_blob_tier=PremiumPageBlobTier.P10)
+                pblob3.upload_blob(
+                    stream,
+                    blob_type=BlobType.PageBlob,
+                    premium_page_blob_tier=PremiumPageBlobTier.P10)
 
             props3 = pblob3.get_blob_properties()
             self.assertEqual(props3.blob_tier, PremiumPageBlobTier.P10)
@@ -869,7 +878,7 @@ class StoragePageBlobTest(StorageTestCase):
                         raise
 
             blob = self._get_blob_reference()
-            pblob = pbs.get_blob_client(container_name, blob.name, blob_type=BlobType.PageBlob)
+            pblob = pbs.get_blob_client(container_name, blob.name)
             pblob.create_page_blob(1024)
             blob_ref = pblob.get_blob_properties()
             self.assertEqual(PremiumPageBlobTier.P10, blob_ref.blob_tier)
@@ -925,8 +934,7 @@ class StoragePageBlobTest(StorageTestCase):
             # Arrange
             source_blob = pbs.get_blob_client(
                 container_name,
-                self.get_resource_name(TEST_BLOB_PREFIX),
-                blob_type=BlobType.PageBlob)
+                self.get_resource_name(TEST_BLOB_PREFIX))
             source_blob.create_page_blob(1024, premium_page_blob_tier=PremiumPageBlobTier.P10)
 
             # Act
@@ -947,14 +955,13 @@ class StoragePageBlobTest(StorageTestCase):
 
             source_blob2 = pbs.get_blob_client(
                container_name,
-               self.get_resource_name(TEST_BLOB_PREFIX),
-               blob_type=BlobType.PageBlob)
+               self.get_resource_name(TEST_BLOB_PREFIX))
 
             source_blob2.create_page_blob(1024)
             source_blob2_url = '/{0}/{1}/{2}'.format(
                 self.settings.PREMIUM_STORAGE_ACCOUNT_NAME, source_blob2.container, source_blob2.name)
 
-            copy_blob2 = pbs.get_blob_client(container_name, 'blob2copy', blob_type=BlobType.PageBlob)
+            copy_blob2 = pbs.get_blob_client(container_name, 'blob2copy')
             copy2 = copy_blob2.copy_blob_from_url(source_blob2_url, premium_page_blob_tier=PremiumPageBlobTier.P60)
             self.assertIsNotNone(copy2)
             self.assertEqual(copy2.status(), 'success')
@@ -964,7 +971,7 @@ class StoragePageBlobTest(StorageTestCase):
             self.assertEqual(copy_ref2.blob_tier, PremiumPageBlobTier.P60)
             self.assertFalse(copy_ref2.blob_tier_inferred)
 
-            copy_blob3 = pbs.get_blob_client(container_name, 'blob3copy', blob_type=BlobType.PageBlob)
+            copy_blob3 = pbs.get_blob_client(container_name, 'blob3copy')
             copy3 = copy_blob3.copy_blob_from_url(source_blob2_url)
             self.assertIsNotNone(copy3)
             self.assertEqual(copy3.status(), 'success')

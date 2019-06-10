@@ -114,8 +114,8 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
     def _create_small_blob(self, blob_type):
         blob_name = self._get_blob_reference(blob_type)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name, blob_type=blob_type)
-        blob.upload_blob(self.bytes)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(self.bytes, blob_type=blob_type)
         return blob
         
     #--Test cases for blob encryption ----------------------------------------
@@ -538,24 +538,24 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Assert
         for service in self.blob_types:
             blob_name = self._get_blob_reference(service)
-            blob = self.bsc.get_blob_client(self.container_name, blob_name, blob_type=service)
+            blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
             with self.assertRaises(ValueError):
-                blob.upload_blob(content)
+                blob.upload_blob(content, blob_type=service)
 
             stream = BytesIO(content)
             with self.assertRaises(ValueError):
-                blob.upload_blob(stream, length=512)
+                blob.upload_blob(stream, length=512, blob_type=service)
 
             FILE_PATH = 'blob_input.temp.dat'
             with open(FILE_PATH, 'wb') as stream:
                 stream.write(content)
             with open(FILE_PATH, 'rb') as stream:
                 with self.assertRaises(ValueError):
-                    blob.upload_blob(stream)
+                    blob.upload_blob(stream, blob_type=service)
 
             with self.assertRaises(ValueError):
-                blob.upload_blob('To encrypt')
+                blob.upload_blob('To encrypt', blob_type=service)
 
     @record
     def test_get_blob_strict_mode_no_policy(self):
@@ -590,7 +590,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Arrange
         self.bsc.key_encryption_key = KeyWrapper('key1')
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name, blob_type=BlobType.BlockBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Assert
         with self.assertRaises(ValueError) as e:
@@ -606,7 +606,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Arrange
         self.bsc.key_encryption_key = KeyWrapper('key1')
         blob_name = self._get_blob_reference(BlobType.AppendBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name, blob_type=BlobType.AppendBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Assert
         with self.assertRaises(ValueError) as e:
@@ -619,7 +619,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # All append_from operations funnel into append_from_stream, so testing one is sufficient
         with self.assertRaises(ValueError) as e:
-            blob.upload_blob(b'To encrypt')
+            blob.upload_blob(b'To encrypt', blob_type=BlobType.AppendBlob)
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
     @record
@@ -627,11 +627,11 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Arrange
         self.bsc.key_encryption_key = KeyWrapper('key1')
         blob_name = self._get_blob_reference(BlobType.PageBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name, blob_type=BlobType.PageBlob)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Assert
         with self.assertRaises(ValueError) as e:
-            blob.upload_page(urandom(512), 0, 511)
+            blob.upload_page(urandom(512), 0, 511, blob_type=BlobType.PageBlob)
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         with self.assertRaises(ValueError) as e:
@@ -696,10 +696,10 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
     def _create_blob_from_star(self, blob_type, content, data, **kwargs):
         blob_name = self._get_blob_reference(blob_type)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name, blob_type=blob_type)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.key_encryption_key = KeyWrapper('key1')
         blob.require_encryption = True
-        blob.upload_blob(data, **kwargs)
+        blob.upload_blob(data, blob_type=blob_type, **kwargs)
 
         blob_content = blob.download_blob().content_as_bytes()
         self.assertEqual(content, blob_content)

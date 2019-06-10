@@ -358,7 +358,6 @@ class BlobServiceClient(object):
     def get_blob_client(
             self, container,  # type: Union[ContainerProperties, str]
             blob,  # type: Union[BlobProperties, str]
-            blob_type=BlobType.BlockBlob,  # type: Union[BlobType, str]
             snapshot=None  # type: Optional[Union[SnapshotProperties, str]]
         ):
         # type: (...) -> BlobClient
@@ -372,14 +371,12 @@ class BlobServiceClient(object):
         :param blob: The blob with which to interact. If specified, this value will override
          a blob value specified in the blob URL.
         :type blob: str or ~azure.storage.blob.models.BlobProperties
-        :param ~azure.storage.blob.common.BlobType blob_type: The type of Blob. Default
-         vale is BlobType.BlockBlob
         :param str snapshot: The optional blob snapshot on which to operate.
         :returns: A BlobClient.
         :rtype: ~azure.core.blob.blob_client.BlobClient
         """
         return BlobClient(
-            self.url, container=container, blob=blob, blob_type=blob_type, snapshot=snapshot,
+            self.url, container=container, blob=blob, snapshot=snapshot,
             credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)

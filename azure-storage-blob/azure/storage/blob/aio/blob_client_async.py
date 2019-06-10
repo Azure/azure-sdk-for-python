@@ -24,7 +24,6 @@ class BlobClient:  # pylint: disable=too-many-public-methods
             container: Optional[Union[str, ContainerProperties]] = None,
             blob: Optional[Union[str, BlobProperties]] = None,
             snapshot: Optional[str] = None,
-            blob_type: Union[str, BlobType] = BlobType.BlockBlob,
             credentials: Optional[SharedKeyCredentials] = None,
             configuration: Optional[Configuration] = None) -> None:
         pass
@@ -39,7 +38,7 @@ class BlobClient:  # pylint: disable=too-many-public-methods
         pass
 
     async def upload_blob(
-            self, data, length=None, metadata=None, content_settings=None, validate_content=False,
+            self, data, length=None, blob_type=BlobType.BlockBlob, metadata=None, content_settings=None, validate_content=False,
             lease=None, if_modified_since=None, if_unmodified_since=None, if_match=None,
             if_none_match=None, timeout=None, premium_page_blob_tier=None, sequence_number=None,
             maxsize_condition=None, appendpos_condition=None):

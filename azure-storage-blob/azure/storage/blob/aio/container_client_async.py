@@ -84,7 +84,7 @@ class ContainerClient(object):
         :returns: A generator that honors directory hierarchy.
         """
 
-    async def get_blob_client(self, blob, blob_type=BlobType.BlockBlob, snapshot=None):
+    async def get_blob_client(self, blob, snapshot=None):
         """
         :returns: A BlobClient.
         """

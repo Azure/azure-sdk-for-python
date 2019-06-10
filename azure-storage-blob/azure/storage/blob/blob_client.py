@@ -87,7 +87,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             container=None,  # type: Optional[Union[str, ContainerProperties]]
             blob=None,  # type: Optional[Union[str, BlobProperties]]
             snapshot=None,  # type: Optional[str]
-            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             credentials=None,  # type: Optional[HTTPPolicy]
             configuration=None,  # type: Optional[Configuration]
             **kwargs  # type: Any
@@ -104,8 +103,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :param blob: The blob with which to interact. If specified, this value will override
          a blob value specified in the blob URL.
         :type blob: str or ~azure.storage.blob.models.BlobProperties
-        :param ~azure.storage.blob.common.BlobType blob_type: The type of the blob. This can be
-         either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
         :param ~azure.storage.blob.authentication.SharedKeyCredentials credentials: Optional shared
          key credentials. This is not necessary if the URL contains a SAS token, or if the blob is
          publicly available.
@@ -132,12 +129,10 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             self.snapshot = snapshot or path_snapshot
         try:
             self.name = blob.name
-            self.blob_type = blob.blob_type
             if not snapshot:
                 self.snapshot = blob.snapshot
         except AttributeError:
             self.name = blob or unquote(path_blob)
-            self.blob_type = blob_type
 
         self.scheme = parsed_url.scheme
         self.account = parsed_url.hostname.split(".blob.core.")[0]
@@ -174,7 +169,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             container,  # type: Union[str, ContainerProperties]
             blob,  # type: Union[str, BlobProperties]
             snapshot=None,  # type: Optional[str]
-            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             credentials=None,  # type: Optional[HTTPPolicy]
             configuration=None,  # type: Optional[Configuration]
             **kwargs  # type: Any
@@ -184,8 +178,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         """
         account_url, creds = parse_connection_str(conn_str, credentials)
         return cls(
-            account_url, container=container, blob=blob,
-            snapshot=snapshot, blob_type=blob_type,
+            account_url, container=container, blob=blob, snapshot=snapshot,
             credentials=creds, configuration=configuration, **kwargs)
 
     def generate_shared_access_signature(
@@ -292,6 +285,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
 
     def upload_blob(
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
             content_settings=None,  # type: Optional[ContentSettings]
@@ -311,7 +305,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         # type: (...) -> Dict[str, Union[str, datetime]]
         """
         Creates a new blob from a data source with automatic chunking.
-
+        :param ~azure.storage.blob.common.BlobType blob_type: The type of the blob. This can be
+         either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
         :param int length:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
@@ -409,7 +404,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                 blob_content_disposition=content_settings.content_disposition
             )
         try:
-            if self.blob_type == BlobType.BlockBlob:
+            if blob_type == BlobType.BlockBlob:
                 adjusted_count = length
                 if (self.key_encryption_key is not None) and (adjusted_count is not None):
                     adjusted_count += (16 - (length % 16))
@@ -490,7 +485,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                         headers=headers,
                         **kwargs)
 
-            elif self.blob_type == BlobType.PageBlob:
+            elif blob_type == BlobType.PageBlob:
                 if length is None or length < 0:
                     raise ValueError("A content length must be specified for a Page Blob.")
                 if length % 512 != 0:
@@ -534,7 +529,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
                     initialization_vector=iv,
                     **kwargs
                 )
-            elif self.blob_type == BlobType.AppendBlob:
+            elif blob_type == BlobType.AppendBlob:
                 if self.require_encryption or (self.key_encryption_key is not None):
                     raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
                 if length == 0:
@@ -1033,7 +1028,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         snapshot = SnapshotProperties(**properties)
         snapshot.name = self.name
         snapshot.container = self.container
-        snapshot.blob_type = self.blob_type
         return snapshot
 
     def copy_blob_from_url(
@@ -1304,8 +1298,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :raises: TypeError when blob client type is not BlockBlob.
         :returns: None
         """
-        if self.blob_type != BlobType.BlockBlob:
-            raise TypeError("This operation is only available for BlockBlob type blobs.")
         access_conditions = get_access_conditions(lease)
         if standard_blob_tier is None:
             raise ValueError("A StandardBlobTier must be specified")
@@ -1332,8 +1324,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :raises: TypeError when blob client type is not BlockBlob.
         :returns: None
         """
-        if self.blob_type != BlobType.BlockBlob:
-            raise TypeError("This operation is only available for BlockBlob type blobs.")
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         block_id = encode_base64(str(block_id))
@@ -1372,8 +1362,6 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :raises: TypeError when blob client type is not BlockBlob.
         :returns: None
         """
-        if self.blob_type != BlobType.BlockBlob:
-            raise TypeError("This operation is only available for BlockBlob type blobs.")
 
     def get_block_list(
             self, block_list_type="committed",  # type: Optional[str]
@@ -1394,11 +1382,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             Required if the blob has an active lease.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :raises: TypeError when blob client type is not BlockBlob.
         :returns: A tuple of two sets - committed and uncommitted blocks
         """
-        if self.blob_type != BlobType.BlockBlob:
-            raise TypeError("This operation is only available for BlockBlob type blobs.")
         access_conditions = get_access_conditions(lease)
         try:
             blocks= self._client.block_blob.get_block_list(
@@ -1473,11 +1458,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :raises: TypeError when blob client type is not BlockBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
-        if self.blob_type != BlobType.BlockBlob:
-            raise TypeError("This operation is only available for BlockBlob type blobs.")
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
@@ -1534,11 +1516,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             each call individually.
         :param str lease:
             Required if the blob has an active lease.
-        :raises: TypeError when blob client type is not PageBlob.
         :returns: None
         """
-        if self.blob_type != BlobType.PageBlob:
-            raise TypeError("This operation is only available for PageBlob type blobs.")
         access_conditions = get_access_conditions(lease)
         if premium_page_blob_tier is None:
             raise ValueError("A PremiumPageBlobTiermust be specified")
@@ -1611,11 +1590,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :raises: TypeError when blob client type is not PageBlob.
         :returns: A list of page ranges.
         """
-        if self.blob_type != BlobType.PageBlob:
-            raise TypeError("This operation is only available for PageBlob type blobs.")
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
@@ -1705,11 +1681,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :raises: TypeError when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
-        if self.blob_type != BlobType.PageBlob:
-            raise TypeError("This operation is only available for PageBlob type blobs.")
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
@@ -1770,11 +1743,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             operation if it does exist.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :raises: TypeError when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
-        if self.blob_type != BlobType.PageBlob:
-            raise TypeError("This operation is only available for PageBlob type blobs.")
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
@@ -1868,12 +1838,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             service fails.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-
-        :raises: TypeError when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
-        if self.blob_type != BlobType.PageBlob:
-            raise TypeError("This operation is only available for PageBlob type blobs.")
         if isinstance(page, six.text_type):
             page = page.encode(encoding)
         if self.require_encryption or (self.key_encryption_key is not None):
@@ -1939,11 +1905,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             Pages must be aligned with 512-byte boundaries, the start offset
             must be a modulus of 512 and the end offset must be a modulus of
             512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
-        :raises: TypeError when blob client type is not PageBlob.
         :returns: Blob-updated property dict (Etag and last modified).
         """
-        if self.blob_type != BlobType.PageBlob:
-            raise TypeError("This operation is only available for PageBlob type blobs.")
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         access_conditions = get_access_conditions(lease)
@@ -1989,11 +1952,8 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         ):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
         """
-        :raises: TypeError when blob client type is not AppendBlob.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         """
-        if self.blob_type != BlobType.AppendBlob:
-            raise TypeError("This operation is only available for AppendBlob type blobs.")
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 

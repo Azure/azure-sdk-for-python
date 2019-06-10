@@ -26,7 +26,8 @@ from azure.storage.blob import (
     SharedKeyCredentials,
     BlobServiceClient,
     ContainerClient,
-    BlobClient
+    BlobClient,
+    BlobType
 )
 from azure.storage.blob.models import (
     BlobPermissions,
@@ -229,7 +230,7 @@ class StorageCommonBlobTest(StorageTestCase):
             blob_name = '{0}a{0}a{0}'.format(c)
             blob_data = c
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
-            blob.upload_blob(blob_data, len(blob_data))
+            blob.upload_blob(blob_data, length=len(blob_data))
 
             data = blob.download_blob()
             content = b"".join(list(data))
@@ -246,7 +247,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         data = b'hello world again'
-        resp = blob.upload_blob(data, len(data), lease=lease)
+        resp = blob.upload_blob(data, length=len(data), lease=lease)
 
         # Assert
         self.assertIsNotNone(resp.get('ETag'))
@@ -262,7 +263,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         data = b'hello world'
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        resp = blob.upload_blob(data, len(data), metadata=metadata)
+        resp = blob.upload_blob(data, length=len(data), metadata=metadata)
 
         # Assert
         self.assertIsNotNone(resp.get('ETag'))
@@ -304,7 +305,7 @@ class StorageCommonBlobTest(StorageTestCase):
         snapshot = self.bsc.get_blob_client(self.container_name, blob.create_snapshot())
 
         upload_data = b'hello world again'
-        blob.upload_blob(upload_data, len(upload_data))
+        blob.upload_blob(upload_data, length=len(upload_data))
 
         # Act
         blob_previous = snapshot.download_blob()
@@ -398,7 +399,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Assert
         self.assertIsInstance(props, BlobProperties)
-        self.assertEqual(props.blob_type, blob.blob_type)
+        self.assertEqual(props.blob_type, BlobType.BlockBlob)
         self.assertEqual(props.content_length, len(self.byte_data))
         self.assertEqual(props.lease.status, 'unlocked')
         self.assertIsNotNone(props.creation_time)
@@ -501,12 +502,12 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         snapshot = self.bsc.get_blob_client(self.container_name, res)
-        blob = snapshot.get_blob_properties()
+        props = snapshot.get_blob_properties()
 
         # Assert
         self.assertIsNotNone(blob)
-        self.assertEqual(blob.blob_type, snapshot.blob_type)
-        self.assertEqual(blob.content_length, len(self.byte_data))
+        self.assertEqual(props.blob_type, BlobType.BlockBlob)
+        self.assertEqual(props.content_length, len(self.byte_data))
 
     @record
     def test_get_blob_properties_with_leased_blob(self):
@@ -520,7 +521,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Assert
         self.assertIsInstance(props, BlobProperties)
-        self.assertEqual(props.blob_type, blob.blob_type)
+        self.assertEqual(props.blob_type, BlobType.BlockBlob)
         self.assertEqual(props.content_length, len(self.byte_data))
         self.assertEqual(props.lease.status, 'locked')
         self.assertEqual(props.lease.state, 'leased')
@@ -979,12 +980,12 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = blob.acquire_lease(lease_duration=15)
-        resp = blob.upload_blob(b'hello 2', 7, lease=lease)
+        resp = blob.upload_blob(b'hello 2', length=7, lease=lease)
         self.sleep(15)
 
         # Assert
         with self.assertRaises(HttpResponseError):
-            blob.upload_blob(b'hello 3', 7, lease=lease)
+            blob.upload_blob(b'hello 3', length=7, lease=lease)
 
     @record
     def test_lease_blob_with_proposed_lease_id(self):
@@ -1026,11 +1027,11 @@ class StorageCommonBlobTest(StorageTestCase):
         lease = blob.acquire_lease(lease_duration=15)
         lease_time = blob.break_lease(lease_break_period=5)
 
-        resp = blob.upload_blob(b'hello 2', 7, lease=lease)
+        resp = blob.upload_blob(b'hello 2', length=7, lease=lease)
         self.sleep(5)
 
         with self.assertRaises(HttpResponseError):
-            blob.upload_blob(b'hello 3', 7, lease=lease)
+            blob.upload_blob(b'hello 3', length=7, lease=lease)
 
         # Assert
         self.assertIsNotNone(lease.id)
@@ -1071,7 +1072,7 @@ class StorageCommonBlobTest(StorageTestCase):
         pytest.skip("Failing with no error code")  # TODO
         blob_name = '啊齄丂狛狜'
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(b'hello world', 11)
+        blob.upload_blob(b'hello world', length=11)
 
         # Act
         data = blob.download_blob()
@@ -1340,7 +1341,7 @@ class StorageCommonBlobTest(StorageTestCase):
         sas_blob = BlobClient(blob.url, credentials=token)
 
         # Act
-        headers = {'x-ms-blob-type': blob.blob_type}
+        headers = {'x-ms-blob-type': 'BlockBlob'}
         response = requests.put(sas_blob.url, headers=headers, data=updated_data)
 
         # Assert

@@ -84,13 +84,13 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
     def _create_container_and_page_blob(self, container_name, blob_name,
                                         content_length):
         container = self._create_container(container_name)
-        blob = self.bsc.get_blob_client(container_name, blob_name, blob_type=BlobType.PageBlob)
+        blob = self.bsc.get_blob_client(container_name, blob_name)
         resp = blob.create_page_blob(str(content_length))
         return container, blob
 
     def _create_container_and_append_blob(self, container_name, blob_name):
         container = self._create_container(container_name)
-        blob = self.bsc.get_blob_client(container_name, blob_name, blob_type=BlobType.AppendBlob)
+        blob = self.bsc.get_blob_client(container_name, blob_name)
         resp = blob.create_append_blob()
         return container, blob
 
@@ -1577,7 +1577,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
 
         # Act
-        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         blob.upload_page(data, 0, 511, if_modified_since=test_datetime)
 
         # Assert
@@ -1592,7 +1592,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
 
         # Act
-        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(HttpResponseError) as e:
             blob.upload_page(data, 0, 511, if_modified_since=test_datetime)
 
@@ -1609,7 +1609,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
 
         # Act
-        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         blob.upload_page(data, 0, 511, if_unmodified_since=test_datetime)
 
         # Assert
@@ -1624,7 +1624,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
 
         # Act
-        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(HttpResponseError) as e:
             blob.upload_page(data, 0, 511, if_unmodified_since=test_datetime)
 
@@ -1637,7 +1637,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024)
         data = b'abcdefghijklmnop' * 32
-        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         etag = blob.get_blob_properties().etag
 
         # Act
@@ -1653,7 +1653,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
 
         # Act
-        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         with self.assertRaises(HttpResponseError) as e:
             blob.upload_page(data, 0, 511, if_match='0x111111111111111')
 
@@ -1668,7 +1668,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         data = b'abcdefghijklmnop' * 32
 
         # Act
-        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         blob.upload_page(data, 0, 511, if_none_match='0x111111111111111')
 
         # Assert
@@ -1679,7 +1679,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024)
         data = b'abcdefghijklmnop' * 32
-        blob = self.bsc.get_blob_client(self.container_name, 'blob1', blob_type=BlobType.PageBlob)
+        blob = self.bsc.get_blob_client(self.container_name, 'blob1')
         etag = blob.get_blob_properties().etag
 
         # Act
@@ -1955,7 +1955,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-        blob.upload_blob(data, if_modified_since=test_datetime)
+        blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_modified_since=test_datetime)
 
         # Assert
         content = b"".join(list(blob.download_blob()))
@@ -1971,7 +1971,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Act
         with self.assertRaises(HttpResponseError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-            blob.upload_blob(data, if_modified_since=test_datetime)
+            blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_modified_since=test_datetime)
 
         self.assertEqual('ConditionNotMet', e.exception.error_code)
 
@@ -1984,7 +1984,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-        blob.upload_blob(data, if_unmodified_since=test_datetime)
+        blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_unmodified_since=test_datetime)
 
         # Assert
         content = b"".join(list(blob.download_blob()))
@@ -2000,7 +2000,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Act
         with self.assertRaises(HttpResponseError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-            blob.upload_blob(data, if_unmodified_since=test_datetime)
+            blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_unmodified_since=test_datetime)
 
         self.assertEqual('ConditionNotMet', e.exception.error_code)
 
@@ -2013,7 +2013,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-        blob.upload_blob(data, if_match=test_etag)
+        blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_match=test_etag)
 
         # Assert
         content = b"".join(list(blob.download_blob()))
@@ -2029,7 +2029,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Act
         with self.assertRaises(HttpResponseError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-            blob.upload_blob(data, if_match=test_etag)
+            blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_match=test_etag)
 
         self.assertEqual('ConditionNotMet', e.exception.error_code)
 
@@ -2042,7 +2042,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-        blob.upload_blob(data, if_none_match=test_etag)
+        blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_none_match=test_etag)
 
         # Assert
         content = b"".join(list(blob.download_blob()))
@@ -2058,7 +2058,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         # Act
         with self.assertRaises(HttpResponseError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-            blob.upload_blob(data, if_none_match=test_etag)
+            blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_none_match=test_etag)
 
         self.assertEqual('ConditionNotMet', e.exception.error_code)
 
