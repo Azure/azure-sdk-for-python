@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 from __future__ import print_function
 import functools
-import time
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
@@ -185,89 +184,46 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
-    def test_example_secrets_backup_restore(self, vault_client, **kwargs):
+    def test_example_secrets_recover(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
         created_secret = secret_client.set_secret("secret-name", "secret-value")
-        secret_name = created_secret.name
-        try:
-            # [START backup_secret]
-            # backup a secret
-            secret_backup = secret_client.backup_secret(secret_name)
+        secret_client.delete_secret(created_secret.name)
 
-            # returns the raw bytes of the backed up secret
-            print(secret_backup)
+        self._poll_until_no_exception(
+            functools.partial(secret_client.get_deleted_secret, created_secret.name), ResourceNotFoundError
+        )
 
-            # [END backup_secret]
-        except HttpResponseError:
-            pass
+        # [START get_deleted_secret]
+        # gets a deleted secret (requires soft-delete enabled for the vault)
+        deleted_secret = secret_client.get_deleted_secret("secret-name")
+        print(deleted_secret.name)
 
-        try:
-            deleted_secret = secret_client.delete_secret(secret_name)
-            self._poll_until_no_exception(
-                functools.partial(secret_client.get_deleted_secret, secret_name), ResourceNotFoundError
-            )
+        # [END get_deleted_secret]
 
-            # [START get_deleted_secret]
-            # gets a deleted secret (requires soft-delete enabled for the vault)
-            deleted_secret = secret_client.get_deleted_secret("secret-name")
-            print(deleted_secret.name)
+        # [START recover_deleted_secret]
 
-            # [END get_deleted_secret]
-        except HttpResponseError:
-            pass
+        # recover deleted secret to the latest version
+        recovered_secret = secret_client.recover_deleted_secret("secret-name")
+        print(recovered_secret.id)
+        print(recovered_secret.name)
 
-        try:
-            # [START restore_secret]
-
-            # restores a backed up secret
-            restored_secret = secret_client.restore_secret(secret_backup)
-            print(restored_secret.id)
-            print(restored_secret.value)
-            print(restored_secret.version)
-
-            # [END restore_secret]
-        except HttpResponseError:
-            pass
+        # [END recover_deleted_secret]
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
-    def test_example_secrets_recover_purge(self, vault_client, **kwargs):
+    def test_example_secrets_purge(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
         created_secret = secret_client.set_secret("secret-name", "secret-value")
+
         secret_client.delete_secret(created_secret.name)
         self._poll_until_no_exception(
             functools.partial(secret_client.get_deleted_secret, created_secret.name), ResourceNotFoundError
         )
 
-        try:
-            # [START recover_deleted_secret]
+        # [START purge_deleted_secret]
 
-            # recover deleted secret to its latest version
-            recover_deleted_secret = secret_client.recover_deleted_secret("secret-name")
-            print(recover_deleted_secret.id)
-            print(recover_deleted_secret.name)
+        # if the vault has soft-delete enabled, purge permanently deletes the secret
+        # (with soft-delete disabled, an delete itself is permanent)
+        secret_client.purge_deleted_secret("secret-name")
 
-            # [END recover_deleted_secret]
-        except HttpResponseError:
-            pass
-
-        try:
-            self._poll_until_no_exception(
-                functools.partial(secret_client.get_secret, created_secret.name), ResourceNotFoundError
-            )
-
-            secret_client.delete_secret(created_secret.name)
-
-            self._poll_until_no_exception(
-                functools.partial(secret_client.get_deleted_secret, created_secret.name), ResourceNotFoundError
-            )
-
-            # [START purge_deleted_secret]
-
-            # if the vault has soft-delete enabled, purge permanently deletes the secret
-            # (without soft-delete, an ordinary delete is permanent)
-            secret_client.purge_deleted_secret("secret-name")
-
-            # [END purge_deleted_secret]
-        except HttpResponseError:
-            pass
+        # [END purge_deleted_secret]

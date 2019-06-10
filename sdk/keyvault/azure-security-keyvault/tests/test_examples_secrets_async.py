@@ -3,12 +3,8 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import asyncio
-import functools
-
 from azure.core.exceptions import ResourceNotFoundError
 from azure.security.keyvault._generated.v7_0.models import KeyVaultErrorException
-from azure.security.keyvault.aio.vault_client import VaultClient
 from devtools_testutils import ResourceGroupPreparer
 
 from async_preparer import AsyncVaultClientPreparer
@@ -188,55 +184,47 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_example_secrets_recover_purge(self, vault_client, **kwargs):
+    async def test_example_secrets_recover(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
         created_secret = await secret_client.set_secret("secret-name", "secret-value")
         await secret_client.delete_secret(created_secret.name)
 
-        try:
-            await self._poll_until_no_exception(
-                secret_client.get_deleted_secret, created_secret.name, expected_exception=ResourceNotFoundError
-            )
+        await self._poll_until_no_exception(
+            secret_client.get_deleted_secret, created_secret.name, expected_exception=ResourceNotFoundError
+        )
 
-            # [START get_deleted_secret]
-            # gets a deleted secret (requires soft-delete enabled for the vault)
-            deleted_secret = await secret_client.get_deleted_secret("secret-name")
-            print(deleted_secret.name)
+        # [START get_deleted_secret]
+        # gets a deleted secret (requires soft-delete enabled for the vault)
+        deleted_secret = await secret_client.get_deleted_secret("secret-name")
+        print(deleted_secret.name)
 
-            # [END get_deleted_secret]
+        # [END get_deleted_secret]
 
-        except KeyVaultErrorException:
-            pass
+        # [START recover_deleted_secret]
 
-        try:
-            # [START recover_deleted_secret]
+        # recover deleted secret to the latest version
+        recovered_secret = await secret_client.recover_deleted_secret("secret-name")
+        print(recovered_secret.id)
+        print(recovered_secret.name)
 
-            # recover deleted secret to the latest version
-            recover_deleted_secret = await secret_client.recover_deleted_secret("secret-name")
-            print(recover_deleted_secret.id)
-            print(recover_deleted_secret.name)
+        # [END recover_deleted_secret]
 
-            # [END recover_deleted_secret]
-        except KeyVaultErrorException:
-            pass
+    @ResourceGroupPreparer()
+    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_example_secrets_purge(self, vault_client, **kwargs):
+        secret_client = vault_client.secrets
+        created_secret = await secret_client.set_secret("secret-name", "secret-value")
 
-        try:
-            await self._poll_until_no_exception(
-                secret_client.get_secret, created_secret.name, expected_exception=ResourceNotFoundError
-            )
+        await secret_client.delete_secret(created_secret.name)
+        await self._poll_until_no_exception(
+            secret_client.get_deleted_secret, created_secret.name, expected_exception=ResourceNotFoundError
+        )
 
-            await secret_client.delete_secret(created_secret.name)
+        # [START purge_deleted_secret]
 
-            await self._poll_until_no_exception(
-                secret_client.get_deleted_secret, created_secret.name, expected_exception=ResourceNotFoundError
-            )
+        # if the vault has soft-delete enabled, purge permanently deletes the secret
+        # (with soft-delete disabled, an delete itself is permanent)
+        await secret_client.purge_deleted_secret("secret-name")
 
-            # [START purge_deleted_secret]
-
-            # if the vault has soft-delete enabled, purge permanently deletes the secret
-            # (without soft-delete, an ordinary delete is permanent)
-            await secret_client.purge_deleted_secret("secret-name")
-
-            # [END purge_deleted_secret]
-        except KeyVaultErrorException:
-            pass
+        # [END purge_deleted_secret]

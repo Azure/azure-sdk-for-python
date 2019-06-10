@@ -4,12 +4,9 @@
 # license information.
 # -------------------------------------------------------------------------
 from __future__ import print_function
-import codecs
 import functools
-import time
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
-from azure.security.keyvault._generated.v7_0.models import JsonWebKey
 from devtools_testutils import ResourceGroupPreparer
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
@@ -262,42 +259,38 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         self._poll_until_no_exception(
             functools.partial(key_client.get_deleted_key, created_key.name), ResourceNotFoundError
         )
+        # [START get_deleted_key]
 
-        try:
-            # [START get_deleted_key]
-            # gets a deleted key (requires soft-delete enabled for the vault)
-            deleted_key = key_client.get_deleted_key("key-name")
-            print(deleted_key.name)
-            print(deleted_key.deleted_date)
+        # get a deleted key (requires soft-delete enabled for the vault)
+        deleted_key = key_client.get_deleted_key("key-name")
+        print(deleted_key.name)
+        print(deleted_key.deleted_date)
 
-            # [END get_deleted_key]
-        except ResourceNotFoundError:
-            pass
+        # [END get_deleted_key]
 
-        try:
-            # [START recover_deleted_key]
+        # [START recover_deleted_key]
 
-            # recover deleted key to its latest version
-            recovered_key = key_client.recover_deleted_key("key-name")
-            print(recovered_key.id)
-            print(recovered_key.name)
+        # recover a deleted key to its latest version (requires soft-delete enabled for the vault)
+        recovered_key = key_client.recover_deleted_key("key-name")
+        print(recovered_key.id)
+        print(recovered_key.name)
 
-            # [END recover_deleted_key]
-        except HttpResponseError:
-            pass
+        # [END recover_deleted_key]
 
-        try:
-            key_client.delete_key(created_key.name)
-            self._poll_until_no_exception(
-                functools.partial(key_client.get_deleted_key, created_key.name), ResourceNotFoundError
-            )
+    @ResourceGroupPreparer()
+    @VaultClientPreparer(enable_soft_delete=True)
+    def test_example_keys_purge(self, vault_client, **kwargs):
+        key_client = vault_client.keys
+        created_key = key_client.create_key("key-name", "RSA")
+        key_client.delete_key(created_key.name)
+        self._poll_until_no_exception(
+            functools.partial(key_client.get_deleted_key, created_key.name), ResourceNotFoundError
+        )
 
-            # [START purge_deleted_key]
+        # [START purge_deleted_key]
 
-            # when the vault has soft-delete enabled, purge permanently deletes a deleted key
-            # (with soft-delete disabled, delete is permanent)
-            key_client.purge_deleted_key("key-name")
+        # if the vault has soft-delete enabled, purge permanently deletes a deleted key
+        # (with soft-delete disabled, delete itself is permanent)
+        key_client.purge_deleted_key("key-name")
 
-            # [END purge_deleted_key]
-        except HttpResponseError:
-            pass
+        # [END purge_deleted_key]

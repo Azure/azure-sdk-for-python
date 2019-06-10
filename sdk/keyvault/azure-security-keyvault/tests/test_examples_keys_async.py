@@ -3,13 +3,10 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import functools
-
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError, HttpResponseError
 from devtools_testutils import ResourceGroupPreparer
 from async_preparer import AsyncVaultClientPreparer
 from async_test_case import AsyncKeyVaultTestCase
-from azure.security.keyvault.aio import VaultClient
 
 
 def print(*args):
@@ -249,60 +246,49 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_example_keys_recover_purge(self, vault_client, **kwargs):
+    async def test_example_keys_recover(self, vault_client, **kwargs):
         key_client = vault_client.keys
         created_key = await key_client.create_key("key-name", "RSA")
-        await self._poll_until_no_exception(
-            key_client.get_key, created_key.name, expected_exception=ResourceNotFoundError
-        )
 
         await key_client.delete_key(created_key.name)
-
         await self._poll_until_no_exception(
             key_client.get_deleted_key, created_key.name, expected_exception=ResourceNotFoundError
         )
 
-        try:
-            # [START get_deleted_key]
+        # [START get_deleted_key]
 
-            # get a deleted key (requires soft-delete enabled for the vault)
-            deleted_key = await key_client.get_deleted_key("key-name")
-            print(deleted_key.name)
+        # get a deleted key (requires soft-delete enabled for the vault)
+        deleted_key = await key_client.get_deleted_key("key-name")
+        print(deleted_key.name)
 
-            # [END get_deleted_key]
-        except ResourceNotFoundError:
-            pass
+        # [END get_deleted_key]
 
-        try:
-            # [START recover_deleted_key]
+        # [START recover_deleted_key]
 
-            # recover deleted key to its latest version
-            recover_deleted_key = await key_client.recover_deleted_key("key-name")
-            print(recover_deleted_key.id)
-            print(recover_deleted_key.name)
+        # recover deleted key to its latest version (requires soft-delete enabled for the vault)
+        recovered_key = await key_client.recover_deleted_key("key-name")
+        print(recovered_key.id)
+        print(recovered_key.name)
 
-            # [END recover_deleted_key]
-        except HttpResponseError:
-            pass
+        # [END recover_deleted_key]
 
-        try:
-            await self._poll_until_no_exception(
-                key_client.get_key, created_key.name, expected_exception=ResourceNotFoundError
-            )
 
-            await key_client.delete_key("key-name")
+    @ResourceGroupPreparer()
+    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_example_keys_purge(self, vault_client, **kwargs):
+        key_client = vault_client.keys
+        created_key = await key_client.create_key("key-name", "RSA")
 
-            await self._poll_until_no_exception(
-                key_client.get_deleted_key, created_key.name, expected_exception=ResourceNotFoundError
-            )
+        await key_client.delete_key(created_key.name)
+        await self._poll_until_no_exception(
+            key_client.get_deleted_key, created_key.name, expected_exception=ResourceNotFoundError
+        )
 
-            # [START purge_deleted_key]
+        # [START purge_deleted_key]
 
-            # if the vault has soft-delete enabled, purge permanently deletes the key
-            # (without soft-delete, an ordinary delete is permanent)
-            # key must be deleted prior to be purged
-            await key_client.purge_deleted_key("key-name")
+        # if the vault has soft-delete enabled, purge permanently deletes a deleted key
+        # (with soft-delete disabled, delete itself is permanent)
+        await key_client.purge_deleted_key("key-name")
 
-            # [END purge_deleted_key]
-        except HttpResponseError:
-            pass
+        # [END purge_deleted_key]

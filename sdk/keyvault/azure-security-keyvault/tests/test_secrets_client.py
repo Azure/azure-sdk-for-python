@@ -204,7 +204,6 @@ class SecretClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer()
     @VaultClientPreparer()
     def test_backup_restore(self, vault_client, **kwargs):
-
         self.assertIsNotNone(vault_client)
         client = vault_client.secrets
         secret_name = self.get_resource_name("secbak")
@@ -226,22 +225,16 @@ class SecretClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
-    def test_recover_purge(self, vault_client, **kwargs):
+    def test_recover(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
         client = vault_client.secrets
 
         secrets = {}
 
         # create secrets to recover
-        for i in range(0, self.list_test_size):
-            secret_name = self.get_resource_name("secrec{}".format(str(i)))
-            secret_value = self.get_resource_name("secval{}".format(str(i)))
-            secrets[secret_name] = client.set_secret(secret_name, secret_value)
-
-        # create secrets to purge
-        for i in range(0, self.list_test_size):
-            secret_name = self.get_resource_name("secprg{}".format(str(i)))
-            secret_value = self.get_resource_name("secval{}".format(str(i)))
+        for i in range(self.list_test_size):
+            secret_name = "secret{}".format(i)
+            secret_value = "value{}".format(i)
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
         # delete all secrets
@@ -254,27 +247,42 @@ class SecretClientTests(KeyVaultTestCase):
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         deleted = [s.name for s in client.list_deleted_secrets()]
-
         self.assertTrue(all(s in deleted for s in secrets.keys()))
 
-        secrets_to_purge = {s for s in secrets.keys() if s.startswith("secprg")}
-        secrets_to_recover = [n for n in secrets.keys() if n.startswith("secrec")]
-
         # recover select secrets
-        for secret_name in secrets_to_recover:
+        for secret_name in secrets.keys():
             client.recover_deleted_secret(secret_name)
 
-        # purge select secrets
-        for secret_name in secrets_to_purge:
-            client.purge_deleted_secret(secret_name)
-
-        if self.is_live:
-            time.sleep(10)
-
-        # validate the recovered secrets
-        for secret_name in secrets_to_recover:
+        # validate the recovered secrets exist
+        for secret_name in secrets.keys():
             self._poll_until_no_exception(functools.partial(client.get_secret, secret_name), ResourceNotFoundError)
 
-        # validate none of our purged secrets are returned by list_deleted_secrets
-        for secret in client.list_deleted_secrets():
-            self.assertFalse(secret.name in secrets_to_purge)
+    @ResourceGroupPreparer()
+    @VaultClientPreparer(enable_soft_delete=True)
+    def test_purge(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.secrets
+
+        secrets = {}
+
+        # create secrets to purge
+        for i in range(self.list_test_size):
+            secret_name = "secret{}".format(i)
+            secret_value = "value{}".format(i)
+            secrets[secret_name] = client.set_secret(secret_name, secret_value)
+
+        # delete all secrets
+        for secret_name in secrets.keys():
+            client.delete_secret(secret_name)
+        for secret_name in secrets.keys():
+            self._poll_until_no_exception(
+                functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError
+            )
+
+        # validate all our deleted secrets are returned by list_deleted_secrets
+        deleted = [s.name for s in client.list_deleted_secrets()]
+        self.assertTrue(all(s in deleted for s in secrets.keys()))
+
+        # purge secrets
+        for secret_name in secrets.keys():
+            client.purge_deleted_secret(secret_name)
