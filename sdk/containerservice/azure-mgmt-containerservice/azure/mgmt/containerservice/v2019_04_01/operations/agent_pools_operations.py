@@ -40,7 +40,7 @@ class AgentPoolsOperations(object):
         self.config = config
 
     def list(
-            self, resource_group_name, managed_cluster_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, custom_headers=None, raw=False, **operation_config):
         """Gets a list of agent pools in the specified managed cluster.
 
         Gets a list of agent pools in the specified managed cluster. The
@@ -48,8 +48,8 @@ class AgentPoolsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param managed_cluster_name: The name of the managed cluster resource.
-        :type managed_cluster_name: str
+        :param resource_name: The name of the managed cluster resource.
+        :type resource_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -68,7 +68,7 @@ class AgentPoolsOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
-                    'managedClusterName': self._serialize.url("managed_cluster_name", managed_cluster_name, 'str')
+                    'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -110,10 +110,10 @@ class AgentPoolsOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{managedClusterName}/agentPools'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools'}
 
     def get(
-            self, resource_group_name, managed_cluster_name, agent_pool_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, agent_pool_name, custom_headers=None, raw=False, **operation_config):
         """Gets the agent pool.
 
         Gets the details of the agent pool by managed cluster and resource
@@ -121,8 +121,8 @@ class AgentPoolsOperations(object):
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param managed_cluster_name: The name of the managed cluster resource.
-        :type managed_cluster_name: str
+        :param resource_name: The name of the managed cluster resource.
+        :type resource_name: str
         :param agent_pool_name: The name of the agent pool.
         :type agent_pool_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -140,7 +140,7 @@ class AgentPoolsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
-            'managedClusterName': self._serialize.url("managed_cluster_name", managed_cluster_name, 'str'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$'),
             'agentPoolName': self._serialize.url("agent_pool_name", agent_pool_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -178,17 +178,17 @@ class AgentPoolsOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{managedClusterName}/agentPools/{agentPoolName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}'}
 
 
     def _create_or_update_initial(
-            self, resource_group_name, managed_cluster_name, agent_pool_name, parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, agent_pool_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
-            'managedClusterName': self._serialize.url("managed_cluster_name", managed_cluster_name, 'str'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$'),
             'agentPoolName': self._serialize.url("agent_pool_name", agent_pool_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -234,15 +234,15 @@ class AgentPoolsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, managed_cluster_name, agent_pool_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, resource_name, agent_pool_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Creates or updates an agent pool.
 
         Creates or updates an agent pool in the specified managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param managed_cluster_name: The name of the managed cluster resource.
-        :type managed_cluster_name: str
+        :param resource_name: The name of the managed cluster resource.
+        :type resource_name: str
         :param agent_pool_name: The name of the agent pool.
         :type agent_pool_name: str
         :param parameters: Parameters supplied to the Create or Update an
@@ -264,7 +264,7 @@ class AgentPoolsOperations(object):
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
-            managed_cluster_name=managed_cluster_name,
+            resource_name=resource_name,
             agent_pool_name=agent_pool_name,
             parameters=parameters,
             custom_headers=custom_headers,
@@ -288,17 +288,17 @@ class AgentPoolsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{managedClusterName}/agentPools/{agentPoolName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, managed_cluster_name, agent_pool_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_name, agent_pool_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', min_length=1),
-            'managedClusterName': self._serialize.url("managed_cluster_name", managed_cluster_name, 'str'),
+            'resourceName': self._serialize.url("resource_name", resource_name, 'str', max_length=63, min_length=1, pattern=r'^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$'),
             'agentPoolName': self._serialize.url("agent_pool_name", agent_pool_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -330,15 +330,15 @@ class AgentPoolsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, managed_cluster_name, agent_pool_name, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, resource_name, agent_pool_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes an agent pool.
 
         Deletes the agent pool in the specified managed cluster.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param managed_cluster_name: The name of the managed cluster resource.
-        :type managed_cluster_name: str
+        :param resource_name: The name of the managed cluster resource.
+        :type resource_name: str
         :param agent_pool_name: The name of the agent pool.
         :type agent_pool_name: str
         :param dict custom_headers: headers that will be added to the request
@@ -354,7 +354,7 @@ class AgentPoolsOperations(object):
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
-            managed_cluster_name=managed_cluster_name,
+            resource_name=resource_name,
             agent_pool_name=agent_pool_name,
             custom_headers=custom_headers,
             raw=True,
@@ -373,4 +373,4 @@ class AgentPoolsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{managedClusterName}/agentPools/{agentPoolName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}'}
