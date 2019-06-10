@@ -69,7 +69,7 @@ def test_example_redirect_policy():
     # It can also be overridden per operation.
     client = PipelineClient(base_url=url, config=config)
     request = client.get(url)
-    pipeline_response = client._pipeline.run(request, redirect_max=5)
+    pipeline_response = client._pipeline.run(request, permit_redirects=True, redirect_max=5)
     # [END redirect_policy]
 
     response = pipeline_response.http_response
