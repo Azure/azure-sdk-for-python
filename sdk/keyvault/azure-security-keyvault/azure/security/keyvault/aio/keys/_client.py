@@ -510,12 +510,12 @@ class KeyClient(_AsyncKeyVaultClientBase):
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys_async.py
-                :start-after: [START purge_deleted_key]
-                :end-before: [END purge_deleted_key]
-                :language: python
-                :dedent: 4
-                :caption: Permanently deletes the specified key
+            .. code-block:: python
+
+                # if the vault has soft-delete enabled, purge permanently deletes a deleted key
+                # (with soft-delete disabled, delete itself is permanent)
+                await key_client.purge_deleted_key("key-name")
+
         """
         await self._client.purge_deleted_key(self.vault_url, name)
 

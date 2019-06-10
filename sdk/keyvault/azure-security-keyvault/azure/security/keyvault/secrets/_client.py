@@ -323,12 +323,11 @@ class SecretClient(_KeyVaultClientBase):
         :raises: ~azure.core.exceptions.HttpResponseError, if client failed to return the purged secret
 
         Example:
-            .. literalinclude:: ../tests/test_examples_secrets.py
-                :start-after: [START purge_deleted_secret]
-                :end-before: [END purge_deleted_secret]
-                :language: python
-                :dedent: 4
-                :caption: Restores a backed up secret to the vault
+            .. code-block:: python
+
+                # if the vault has soft-delete enabled, purge permanently deletes the secret
+                # (with soft-delete disabled, delete itself is permanent)
+                secret_client.purge_deleted_secret("secret-name")
 
         """
         self._client.purge_deleted_secret(self.vault_url, name)

@@ -223,7 +223,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
-    def test_example_keys_recover_purge_async(self, vault_client, **kwargs):
+    def test_example_keys_recover(self, vault_client, **kwargs):
         key_client = vault_client.keys
         created_key = key_client.create_key("key-name", "RSA")
         key_client.delete_key(created_key.name)
@@ -246,21 +246,3 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(recovered_key.name)
 
         # [END recover_deleted_key]
-
-    @ResourceGroupPreparer()
-    @VaultClientPreparer(enable_soft_delete=True)
-    def test_example_keys_purge(self, vault_client, **kwargs):
-        key_client = vault_client.keys
-        created_key = key_client.create_key("key-name", "RSA")
-        key_client.delete_key(created_key.name)
-        self._poll_until_no_exception(
-            functools.partial(key_client.get_deleted_key, created_key.name), ResourceNotFoundError
-        )
-
-        # [START purge_deleted_key]
-
-        # if the vault has soft-delete enabled, purge permanently deletes a deleted key
-        # (with soft-delete disabled, delete itself is permanent)
-        key_client.purge_deleted_key("key-name")
-
-        # [END purge_deleted_key]

@@ -176,23 +176,3 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(recovered_secret.name)
 
         # [END recover_deleted_secret]
-
-    @ResourceGroupPreparer()
-    @AsyncVaultClientPreparer(enable_soft_delete=True)
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_example_secrets_purge(self, vault_client, **kwargs):
-        secret_client = vault_client.secrets
-        created_secret = await secret_client.set_secret("secret-name", "secret-value")
-
-        await secret_client.delete_secret(created_secret.name)
-        await self._poll_until_no_exception(
-            secret_client.get_deleted_secret, created_secret.name, expected_exception=ResourceNotFoundError
-        )
-
-        # [START purge_deleted_secret]
-
-        # if the vault has soft-delete enabled, purge permanently deletes the secret
-        # (with soft-delete disabled, an delete itself is permanent)
-        await secret_client.purge_deleted_secret("secret-name")
-
-        # [END purge_deleted_secret]

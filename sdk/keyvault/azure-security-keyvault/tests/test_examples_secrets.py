@@ -184,22 +184,3 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(recovered_secret.name)
 
         # [END recover_deleted_secret]
-
-    @ResourceGroupPreparer()
-    @VaultClientPreparer(enable_soft_delete=True)
-    def test_example_secrets_purge(self, vault_client, **kwargs):
-        secret_client = vault_client.secrets
-        created_secret = secret_client.set_secret("secret-name", "secret-value")
-
-        secret_client.delete_secret(created_secret.name)
-        self._poll_until_no_exception(
-            functools.partial(secret_client.get_deleted_secret, created_secret.name), ResourceNotFoundError
-        )
-
-        # [START purge_deleted_secret]
-
-        # if the vault has soft-delete enabled, purge permanently deletes the secret
-        # (with soft-delete disabled, an delete itself is permanent)
-        secret_client.purge_deleted_secret("secret-name")
-
-        # [END purge_deleted_secret]
