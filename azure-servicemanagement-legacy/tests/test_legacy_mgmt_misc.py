@@ -14,8 +14,6 @@
 #--------------------------------------------------------------------------
 import unittest
 import pytest
-
-pytestmark = pytest.mark.skip
 import os
 import os.path
 import requests
