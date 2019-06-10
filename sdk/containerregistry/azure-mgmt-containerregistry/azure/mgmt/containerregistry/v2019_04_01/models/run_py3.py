@@ -72,8 +72,6 @@ class Run(ProxyResource):
     :ivar run_error_message: The error message received from backend systems
      after the run is scheduled.
     :vartype run_error_message: str
-    :param update_trigger_token: The update trigger token passed for the Run.
-    :type update_trigger_token: str
     :param provisioning_state: The provisioning state of a run. Possible
      values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
      'Canceled'
@@ -114,13 +112,12 @@ class Run(ProxyResource):
         'source_registry_auth': {'key': 'properties.sourceRegistryAuth', 'type': 'str'},
         'custom_registries': {'key': 'properties.customRegistries', 'type': '[str]'},
         'run_error_message': {'key': 'properties.runErrorMessage', 'type': 'str'},
-        'update_trigger_token': {'key': 'properties.updateTriggerToken', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'is_archive_enabled': {'key': 'properties.isArchiveEnabled', 'type': 'bool'},
         'timer_trigger': {'key': 'properties.timerTrigger', 'type': 'TimerTriggerDescriptor'},
     }
 
-    def __init__(self, *, run_id: str=None, status=None, last_updated_time=None, run_type=None, create_time=None, start_time=None, finish_time=None, output_images=None, task: str=None, image_update_trigger=None, source_trigger=None, platform=None, agent_configuration=None, source_registry_auth: str=None, custom_registries=None, update_trigger_token: str=None, provisioning_state=None, is_archive_enabled: bool=False, timer_trigger=None, **kwargs) -> None:
+    def __init__(self, *, run_id: str=None, status=None, last_updated_time=None, run_type=None, create_time=None, start_time=None, finish_time=None, output_images=None, task: str=None, image_update_trigger=None, source_trigger=None, platform=None, agent_configuration=None, source_registry_auth: str=None, custom_registries=None, provisioning_state=None, is_archive_enabled: bool=False, timer_trigger=None, **kwargs) -> None:
         super(Run, self).__init__(**kwargs)
         self.run_id = run_id
         self.status = status
@@ -138,7 +135,6 @@ class Run(ProxyResource):
         self.source_registry_auth = source_registry_auth
         self.custom_registries = custom_registries
         self.run_error_message = None
-        self.update_trigger_token = update_trigger_token
         self.provisioning_state = provisioning_state
         self.is_archive_enabled = is_archive_enabled
         self.timer_trigger = timer_trigger
