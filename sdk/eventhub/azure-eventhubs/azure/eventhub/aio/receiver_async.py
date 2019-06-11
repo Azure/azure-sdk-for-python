@@ -25,7 +25,7 @@ class EventReceiver(object):
     _epoch = b'com.microsoft:epoch'
 
     def __init__(  # pylint: disable=super-init-not-called
-            self, client, source, offset=None, prefetch=300, exclusive_receiver_priority=None,
+            self, client, source, event_position=None, prefetch=300, exclusive_receiver_priority=None,
             keep_alive=None, auto_reconnect=True, loop=None):
         """
         Instantiate an async receiver.
@@ -34,8 +34,8 @@ class EventReceiver(object):
         :type client: ~azure.eventhub.aio.EventHubClientAsync
         :param source: The source EventHub from which to receive events.
         :type source: ~uamqp.address.Source
-        :param offset: The position from which to start receiving.
-        :type offset: ~azure.eventhub.common.EventPosition
+        :param event_position: The position from which to start receiving.
+        :type event_position: ~azure.eventhub.common.EventPosition
         :param prefetch: The number of events to prefetch from the service
          for processing. Default is 300.
         :type prefetch: int
@@ -48,7 +48,7 @@ class EventReceiver(object):
         self.running = False
         self.client = client
         self.source = source
-        self.offset = offset
+        self.offset = event_position
         self.messages_iter = None
         self.prefetch = prefetch
         self.exclusive_receiver_priority = exclusive_receiver_priority

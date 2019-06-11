@@ -24,7 +24,7 @@ from uamqp import constants
 from azure.eventhub import __version__
 from azure.eventhub.sender import EventSender
 from azure.eventhub.receiver import EventReceiver
-from azure.eventhub.common import parse_sas_token
+from azure.eventhub.common import parse_sas_token, EventPosition
 from azure.eventhub.error import EventHubError
 from .client_abstract import EventHubClientAbstract
 from .common import EventHubSASTokenCredential, EventHubSharedKeyCredential
@@ -186,7 +186,7 @@ class EventHubClient(EventHubClientAbstract):
             mgmt_client.close()
 
     def create_receiver(
-            self, partition_id, consumer_group="$Default", event_position=None, exclusive_receiver_priority=None,
+            self, partition_id, consumer_group="$Default", event_position=EventPosition.first_available_event(), exclusive_receiver_priority=None,
             operation=None, prefetch=None,
     ):
         """

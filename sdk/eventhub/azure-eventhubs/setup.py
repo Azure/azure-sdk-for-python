@@ -43,7 +43,7 @@ exclude_packages = [
         'azure',
     ]
 
-if sys.version_info[0] < 3 or (sys.version_info[0] == 3 and sys.version_info[1] < 5):
+if sys.version_info < (3, 5, 3):
     exclude_packages.extend([
         '*.aio',
         '*.aio.*',
@@ -66,7 +66,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        # 'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',

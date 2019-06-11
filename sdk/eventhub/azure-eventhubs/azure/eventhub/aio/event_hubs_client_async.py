@@ -15,7 +15,7 @@ from uamqp import (
     AMQPClientAsync,
 )
 
-from azure.eventhub.common import parse_sas_token, EventHubSharedKeyCredential, EventHubSASTokenCredential
+from azure.eventhub.common import parse_sas_token, EventPosition, EventHubSharedKeyCredential, EventHubSASTokenCredential
 from azure.eventhub import (
     EventHubError)
 from ..client_abstract import EventHubClientAbstract
@@ -177,7 +177,7 @@ class EventHubClient(EventHubClientAbstract):
             await mgmt_client.close_async()
 
     def create_receiver(
-            self, partition_id, consumer_group="$Default", event_position=None, exclusive_receiver_priority=None,
+            self, partition_id, consumer_group="$Default", event_position=EventPosition.first_available_event(), exclusive_receiver_priority=None,
             operation=None, prefetch=None, loop=None):
         """
         Create an async receiver to the client for a particular consumer group and partition.
@@ -214,7 +214,7 @@ class EventHubClient(EventHubClientAbstract):
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition_id)
         handler = EventReceiver(
-            self, source_url, offset=event_position, exclusive_receiver_priority=exclusive_receiver_priority,
+            self, source_url, event_position=event_position, exclusive_receiver_priority=exclusive_receiver_priority,
             prefetch=prefetch, loop=loop)
         return handler
 
