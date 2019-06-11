@@ -145,7 +145,7 @@ class StreamDownloadGenerator(object):
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response.
     """
-    def stream_download(self, pipeline) -> Iterator[bytes]:
+    def stream_download(self, pipeline):
         """Generator for streaming request body data.
 
         :param pipeline: The pipeline object
