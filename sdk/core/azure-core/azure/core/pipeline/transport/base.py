@@ -266,6 +266,9 @@ class HttpResponse(_HttpResponseBase):
 
         Should be implemented by sub-classes if streaming download
         is supported.
+
+        :param pipeline: The pipeline object
+        :type pipeline: azure.core.pipeline
         """
 
 

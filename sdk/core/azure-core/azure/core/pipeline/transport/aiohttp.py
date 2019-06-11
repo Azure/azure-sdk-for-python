@@ -32,6 +32,7 @@ import aiohttp
 
 from azure.core.configuration import Configuration
 from azure.core.exceptions import ServiceRequestError
+from azure.core.pipeline import Pipeline
 
 from requests.exceptions import (
     ChunkedEncodingError,
@@ -168,7 +169,8 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
     :param block_size: block size of data sent over connection.
     :type block_size: int
     """
-    def __init__(self, pipeline, request, response: aiohttp.ClientResponse, block_size: int) -> None:
+    def __init__(self, pipeline: Pipeline, request: HttpRequest,
+                 response: aiohttp.ClientResponse, block_size: int) -> None:
         self.pipeline = pipeline
         self.request = request
         self.response = response
@@ -182,12 +184,13 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
     async def __anext__(self):
         retry_active = True
         retry_total = 3
+        retry_interval = 1000
         while retry_active:
             try:
                 chunk = await self.response.content.read(self.block_size)
                 if not chunk:
                     raise _ResponseStopIteration()
-                self.downloaded += chunk
+                self.downloaded += self.block_size
                 return chunk
             except _ResponseStopIteration:
                 self.response.close()
@@ -197,7 +200,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 if retry_total <= 0:
                     retry_active = False
                 else:
-                    await asyncio.sleep(1000)
+                    await asyncio.sleep(retry_interval)
                     headers = {'range': 'bytes=' + self.downloaded + '-'}
                     resp = self.pipeline.run(self.request, stream=True, headers=headers)
                     if resp.status_code == 416:
@@ -247,5 +250,8 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
     def stream_download(self, pipeline) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
+
+        :param pipeline: The pipeline object
+        :type pipeline: azure.core.pipeline
         """
         return AioHttpStreamDownloadGenerator(pipeline, self.request, self.internal_response, self.block_size)

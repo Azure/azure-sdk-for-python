@@ -36,6 +36,7 @@ from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError
 )
+from azure.core.pipeline import Pipeline
 from .base import HttpRequest
 from .base_async import (
     AsyncHttpTransport,
@@ -128,7 +129,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
     :param generator iter_content_func: Iterator for response data.
     :param int content_length: size of body in bytes.
     """
-    def __init__(self, pipeline, request, response: requests.Response, block_size: int) -> None:
+    def __init__(self, pipeline: Pipeline, request: HttpRequest, response: requests.Response, block_size: int) -> None:
         self.pipeline = pipeline
         self.request = request
         self.response = response
@@ -144,6 +145,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
         loop = _get_running_loop()
         retry_active = True
         retry_total = 3
+        retry_interval = 1000
         while retry_active:
             try:
                 chunk = await loop.run_in_executor(
@@ -153,7 +155,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
                 )
                 if not chunk:
                     raise _ResponseStopIteration()
-                self.downloaded += chunk
+                self.downloaded += self.block_size
                 return chunk
             except _ResponseStopIteration:
                 self.response.close()
@@ -164,7 +166,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
                 if retry_total <= 0:
                     retry_active = False
                 else:
-                    await asyncio.sleep(1000)
+                    await asyncio.sleep(retry_interval)
                     headers = {'range': 'bytes=' + self.downloaded + '-'}
                     resp = self.pipeline.run(self.request, stream=True, headers=headers)
                     if resp.status_code == 416:

@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
 import logging
-from typing import Iterator, Optional, Any, Union, TypeVar
+from typing import Iterator, Optional, Any, Union
 import time
 import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
@@ -36,6 +36,7 @@ from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError
 )
+from azure.core.pipeline import Pipeline
 from . import HttpRequest # pylint: disable=unused-import
 
 from .base import (
@@ -43,8 +44,6 @@ from .base import (
     HttpResponse,
     _HttpResponseBase
 )
-
-PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -88,7 +87,7 @@ class StreamDownloadGenerator(object):
     :param generator iter_content_func: Iterator for response data.
     :param int content_length: size of body in bytes.
     """
-    def __init__(self, pipeline, request, response, block_size):
+    def __init__(self, pipeline: Pipeline, request: HttpRequest, response: requests.Response, block_size: int):
         self.pipeline = pipeline
         self.request = request
         self.response = response
@@ -106,12 +105,13 @@ class StreamDownloadGenerator(object):
     def __next__(self):
         retry_active = True
         retry_total = 3
+        retry_interval = 1000
         while retry_active:
             try:
                 chunk = next(self.iter_content_func)
                 if not chunk:
                     raise StopIteration()
-                self.downloaded += chunk
+                self.downloaded += self.block_size
                 return chunk
             except StopIteration:
                 self.response.close()
@@ -122,7 +122,7 @@ class StreamDownloadGenerator(object):
                 if retry_total <= 0:
                     retry_active = False
                 else:
-                    time.sleep(1000)
+                    time.sleep(retry_interval)
                     headers = {'range': 'bytes=' + self.downloaded + '-'}
                     resp = self.pipeline.run(self.request, stream=True, headers=headers)
                     if resp.status_code == 416:
@@ -146,7 +146,6 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response.
     """
     def stream_download(self, pipeline):
-        # type: (PipelineType) -> Iterator[bytes]
         """Generator for streaming request body data."""
         return StreamDownloadGenerator(pipeline, self.request, self.internal_response, self.block_size)
 

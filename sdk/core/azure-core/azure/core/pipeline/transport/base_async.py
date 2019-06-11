@@ -75,6 +75,9 @@ class AsyncHttpResponse(_HttpResponseBase):
 
         Should be implemented by sub-classes if streaming download
         is supported. Will return an asynchronous generator.
+
+        :param pipeline: The pipeline object
+        :type pipeline: azure.core.pipeline
         """
 
 

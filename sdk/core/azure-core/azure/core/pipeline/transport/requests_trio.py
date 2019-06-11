@@ -36,6 +36,7 @@ from azure.core.exceptions import (
     ServiceRequestError,
     ServiceResponseError
 )
+from azure.core.pipeline import Pipeline
 from .base import HttpRequest
 from .base_async import (
     AsyncHttpTransport,
@@ -58,7 +59,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
     :param generator iter_content_func: Iterator for response data.
     :param int content_length: size of body in bytes.
     """
-    def __init__(self, pipeline, request, response: requests.Response, block_size: int) -> None:
+    def __init__(self, pipeline: Pipeline, request: HttpRequest, response: requests.Response, block_size: int) -> None:
         self.pipeline = pipeline
         self.request = request
         self.response = response
@@ -81,7 +82,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                 )
                 if not chunk:
                     raise _ResponseStopIteration()
-                self.downloaded += chunk
+                self.downloaded += self.block_size
                 return chunk
             except _ResponseStopIteration:
                 self.response.close()
