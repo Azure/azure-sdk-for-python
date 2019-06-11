@@ -70,15 +70,22 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         Creates an account sas definition, to manage storage account and its entities.
         """
         from azure.storage.common import SharedAccessSignature, CloudStorageAccount
+        from azure.storage.blob import BlobServiceClient
         from azure.keyvault.models import SasTokenType, SasDefinitionAttributes
         from azure.keyvault import SecretId
 
         # To create an account sas definition in the vault we must first create the template. The
         # template_uri for an account sas definition is the intended account sas token signed with an arbitrary key.
         # Use the SharedAccessSignature class from azure.storage.common to create a account sas token
+
+        storage_account_key = '00000000'
+        container_name='blobcontainer'
+        blob_name='blob1'
+        blob_data = u'test blob1 data'
+
         sas = SharedAccessSignature(account_name=storage_account_name,
                                     # don't sign the template with the storage account key use key 00000000
-                                    account_key='00000000')
+                                    account_key=storage_account_key)
         account_sas_template = sas.generate_account(services='bfqt',  # all services blob, file, queue and table
                                                     resource_types='sco',  # all resources service, template, object
                                                     permission='acdlpruw',
@@ -110,12 +117,16 @@ class KeyVaultSecretTest(KeyvaultTestCase):
         cloud_storage_account = CloudStorageAccount(account_name=storage_account_name,
                                                     sas_token=acct_sas_token)
 
+        blob_conn_string = 'EndpointSuffix=blob.core.windows.net;AccountKey={key};AccountName={hostname};DefaultEndpointsProtocol=https;SharedAccessSignature={token}'.format(token=acct_sas_token[1:],hostname=storage_account_name,key=storage_account_key)
+
         # create a blob with the account sas token
-        blob_service = cloud_storage_account.create_block_blob_service()
-        blob_service.create_container('blobcontainer')
-        blob_service.create_blob_from_text(container_name='blobcontainer',
-                                           blob_name='blob1',
-                                           text=u'test blob1 data')
+        blob_service = BlobServiceClient.from_connection_string(conn_str=blob_conn_string)
+        container = blob_service.get_container_client(container_name)
+        created = container.create_container()
+
+        blob_client = blob_service.get_blob_client(container_name, blob_name)
+        blob_client.upload_blob(blob_data)
+
 
     def create_blob_sas_defintion(self, storage_account_name, vault_url):
         """
