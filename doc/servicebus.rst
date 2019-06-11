@@ -1,6 +1,13 @@
 Service Bus
 ===========
 
+**This documentation is for the old service bus API.** 
+
+The service bus SDK was re-worked with an entirely different API in Spring 2019. New service bus API documentation can be found `here
+<https://docs.microsoft.com/en-us/python/api/azure-servicebus/azure.servicebus?view=azure-python>`_.
+
+We recommend moving to the new API, but have left this API in the ``control_client`` namespace to support legacy scenarios.
+
 ServiceBus Queues
 -----------------
 
@@ -25,7 +32,7 @@ service with:
 
 .. code:: python
 
-    from azure.servicebus import ServiceBusService
+    from azure.servicebus.control_client import ServiceBusService
 
     key_name = 'RootManageSharedAccessKey' # SharedAccessKeyName from Azure portal
     key_value = '' # SharedAccessKey from Azure portal
@@ -40,7 +47,7 @@ To use ACS authentication, create the service bus service with:
 
 .. code:: python
 
-    from azure.servicebus import ServiceBusService
+    from azure.servicebus.control_client import ServiceBusService
 
     account_key = '' # DEFAULT KEY from Azure portal
     issuer = 'owner' # DEFAULT ISSUER from Azure portal
@@ -62,7 +69,7 @@ message into the queue:
 
 .. code:: python
 
-    from azure.servicebus import Message
+    from azure.servicebus.control_client import Message
 
     msg = Message('Hello World!')
     sbs.send_queue_message('taskqueue', msg)
@@ -72,7 +79,7 @@ send several messages at once:
 
 .. code:: python
 
-    from azure.servicebus import Message
+    from azure.servicebus.control_client import Message
 
     msg1 = Message('Hello World!')
     msg2 = Message('Hello World again!')
@@ -102,7 +109,7 @@ topic:
 
 .. code:: python
 
-    from azure.servicebus import Message
+    from azure.servicebus.control_client import Message
 
     msg = Message(b'Hello World!')
     sbs.send_topic_message('taskdiscussion', msg)
@@ -112,7 +119,7 @@ several messages at once:
 
 .. code:: python
 
-    from azure.servicebus import Message
+    from azure.servicebus.control_client import Message
 
     msg1 = Message(b'Hello World!')
     msg2 = Message(b'Hello World again!')
@@ -129,7 +136,7 @@ sent before the subscription is created will not be received.
 
 .. code:: python
 
-    from azure.servicebus import Message
+    from azure.servicebus.control_client import Message
 
     sbs.create_subscription('taskdiscussion', 'client1')
     msg = Message('Hello World!')
@@ -199,5 +206,3 @@ will be made by Python before sending to the RestAPI.
     sent_msg = Message(b'receive message',
                        broker_properties = broker_properties
     )
-
-

@@ -7,7 +7,8 @@
       "python": "",
       "python-mode": "update",
       "sdkrel:python-sdks-folder": "./sdk/.",
-      "multiapi": ""
+      "multiapi": "",
+      "keep-version-file" :""
     },
     "repotag": "azure-sdk-for-python",
     "version": "0.2.0"

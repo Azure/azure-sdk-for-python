@@ -7,6 +7,8 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import test_config
 
+pytestmark = pytest.mark.cosmosEmulator
+
 @pytest.mark.usefixtures("teardown")
 class EncodingTest(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
@@ -14,8 +16,19 @@ class EncodingTest(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, connectionPolicy)
-    created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(client)
+
+    @classmethod
+    def setUpClass(cls):
+        if (cls.masterKey == '[YOUR_KEY_HERE]' or
+                cls.host == '[YOUR_ENDPOINT_HERE]'):
+            raise Exception(
+                "You must specify your Azure Cosmos account values for "
+                "'masterKey' and 'host' at the top of this class to run the "
+                "tests.")
+        
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        cls.created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(cls.client)
+
 
     def test_unicode_characters_in_partition_key (self):
         test_string = u'€€ کلید پارتیشن विभाजन कुंजी 	123'

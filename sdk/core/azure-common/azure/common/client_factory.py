@@ -22,10 +22,10 @@ from .cloud import get_cli_active_cloud
 
 
 def _instantiate_client(client_class, **kwargs):
-    """Instantiate a client from kwargs, removing the subscription_id/tenant_id argument if unsupported.
+    """Instantiate a client from kwargs, removing the subscription_id/tenant_id/base_url argument if unsupported.
     """
     args = get_arg_spec(client_class.__init__).args
-    for key in ['subscription_id', 'tenant_id']:
+    for key in ['subscription_id', 'tenant_id', 'base_url']:
         if key not in kwargs:
             continue
         if key not in args:
@@ -144,6 +144,7 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
     :return: An instantiated client
     """
     is_graphrbac = client_class.__name__ == 'GraphRbacManagementClient'
+    is_keyvault = client_class.__name__ == 'KeyVaultClient'
     parameters = {
         'subscription_id': config_dict.get('subscriptionId'),
         'base_url': config_dict.get('resourceManagerEndpointUrl'),
@@ -156,6 +157,8 @@ def get_client_from_json_dict(client_class, config_dict, **kwargs):
         # Get the right resource for Credentials
         if is_graphrbac:
             resource = config_dict['activeDirectoryGraphResourceId']
+        elif is_keyvault:
+            resource = "https://vault.azure.net"
         else:
             if "activeDirectoryResourceId" not in config_dict and 'resourceManagerEndpointUrl' not in config_dict:
                 raise ValueError("Need activeDirectoryResourceId or resourceManagerEndpointUrl key")

@@ -3,6 +3,17 @@
 Release History
 ===============
 
+0.7.0 (2019-05-30)
+++++++++++++++++++
+
+**Features**
+
+- Model OSProfile has a new parameter ssh_public_key
+- Model HanaInstance has a new parameter partner_node_id
+- Model HanaInstance has a new parameter provisioning_state
+- Added operation HanaInstancesOperations.create
+- Added operation HanaInstancesOperations.delete
+
 0.6.0 (2019-05-20)
 ++++++++++++++++++
 

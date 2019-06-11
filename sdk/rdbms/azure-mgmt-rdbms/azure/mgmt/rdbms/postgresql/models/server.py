@@ -37,7 +37,7 @@ class Server(TrackedResource):
      for creation).
     :type administrator_login: str
     :param version: Server version. Possible values include: '9.5', '9.6',
-     '10', '10.0', '10.2'
+     '10', '10.0', '10.2', '11'
     :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'

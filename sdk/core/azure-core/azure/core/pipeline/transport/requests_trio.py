@@ -49,7 +49,13 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class TrioStreamDownloadGenerator(AsyncIterator):
+    """Generator for streaming response data.
 
+    :param response: The response object.
+    :param int block_size: Number of bytes to read into memory.
+    :param generator iter_content_func: Iterator for response data.
+    :param int content_length: size of body in bytes.
+    """
     def __init__(self, response: requests.Response, block_size: int) -> None:
         self.response = response
         self.block_size = block_size
@@ -85,18 +91,18 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                 raise
 
 class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):  # type: ignore
-
+    """Asynchronous streaming of data from the response.
+    """
     def stream_download(self) -> AsyncIteratorType[bytes]:  # type: ignore
-        """Generator for streaming request body data.
-
-        :param callback: Custom callback for monitoring progress.
-        :param int chunk_size:
+        """Generator for streaming response data.
         """
         return TrioStreamDownloadGenerator(self.internal_response, self.block_size) # type: ignore
 
 
 class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
-
+    """Identical implementation as the synchronous RequestsTransport wrapped in a class with
+     asynchronous methods. Uses the third party trio event loop.
+    """
     async def __aenter__(self):
         return super(TrioRequestsTransport, self).__enter__()
 
@@ -108,6 +114,12 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
 
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
         """Send the request using this HTTP sender.
+
+        :param request: The HttpRequest
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :param kwargs: Any keyword arguments
+        :return: The AsyncHttpResponse
+        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
         """
         self.open()
         trio_limiter = kwargs.get("trio_limiter", None)

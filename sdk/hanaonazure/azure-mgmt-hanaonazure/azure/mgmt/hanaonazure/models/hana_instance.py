@@ -50,6 +50,14 @@ class HanaInstance(Resource):
     :vartype proximity_placement_group: str
     :ivar hw_revision: Hardware revision of a HANA instance
     :vartype hw_revision: str
+    :ivar partner_node_id: ARM ID of another HanaInstance that will share a
+     network with this HanaInstance
+    :vartype partner_node_id: str
+    :ivar provisioning_state: State of provisioning of the HanaInstance.
+     Possible values include: 'Accepted', 'Creating', 'Updating', 'Failed',
+     'Succeeded', 'Deleting', 'Migrating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.hanaonazure.models.HanaProvisioningStatesEnum
     """
 
     _validation = {
@@ -62,6 +70,8 @@ class HanaInstance(Resource):
         'power_state': {'readonly': True},
         'proximity_placement_group': {'readonly': True},
         'hw_revision': {'readonly': True},
+        'partner_node_id': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -78,6 +88,8 @@ class HanaInstance(Resource):
         'power_state': {'key': 'properties.powerState', 'type': 'str'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'str'},
         'hw_revision': {'key': 'properties.hwRevision', 'type': 'str'},
+        'partner_node_id': {'key': 'properties.partnerNodeId', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -90,3 +102,5 @@ class HanaInstance(Resource):
         self.power_state = None
         self.proximity_placement_group = None
         self.hw_revision = None
+        self.partner_node_id = None
+        self.provisioning_state = None
