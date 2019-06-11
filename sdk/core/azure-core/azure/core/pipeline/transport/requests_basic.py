@@ -87,7 +87,7 @@ class StreamDownloadGenerator(object):
     :param generator iter_content_func: Iterator for response data.
     :param int content_length: size of body in bytes.
     """
-    def __init__(self, pipeline: Pipeline, request: HttpRequest, response: requests.Response, block_size: int):
+    def __init__(self, pipeline, request, response, block_size):
         self.pipeline = pipeline
         self.request = request
         self.response = response
@@ -146,11 +146,8 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response.
     """
     def stream_download(self, pipeline):
-        """Generator for streaming request body data.
-
-        :param pipeline: The pipeline object
-        :type pipeline: azure.core.pipeline
-        """
+        # type: (Pipeline) -> Iterator[bytes]
+        """Generator for streaming request body data."""
         return StreamDownloadGenerator(pipeline, self.request, self.internal_response, self.block_size)
 
 
