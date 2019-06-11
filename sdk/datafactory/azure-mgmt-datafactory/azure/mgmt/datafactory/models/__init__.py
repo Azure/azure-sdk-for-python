@@ -96,7 +96,7 @@ try:
     from .multiple_pipeline_trigger_py3 import MultiplePipelineTrigger
     from .azure_function_linked_service_py3 import AzureFunctionLinkedService
     from .azure_data_explorer_linked_service_py3 import AzureDataExplorerLinkedService
-    from .sap_table_py3 import SapTable
+    from .sap_table_linked_service_py3 import SapTableLinkedService
     from .google_ad_words_linked_service_py3 import GoogleAdWordsLinkedService
     from .oracle_service_cloud_linked_service_py3 import OracleServiceCloudLinkedService
     from .dynamics_ax_linked_service_py3 import DynamicsAXLinkedService
@@ -548,7 +548,7 @@ except (SyntaxError, ImportError):
     from .multiple_pipeline_trigger import MultiplePipelineTrigger
     from .azure_function_linked_service import AzureFunctionLinkedService
     from .azure_data_explorer_linked_service import AzureDataExplorerLinkedService
-    from .sap_table import SapTable
+    from .sap_table_linked_service import SapTableLinkedService
     from .google_ad_words_linked_service import GoogleAdWordsLinkedService
     from .oracle_service_cloud_linked_service import OracleServiceCloudLinkedService
     from .dynamics_ax_linked_service import DynamicsAXLinkedService
@@ -1068,7 +1068,7 @@ __all__ = [
     'MultiplePipelineTrigger',
     'AzureFunctionLinkedService',
     'AzureDataExplorerLinkedService',
-    'SapTable',
+    'SapTableLinkedService',
     'GoogleAdWordsLinkedService',
     'OracleServiceCloudLinkedService',
     'DynamicsAXLinkedService',
