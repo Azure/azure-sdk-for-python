@@ -13,41 +13,19 @@ def print(*args):
     assert all(arg is not None for arg in args)
 
 
-def create_vault_client():
-    client_id = ""
-    client_secret = ""
-    tenant_id = ""
-    vault_url = ""
-
-    # [START create_vault_client]
-    from azure.identity import AsyncClientSecretCredential
-    from azure.security.keyvault.aio import VaultClient
-
-    credential = AsyncClientSecretCredential(client_id=client_id, secret=client_secret, tenant_id=tenant_id)
-
-    # Create a new Vault client using a client secret credential
-    vault_client = VaultClient(vault_url=vault_url, credential=credential)
-    # [END create_vault_client]
-    return vault_client
-
-
-def create_key_client():
-    client_id = ""
-    client_secret = ""
-    tenant_id = ""
-    vault_url = ""
-
+def test_create_key_client():
+    vault_url = "vault_url"
+    # pylint:disable=unused-variable
     # [START create_key_client]
-    from azure.identity import AsyncClientSecretCredential
+
+    from azure.identity.aio import AsyncDefaultAzureCredential
     from azure.security.keyvault.aio import KeyClient
 
-    credential = AsyncClientSecretCredential(client_id=client_id, secret=client_secret, tenant_id=tenant_id)
-
-    # Create a new key client using a client secret credential
-    key_client = KeyClient(vault_url=vault_url, credential=credential)
+    # Create a KeyClient using default Azure credentials
+    credential = AsyncDefaultAzureCredential()
+    key_client = KeyClient(vault_url, credential)
 
     # [END create_key_client]
-    return key_client
 
 
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):

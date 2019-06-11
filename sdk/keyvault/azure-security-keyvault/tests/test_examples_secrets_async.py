@@ -14,6 +14,21 @@ def print(*args):
     assert all(arg is not None for arg in args)
 
 
+def test_create_secret_client():
+    vault_url = "vault_url"
+    # pylint:disable=unused-variable
+    # [START create_secret_client]
+
+    from azure.identity.aio import AsyncDefaultAzureCredential
+    from azure.security.keyvault.aio.secrets import SecretClient
+
+    # Create a SecretClient using default Azure credentials
+    credentials = AsyncDefaultAzureCredential()
+    secret_client = SecretClient(vault_url, credentials)
+
+    # [END create_secret_client]
+
+
 class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer(enable_soft_delete=True)

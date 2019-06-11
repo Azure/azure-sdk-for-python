@@ -13,8 +13,7 @@ from ._models import Secret, DeletedSecret, SecretAttributes
 
 
 class SecretClient(_KeyVaultClientBase):
-    """SecretClient defines a high level interface for
-    managing secrets in the specified vault.
+    """SecretClient is a high-level interface for managing a vault's secrets.
 
     Example:
         .. literalinclude:: ../tests/test_examples_secrets.py
@@ -25,8 +24,6 @@ class SecretClient(_KeyVaultClientBase):
     """
 
     # pylint:disable=protected-access
-
-    _api_version = "7.0"
 
     def get_secret(self, name, version=None, **kwargs):
         # type: (str, str, Mapping[str, Any]) -> Secret

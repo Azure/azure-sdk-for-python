@@ -16,44 +16,19 @@ def print(*args):
     assert all(arg is not None for arg in args)
 
 
-def create_vault_client():
-    client_id = ""
-    client_secret = ""
-    tenant_id = ""
-    vault_url = ""
+def test_create_secret_client():
+    vault_url = "vault_url"
+    # pylint:disable=unused-variable
+    # [START create_secret_client]
 
-    # [START create_vault_client
-    from azure.security.keyvault.vault_client import VaultClient
-    from azure.common.credentials import ServicePrincipalCredentials
+    from azure.identity import DefaultAzureCredential
+    from azure.security.keyvault.secrets import SecretClient
 
-    credentials = ServicePrincipalCredentials(
-        client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
-    )
+    # Create a SecretClient using default Azure credentials
+    credentials = DefaultAzureCredential()
+    secret_client = SecretClient(vault_url, credentials)
 
-    # Create a new Vault client using Azure credentials
-    vault_client = VaultClient(vault_url=vault_url, credential=credentials)
-    # [END create_vault_client]
-    return vault_client
-
-
-def create_secret_client():
-    client_id = ""
-    client_secret = ""
-    tenant_id = ""
-    vault_url = ""
-
-    # [START create_secret_client
-    from azure.common.credentials import ServicePrincipalCredentials
-    from azure.security.keyvault.secrets._client import SecretClient
-
-    credentials = ServicePrincipalCredentials(
-        client_id=client_id, secret=client_secret, tenant=tenant_id, resource="https://vault.azure.net"
-    )
-
-    # Create a new Secret client using Azure credentials
-    secret_client = SecretClient(vault_url=vault_url, credential=credentials)
     # [END create_secret_client]
-    return secret_client
 
 
 class TestExamplesKeyVault(KeyVaultTestCase):

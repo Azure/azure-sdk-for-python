@@ -13,8 +13,7 @@ from ._models import Key, KeyBase, DeletedKey, KeyOperationResult
 
 
 class KeyClient(_KeyVaultClientBase):
-    """KeyClient defines a high level interface for
-    managing keys in the specified vault.
+    """KeyClient is a high-level interface for managing a vault's keys.
 
     Example:
         .. literalinclude:: ../tests/test_examples_keys.py

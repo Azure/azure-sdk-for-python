@@ -15,7 +15,7 @@ from ...secrets._models import Secret, DeletedSecret, SecretAttributes
 
 
 class SecretClient(_AsyncKeyVaultClientBase):
-    """The SecretClient class defines a high level interface for managing secrets in the specified vault.
+    """SecretClient is a high-level interface for managing a vault's secrets.
 
     Example:
         .. literalinclude:: ../tests/test_examples_secrets_async.py
