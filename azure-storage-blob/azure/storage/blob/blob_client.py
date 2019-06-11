@@ -112,7 +112,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         parsed_url = urlparse(blob_url.rstrip('/'))
         if not parsed_url.path and not (container and blob):
             raise ValueError("Please specify a container and blob name.")
-        super(BlobClient, self).__init__(parsed_url, credentials, **kwargs)
 
         path_container = ""
         path_blob = ""
@@ -135,18 +134,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 self.snapshot = blob.snapshot
         except AttributeError:
             self.blob_name = blob or unquote(path_blob)
+        self._query_str = self._format_query_string(sas_token, credentials, self.snapshot)
+        super(BlobClient, self).__init__(parsed_url, credentials, configuration, **kwargs)
 
-        self._hosts[LocationMode.PRIMARY] = self._format_blob_url(
-            parsed_url.hostname,
-            sas_token,
-            credentials)
-        if self._secondary_account:
-            self._hosts[LocationMode.SECONDARY] = self._format_blob_url(
-                self._secondary_account,
-                sas_token,
-                credentials)
-
-        self._set_pipeline(configuration, credentials, **kwargs)
+    def _format_url(self, hostname):
+        return "{}://{}/{}/{}{}".format(
+            self.scheme,
+            hostname,
+            quote(self.container),
+            self.blob_name.replace(' ', '%20').replace('?', '%3F'),  # TODO: Confirm why recordings don't urlencode chars
+            self._query_str)
 
     @staticmethod
     def create_configuration(**kwargs):
@@ -1143,26 +1140,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: A pollable object to check copy operation status (and abort).
         :rtype: :class:`~azure.storage.blob.polling.CopyStatusPoller`
         """
-        if source_url.startswith('/'):
-            # Backwards compatibility for earlier versions of the SDK where
-            # the copy source can be in the following formats:
-            # - Blob in named container:
-            #     /accountName/containerName/blobName
-            # - Snapshot in named container:
-            #     /accountName/containerName/blobName?snapshot=<DateTime>
-            # - Blob in root container:
-            #     /accountName/blobName
-            # - Snapshot in root container:
-            #     /accountName/blobName?snapshot=<DateTime>
-            account, _, source = \
-                source_url.partition('/')[2].partition('/')
-            parsed_url = urlparse(self.url)
-            source_url = "{}://{}/{}".format(
-                self.scheme,
-                parsed_url.hostname.replace(self._primary_account, account),
-                source.strip('/')
-            )
-
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         if source_lease:

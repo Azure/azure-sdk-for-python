@@ -66,19 +66,12 @@ class BlobServiceClient(StorageAccountHostsMixin):
         ):
         # type: (...) -> None
         parsed_url = urlparse(account_url.rstrip('/'))
-        super(BlobServiceClient, self).__init__(parsed_url, credentials, **kwargs)
+        _, sas_token = parse_query(parsed_url.query)
+        self._query_str = self._format_query_string(sas_token, credentials)
+        super(BlobServiceClient, self).__init__(parsed_url, credentials, configuration, **kwargs)
 
-        self._hosts[LocationMode.PRIMARY] = self._format_account_url(
-            parsed_url.hostname,
-            parsed_url.query,
-            credentials)
-        if self._secondary_account:
-            self._hosts[LocationMode.SECONDARY] = self._format_account_url(
-                self._secondary_account,
-                parsed_url.query,
-                credentials)
-
-        self._set_pipeline(configuration, credentials, **kwargs)
+    def _format_url(self, hostname):
+        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
     def from_connection_string(
@@ -410,7 +403,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.core.blob.container_client.ContainerClient
         """
         return ContainerClient(self.url, container=container_name,
-            credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline,
+            credentials=self.credentials, configuration=self._config,
+            _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
 
@@ -436,6 +430,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         """
         return BlobClient(
             self.url, container=container_name, blob=blob_name, snapshot=snapshot,
-            credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline,
+            credentials=self.credentials, configuration=self._config,
+            _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)

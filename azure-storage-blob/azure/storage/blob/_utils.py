@@ -125,40 +125,63 @@ class StorageAccountHostsMixin(object):
     def __init__(
             self, parsed_url,  # type: str
             credentials=None,  # type: Optional[HTTPPolicy]
+            configuration=None, # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
-        self._hosts = {LocationMode.PRIMARY: None, LocationMode.SECONDARY: None}
-        self._location_mode = LocationMode.PRIMARY
+        self._location_mode = kwargs.get('_location_mode', LocationMode.PRIMARY)
+        self._hosts = kwargs.get('_hosts')
         self.credentials = credentials
         self.scheme = parsed_url.scheme
 
-        account = parsed_url.hostname.split(".blob.core.")
-        self._secondary_account = None
-        self._primary_account = account[0]
-        if len(account) > 1:
-            self._secondary_account = parsed_url.hostname.replace(
-                self._primary_account,
-                self._primary_account + '-secondary')
-        if kwargs.get('secondary_hostname'):
-            self._secondary_account = kwargs['secondary_hostname']
+        if not self._hosts:
+            account = parsed_url.hostname.split(".blob.core.")
+            secondary_hostname = None
+            primary_account = account[0]
+            if len(account) > 1:
+                secondary_hostname = parsed_url.hostname.replace(
+                    primary_account,
+                    primary_account + '-secondary')
+            if kwargs.get('secondary_hostname'):
+                secondary_hostname = kwargs['secondary_hostname']
+            self._hosts = {
+                LocationMode.PRIMARY: parsed_url.hostname,
+                LocationMode.SECONDARY: secondary_hostname}
 
         self.require_encryption = kwargs.get('require_encryption', False)
         self.key_encryption_key = kwargs.get('key_encryption_key')
         self.key_resolver_function = kwargs.get('key_resolver_function')
 
+        self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
+        self._client = create_client(self.url, self._pipeline)
 
     @property
     def url(self):
-        return self._hosts[self._location_mode]
+        return self._format_url(self._hosts[self._location_mode])
 
     @property
     def primary_endpoint(self):
+        return self._format_url(self._hosts[LocationMode.PRIMARY])
+
+    @property
+    def primary_hostname(self):
         return self._hosts[LocationMode.PRIMARY]
+
+    @primary_hostname.setter
+    def secondary_hostname(self, value):
+        self._hosts[LocationMode.PRIMARY] = value
 
     @property
     def secondary_endpoint(self):
+        return self._format_url(self._hosts[LocationMode.SECONDARY])
+
+    @property
+    def secondary_hostname(self):
         return self._hosts[LocationMode.SECONDARY]
+
+    @secondary_hostname.setter
+    def secondary_hostname(self, value):
+        self._hosts[LocationMode.SECONDARY] = value
 
     @property
     def location_mode(self):
@@ -182,47 +205,15 @@ class StorageAccountHostsMixin(object):
         """
         return create_configuration(**kwargs)
 
-    def _set_pipeline(self, configuration, credentials, **kwargs):
-        self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
-        self._client = create_client(self.url, self._pipeline)
-
-    def _format_account_url(self, hostname, query, credentials):
-        _, sas_token = parse_query(query)
-        url = "{}://{}/?".format(
-            self.scheme,
-            hostname
-        )
+    def _format_query_string(self, sas_token, credentials, snapshot=None):
+        query_str = "?"
+        if snapshot:
+            query_str += 'snapshot={}&'.format(self.snapshot)
         if sas_token and not credentials:
-            url += sas_token
+            query_str += sas_token
         elif is_credential_sastoken(credentials):
-            url += credentials
-        return url.rstrip('?&')
-
-    def _format_container_url(self, hostname, sas_token, credentials):
-        url = "{}://{}/{}?".format(
-            self.scheme,
-            hostname,
-            quote(self.container_name)
-        )
-        if sas_token and not credentials:
-            url += sas_token
-        elif is_credential_sastoken(credentials):
-            url += credentials
-        return url.rstrip('?&')
-
-    def _format_blob_url(self, hostname, sas_token, credentials):
-        url = "{}://{}/{}/{}?".format(
-            self.scheme,
-            hostname,
-            quote(self.container),
-            self.blob_name.replace(' ', '%20').replace('?', '%3F'))  # TODO: Confirm why recordings don't urlencode chars
-        if self.snapshot:
-            url += 'snapshot={}&'.format(self.snapshot)
-        if sas_token and not credentials:
-            url += sas_token
-        elif is_credential_sastoken(credentials):
-            url += credentials
-        return url.rstrip('?&')
+            query_str += credentials
+        return query_str.rstrip('?&')
 
 
 def parse_connection_str(conn_str, credentials):
@@ -238,6 +229,7 @@ def parse_connection_str(conn_str, credentials):
         return account_url, creds
     except KeyError as error:
         raise ValueError("Connection string missing setting: '{}'".format(error.args[0]))
+
 
 def url_quote(url):
     return quote(url)

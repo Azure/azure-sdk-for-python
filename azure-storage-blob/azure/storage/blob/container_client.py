@@ -86,7 +86,6 @@ class ContainerClient(StorageAccountHostsMixin):
         parsed_url = urlparse(container_url.rstrip('/'))
         if not parsed_url.path and not container:
             raise ValueError("Please specify a container name.")
-        super(ContainerClient, self).__init__(parsed_url, credentials, **kwargs)
 
         path_container = ""
         if parsed_url.path:
@@ -96,18 +95,15 @@ class ContainerClient(StorageAccountHostsMixin):
             self.container_name = container.name
         except AttributeError:
             self.container_name = container or unquote(path_container)
+        self._query_str = self._format_query_string(sas_token, credentials)
+        super(ContainerClient, self).__init__(parsed_url, credentials, configuration, **kwargs)
 
-        self._hosts[LocationMode.PRIMARY] = self._format_container_url(
-            parsed_url.hostname,
-            sas_token,
-            credentials)
-        if self._secondary_account:
-            self._hosts[LocationMode.SECONDARY] = self._format_container_url(
-                self._secondary_account,
-                sas_token,
-                credentials)
-
-        self._set_pipeline(configuration, credentials, **kwargs)
+    def _format_url(self, hostname):
+        return "{}://{}/{}{}".format(
+            self.scheme,
+            hostname,
+            quote(self.container_name),
+            self._query_str)
 
     @classmethod
     def from_connection_string(
@@ -674,6 +670,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         return BlobClient(
             self.url, container=self.container_name, blob=blob_name, snapshot=snapshot,
-            credentials=self.credentials, configuration=self._config, _pipeline=self._pipeline,
+            credentials=self.credentials, configuration=self._config,
+            _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)

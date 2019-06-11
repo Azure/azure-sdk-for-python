@@ -832,9 +832,8 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        sourceblob = '/{0}/{1}/{2}'.format(self.settings.STORAGE_ACCOUNT_NAME,
-                                           self.container_name,
-                                           blob_name)
+        sourceblob = '{0}/{1}/{2}'.format(
+            self._get_account_url(), self.container_name, blob_name)
 
         copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
         copy = copyblob.copy_blob_from_url(sourceblob)
@@ -935,7 +934,7 @@ class StorageCommonBlobTest(StorageTestCase):
         target_blob_name = 'targetblob'
         target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
         print(source_blob.url)
-        copy_resp = target_blob.copy_blob_from_url(source_blob.url) #, requires_sync=True)
+        copy_resp = target_blob.copy_blob_from_url(source_blob.url)
 
         with self.assertRaises(HttpResponseError):
             copy_resp.abort()

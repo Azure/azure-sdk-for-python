@@ -931,9 +931,8 @@ class StoragePageBlobTest(StorageTestCase):
             source_blob.create_page_blob(1024, premium_page_blob_tier=PremiumPageBlobTier.P10)
 
             # Act
-            source_blob_url = '/{0}/{1}/{2}'.format(self.settings.PREMIUM_STORAGE_ACCOUNT_NAME,
-                                               container_name,
-                                               source_blob.blob_name)
+            source_blob_url = '{0}/{1}/{2}'.format(
+                self._get_premium_account_url(), container_name, source_blob.blob_name)
 
             copy_blob = pbs.get_blob_client(container_name, 'blob1copy')
             copy = copy_blob.copy_blob_from_url(source_blob_url, premium_page_blob_tier=PremiumPageBlobTier.P30)
@@ -951,8 +950,8 @@ class StoragePageBlobTest(StorageTestCase):
                self.get_resource_name(TEST_BLOB_PREFIX))
 
             source_blob2.create_page_blob(1024)
-            source_blob2_url = '/{0}/{1}/{2}'.format(
-                self.settings.PREMIUM_STORAGE_ACCOUNT_NAME, source_blob2.container, source_blob2.blob_name)
+            source_blob2_url = '{0}/{1}/{2}'.format(
+                self._get_premium_account_url(), source_blob2.container, source_blob2.blob_name)
 
             copy_blob2 = pbs.get_blob_client(container_name, 'blob2copy')
             copy2 = copy_blob2.copy_blob_from_url(source_blob2_url, premium_page_blob_tier=PremiumPageBlobTier.P60)
