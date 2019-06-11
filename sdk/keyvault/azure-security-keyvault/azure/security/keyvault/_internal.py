@@ -28,7 +28,7 @@ from ._generated import KeyVaultClient
 _VaultId = namedtuple("VaultId", ["vault_url", "collection", "name", "version"])
 
 
-KEY_VAULT_SCOPES = ("https://vault.azure.net/.default",)
+KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
 
 
 def _parse_vault_id(url):
@@ -68,7 +68,7 @@ class _KeyVaultClientBase(object):
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=False)(credential, **kwargs)
-        config.authentication_policy = BearerTokenCredentialPolicy(credential, scopes=KEY_VAULT_SCOPES)
+        config.authentication_policy = BearerTokenCredentialPolicy(credential, KEY_VAULT_SCOPE)
         return config
 
     def __init__(self, vault_url, credential, config=None, transport=None, api_version=None, **kwargs):
