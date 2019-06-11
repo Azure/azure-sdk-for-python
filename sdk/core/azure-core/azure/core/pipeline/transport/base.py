@@ -260,14 +260,12 @@ class _HttpResponseBase(object):
 
 
 class HttpResponse(_HttpResponseBase):
+    # type: (PipelineType) -> Iterator[bytes]
     def stream_download(self, pipeline):
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download
         is supported.
-
-        :param pipeline: The pipeline object
-        :type pipeline: azure.core.pipeline
         """
 
 
