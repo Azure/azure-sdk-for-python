@@ -316,6 +316,14 @@ def main(input_str):
 
     versionned_mod = versioned_modules[last_api_version]
     client_name = get_client_class_name_from_module(versionned_mod)
+    client_class = versionned_mod.__dict__[client_name]
+
+    # Detect if this client is using an operation mixin (Network)
+    # Operation mixins are available since Autorest.Python 4.x
+    operations_mixin = next((c for c in client_class.__mro__ if "OperationsMixin" in c.__name__), None)
+    if operations_mixin:
+        _LOGGER.info("This client is using an OperationsMixin")
+
 
     # If we get a StopIteration here, means the API version folder is broken
     client_file_name = next(last_api_path.glob("*_client.py")).name
