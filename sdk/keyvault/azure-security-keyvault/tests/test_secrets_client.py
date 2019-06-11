@@ -254,7 +254,10 @@ class SecretClientTests(KeyVaultTestCase):
 
         # validate the recovered secrets exist
         for secret_name in secrets.keys():
-            self._poll_until_no_exception(functools.partial(client.get_secret, secret_name), ResourceNotFoundError)
+            secret = self._poll_until_no_exception(
+                functools.partial(client.get_secret, secret_name), ResourceNotFoundError
+            )
+            self._assert_secret_attributes_equal(secret, secrets[secret.name])
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)

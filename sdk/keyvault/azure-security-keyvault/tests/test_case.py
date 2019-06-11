@@ -22,8 +22,7 @@ class KeyVaultTestCase(AzureMgmtTestCase):
 
         for i in range(max_retries):
             try:
-                fn()
-                break
+                return fn()
             except expected_exception:
                 if i == max_retries - 1:
                     raise
