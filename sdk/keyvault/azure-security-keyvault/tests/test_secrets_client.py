@@ -178,19 +178,18 @@ class SecretClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
     def test_list_deleted_secrets(self, vault_client, **kwargs):
-
         self.assertIsNotNone(vault_client)
         client = vault_client.secrets
 
-        secret_name = self.get_resource_name("sec")
-        secret_value = self.get_resource_name("secval")
         expected = {}
 
-        # create secrets to delete
-        for _ in range(0, self.list_test_size):
+        # create secrets
+        for i in range(0, self.list_test_size):
+            secret_name = "secret{}".format(i)
+            secret_value = "value{}".format(i)
             expected[secret_name] = client.set_secret(secret_name, secret_value)
 
-        # delete all secrets
+        # delete them
         for secret_name in expected.keys():
             client.delete_secret(secret_name)
         for secret_name in expected.keys():
@@ -198,7 +197,7 @@ class SecretClientTests(KeyVaultTestCase):
                 functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError
             )
 
-        # validate all our deleted secrets are returned by list_deleted_secrets
+        # validate all the deleted secrets are returned by list_deleted_secrets
         self._validate_secret_list(list(client.list_deleted_secrets()), expected)
 
     @ResourceGroupPreparer()
