@@ -253,29 +253,27 @@ class KeyClientTests(KeyVaultTestCase):
     def test_recover(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
         client = vault_client.keys
-        keys = {}
 
-        # create keys to recover
+        # create keys
+        keys = {}
         for i in range(self.list_test_size):
             key_name = "key{}".format(i)
             keys[key_name] = client.create_key(key_name, "RSA")
 
-        # delete all keys
+        # delete them
         for key_name in keys.keys():
             client.delete_key(key_name)
-
         for key_name in keys.keys():
             self._poll_until_no_exception(
                 functools.partial(client.get_deleted_key, key_name), expected_exception=ResourceNotFoundError
             )
 
-        # validate all our deleted keys are returned by list_deleted_keys
+        # validate the deleted keys are returned by list_deleted_keys
         deleted = [s.name for s in client.list_deleted_keys()]
         self.assertTrue(all(s in deleted for s in keys.keys()))
 
-        # recover select keys
-        keys_to_recover = [s for s in keys.keys() if s.startswith("keyrec")]
-        for key_name in keys_to_recover:
+        # recover the keys
+        for key_name in keys.keys():
             recovered_key = client.recover_deleted_key(key_name)
             expected_key = keys[key_name]
             self._assert_key_attributes_equal(expected_key, recovered_key)
