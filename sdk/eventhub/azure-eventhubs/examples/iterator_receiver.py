@@ -31,9 +31,8 @@ class PartitionReceiverThread(Thread):
         self.receiver = receiver
 
     def run(self):
-        with self.receiver:
-            for item in self.receiver:
-                print(item)
+        for item in self.receiver:
+            print(item)
 
 
 client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
@@ -42,4 +41,4 @@ receiver = client.create_receiver(partition_id="0", event_position=EVENT_POSITIO
 with receiver:
     thread = PartitionReceiverThread(receiver)
     thread.start()
-    thread.join()
+    thread.join(2)  # stop after 2 seconds
