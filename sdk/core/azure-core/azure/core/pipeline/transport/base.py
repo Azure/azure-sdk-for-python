@@ -48,6 +48,7 @@ from azure.core.pipeline import ABC, AbstractContextManager, PipelineRequest, Pi
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
+PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -259,8 +260,8 @@ class _HttpResponseBase(object):
 
 
 class HttpResponse(_HttpResponseBase):
-    def stream_download(self):
-        # type: () -> Iterator[bytes]
+    def stream_download(self, pipeline):
+        # type: (PipelineType) -> Iterator[bytes]
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download
