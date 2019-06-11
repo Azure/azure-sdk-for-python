@@ -12,6 +12,7 @@ from .container_client import ContainerClient
 from .blob_service_client import BlobServiceClient
 from .lease import LeaseClient
 from .authentication import SharedKeyCredentials
+from ._policies import ExponentialRetry, LinearRetry
 
 
 __all__ = [

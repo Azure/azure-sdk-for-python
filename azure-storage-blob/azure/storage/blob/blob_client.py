@@ -38,6 +38,7 @@ from ._utils import (
     process_storage_error,
     encode_base64,
     get_length,
+    read_length,
     parse_connection_str,
     parse_query,
     is_credential_sastoken,
@@ -144,11 +145,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             quote(self.container),
             self.blob_name.replace(' ', '%20').replace('?', '%3F'),  # TODO: Confirm why recordings don't urlencode chars
             self._query_str)
-
-    @staticmethod
-    def create_configuration(**kwargs):
-        # type: (**Any) -> Configuration
-        return create_configuration(**kwargs)
 
     @classmethod
     def from_connection_string(
@@ -1256,11 +1252,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if isinstance(data, six.text_type):
             data = data.encode(encoding)
         access_conditions = get_access_conditions(lease)
-        if not length:
-            try:
-                length = len(data)
-            except TypeError:
-                raise ValueError("Please specify content length.")
+        if length is None:
+            length = get_length(data)
+            if length is None:
+                length, data = read_length(data)
+        if isinstance(data, bytes):
+            data = data[:length]
         try:
             self._client.block_blob.stage_block(
                 block_id,
@@ -1791,10 +1788,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-        if not length:
-            try:
-                length = get_length(page)
-            except TypeError:
+        if length is None:
+            length = get_length(page)
+            if length is None:
                 raise ValueError("Please specifiy content length.")
         if start_range is None or start_range % 512 != 0:
             raise ValueError("start_range must be an integer that aligns with 512 page size")
@@ -1905,13 +1901,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         if isinstance(data, six.text_type):
             data = data.encode(encoding)
-        if not length:
-            try:
-                length = get_length(data)
-            except TypeError:
-                raise ValueError("Please specifiy content length.")
+        if length is None:
+            length = get_length(data)
+            if length is None:
+                length, data = read_length(data)
         if length == 0:
             return {}
+        if isinstance(data, bytes):
+            data = data[:length]
+
         append_conditions = None
         if maxsize_condition or appendpos_condition:
             append_conditions = AppendPositionAccessConditions(
@@ -1923,7 +1921,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_modified_since, if_unmodified_since, if_match, if_none_match)
         try:
             return self._client.append_blob.append_block(
-                data[:length],
+                data,
                 content_length=length,
                 timeout=None,
                 transactional_content_md5=None,

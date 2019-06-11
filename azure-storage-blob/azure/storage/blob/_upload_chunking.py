@@ -493,10 +493,10 @@ class IterStreamer(object):
     def next(self):
         return next(self.iterator)
 
-    def tell(self):
+    def tell(self, *args, **kwargs):
         raise UnsupportedOperation("Data generator does not support tell.")
 
-    def seek(self):
+    def seek(self, *args, **kwargs):
         raise UnsupportedOperation("Data generator is unseekable.")
 
     def read(self, size):

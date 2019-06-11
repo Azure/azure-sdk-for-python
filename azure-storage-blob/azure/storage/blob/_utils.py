@@ -52,7 +52,9 @@ from ._policies import (
     StorageHeadersPolicy,
     StorageContentValidation,
     StorageSecondaryAccount,
-    StorageResponseHook)
+    StorageResponseHook,
+    ExponentialRetry,
+    LinearRetry)
 from ._generated import AzureBlobStorage
 from ._generated.models import (
     LeaseAccessConditions,
@@ -135,17 +137,17 @@ class StorageAccountHostsMixin(object):
         self.scheme = parsed_url.scheme
 
         if not self._hosts:
-            account = parsed_url.hostname.split(".blob.core.")
+            account = parsed_url.netloc.split(".blob.core.")
             secondary_hostname = None
             primary_account = account[0]
             if len(account) > 1:
-                secondary_hostname = parsed_url.hostname.replace(
+                secondary_hostname = parsed_url.netloc.replace(
                     primary_account,
                     primary_account + '-secondary')
             if kwargs.get('secondary_hostname'):
                 secondary_hostname = kwargs['secondary_hostname']
             self._hosts = {
-                LocationMode.PRIMARY: parsed_url.hostname,
+                LocationMode.PRIMARY: parsed_url.netloc,
                 LocationMode.SECONDARY: secondary_hostname}
 
         self.require_encryption = kwargs.get('require_encryption', False)
@@ -333,6 +335,23 @@ def get_length(data):
 
     return length
 
+def read_length(data):
+    try:
+        if hasattr(data, 'read'):
+            read_data = b''
+            for chunk in iter(lambda: data.read(4096), b""):
+                read_data += chunk
+            return len(read_data), read_data
+        elif hasattr(data, '__iter__'):
+            read_data = b''
+            for chunk in data:
+                read_data += chunk
+            return len(read_data), read_data
+    except:
+        pass
+    raise ValueError("Unable to calculate content length, please specify.")
+
+
 
 def parse_length_from_content_range(content_range):
     '''
@@ -401,7 +420,7 @@ def create_configuration(**kwargs):
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = UserAgentPolicy(**kwargs)
-    config.retry_policy = RetryPolicy(**kwargs)
+    config.retry_policy = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
     config.redirect_policy = RedirectPolicy(**kwargs)
     config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
