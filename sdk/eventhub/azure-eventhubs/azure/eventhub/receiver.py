@@ -154,6 +154,11 @@ class EventReceiver(object):
             raise EventHubError("This receiver has been closed. Please create a new receiver to receive event data.",
                                 self.error)
 
+    def _redirect(self, redirect):
+        self.redirected = redirect
+        self.running = False
+        self._open()
+
     def _open(self):
         """
         Open the EventReceiver using the supplied connection.
@@ -164,13 +169,20 @@ class EventReceiver(object):
         # pylint: disable=protected-access
         self._check_closed()
         if self.redirected:
+            self.client._process_redirect_uri(self.redirected)
             self.source = self.redirected.address
             source = Source(self.source)
             if self.offset is not None:
                 source.set_filter(self.offset._selector())
+
             alt_creds = {
                 "username": self.client._auth_config.get("iot_username"),
                 "password":self.client._auth_config.get("iot_password")}
+            '''
+            alt_creds = {
+                "username": self.client._auth_config.get("username"),
+                "password": self.client._auth_config.get("password")}
+            '''
             self._handler = ReceiveClient(
                 source,
                 auth=self.client.get_auth(**alt_creds),
@@ -235,6 +247,9 @@ class EventReceiver(object):
             else:
                 log.info("EventReceiver couldn't authenticate. Attempting reconnect.")
                 return False
+        except errors.LinkRedirect as redirect:
+            self._redirect(redirect)
+            return True
         except (errors.LinkDetach, errors.ConnectionClose) as shutdown:
             if shutdown.action.retry:
                 log.info("EventReceiver detached. Attempting reconnect.")
