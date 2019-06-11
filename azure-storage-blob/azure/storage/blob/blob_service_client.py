@@ -23,8 +23,9 @@ from .models import (
     StorageServiceProperties,
     ContainerPropertiesPaged
 )
-from .common import BlobType
+from .common import BlobType, LocationMode
 from ._utils import (
+    StorageAccountHostsMixin,
     create_client,
     create_pipeline,
     create_configuration,
@@ -55,7 +56,7 @@ if TYPE_CHECKING:
     )
 
 
-class BlobServiceClient(object):
+class BlobServiceClient(StorageAccountHostsMixin):
 
     def __init__(
             self, account_url,  # type: str
@@ -65,28 +66,19 @@ class BlobServiceClient(object):
         ):
         # type: (...) -> None
         parsed_url = urlparse(account_url.rstrip('/'))
-        self.scheme = parsed_url.scheme
-        self.account = parsed_url.hostname.split(".blob.core.")[0]
-        self.credentials = credentials
+        super(BlobServiceClient, self).__init__(parsed_url, credentials, **kwargs)
 
-        _, sas_token = parse_query(parsed_url.query)
-        self.url = "{}://{}/?".format(
-            self.scheme,
-            parsed_url.hostname
-        )
-        if sas_token and not credentials:
-            self.url += sas_token
-        elif is_credential_sastoken(credentials):
-            self.url += credentials
-            credentials = None
-        self.url = self.url.rstrip('?&')
+        self._hosts[LocationMode.PRIMARY] = self._format_account_url(
+            parsed_url.hostname,
+            parsed_url.query,
+            credentials)
+        if self._secondary_account:
+            self._hosts[LocationMode.SECONDARY] = self._format_account_url(
+                self._secondary_account,
+                parsed_url.query,
+                credentials)
 
-        self.require_encryption = kwargs.get('require_encryption', False)
-        self.key_encryption_key = kwargs.get('key_encryption_key')
-        self.key_resolver_function = kwargs.get('key_resolver_function')
-
-        self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
-        self._client = create_client(self.url, self._pipeline)
+        self._set_pipeline(configuration, credentials, **kwargs)
 
     @classmethod
     def from_connection_string(
@@ -106,17 +98,6 @@ class BlobServiceClient(object):
         """
         account_url, creds = parse_connection_str(conn_str, credentials)
         return cls(account_url, credentials=creds, configuration=configuration, **kwargs)
-
-    @staticmethod
-    def create_configuration(**kwargs):
-        # type: (**Any) -> Configuration
-        """
-        Get an HTTP Pipeline Configuration with all default policies for the Blob
-        Storage service.
-
-        :rtype: ~azure.core.configuration.Configuration
-        """
-        return create_configuration(**kwargs)
 
     def generate_shared_access_signature(
             self, resource_types,  # type: Union[ResourceTypes, str]
@@ -168,7 +149,7 @@ class BlobServiceClient(object):
         if not hasattr(self.credentials, 'account_key') and not self.credentials.account_key:
             raise ValueError("No account SAS key available.")
 
-        sas = SharedAccessSignature(self.account, self.credentials.account_key)
+        sas = SharedAccessSignature(self.credentials.account_name, self.credentials.account_key)
         return sas.generate_account(resource_types, permission,
                                     expiry, start=start, ip=ip, protocol=protocol)
 

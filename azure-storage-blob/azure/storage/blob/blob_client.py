@@ -19,13 +19,14 @@ except ImportError:
 import six
 from azure.core import Configuration
 
-from .common import BlobType
+from .common import BlobType, LocationMode
 from .lease import LeaseClient
 from .models import SnapshotProperties, BlobBlock
 from .polling import CopyBlob, CopyStatusPoller
 from ._shared_access_signature import BlobSharedAccessSignature
 from ._encryption import _generate_blob_encryption_data, _encrypt_blob
 from ._utils import (
+    StorageAccountHostsMixin,
     create_client,
     create_configuration,
     create_pipeline,
@@ -79,10 +80,10 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     ' for this method.')
 
 
-class BlobClient(object):  # pylint: disable=too-many-public-methods
+class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-methods
 
     def __init__(
-            self, url,  # type: str
+            self, blob_url,  # type: str
             container=None,  # type: Optional[Union[str, ContainerProperties]]
             blob=None,  # type: Optional[Union[str, BlobProperties]]
             snapshot=None,  # type: Optional[str]
@@ -108,9 +109,11 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         :param configuration: A optional pipeline configuration.
          This can be retrieved with :func:`BlobClient.create_configuration()`
         """
-        parsed_url = urlparse(url.rstrip('/'))
+        parsed_url = urlparse(blob_url.rstrip('/'))
         if not parsed_url.path and not (container and blob):
             raise ValueError("Please specify a container and blob name.")
+        super(BlobClient, self).__init__(parsed_url, credentials, **kwargs)
+
         path_container = ""
         path_blob = ""
         path_snapshot = None
@@ -133,29 +136,17 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         except AttributeError:
             self.blob_name = blob or unquote(path_blob)
 
-        self.scheme = parsed_url.scheme
-        self.account = parsed_url.hostname.split(".blob.core.")[0]
-        self.credentials = credentials
-        self.url = "{}://{}/{}/{}?".format(
-            self.scheme,
+        self._hosts[LocationMode.PRIMARY] = self._format_blob_url(
             parsed_url.hostname,
-            quote(self.container),
-            self.blob_name.replace(' ', '%20').replace('?', '%3F'))  # TODO: Confirm why recordings don't urlencode chars
-        if self.snapshot:
-            self.url += 'snapshot={}&'.format(self.snapshot)
-        if sas_token and not credentials:
-            self.url += sas_token
-        elif is_credential_sastoken(credentials):
-            self.url += credentials
-            credentials = None
-        self.url = self.url.rstrip('?&')
+            sas_token,
+            credentials)
+        if self._secondary_account:
+            self._hosts[LocationMode.SECONDARY] = self._format_blob_url(
+                self._secondary_account,
+                sas_token,
+                credentials)
 
-        self.require_encryption = kwargs.get('require_encryption', False)
-        self.key_encryption_key = kwargs.get('key_encryption_key')
-        self.key_resolver_function = kwargs.get('key_resolver_function')
-
-        self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
-        self._client = create_client(self.url, self._pipeline)
+        self._set_pipeline(configuration, credentials, **kwargs)
 
     @staticmethod
     def create_configuration(**kwargs):
@@ -251,7 +242,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
         """
         if not hasattr(self.credentials, 'account_key') and not self.credentials.account_key:
             raise ValueError("No account SAS key available.")
-        sas = BlobSharedAccessSignature(self.account, self.credentials.account_key)
+        sas = BlobSharedAccessSignature(self.credentials.account_name, self.credentials.account_key)
         return sas.generate_blob(
             self.container,
             self.blob_name,
@@ -1168,7 +1159,7 @@ class BlobClient(object):  # pylint: disable=too-many-public-methods
             parsed_url = urlparse(self.url)
             source_url = "{}://{}/{}".format(
                 self.scheme,
-                parsed_url.hostname.replace(self.account, account),
+                parsed_url.hostname.replace(self._primary_account, account),
                 source.strip('/')
             )
 

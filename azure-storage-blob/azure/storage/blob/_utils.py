@@ -45,7 +45,7 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     DecodeError)
 
-from .common import StorageErrorCode
+from .common import StorageErrorCode, LocationMode
 from .authentication import SharedKeyCredentials
 from ._policies import (
     StorageBlobSettings,
@@ -118,6 +118,111 @@ class _QueryStringConstants(object):
             _QueryStringConstants.SIGNED_RESOURCE_TYPES,
             _QueryStringConstants.SIGNED_SERVICES,
         ]
+
+
+class StorageAccountHostsMixin(object):
+
+    def __init__(
+            self, parsed_url,  # type: str
+            credentials=None,  # type: Optional[HTTPPolicy]
+            **kwargs  # type: Any
+        ):
+        # type: (...) -> None
+        self._hosts = {LocationMode.PRIMARY: None, LocationMode.SECONDARY: None}
+        self._location_mode = LocationMode.PRIMARY
+        self.credentials = credentials
+        self.scheme = parsed_url.scheme
+
+        account = parsed_url.hostname.split(".blob.core.")
+        self._secondary_account = None
+        self._primary_account = account[0]
+        if len(account) > 1:
+            self._secondary_account = parsed_url.hostname.replace(
+                self._primary_account,
+                self._primary_account + '-secondary')
+        if kwargs.get('secondary_hostname'):
+            self._secondary_account = kwargs['secondary_hostname']
+
+        self.require_encryption = kwargs.get('require_encryption', False)
+        self.key_encryption_key = kwargs.get('key_encryption_key')
+        self.key_resolver_function = kwargs.get('key_resolver_function')
+
+
+    @property
+    def url(self):
+        return self._hosts[self._location_mode]
+
+    @property
+    def primary_endpoint(self):
+        return self._hosts[LocationMode.PRIMARY]
+
+    @property
+    def secondary_endpoint(self):
+        return self._hosts[LocationMode.SECONDARY]
+
+    @property
+    def location_mode(self):
+        return self._location_mode
+
+    @location_mode.setter
+    def location_mode(self, value):
+        if self._hosts.get(value):
+            self._client._config.url = self._hosts[value]
+            self._location_mode = value
+        raise ValueError("No host URL for location mode: {}".format(value))
+
+    @staticmethod
+    def create_configuration(**kwargs):
+        # type: (**Any) -> Configuration
+        """
+        Get an HTTP Pipeline Configuration with all default policies for the Blob
+        Storage service.
+
+        :rtype: ~azure.core.configuration.Configuration
+        """
+        return create_configuration(**kwargs)
+
+    def _set_pipeline(self, configuration, credentials, **kwargs):
+        self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
+        self._client = create_client(self.url, self._pipeline)
+
+    def _format_account_url(self, hostname, query, credentials):
+        _, sas_token = parse_query(query)
+        url = "{}://{}/?".format(
+            self.scheme,
+            hostname
+        )
+        if sas_token and not credentials:
+            url += sas_token
+        elif is_credential_sastoken(credentials):
+            url += credentials
+        return url.rstrip('?&')
+
+    def _format_container_url(self, hostname, sas_token, credentials):
+        url = "{}://{}/{}?".format(
+            self.scheme,
+            hostname,
+            quote(self.container_name)
+        )
+        if sas_token and not credentials:
+            url += sas_token
+        elif is_credential_sastoken(credentials):
+            url += credentials
+        return url.rstrip('?&')
+
+    def _format_blob_url(self, hostname, sas_token, credentials):
+        url = "{}://{}/{}/{}?".format(
+            self.scheme,
+            hostname,
+            quote(self.container),
+            self.blob_name.replace(' ', '%20').replace('?', '%3F'))  # TODO: Confirm why recordings don't urlencode chars
+        if self.snapshot:
+            url += 'snapshot={}&'.format(self.snapshot)
+        if sas_token and not credentials:
+            url += sas_token
+        elif is_credential_sastoken(credentials):
+            url += credentials
+        return url.rstrip('?&')
 
 
 def parse_connection_str(conn_str, credentials):
@@ -236,6 +341,7 @@ def get_length(data):
 
     return length
 
+
 def parse_length_from_content_range(content_range):
     '''
     Parses the blob length from the content range header: bytes 1-3/65537
@@ -314,6 +420,8 @@ def create_configuration(**kwargs):
 
 def create_pipeline(configuration, credentials, **kwargs):
     # type: (Configuration, Optional[HTTPPolicy], **Any) -> Tuple[Configuration, Pipeline]
+    if not isinstance(credentials, SharedKeyCredentials):
+        credentials = None
     config = configuration or create_configuration(**kwargs)
     if kwargs.get('_pipeline'):
         return config, kwargs['_pipeline']

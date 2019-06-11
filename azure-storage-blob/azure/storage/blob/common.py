@@ -8,6 +8,17 @@ from enum import Enum
 from ._generated.models import StorageErrorCode
 
 
+class LocationMode(object):
+    """
+    Specifies the location the request should be sent to. This mode only applies 
+    for RA-GRS accounts which allow secondary read access. All other account types 
+    must use PRIMARY.
+    """
+
+    PRIMARY = 'primary'  #: Requests should be sent to the primary location.
+    SECONDARY = 'secondary'  #: Requests should be sent to the secondary location, if possible.
+
+
 class BlobType(str, Enum):
 
     BlockBlob = "BlockBlob"

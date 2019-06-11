@@ -487,8 +487,14 @@ class IterStreamer(object):
     def __iter__(self):
         return self.iterator
 
+    def seekable(self):
+        return False
+
     def next(self):
         return next(self.iterator)
+
+    def seek(self):
+        raise UnsupportedOperation("Data generator is unseekable")
 
     def read(self, size):
         data = self.leftover

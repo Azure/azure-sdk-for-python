@@ -20,11 +20,12 @@ except ImportError:
 
 from azure.core import Configuration
 
-from .common import BlobType
+from .common import BlobType, LocationMode
 from .lease import LeaseClient
 from .blob_client import BlobClient
 from .models import ContainerProperties, BlobProperties, BlobPropertiesPaged, AccessPolicy
 from ._utils import (
+    StorageAccountHostsMixin,
     create_client,
     create_configuration,
     create_pipeline,
@@ -58,10 +59,10 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
-class ContainerClient(object):
+class ContainerClient(StorageAccountHostsMixin):
 
     def __init__(
-            self, url,  # type: str
+            self, container_url,  # type: str
             container=None,  # type: Union[ContainerProperties, str]
             credentials=None,  # type: Optional[HTTPPolicy]
             configuration=None,  # type: Optional[Configuration]
@@ -82,10 +83,11 @@ class ContainerClient(object):
         :param configuration: A optional pipeline configuration.
          This can be retrieved with :func:`ContainerClient.create_configuration()`
         """
-        parsed_url = urlparse(url.rstrip('/'))
-
+        parsed_url = urlparse(container_url.rstrip('/'))
         if not parsed_url.path and not container:
             raise ValueError("Please specify a container name.")
+        super(ContainerClient, self).__init__(parsed_url, credentials, **kwargs)
+
         path_container = ""
         if parsed_url.path:
             path_container = parsed_url.path.lstrip('/').partition('/')[0]
@@ -95,32 +97,17 @@ class ContainerClient(object):
         except AttributeError:
             self.container_name = container or unquote(path_container)
 
-        self.scheme = parsed_url.scheme
-        self.credentials = credentials
-        self.account = parsed_url.hostname.split(".blob.core.")[0]
-        self.url = "{}://{}/{}?".format(
-            self.scheme,
+        self._hosts[LocationMode.PRIMARY] = self._format_container_url(
             parsed_url.hostname,
-            quote(self.container_name)
-        )
-        if sas_token and not credentials:
-            self.url += sas_token
-        elif is_credential_sastoken(credentials):
-            self.url += credentials
-            credentials = None
-        self.url = self.url.rstrip('?&')
+            sas_token,
+            credentials)
+        if self._secondary_account:
+            self._hosts[LocationMode.SECONDARY] = self._format_container_url(
+                self._secondary_account,
+                sas_token,
+                credentials)
 
-        self.require_encryption = kwargs.get('require_encryption', False)
-        self.key_encryption_key = kwargs.get('key_encryption_key')
-        self.key_resolver_function = kwargs.get('key_resolver_function')
-
-        self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
-        self._client = create_client(self.url, self._pipeline)
-
-    @staticmethod
-    def create_configuration(**kwargs):
-        # type: (**Any) -> Configuration
-        return create_configuration(**kwargs)
+        self._set_pipeline(configuration, credentials, **kwargs)
 
     @classmethod
     def from_connection_string(
@@ -154,7 +141,7 @@ class ContainerClient(object):
         # type: (...) -> str
         if not hasattr(self.credentials, 'account_key') and not self.credentials.account_key:
             raise ValueError("No account SAS key available.")
-        sas = BlobSharedAccessSignature(self.account, self.credentials.account_key)
+        sas = BlobSharedAccessSignature(self.credentials.account_name, self.credentials.account_key)
         return sas.generate_container(
             self.container_name,
             permission=permission,
