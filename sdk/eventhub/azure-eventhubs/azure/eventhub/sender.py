@@ -104,6 +104,7 @@ class EventSender(object):
                 properties=self.client._create_properties(self.client.config.user_agent))
         if not self.running:
             self._connect()
+            self.running = True
 
     def _connect(self):
         connected = self._build_connection()
@@ -121,7 +122,6 @@ class EventSender(object):
         """
         # pylint: disable=protected-access
         if is_reconnect:
-            self.unsent_events = self._handler.pending_messages
             self._handler.close()
             self._handler = SendClient(
                 self.target,
@@ -223,9 +223,10 @@ class EventSender(object):
                 if self.unsent_events:
                     self._handler.queue_message(*self.unsent_events)
                     self._handler.wait()
-                self.unsent_events = self._handler.pending_messages
+                    self.unsent_events = self._handler.pending_messages
                 if self._outcome != constants.MessageSendResult.Ok:
                     EventSender._error(self._outcome, self._condition)
+                return
             except (errors.MessageAccepted,
                     errors.MessageAlreadySettled,
                     errors.MessageModified,
@@ -287,8 +288,6 @@ class EventSender(object):
                 error = EventHubError("Send failed: {}".format(e))
                 self.close(exception=error)
                 raise error
-            else:
-                return self._outcome
 
     def _check_closed(self):
         if self.error:

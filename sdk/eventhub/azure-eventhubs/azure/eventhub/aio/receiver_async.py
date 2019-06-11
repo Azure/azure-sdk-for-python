@@ -187,6 +187,7 @@ class EventReceiver(object):
                 loop=self.loop)
         if not self.running:
             await self._connect()
+            self.running = True
 
     async def _connect(self):
         connected = await self._build_connection()

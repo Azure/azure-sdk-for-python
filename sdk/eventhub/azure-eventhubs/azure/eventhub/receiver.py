@@ -196,6 +196,7 @@ class EventReceiver(object):
                 properties=self.client._create_properties(self.client.config.user_agent))  # pylint: disable=protected-access
         if not self.running:
             self._connect()
+            self.running = True
 
     def _connect(self):
         connected = self._build_connection()

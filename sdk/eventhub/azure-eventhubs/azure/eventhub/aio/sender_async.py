@@ -106,6 +106,7 @@ class EventSender(object):
                 loop=self.loop)
         if not self.running:
             await self._connect()
+            self.running = True
 
     async def _connect(self):
         connected = await self._build_connection()
@@ -123,7 +124,6 @@ class EventSender(object):
         """
         # pylint: disable=protected-access
         if is_reconnect:
-            self.unsent_events = self._handler.pending_messages
             await self._handler.close_async()
             self._handler = SendClientAsync(
                 self.target,
@@ -227,9 +227,10 @@ class EventSender(object):
                 if self.unsent_events:
                     self._handler.queue_message(*self.unsent_events)
                     await self._handler.wait_async()
-                self.unsent_events = self._handler.pending_messages
+                    self.unsent_events = self._handler.pending_messages
                 if self._outcome != constants.MessageSendResult.Ok:
                     EventSender._error(self._outcome, self._condition)
+                return
             except (errors.MessageAccepted,
                     errors.MessageAlreadySettled,
                     errors.MessageModified,
@@ -291,8 +292,6 @@ class EventSender(object):
                 error = EventHubError("Send failed: {}".format(e))
                 await self.close(exception=error)
                 raise error
-            else:
-                return self._outcome
 
     def _check_closed(self):
         if self.error:
