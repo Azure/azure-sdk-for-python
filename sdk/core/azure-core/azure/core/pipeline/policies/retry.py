@@ -32,7 +32,7 @@ import logging
 import time
 import email
 from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
-
+from azure.core.pipeline import PipelineResponse
 from azure.core.exceptions import (
     AzureError,
     ServiceResponseError,
@@ -297,7 +297,7 @@ class RetryPolicy(HTTPPolicy):
         """
         settings['total'] -= 1
 
-        if response.http_response.status_code == 202:
+        if isinstance(response, PipelineResponse) and response.http_response.status_code == 202:
             return False
 
         if error and self._is_connection_error(error):

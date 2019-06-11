@@ -23,7 +23,7 @@ def test_bearer_policy_adds_header():
 
     fake_credential = Mock(get_token=Mock(return_value=expected_token))
     policies = [
-        BearerTokenCredentialPolicy(credential=fake_credential, scopes=("",)),
+        BearerTokenCredentialPolicy(fake_credential, "scope"),
         Mock(spec=HTTPPolicy, send=verify_authorization_header),
     ]
 
@@ -43,7 +43,7 @@ def test_bearer_policy_send():
 
     fake_credential = Mock(get_token=lambda _: "")
     policies = [
-        BearerTokenCredentialPolicy(credential=fake_credential, scopes=("",)),
+        BearerTokenCredentialPolicy(fake_credential, "scope"),
         Mock(spec=HTTPPolicy, send=verify_request),
     ]
     response = Pipeline(transport=Mock(spec=HttpTransport), policies=policies).run(expected_request)
