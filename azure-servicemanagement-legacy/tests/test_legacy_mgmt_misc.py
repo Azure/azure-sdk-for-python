@@ -86,8 +86,6 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         super(LegacyMgmtMiscTest, self).setUp()
 
         self.sms = self.create_service_management(ServiceManagementService)
-
-        
         self.bsc = self._create_storage_service(BlobServiceClient, self.settings)
 
         self.hosted_service_name = self.get_resource_name('utsvc')

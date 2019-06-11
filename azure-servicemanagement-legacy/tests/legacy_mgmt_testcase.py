@@ -85,11 +85,19 @@ class LegacyMgmtTestCase(RecordingTestCase):
         return service
 
     def _create_storage_service(self, service_class, settings, **kwargs):
-        account_name = account_name or settings.STORAGE_ACCOUNT_NAME
-        account_key = account_key or settings.STORAGE_ACCOUNT_KEY
+
+        try:
+            account_name_arg = account_name or settings.STORAGE_ACCOUNT_NAME
+        except NameError:
+            account_name_arg = settings.STORAGE_ACCOUNT_NAME
+        try:
+            account_key_arg = account_key or settings.STORAGE_ACCOUNT_KEY
+        except NameError:
+            account_key_arg = settings.STORAGE_ACCOUNT_KEY
+
         service = service_class(
-            "https://{}.blob.core.windows.net".format(account_name),
-            credentials=SharedKeyCredentials(account_name, account_key)
+            "https://{}.blob.core.windows.net".format(account_name_arg),
+            credentials=SharedKeyCredentials(account_name_arg, account_key_arg)
         )
         self._set_service_options(service, settings)
         return service
