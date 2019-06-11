@@ -260,8 +260,8 @@ class _HttpResponseBase(object):
 
 
 class HttpResponse(_HttpResponseBase):
-    # type: (PipelineType) -> Iterator[bytes]
     def stream_download(self, pipeline):
+        # type: (PipelineType) -> Iterator[bytes]
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download

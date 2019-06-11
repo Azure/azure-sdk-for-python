@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
 import logging
-from typing import Iterator, Optional, Any, Union
+from typing import Iterator, Optional, Any, Union, TypeVar
 import time
 import urllib3 # type: ignore
 from urllib3.util.retry import Retry # type: ignore
@@ -44,6 +44,8 @@ from .base import (
     HttpResponse,
     _HttpResponseBase
 )
+
+PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -146,7 +148,7 @@ class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response.
     """
     def stream_download(self, pipeline):
-        # type: (Pipeline) -> Iterator[bytes]
+        # type: (PipelineType) -> Iterator[bytes]
         """Generator for streaming request body data."""
         return StreamDownloadGenerator(pipeline, self.request, self.internal_response, self.block_size)
 
