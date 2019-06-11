@@ -111,6 +111,16 @@ def extract_api_version_from_code(function):
         raise
 
 def build_operation_meta(versioned_modules):
+    """Introspect the client:
+
+    version_dict => {
+        'application_gateways': [
+            ('v2018-05-01', 'ApplicationGatewaysOperations')
+        ]
+    }
+    mod_to_api_version => {'v2018-05-01': '2018-05-01'}
+    """
+
     version_dict = {}
     mod_to_api_version = {}
     for versionned_label, versionned_mod in versioned_modules:
@@ -271,9 +281,16 @@ def main(input_str):
     model_string = build_models_string(module_name, mod_to_api_version)
 
     operations_string = []
-    for attr in sorted(version_dict.keys()):
-        versions = version_dict[attr]
-        operations_string.append(build_operation_group(module_name, attr, versions, mod_to_api_version))
+    for operation_name in sorted(version_dict.keys()):
+        versions = version_dict[operation_name]
+        operations_string.append(
+            build_operation_group(
+                module_name,
+                operation_name,
+                versions,
+                mod_to_api_version
+            )
+        )
 
     client_file = find_client_file(package_name, module_name)
     client_folder = find_module_folder(package_name, module_name)
@@ -297,8 +314,19 @@ def main(input_str):
         keep_trailing_newline=True
     )
 
+    # version_dict => {
+    #     'application_gateways': [
+    #         ('v2018-05-01', 'ApplicationGatewaysOperations')
+    #     ]
+    # }
+    # mod_to_api_version => {'v2018-05-01': '2018-05-01'}
+
     conf = {
-        'api_version_modules': sorted(mod_to_api_version.keys())
+        'api_version_modules': sorted(mod_to_api_version.keys()),
+        'client_name': 'NetworkManagementClient',
+        'module_name': module_name,
+        'operations': version_dict,
+        'mod_to_api_version': mod_to_api_version
     }
 
     for template_name in env.list_templates():

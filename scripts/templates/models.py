@@ -4,6 +4,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-{%- for api_version_module in api_version_modules %}
-from .{{ api_version_module }}.models import *
+{%- for mod_api_version, _ in mod_to_api_version|dictsort %}
+from .{{ mod_api_version }}.models import *
 {%- endfor %}
