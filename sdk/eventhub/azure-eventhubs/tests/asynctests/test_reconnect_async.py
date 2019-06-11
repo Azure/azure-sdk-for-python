@@ -15,7 +15,7 @@ from azure.eventhub import (
     EventHubError)
 from azure.eventhub.aio import EventHubClient
 
-SLEEP= False
+SLEEP = False
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
@@ -36,7 +36,7 @@ async def test_send_with_long_interval_async(connstr_receivers):
 
     received = []
     for r in receivers:
-        if SLEEP:  # if sender sleeps, the receivers will be disconnected. destroy connection to simulate
+        if not SLEEP:  # if sender sleeps, the receivers will be disconnected. destroy connection to simulate
             r._handler._connection._conn.destroy()
         received.extend(r.receive(timeout=1))
     assert len(received) == 2
@@ -63,15 +63,15 @@ async def test_send_with_forced_conn_close_async(connstr_receivers):
     try:
         await sender.send(EventData(b"A single event"))
         if SLEEP:
-            sender._handler._connection._conn.destroy()
-        else:
             await asyncio.sleep(300)
+        else:
+            sender._handler._connection._conn.destroy()
         await sender.send(EventData(b"A single event"))
         await sender.send(EventData(b"A single event"))
         if SLEEP:
-            sender._handler._connection._conn.destroy()
-        else:
             await asyncio.sleep(300)
+        else:
+            sender._handler._connection._conn.destroy()
         await sender.send(EventData(b"A single event"))
         await sender.send(EventData(b"A single event"))
     finally:
@@ -79,6 +79,8 @@ async def test_send_with_forced_conn_close_async(connstr_receivers):
     
     received = []
     for r in receivers:
-       received.extend(pump(r))
+        if not SLEEP:
+            r._handler._connection._conn.destroy()
+        received.extend(pump(r))
     assert len(received) == 5
     assert list(received[0].body)[0] == b"A single event"

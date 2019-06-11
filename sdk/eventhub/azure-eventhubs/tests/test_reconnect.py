@@ -32,7 +32,7 @@ def test_send_with_long_interval_sync(connstr_receivers):
 
     received = []
     for r in receivers:
-        if SLEEP:
+        if not SLEEP:
             r._handler._connection._conn.destroy()
         received.extend(r.receive(timeout=3))
 
@@ -63,6 +63,8 @@ def test_send_with_forced_conn_close_sync(connstr_receivers):
     
     received = []
     for r in receivers:
-       received.extend(r.receive(timeout=1))
+        if not SLEEP:
+            r._handler._connection._conn.destroy()
+        received.extend(r.receive(timeout=1))
     assert len(received) == 5
     assert list(received[0].body)[0] == b"A single event"
