@@ -13,9 +13,9 @@ Install the Azure Key Vault client library for Python with [pip](https://pypi.or
 #### Prerequisites
 * An [Azure subscription](https://azure.microsoft.com/free/).
 * Python 2.7, 3.4 or later to use this package.
-* An existing Key Vault. If you need to create a Key Vault, you can use the [Azure Cloud Shell](https://shell.azure.com/bash) to create one with this Azure CLI command:
+* An existing Key Vault. If you need to create a Key Vault, you can use the [Azure Cloud Shell](https://shell.azure.com/bash) to create one with this Azure CLI command. Replace `<your-resource-group-name>` and `<your-key-vault-name>` with your own, unique names:
 
-    `az keyvault create --resource-group keyvault-rg --name test-keyvault`
+    `az keyvault create --resource-group <your-resource-group-name> --name <your-key-vault-name>`
 
 ### Authenticate the client
 In order to interact with the Key Vault service, you'll need to create an instance of the [KeyVaultClient](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault) class. You need a **vault url**, **client secret credentials (client id, client secret, tenant id)** and a [resource url](https://vault.azure.net) to instantiate a client object.
@@ -37,10 +37,10 @@ Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to creat
 #### Create Secret client
 Once you have the `client_id`, `client_secret` and `tenant_id` from above, you can create the [SecretClient](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets/_client.py):
 ```python
-    from azure.identity import AsyncClientSecretCredential
+    from azure.identity import DefaultAzureCredential
     from azure.security.keyvault import SecretClient
 
-    credential = AsyncClientSecretCredential(client_id=client_id, secret=client_secret, tenant_id=tenant_id)
+    credential = AsyncDefaultAzureCredential()
 
     # Create a new secret client using a client secret credential
     secret_client = SecretClient(vault_url=vault_url, credential=credential)
@@ -135,10 +135,10 @@ This example creates a secret in the specified Key Vault with the specified opti
 ```python
     import asyncio
 
-    from azure.identity import AsyncClientSecretCredential
+    from azure.identity import AsyncDefaultAzureCredential
     from azure.security.keyvault.aio import SecretClient
 
-    credential = AsyncClientSecretCredential(client_id=client_id, secret=client_secret, tenant_id=tenant_id)
+    credential = AsyncDefaultAzureCredential()
     # Create a new secret client using a client secret credential
     secret_client = SecretClient(vault_url=vault_url, credential=credential)
 
