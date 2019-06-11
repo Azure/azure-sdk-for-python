@@ -5,8 +5,7 @@
 # --------------------------------------------------------------------------
 from unittest.mock import Mock
 from azure.core.pipeline import AsyncPipeline, PipelineResponse
-from azure.core.pipeline.policies import HTTPPolicy
-from azure.core.pipeline.policies.credentials_async import AsyncBearerTokenCredentialPolicy
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, HTTPPolicy
 from azure.core.pipeline.transport import HttpRequest, AsyncHttpTransport
 import pytest
 
@@ -28,7 +27,7 @@ async def test_bearer_policy_adds_header():
 
     fake_credential = Mock(get_token=get_token)
     policies = [
-        AsyncBearerTokenCredentialPolicy(credential=fake_credential, scopes=("",)),
+        AsyncBearerTokenCredentialPolicy(fake_credential, "scope"),
         Mock(spec=HTTPPolicy, send=verify_authorization_header),
     ]
     pipeline = AsyncPipeline(transport=Mock(spec=AsyncHttpTransport), policies=policies)
@@ -52,7 +51,7 @@ async def test_bearer_policy_send():
 
     fake_credential = Mock(get_token=get_token)
     policies = [
-        AsyncBearerTokenCredentialPolicy(credential=fake_credential, scopes=("",)),
+        AsyncBearerTokenCredentialPolicy(fake_credential, "scope"),
         Mock(spec=HTTPPolicy, send=verify_request),
     ]
     pipeline = AsyncPipeline(transport=Mock(spec=AsyncHttpTransport), policies=policies)

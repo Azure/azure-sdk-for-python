@@ -12,10 +12,21 @@ from .credentials import (
     TokenCredentialChain,
 )
 
+
+class DefaultAzureCredential(TokenCredentialChain):
+    """default credential is environment followed by MSI/IMDS"""
+
+    def __init__(self, **kwargs):
+        super(DefaultAzureCredential, self).__init__(
+            EnvironmentCredential(**kwargs), ManagedIdentityCredential(**kwargs)
+        )
+
+
 __all__ = [
     "AuthenticationError",
     "CertificateCredential",
     "ClientSecretCredential",
+    "DefaultAzureCredential",
     "EnvironmentCredential",
     "ManagedIdentityCredential",
     "TokenCredentialChain",
@@ -25,6 +36,7 @@ try:
     from .aio import (
         AsyncCertificateCredential,
         AsyncClientSecretCredential,
+        AsyncDefaultAzureCredential,
         AsyncEnvironmentCredential,
         AsyncManagedIdentityCredential,
         AsyncTokenCredentialChain,
@@ -34,10 +46,11 @@ try:
         [
             "AsyncCertificateCredential",
             "AsyncClientSecretCredential",
+            "AsyncDefaultAzureCredential",
             "AsyncEnvironmentCredential",
             "AsyncManagedIdentityCredential",
             "AsyncTokenCredentialChain",
         ]
     )
-except SyntaxError:
+except (ImportError, SyntaxError):
     pass
