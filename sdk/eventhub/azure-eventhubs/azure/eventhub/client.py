@@ -180,7 +180,7 @@ class EventHubClient(EventHubClientAbstract):
                 output['last_enqueued_time_utc'] = datetime.datetime.utcfromtimestamp(
                     float(partition_info[b'last_enqueued_time_utc'] / 1000))
                 output['is_empty'] = partition_info[b'is_partition_empty']
-                # TODO: add retrieval time. May need uamqp change
+                output['retrieval_time'] = datetime.datetime.utcnow()
             return output
         finally:
             mgmt_client.close()
