@@ -119,6 +119,12 @@ class EventHubClientAbstract(object):
         :type transport_type: ~azure.eventhub.TransportType
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
+        :param max_batch_size: Receive a batch of events. Batch size will be up to the maximum specified, but
+         will return as soon as service returns no new events. Default value is the same as prefetch.
+        :type max_batch_size: int
+        :param receive_timeout: The timeout time in seconds to receive a batch of events from an Event Hub.
+         Default value is 0 seconds.
+        :type receive_timeout: int
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: int
@@ -177,6 +183,12 @@ class EventHubClientAbstract(object):
         :type transport_type: ~azure.eventhub.TransportType
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
+        :param max_batch_size: Receive a batch of events. Batch size will be up to the maximum specified, but
+         will return as soon as service returns no new events. Default value is the same as prefetch.
+        :type max_batch_size: int
+        :param receive_timeout: The timeout time in seconds to receive a batch of events from an Event Hub.
+         Default value is 0 seconds.
+        :type receive_timeout: int
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: int
@@ -227,6 +239,12 @@ class EventHubClientAbstract(object):
         :type transport_type: ~azure.eventhub.TransportType
         :param prefetch: The message prefetch count of the receiver. Default is 300.
         :type prefetch: int
+        :param max_batch_size: Receive a batch of events. Batch size will be up to the maximum specified, but
+         will return as soon as service returns no new events. Default value is the same as prefetch.
+        :type max_batch_size: int
+        :param receive_timeout: The timeout time in seconds to receive a batch of events from an Event Hub.
+         Default value is 0 seconds.
+        :type receive_timeout: int
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: int
