@@ -77,9 +77,9 @@ def get_versioned_modules(package_name: str, module_name:str, sdk_root : Path = 
     # Doesn't work with namespace package
     # sys.path.append(str((sdk_root / package_name).resolve()))
     module_to_generate = importlib.import_module(module_name)
-    return [(label, importlib.import_module('.'+label, module_to_generate.__name__))
+    return {label: importlib.import_module('.'+label, module_to_generate.__name__)
             for (_, label, ispkg) in pkgutil.iter_modules(module_to_generate.__path__)
-            if label.startswith("v20") and ispkg]
+            if label.startswith("v20") and ispkg}
 
 class ApiVersionExtractor(ast.NodeVisitor):
     def __init__(self, *args, **kwargs):
@@ -110,6 +110,12 @@ def extract_api_version_from_code(function):
     except Exception:
         raise
 
+def get_client_class_name_from_module(module):
+    """Being a module that is an Autorest generation, get the client name."""
+    # Using the fact that Client is always the first element in __all__
+    # I externalize that code in a class in case we need to be smarter later
+    return module.__all__[0]
+
 def build_operation_meta(versioned_modules):
     """Introspect the client:
 
@@ -123,9 +129,9 @@ def build_operation_meta(versioned_modules):
 
     version_dict = {}
     mod_to_api_version = {}
-    for versionned_label, versionned_mod in versioned_modules:
+    for versionned_label, versionned_mod in versioned_modules.items():
         extracted_api_versions = set()
-        client_doc = versionned_mod.__dict__[versionned_mod.__all__[0]].__doc__
+        client_doc = versionned_mod.__dict__[get_client_class_name_from_module(versionned_mod)].__doc__
         operations = list(re.finditer(r':ivar (?P<attr>[a-z_]+): \w+ operations\n\s+:vartype (?P=attr): .*.operations.(?P<clsname>\w+)\n', client_doc))
         for operation in operations:
             attr, clsname = operation.groups()
@@ -295,19 +301,24 @@ def main(input_str):
     client_file = find_client_file(package_name, module_name)
     client_folder = find_module_folder(package_name, module_name)
     last_api_version = sorted(mod_to_api_version.keys())[-1]
+    last_api_path = client_folder / last_api_version
 
     _LOGGER.info("Copy _configuration.py if possible")
 
-    if (client_folder / last_api_version).exists():
-        _LOGGER.warning("I got a configuration file")
-        shutil.copy(
-            client_folder / last_api_version / "_configuration.py",
-            client_folder / "_configuration.py"
-        )
-        shutil.copy(
-            client_folder / last_api_version / "__init__.py",
-            client_folder / "__init__.py"
-        )
+    shutil.copy(
+        client_folder / last_api_version / "_configuration.py",
+        client_folder / "_configuration.py"
+    )
+    shutil.copy(
+        client_folder / last_api_version / "__init__.py",
+        client_folder / "__init__.py"
+    )
+
+    versionned_mod = versioned_modules[last_api_version]
+    client_name = get_client_class_name_from_module(versionned_mod)
+
+    # If we get a StopIteration here, means the API version folder is broken
+    client_file_name = next(last_api_path.glob("*_client.py")).name
 
     env = Environment(
         loader=FileSystemLoader(str(Path(__file__).parents[0] / 'templates')),
@@ -323,7 +334,7 @@ def main(input_str):
 
     conf = {
         'api_version_modules': sorted(mod_to_api_version.keys()),
-        'client_name': 'NetworkManagementClient',
+        'client_name': client_name,
         'module_name': module_name,
         'operations': version_dict,
         'mod_to_api_version': mod_to_api_version
