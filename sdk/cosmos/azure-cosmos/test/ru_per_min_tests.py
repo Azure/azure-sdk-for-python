@@ -28,6 +28,8 @@ from azure.cosmos import query_iterable
 import azure.cosmos.base as base
 import test_config
 
+pytestmark = pytest.mark.cosmosEmulator
+
 # IMPORTANT NOTES:
   
 #      Most test cases in this file create collections in your Azure Cosmos
@@ -47,8 +49,6 @@ class RuPerMinTests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, connectionPolicy)
-    created_db = test_config._test_config.create_database_if_not_exist(client)
 
     @classmethod
     def setUpClass(cls):
@@ -60,6 +60,9 @@ class RuPerMinTests(unittest.TestCase):
             raise Exception("You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
+
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
 
     def _query_offers(self, collection_self_link):
         offers = list(self.client.ReadOffers())

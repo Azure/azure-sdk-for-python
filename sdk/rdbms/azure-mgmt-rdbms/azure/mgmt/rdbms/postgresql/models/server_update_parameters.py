@@ -23,7 +23,7 @@ class ServerUpdateParameters(Model):
      login.
     :type administrator_login_password: str
     :param version: The version of a server. Possible values include: '9.5',
-     '9.6', '10', '10.0', '10.2'
+     '9.6', '10', '10.0', '10.2', '11'
     :type version: str or ~azure.mgmt.rdbms.postgresql.models.ServerVersion
     :param ssl_enforcement: Enable ssl enforcement or not when connect to
      server. Possible values include: 'Enabled', 'Disabled'

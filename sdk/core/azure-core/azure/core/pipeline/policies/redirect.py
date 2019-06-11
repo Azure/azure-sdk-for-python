@@ -47,12 +47,14 @@ class RedirectPolicy(HTTPPolicy):
 
     A redirect policy in the pipeline can be configured directly or per operation.
 
-    Keyword arguments:
-    :param redirects_allow: Whether the client allows redirects. Defaults to True.
-    :param redirect_max: The maximum allowed redirects. Defaults to 30.
+    **Keyword arguments:**
+
+    *permit_redirects (bool)* - Whether the client allows redirects. Defaults to True.
+
+    *redirect_max (int)* - The maximum allowed redirects. Defaults to 30.
 
     Example:
-        .. literalinclude:: ../../../../examples/examples_sync.py
+        .. literalinclude:: ../examples/examples_sync.py
             :start-after: [START redirect_policy]
             :end-before: [END redirect_policy]
             :language: python
@@ -65,7 +67,7 @@ class RedirectPolicy(HTTPPolicy):
     REDIRECT_HEADERS_BLACKLIST = frozenset(['Authorization'])
 
     def __init__(self, **kwargs):
-        self.allow = kwargs.get('redirects_allow', True)
+        self.allow = kwargs.get('permit_redirects', True)
         self.max_redirects = kwargs.get('redirect_max', 30)
 
         remove_headers = set(kwargs.get('redirect_remove_headers', []))
@@ -78,7 +80,7 @@ class RedirectPolicy(HTTPPolicy):
     def no_redirects(cls):
         """Disable redirects.
         """
-        return cls(redirects_allow=False)
+        return cls(permit_redirects=False)
 
     def configure_redirects(self, options):
         """Configures the redirect settings.
@@ -88,7 +90,7 @@ class RedirectPolicy(HTTPPolicy):
         :rtype: dict
         """
         return {
-            'allow': options.pop("redirects_allow", self.max_redirects),
+            'allow': options.pop("permit_redirects", self.allow),
             'redirects': options.pop("redirect_max", self.max_redirects),
             'history': []
         }
@@ -142,8 +144,8 @@ class RedirectPolicy(HTTPPolicy):
         return settings['redirects'] > 0 or not settings['allow']
 
     def send(self, request):
-        """Sends the PipelineRequest object to the next policy. Uses redirect settings
-         to send request to redirect endpoint if necessary.
+        """Sends the PipelineRequest object to the next policy.
+        Uses redirect settings to send request to redirect endpoint if necessary.
 
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest

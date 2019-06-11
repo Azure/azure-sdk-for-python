@@ -12,6 +12,8 @@ from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 import azure.cosmos.synchronized_request as synchronized_request
 import azure.cosmos.retry_utility as retry_utility
 
+pytestmark = pytest.mark.cosmosEmulator
+
 @pytest.mark.usefixtures("teardown")
 class SessionTests(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
@@ -19,8 +21,20 @@ class SessionTests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, connectionPolicy)
-    created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(client)
+
+    @classmethod
+    def setUpClass(cls):
+        # creates the database, collection, and insert all the documents
+        # we will gain some speed up in running the tests by creating the
+        # database, collection and inserting all the docs only once
+
+        if (cls.masterKey == '[YOUR_KEY_HERE]' or cls.host == '[YOUR_ENDPOINT_HERE]'):
+            raise Exception("You must specify your Azure Cosmos account values for "
+                "'masterKey' and 'host' at the top of this class to run the "
+                "tests.")
+
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        cls.created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(cls.client)
 
     def _MockRequest(self, global_endpoint_manager, request, connection_policy, requests_session, path, request_options, request_body):
         if HttpHeaders.SessionToken in request_options['headers']:
