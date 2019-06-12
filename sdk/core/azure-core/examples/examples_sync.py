@@ -69,11 +69,27 @@ def test_example_redirect_policy():
     # It can also be overridden per operation.
     client = PipelineClient(base_url=url, config=config)
     request = client.get(url)
-    pipeline_response = client._pipeline.run(request, redirect_max=5)
+    pipeline_response = client._pipeline.run(request, permit_redirects=True, redirect_max=5)
     # [END redirect_policy]
 
     response = pipeline_response.http_response
     assert response.status_code == 200
+
+
+def test_example_no_redirects():
+    url = "https://bing.com"
+
+    config = Configuration()
+    config.redirect_policy = RedirectPolicy.no_redirects()
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(request)
+
+    response = pipeline_response.http_response
+    # bing returns 301 if not redirected
+    assert response.status_code == 301
+
 
 def test_example_retry_policy():
 
@@ -135,3 +151,17 @@ def test_example_retry_policy():
 
     response = pipeline_response.http_response
     assert response.status_code == 200
+
+def test_example_no_retries():
+    url = "https://bing.com"
+
+    config = Configuration()
+    config.retry_policy = RetryPolicy.no_retries()
+
+    client = PipelineClient(base_url=url, config=config)
+    request = client.get(url)
+    pipeline_response = client._pipeline.run(request)
+
+    response = pipeline_response.http_response
+    # bing returns 301 if not retried
+    assert response.status_code == 301

@@ -38,6 +38,7 @@ try:
     from .region_for_online_offline_py3 import RegionForOnlineOffline
     from .resource_py3 import Resource
     from .extended_resource_properties_py3 import ExtendedResourceProperties
+    from .throughput_py3 import Throughput
     from .database_account_create_update_parameters_py3 import DatabaseAccountCreateUpdateParameters
     from .database_account_patch_parameters_py3 import DatabaseAccountPatchParameters
     from .database_account_list_read_only_keys_result_py3 import DatabaseAccountListReadOnlyKeysResult
@@ -45,6 +46,8 @@ try:
     from .database_account_connection_string_py3 import DatabaseAccountConnectionString
     from .database_account_list_connection_strings_result_py3 import DatabaseAccountListConnectionStringsResult
     from .database_account_regenerate_key_parameters_py3 import DatabaseAccountRegenerateKeyParameters
+    from .throughput_resource_py3 import ThroughputResource
+    from .throughput_update_parameters_py3 import ThroughputUpdateParameters
     from .sql_database_resource_py3 import SqlDatabaseResource
     from .sql_database_create_update_parameters_py3 import SqlDatabaseCreateUpdateParameters
     from .sql_container_resource_py3 import SqlContainerResource
@@ -111,6 +114,7 @@ except (SyntaxError, ImportError):
     from .region_for_online_offline import RegionForOnlineOffline
     from .resource import Resource
     from .extended_resource_properties import ExtendedResourceProperties
+    from .throughput import Throughput
     from .database_account_create_update_parameters import DatabaseAccountCreateUpdateParameters
     from .database_account_patch_parameters import DatabaseAccountPatchParameters
     from .database_account_list_read_only_keys_result import DatabaseAccountListReadOnlyKeysResult
@@ -118,6 +122,8 @@ except (SyntaxError, ImportError):
     from .database_account_connection_string import DatabaseAccountConnectionString
     from .database_account_list_connection_strings_result import DatabaseAccountListConnectionStringsResult
     from .database_account_regenerate_key_parameters import DatabaseAccountRegenerateKeyParameters
+    from .throughput_resource import ThroughputResource
+    from .throughput_update_parameters import ThroughputUpdateParameters
     from .sql_database_resource import SqlDatabaseResource
     from .sql_database_create_update_parameters import SqlDatabaseCreateUpdateParameters
     from .sql_container_resource import SqlContainerResource
@@ -215,6 +221,7 @@ __all__ = [
     'RegionForOnlineOffline',
     'Resource',
     'ExtendedResourceProperties',
+    'Throughput',
     'DatabaseAccountCreateUpdateParameters',
     'DatabaseAccountPatchParameters',
     'DatabaseAccountListReadOnlyKeysResult',
@@ -222,6 +229,8 @@ __all__ = [
     'DatabaseAccountConnectionString',
     'DatabaseAccountListConnectionStringsResult',
     'DatabaseAccountRegenerateKeyParameters',
+    'ThroughputResource',
+    'ThroughputUpdateParameters',
     'SqlDatabaseResource',
     'SqlDatabaseCreateUpdateParameters',
     'SqlContainerResource',
