@@ -64,3 +64,16 @@ class UsagePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(UsagePaged, self).__init__(*args, **kwargs)
+class ListContainerItemPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ListContainerItem <azure.mgmt.storage.v2019_04_01.models.ListContainerItem>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ListContainerItem]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ListContainerItemPaged, self).__init__(*args, **kwargs)
