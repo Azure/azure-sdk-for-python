@@ -3,6 +3,20 @@
 Release History
 ===============
 
+**Features**
+
+- Model StorageAccount has a new parameter azure_files_identity_based_authentication
+- Model StorageAccountCreateParameters has a new parameter azure_files_identity_based_authentication
+- Model StorageAccountUpdateParameters has a new parameter azure_files_identity_based_authentication
+- Model ListContainerItems has a new parameter next_link
+
+**Breaking changes**
+
+- Operation BlobContainersOperations.list has a new signature
+- Model StorageAccount no longer has parameter enable_azure_files_aad_integration
+- Model StorageAccountCreateParameters no longer has parameter enable_azure_files_aad_integration
+- Model StorageAccountUpdateParameters no longer has parameter enable_azure_files_aad_integration
+
 4.0.0 (2019-06-12)
 ++++++++++++++++++
 
