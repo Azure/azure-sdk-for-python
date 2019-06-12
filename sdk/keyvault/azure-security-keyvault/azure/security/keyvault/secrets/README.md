@@ -31,14 +31,24 @@ Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to creat
     ```Bash
     az ad sp create-for-rbac -n <your-application-name> --skip-assignment
     ```
-* Use the above returned credentials information to populate **AZURE_CLIENT_ID**(appId), **AZURE_CLIENT_SECRET**(password) and **AZURE_TENANT_ID**(tenant) environment variables.
+    Output:
+    ```json
+    {
+        "appId": "fa7c8686-c4f5-4639-ab88-497ee122bad3",
+        "displayName": "myspn",
+        "name": "http://myspn",
+        "password": "30e5c628-a322-3497-8429-52f2f98788c7",
+        "tenant": "72f988bf-86f1-41fg-91ab-2d7cd011db47"
+    }
+    ```
+* Use the above returned credentials information to set **AZURE_CLIENT_ID**(appId), **AZURE_CLIENT_SECRET**(password) and **AZURE_TENANT_ID**(tenant) environment variables.
 
 * Grant the above mentioned application authorization to perform secret operations on the keyvault:
     ```Bash
-    az keyvault set-policy --name <your-key-vault-name> --spn <your-service-principal-id> --secret-permissions <secret-permissions>
+    az keyvault set-policy --name <your-key-vault-name> --spn $AZURE_CLIENT_ID --secret-permissions {backup, delete, get, list, set}
     ```
     > --secret-permissions:
-    > Space-separated list of secret permissions to assign. Accepted values: backup, delete, get, list, purge, recover, restore, set
+    > Accepted values: backup, delete, get, list, purge, recover, restore, set
 
 #### Create Secret client
 Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables, you can create the [SecretClient](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets/_client.py):
@@ -104,8 +114,8 @@ The following section provides several code snippets using the above created `se
 
     updated_secret = secret_client.update_secret("secret-name", content_type=content_type, tags=tags)
 
-    print(secret.id)
-    print(secret.value)
+    print(updated_secret.id)
+    print(updated_secret.value)
     print(updated_secret.version)
     print(updated_secret.updated)
     print(updated_secret.content_type)
@@ -202,11 +212,13 @@ Several KeyVault Python SDK samples are available to you in the SDK's GitHub rep
   * Get an existing secret
   * Update an existing secret
   * Delete secret
-* [backup_restore_secrets.py](TODO) and [backup_restore_secrets_async.py](TODO) - Example code for working with Key Vault secrets backup and recovery, including:
-  * Create a secret
-  * Back up an existing secret
-  * Delete secret
-  * Recover secret using the backup bytes of secret
+* [list_secrets.py](TODO) and [list_secrets_async.py](TODO) - Example code for working with Key Vault secrets backup and recovery, including:
+  * Create secrets
+  * List all secrets in the Key Vault
+  * Update secrets in the Key Vault
+  * List versions of a specified secret
+  * Delete secrets from the Key Vault
+  * List deleted secrets in the Key Vault
 
  ###  Additional Documentation
 For more extensive documentation on Azure Key Vault, see the [API reference documentation](TODO).
