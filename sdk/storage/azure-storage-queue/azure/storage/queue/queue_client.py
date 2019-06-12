@@ -9,7 +9,25 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+from ._utils import (
+    create_client,
+    create_configuration,
+    create_pipeline,
+    parse_query,
+    is_credential_sastoken,
+    parse_connection_str,
+    process_storage_error,
+    basic_error_map
+)
+from .models import SignedIdentifier, StorageErrorException
+from .queue_iterator import QueueIterator
+
 from azure.core import Configuration
+try:
+    from urllib.parse import urlparse, quote, unquote, parse_qs
+except ImportError:
+    from urlparse import urlparse, parse_qs
+    from urllib2 import quote, unquote
 
 if TYPE_CHECKING:
     from azure.core.pipeline.policies import HTTPPolicy
@@ -34,6 +52,32 @@ class QueueClient(object):
         :param configuration: A optional pipeline configuration.
          This can be retrieved with :func:`QueueClient.create_configuration()`
         """
+        parsed_url = urlparse(queue_url.rstrip('/'))
+        if not parsed_url.path:
+            raise ValueError("Please specify a queue_url.")
+        _, sas_token = parse_query(parsed_url.query)
+
+        self.queue_name = queue_name
+        self.scheme = parsed_url.scheme
+        self.account = parsed_url.hostname.split(".queue.core.")[0]
+        self.credentials = credentials
+        self.url = "{}://{}/{}?".format(
+            self.scheme,
+            parsed_url.hostname,
+            self.queue_name.replace(' ', '%20').replace('?', '%3F'))
+        if sas_token and not self.credentials:
+            self.url += sas_token
+        elif is_credential_sastoken(credentials):
+            self.url += self.credentials
+            credentials = None
+        self.url = self.url.rstrip('?&')
+
+        self.require_encryption = kwargs.get('require_encryption', False)
+        self.key_encryption_key = kwargs.get('key_encryption_key')
+        self.key_resolver_function = kwargs.get('key_resolver_function')
+
+        self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
+        self._client = create_client(self.url, self._pipeline)
 
     @classmethod
     def from_connection_string(
@@ -46,8 +90,12 @@ class QueueClient(object):
         """
         Create QueueClient from a Connection String.
         """
+        account_url, creds = parse_connection_str(conn_str)
+        return cls(
+            account_url, queue_name=queue_name,
+            credentials=creds, configuration=configuration, **kwargs)
 
-    def create_queue(self, metadata=None, timeout=None):
+    def create_queue(self, metadata=None, timeout=None, **kwargs):
         # type: (Optional[Dict[str, Any]], Optional[int]) -> bool
         """
         Creates a queue under the given account.
@@ -58,13 +106,24 @@ class QueueClient(object):
         :type metadata: dict(str, str)
         :param int timeout:
             The server timeout, expressed in seconds.
-        :return:
-            A boolean indicating whether the queue was created. If fail_on_exist 
-            was set to True, this will throw instead of returning false.
-        :rtype: bool
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises:
+         :class:`StorageErrorException<queue.models.StorageErrorException>`
         """
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError('The require_encryption flag is set, but encryption is not supported for this method.')
+        try:
+            return self._client.queue.create(
+                metadata=metadata,
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs
+            )
+        except StorageErrorException as error:
+            process_storage_error(error)
     
-    def delete_queue(self, timeout=None):
+    def delete_queue(self, timeout=None, **kwargs):
         # type: (Optional[int]) -> bool
         """
         Deletes the specified queue and any messages it contains.
@@ -81,8 +140,16 @@ class QueueClient(object):
             was set to True, this will throw instead of returning false.
         :rtype: bool
         """
+        try:
+            self._client.queue.delete(
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs
+            )
+        except StorageErrorException as error:
+            process_storage_error(error)
 
-    def get_queue_metadata(self, timeout=None):
+    def get_queue_metadata(self, timeout=None, **kwargs):
         # type: (Optional[int]) -> Dict[str, str]
         """
         Retrieves user-defined metadata and queue properties on the specified
@@ -95,8 +162,18 @@ class QueueClient(object):
             number of messages in the queue.
         :rtype: dict(str, str)
         """
+        try:
+            queue_props = self._client.queue.get_properties(
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs
+            )
+        except StorageErrorException as error:
+            process_storage_error(error)
+        queue_props.name = self.queue_name
+        return queue_props
 
-    def set_queue_metadata(self, metadata=None, timeout=None):
+    def set_queue_metadata(self, metadata=None, timeout=None, **kwargs):
         # type: (Optional[Dict[str, Any]], Optional[int]) -> None
         """
         Sets user-defined metadata on the specified queue. Metadata is
@@ -107,8 +184,16 @@ class QueueClient(object):
         :param int timeout:
             The server timeout, expressed in seconds.
         """
+        try:
+            self._client.queue.set_metadata(
+                metadata=metadata,
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
-    def get_queue_acl(self, timeout=None):
+    def get_queue_acl(self, timeout=None, **kwargs):
         # type: (Optional[int]) -> Dict[str, Any]
         """
         Returns details about any stored access policies specified on the
@@ -118,9 +203,17 @@ class QueueClient(object):
         :return: A dictionary of access policies associated with the queue.
         :rtype: dict(str, :class:`~azure.storage.common.models.AccessPolicy`)
         """
+        try:
+            queue_acl = self._client.queue.get_access_policy(
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+        return queue_acl
 
-    def set_queue_acl(self, signed_identifiers=None, timeout=None):
-        # type: (Optional[Dict[Any, Any]], Optional[int]) -> None
+    def set_queue_acl(self, signed_identifiers=None, timeout=None, **kwargs):
+        # type: (Optional[List[SignedIdentifier]], Optional[int]) -> None
         """
         Sets stored access policies for the queue that may be used with Shared 
         Access Signatures. 
@@ -135,13 +228,23 @@ class QueueClient(object):
         that is associated with the stored access policy will throw an 
         :class:`AzureHttpError` until the access policy becomes active.
         :param signed_identifiers:
-            A dictionary of access policies to associate with the queue. The 
-            dictionary may contain up to 5 elements. An empty dictionary 
+            A list of SignedIdentifier access policies to associate with the queue. The 
+            list may contain up to 5 elements. An empty list 
             will clear the access policies set on the service. 
-        :type signed_identifiers: dict(str, :class:`~azure.storage.common.models.AccessPolicy`)
+        :type signed_identifiers: dict(str, :class:`queue.models.SignedIdentifier`)
         :param int timeout:
             The server timeout, expressed in seconds.
         """
+        if signed_identifiers and len(signed_identifiers) > 5:
+            raise ValueError("Too many access policies")
+        try:
+            self._client.queue.set_access_policy(
+                queue_acl=signed_identifiers,
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     def enqueue_message(self, content, visibility_timeout=None, time_to_live=None, timeout=None):
         # type: (Any, Optional[int], Optional[int], Optional[int]) -> QueueMessage
@@ -199,10 +302,18 @@ class QueueClient(object):
             returned from the service.
         :rtype: :class:`~azure.storage.queue.models.QueueMessage`
         """
+        try:
+            return QueueIterator(
+                visibility_timeout=visibility_timeout,
+                timeout=timeout,
+                error_map=basic_error_map()
+            )
+        except StorageErrorException as error:
+            process_storage_error(error)
 
-    def update_message(self, message, visibility_timeout, pop_receipt=None,
-                       content=None, timeout=None):
-        # type: (Any, int, Optional[str], Optional[Any], Optional[int]) -> List[QueueMessage]
+    def update_message(self, message, visibility_timeout=None, pop_receipt=None,
+                       content=None, timeout=None, **kwargs):
+        # type: (Any, int, Optional[str], Optional[Any], Optional[int], Any) -> List[QueueMessage]
         """
         Updates the visibility timeout of a message. You can also use this
         operation to update the contents of a message.
@@ -238,8 +349,22 @@ class QueueClient(object):
             this object is also populated with the content, although it is not returned by the service.
         :rtype: list(:class:`~azure.storage.queue.models.QueueMessage`)
         """
+        pop_receipt = pop_receipt or message.pop_receipt
+        if pop_receipt is None:
+            raise ValueError("pop_receipt must be present")
+        try:
+            self._client.message_id.update(
+                queue_message=message,
+                visibilitytimeout=visibility_timeout,
+                timeout=timeout,
+                pop_receipt=pop_receipt,
+                error_map=basic_error_map(),
+                **kwargs
+            )
+        except StorageErrorException as error:
+            process_storage_error(error)
 
-    def peek_messages(self, max_messages=None, timeout=None):
+    def peek_messages(self, max_messages=None, timeout=None, **kwargs):
         # type: (Optional[int], Optional[int]) -> List[QueueMessage]
         """
         Retrieves one or more messages from the front of the queue, but does
@@ -265,17 +390,35 @@ class QueueClient(object):
             not pop the message and can only retrieve already visible messages.
         :rtype: list(:class:`~azure.storage.queue.models.QueueMessage`)
         """
+        if max_messages and not 1 <= max_messages <= 32:
+            raise ValueError("Number of messages to peek should be between 1 and 32")
+        try:
+            return self._client.messages.peek(
+                number_of_messages=max_messages,
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
-    def clear_messages(self, timeout=None):
+    def clear_messages(self, timeout=None, **kwargs):
         # type: (Optional[int]) -> None
         """
         Deletes all messages from the specified queue.
         :param int timeout:
             The server timeout, expressed in seconds.
         """
+        try:
+            self._client.messages.clear(
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs
+            )
+        except StorageErrorException as error:
+            process_storage_error(error)
 
-    def delete_message(self, message, pop_receipt=None, timeout=None):
-        # type: (Any, int, Optional[str], Optional[int]) -> None
+    def delete_message(self, message=None, pop_receipt=None, timeout=None, **kwargs):
+        # type: (Any, Optional[str], Optional[str], Optional[int]) -> None
         """
         Deletes the specified message.
         Normally after a client retrieves a message with the get_messages operation, 
@@ -288,10 +431,24 @@ class QueueClient(object):
         pop_receipt returned from the :func:`~get_messages` or :func:`~update_message` 
         operation.
         :param str message:
-            The message object or message id identifying the message to delete.
+            The message object identifying the message to delete.
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~get_messages` or :func:`~update_message`.
         :param int timeout:
             The server timeout, expressed in seconds.
         """
+        if not message and not pop_receipt:
+            raise ValueError("Either a message object or a pop receipt must be given")
+        pop_receipt = pop_receipt or message.pop_receipt
+        if not pop_receipt:
+            raise ValueError("pop_receipt is required.")
+        try:
+            self._client.message_id.delete(
+                pop_receipt=pop_receipt,
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs
+            )
+        except StorageErrorException as error:
+            process_storage_error(error)

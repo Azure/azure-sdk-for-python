@@ -31,7 +31,7 @@ class MessageIdOperations(object):
 
         self._config = config
 
-    def update(self, queue_message, pop_receipt, visibilitytimeout, timeout=None, request_id=None, cls=None, **kwargs):
+    def update(self, queue_message, pop_receipt, visibilitytimeout=None, timeout=None, request_id=None, cls=None, **kwargs):
         """The Update operation was introduced with version 2011-08-18 of the
         Queue service API. The Update Message operation updates the visibility
         timeout of a message. You can also use this operation to update the
