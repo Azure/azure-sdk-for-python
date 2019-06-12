@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .skus_operations import SkusOperations
-from .storage_accounts_operations import StorageAccountsOperations
-from .usage_operations import UsageOperations
+from ._operations import Operations
+from ._skus_operations import SkusOperations
+from ._storage_accounts_operations import StorageAccountsOperations
+from ._usage_operations import UsageOperations
 
 __all__ = [
     'Operations',
