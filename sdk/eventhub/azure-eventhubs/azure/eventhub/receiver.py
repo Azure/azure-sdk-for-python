@@ -157,6 +157,7 @@ class EventReceiver(object):
     def _redirect(self, redirect):
         self.redirected = redirect
         self.running = False
+        self.messages_iter = None
         self._open()
 
     def _open(self):
@@ -306,6 +307,9 @@ class EventReceiver(object):
                 :caption: Close down the handler.
 
         """
+        if self.messages_iter:
+            self.messages_iter.close()
+            self.messages_iter = None
         self.running = False
         if self.error:
             return
