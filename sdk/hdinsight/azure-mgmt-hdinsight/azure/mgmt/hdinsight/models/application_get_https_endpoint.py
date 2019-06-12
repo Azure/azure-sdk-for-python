@@ -23,8 +23,7 @@ class ApplicationGetHttpsEndpoint(Model):
     :type destination_port: int
     :param public_port: The public port to connect to.
     :type public_port: int
-    :param sub_domain_suffix: The subDomainSuffix of the application. It
-     cannot be greater than 3 characters.
+    :param sub_domain_suffix: The subDomainSuffix of the application.
     :type sub_domain_suffix: str
     :param disable_gateway_auth: The value indicates whether to disable
      GatewayAuth.
