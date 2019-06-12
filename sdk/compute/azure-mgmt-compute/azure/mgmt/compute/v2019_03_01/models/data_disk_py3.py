@@ -55,7 +55,7 @@ class DataDisk(Model):
     :param managed_disk: The managed disk parameters.
     :type managed_disk:
      ~azure.mgmt.compute.v2019_03_01.models.ManagedDiskParameters
-    :param to_be_detached: Specifies whether the datadisk is in process of
+    :param to_be_detached: Specifies whether the data disk is in process of
      detachment from the VirtualMachine/VirtualMachineScaleset
     :type to_be_detached: bool
     """

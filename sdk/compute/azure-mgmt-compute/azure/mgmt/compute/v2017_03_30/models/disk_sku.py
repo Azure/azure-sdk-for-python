@@ -31,7 +31,7 @@ class DiskSku(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'StorageAccountTypes'},
+        'name': {'key': 'name', 'type': 'str'},
         'tier': {'key': 'tier', 'type': 'str'},
     }
 

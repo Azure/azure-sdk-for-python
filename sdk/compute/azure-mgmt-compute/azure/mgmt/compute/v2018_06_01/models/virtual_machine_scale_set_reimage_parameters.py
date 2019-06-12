@@ -16,7 +16,8 @@ class VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimagePar
     """Describes a Virtual Machine Scale Set VM Reimage Parameters.
 
     :param temp_disk: Specifies whether to reimage temp disk. Default value:
-     false.
+     false. Note: This temp disk reimage parameter is only supported for
+     VM/VMSS with Ephemeral OS disk.
     :type temp_disk: bool
     :param instance_ids: The virtual machine scale set instance ids. Omitting
      the virtual machine scale set instance ids will result in the operation

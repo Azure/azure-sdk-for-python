@@ -13,10 +13,12 @@ from msrest.serialization import Model
 
 
 class VirtualMachineReimageParameters(Model):
-    """Parameters for Reimaging Virtual Machine. Default value for OSDisk : true.
+    """Parameters for Reimaging Virtual Machine. NOTE: Virtual Machine OS disk
+    will always be reimaged.
 
     :param temp_disk: Specifies whether to reimage temp disk. Default value:
-     false.
+     false. Note: This temp disk reimage parameter is only supported for
+     VM/VMSS with Ephemeral OS disk.
     :type temp_disk: bool
     """
 

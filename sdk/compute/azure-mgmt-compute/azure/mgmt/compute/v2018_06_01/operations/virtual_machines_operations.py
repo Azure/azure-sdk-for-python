@@ -1429,7 +1429,8 @@ class VirtualMachinesOperations(object):
         :param vm_name: The name of the virtual machine.
         :type vm_name: str
         :param temp_disk: Specifies whether to reimage temp disk. Default
-         value: false.
+         value: false. Note: This temp disk reimage parameter is only supported
+         for VM/VMSS with Ephemeral OS disk.
         :type temp_disk: bool
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
