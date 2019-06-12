@@ -35,7 +35,7 @@ Last but not least, HTTP connection pooling is now enabled by default. You shoul
 
 **Breaking changes**
 
-- Model RegistryUpdateParameters no longer has parameter containerregistry_account
+- Model RegistryUpdateParameters no longer has parameter storage_account
 - Removed operation RegistriesOperations.update_policies
 - Removed operation RegistriesOperations.list_policies
 
@@ -78,14 +78,14 @@ Last but not least, HTTP connection pooling is now enabled by default. You shoul
 
 **Bugfixes**
 
-- Rename incorrect "id" to "virtual_containerregistry_resource_id"
+- Rename incorrect "id" to "virtual_network_resource_id"
 
 2.5.0 (2018-12-10)
 ++++++++++++++++++
 
 **Features**
 
-- Add containerregistry rule set to registry properties
+- Add network rule set to registry properties
 
 2.4.0 (2018-11-05)
 ++++++++++++++++++
