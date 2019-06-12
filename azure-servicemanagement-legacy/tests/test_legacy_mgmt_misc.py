@@ -41,8 +41,13 @@ from azure.servicemanagement import (
     parse_response_for_async_op,
     get_certificate_from_publish_settings,
 )
+
+from azure.core import HttpResponseError
 from azure.storage.blob import BlobServiceClient
-from azure.storage.blob.common import PublicAccess
+from azure.storage.blob.common import (
+    BlobType,
+    PublicAccess
+)
 from testutils.common_recordingtestcase import (
     TestMode,
     record,
@@ -285,17 +290,33 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
     def _create_container_and_block_blob(self, container_name, blob_name,
                                          blob_data):
         new_container = self.bsc.get_container_client(container_name)
-        new_container.create_container(public_access='container')
-        block_blob = new_container.get_blob_client(blob_name)
-        block_blob.upload(blob_data)
 
+        try:
+            new_container.create_container(public_access='container')
+        except Exception as error:
+            if 'The specified container already exists.' in str(error):
+                pass
+            else:
+                raise
+    
+        blob_client = self.bsc.get_blob_client(container_name, blob_name)
+        blob_client.upload_blob(blob_data)
+
+#TODO
     def _create_container_and_page_blob(self, container_name, blob_name,
                                         content_length):
         new_container = self.bsc.get_container_client(container_name)
-        new_container.create_container(public_access='container')
-        page_blob = new_container.get_blob_client(blob_name, blob_type='pageblob')
-        page_blob.upload(b'')
-        return page_blob
+        try:
+            new_container.create_container(public_access='container')
+        except Exception as error:
+            if 'The specified container already exists.' in str(error):
+                pass
+            else:
+                raise
+
+        page_blob_client = self.bsc.get_blob_client(container_name, blob_name, blob_type=BlobType.PageBlob)
+        page_blob_client.upload_blob(b'')
+        return page_blob_client
 
     def _upload_file_to_block_blob(self, file_path, blob_name):
         data = open(file_path, 'rb').read()
@@ -312,7 +333,7 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
                 data = f.read(chunk_size)
                 if data:
                     length = len(data)
-                    blob_client.update_page(data, index, index + length - 1)
+                    blob_client.upload_page(data, index, index + length - 1)
                     index += length
                 else:
                     break
@@ -320,6 +341,12 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
     def _upload_file_to_page_blob(self, file_path, blob_name):
         url = self._make_blob_url(self.settings.STORAGE_ACCOUNT_NAME,
                                   self.container_name, blob_name)
+
+        # return self.bs.get_blob_client(
+        # self.container_name,
+        # self.get_resource_name(TEST_BLOB_PREFIX),
+        # blob_type=BlobType.PageBlob)
+
         content_length = os.path.getsize(file_path)
         page_blob = self._create_container_and_page_blob(
             self.container_name, blob_name, content_length)
@@ -570,10 +597,10 @@ class LegacyMgmtMiscTest(LegacyMgmtTestCase):
         blob_name = 'imagecopy.vhd'
         container = self.bsc.get_container_client(self.container_name)
         container.create_container(public_access=PublicAccess.Blob)
-        blob = container.get_blob_client(blob_name)
-        resp = blob.copy_from_source(self.settings.LINUX_OS_VHD)
-        copied_blob = container.get_blob_client(resp)
-        return copied_blob.make_url()
+        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+        resp = blob_client.copy_blob_from_url(self.settings.LINUX_OS_VHD)
+
+        return blob_client.make_url()
 
     #--Test cases for http passthroughs --------------------------------------
     @record
