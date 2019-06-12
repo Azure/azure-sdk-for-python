@@ -510,4 +510,4 @@ class AgentPoolsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_available_agent_pool_versions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/availableAgentpoolVersions'}
+    get_available_agent_pool_versions.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/availableAgentPoolVersions'}
