@@ -10,34 +10,34 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .storage_account_check_name_availability_parameters_py3 import StorageAccountCheckNameAvailabilityParameters
-    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
-    from .storage_account_create_parameters_py3 import StorageAccountCreateParameters
-    from .endpoints_py3 import Endpoints
-    from .custom_domain_py3 import CustomDomain
-    from .storage_account_py3 import StorageAccount
-    from .storage_account_keys_py3 import StorageAccountKeys
-    from .storage_account_update_parameters_py3 import StorageAccountUpdateParameters
-    from .storage_account_regenerate_key_parameters_py3 import StorageAccountRegenerateKeyParameters
-    from .usage_name_py3 import UsageName
-    from .usage_py3 import Usage
-    from .resource_py3 import Resource
+    from ._models_py3 import CheckNameAvailabilityResult
+    from ._models_py3 import CustomDomain
+    from ._models_py3 import Endpoints
+    from ._models_py3 import Resource
+    from ._models_py3 import StorageAccount
+    from ._models_py3 import StorageAccountCheckNameAvailabilityParameters
+    from ._models_py3 import StorageAccountCreateParameters
+    from ._models_py3 import StorageAccountKeys
+    from ._models_py3 import StorageAccountRegenerateKeyParameters
+    from ._models_py3 import StorageAccountUpdateParameters
+    from ._models_py3 import Usage
+    from ._models_py3 import UsageName
 except (SyntaxError, ImportError):
-    from .storage_account_check_name_availability_parameters import StorageAccountCheckNameAvailabilityParameters
-    from .check_name_availability_result import CheckNameAvailabilityResult
-    from .storage_account_create_parameters import StorageAccountCreateParameters
-    from .endpoints import Endpoints
-    from .custom_domain import CustomDomain
-    from .storage_account import StorageAccount
-    from .storage_account_keys import StorageAccountKeys
-    from .storage_account_update_parameters import StorageAccountUpdateParameters
-    from .storage_account_regenerate_key_parameters import StorageAccountRegenerateKeyParameters
-    from .usage_name import UsageName
-    from .usage import Usage
-    from .resource import Resource
-from .storage_account_paged import StorageAccountPaged
-from .usage_paged import UsagePaged
-from .storage_management_client_enums import (
+    from ._models import CheckNameAvailabilityResult
+    from ._models import CustomDomain
+    from ._models import Endpoints
+    from ._models import Resource
+    from ._models import StorageAccount
+    from ._models import StorageAccountCheckNameAvailabilityParameters
+    from ._models import StorageAccountCreateParameters
+    from ._models import StorageAccountKeys
+    from ._models import StorageAccountRegenerateKeyParameters
+    from ._models import StorageAccountUpdateParameters
+    from ._models import Usage
+    from ._models import UsageName
+from ._paged_models import StorageAccountPaged
+from ._paged_models import UsagePaged
+from ._storage_management_client_enums import (
     Reason,
     AccountType,
     ProvisioningState,
@@ -46,18 +46,18 @@ from .storage_management_client_enums import (
 )
 
 __all__ = [
-    'StorageAccountCheckNameAvailabilityParameters',
     'CheckNameAvailabilityResult',
-    'StorageAccountCreateParameters',
-    'Endpoints',
     'CustomDomain',
-    'StorageAccount',
-    'StorageAccountKeys',
-    'StorageAccountUpdateParameters',
-    'StorageAccountRegenerateKeyParameters',
-    'UsageName',
-    'Usage',
+    'Endpoints',
     'Resource',
+    'StorageAccount',
+    'StorageAccountCheckNameAvailabilityParameters',
+    'StorageAccountCreateParameters',
+    'StorageAccountKeys',
+    'StorageAccountRegenerateKeyParameters',
+    'StorageAccountUpdateParameters',
+    'Usage',
+    'UsageName',
     'StorageAccountPaged',
     'UsagePaged',
     'Reason',
