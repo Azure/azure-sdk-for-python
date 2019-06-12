@@ -39,7 +39,6 @@ try:
     from ._models_py3 import LegalHoldProperties
     from ._models_py3 import ListAccountSasResponse
     from ._models_py3 import ListContainerItem
-    from ._models_py3 import ListContainerItems
     from ._models_py3 import ListServiceSasResponse
     from ._models_py3 import ManagementPolicy
     from ._models_py3 import ManagementPolicyAction
@@ -103,7 +102,6 @@ except (SyntaxError, ImportError):
     from ._models import LegalHoldProperties
     from ._models import ListAccountSasResponse
     from ._models import ListContainerItem
-    from ._models import ListContainerItems
     from ._models import ListServiceSasResponse
     from ._models import ManagementPolicy
     from ._models import ManagementPolicyAction
@@ -137,6 +135,7 @@ except (SyntaxError, ImportError):
     from ._models import Usage
     from ._models import UsageName
     from ._models import VirtualNetworkRule
+from ._paged_models import ListContainerItemPaged
 from ._paged_models import OperationPaged
 from ._paged_models import SkuPaged
 from ._paged_models import StorageAccountPaged
@@ -203,7 +202,6 @@ __all__ = [
     'LegalHoldProperties',
     'ListAccountSasResponse',
     'ListContainerItem',
-    'ListContainerItems',
     'ListServiceSasResponse',
     'ManagementPolicy',
     'ManagementPolicyAction',
@@ -241,6 +239,7 @@ __all__ = [
     'SkuPaged',
     'StorageAccountPaged',
     'UsagePaged',
+    'ListContainerItemPaged',
     'ReasonCode',
     'SkuName',
     'SkuTier',
