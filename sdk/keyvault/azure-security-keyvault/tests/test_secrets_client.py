@@ -274,3 +274,10 @@ class SecretClientTests(KeyVaultTestCase):
         # purge secrets
         for secret_name in secrets.keys():
             client.purge_deleted_secret(secret_name)
+        for secret_name in secrets.keys():
+            self._poll_until_exception(
+                functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError
+            )
+
+        deleted = [s.name for s in client.list_deleted_secrets()]
+        self.assertTrue(not any(s in deleted for s in secrets.keys()))
