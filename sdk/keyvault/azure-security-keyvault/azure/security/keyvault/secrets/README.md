@@ -42,6 +42,11 @@ Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to creat
     }
     ```
 * Use the above returned credentials information to set **AZURE_CLIENT_ID**(appId), **AZURE_CLIENT_SECRET**(password) and **AZURE_TENANT_ID**(tenant) environment variables.
+  ```Bash
+    export AZURE_CLIENT_ID="fa7c8686-c4f5-4639-ab88-497ee122bad3"
+    export AZURE_CLIENT_SECRET="30e5c628-a322-3497-8429-52f2f98788c7"
+    export AZURE_TENANT_ID="72f988bf-86f1-41fg-91ab-2d7cd011db47"
+  ```
 
 * Grant the above mentioned application authorization to perform secret operations on the keyvault:
     ```Bash
