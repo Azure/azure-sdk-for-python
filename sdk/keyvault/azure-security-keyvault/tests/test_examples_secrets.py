@@ -52,13 +52,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         # [END set_secret]
         # [START get_secret]
-        secret_version = secret.version
 
         # get the latest version of a secret
         secret = secret_client.get_secret("secret-name")
 
         # alternatively, specify a version
-        secret = secret_client.get_secret("secret-name", secret_version)
+        secret = secret_client.get_secret("secret-name", secret.version)
 
         print(secret.id)
         print(secret.name)
