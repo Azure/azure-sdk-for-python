@@ -235,9 +235,14 @@ def build_operation_mixin_meta(versioned_modules):
     """Introspect the client:
 
     version_dict => {
-        'check_dns_name_availability': [
-            'v2018_05_01'
-        ]
+        'check_dns_name_availability': {
+            'doc': 'docstring',
+            'signature': '(self, p1, p2, **operation_config),
+            'call': 'p1, p2',
+            'available_apis': [
+                'v2018_05_01'
+            ]
+        }
     }
     """
     mixin_operations = {}
@@ -292,7 +297,9 @@ def find_client_file(package_name, module_name):
 def main(input_str):
     package_name, module_name = parse_input(input_str)
     versioned_modules = get_versioned_modules(package_name, module_name)
-    version_dict, mod_to_api_version = build_operation_meta(versioned_modules)
+    versioned_operations_dict, mod_to_api_version = build_operation_meta(
+        versioned_modules
+    )
 
     client_folder = find_module_folder(package_name, module_name)
     last_api_version = sorted(mod_to_api_version.keys())[-1]
@@ -319,28 +326,52 @@ def main(input_str):
     # If we get a StopIteration here, means the API version folder is broken
     client_file_name = next(last_api_path.glob("*_client.py")).name
 
-    env = Environment(
-        loader=FileSystemLoader(str(Path(__file__).parents[0] / "templates")),
-        keep_trailing_newline=True,
-    )
-
-    # version_dict => {
+    # versioned_operations_dict => {
     #     'application_gateways': [
     #         ('v2018-05-01', 'ApplicationGatewaysOperations')
     #     ]
     # }
     # mod_to_api_version => {'v2018-05-01': '2018-05-01'}
+    # mixin_operations => {
+    #     'check_dns_name_availability': {
+    #         'doc': 'docstring',
+    #         'signature': '(self, p1, p2, **operation_config),
+    #         'call': 'p1, p2',
+    #         'available_apis': [
+    #             'v2018_05_01'
+    #         ]
+    #     }
+    # }
+
+    last_rt_list = {}
+    for operation, operation_metadata in versioned_operations_dict.items():
+        local_last_api_version = sorted(operation_metadata)[-1][0]
+        if local_last_api_version == last_api_version:
+            continue
+        last_rt_list[operation] = mod_to_api_version[local_last_api_version]
+
+    for operation, operation_metadata in mixin_operations.items():
+        local_last_api_version = sorted(operation_metadata['available_apis'])[-1]
+        if local_last_api_version == last_api_version:
+            continue
+        last_rt_list[operation] = mod_to_api_version[local_last_api_version]
 
     conf = {
         "api_version_modules": sorted(mod_to_api_version.keys()),
         "client_name": client_name,
         "module_name": module_name,
-        "operations": version_dict,
+        "operations": versioned_operations_dict,
         "mixin_operations": mixin_operations,
         "mod_to_api_version": mod_to_api_version,
         "last_api_version": mod_to_api_version[last_api_version],
         "client_doc": client_class.__doc__.split("\n")[0],
+        "last_rt_list": last_rt_list,
     }
+
+    env = Environment(
+        loader=FileSystemLoader(str(Path(__file__).parents[0] / "templates")),
+        keep_trailing_newline=True,
+    )
 
     for template_name in env.list_templates():
         # Don't generate files if they is not operations mixins

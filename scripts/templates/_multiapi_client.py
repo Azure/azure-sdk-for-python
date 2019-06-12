@@ -51,6 +51,9 @@ class {{ client_name }}({% if mixin_operations %}{{ client_name }}OperationsMixi
     _PROFILE_TAG = "{{ module_name }}.{{ client_name }}"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
+{%- for rt_name, api_version in last_rt_list|dictsort %}
+            '{{ rt_name }}': '{{ api_version }}',
+{%- endfor %}
             None: DEFAULT_API_VERSION
         }},
         _PROFILE_TAG + " latest"
