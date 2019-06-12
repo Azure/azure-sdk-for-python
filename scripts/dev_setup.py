@@ -74,14 +74,19 @@ content_packages = sorted(
     ]
 )
 
-# Put azure-common in front
-if "azure-common" in content_packages:
-    content_packages.remove("azure-common")
-content_packages.insert(0, "azure-common")
+# Install tests dep first
+if "azure-devtools" in content_packages:
+    content_packages.remove("azure-devtools")
+content_packages.insert(0, "azure-devtools")
 
 if "azure-sdk-tools" in content_packages:
     content_packages.remove("azure-sdk-tools")
 content_packages.insert(1, "azure-sdk-tools")
+
+# Put azure-common in front of content package
+if "azure-common" in content_packages:
+    content_packages.remove("azure-common")
+content_packages.insert(2, "azure-common")
 
 print("Running dev setup...")
 print("Root directory '{}'\n".format(root_dir))
@@ -100,8 +105,9 @@ if sys.version_info < (3,):
         pip_command("install {}/{}/".format(packages[package_name], package_name))
 
 # install packages
+print("Packages to install: {}".format(content_packages))
 for package_name in content_packages:
-    print("Installing {}".format(package_name))
+    print("\nInstalling {}".format(package_name))
     # if we are running dev_setup with no arguments. going after dev_requirements will be a pointless exercise
     # and waste of cycles as all the dependencies will be installed regardless.
     if os.path.isfile(

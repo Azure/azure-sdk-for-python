@@ -73,7 +73,7 @@ async def test_example_async_redirect_policy():
 
     # It can also be overridden per operation.
     async with AsyncPipelineClient(base_url=url, config=config) as client:
-        response = await client._pipeline.run(request, redirect_max=5)
+        response = await client._pipeline.run(request, permit_redirects=True, redirect_max=5)
 
     # [END async_redirect_policy]
 
