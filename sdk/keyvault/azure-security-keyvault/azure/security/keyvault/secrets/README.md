@@ -3,7 +3,7 @@ Azure Key Vault is a cloud service that provides a secure storage of secrets, su
 
 Use the secret client library to create and manage secrets.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets) | [Package (Pypi)](TODO) | [API reference documentation](TODO) | [Product documentation](TODO) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets) | [Package (Pypi)](TODO) | [API reference documentation](TODO) | [Product documentation](https://docs.microsoft.com/en-us/azure/key-vault/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets/samples)
 ## Getting started
 ### Install the package
 Install the Azure Key Vault client library for Python with [pip](https://pypi.org/project/pip/):
@@ -27,6 +27,8 @@ Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to creat
 
      `az ad sp create-for-rbac -n <your-application-name> --skip-assignment`
 
+* Use the above returned credentials information to populate **AZURE_CLIENT_ID**(appId), **AZURE_CLIENT_SECRET**(password) and **AZURE_TENANT_ID**(tenant) environment variables.
+  
 * Grant the above mentioned application authorization to perform secret operations on the keyvault:
 
      `az keyvault set-policy --name <your-key-vault-name> --spn <your-service-principal-id> --secret-permissions <secret-permissions>`
@@ -35,7 +37,8 @@ Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to creat
 
 
 #### Create Secret client
-Once you have the `client_id`, `client_secret` and `tenant_id` from above, you can create the [SecretClient](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets/_client.py):
+Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables, you can create the [SecretClient](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets/_client.py):
+
 ```python
     from azure.identity import DefaultAzureCredential
     from azure.security.keyvault import SecretClient
@@ -127,7 +130,7 @@ This example lists all the secrets in the specified Key Vault.
 ```
 
 ### Async operations
-Python’s asyncio package (introduced in Python 3.4) and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
+Python’s [asyncio package](https://pypi.org/project/asyncio/) (introduced in Python 3.4) and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
 The following examples provide code snippets for performing async operations in the Secret Client library:
 
 ### Async create a secret
@@ -189,23 +192,21 @@ Http request and response details are printed to stdout with this logging config
 
 ## Next steps
 Several KeyVault Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Key Vault:
-* [test_examples_secrets_sync.py](TODO) -  Python code for working with Key Vault secrets, including:
-    * Create a secret
-    * Get an existing secret
-    * Update an existing secret
-    * List secret versions
-    * Delete secret
-    * List deleted secrets
-* [test_examples_secrets_async.py](TODO) -  Python code for working with async Key Vault secrets, including:
-    * Create a secret
-    * Get an existing secret
-    * Update an existing secret
-    * List secret versions
-    * Delete secret
-    * List deleted secrets
+* [test_examples_secrets_sync.py](TODO) and [test_examples_secrets_async.py](TODO) - Contains the code snippets working with Key Vault secrets.
+* [hello_world.py](TODO) and [hello_world_async.py](TODO) - Python code for working with Azure key Vault, including:
+  * Create a secret
+  * Get an existing secret
+  * Update an existing secret
+  * Delete secret
+* [backup_restore_secrets.py](TODO) and [backup_restore_secrets_async.py](TODO) - Example code for working with Key Vault secrets backup and recovery, including:
+  * Create a secret
+  * Back up an existing secret
+  * Delete secret
+  * Recover secret using the backup bytes of secret
+  
 
  ###  Additional Documentation
-For more extensive documentation on Azure Key Vault, see the reference documentation available at docs.microsoft.com/python/api/azure-security-keyvault--TODO
+For more extensive documentation on Azure Key Vault, see the [API reference documentation](TODO).
 
 ## Contributing
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
