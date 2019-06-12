@@ -190,7 +190,7 @@ class DpsCertificateOperations(object):
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Devices/provisioningServices/{provisioningServiceName}/certificates/{certificateName}'}
 
     def delete(
-            self, resource_group_name, if_match, provisioning_service_name, certificate_name, certificatename=None, certificateraw_bytes=None, certificateis_verified=None, certificatepurpose=None, certificatecreated=None, certificatelast_updated=None, certificatehas_private_key=None, certificatenonce=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, if_match, provisioning_service_name, certificate_name, custom_headers=None, raw=False, **operation_config):
         """Delete the Provisioning Service Certificate.
 
         Deletes the specified certificate associated with the Provisioning
@@ -206,29 +206,6 @@ class DpsCertificateOperations(object):
         :param certificate_name: This is a mandatory field, and is the logical
          name of the certificate that the provisioning service will access by.
         :type certificate_name: str
-        :param certificatename: This is optional, and it is the Common Name of
-         the certificate.
-        :type certificatename: str
-        :param certificateraw_bytes: Raw data within the certificate.
-        :type certificateraw_bytes: bytearray
-        :param certificateis_verified: Indicates if certificate has been
-         verified by owner of the private key.
-        :type certificateis_verified: bool
-        :param certificatepurpose: A description that mentions the purpose of
-         the certificate. Possible values include: 'clientAuthentication',
-         'serverAuthentication'
-        :type certificatepurpose: str or
-         ~azure.mgmt.iothubprovisioningservices.models.CertificatePurpose
-        :param certificatecreated: Time the certificate is created.
-        :type certificatecreated: datetime
-        :param certificatelast_updated: Time the certificate is last updated.
-        :type certificatelast_updated: datetime
-        :param certificatehas_private_key: Indicates if the certificate
-         contains a private key.
-        :type certificatehas_private_key: bool
-        :param certificatenonce: Random number generated to indicate Proof of
-         Possession.
-        :type certificatenonce: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -251,22 +228,6 @@ class DpsCertificateOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        if certificatename is not None:
-            query_parameters['certificate.name'] = self._serialize.query("certificatename", certificatename, 'str')
-        if certificateraw_bytes is not None:
-            query_parameters['certificate.rawBytes'] = self._serialize.query("certificateraw_bytes", certificateraw_bytes, 'bytearray')
-        if certificateis_verified is not None:
-            query_parameters['certificate.isVerified'] = self._serialize.query("certificateis_verified", certificateis_verified, 'bool')
-        if certificatepurpose is not None:
-            query_parameters['certificate.purpose'] = self._serialize.query("certificatepurpose", certificatepurpose, 'str')
-        if certificatecreated is not None:
-            query_parameters['certificate.created'] = self._serialize.query("certificatecreated", certificatecreated, 'iso-8601')
-        if certificatelast_updated is not None:
-            query_parameters['certificate.lastUpdated'] = self._serialize.query("certificatelast_updated", certificatelast_updated, 'iso-8601')
-        if certificatehas_private_key is not None:
-            query_parameters['certificate.hasPrivateKey'] = self._serialize.query("certificatehas_private_key", certificatehas_private_key, 'bool')
-        if certificatenonce is not None:
-            query_parameters['certificate.nonce'] = self._serialize.query("certificatenonce", certificatenonce, 'str')
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
