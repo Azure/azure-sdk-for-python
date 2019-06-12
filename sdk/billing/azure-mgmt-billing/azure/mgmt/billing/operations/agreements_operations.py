@@ -40,7 +40,7 @@ class AgreementsOperations(object):
             self, billing_account_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Lists all agreements for a billing account.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param expand: May be used to expand the participants.
         :type expand: str
@@ -101,7 +101,7 @@ class AgreementsOperations(object):
             self, billing_account_name, agreement_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Get the agreement by name.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param agreement_name: Agreement Id.
         :type agreement_name: str

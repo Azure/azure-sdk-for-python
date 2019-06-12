@@ -40,9 +40,9 @@ class InvoiceSectionsOperations(object):
 
     def list_by_billing_account_name(
             self, billing_account_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all invoice sections for a user which he has access to.
+        """Lists all invoice sections for which a user has access.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param expand: May be used to expand the billingProfiles.
         :type expand: str
@@ -158,7 +158,7 @@ class InvoiceSectionsOperations(object):
             self, billing_account_name, display_name=None, billing_profile_id=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """The operation to create a InvoiceSection.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param display_name: The name of the InvoiceSection.
         :type display_name: str
@@ -213,10 +213,10 @@ class InvoiceSectionsOperations(object):
 
     def list_by_billing_profile_name(
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all invoice sections under a billing profile for a user which he
-        has access to.
+        """Lists all invoice sections under a billing profile for which a user has
+        access.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
@@ -277,7 +277,7 @@ class InvoiceSectionsOperations(object):
         """Lists all invoiceSections with create subscription permission for a
         user.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param expand: May be used to expand the billingProfiles.
         :type expand: str
@@ -338,7 +338,7 @@ class InvoiceSectionsOperations(object):
             self, billing_account_name, invoice_section_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Get the InvoiceSection by id.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
@@ -457,7 +457,7 @@ class InvoiceSectionsOperations(object):
             self, billing_account_name, invoice_section_name, display_name=None, billing_profiles=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """The operation to update a InvoiceSection.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
@@ -518,7 +518,7 @@ class InvoiceSectionsOperations(object):
             self, billing_account_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
         """Elevates the caller's access to match their billing profile access.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str

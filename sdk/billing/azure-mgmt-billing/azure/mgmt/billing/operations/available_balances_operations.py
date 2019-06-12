@@ -41,7 +41,7 @@ class AvailableBalancesOperations(object):
         """The latest available credit balance for a given billingAccountName and
         billingProfileName.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str

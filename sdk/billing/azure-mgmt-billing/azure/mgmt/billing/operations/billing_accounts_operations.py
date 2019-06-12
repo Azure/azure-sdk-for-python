@@ -40,7 +40,7 @@ class BillingAccountsOperations(object):
 
     def list(
             self, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all billing accounts for a user which he has access to.
+        """Lists all billing accounts for which a user has access.
 
         :param expand: May be used to expand the invoiceSections and
          billingProfiles.
@@ -98,7 +98,7 @@ class BillingAccountsOperations(object):
             self, billing_account_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Get the billing account by id.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param expand: May be used to expand the invoiceSections and
          billingProfiles.
@@ -206,7 +206,7 @@ class BillingAccountsOperations(object):
             self, billing_account_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """The operation to update a billing account.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param parameters: Parameters supplied to the update billing account
          operation.

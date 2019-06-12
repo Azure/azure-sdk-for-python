@@ -40,7 +40,7 @@ class BillingRoleDefinitionsOperations(object):
             self, billing_account_name, billing_role_definition_name, custom_headers=None, raw=False, **operation_config):
         """Gets the role definition for a role.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_role_definition_name: role definition id.
         :type billing_role_definition_name: str
@@ -100,7 +100,7 @@ class BillingRoleDefinitionsOperations(object):
             self, billing_account_name, invoice_section_name, billing_role_definition_name, custom_headers=None, raw=False, **operation_config):
         """Gets the role definition for a role.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
@@ -163,7 +163,7 @@ class BillingRoleDefinitionsOperations(object):
             self, billing_account_name, billing_profile_name, billing_role_definition_name, custom_headers=None, raw=False, **operation_config):
         """Gets the role definition for a role.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
@@ -226,7 +226,7 @@ class BillingRoleDefinitionsOperations(object):
             self, billing_account_name, custom_headers=None, raw=False, **operation_config):
         """Lists the role definition for a billing account.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -284,7 +284,7 @@ class BillingRoleDefinitionsOperations(object):
             self, billing_account_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
         """Lists the role definition for an invoice Section.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
@@ -345,7 +345,7 @@ class BillingRoleDefinitionsOperations(object):
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
         """Lists the role definition for a Billing Profile.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str

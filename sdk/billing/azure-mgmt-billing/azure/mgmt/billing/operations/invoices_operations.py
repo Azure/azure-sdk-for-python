@@ -40,7 +40,7 @@ class InvoicesOperations(object):
             self, billing_account_name, period_start_date, period_end_date, custom_headers=None, raw=False, **operation_config):
         """List of invoices for a billing account.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param period_start_date: Invoice period start date.
         :type period_start_date: str
@@ -103,7 +103,7 @@ class InvoicesOperations(object):
             self, billing_account_name, billing_profile_name, period_start_date, period_end_date, custom_headers=None, raw=False, **operation_config):
         """List of invoices for a billing profile.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
@@ -169,7 +169,7 @@ class InvoicesOperations(object):
             self, billing_account_name, billing_profile_name, invoice_name, custom_headers=None, raw=False, **operation_config):
         """Get the invoice by name.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str

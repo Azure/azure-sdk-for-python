@@ -42,6 +42,11 @@ class BillingSubscriptionSummary(Resource):
     :ivar billing_profile_name: Billing Profile name to which this product
      belongs.
     :vartype billing_profile_name: str
+    :ivar customer_id: Customer id to which this product belongs.
+    :vartype customer_id: str
+    :ivar customer_display_name: Display name of customer to which this
+     product belongs.
+    :vartype customer_display_name: str
     :ivar invoice_section_id: Invoice section id to which this product
      belongs.
     :vartype invoice_section_id: str
@@ -52,6 +57,10 @@ class BillingSubscriptionSummary(Resource):
     :type sku_id: str
     :ivar sku_description: The sku description.
     :vartype sku_description: str
+    :param service_provider_id: The service provider id.
+    :type service_provider_id: str
+    :ivar service_provider_description: The service provider description.
+    :vartype service_provider_description: str
     """
 
     _validation = {
@@ -64,9 +73,12 @@ class BillingSubscriptionSummary(Resource):
         'month_to_date_charges': {'readonly': True},
         'billing_profile_id': {'readonly': True},
         'billing_profile_name': {'readonly': True},
+        'customer_id': {'readonly': True},
+        'customer_display_name': {'readonly': True},
         'invoice_section_id': {'readonly': True},
         'invoice_section_name': {'readonly': True},
         'sku_description': {'readonly': True},
+        'service_provider_description': {'readonly': True},
     }
 
     _attribute_map = {
@@ -80,10 +92,14 @@ class BillingSubscriptionSummary(Resource):
         'month_to_date_charges': {'key': 'properties.monthToDateCharges', 'type': 'Amount'},
         'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
         'billing_profile_name': {'key': 'properties.billingProfileName', 'type': 'str'},
+        'customer_id': {'key': 'properties.customerId', 'type': 'str'},
+        'customer_display_name': {'key': 'properties.customerDisplayName', 'type': 'str'},
         'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
         'invoice_section_name': {'key': 'properties.invoiceSectionName', 'type': 'str'},
         'sku_id': {'key': 'properties.skuId', 'type': 'str'},
         'sku_description': {'key': 'properties.skuDescription', 'type': 'str'},
+        'service_provider_id': {'key': 'properties.serviceProviderId', 'type': 'str'},
+        'service_provider_description': {'key': 'properties.serviceProviderDescription', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -95,7 +111,11 @@ class BillingSubscriptionSummary(Resource):
         self.month_to_date_charges = None
         self.billing_profile_id = None
         self.billing_profile_name = None
+        self.customer_id = None
+        self.customer_display_name = None
         self.invoice_section_id = None
         self.invoice_section_name = None
         self.sku_id = kwargs.get('sku_id', None)
         self.sku_description = None
+        self.service_provider_id = kwargs.get('service_provider_id', None)
+        self.service_provider_description = None

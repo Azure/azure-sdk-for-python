@@ -38,7 +38,7 @@ class TransfersOperations(object):
             self, billing_account_name, invoice_section_name, billing_profile_id=None, recipient_email_id=None, custom_headers=None, raw=False, **operation_config):
         """Initiates the request to transfer the legacy subscriptions or RIs.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
@@ -108,7 +108,7 @@ class TransfersOperations(object):
             self, billing_account_name, invoice_section_name, transfer_name, custom_headers=None, raw=False, **operation_config):
         """Gets the transfer details for given transfer Id.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
@@ -170,7 +170,7 @@ class TransfersOperations(object):
             self, billing_account_name, invoice_section_name, transfer_name, custom_headers=None, raw=False, **operation_config):
         """Cancels the transfer for given transfer Id.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
@@ -232,7 +232,7 @@ class TransfersOperations(object):
             self, billing_account_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
         """Lists all transfer's details initiated from given invoice section.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str

@@ -40,7 +40,7 @@ class ProductsOperations(object):
             self, billing_account_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists products by billing account name.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param filter: May be used to filter by product type. The filter
          supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
@@ -112,7 +112,7 @@ class ProductsOperations(object):
             self, billing_account_name, invoice_section_name, filter=None, custom_headers=None, raw=False, **operation_config):
         """Lists products by invoice section name.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
@@ -179,7 +179,7 @@ class ProductsOperations(object):
             self, billing_account_name, invoice_section_name, product_name, custom_headers=None, raw=False, **operation_config):
         """Get a single product by name.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
@@ -242,7 +242,7 @@ class ProductsOperations(object):
             self, billing_account_name, invoice_section_name, product_name, destination_invoice_section_id=None, destination_billing_profile_id=None, custom_headers=None, raw=False, **operation_config):
         """The operation to transfer a Product to another invoice section.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
@@ -324,7 +324,7 @@ class ProductsOperations(object):
             self, billing_account_name, invoice_section_name, product_name, destination_invoice_section_id=None, destination_billing_profile_id=None, custom_headers=None, raw=False, **operation_config):
         """Validates the transfer of products across invoice sections.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
@@ -400,7 +400,7 @@ class ProductsOperations(object):
             self, billing_account_name, product_name, auto_renew=None, custom_headers=None, raw=False, **operation_config):
         """Cancel auto renew for product by product id and billing account name.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param product_name: Invoice Id.
         :type product_name: str
@@ -470,7 +470,7 @@ class ProductsOperations(object):
             self, billing_account_name, invoice_section_name, product_name, auto_renew=None, custom_headers=None, raw=False, **operation_config):
         """Cancel auto renew for product by product id and invoice section name.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str

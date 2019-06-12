@@ -42,7 +42,7 @@ class BillingProfilesOperations(object):
             self, billing_account_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Lists all billing profiles for a user which that user has access to.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param expand: May be used to expand the invoiceSections.
         :type expand: str
@@ -156,7 +156,7 @@ class BillingProfilesOperations(object):
             self, billing_account_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """The operation to create a BillingProfile.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param parameters: Parameters supplied to the Create BillingProfile
          operation.
@@ -212,7 +212,7 @@ class BillingProfilesOperations(object):
             self, billing_account_name, billing_profile_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Get the billing profile by id.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
@@ -329,7 +329,7 @@ class BillingProfilesOperations(object):
             self, billing_account_name, billing_profile_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """The operation to update a billing profile.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str

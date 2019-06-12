@@ -38,9 +38,9 @@ class EnrollmentAccountsOperations(object):
 
     def list_by_billing_account_name(
             self, billing_account_name, expand=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists all Enrollment Accounts for a user which he has access to.
+        """Lists all Enrollment Accounts for which a user has access.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param expand: May be used to expand the department.
         :type expand: str
@@ -108,7 +108,7 @@ class EnrollmentAccountsOperations(object):
             self, billing_account_name, enrollment_account_name, expand=None, filter=None, custom_headers=None, raw=False, **operation_config):
         """Get the enrollment account by id.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param enrollment_account_name: Enrollment Account Id.
         :type enrollment_account_name: str

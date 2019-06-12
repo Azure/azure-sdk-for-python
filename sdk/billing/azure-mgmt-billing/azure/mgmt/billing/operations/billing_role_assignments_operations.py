@@ -40,7 +40,7 @@ class BillingRoleAssignmentsOperations(object):
             self, billing_account_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
         """Get the role assignment for the caller.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_role_assignment_name: role assignment id.
         :type billing_role_assignment_name: str
@@ -100,7 +100,7 @@ class BillingRoleAssignmentsOperations(object):
             self, billing_account_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
         """Delete the role assignment on this billing account.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_role_assignment_name: role assignment id.
         :type billing_role_assignment_name: str
@@ -160,7 +160,7 @@ class BillingRoleAssignmentsOperations(object):
             self, billing_account_name, invoice_section_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
         """Get the role assignment for the caller on the invoice Section.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
@@ -223,7 +223,7 @@ class BillingRoleAssignmentsOperations(object):
             self, billing_account_name, invoice_section_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
         """Delete the role assignment on the invoice Section.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
@@ -286,7 +286,7 @@ class BillingRoleAssignmentsOperations(object):
             self, billing_account_name, billing_profile_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
         """Get the role assignment for the caller on the Billing Profile.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
@@ -349,7 +349,7 @@ class BillingRoleAssignmentsOperations(object):
             self, billing_account_name, billing_profile_name, billing_role_assignment_name, custom_headers=None, raw=False, **operation_config):
         """Delete the role assignment on this Billing Profile.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
@@ -412,7 +412,7 @@ class BillingRoleAssignmentsOperations(object):
             self, billing_account_name, custom_headers=None, raw=False, **operation_config):
         """Get the role assignments on the Billing Account.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -470,7 +470,7 @@ class BillingRoleAssignmentsOperations(object):
             self, billing_account_name, principal_id=None, billing_role_definition_id=None, custom_headers=None, raw=False, **operation_config):
         """The operation to add a role assignment to a billing account.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param principal_id: The user's principal id that the role gets
          assigned to
@@ -539,7 +539,7 @@ class BillingRoleAssignmentsOperations(object):
             self, billing_account_name, invoice_section_name, custom_headers=None, raw=False, **operation_config):
         """Get the role assignments on the invoice Section.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
@@ -600,7 +600,7 @@ class BillingRoleAssignmentsOperations(object):
             self, billing_account_name, invoice_section_name, principal_id=None, billing_role_definition_id=None, custom_headers=None, raw=False, **operation_config):
         """The operation to add a role assignment to a invoice Section.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param invoice_section_name: InvoiceSection Id.
         :type invoice_section_name: str
@@ -672,7 +672,7 @@ class BillingRoleAssignmentsOperations(object):
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
         """Get the role assignments on the Billing Profile.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str
@@ -733,7 +733,7 @@ class BillingRoleAssignmentsOperations(object):
             self, billing_account_name, billing_profile_name, principal_id=None, billing_role_definition_id=None, custom_headers=None, raw=False, **operation_config):
         """The operation to add a role assignment to a billing profile.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str

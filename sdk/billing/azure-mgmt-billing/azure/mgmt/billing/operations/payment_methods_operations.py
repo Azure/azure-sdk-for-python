@@ -40,7 +40,7 @@ class PaymentMethodsOperations(object):
             self, billing_account_name, custom_headers=None, raw=False, **operation_config):
         """Lists the Payment Methods by billing account Id.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -105,7 +105,7 @@ class PaymentMethodsOperations(object):
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
         """Lists the Payment Methods by billing profile Id.
 
-        :param billing_account_name: billing Account Id.
+        :param billing_account_name: Billing Account Id.
         :type billing_account_name: str
         :param billing_profile_name: Billing Profile Id.
         :type billing_profile_name: str

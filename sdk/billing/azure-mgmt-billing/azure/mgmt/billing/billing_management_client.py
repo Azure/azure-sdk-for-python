@@ -18,6 +18,7 @@ from .operations.payment_methods_operations import PaymentMethodsOperations
 from .operations.addresses_operations import AddressesOperations
 from .operations.available_balances_operations import AvailableBalancesOperations
 from .operations.billing_profiles_operations import BillingProfilesOperations
+from .operations.customers_operations import CustomersOperations
 from .operations.invoice_sections_operations import InvoiceSectionsOperations
 from .operations.departments_operations import DepartmentsOperations
 from .operations.enrollment_accounts_operations import EnrollmentAccountsOperations
@@ -47,7 +48,7 @@ class BillingManagementClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Azure Subscription ID.
+    :param subscription_id: Azure Subscription Id.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -87,6 +88,8 @@ class BillingManagementClient(SDKClient):
     :vartype available_balances: azure.mgmt.billing.operations.AvailableBalancesOperations
     :ivar billing_profiles: BillingProfiles operations
     :vartype billing_profiles: azure.mgmt.billing.operations.BillingProfilesOperations
+    :ivar customers: Customers operations
+    :vartype customers: azure.mgmt.billing.operations.CustomersOperations
     :ivar invoice_sections: InvoiceSections operations
     :vartype invoice_sections: azure.mgmt.billing.operations.InvoiceSectionsOperations
     :ivar departments: Departments operations
@@ -127,7 +130,7 @@ class BillingManagementClient(SDKClient):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Azure Subscription ID.
+    :param subscription_id: Azure Subscription Id.
     :type subscription_id: str
     :param str base_url: Service URL
     """
@@ -152,6 +155,8 @@ class BillingManagementClient(SDKClient):
         self.available_balances = AvailableBalancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_profiles = BillingProfilesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.customers = CustomersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.invoice_sections = InvoiceSectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

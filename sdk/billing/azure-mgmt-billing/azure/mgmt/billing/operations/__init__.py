@@ -14,6 +14,7 @@ from .payment_methods_operations import PaymentMethodsOperations
 from .addresses_operations import AddressesOperations
 from .available_balances_operations import AvailableBalancesOperations
 from .billing_profiles_operations import BillingProfilesOperations
+from .customers_operations import CustomersOperations
 from .invoice_sections_operations import InvoiceSectionsOperations
 from .departments_operations import DepartmentsOperations
 from .enrollment_accounts_operations import EnrollmentAccountsOperations
@@ -39,6 +40,7 @@ __all__ = [
     'AddressesOperations',
     'AvailableBalancesOperations',
     'BillingProfilesOperations',
+    'CustomersOperations',
     'InvoiceSectionsOperations',
     'DepartmentsOperations',
     'EnrollmentAccountsOperations',

@@ -41,6 +41,9 @@ try:
     from .enrollment_account_list_result_py3 import EnrollmentAccountListResult
     from .billing_profile_list_result_py3 import BillingProfileListResult
     from .billing_profile_creation_parameters_py3 import BillingProfileCreationParameters
+    from .service_provider_py3 import ServiceProvider
+    from .customer_py3 import Customer
+    from .customer_list_result_py3 import CustomerListResult
     from .invoice_section_creation_request_py3 import InvoiceSectionCreationRequest
     from .invoice_section_list_result_py3 import InvoiceSectionListResult
     from .operation_status_py3 import OperationStatus
@@ -111,6 +114,9 @@ except (SyntaxError, ImportError):
     from .enrollment_account_list_result import EnrollmentAccountListResult
     from .billing_profile_list_result import BillingProfileListResult
     from .billing_profile_creation_parameters import BillingProfileCreationParameters
+    from .service_provider import ServiceProvider
+    from .customer import Customer
+    from .customer_list_result import CustomerListResult
     from .invoice_section_creation_request import InvoiceSectionCreationRequest
     from .invoice_section_list_result import InvoiceSectionListResult
     from .operation_status import OperationStatus
@@ -206,6 +212,9 @@ __all__ = [
     'EnrollmentAccountListResult',
     'BillingProfileListResult',
     'BillingProfileCreationParameters',
+    'ServiceProvider',
+    'Customer',
+    'CustomerListResult',
     'InvoiceSectionCreationRequest',
     'InvoiceSectionListResult',
     'OperationStatus',
