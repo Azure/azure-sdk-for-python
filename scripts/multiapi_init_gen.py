@@ -278,6 +278,26 @@ def build_operation_mixin_meta(versioned_modules):
     return mixin_operations
 
 
+def build_last_rt_list(
+    versioned_operations_dict, mixin_operations, mod_to_api_version, last_api_version
+):
+    """Build the a mapping RT => API version if RT doesn't exist in latest detected API version.
+    """
+    last_rt_list = {}
+    for operation, operation_metadata in versioned_operations_dict.items():
+        local_last_api_version = sorted(operation_metadata)[-1][0]
+        if local_last_api_version == last_api_version:
+            continue
+        last_rt_list[operation] = mod_to_api_version[local_last_api_version]
+
+    for operation, operation_metadata in mixin_operations.items():
+        local_last_api_version = sorted(operation_metadata["available_apis"])[-1]
+        if local_last_api_version == last_api_version:
+            continue
+        last_rt_list[operation] = mod_to_api_version[local_last_api_version]
+    return last_rt_list
+
+
 def find_module_folder(package_name, module_name):
     sdk_root = Path(__file__).parents[1]
     _LOGGER.debug("SDK root is: %s", sdk_root)
@@ -342,19 +362,16 @@ def main(input_str):
     #         ]
     #     }
     # }
+    # last_rt_list = {
+    #    'check_dns_name_availability': 'v2018_05_01'
+    # }
 
-    last_rt_list = {}
-    for operation, operation_metadata in versioned_operations_dict.items():
-        local_last_api_version = sorted(operation_metadata)[-1][0]
-        if local_last_api_version == last_api_version:
-            continue
-        last_rt_list[operation] = mod_to_api_version[local_last_api_version]
-
-    for operation, operation_metadata in mixin_operations.items():
-        local_last_api_version = sorted(operation_metadata['available_apis'])[-1]
-        if local_last_api_version == last_api_version:
-            continue
-        last_rt_list[operation] = mod_to_api_version[local_last_api_version]
+    last_rt_list = build_last_rt_list(
+        versioned_operations_dict,
+        mixin_operations,
+        mod_to_api_version,
+        last_api_version,
+    )
 
     conf = {
         "api_version_modules": sorted(mod_to_api_version.keys()),
