@@ -171,7 +171,6 @@ class EventHubClient(EventHubClientAbstract):
                 output['last_enqueued_time_utc'] = datetime.datetime.utcfromtimestamp(
                     float(partition_info[b'last_enqueued_time_utc'] / 1000))
                 output['is_empty'] = partition_info[b'is_partition_empty']
-                output['retrieval_time'] = datetime.datetime.utcnow()
             return output
         finally:
             await mgmt_client.close_async()
@@ -233,7 +232,7 @@ class EventHubClient(EventHubClientAbstract):
         :type operation: str
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
-        :type send_timeout: int
+        :type send_timeout: float
         :param loop: An event loop. If not specified the default event loop will be used.
         :rtype ~azure.eventhub.aio.sender_async.EventSender
 

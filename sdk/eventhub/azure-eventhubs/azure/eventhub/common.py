@@ -318,15 +318,15 @@ class EventPosition(object):
             return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')
         return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
 
-    @staticmethod
-    def first_available_event():
+    @classmethod
+    def first_available_event(cls):
         """
         Get the beginning of the event stream.
 
         :rtype: azure.eventhub.common.EventPosition
         """
 
-        return EventPosition("-1")
+        return cls("-1")
 
     @classmethod
     def new_events_only(cls):
@@ -336,10 +336,10 @@ class EventPosition(object):
         :rtype: azure.eventhub.common.EventPosition
         """
 
-        return EventPosition("@latest")
+        return cls("@latest")
 
-    @staticmethod
-    def from_offset(offset, inclusive=False):
+    @classmethod
+    def from_offset(cls, offset, inclusive=False):
         """
         Get the event position from/after the specified offset.
 
@@ -350,10 +350,10 @@ class EventPosition(object):
         :rtype: azure.eventhub.common.EventPosition
         """
 
-        return EventPosition(offset, inclusive)
+        return cls(offset, inclusive)
 
-    @staticmethod
-    def from_sequence(sequence, inclusive=False):
+    @classmethod
+    def from_sequence(cls, sequence, inclusive=False):
         """
         Get the event position from/after the specified sequence number.
 
@@ -364,10 +364,10 @@ class EventPosition(object):
         :rtype: azure.eventhub.common.EventPosition
         """
 
-        return EventPosition(sequence, inclusive)
+        return cls(sequence, inclusive)
 
-    @staticmethod
-    def from_enqueued_time(enqueued_time, inclusive=False):
+    @classmethod
+    def from_enqueued_time(cls, enqueued_time, inclusive=False):
         """
         Get the event position from/after the specified enqueue time.
 
@@ -378,7 +378,7 @@ class EventPosition(object):
         :rtype: azure.eventhub.common.EventPosition
         """
 
-        return EventPosition(enqueued_time, inclusive)
+        return cls(enqueued_time, inclusive)
 
 
 # TODO: move some behaviors to these two classes.

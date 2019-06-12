@@ -50,14 +50,11 @@ try:
 
     print('Start sending events behind a proxy.')
 
-    sender.send(list)
+    sender.send(event_list)
 
     print('Start receiving events behind a proxy.')
 
     received = receiver.receive(max_batch_size=50, timeout=5)
-
-except KeyboardInterrupt:
-    pass
 finally:
     sender.close()
     receiver.close()

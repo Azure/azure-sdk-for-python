@@ -94,6 +94,7 @@ class EventHubClient(EventHubClientAbstract):
                                                transport_type=transport_type)
 
     def get_properties(self):
+        # type:() -> dict[str, Any()]
         """
         Get properties of the specified EventHub.
         Keys in the details dictionary include:
@@ -129,6 +130,7 @@ class EventHubClient(EventHubClientAbstract):
             mgmt_client.close()
 
     def get_partition_ids(self):
+        # type:() -> list[str]
         """
         Get partition ids of the specified EventHub.
 
@@ -137,6 +139,7 @@ class EventHubClient(EventHubClientAbstract):
         return self.get_properties()['partition_ids']
 
     def get_partition_properties(self, partition):
+        # type:(str) -> dict[str, str]
         """
         Get properties of the specified partition.
         Keys in the details dictionary include:
@@ -172,7 +175,6 @@ class EventHubClient(EventHubClientAbstract):
             output = {}
             if partition_info:
                 output['event_hub_path'] = partition_info[b'name'].decode('utf-8')
-                # output['type'] = partition_info[b'type'].decode('utf-8')
                 output['id'] = partition_info[b'partition'].decode('utf-8')
                 output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
                 output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']
@@ -180,15 +182,15 @@ class EventHubClient(EventHubClientAbstract):
                 output['last_enqueued_time_utc'] = datetime.datetime.utcfromtimestamp(
                     float(partition_info[b'last_enqueued_time_utc'] / 1000))
                 output['is_empty'] = partition_info[b'is_partition_empty']
-                output['retrieval_time'] = datetime.datetime.utcnow()
             return output
         finally:
             mgmt_client.close()
 
     def create_receiver(
-            self, partition_id, consumer_group="$Default", event_position=EventPosition.first_available_event(), exclusive_receiver_priority=None,
-            operation=None, prefetch=None,
+            self, partition_id, consumer_group="$Default", event_position=EventPosition.first_available_event(),
+            exclusive_receiver_priority=None, operation=None, prefetch=None,
     ):
+        # type: (str, str, EventPosition, int, str, int) -> EventReceiver
         """
         Create a receiver to the client for a particular consumer group and partition.
 
@@ -228,6 +230,7 @@ class EventHubClient(EventHubClientAbstract):
         return handler
 
     def create_sender(self, partition_id=None, operation=None, send_timeout=None):
+        # type: (str, str, float) -> EventSender
         """
         Create a sender to the client to send EventData object to an EventHub.
 

@@ -20,13 +20,9 @@ iot_connection_str = 'HostName=iothubfortrack2py.azure-devices.net;SharedAccessK
 
 client = EventHubClient.from_iothub_connection_string(iot_connection_str, network_tracing=True)
 receiver = client.create_receiver(partition_id="0", operation='/messages/events')
-try:
-    with receiver:
-        received = receiver.receive(timeout=5)
-        print(received)
+with receiver:
+    received = receiver.receive(timeout=5)
+    print(received)
 
-        eh_info = client.get_properties()
-        print(eh_info)
-
-except KeyboardInterrupt:
-    pass
+    eh_info = client.get_properties()
+    print(eh_info)

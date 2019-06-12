@@ -87,6 +87,7 @@ class EventReceiver(object):
 
     def __next__(self):
         self._open()
+        max_retries = self.client.config.max_retries
         connecting_count = 0
         while True:
             connecting_count += 1
@@ -98,7 +99,7 @@ class EventReceiver(object):
                 self.offset = event_data.offset
                 return event_data
             except errors.AuthenticationException as auth_error:
-                if connecting_count < 3:
+                if connecting_count < max_retries:
                     log.info("EventReceiver disconnected due to token error. Attempting reconnect.")
                     self._reconnect()
                 else:
@@ -116,7 +117,7 @@ class EventReceiver(object):
                     self.close(exception=error)
                     raise error
             except errors.MessageHandlerError as shutdown:
-                if connecting_count < 3:
+                if connecting_count < max_retries:
                     log.info("EventReceiver detached. Attempting reconnect.")
                     self._reconnect()
                 else:
@@ -125,7 +126,7 @@ class EventReceiver(object):
                     self.close(error)
                     raise error
             except errors.AMQPConnectionError as shutdown:
-                if connecting_count < 3:
+                if connecting_count < max_retries:
                     log.info("EventReceiver connection lost. Attempting reconnect.")
                     self._reconnect()
                 else:
@@ -133,14 +134,14 @@ class EventReceiver(object):
                     error = ConnectionLostError(str(shutdown), shutdown)
                     self.close(error)
                     raise error
-            except compat.TimeoutException as toe:
-                if connecting_count < 3:
-                    log.info("EventReceiver timed out sending event data. Attempting reconnect.")
+            except compat.TimeoutException as shutdown:
+                if connecting_count < max_retries:
+                    log.info("EventReceiver timed out receiving event data. Attempting reconnect.")
                     self._reconnect()
                 else:
                     log.info("EventReceiver timed out. Shutting down.")
-                    self.close(toe)
-                    raise TimeoutError(str(toe), toe)
+                    self.close(shutdown)
+                    raise TimeoutError(str(shutdown), shutdown)
             except StopIteration:
                 raise
             except Exception as e:
@@ -179,11 +180,6 @@ class EventReceiver(object):
             alt_creds = {
                 "username": self.client._auth_config.get("iot_username"),
                 "password":self.client._auth_config.get("iot_password")}
-            '''
-            alt_creds = {
-                "username": self.client._auth_config.get("username"),
-                "password": self.client._auth_config.get("password")}
-            '''
             self._handler = ReceiveClient(
                 source,
                 auth=self.client.get_auth(**alt_creds),
@@ -272,12 +268,12 @@ class EventReceiver(object):
                 return False
         except errors.AMQPConnectionError as shutdown:
             if is_reconnect:
-                log.info("EventSender connection error (%r). Shutting down.", shutdown)
+                log.info("EventReceiver connection error (%r). Shutting down.", shutdown)
                 error = AuthenticationError(str(shutdown), shutdown)
                 self.close(exception=error)
                 raise error
             else:
-                log.info("EventSender couldn't authenticate. Attempting reconnect.")
+                log.info("EventReceiver couldn't authenticate. Attempting reconnect.")
                 return False
         except Exception as e:
             log.info("Unexpected error occurred (%r). Shutting down.", e)
@@ -368,6 +364,7 @@ class EventReceiver(object):
         timeout = self.client.config.receive_timeout if timeout is None else timeout
 
         data_batch = []
+        max_retries = self.client.config.max_retries
         connecting_count = 0
         while True:
             connecting_count += 1
@@ -382,7 +379,7 @@ class EventReceiver(object):
                     data_batch.append(event_data)
                 return data_batch
             except errors.AuthenticationException as auth_error:
-                if connecting_count < 3:
+                if connecting_count < max_retries:
                     log.info("EventReceiver disconnected due to token error. Attempting reconnect.")
                     self._reconnect()
                 else:
@@ -400,7 +397,7 @@ class EventReceiver(object):
                     self.close(exception=error)
                     raise error
             except errors.MessageHandlerError as shutdown:
-                if connecting_count < 3:
+                if connecting_count < max_retries:
                     log.info("EventReceiver detached. Attempting reconnect.")
                     self._reconnect()
                 else:
@@ -409,7 +406,7 @@ class EventReceiver(object):
                     self.close(error)
                     raise error
             except errors.AMQPConnectionError as shutdown:
-                if connecting_count < 3:
+                if connecting_count < max_retries:
                     log.info("EventReceiver connection lost. Attempting reconnect.")
                     self._reconnect()
                 else:
@@ -417,14 +414,14 @@ class EventReceiver(object):
                     error = ConnectionLostError(str(shutdown), shutdown)
                     self.close(error)
                     raise error
-            except compat.TimeoutException as toe:
-                if connecting_count < 3:
-                    log.info("EventReceiver timed out sending event data. Attempting reconnect.")
+            except compat.TimeoutException as shutdown:
+                if connecting_count < max_retries:
+                    log.info("EventReceiver timed out receiving event data. Attempting reconnect.")
                     self._reconnect()
                 else:
                     log.info("EventReceiver timed out. Shutting down.")
-                    self.close(toe)
-                    raise TimeoutError(str(toe), toe)
+                    self.close(shutdown)
+                    raise TimeoutError(str(shutdown), shutdown)
             except Exception as e:
                 log.info("Unexpected error occurred (%r). Shutting down.", e)
                 error = EventHubError("Receive failed: {}".format(e))

@@ -35,13 +35,13 @@ try:
     client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY), network_tracing=False)
     sender = client.create_sender(partition_id="1")
 
-    list = []
+    event_list = []
     for i in range(1500):
-        list.append('Hello World')
+        event_list.append('Hello World')
 
     with sender:
         start_time = time.time()
-        data = EventData(body=list)
+        data = EventData(body=event_list)
         sender.send(data)
         end_time = time.time()
         run_time = end_time - start_time

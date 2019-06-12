@@ -39,10 +39,10 @@ class EventSender(object):
         :type partition: str
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
-        :type send_timeout: int
+        :type send_timeout: float
         :param keep_alive: The time interval in seconds between pinging the connection to keep it alive during
          periods of inactivity. The default value is None, i.e. no keep alive pings.
-        :type keep_alive: int
+        :type keep_alive: float
         :param auto_reconnect: Whether to automatically reconnect the sender if a retryable error occurs.
          Default value is `True`.
         :type auto_reconnect: bool
@@ -63,7 +63,6 @@ class EventSender(object):
         if partition:
             self.target += "/Partitions/" + partition
             self.name += "-partition{}".format(partition)
-        self._handler = None
         self._handler = SendClient(
             self.target,
             auth=self.client.get_auth(),
@@ -216,6 +215,7 @@ class EventSender(object):
 
     def _send_event_data(self):
         self._open()
+        max_retries = self.client.config.max_retries
         connecting_count = 0
         while True:
             connecting_count += 1
@@ -240,7 +240,7 @@ class EventSender(object):
                 self.close(exception=error)
                 raise error
             except errors.AuthenticationException as auth_error:
-                if connecting_count < 3:
+                if connecting_count < max_retries:
                     log.info("EventSender disconnected due to token error. Attempting reconnect.")
                     self._reconnect()
                 else:
@@ -258,7 +258,7 @@ class EventSender(object):
                     self.close(exception=error)
                     raise error
             except errors.MessageHandlerError as shutdown:
-                if connecting_count < 3:
+                if connecting_count < max_retries:
                     log.info("EventSender detached. Attempting reconnect.")
                     self._reconnect()
                 else:
@@ -267,7 +267,7 @@ class EventSender(object):
                     self.close(error)
                     raise error
             except errors.AMQPConnectionError as shutdown:
-                if connecting_count < 3:
+                if connecting_count < max_retries:
                     log.info("EventSender connection lost. Attempting reconnect.")
                     self._reconnect()
                 else:
@@ -275,14 +275,14 @@ class EventSender(object):
                     error = ConnectionLostError(str(shutdown), shutdown)
                     self.close(error)
                     raise error
-            except compat.TimeoutException as toe:
-                if connecting_count < 3:
+            except compat.TimeoutException as shutdown:
+                if connecting_count < max_retries:
                     log.info("EventSender timed out sending event data. Attempting reconnect.")
                     self._reconnect()
                 else:
                     log.info("EventSender timed out. Shutting down.")
-                    self.close(toe)
-                    raise TimeoutError(str(toe), toe)
+                    self.close(shutdown)
+                    raise TimeoutError(str(shutdown), shutdown)
             except Exception as e:
                 log.info("Unexpected error occurred (%r). Shutting down.", e)
                 error = EventHubError("Send failed: {}".format(e))
@@ -312,6 +312,8 @@ class EventSender(object):
         :type batching_label: str
         :raises: ~azure.eventhub.common.EventHubError if the message fails to
          send.
+        :return: None
+        :rtype: None
 
         Example:
             .. literalinclude:: ../examples/test_examples_eventhub.py

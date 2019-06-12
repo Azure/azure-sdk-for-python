@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-__version__ = "1.3.1"
+__version__ = "2.0.0-preview.1"
 
 from azure.eventhub.common import EventData, EventPosition
 from azure.eventhub.error import EventHubError, EventDataError, ConnectError, \
