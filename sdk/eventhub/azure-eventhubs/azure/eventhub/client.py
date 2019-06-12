@@ -15,6 +15,7 @@ try:
     from urllib import unquote_plus, urlencode, quote_plus
 except ImportError:
     from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
+from typing import Any, List, Dict
 
 import uamqp
 from uamqp import Message, AMQPClient
@@ -94,7 +95,7 @@ class EventHubClient(EventHubClientAbstract):
                                                transport_type=transport_type)
 
     def get_properties(self):
-        # type:() -> dict[str, Any()]
+        # type:() -> Dict[str, Any]
         """
         Get properties of the specified EventHub.
         Keys in the details dictionary include:
@@ -130,7 +131,7 @@ class EventHubClient(EventHubClientAbstract):
             mgmt_client.close()
 
     def get_partition_ids(self):
-        # type:() -> list[str]
+        # type:() -> List[str]
         """
         Get partition ids of the specified EventHub.
 
@@ -139,7 +140,7 @@ class EventHubClient(EventHubClientAbstract):
         return self.get_properties()['partition_ids']
 
     def get_partition_properties(self, partition):
-        # type:(str) -> dict[str, str]
+        # type:(str) -> Dict[str, str]
         """
         Get properties of the specified partition.
         Keys in the details dictionary include:
