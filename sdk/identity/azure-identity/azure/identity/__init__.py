@@ -4,13 +4,53 @@
 # license information.
 # --------------------------------------------------------------------------
 from .exceptions import AuthenticationError
-from .credentials import ClientSecretCredential, TokenCredentialChain
+from .credentials import (
+    CertificateCredential,
+    ClientSecretCredential,
+    EnvironmentCredential,
+    ManagedIdentityCredential,
+    TokenCredentialChain,
+)
 
-__all__ = ["AuthenticationError", "ClientSecretCredential", "TokenCredentialChain"]
+
+class DefaultAzureCredential(TokenCredentialChain):
+    """default credential is environment followed by MSI/IMDS"""
+
+    def __init__(self, **kwargs):
+        super(DefaultAzureCredential, self).__init__(
+            EnvironmentCredential(**kwargs), ManagedIdentityCredential(**kwargs)
+        )
+
+
+__all__ = [
+    "AuthenticationError",
+    "CertificateCredential",
+    "ClientSecretCredential",
+    "DefaultAzureCredential",
+    "EnvironmentCredential",
+    "ManagedIdentityCredential",
+    "TokenCredentialChain",
+]
 
 try:
-    from .aio import AsyncClientSecretCredential, AsyncTokenCredentialChain
+    from .aio import (
+        AsyncCertificateCredential,
+        AsyncClientSecretCredential,
+        AsyncDefaultAzureCredential,
+        AsyncEnvironmentCredential,
+        AsyncManagedIdentityCredential,
+        AsyncTokenCredentialChain,
+    )
 
-    __all__.extend(["AsyncClientSecretCredential", "AsyncTokenCredentialChain"])
-except SyntaxError:
+    __all__.extend(
+        [
+            "AsyncCertificateCredential",
+            "AsyncClientSecretCredential",
+            "AsyncDefaultAzureCredential",
+            "AsyncEnvironmentCredential",
+            "AsyncManagedIdentityCredential",
+            "AsyncTokenCredentialChain",
+        ]
+    )
+except (ImportError, SyntaxError):
     pass

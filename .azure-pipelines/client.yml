@@ -10,7 +10,8 @@ variables:
   PythonVersion: '3.6'
   ReleaseTag: 'RELEASE_CANDIDATE'
   TestMarkArgument: 'not cosmosEmulator'
-
+  skipComponentGovernanceDetection: true
+  
 jobs:
   - job: 'Build'
 
