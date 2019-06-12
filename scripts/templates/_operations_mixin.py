@@ -8,12 +8,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
+from msrest import Serializer, Deserializer
 
 
 class {{ client_name }}OperationsMixin(object):
 
 {% for operation_name, metadata in mixin_operations|dictsort %}
-    def {{ operation_name }}(self):
+    def {{ operation_name }}{{ metadata['signature'] }}:
         """{{ metadata['doc'] }}
         """
         api_version = self._get_api_version('{{ operation_name }}')
@@ -23,10 +24,10 @@ class {{ client_name }}OperationsMixin(object):
 {%- endfor %}
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(
-            self._client,
-            self.config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version))
-        ).{{ operation_name }}()
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance.config = self.config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.{{ operation_name }}({{ metadata['call'] }}, **operation_config)
 {% endfor %}

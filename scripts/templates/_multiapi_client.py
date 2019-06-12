@@ -16,10 +16,11 @@ from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from .version import VERSION
 from ._configuration import {{ client_name }}Configuration
+{% if mixin_operations %}from ._operations_mixin import {{ client_name }}OperationsMixin{% endif %}
 
 
-class {{ client_name }}(MultiApiClientMixin, SDKClient):
-    """Network Client
+class {{ client_name }}({% if mixin_operations %}{{ client_name }}OperationsMixin, {% endif %}MultiApiClientMixin, SDKClient):
+    """{{ client_doc }}
 
     This ready contains multiple API versions, to help you deal with all Azure clouds
     (Azure Stack, Azure Government, Azure China, etc.).
@@ -46,7 +47,7 @@ class {{ client_name }}(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2019-04-01'
+    DEFAULT_API_VERSION = '{{ last_api_version }}'
     _PROFILE_TAG = "{{ module_name }}.{{ client_name }}"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -86,7 +87,7 @@ class {{ client_name }}(MultiApiClientMixin, SDKClient):
     def {{ operation_name }}(self):
         """Instance depends on the API version:
 {% for api in available_apis %}
-           * {{ api[0] }}: :class:`{{ api[1] }}<{{ module_name }}.{{ api[0] }}.operations.{{ api[1] }}>`
+           * {{ mod_to_api_version[api[0]] }}: :class:`{{ api[1] }}<{{ module_name }}.{{ api[0] }}.operations.{{ api[1] }}>`
 {%- endfor %}
         """
         api_version = self._get_api_version('{{ operation_name }}')
