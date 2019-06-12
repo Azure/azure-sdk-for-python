@@ -121,7 +121,7 @@ class DedicatedCloudNodeOperations(object):
 
         Returns list of dedicate cloud nodes within resource group.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param filter: The filter to apply on the list operation
         :type filter: str
@@ -201,7 +201,7 @@ class DedicatedCloudNodeOperations(object):
 
         Returns dedicated cloud node.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param dedicated_cloud_node_name: dedicated cloud node name
         :type dedicated_cloud_node_name: str
@@ -319,7 +319,7 @@ class DedicatedCloudNodeOperations(object):
 
         Returns dedicated cloud node by its name.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param dedicated_cloud_node_name: dedicated cloud node name
         :type dedicated_cloud_node_name: str
@@ -380,7 +380,7 @@ class DedicatedCloudNodeOperations(object):
 
         Delete dedicated cloud node.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param dedicated_cloud_node_name: dedicated cloud node name
         :type dedicated_cloud_node_name: str
@@ -437,7 +437,7 @@ class DedicatedCloudNodeOperations(object):
 
         Patches dedicated node properties.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param dedicated_cloud_node_name: dedicated cloud node name
         :type dedicated_cloud_node_name: str

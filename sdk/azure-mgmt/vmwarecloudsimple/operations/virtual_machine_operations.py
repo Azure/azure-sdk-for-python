@@ -121,7 +121,7 @@ class VirtualMachineOperations(object):
 
         Returns list of virtual machine within resource group.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param filter: The filter to apply on the list operation
         :type filter: str
@@ -201,7 +201,7 @@ class VirtualMachineOperations(object):
 
         Get virtual machine.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param virtual_machine_name: virtual machine name
         :type virtual_machine_name: str
@@ -323,7 +323,7 @@ class VirtualMachineOperations(object):
 
         Create Or Update Virtual Machine.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param virtual_machine_name: virtual machine name
         :type virtual_machine_name: str
@@ -426,7 +426,7 @@ class VirtualMachineOperations(object):
 
         Delete virtual machine.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param virtual_machine_name: virtual machine name
         :type virtual_machine_name: str
@@ -526,7 +526,7 @@ class VirtualMachineOperations(object):
 
         Patch virtual machine properties.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param virtual_machine_name: virtual machine name
         :type virtual_machine_name: str
@@ -603,7 +603,7 @@ class VirtualMachineOperations(object):
         request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204, 404]:
+        if response.status_code not in [200, 202, 404]:
             raise models.CSRPErrorException(self._deserialize, response)
 
         if raw:
@@ -623,7 +623,7 @@ class VirtualMachineOperations(object):
 
         Power on virtual machine.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param virtual_machine_name: virtual machine name
         :type virtual_machine_name: str
@@ -710,7 +710,7 @@ class VirtualMachineOperations(object):
         request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 204, 404]:
+        if response.status_code not in [200, 202, 404]:
             raise models.CSRPErrorException(self._deserialize, response)
 
         if raw:
@@ -731,7 +731,7 @@ class VirtualMachineOperations(object):
 
         Power off virtual machine, options: shutdown, poweroff, and suspend.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param virtual_machine_name: virtual machine name
         :type virtual_machine_name: str

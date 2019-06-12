@@ -122,7 +122,7 @@ class DedicatedCloudServiceOperations(object):
 
         Returns list of dedicated cloud service within resource group.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param filter: The filter to apply on the list operation
         :type filter: str
@@ -202,7 +202,7 @@ class DedicatedCloudServiceOperations(object):
 
         Returns Dedicate Cloud Service.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param dedicated_cloud_service_name: dedicated cloud Service name
         :type dedicated_cloud_service_name: str
@@ -265,7 +265,7 @@ class DedicatedCloudServiceOperations(object):
 
         Create dedicate cloud service.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param dedicated_cloud_service_name: dedicated cloud Service name
         :type dedicated_cloud_service_name: str
@@ -376,7 +376,7 @@ class DedicatedCloudServiceOperations(object):
 
         Delete dedicate cloud service.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param dedicated_cloud_service_name: dedicated cloud service name
         :type dedicated_cloud_service_name: str
@@ -423,7 +423,7 @@ class DedicatedCloudServiceOperations(object):
 
         Patch dedicated cloud service's properties.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group
         :type resource_group_name: str
         :param dedicated_cloud_service_name: dedicated cloud service name
         :type dedicated_cloud_service_name: str
