@@ -11,12 +11,12 @@
 
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from ._configuration import StorageManagementClientConfiguration
 from .version import VERSION
+from ._configuration import StorageManagementClientConfiguration
+
 
 
 class StorageManagementClient(MultiApiClientMixin, SDKClient):
@@ -47,10 +47,11 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION='2019-04-01'
+    DEFAULT_API_VERSION = '2019-04-01'
     _PROFILE_TAG = "azure.mgmt.storage.StorageManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
+            'usage': '2018-02-01',
             None: DEFAULT_API_VERSION
         }},
         _PROFILE_TAG + " latest"
@@ -64,8 +65,6 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             api_version=api_version,
             profile=profile
         )
-
-############ Generated from here ############
 
     @classmethod
     def _models_dict(cls, api_version):
