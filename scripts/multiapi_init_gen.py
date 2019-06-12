@@ -457,7 +457,13 @@ def main(input_str):
         if template_name == "_operations_mixin.py" and not mixin_operations:
             continue
 
-        future_filepath = client_folder / template_name
+        # Some file doesn't use the template name
+        if template_name == "_multiapi_client.py":
+            output_filename = client_file_name
+        else:
+            output_filename = template_name
+
+        future_filepath = client_folder / output_filename
 
         template = env.get_template(template_name)
         result = template.render(**conf)
