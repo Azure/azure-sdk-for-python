@@ -19,8 +19,7 @@ class CreateTasksErrorException(Exception):
         if failure_tasks and errors:
             self.message = \
                 "Multiple errors encountered. Check the `failure_tasks` and " \
-                "`errors` properties for additional details"
-
+                "`errors` properties for additional details."
         elif errors:
             if len(errors) > 1:
                 self.message = \
