@@ -345,10 +345,22 @@ def main(input_str):
         'client_name': client_name,
         'module_name': module_name,
         'operations': version_dict,
+        'mixin_operations': {
+            'check_dns_name_availability': {
+                'doc': 'This is the docstring',
+                'available_apis':[
+                    'v2019_04_01'
+                ]
+            }
+        },
         'mod_to_api_version': mod_to_api_version
     }
 
     for template_name in env.list_templates():
+        # Don't generate files if they is not operations mixins
+        if template_name == "_operations_mixin.py" and not operations_mixin:
+            continue
+
         future_filepath = client_folder / template_name
 
         template = env.get_template(template_name)
