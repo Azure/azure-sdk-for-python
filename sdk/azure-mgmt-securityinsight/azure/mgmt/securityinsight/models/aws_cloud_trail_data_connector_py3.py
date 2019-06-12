@@ -9,14 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .data_connector_py3 import DataConnector
 
 
-class Settings(Model):
-    """The Setting.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: UebaSettings, ToggleSettings
+class AwsCloudTrailDataConnector(DataConnector):
+    """Represents Amazon Web Services CloudTrail data connector.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -29,10 +26,16 @@ class Settings(Model):
     :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param etag: Etag of the alert rule.
+    :param etag: Etag of the data connector.
     :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
+    :param aws_role_arn: The Aws Role Arn (with CloudTrailReadOnly policy)
+     that is used to access the Aws account.
+    :type aws_role_arn: str
+    :param data_types: The available data types for the connector.
+    :type data_types:
+     ~azure.mgmt.securityinsight.models.AwsCloudTrailDataConnectorDataTypes
     """
 
     _validation = {
@@ -48,16 +51,12 @@ class Settings(Model):
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
+        'aws_role_arn': {'key': 'properties.awsRoleArn', 'type': 'str'},
+        'data_types': {'key': 'properties.dataTypes', 'type': 'AwsCloudTrailDataConnectorDataTypes'},
     }
 
-    _subtype_map = {
-        'kind': {'UebaSettings': 'UebaSettings', 'ToggleSettings': 'ToggleSettings'}
-    }
-
-    def __init__(self, *, etag: str=None, **kwargs) -> None:
-        super(Settings, self).__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
-        self.etag = etag
-        self.kind = None
+    def __init__(self, *, etag: str=None, aws_role_arn: str=None, data_types=None, **kwargs) -> None:
+        super(AwsCloudTrailDataConnector, self).__init__(etag=etag, **kwargs)
+        self.aws_role_arn = aws_role_arn
+        self.data_types = data_types
+        self.kind = 'AmazonWebServicesCloudTrail'

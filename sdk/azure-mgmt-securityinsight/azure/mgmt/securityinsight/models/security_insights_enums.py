@@ -45,7 +45,7 @@ class CaseSeverity(str, Enum):
 class CaseStatus(str, Enum):
 
     draft = "Draft"  #: Case that wasn't promoted yet to active
-    open = "Open"  #: An active case which isn't handled currently
+    new = "New"  #: An active case which isn't handled currently
     in_progress = "InProgress"  #: An active case which is handled
     closed = "Closed"  #: A non active case
 
@@ -64,6 +64,7 @@ class DataConnectorKind(str, Enum):
     microsoft_cloud_app_security = "MicrosoftCloudAppSecurity"
     threat_intelligence = "ThreatIntelligence"
     office365 = "Office365"
+    amazon_web_services_cloud_trail = "AmazonWebServicesCloudTrail"
 
 
 class DataTypeState(str, Enum):
@@ -94,6 +95,12 @@ class SettingKind(str, Enum):
 
 
 class StatusInMcas(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
+class LicenseStatus(str, Enum):
 
     enabled = "Enabled"
     disabled = "Disabled"

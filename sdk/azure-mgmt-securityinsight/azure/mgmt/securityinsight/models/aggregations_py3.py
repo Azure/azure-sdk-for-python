@@ -15,6 +15,9 @@ from msrest.serialization import Model
 class Aggregations(Model):
     """The aggregation.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: CasesAggregation
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
@@ -42,6 +45,10 @@ class Aggregations(Model):
         'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'CasesAggregation': 'CasesAggregation'}
     }
 
     def __init__(self, **kwargs) -> None:

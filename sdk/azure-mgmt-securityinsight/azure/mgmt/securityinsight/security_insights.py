@@ -23,6 +23,7 @@ from .operations.entities_operations import EntitiesOperations
 from .operations.office_consents_operations import OfficeConsentsOperations
 from .operations.product_settings_operations import ProductSettingsOperations
 from .operations.cases_aggregations_operations import CasesAggregationsOperations
+from .operations.entity_queries_operations import EntityQueriesOperations
 from . import models
 
 
@@ -84,6 +85,8 @@ class SecurityInsights(SDKClient):
     :vartype product_settings: azure.mgmt.securityinsight.operations.ProductSettingsOperations
     :ivar cases_aggregations: CasesAggregations operations
     :vartype cases_aggregations: azure.mgmt.securityinsight.operations.CasesAggregationsOperations
+    :ivar entity_queries: EntityQueries operations
+    :vartype entity_queries: azure.mgmt.securityinsight.operations.EntityQueriesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -123,4 +126,6 @@ class SecurityInsights(SDKClient):
         self.product_settings = ProductSettingsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.cases_aggregations = CasesAggregationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.entity_queries = EntityQueriesOperations(
             self._client, self.config, self._serialize, self._deserialize)

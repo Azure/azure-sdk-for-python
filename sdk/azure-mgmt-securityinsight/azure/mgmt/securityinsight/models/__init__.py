@@ -29,6 +29,9 @@ try:
     from .ti_data_connector_data_types_indicators_py3 import TIDataConnectorDataTypesIndicators
     from .ti_data_connector_data_types_py3 import TIDataConnectorDataTypes
     from .ti_data_connector_py3 import TIDataConnector
+    from .aws_cloud_trail_data_connector_data_types_logs_py3 import AwsCloudTrailDataConnectorDataTypesLogs
+    from .aws_cloud_trail_data_connector_data_types_py3 import AwsCloudTrailDataConnectorDataTypes
+    from .aws_cloud_trail_data_connector_py3 import AwsCloudTrailDataConnector
     from .alerts_data_type_of_data_connector_alerts_py3 import AlertsDataTypeOfDataConnectorAlerts
     from .alerts_data_type_of_data_connector_py3 import AlertsDataTypeOfDataConnector
     from .aad_data_connector_py3 import AADDataConnector
@@ -49,6 +52,10 @@ try:
     from .toggle_settings_py3 import ToggleSettings
     from .aggregations_py3 import Aggregations
     from .aggregations_kind1_py3 import AggregationsKind1
+    from .cases_aggregation_by_severity_properties_py3 import CasesAggregationBySeverityProperties
+    from .cases_aggregation_by_status_properties_py3 import CasesAggregationByStatusProperties
+    from .cases_aggregation_py3 import CasesAggregation
+    from .entity_query_py3 import EntityQuery
 except (SyntaxError, ImportError):
     from .operation_display import OperationDisplay
     from .operation import Operation
@@ -69,6 +76,9 @@ except (SyntaxError, ImportError):
     from .ti_data_connector_data_types_indicators import TIDataConnectorDataTypesIndicators
     from .ti_data_connector_data_types import TIDataConnectorDataTypes
     from .ti_data_connector import TIDataConnector
+    from .aws_cloud_trail_data_connector_data_types_logs import AwsCloudTrailDataConnectorDataTypesLogs
+    from .aws_cloud_trail_data_connector_data_types import AwsCloudTrailDataConnectorDataTypes
+    from .aws_cloud_trail_data_connector import AwsCloudTrailDataConnector
     from .alerts_data_type_of_data_connector_alerts import AlertsDataTypeOfDataConnectorAlerts
     from .alerts_data_type_of_data_connector import AlertsDataTypeOfDataConnector
     from .aad_data_connector import AADDataConnector
@@ -89,6 +99,10 @@ except (SyntaxError, ImportError):
     from .toggle_settings import ToggleSettings
     from .aggregations import Aggregations
     from .aggregations_kind1 import AggregationsKind1
+    from .cases_aggregation_by_severity_properties import CasesAggregationBySeverityProperties
+    from .cases_aggregation_by_status_properties import CasesAggregationByStatusProperties
+    from .cases_aggregation import CasesAggregation
+    from .entity_query import EntityQuery
 from .operation_paged import OperationPaged
 from .alert_rule_paged import AlertRulePaged
 from .action_paged import ActionPaged
@@ -97,6 +111,7 @@ from .bookmark_paged import BookmarkPaged
 from .data_connector_paged import DataConnectorPaged
 from .entity_paged import EntityPaged
 from .office_consent_paged import OfficeConsentPaged
+from .entity_query_paged import EntityQueryPaged
 from .security_insights_enums import (
     AlertRuleKind,
     AlertSeverity,
@@ -110,6 +125,7 @@ from .security_insights_enums import (
     OSFamily,
     SettingKind,
     StatusInMcas,
+    LicenseStatus,
     AggregationsKind,
 )
 
@@ -133,6 +149,9 @@ __all__ = [
     'TIDataConnectorDataTypesIndicators',
     'TIDataConnectorDataTypes',
     'TIDataConnector',
+    'AwsCloudTrailDataConnectorDataTypesLogs',
+    'AwsCloudTrailDataConnectorDataTypes',
+    'AwsCloudTrailDataConnector',
     'AlertsDataTypeOfDataConnectorAlerts',
     'AlertsDataTypeOfDataConnector',
     'AADDataConnector',
@@ -153,6 +172,10 @@ __all__ = [
     'ToggleSettings',
     'Aggregations',
     'AggregationsKind1',
+    'CasesAggregationBySeverityProperties',
+    'CasesAggregationByStatusProperties',
+    'CasesAggregation',
+    'EntityQuery',
     'OperationPaged',
     'AlertRulePaged',
     'ActionPaged',
@@ -161,6 +184,7 @@ __all__ = [
     'DataConnectorPaged',
     'EntityPaged',
     'OfficeConsentPaged',
+    'EntityQueryPaged',
     'AlertRuleKind',
     'AlertSeverity',
     'TriggerOperator',
@@ -173,5 +197,6 @@ __all__ = [
     'OSFamily',
     'SettingKind',
     'StatusInMcas',
+    'LicenseStatus',
     'AggregationsKind',
 ]
