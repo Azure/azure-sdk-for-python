@@ -36,8 +36,8 @@ class UrlRedirectActionParameters(Model):
      must start with /. Leave empty to use the incoming path as destination
      path.
     :type custom_path: str
-    :param custom_hostname: Host to redirect. Leave empty to use the incoming
-     host as the destination host.
+    :param custom_hostname: Host to redirect. Leave empty to use use the
+     incoming host as the destination host.
     :type custom_hostname: str
     :param custom_query_string: The set of query strings to be placed in the
      redirect URL. Setting this value would replace any existing query string;

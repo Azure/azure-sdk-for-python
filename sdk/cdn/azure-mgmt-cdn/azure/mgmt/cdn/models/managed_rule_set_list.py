@@ -12,20 +12,17 @@
 from msrest.serialization import Model
 
 
-class Sku(Model):
-    """The pricing tier (defines a CDN provider, feature list and rate) of the CDN
-    profile.
+class ManagedRuleSetList(Model):
+    """Defines the list of managed rule sets for the policy.
 
-    :param name: Name of the pricing tier. Possible values include:
-     'Standard_Verizon', 'Premium_Verizon', 'Custom_Verizon',
-     'Standard_Akamai', 'Standard_ChinaCdn', 'Standard_Microsoft'
-    :type name: str or ~azure.mgmt.cdn.models.SkuName
+    :param managed_rule_sets: List of rule sets.
+    :type managed_rule_sets: list[~azure.mgmt.cdn.models.ManagedRuleSet]
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        'managed_rule_sets': {'key': 'managedRuleSets', 'type': '[ManagedRuleSet]'},
     }
 
     def __init__(self, **kwargs):
-        super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        super(ManagedRuleSetList, self).__init__(**kwargs)
+        self.managed_rule_sets = kwargs.get('managed_rule_sets', None)

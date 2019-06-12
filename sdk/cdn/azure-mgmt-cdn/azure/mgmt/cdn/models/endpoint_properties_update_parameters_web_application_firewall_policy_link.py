@@ -12,20 +12,18 @@
 from msrest.serialization import Model
 
 
-class Sku(Model):
-    """The pricing tier (defines a CDN provider, feature list and rate) of the CDN
-    profile.
+class EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink(Model):
+    """Defines the Web Application Firewall policy for the endpoint (if
+    applicable).
 
-    :param name: Name of the pricing tier. Possible values include:
-     'Standard_Verizon', 'Premium_Verizon', 'Custom_Verizon',
-     'Standard_Akamai', 'Standard_ChinaCdn', 'Standard_Microsoft'
-    :type name: str or ~azure.mgmt.cdn.models.SkuName
+    :param id: Resource ID.
+    :type id: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(Sku, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        super(EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
