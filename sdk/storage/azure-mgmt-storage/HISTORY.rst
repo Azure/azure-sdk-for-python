@@ -3,6 +3,9 @@
 Release History
 ===============
 
+4.0.0 (2019-06-12)
+++++++++++++++++++
+
 **Features**
 
 - Model StorageAccount has a new parameter azure_files_identity_based_authentication
@@ -14,9 +17,6 @@ Release History
 - Model StorageAccount no longer has parameter enable_azure_files_aad_integration
 - Model StorageAccountCreateParameters no longer has parameter enable_azure_files_aad_integration
 - Model StorageAccountUpdateParameters no longer has parameter enable_azure_files_aad_integration
-
-4.0.0 (2019-06-12)
-++++++++++++++++++
 
 **Breaking changes**
 
