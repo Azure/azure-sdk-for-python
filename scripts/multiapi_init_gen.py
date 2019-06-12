@@ -1,17 +1,13 @@
 import ast
 import importlib
 import inspect
-import ast
 import logging
 import os
 import pkgutil
 import re
 import sys
 import shutil
-import types
-import glob
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 from typing import List, Tuple, Any
 
@@ -277,85 +273,6 @@ def build_operation_mixin_meta(versioned_modules):
     return mixin_operations
 
 
-def build_models_string(module_name, mod_to_api_version):
-    result = """    @classmethod
-    def models(cls, api_version=DEFAULT_API_VERSION):
-"""
-
-    template_models_if = """
-        {first}if api_version == '{api_version}':
-            from .{api_version_module} import models
-            return models"""
-    template_models_end_def = """        raise NotImplementedError("APIVersion {} is not available".format(api_version))
-"""
-
-    template_intro_doc = '        """Module depends on the API version:\n'
-    template_inside_doc = "           * {api_version}: :mod:`{api_version_module}.models<{module_name}.{api_version_module}.models>`"
-    template_end_doc = '        """'
-
-    result += template_intro_doc
-    for attr in sorted(mod_to_api_version.keys()):
-        result += "\n"
-        result += template_inside_doc.format(
-            module_name=module_name,
-            api_version=mod_to_api_version[attr],
-            api_version_module=attr,
-        )
-    result += "\n"
-    result += template_end_doc
-
-    first = True
-    for attr in sorted(mod_to_api_version.keys()):
-        result += template_models_if.format(
-            first="" if first else "el",
-            api_version=mod_to_api_version[attr],
-            api_version_module=attr,
-        )
-        first = False
-    result += "\n"
-    result += template_models_end_def
-    return result
-
-
-def build_operation_group(module_name, operation_name, versions, mod_to_api_version):
-
-    template_def = "    @property\n    def {attr}(self):\n"
-    template_intro_doc = '        """Instance depends on the API version:\n\n'
-    template_inside_doc = "           * {api_version}: :class:`{clsname}<{module_name}.{api_version_module}.operations.{clsname}>`\n"
-    template_end_doc = '        """\n'
-    template_code_prefix = "        api_version = self._get_api_version('{attr}')"
-    template_if = """        {first}if api_version == '{api_version}':
-            from .{api_version_module}.operations import {clsname} as OperationClass"""
-    template_end_def = """        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-"""
-    result = template_def.format(attr=operation_name)
-    result += template_intro_doc
-    for version in versions:
-        result += template_inside_doc.format(
-            api_version=mod_to_api_version[version[0]],
-            api_version_module=version[0],
-            module_name=module_name,
-            clsname=version[1],
-        )
-    result += template_end_doc
-    result += template_code_prefix.format(attr=operation_name)
-    first = True
-    for version in versions:
-        result += "\n"
-        result += template_if.format(
-            first="" if first else "el",
-            api_version=mod_to_api_version[version[0]],
-            api_version_module=version[0],
-            clsname=version[1],
-        )
-        first = False
-    result += "\n"
-    result += template_end_def
-    return result
-
-
 def find_module_folder(package_name, module_name):
     sdk_root = Path(__file__).parents[1]
     _LOGGER.debug("SDK root is: %s", sdk_root)
@@ -372,38 +289,11 @@ def find_client_file(package_name, module_name):
     return next(module_path.glob("*_client.py"))
 
 
-_CODE_PREFIX = """
-    @classmethod
-    def _models_dict(cls, api_version):
-        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
-
-"""
-
-_MODELS_FILE = """# coding=utf-8
-# --------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
-"""
-
-
 def main(input_str):
     package_name, module_name = parse_input(input_str)
     versioned_modules = get_versioned_modules(package_name, module_name)
     version_dict, mod_to_api_version = build_operation_meta(versioned_modules)
-    model_string = build_models_string(module_name, mod_to_api_version)
 
-    operations_string = []
-    for operation_name in sorted(version_dict.keys()):
-        versions = version_dict[operation_name]
-        operations_string.append(
-            build_operation_group(
-                module_name, operation_name, versions, mod_to_api_version
-            )
-        )
-
-    client_file = find_client_file(package_name, module_name)
     client_folder = find_module_folder(package_name, module_name)
     last_api_version = sorted(mod_to_api_version.keys())[-1]
     last_api_path = client_folder / last_api_version
@@ -470,22 +360,6 @@ def main(input_str):
 
         with open(future_filepath, "w") as fd:
             fd.write(result)
-
-    with open(client_file, "r") as read_client:
-        lines = read_client.readlines()
-    with open(client_file, "w", newline="\n") as write_client:
-        for line in lines:
-            write_client.write(line)
-            if line == _GENERATE_MARKER:
-                break
-        else:
-            sys.exit("Didn't find generate lines!!!!")
-
-        write_client.write(_CODE_PREFIX)
-        write_client.write(model_string)
-        for operation in operations_string:
-            write_client.write("\n")
-            write_client.write(operation)
 
 
 if __name__ == "__main__":
