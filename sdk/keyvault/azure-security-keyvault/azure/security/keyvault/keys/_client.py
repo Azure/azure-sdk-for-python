@@ -6,26 +6,15 @@
 from typing import Any, Dict, Generator, Mapping, Optional, List
 from datetime import datetime
 
-from azure.core import Configuration
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport
-from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
 
-from .._generated import KeyVaultClient
+from .._internal import _KeyVaultClientBase
 from ._models import Key, KeyBase, DeletedKey, KeyOperationResult
 
 
-class KeyClient:
+class KeyClient(_KeyVaultClientBase):
     """KeyClient defines a high level interface for
     managing keys in the specified vault.
-
-    :param credentials:  A credential or credential provider which can be used to authenticate to the vault,
-        a ValueError will be raised if the entity is not provided
-    :type credentials: azure.authentication.Credential or azure.authentication.CredentialProvider
-    :param str vault_url: The url of the vault to which the client will connect,
-        a ValueError will be raised if the entity is not provided
-    :param ~azure.core.configuration.Configuration config:  The configuration for the KeyClient
 
     Example:
         .. literalinclude:: ../tests/test_examples_keyvault.py
@@ -37,46 +26,6 @@ class KeyClient:
     """
 
     # pylint:disable=protected-access
-
-    @staticmethod
-    def create_config(**kwargs):
-        pass  # TODO
-
-    def __init__(self, vault_url, credentials, config=None, api_version=None, **kwargs):
-        # type: (str, Any, Configuration, Optional[str], Mapping[str, Any]) -> None
-        # TODO: update type hint for credentials
-        if not credentials:
-            raise ValueError("credentials")
-
-        if not vault_url:
-            raise ValueError("vault_url")
-
-        self._vault_url = vault_url
-
-        if api_version is None:
-            api_version = KeyVaultClient.DEFAULT_API_VERSION
-
-        config = config or KeyVaultClient.get_configuration_class(api_version)(credentials)
-
-        # TODO generated default pipeline should be fine when token policy isn't necessary
-        policies = [
-            config.headers_policy,
-            config.user_agent_policy,
-            config.proxy_policy,
-            _BearerTokenCredentialPolicy(credentials),
-            config.redirect_policy,
-            config.retry_policy,
-            config.logging_policy,
-        ]
-        transport = RequestsTransport(config)
-        pipeline = Pipeline(transport, policies=policies)
-
-        self._client = KeyVaultClient(credentials, api_version=api_version, pipeline=pipeline)
-
-    @property
-    def vault_url(self):
-        # type: () -> str
-        return self._vault_url
 
     def create_key(
         self,

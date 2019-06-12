@@ -6,27 +6,15 @@
 from typing import Any, Dict, Generator, Mapping, Optional
 from datetime import datetime
 
-from azure.core import Configuration
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import RetryPolicy, RedirectPolicy, UserAgentPolicy
-from azure.core.pipeline.transport import RequestsTransport
-from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
 
-from .._generated import KeyVaultClient
+from .._internal import _KeyVaultClientBase
 from ._models import Secret, DeletedSecret, SecretAttributes
 
 
-class SecretClient:
+class SecretClient(_KeyVaultClientBase):
     """SecretClient defines a high level interface for
     managing secrets in the specified vault.
-
-    :param credentials:  A credential or credential provider which can be used to authenticate to the vault,
-        a ValueError will be raised if the entity is not provided
-    :type credentials: azure.authentication.Credential or azure.authentication.CredentialProvider
-    :param str vault_url: The url of the vault to which the client will connect,
-        a ValueError will be raised if the entity is not provided
-    :param ~azure.core.configuration.Configuration config:  The configuration for the SecretClient
 
     Example:
         .. literalinclude:: ../tests/test_examples_keyvault.py
@@ -40,44 +28,6 @@ class SecretClient:
     # pylint:disable=protected-access
 
     _api_version = "7.0"
-
-    @staticmethod
-    def create_config(**kwargs):
-        pass  # TODO
-
-    def __init__(self, vault_url, credentials, config=None, api_version=None, **kwargs):
-        if not credentials:
-            raise ValueError("credentials")
-
-        if not vault_url:
-            raise ValueError("vault_url")
-
-        self._vault_url = vault_url
-
-        if api_version is None:
-            api_version = KeyVaultClient.DEFAULT_API_VERSION
-
-        config = config or KeyVaultClient.get_configuration_class(api_version)(credentials)
-
-        # TODO generated default pipeline should be fine when token policy isn't necessary
-        policies = [
-            config.headers_policy,
-            config.user_agent_policy,
-            config.proxy_policy,
-            _BearerTokenCredentialPolicy(credentials),
-            config.redirect_policy,
-            config.retry_policy,
-            config.logging_policy,
-        ]
-        transport = RequestsTransport(config)
-        pipeline = Pipeline(transport, policies=policies)
-
-        self._client = KeyVaultClient(credentials, api_version=self._api_version, pipeline=pipeline)
-
-    @property
-    def vault_url(self):
-        # type: () -> str
-        return self._vault_url
 
     def get_secret(self, name, version=None, **kwargs):
         # type: (str, str, Mapping[str, Any]) -> Secret
@@ -100,9 +50,8 @@ class SecretClient:
                 :language: python
                 :dedent: 4
                 :caption: Get secret from the key vault
-
         """
-        bundle = self._client.get_secret(self._vault_url, name, version, error_map={404: ResourceNotFoundError})
+        bundle = self._client.get_secret(self._vault_url, name, version or "", error_map={404: ResourceNotFoundError})
         return Secret._from_secret_bundle(bundle)
 
     def set_secret(
@@ -148,10 +97,10 @@ class SecretClient:
         )
         return Secret._from_secret_bundle(bundle)
 
-    def update_secret_attributes(
-        self, name, version, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
+    def update_secret(
+        self, name, version=None, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
     ):
-        # type: (str, str, Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> SecretAttributes
+        # type: (str, Optional[str], Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> SecretAttributes
         """Updates the attributes associated with a specified secret in the key vault.
 
         The UPDATE operation changes specified attributes of an existing stored secret.
@@ -175,8 +124,8 @@ class SecretClient:
 
         Example:
             .. literalinclude:: ../tests/test_examples_keyvault.py
-                :start-after: [START update_secret_attributes]
-                :end-before: [END update_secret_attributes]
+                :start-after: [START update_secret]
+                :end-before: [END update_secret]
                 :language: python
                 :dedent: 4
                 :caption: Updates the attributes associated with a specified secret in the key vault
@@ -189,7 +138,7 @@ class SecretClient:
         bundle = self._client.update_secret(
             self.vault_url,
             name,
-            secret_version=version,
+            secret_version=version or "",
             content_type=content_type,
             tags=tags,
             secret_attributes=attributes,

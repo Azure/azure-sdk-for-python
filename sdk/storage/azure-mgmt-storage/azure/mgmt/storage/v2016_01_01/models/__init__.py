@@ -10,44 +10,44 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .storage_account_check_name_availability_parameters_py3 import StorageAccountCheckNameAvailabilityParameters
-    from .check_name_availability_result_py3 import CheckNameAvailabilityResult
-    from .sku_py3 import Sku
-    from .custom_domain_py3 import CustomDomain
-    from .encryption_service_py3 import EncryptionService
-    from .encryption_services_py3 import EncryptionServices
-    from .encryption_py3 import Encryption
-    from .storage_account_create_parameters_py3 import StorageAccountCreateParameters
-    from .endpoints_py3 import Endpoints
-    from .storage_account_py3 import StorageAccount
-    from .storage_account_key_py3 import StorageAccountKey
-    from .storage_account_list_keys_result_py3 import StorageAccountListKeysResult
-    from .storage_account_regenerate_key_parameters_py3 import StorageAccountRegenerateKeyParameters
-    from .storage_account_update_parameters_py3 import StorageAccountUpdateParameters
-    from .usage_name_py3 import UsageName
-    from .usage_py3 import Usage
-    from .resource_py3 import Resource
+    from ._models_py3 import CheckNameAvailabilityResult
+    from ._models_py3 import CustomDomain
+    from ._models_py3 import Encryption
+    from ._models_py3 import EncryptionService
+    from ._models_py3 import EncryptionServices
+    from ._models_py3 import Endpoints
+    from ._models_py3 import Resource
+    from ._models_py3 import Sku
+    from ._models_py3 import StorageAccount
+    from ._models_py3 import StorageAccountCheckNameAvailabilityParameters
+    from ._models_py3 import StorageAccountCreateParameters
+    from ._models_py3 import StorageAccountKey
+    from ._models_py3 import StorageAccountListKeysResult
+    from ._models_py3 import StorageAccountRegenerateKeyParameters
+    from ._models_py3 import StorageAccountUpdateParameters
+    from ._models_py3 import Usage
+    from ._models_py3 import UsageName
 except (SyntaxError, ImportError):
-    from .storage_account_check_name_availability_parameters import StorageAccountCheckNameAvailabilityParameters
-    from .check_name_availability_result import CheckNameAvailabilityResult
-    from .sku import Sku
-    from .custom_domain import CustomDomain
-    from .encryption_service import EncryptionService
-    from .encryption_services import EncryptionServices
-    from .encryption import Encryption
-    from .storage_account_create_parameters import StorageAccountCreateParameters
-    from .endpoints import Endpoints
-    from .storage_account import StorageAccount
-    from .storage_account_key import StorageAccountKey
-    from .storage_account_list_keys_result import StorageAccountListKeysResult
-    from .storage_account_regenerate_key_parameters import StorageAccountRegenerateKeyParameters
-    from .storage_account_update_parameters import StorageAccountUpdateParameters
-    from .usage_name import UsageName
-    from .usage import Usage
-    from .resource import Resource
-from .storage_account_paged import StorageAccountPaged
-from .usage_paged import UsagePaged
-from .storage_management_client_enums import (
+    from ._models import CheckNameAvailabilityResult
+    from ._models import CustomDomain
+    from ._models import Encryption
+    from ._models import EncryptionService
+    from ._models import EncryptionServices
+    from ._models import Endpoints
+    from ._models import Resource
+    from ._models import Sku
+    from ._models import StorageAccount
+    from ._models import StorageAccountCheckNameAvailabilityParameters
+    from ._models import StorageAccountCreateParameters
+    from ._models import StorageAccountKey
+    from ._models import StorageAccountListKeysResult
+    from ._models import StorageAccountRegenerateKeyParameters
+    from ._models import StorageAccountUpdateParameters
+    from ._models import Usage
+    from ._models import UsageName
+from ._paged_models import StorageAccountPaged
+from ._paged_models import UsagePaged
+from ._storage_management_client_enums import (
     Reason,
     SkuName,
     SkuTier,
@@ -60,23 +60,23 @@ from .storage_management_client_enums import (
 )
 
 __all__ = [
-    'StorageAccountCheckNameAvailabilityParameters',
     'CheckNameAvailabilityResult',
-    'Sku',
     'CustomDomain',
+    'Encryption',
     'EncryptionService',
     'EncryptionServices',
-    'Encryption',
-    'StorageAccountCreateParameters',
     'Endpoints',
+    'Resource',
+    'Sku',
     'StorageAccount',
+    'StorageAccountCheckNameAvailabilityParameters',
+    'StorageAccountCreateParameters',
     'StorageAccountKey',
     'StorageAccountListKeysResult',
     'StorageAccountRegenerateKeyParameters',
     'StorageAccountUpdateParameters',
-    'UsageName',
     'Usage',
-    'Resource',
+    'UsageName',
     'StorageAccountPaged',
     'UsagePaged',
     'Reason',
