@@ -87,11 +87,11 @@ class QueueMessage(object):
         Only returned by get messages operations. Set to None for peek messages.
     '''
 
-    def __init__(self):
+    def __init__(self, content=None):
         self.id = None
         self.insertion_time = None
         self.expiration_time = None
         self.dequeue_count = None
-        self.content = None
+        self.content = content
         self.pop_receipt = None
         self.time_next_visible = None

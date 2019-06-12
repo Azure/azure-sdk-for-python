@@ -19,7 +19,7 @@ from ._utils import (
     process_storage_error,
     basic_error_map
 )
-from .models import SignedIdentifier, StorageErrorException
+from .models import SignedIdentifier, StorageErrorException, QueueMessage
 from .queue_iterator import QueueIterator
 
 from azure.core import Configuration
@@ -246,7 +246,7 @@ class QueueClient(object):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def enqueue_message(self, content, visibility_timeout=None, time_to_live=None, timeout=None):
+    def enqueue_message(self, content, visibility_timeout=None, time_to_live=None, timeout=None, **kwargs):
         # type: (Any, Optional[int], Optional[int], Optional[int]) -> QueueMessage
         """
         Adds a new message to the back of the message queue. 
@@ -281,8 +281,21 @@ class QueueClient(object):
             returned from the service.
         :rtype: :class:`~azure.storage.queue.models.QueueMessage`
         """
+        queue_message = QueueMessage(content=content)
+        try:
+            self._client.messages.enqueue(
+                queue_message=queue_message,
+                visibilitytimeout=visibility_timeout,
+                message_time_to_live=time_to_live,
+                timeout=timeout,
+                error_map=basic_error_map(),
+                **kwargs
+            )
+            return queue_message
+        except StorageErrorException as error:
+            process_storage_error(error)
 
-    def dequeue_messages(self, visibility_timeout=None, timeout=None):
+    def dequeue_messages(self, visibility_timeout=None, timeout=None, **kwargs):
         # type: (Optional[int], Optional[int]) -> QueueMessage
         """
         Removes one or more messages from top of the queue.
@@ -303,10 +316,11 @@ class QueueClient(object):
         :rtype: :class:`~azure.storage.queue.models.QueueMessage`
         """
         try:
-            return QueueIterator(
-                visibility_timeout=visibility_timeout,
+            return self._client.messages.dequeue(
+                visibilitytimeout=visibility_timeout,
                 timeout=timeout,
-                error_map=basic_error_map()
+                error_map=basic_error_map(),
+                **kwargs
             )
         except StorageErrorException as error:
             process_storage_error(error)
