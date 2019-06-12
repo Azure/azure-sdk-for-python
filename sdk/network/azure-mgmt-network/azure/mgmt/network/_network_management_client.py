@@ -16,9 +16,10 @@ from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from .version import VERSION
 from ._configuration import NetworkManagementClientConfiguration
+from ._operations_mixin import NetworkManagementClientOperationsMixin
 
 
-class NetworkManagementClient(MultiApiClientMixin, SDKClient):
+class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiClientMixin, SDKClient):
     """Network Client
 
     This ready contains multiple API versions, to help you deal with all Azure clouds
@@ -50,6 +51,8 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
     _PROFILE_TAG = "azure.mgmt.network.NetworkManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
+            'interface_endpoints': '2019-02-01',
+            'virtual_wa_ns': '2018-07-01',
             None: DEFAULT_API_VERSION
         }},
         _PROFILE_TAG + " latest"
@@ -63,83 +66,6 @@ class NetworkManagementClient(MultiApiClientMixin, SDKClient):
             api_version=api_version,
             profile=profile
         )
-
-    def check_dns_name_availability(
-            self, location, domain_name_label, custom_headers=None, raw=False, **operation_config):
-        """Checks whether a domain name in the cloudapp.azure.com zone is
-        available for use.
-
-        :param location: The location of the domain name.
-        :type location: str
-        :param domain_name_label: The domain name to be verified. It must
-         conform to the following regular expression:
-         ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.
-        :type domain_name_label: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2018_08_01.models.DnsNameAvailabilityResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>` if
-         raw=true
-        :rtype: :class:`DnsNameAvailabilityResult
-         <azure.mgmt.network.v2018_08_01.models.DnsNameAvailabilityResult>` or
-         :class:`ClientRawResponse<msrest.pipeline.ClientRawResponse>`
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        api_version = self._get_api_version('check_dns_name_availability')
-        if api_version == '2019-04-01':
-            from .v2019_04_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2019-02-01':
-            from .v2019_02_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2018-12-01':
-            from .v2018_12_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2018-11-01':
-            from .v2018_11_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2018-10-01':
-            from .v2018_10_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2018-08-01':
-            from .v2018_08_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2018-07-01':
-            from .v2018_07_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2018-06-01':
-            from .v2018_06_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2018-04-01':
-            from .v2018_04_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2018-02-01':
-            from .v2018_02_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2018-01-01':
-            from .v2018_01_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2017-11-01':
-            from .v2017_11_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2017-10-01':
-            from .v2017_10_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2017-09-01':
-            from .v2017_09_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2017-08-01':
-            from .v2017_08_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2017-06-01':
-            from .v2017_06_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2017-03-01':
-            from .v2017_03_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2016-12-01':
-            from .v2016_12_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2016-09-01':
-            from .v2016_09_01 import NetworkManagementClient as ClientClass
-        elif api_version == '2015-06-15':
-            from .v2015_06_15 import NetworkManagementClient as ClientClass
-        localclient = ClientClass(self.config.credentials,
-                                  self.config.subscription_id,
-                                  self.config.base_url)
-        return localclient.check_dns_name_availability(location,
-                                                       domain_name_label,
-                                                       custom_headers,
-                                                       raw,
-                                                       **operation_config)
-
-############ Generated from here ############
 
     @classmethod
     def _models_dict(cls, api_version):
