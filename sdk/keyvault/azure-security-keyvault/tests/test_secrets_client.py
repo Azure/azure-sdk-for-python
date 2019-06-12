@@ -43,7 +43,7 @@ class SecretClientTests(KeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer()
-    @VaultClientPreparer(enable_soft_delete=True)
+    @VaultClientPreparer()
     def test_secret_crud_operations(self, vault_client, **kwargs):
 
         self.assertIsNotNone(vault_client)
@@ -77,25 +77,25 @@ class SecretClientTests(KeyVaultTestCase):
         self.assertEqual(expires, created.expires)
         self.assertEqual(tags, created.tags)
 
-        # get secret without version
-        self._assert_secret_attributes_equal(created, client.get_secret(created.name, ""))
-
-        # get secret with version
+        self._assert_secret_attributes_equal(created, client.get_secret(created.name))
         self._assert_secret_attributes_equal(created, client.get_secret(created.name, created.version))
 
         def _update_secret(secret):
             content_type = "text/plain"
             expires = date_parse.parse("2050-01-02T08:00:00.000Z")
             tags = {"foo": "updated tag"}
-            secret_bundle = client.update_secret(
-                secret.name, secret.version, content_type=content_type, expires=expires, tags=tags
+            enabled = not secret.enabled
+            updated_secret = client.update_secret(
+                secret.name, secret.version, content_type=content_type, expires=expires, tags=tags, enabled=enabled
             )
-            self.assertEqual(tags, secret_bundle.tags)
-            self.assertEqual(secret.id, secret_bundle.id)
-            self.assertNotEqual(secret.updated, secret_bundle.updated)
-            return secret_bundle
+            self.assertEqual(tags, updated_secret.tags)
+            self.assertEqual(secret.id, updated_secret.id)
+            self.assertEqual(content_type, updated_secret.content_type)
+            self.assertEqual(expires, updated_secret.expires)
+            self.assertNotEqual(secret.enabled, updated_secret.enabled)
+            self.assertNotEqual(secret.updated, updated_secret.updated)
+            return updated_secret
 
-        # update secret with version
         if self.is_live:
             # wait to ensure the secret's update time won't equal its creation time
             time.sleep(1)
@@ -106,21 +106,7 @@ class SecretClientTests(KeyVaultTestCase):
         deleted = client.delete_secret(updated.name)
         self.assertIsNotNone(deleted)
 
-        self._poll_until_no_exception(functools.partial(client.get_deleted_secret, created.name), ResourceNotFoundError)
-
-        # get the deleted secret
-        deleted_secret = client.get_deleted_secret(deleted.name)
-        self.assertIsNotNone(deleted_secret)
-
-        # TestCase.assertRaisesRegexp was deprecated in 3.2
-        if hasattr(self, "assertRaisesRegex"):
-            assertRaises = self.assertRaisesRegex
-        else:
-            assertRaises = self.assertRaisesRegexp
-
-        # deleted secret isn't found
-        with assertRaises(HttpResponseError, r"(?i)not found"):
-            client.get_secret(deleted.name, "")
+        self._poll_until_exception(functools.partial(client.get_secret, updated.name), ResourceNotFoundError)
 
     @ResourceGroupPreparer()
     @VaultClientPreparer()

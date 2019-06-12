@@ -47,7 +47,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer()
-    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_secret_crud_operations(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -83,13 +83,17 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             content_type = "text/plain"
             expires = date_parse.parse("2050-02-02T08:00:00.000Z")
             tags = {"foo": "updated tag"}
-            secret_bundle = await client.update_secret(
-                secret.name, secret.version, content_type=content_type, expires=expires, tags=tags
+            enabled = not secret.enabled
+            updated_secret = await client.update_secret(
+                secret.name, secret.version, content_type=content_type, expires=expires, tags=tags, enabled=enabled
             )
-            self.assertEqual(tags, secret_bundle.tags)
-            self.assertEqual(secret.id, secret_bundle.id)
-            self.assertNotEqual(secret.updated, secret_bundle.updated)
-            return secret_bundle
+            self.assertEqual(tags, updated_secret.tags)
+            self.assertEqual(secret.id, updated_secret.id)
+            self.assertEqual(content_type, updated_secret.content_type)
+            self.assertEqual(expires, updated_secret.expires)
+            self.assertNotEqual(secret.enabled, updated_secret.enabled)
+            self.assertNotEqual(secret.updated, updated_secret.updated)
+            return updated_secret
 
         # update secret with version
         if self.is_live:
@@ -102,13 +106,9 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         deleted = await client.delete_secret(updated.name)
         self.assertIsNotNone(deleted)
 
-        await self._poll_until_no_exception(
-            client.get_deleted_secret, secret_name, expected_exception=ResourceNotFoundError
+        await self._poll_until_exception(
+            client.get_secret, updated.name, expected_exception=ResourceNotFoundError
         )
-
-        # deleted secret isn't found
-        with self.assertRaises(ResourceNotFoundError):
-            await client.get_secret(updated.name, "")
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer()
