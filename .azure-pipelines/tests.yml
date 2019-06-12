@@ -3,7 +3,9 @@
 
 jobs:
   - job: 'Test'
-
+    variables:
+      skipComponentGovernanceDetection: true
+      
     timeoutInMinutes: 120
     strategy:
       matrix:

@@ -15,16 +15,9 @@ from msrest.serialization import Model
 class IpAddress(Model):
     """Specifies the IP address of the network interface.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar ip_address: Specifies the IP address of the network interface.
-    :vartype ip_address: str
+    :param ip_address: Specifies the IP address of the network interface.
+    :type ip_address: str
     """
-
-    _validation = {
-        'ip_address': {'readonly': True},
-    }
 
     _attribute_map = {
         'ip_address': {'key': 'ipAddress', 'type': 'str'},
@@ -32,4 +25,4 @@ class IpAddress(Model):
 
     def __init__(self, **kwargs):
         super(IpAddress, self).__init__(**kwargs)
-        self.ip_address = None
+        self.ip_address = kwargs.get('ip_address', None)

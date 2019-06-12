@@ -1,9 +1,9 @@
 [packaging]
 package_name = "azure-core"
 package_nspkg = "azure-nspkg"
-package_pprint_name = "MyService Management"
+package_pprint_name = "Core"
 package_doc_id = ""
 is_stable = false
-is_arm = true
-need_msrestazure = true
+is_arm = false
+need_msrestazure = false
 auto_update = false
