@@ -76,7 +76,7 @@ class PercentileSourceTargetOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3),
+                    'accountName': self._serialize.url("account_name", account_name, 'str', max_length=50, min_length=3, pattern=r'^[a-z0-9]+(-[a-z0-9]+)*'),
                     'sourceRegion': self._serialize.url("source_region", source_region, 'str'),
                     'targetRegion': self._serialize.url("target_region", target_region, 'str')
                 }
