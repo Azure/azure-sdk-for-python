@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .registries_operations import RegistriesOperations
-from .operations import Operations
-from .replications_operations import ReplicationsOperations
-from .webhooks_operations import WebhooksOperations
-from .runs_operations import RunsOperations
-from .tasks_operations import TasksOperations
+from ._registries_operations import RegistriesOperations
+from ._operations import Operations
+from ._replications_operations import ReplicationsOperations
+from ._webhooks_operations import WebhooksOperations
+from ._runs_operations import RunsOperations
+from ._tasks_operations import TasksOperations
 
 __all__ = [
     'RegistriesOperations',
