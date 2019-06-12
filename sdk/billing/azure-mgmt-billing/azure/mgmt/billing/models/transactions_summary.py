@@ -50,6 +50,11 @@ class TransactionsSummary(Resource):
     :vartype transaction_amount: ~azure.mgmt.billing.models.Amount
     :ivar quantity: Purchase quantity.
     :vartype quantity: int
+    :ivar customer_id: Customer id to which this product belongs.
+    :vartype customer_id: str
+    :ivar customer_display_name: Display name of customer to which this
+     product belongs.
+    :vartype customer_display_name: str
     :ivar invoice_section_id: Invoice section id to which this product
      belongs.
     :vartype invoice_section_id: str
@@ -82,6 +87,8 @@ class TransactionsSummary(Resource):
         'product_description': {'readonly': True},
         'transaction_amount': {'readonly': True},
         'quantity': {'readonly': True},
+        'customer_id': {'readonly': True},
+        'customer_display_name': {'readonly': True},
         'invoice_section_id': {'readonly': True},
         'invoice_section_name': {'readonly': True},
         'billing_profile_id': {'readonly': True},
@@ -106,6 +113,8 @@ class TransactionsSummary(Resource):
         'transaction_type': {'key': 'properties.transactionType', 'type': 'str'},
         'transaction_amount': {'key': 'properties.transactionAmount', 'type': 'Amount'},
         'quantity': {'key': 'properties.quantity', 'type': 'int'},
+        'customer_id': {'key': 'properties.customerId', 'type': 'str'},
+        'customer_display_name': {'key': 'properties.customerDisplayName', 'type': 'str'},
         'invoice_section_id': {'key': 'properties.invoiceSectionId', 'type': 'str'},
         'invoice_section_name': {'key': 'properties.invoiceSectionName', 'type': 'str'},
         'billing_profile_id': {'key': 'properties.billingProfileId', 'type': 'str'},
@@ -128,6 +137,8 @@ class TransactionsSummary(Resource):
         self.transaction_type = kwargs.get('transaction_type', None)
         self.transaction_amount = None
         self.quantity = None
+        self.customer_id = None
+        self.customer_display_name = None
         self.invoice_section_id = None
         self.invoice_section_name = None
         self.billing_profile_id = None
