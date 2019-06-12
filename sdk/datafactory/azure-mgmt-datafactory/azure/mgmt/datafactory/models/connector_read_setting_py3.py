@@ -13,7 +13,7 @@ from msrest.serialization import Model
 
 
 class ConnectorReadSetting(Model):
-    """Connector read settings.
+    """Connector read setting.
 
     All required parameters must be populated in order to send to Azure.
 
