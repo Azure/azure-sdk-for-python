@@ -78,6 +78,7 @@ class QueueClient(object):
 
         self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
         self._client = create_client(self.url, self._pipeline)
+        self._queue_iterator = QueueIterator()
 
     @classmethod
     def from_connection_string(
@@ -282,6 +283,7 @@ class QueueClient(object):
         :rtype: :class:`~azure.storage.queue.models.QueueMessage`
         """
         queue_message = QueueMessage(content=content)
+
         try:
             self._client.messages.enqueue(
                 queue_message=queue_message,
@@ -291,6 +293,7 @@ class QueueClient(object):
                 error_map=basic_error_map(),
                 **kwargs
             )
+            self._queue_iterator.put(queue_message)
             return queue_message
         except StorageErrorException as error:
             process_storage_error(error)
@@ -316,12 +319,14 @@ class QueueClient(object):
         :rtype: :class:`~azure.storage.queue.models.QueueMessage`
         """
         try:
-            return self._client.messages.dequeue(
+            self._client.messages.dequeue(
                 visibilitytimeout=visibility_timeout,
                 timeout=timeout,
                 error_map=basic_error_map(),
                 **kwargs
             )
+            next(self._queue_iterator)
+            return self._queue_iterator
         except StorageErrorException as error:
             process_storage_error(error)
 

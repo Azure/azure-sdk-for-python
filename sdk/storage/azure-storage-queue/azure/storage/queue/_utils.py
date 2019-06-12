@@ -126,3 +126,64 @@ def basic_error_map():
     return {
         404: ResourceNotFoundError
     }
+
+def _sign_string(key, string_to_sign, key_is_base64=True):
+    if key_is_base64:
+        key = _decode_base64_to_bytes(key)
+    else:
+        if isinstance(key, six.text_type):
+            key = key.encode('utf-8')
+    if isinstance(string_to_sign, six.text_type):
+        string_to_sign = string_to_sign.encode('utf-8')
+    signed_hmac_sha256 = hmac.HMAC(key, string_to_sign, hashlib.sha256)
+    digest = signed_hmac_sha256.digest()
+    encoded_digest = encode_base64(digest)
+    return encoded_diges
+
+
+class _QueryStringConstants(object):
+    SIGNED_SIGNATURE = 'sig'
+    SIGNED_PERMISSION = 'sp'
+    SIGNED_START = 'st'
+    SIGNED_EXPIRY = 'se'
+    SIGNED_RESOURCE = 'sr'
+    SIGNED_IDENTIFIER = 'si'
+    SIGNED_IP = 'sip'
+    SIGNED_PROTOCOL = 'spr'
+    SIGNED_VERSION = 'sv'
+    SIGNED_CACHE_CONTROL = 'rscc'
+    SIGNED_CONTENT_DISPOSITION = 'rscd'
+    SIGNED_CONTENT_ENCODING = 'rsce'
+    SIGNED_CONTENT_LANGUAGE = 'rscl'
+    SIGNED_CONTENT_TYPE = 'rsct'
+    START_PK = 'spk'
+    START_RK = 'srk'
+    END_PK = 'epk'
+    END_RK = 'erk'
+    SIGNED_RESOURCE_TYPES = 'srt'
+    SIGNED_SERVICES = 'ss'
+
+    @staticmethod
+    def to_list():
+        return [
+            _QueryStringConstants.SIGNED_SIGNATURE,
+            _QueryStringConstants.SIGNED_PERMISSION,
+            _QueryStringConstants.SIGNED_START,
+            _QueryStringConstants.SIGNED_EXPIRY,
+            _QueryStringConstants.SIGNED_RESOURCE,
+            _QueryStringConstants.SIGNED_IDENTIFIER,
+            _QueryStringConstants.SIGNED_IP,
+            _QueryStringConstants.SIGNED_PROTOCOL,
+            _QueryStringConstants.SIGNED_VERSION,
+            _QueryStringConstants.SIGNED_CACHE_CONTROL,
+            _QueryStringConstants.SIGNED_CONTENT_DISPOSITION,
+            _QueryStringConstants.SIGNED_CONTENT_ENCODING,
+            _QueryStringConstants.SIGNED_CONTENT_LANGUAGE,
+            _QueryStringConstants.SIGNED_CONTENT_TYPE,
+            _QueryStringConstants.START_PK,
+            _QueryStringConstants.START_RK,
+            _QueryStringConstants.END_PK,
+            _QueryStringConstants.END_RK,
+            _QueryStringConstants.SIGNED_RESOURCE_TYPES,
+            _QueryStringConstants.SIGNED_SERVICES,
+        ]
