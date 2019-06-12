@@ -4,17 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 import asyncio
-import functools
 
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
 from async_preparer import AsyncVaultClientPreparer
 from async_test_case import AsyncKeyVaultTestCase
 
-from azure.security.keyvault.aio.vault_client import VaultClient
 
 from dateutil import parser as date_parse
-import time
 
 
 class KeyVaultSecretTest(AsyncKeyVaultTestCase):
@@ -50,7 +47,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer()
-    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_secret_crud_operations(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
@@ -86,18 +83,22 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             content_type = "text/plain"
             expires = date_parse.parse("2050-02-02T08:00:00.000Z")
             tags = {"foo": "updated tag"}
-            secret_bundle = await client.update_secret(
-                secret.name, secret.version, content_type=content_type, expires=expires, tags=tags
+            enabled = not secret.enabled
+            updated_secret = await client.update_secret(
+                secret.name, secret.version, content_type=content_type, expires=expires, tags=tags, enabled=enabled
             )
-            self.assertEqual(tags, secret_bundle.tags)
-            self.assertEqual(secret.id, secret_bundle.id)
-            self.assertNotEqual(secret.updated, secret_bundle.updated)
-            return secret_bundle
+            self.assertEqual(tags, updated_secret.tags)
+            self.assertEqual(secret.id, updated_secret.id)
+            self.assertEqual(content_type, updated_secret.content_type)
+            self.assertEqual(expires, updated_secret.expires)
+            self.assertNotEqual(secret.enabled, updated_secret.enabled)
+            self.assertNotEqual(secret.updated, updated_secret.updated)
+            return updated_secret
 
         # update secret with version
         if self.is_live:
             # wait a second to ensure the secret's update time won't equal its creation time
-            time.sleep(1)
+            await asyncio.sleep(1)
 
         updated = await _update_secret(created)
 
@@ -105,11 +106,9 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         deleted = await client.delete_secret(updated.name)
         self.assertIsNotNone(deleted)
 
-        await self._poll_until_resource_found(client.get_deleted_secret, [secret_name])
-
-        # deleted secret isn't found
-        with self.assertRaises(ResourceNotFoundError):
-            await client.get_secret(updated.name, "")
+        await self._poll_until_exception(
+            client.get_secret, updated.name, expected_exception=ResourceNotFoundError
+        )
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer()
@@ -182,7 +181,9 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         for secret_name in expected.keys():
             await client.delete_secret(secret_name)
 
-        await self._poll_until_resource_found(client.get_deleted_secret, expected.keys())
+        await self._poll_until_no_exception(
+            client.get_deleted_secret, *expected.keys(), expected_exception=ResourceNotFoundError
+        )
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         result = client.list_deleted_secrets()
@@ -215,48 +216,64 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_recover_purge(self, vault_client, **kwargs):
+    async def test_recover(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
         client = vault_client.secrets
 
         secrets = {}
 
         # create secrets to recover
-        for i in range(0, self.list_test_size):
-            secret_name = self.get_resource_name("secrec{}".format(str(i)))
-            secret_value = self.get_resource_name("secval{}".format((str(i))))
-            secrets[secret_name] = await client.set_secret(secret_name, secret_value)
-
-        # create secrets to purge
-        for i in range(0, self.list_test_size):
-            secret_name = self.get_resource_name("secprg{}".format(str(i)))
-            secret_value = self.get_resource_name("secval{}".format((str(i))))
+        for i in range(self.list_test_size):
+            secret_name = "secret{}".format(i)
+            secret_value = "value{}".format(i)
             secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
         # delete all secrets
         for secret_name in secrets.keys():
             await client.delete_secret(secret_name)
+        await self._poll_until_no_exception(
+            client.get_deleted_secret, *secrets.keys(), expected_exception=ResourceNotFoundError
+        )
 
-        await self._poll_until_resource_found(client.get_deleted_secret, secrets.keys())
+        # validate all our deleted secrets are returned by list_deleted_secrets
+        async for deleted_secret in client.list_deleted_secrets():
+            assert deleted_secret.name in secrets
 
         # recover select secrets
-        for secret_name in [s for s in secrets.keys() if s.startswith("secrec")]:
+        for secret_name in secrets.keys():
             await client.recover_deleted_secret(secret_name)
 
-        # purge select secrets
-        for secret_name in [s for s in secrets.keys() if s.startswith("secprg")]:
-            await client.purge_deleted_secret(secret_name)
+        # validate the recovered secrets exist
+        await self._poll_until_no_exception(
+            client.get_secret, *secrets.keys(), expected_exception=ResourceNotFoundError
+        )
 
-        # validate the recovered secrets
-        expected = {k: v for k, v in secrets.items() if k.startswith("secrec")}
-        await self._poll_until_resource_found(client.get_secret, expected.keys())
+    @ResourceGroupPreparer()
+    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_purge(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.secrets
 
-        actual = {}
-        for k in expected.keys():
-            actual[k] = await client.get_secret(k, "")
+        secrets = {}
 
-        self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
+        # create secrets to purge
+        for i in range(self.list_test_size):
+            secret_name = "secret{}".format(i)
+            secret_value = "value{}".format(i)
+            secrets[secret_name] = await client.set_secret(secret_name, secret_value)
 
-        # validate none of our purged secrets are returned by list_deleted_secrets
+        # delete all secrets
+        for secret_name in secrets.keys():
+            await client.delete_secret(secret_name)
+        await self._poll_until_no_exception(
+            client.get_deleted_secret, *secrets.keys(), expected_exception=ResourceNotFoundError
+        )
+
+        # validate all our deleted secrets are returned by list_deleted_secrets
         async for deleted_secret in client.list_deleted_secrets():
-            self.assertTrue(not any(s in deleted_secret for s in secrets.keys()))
+            assert deleted_secret.name in secrets
+
+        # purge secrets
+        for secret_name in secrets.keys():
+            await client.purge_deleted_secret(secret_name)
