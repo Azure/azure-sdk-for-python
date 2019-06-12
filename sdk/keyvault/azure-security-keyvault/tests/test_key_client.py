@@ -2,10 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
-import time
+# -------------------------------------------------------------------------
 import codecs
 from dateutil import parser as date_parse
+import functools
+import time
+
+from azure.core.exceptions import ResourceNotFoundError
 from azure.security.keyvault._generated.v7_0.models import JsonWebKey
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
@@ -152,6 +155,7 @@ class KeyClientTests(KeyVaultTestCase):
         if self.is_live:
             # wait to ensure the key's update time won't equal its creation time
             time.sleep(1)
+
         self._update_key(client, created_rsa_key)
 
         # delete the new key
@@ -164,9 +168,10 @@ class KeyClientTests(KeyVaultTestCase):
             "Missing required deleted key attributes.",
         )
 
-        if self.is_live:
-            # wait to ensure the key has been deleted
-            time.sleep(20)
+        self._poll_until_no_exception(
+            functools.partial(client.get_deleted_key, created_rsa_key.name), ResourceNotFoundError
+        )
+
         # get the deleted key when soft deleted enabled
         deleted_key = client.get_deleted_key(created_rsa_key.name)
         self.assertIsNotNone(deleted_key)
@@ -245,55 +250,68 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
-    def test_recover_purge(self, vault_client, **kwargs):
-
+    def test_recover(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
         client = vault_client.keys
+
+        # create keys
         keys = {}
-
-        # create keys to recover
         for i in range(self.list_test_size):
-            key_name = self.get_resource_name("keyrec{}".format(i))
+            key_name = "key{}".format(i)
             keys[key_name] = client.create_key(key_name, "RSA")
 
-        # create keys to purge
-        for i in range(self.list_test_size):
-            key_name = self.get_resource_name("keyprg{}".format(i))
-            keys[key_name] = client.create_key(key_name, "RSA")
-
-        # delete all keys
+        # delete them
         for key_name in keys.keys():
             client.delete_key(key_name)
+        for key_name in keys.keys():
+            self._poll_until_no_exception(
+                functools.partial(client.get_deleted_key, key_name), expected_exception=ResourceNotFoundError
+            )
 
-        if self.is_live:
-            time.sleep(20)
-
-        # validate all our deleted keys are returned by list_deleted_keys
+        # validate the deleted keys are returned by list_deleted_keys
         deleted = [s.name for s in client.list_deleted_keys()]
-
         self.assertTrue(all(s in deleted for s in keys.keys()))
 
-        # recover select keys
-        for key_name in [s for s in keys.keys() if s.startswith("keyrec")]:
+        # recover the keys
+        for key_name in keys.keys():
             recovered_key = client.recover_deleted_key(key_name)
             expected_key = keys[key_name]
             self._assert_key_attributes_equal(expected_key, recovered_key)
 
-        # purge select keys
-        for key_name in [s for s in keys.keys() if s.startswith("keyprg")]:
+    @ResourceGroupPreparer()
+    @VaultClientPreparer(enable_soft_delete=True)
+    def test_purge(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.keys
+
+        # create keys
+        key_names = ["key{}".format(i) for i in range(self.list_test_size)]
+        for name in key_names:
+            client.create_key(name, "RSA")
+
+        # delete them
+        for key_name in key_names:
+            client.delete_key(key_name)
+        for key_name in key_names:
+            self._poll_until_no_exception(
+                functools.partial(client.get_deleted_key, key_name), expected_exception=ResourceNotFoundError
+            )
+
+        # validate all our deleted keys are returned by list_deleted_keys
+        deleted = [k.name for k in client.list_deleted_keys()]
+        self.assertTrue(all(n in deleted for n in key_names))
+
+        # purge them
+        for key_name in key_names:
             client.purge_deleted_key(key_name)
+        for key_name in key_names:
+            self._poll_until_exception(
+                functools.partial(client.get_deleted_key, key_name), expected_exception=ResourceNotFoundError
+            )
 
-        if not self.is_playback():
-            time.sleep(20)
-
-        # validate none of our purged keys are returned by list_deleted_keys
+        # validate none are returned by list_deleted_keys
         deleted = [s.name for s in client.list_deleted_keys()]
-        self.assertTrue(not any(s in deleted for s in keys.keys()))
-
-        # validate the recovered keys
-        expected = {k: v for k, v in keys.items() if k.startswith("keyrec")}
-        actual = {k: client.get_key(k, "") for k in expected.keys()}
-        self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
+        self.assertTrue(not any(s in deleted for s in key_names))
 
     @ResourceGroupPreparer()
     @VaultClientPreparer()
