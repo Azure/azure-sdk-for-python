@@ -11,47 +11,24 @@
 
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 from .version import VERSION
+from ._configuration import ContainerRegistryManagementClientConfiguration
 
-
-class ContainerRegistryManagementClientConfiguration(AzureConfiguration):
-    """Configuration for ContainerRegistryManagementClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: The Microsoft Azure subscription ID.
-    :type subscription_id: str
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(ContainerRegistryManagementClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('containerregistrymanagementclient/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
-        self.subscription_id = subscription_id
 
 
 class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
     """ContainerRegistryManagementClient
+
+    This ready contains multiple API versions, to help you deal with all Azure clouds
+    (Azure Stack, Azure Government, Azure China, etc.).
+    By default, uses latest API version available on public Azure.
+    For production, you should stick a particular api-version and/or profile.
+    The profile sets a mapping between the operation group and an API version.
+    The api-version parameter sets the default API version if the operation
+    group is not described in the profile.
 
     :ivar config: Configuration for client.
     :vartype config: ContainerRegistryManagementClientConfiguration
@@ -59,13 +36,15 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The Microsoft Azure subscription ID.
+    :param subscription_id: Subscription credentials which uniquely identify
+     Microsoft Azure subscription. The subscription ID forms part of the URI
+     for every service call.
     :type subscription_id: str
     :param str api_version: API version to use if no profile is provided, or if
      missing in profile.
     :param str base_url: Service URL
-    :param profile: A dict using operation group name to API version.
-    :type profile: dict[str, str]
+    :param profile: A profile definition, from KnownProfiles to dict.
+    :type profile: azure.profiles.KnownProfiles
     """
 
     DEFAULT_API_VERSION = '2019-05-01'
@@ -82,6 +61,7 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
         _PROFILE_TAG + " latest"
     )
 
+
     def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
         self.config = ContainerRegistryManagementClientConfiguration(credentials, subscription_id, base_url)
         super(ContainerRegistryManagementClient, self).__init__(
@@ -90,8 +70,6 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
             api_version=api_version,
             profile=profile
         )
-
-############ Generated from here ############
 
     @classmethod
     def _models_dict(cls, api_version):
