@@ -12,7 +12,7 @@ Install the Azure Key Vault client library for Python with [pip](https://pypi.or
 pip install azure-security-keyvault
 ```
 
-#### Prerequisites
+### Prerequisites
 * An [Azure subscription](https://azure.microsoft.com/free/).
 * Python 2.7, 3.4 or later to use this package.
 * An existing Key Vault. If you need to create a Key Vault, you can use the [Azure Cloud Shell](https://shell.azure.com/bash) to create one with this Azure CLI command. Replace `<your-resource-group-name>` and `<your-key-vault-name>` with your own, unique names:
@@ -32,7 +32,7 @@ Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to creat
     az ad sp create-for-rbac -n <your-application-name> --skip-assignment
     ```
 * Use the above returned credentials information to populate **AZURE_CLIENT_ID**(appId), **AZURE_CLIENT_SECRET**(password) and **AZURE_TENANT_ID**(tenant) environment variables.
-  
+
 * Grant the above mentioned application authorization to perform secret operations on the keyvault:
     ```Bash
     az keyvault set-policy --name <your-key-vault-name> --spn <your-service-principal-id> --secret-permissions <secret-permissions>
@@ -207,7 +207,6 @@ Several KeyVault Python SDK samples are available to you in the SDK's GitHub rep
   * Back up an existing secret
   * Delete secret
   * Recover secret using the backup bytes of secret
-  
 
  ###  Additional Documentation
 For more extensive documentation on Azure Key Vault, see the [API reference documentation](TODO).
