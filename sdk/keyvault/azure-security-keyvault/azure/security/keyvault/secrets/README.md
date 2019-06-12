@@ -8,14 +8,18 @@ Use the secret client library to create and manage secrets.
 ### Install the package
 Install the Azure Key Vault client library for Python with [pip](https://pypi.org/project/pip/):
 
-`pip install azure-security-keyvault`
+```Bash
+pip install azure-security-keyvault
+```
 
 #### Prerequisites
 * An [Azure subscription](https://azure.microsoft.com/free/).
 * Python 2.7, 3.4 or later to use this package.
 * An existing Key Vault. If you need to create a Key Vault, you can use the [Azure Cloud Shell](https://shell.azure.com/bash) to create one with this Azure CLI command. Replace `<your-resource-group-name>` and `<your-key-vault-name>` with your own, unique names:
 
-    `az keyvault create --resource-group <your-resource-group-name> --name <your-key-vault-name>`
+```Bash
+az keyvault create --resource-group <your-resource-group-name> --name <your-key-vault-name>
+```
 
 ### Authenticate the client
 In order to interact with the Key Vault service, you'll need to create an instance of the [KeyVaultClient](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault) class. You need a **vault url**, **client secret credentials (client id, client secret, tenant id)** and a [resource url](https://vault.azure.net) to instantiate a client object.
@@ -24,17 +28,17 @@ In order to interact with the Key Vault service, you'll need to create an instan
 Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to create/get client secret credentials.
 
  * Create a service principal and configure its access to Azure resources:
-
-     `az ad sp create-for-rbac -n <your-application-name> --skip-assignment`
-
+    ```Bash
+    az ad sp create-for-rbac -n <your-application-name> --skip-assignment
+    ```
 * Use the above returned credentials information to populate **AZURE_CLIENT_ID**(appId), **AZURE_CLIENT_SECRET**(password) and **AZURE_TENANT_ID**(tenant) environment variables.
   
 * Grant the above mentioned application authorization to perform secret operations on the keyvault:
-
-     `az keyvault set-policy --name <your-key-vault-name> --spn <your-service-principal-id> --secret-permissions <secret-permissions>`
+    ```Bash
+    az keyvault set-policy --name <your-key-vault-name> --spn <your-service-principal-id> --secret-permissions <secret-permissions>
+    ```
     > --secret-permissions:
     > Space-separated list of secret permissions to assign. Accepted values: backup, delete, get, list, purge, recover, restore, set
-
 
 #### Create Secret client
 Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables, you can create the [SecretClient](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets/_client.py):
