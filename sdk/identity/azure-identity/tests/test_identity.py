@@ -20,9 +20,10 @@ from azure.identity import (
     ClientSecretCredential,
     DefaultAzureCredential,
     EnvironmentCredential,
+    ManagedIdentityCredential,
     TokenCredentialChain,
 )
-from azure.identity._internal import ImdsCredential, MsiCredential
+from azure.identity._internal import ImdsCredential
 from azure.identity.constants import EnvironmentVariables, MSI_ENDPOINT, MSI_SECRET
 
 
@@ -187,7 +188,7 @@ def test_imds_credential_cache():
     credential = ImdsCredential(transport=Mock(send=mock_send))
     token = credential.get_token(scope)
     assert token.token == expired
-    assert mock_send.call_count == 1
+    assert mock_send.call_count == 2  # first request was probing for endpoint availability
 
     # calling get_token again should provoke another HTTP request
     good_for_an_hour = "this token's good for an hour"
@@ -196,37 +197,37 @@ def test_imds_credential_cache():
     token_payload["access_token"] = good_for_an_hour
     token = credential.get_token(scope)
     assert token.token == good_for_an_hour
-    assert mock_send.call_count == 2
+    assert mock_send.call_count == 3
 
     # get_token should return the cached token now
     token = credential.get_token(scope)
     assert token.token == good_for_an_hour
-    assert mock_send.call_count == 2
+    assert mock_send.call_count == 3
 
 
 def test_imds_credential_retries():
     mock_response = Mock(
         text=lambda: b"",
         headers={"content-type": "application/json", "Retry-After": "0"},
-        status_code=200,
         content_type=["application/json"],
     )
     mock_send = Mock(return_value=mock_response)
 
-    retry_total = 1
-    credential = ImdsCredential(retry_total=retry_total, transport=Mock(send=mock_send))
+    credential = ImdsCredential(transport=Mock(send=mock_send))
 
     for status_code in (404, 429, 500):
+        mock_send.reset_mock()
         mock_response.status_code = status_code
         try:
             credential.get_token("scope")
         except AuthenticationError:
             pass
-        assert mock_send.call_count is 1 + retry_total
-        mock_send.reset_mock()
+        # first call was availability probe, second the original request; there should be at least one retry thereafter
+        assert mock_send.call_count > 2
 
 
-def test_msi_credential(monkeypatch):
+def test_managed_identity_app_service(monkeypatch):
+    # in App Service, MSI_SECRET and MSI_ENDPOINT are set
     msi_secret = "secret"
     monkeypatch.setenv(MSI_SECRET, msi_secret)
     monkeypatch.setenv(MSI_ENDPOINT, "https://foo.bar")
@@ -241,7 +242,26 @@ def test_msi_credential(monkeypatch):
         raise exception
 
     with pytest.raises(Exception) as ex:
-        MsiCredential(transport=Mock(send=validate_request)).get_token("https://scope")
+        ManagedIdentityCredential(transport=Mock(send=validate_request)).get_token("https://scope")
+    assert ex.value.message is success_message
+
+
+def test_managed_identity_cloud_shell(monkeypatch):
+    # in Cloud Shell, only MSI_ENDPOINT is set
+    msi_endpoint = "https://localhost:50432"
+    monkeypatch.setenv(MSI_ENDPOINT, msi_endpoint)
+
+    success_message = "test passed"
+
+    def validate_request(req, *args, **kwargs):
+        assert req.headers["Metadata"] == "true"
+        assert req.url.startswith(os.environ[MSI_ENDPOINT])
+        exception = Exception()
+        exception.message = success_message
+        raise exception
+
+    with pytest.raises(Exception) as ex:
+        ManagedIdentityCredential(transport=Mock(send=validate_request)).get_token("https://scope")
     assert ex.value.message is success_message
 
 

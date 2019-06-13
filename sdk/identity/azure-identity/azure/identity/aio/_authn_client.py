@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 import time
 from typing import Any, Dict, Iterable, Mapping, Optional
 
@@ -41,10 +41,11 @@ class AsyncAuthnClient(AuthnClientBase):
         headers: Optional[Mapping[str, str]] = None,
         form_data: Optional[Mapping[str, str]] = None,
         params: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> AccessToken:
         request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
         request_time = int(time.time())
-        response = await self._pipeline.run(request, stream=False)
+        response = await self._pipeline.run(request, stream=False, **kwargs)
         token = self._deserialize_and_cache_token(response, scopes, request_time)
         return token
 
@@ -52,7 +53,5 @@ class AsyncAuthnClient(AuthnClientBase):
     def create_config(**kwargs: Mapping[str, Any]) -> Configuration:
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
-        config.retry_policy = AsyncRetryPolicy(
-            retry_on_status_codes=[404, 429] + list(range(500, 600)), **kwargs
-        )
+        config.retry_policy = AsyncRetryPolicy(**kwargs)
         return config
