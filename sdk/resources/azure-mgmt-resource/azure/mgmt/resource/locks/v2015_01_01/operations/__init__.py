@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .management_locks_operations import ManagementLocksOperations
+from ._management_locks_operations import ManagementLocksOperations
 
 __all__ = [
     'ManagementLocksOperations',
