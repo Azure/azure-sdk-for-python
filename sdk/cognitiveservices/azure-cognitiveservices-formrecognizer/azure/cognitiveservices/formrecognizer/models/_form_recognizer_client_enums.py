@@ -9,14 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._accounts_operations import AccountsOperations
-from ._resource_skus_operations import ResourceSkusOperations
-from ._operations import Operations
-from ._check_sku_availability_operations import CheckSkuAvailabilityOperations
+from enum import Enum
 
-__all__ = [
-    'AccountsOperations',
-    'ResourceSkusOperations',
-    'Operations',
-    'CheckSkuAvailabilityOperations',
-]
+
+class TextOperationStatusCodes(str, Enum):
+
+    not_started = "Not Started"
+    running = "Running"
+    failed = "Failed"
+    succeeded = "Succeeded"
+
+
+class TextRecognitionResultDimensionUnit(str, Enum):
+
+    pixel = "pixel"
+    inch = "inch"
+
+
+class TextRecognitionResultConfidenceClass(str, Enum):
+
+    high = "High"
+    low = "Low"

@@ -10,55 +10,99 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .train_request_py3 import TrainRequest
-    from .form_document_report_py3 import FormDocumentReport
-    from .form_operation_error_py3 import FormOperationError
-    from .train_result_py3 import TrainResult
-    from .keys_result_py3 import KeysResult
-    from .model_result_py3 import ModelResult
-    from .models_result_py3 import ModelsResult
-    from .inner_error_py3 import InnerError
-    from .error_information_py3 import ErrorInformation
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .extracted_token_py3 import ExtractedToken
-    from .extracted_key_value_pair_py3 import ExtractedKeyValuePair
-    from .extracted_table_column_py3 import ExtractedTableColumn
-    from .extracted_table_py3 import ExtractedTable
-    from .extracted_page_py3 import ExtractedPage
-    from .analyze_result_py3 import AnalyzeResult
+    from ._models_py3 import AnalyzeResult
+    from ._models_py3 import ComputerVisionError, ComputerVisionErrorException
+    from ._models_py3 import ElementReference
+    from ._models_py3 import ErrorInformation
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ExtractedKeyValuePair
+    from ._models_py3 import ExtractedPage
+    from ._models_py3 import ExtractedTable
+    from ._models_py3 import ExtractedTableColumn
+    from ._models_py3 import ExtractedToken
+    from ._models_py3 import FieldValue
+    from ._models_py3 import FormDocumentReport
+    from ._models_py3 import FormOperationError
+    from ._models_py3 import ImageUrl
+    from ._models_py3 import InnerError
+    from ._models_py3 import KeysResult
+    from ._models_py3 import Line
+    from ._models_py3 import ModelResult
+    from ._models_py3 import ModelsResult
+    from ._models_py3 import NumberValue
+    from ._models_py3 import ReadReceiptResult
+    from ._models_py3 import StringValue
+    from ._models_py3 import TextRecognitionResult
+    from ._models_py3 import TrainRequest
+    from ._models_py3 import TrainResult
+    from ._models_py3 import TrainSourceFilter
+    from ._models_py3 import UnderstandingResult
+    from ._models_py3 import Word
 except (SyntaxError, ImportError):
-    from .train_request import TrainRequest
-    from .form_document_report import FormDocumentReport
-    from .form_operation_error import FormOperationError
-    from .train_result import TrainResult
-    from .keys_result import KeysResult
-    from .model_result import ModelResult
-    from .models_result import ModelsResult
-    from .inner_error import InnerError
-    from .error_information import ErrorInformation
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .extracted_token import ExtractedToken
-    from .extracted_key_value_pair import ExtractedKeyValuePair
-    from .extracted_table_column import ExtractedTableColumn
-    from .extracted_table import ExtractedTable
-    from .extracted_page import ExtractedPage
-    from .analyze_result import AnalyzeResult
+    from ._models import AnalyzeResult
+    from ._models import ComputerVisionError, ComputerVisionErrorException
+    from ._models import ElementReference
+    from ._models import ErrorInformation
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ExtractedKeyValuePair
+    from ._models import ExtractedPage
+    from ._models import ExtractedTable
+    from ._models import ExtractedTableColumn
+    from ._models import ExtractedToken
+    from ._models import FieldValue
+    from ._models import FormDocumentReport
+    from ._models import FormOperationError
+    from ._models import ImageUrl
+    from ._models import InnerError
+    from ._models import KeysResult
+    from ._models import Line
+    from ._models import ModelResult
+    from ._models import ModelsResult
+    from ._models import NumberValue
+    from ._models import ReadReceiptResult
+    from ._models import StringValue
+    from ._models import TextRecognitionResult
+    from ._models import TrainRequest
+    from ._models import TrainResult
+    from ._models import TrainSourceFilter
+    from ._models import UnderstandingResult
+    from ._models import Word
+from ._form_recognizer_client_enums import (
+    TextOperationStatusCodes,
+    TextRecognitionResultConfidenceClass,
+    TextRecognitionResultDimensionUnit,
+)
 
 __all__ = [
-    'TrainRequest',
-    'FormDocumentReport',
-    'FormOperationError',
-    'TrainResult',
-    'KeysResult',
-    'ModelResult',
-    'ModelsResult',
-    'InnerError',
+    'AnalyzeResult',
+    'ComputerVisionError', 'ComputerVisionErrorException',
+    'ElementReference',
     'ErrorInformation',
     'ErrorResponse', 'ErrorResponseException',
-    'ExtractedToken',
     'ExtractedKeyValuePair',
-    'ExtractedTableColumn',
-    'ExtractedTable',
     'ExtractedPage',
-    'AnalyzeResult',
+    'ExtractedTable',
+    'ExtractedTableColumn',
+    'ExtractedToken',
+    'FieldValue',
+    'FormDocumentReport',
+    'FormOperationError',
+    'ImageUrl',
+    'InnerError',
+    'KeysResult',
+    'Line',
+    'ModelResult',
+    'ModelsResult',
+    'NumberValue',
+    'ReadReceiptResult',
+    'StringValue',
+    'TextRecognitionResult',
+    'TrainRequest',
+    'TrainResult',
+    'TrainSourceFilter',
+    'UnderstandingResult',
+    'Word',
+    'TextOperationStatusCodes',
+    'TextRecognitionResultDimensionUnit',
+    'TextRecognitionResultConfidenceClass',
 ]
