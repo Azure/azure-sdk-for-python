@@ -3,14 +3,14 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
+from dateutil import parser as date_parse
+import time
 
 from devtools_testutils import ResourceGroupPreparer
 from preparer import VaultClientPreparer
 from test_case import KeyVaultTestCase
-from azure.core.exceptions import HttpResponseError
-
-from dateutil import parser as date_parse
-import time
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 
 class SecretClientTests(KeyVaultTestCase):
@@ -43,7 +43,7 @@ class SecretClientTests(KeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     @ResourceGroupPreparer()
-    @VaultClientPreparer(enable_soft_delete=True)
+    @VaultClientPreparer()
     def test_secret_crud_operations(self, vault_client, **kwargs):
 
         self.assertIsNotNone(vault_client)
@@ -77,52 +77,36 @@ class SecretClientTests(KeyVaultTestCase):
         self.assertEqual(expires, created.expires)
         self.assertEqual(tags, created.tags)
 
-        # get secret without version
-        self._assert_secret_attributes_equal(created, client.get_secret(created.name, ""))
-
-        # get secret with version
+        self._assert_secret_attributes_equal(created, client.get_secret(created.name))
         self._assert_secret_attributes_equal(created, client.get_secret(created.name, created.version))
 
         def _update_secret(secret):
             content_type = "text/plain"
             expires = date_parse.parse("2050-01-02T08:00:00.000Z")
             tags = {"foo": "updated tag"}
-            secret_bundle = client.update_secret_attributes(
-                secret.name, secret.version, content_type=content_type, expires=expires, tags=tags
+            enabled = not secret.enabled
+            updated_secret = client.update_secret(
+                secret.name, secret.version, content_type=content_type, expires=expires, tags=tags, enabled=enabled
             )
-            self.assertEqual(tags, secret_bundle.tags)
-            self.assertEqual(secret.id, secret_bundle.id)
-            self.assertNotEqual(secret.updated, secret_bundle.updated)
-            return secret_bundle
+            self.assertEqual(tags, updated_secret.tags)
+            self.assertEqual(secret.id, updated_secret.id)
+            self.assertEqual(content_type, updated_secret.content_type)
+            self.assertEqual(expires, updated_secret.expires)
+            self.assertNotEqual(secret.enabled, updated_secret.enabled)
+            self.assertNotEqual(secret.updated, updated_secret.updated)
+            return updated_secret
 
-        # update secret with version
         if self.is_live:
             # wait to ensure the secret's update time won't equal its creation time
             time.sleep(1)
+
         updated = _update_secret(created)
 
         # delete secret
         deleted = client.delete_secret(updated.name)
         self.assertIsNotNone(deleted)
 
-        if self.is_live:
-            # wait to ensure the secret has been deleted
-            # TODO: replace sleeps with polling (client won't do it by default because 404 isn't retryable)
-            time.sleep(30)
-
-        # get the deleted secret
-        deleted_secret = client.get_deleted_secret(deleted.name)
-        self.assertIsNotNone(deleted_secret)
-
-        # TestCase.assertRaisesRegexp was deprecated in 3.2
-        if hasattr(self, "assertRaisesRegex"):
-            assertRaises = self.assertRaisesRegex
-        else:
-            assertRaises = self.assertRaisesRegexp
-
-        # deleted secret isn't found
-        with assertRaises(HttpResponseError, r"(?i)not found"):
-            client.get_secret(deleted.name, "")
+        self._poll_until_exception(functools.partial(client.get_secret, updated.name), ResourceNotFoundError)
 
     @ResourceGroupPreparer()
     @VaultClientPreparer()
@@ -180,32 +164,31 @@ class SecretClientTests(KeyVaultTestCase):
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
     def test_list_deleted_secrets(self, vault_client, **kwargs):
-
         self.assertIsNotNone(vault_client)
         client = vault_client.secrets
 
-        secret_name = self.get_resource_name("sec")
-        secret_value = self.get_resource_name("secval")
         expected = {}
 
-        # create secrets to delete
-        for _ in range(0, self.list_test_size):
+        # create secrets
+        for i in range(0, self.list_test_size):
+            secret_name = "secret{}".format(i)
+            secret_value = "value{}".format(i)
             expected[secret_name] = client.set_secret(secret_name, secret_value)
 
-        # delete all secrets
+        # delete them
         for secret_name in expected.keys():
             client.delete_secret(secret_name)
+        for secret_name in expected.keys():
+            self._poll_until_no_exception(
+                functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError
+            )
 
-        if not self.is_playback():
-            time.sleep(20)
-
-        # validate all our deleted secrets are returned by list_deleted_secrets
+        # validate all the deleted secrets are returned by list_deleted_secrets
         self._validate_secret_list(list(client.list_deleted_secrets()), expected)
 
     @ResourceGroupPreparer()
     @VaultClientPreparer()
     def test_backup_restore(self, vault_client, **kwargs):
-
         self.assertIsNotNone(vault_client)
         client = vault_client.secrets
         secret_name = self.get_resource_name("secbak")
@@ -227,52 +210,74 @@ class SecretClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
-    def test_recover_purge(self, vault_client, **kwargs):
+    def test_recover(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
         client = vault_client.secrets
 
         secrets = {}
 
         # create secrets to recover
-        for i in range(0, self.list_test_size):
-            secret_name = self.get_resource_name("secrec{}".format(str(i)))
-            secret_value = self.get_resource_name("secval{}".format(str(i)))
-            secrets[secret_name] = client.set_secret(secret_name, secret_value)
-
-        # create secrets to purge
-        for i in range(0, self.list_test_size):
-            secret_name = self.get_resource_name("secprg{}".format(str(i)))
-            secret_value = self.get_resource_name("secval{}".format(str(i)))
+        for i in range(self.list_test_size):
+            secret_name = "secret{}".format(i)
+            secret_value = "value{}".format(i)
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
         # delete all secrets
         for secret_name in secrets.keys():
             client.delete_secret(secret_name)
-
-        if not self.is_playback():
-            time.sleep(20)
+        for secret_name in secrets.keys():
+            self._poll_until_no_exception(
+                functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError
+            )
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         deleted = [s.name for s in client.list_deleted_secrets()]
-
         self.assertTrue(all(s in deleted for s in secrets.keys()))
 
         # recover select secrets
-        for secret_name in [s for s in secrets.keys() if s.startswith("secrec")]:
+        for secret_name in secrets.keys():
             client.recover_deleted_secret(secret_name)
 
-        # purge select secrets
-        for secret_name in [s for s in secrets.keys() if s.startswith("secprg")]:
+        # validate the recovered secrets exist
+        for secret_name in secrets.keys():
+            secret = self._poll_until_no_exception(
+                functools.partial(client.get_secret, secret_name), ResourceNotFoundError
+            )
+            self._assert_secret_attributes_equal(secret, secrets[secret.name])
+
+    @ResourceGroupPreparer()
+    @VaultClientPreparer(enable_soft_delete=True)
+    def test_purge(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.secrets
+
+        secrets = {}
+
+        # create secrets to purge
+        for i in range(self.list_test_size):
+            secret_name = "secret{}".format(i)
+            secret_value = "value{}".format(i)
+            secrets[secret_name] = client.set_secret(secret_name, secret_value)
+
+        # delete all secrets
+        for secret_name in secrets.keys():
+            client.delete_secret(secret_name)
+        for secret_name in secrets.keys():
+            self._poll_until_no_exception(
+                functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError
+            )
+
+        # validate all our deleted secrets are returned by list_deleted_secrets
+        deleted = [s.name for s in client.list_deleted_secrets()]
+        self.assertTrue(all(s in deleted for s in secrets.keys()))
+
+        # purge secrets
+        for secret_name in secrets.keys():
             client.purge_deleted_secret(secret_name)
+        for secret_name in secrets.keys():
+            self._poll_until_exception(
+                functools.partial(client.get_deleted_secret, secret_name), ResourceNotFoundError
+            )
 
-        if not self.is_playback():
-            time.sleep(20)
-
-        # validate none of our purged secrets are returned by list_deleted_secrets
         deleted = [s.name for s in client.list_deleted_secrets()]
         self.assertTrue(not any(s in deleted for s in secrets.keys()))
-
-        # validate the recovered secrets
-        expected = {k: v for k, v in secrets.items() if k.startswith("secrec")}
-        actual = {k: client.get_secret(k, "") for k in expected.keys()}
-        self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))

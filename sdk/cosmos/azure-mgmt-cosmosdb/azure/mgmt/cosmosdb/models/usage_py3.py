@@ -27,9 +27,9 @@ class Usage(Model):
     :ivar quota_period: The quota period used to summarize the usage values.
     :vartype quota_period: str
     :ivar limit: Maximum value for this metric
-    :vartype limit: int
+    :vartype limit: long
     :ivar current_value: Current value for this metric
-    :vartype current_value: int
+    :vartype current_value: long
     """
 
     _validation = {
@@ -43,8 +43,8 @@ class Usage(Model):
         'unit': {'key': 'unit', 'type': 'str'},
         'name': {'key': 'name', 'type': 'MetricName'},
         'quota_period': {'key': 'quotaPeriod', 'type': 'str'},
-        'limit': {'key': 'limit', 'type': 'int'},
-        'current_value': {'key': 'currentValue', 'type': 'int'},
+        'limit': {'key': 'limit', 'type': 'long'},
+        'current_value': {'key': 'currentValue', 'type': 'long'},
     }
 
     def __init__(self, *, unit=None, **kwargs) -> None:

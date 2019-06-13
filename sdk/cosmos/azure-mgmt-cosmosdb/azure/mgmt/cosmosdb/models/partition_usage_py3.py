@@ -27,9 +27,9 @@ class PartitionUsage(Usage):
     :ivar quota_period: The quota period used to summarize the usage values.
     :vartype quota_period: str
     :ivar limit: Maximum value for this metric
-    :vartype limit: int
+    :vartype limit: long
     :ivar current_value: Current value for this metric
-    :vartype current_value: int
+    :vartype current_value: long
     :ivar partition_id: The partition id (GUID identifier) of the usages.
     :vartype partition_id: str
     :ivar partition_key_range_id: The partition key range id (integer
@@ -50,8 +50,8 @@ class PartitionUsage(Usage):
         'unit': {'key': 'unit', 'type': 'str'},
         'name': {'key': 'name', 'type': 'MetricName'},
         'quota_period': {'key': 'quotaPeriod', 'type': 'str'},
-        'limit': {'key': 'limit', 'type': 'int'},
-        'current_value': {'key': 'currentValue', 'type': 'int'},
+        'limit': {'key': 'limit', 'type': 'long'},
+        'current_value': {'key': 'currentValue', 'type': 'long'},
         'partition_id': {'key': 'partitionId', 'type': 'str'},
         'partition_key_range_id': {'key': 'partitionKeyRangeId', 'type': 'str'},
     }

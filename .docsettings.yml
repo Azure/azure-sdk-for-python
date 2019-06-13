@@ -1,5 +1,5 @@
 omitted_paths:
-  - azure-sdk-tools/*
+  - tools/*
   - scripts/*
   - azure-mgmt-netapp/tests/*
   - "azure-mgmt*/*"

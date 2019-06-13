@@ -17,22 +17,22 @@ class SqlStorageUpdateSettings(Model):
 
     :param disk_count: Virtual machine disk count.
     :type disk_count: int
+    :param starting_device_id: Device id of the first disk to be updated.
+    :type starting_device_id: int
     :param disk_configuration_type: Disk configuration to apply to SQL Server.
      Possible values include: 'NEW', 'EXTEND', 'ADD'
     :type disk_configuration_type: str or
      ~azure.mgmt.sqlvirtualmachine.models.DiskConfigurationType
-    :param starting_device_id: Device id of the first disk to be updated.
-    :type starting_device_id: int
     """
 
     _attribute_map = {
         'disk_count': {'key': 'diskCount', 'type': 'int'},
-        'disk_configuration_type': {'key': 'diskConfigurationType', 'type': 'str'},
         'starting_device_id': {'key': 'startingDeviceId', 'type': 'int'},
+        'disk_configuration_type': {'key': 'diskConfigurationType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(SqlStorageUpdateSettings, self).__init__(**kwargs)
         self.disk_count = kwargs.get('disk_count', None)
-        self.disk_configuration_type = kwargs.get('disk_configuration_type', None)
         self.starting_device_id = kwargs.get('starting_device_id', None)
+        self.disk_configuration_type = kwargs.get('disk_configuration_type', None)

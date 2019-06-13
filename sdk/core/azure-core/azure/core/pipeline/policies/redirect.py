@@ -43,14 +43,31 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class RedirectPolicy(HTTPPolicy):
-    """A redirect policy"""
+    """A redirect policy.
+
+    A redirect policy in the pipeline can be configured directly or per operation.
+
+    **Keyword arguments:**
+
+    *permit_redirects (bool)* - Whether the client allows redirects. Defaults to True.
+
+    *redirect_max (int)* - The maximum allowed redirects. Defaults to 30.
+
+    Example:
+        .. literalinclude:: ../examples/examples_sync.py
+            :start-after: [START redirect_policy]
+            :end-before: [END redirect_policy]
+            :language: python
+            :dedent: 4
+            :caption: Configuring a redirect policy.
+    """
 
     REDIRECT_STATUSES = frozenset([300, 301, 302, 303, 307, 308])
 
     REDIRECT_HEADERS_BLACKLIST = frozenset(['Authorization'])
 
     def __init__(self, **kwargs):
-        self.allow = kwargs.get('redirects_allow', True)
+        self.allow = kwargs.get('permit_redirects', True)
         self.max_redirects = kwargs.get('redirect_max', 30)
 
         remove_headers = set(kwargs.get('redirect_remove_headers', []))
@@ -61,21 +78,31 @@ class RedirectPolicy(HTTPPolicy):
 
     @classmethod
     def no_redirects(cls):
-        return cls(redirects_allow=False)
+        """Disable redirects.
+        """
+        return cls(permit_redirects=False)
 
     def configure_redirects(self, options):
+        """Configures the redirect settings.
+
+        :param options: Keyword arguments from context.
+        :return: A dict containing redirect settings and a history of redirects.
+        :rtype: dict
+        """
         return {
-            'allow': options.pop("redirects_allow", self.max_redirects),
+            'allow': options.pop("permit_redirects", self.allow),
             'redirects': options.pop("redirect_max", self.max_redirects),
             'history': []
         }
 
     def get_redirect_location(self, response):
-        """Should we redirect and where to?
+        """Checks for redirect status code and gets redirect location.
 
-        :returns: Truthy redirect location string if we got a redirect status
-            code and valid location. ``None`` if redirect status and no
-            location. ``False`` if not a redirect status code.
+        :param response: The PipelineResponse object
+        :type response: ~azure.core.pipeline.PipelineResponse
+        :return: Truthy redirect location string if we got a redirect status
+         code and valid location. ``None`` if redirect status and no
+         location. ``False`` if not a redirect status code.
         """
         if response.http_response.status_code in [301, 302]:
             if response.http_request.method in ['GET', 'HEAD', ]:
@@ -89,10 +116,13 @@ class RedirectPolicy(HTTPPolicy):
     def increment(self, settings, response, redirect_location):
         """Increment the redirect attempts for this request.
 
+        :param dict settings: The redirect settings
         :param response: A pipeline response object.
-        :param redirect_location: The redirected endpoint.
-
+        :type response: ~azure.core.pipeline.PipelineResponse
+        :param str redirect_location: The redirected endpoint.
         :return: Whether further redirect attempts are remaining.
+         False if exhausted; True if more redirect attempts available.
+        :rtype: bool
         """
         # TODO: Revise some of the logic here.
         settings['redirects'] -= 1
@@ -111,15 +141,24 @@ class RedirectPolicy(HTTPPolicy):
             response.http_request.method = 'GET'
         for non_redirect_header in self._remove_headers_on_redirect:
             response.http_request.headers.pop(non_redirect_header, None)
-        return settings['redirects'] > 0 or not settings['allow']
+        return settings['redirects'] > 0
 
     def send(self, request):
+        """Sends the PipelineRequest object to the next policy.
+        Uses redirect settings to send request to redirect endpoint if necessary.
+
+        :param request: The PipelineRequest object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: Returns the PipelineResponse or raises error if maximum redirects exceeded.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        :raises: ~azure.core.exceptions.TooManyRedirectsError if maximum redirects exceeded.
+        """
         retryable = True
         redirect_settings = self.configure_redirects(request.context.options)
         while retryable:
             response = self.next.send(request)
             redirect_location = self.get_redirect_location(response)
-            if redirect_location:
+            if redirect_location and redirect_settings['allow']:
                 retryable = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
                 continue
