@@ -12,18 +12,15 @@
 from msrest.serialization import Model
 
 
-class CopyTranslator(Model):
-    """A copy activity translator.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: TabularTranslator
+class FormatWriteSetting(Model):
+    """Format write settings.
 
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Constant filled by server.
+    :param type: Required. The write setting type.
     :type type: str
     """
 
@@ -36,11 +33,7 @@ class CopyTranslator(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'type': {'TabularTranslator': 'TabularTranslator'}
-    }
-
-    def __init__(self, *, additional_properties=None, **kwargs) -> None:
-        super(CopyTranslator, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
-        self.type = None
+    def __init__(self, **kwargs):
+        super(FormatWriteSetting, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.type = kwargs.get('type', None)

@@ -52,6 +52,10 @@ class SqlSink(CopySink):
     :param stored_procedure_parameters: SQL stored procedure parameters.
     :type stored_procedure_parameters: dict[str,
      ~azure.mgmt.datafactory.models.StoredProcedureParameter]
+    :param stored_procedure_table_type_parameter_name: The stored procedure
+     parameter name of the table type. Type: string (or Expression with
+     resultType string).
+    :type stored_procedure_table_type_parameter_name: object
     """
 
     _validation = {
@@ -70,6 +74,7 @@ class SqlSink(CopySink):
         'sql_writer_table_type': {'key': 'sqlWriterTableType', 'type': 'object'},
         'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
+        'stored_procedure_table_type_parameter_name': {'key': 'storedProcedureTableTypeParameterName', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
@@ -78,4 +83,5 @@ class SqlSink(CopySink):
         self.sql_writer_table_type = kwargs.get('sql_writer_table_type', None)
         self.pre_copy_script = kwargs.get('pre_copy_script', None)
         self.stored_procedure_parameters = kwargs.get('stored_procedure_parameters', None)
+        self.stored_procedure_table_type_parameter_name = kwargs.get('stored_procedure_table_type_parameter_name', None)
         self.type = 'SqlSink'

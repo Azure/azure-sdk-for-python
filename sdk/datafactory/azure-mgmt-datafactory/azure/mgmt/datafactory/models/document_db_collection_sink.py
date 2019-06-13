@@ -43,6 +43,9 @@ class DocumentDbCollectionSink(CopySink):
     :param nesting_separator: Nested properties separator. Default is . (dot).
      Type: string (or Expression with resultType string).
     :type nesting_separator: object
+    :param write_behavior: Describes how to write data to Azure Cosmos DB.
+     Allowed values: insert and upsert.
+    :type write_behavior: object
     """
 
     _validation = {
@@ -58,9 +61,11 @@ class DocumentDbCollectionSink(CopySink):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'nesting_separator': {'key': 'nestingSeparator', 'type': 'object'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(DocumentDbCollectionSink, self).__init__(**kwargs)
         self.nesting_separator = kwargs.get('nesting_separator', None)
+        self.write_behavior = kwargs.get('write_behavior', None)
         self.type = 'DocumentDbCollectionSink'

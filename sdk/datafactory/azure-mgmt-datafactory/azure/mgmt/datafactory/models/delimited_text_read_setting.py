@@ -9,22 +9,23 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .format_read_setting import FormatReadSetting
 
 
-class CopyTranslator(Model):
-    """A copy activity translator.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: TabularTranslator
+class DelimitedTextReadSetting(FormatReadSetting):
+    """Delimited text read settings.
 
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Constant filled by server.
+    :param type: Required. The read setting type.
     :type type: str
+    :param skip_line_count: Indicates the number of non-empty rows to skip
+     when reading data from input files. Type: integer (or Expression with
+     resultType integer).
+    :type skip_line_count: object
     """
 
     _validation = {
@@ -34,13 +35,9 @@ class CopyTranslator(Model):
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'type': {'TabularTranslator': 'TabularTranslator'}
+        'skip_line_count': {'key': 'skipLineCount', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
-        super(CopyTranslator, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.type = None
+        super(DelimitedTextReadSetting, self).__init__(**kwargs)
+        self.skip_line_count = kwargs.get('skip_line_count', None)

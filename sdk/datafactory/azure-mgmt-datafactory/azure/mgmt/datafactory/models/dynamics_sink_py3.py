@@ -44,8 +44,7 @@ class DynamicsSink(CopySink):
     :param type: Required. Constant filled by server.
     :type type: str
     :ivar write_behavior: Required. The write behavior for the operation.
-     Default value: "Upsert" .
-    :vartype write_behavior: str
+    :vartype write_behavior: object
     :param ignore_null_values: The flag indicating whether ignore null values
      from input dataset (except key fields) during write operation. Default is
      false. Type: boolean (or Expression with resultType boolean).
@@ -65,11 +64,11 @@ class DynamicsSink(CopySink):
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'object'},
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
     }
 
-    write_behavior = "Upsert"
+    write_behavior = None
 
     def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, ignore_null_values=None, **kwargs) -> None:
         super(DynamicsSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)

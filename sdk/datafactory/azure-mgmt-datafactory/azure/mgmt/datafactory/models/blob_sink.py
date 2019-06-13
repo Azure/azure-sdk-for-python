@@ -49,10 +49,8 @@ class BlobSink(CopySink):
     :param blob_writer_add_header: Blob writer add header. Type: boolean (or
      Expression with resultType boolean).
     :type blob_writer_add_header: object
-    :param copy_behavior: The type of copy behavior for copy sink. Possible
-     values include: 'PreserveHierarchy', 'FlattenHierarchy', 'MergeFiles'
-    :type copy_behavior: str or
-     ~azure.mgmt.datafactory.models.CopyBehaviorType
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
     """
 
     _validation = {
@@ -70,7 +68,7 @@ class BlobSink(CopySink):
         'blob_writer_overwrite_files': {'key': 'blobWriterOverwriteFiles', 'type': 'object'},
         'blob_writer_date_time_format': {'key': 'blobWriterDateTimeFormat', 'type': 'object'},
         'blob_writer_add_header': {'key': 'blobWriterAddHeader', 'type': 'object'},
-        'copy_behavior': {'key': 'copyBehavior', 'type': 'str'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):

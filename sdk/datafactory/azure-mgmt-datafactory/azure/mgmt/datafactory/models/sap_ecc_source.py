@@ -35,7 +35,7 @@ class SapEccSource(CopySource):
     :type type: str
     :param query: SAP ECC OData query. For example, "$top=1". Type: string (or
      Expression with resultType string).
-    :type query: str
+    :type query: object
     """
 
     _validation = {
@@ -48,7 +48,7 @@ class SapEccSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'query': {'key': 'query', 'type': 'str'},
+        'query': {'key': 'query', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
