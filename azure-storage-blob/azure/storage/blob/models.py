@@ -16,7 +16,11 @@ from ._generated.models import StorageServiceProperties
 from ._generated.models import BlobProperties as GenBlobProps
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import StorageErrorException
-from ._utils import decode_base64, serialize_iso, process_storage_error
+from ._utils import (
+    decode_base64,
+    serialize_iso,
+    process_storage_error,
+    return_context_and_deserialized)
 from .common import BlockState, BlobType
 
 
@@ -267,6 +271,7 @@ class ContainerPropertiesPaged(Paged):
         self.current_marker = None
         self.results_per_page = results_per_page
         self.next_marker = marker or ""
+        self.location_mode = None
 
     def _advance_page(self):
         # type: () -> List[Model]
@@ -282,9 +287,11 @@ class ContainerPropertiesPaged(Paged):
             raise StopIteration("End of paging")
         self._current_page_iter_index = 0
         try:
-            self._response = self._get_next(
+            self.location_mode, self._response = self._get_next(
                 marker=self.next_marker or None,
-                maxresults=self.results_per_page)
+                maxresults=self.results_per_page,
+                cls=return_context_and_deserialized,
+                use_location=self.location_mode)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -416,7 +423,8 @@ class BlobPropertiesPaged(Paged):
         self.next_marker = marker or ""
         self.container_name = container
         self.delimiter = None
-        self.segment = None
+        self.current_page = None
+        self.location_mode = None
 
     def _advance_page(self):
         # type: () -> List[Model]
@@ -431,10 +439,13 @@ class BlobPropertiesPaged(Paged):
         if self.next_marker is None:
             raise StopIteration("End of paging")
         self._current_page_iter_index = 0
+        
         try:
-            self._response = self._get_next(
+            self.location_mode, self._response = self._get_next(
                 marker=self.next_marker or None,
-                maxresults=self.results_per_page)
+                maxresults=self.results_per_page,
+                cls=return_context_and_deserialized,
+                use_location=self.location_mode)
         except StorageErrorException as error:
             process_storage_error(error)
 

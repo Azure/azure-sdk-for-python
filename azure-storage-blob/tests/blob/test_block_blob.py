@@ -381,17 +381,19 @@ class StorageBlockBlobTest(StorageTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        progress = []  # TODO: upload progress
+        progress = []
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
-        def callback(current, total):
-            progress.append((current, total))
-
-        create_resp = blob.upload_blob(data)  #, progress_callback=callback)
+        create_resp = blob.upload_blob(data, raw_response_hook=callback)
         props = blob.get_blob_properties()
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        #self.assert_upload_progress(len(data), self.config.blob_settings.max_block_size, progress)
+        self.assert_upload_progress(len(data), self.config.blob_settings.max_block_size, progress)
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
@@ -510,17 +512,19 @@ class StorageBlockBlobTest(StorageTestCase):
             stream.write(data)
 
         # Act
-        progress = []  # TODO support upload progress
-
-        def callback(current, total):
-            progress.append((current, total))
+        progress = []
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream)  #,progress_callback=callback)
+            blob.upload_blob(stream, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        #self.assert_upload_progress(len(data), self.config.blob_settings.max_block_size, progress)
+        self.assert_upload_progress(len(data), self.config.blob_settings.max_block_size, progress)
 
     def test_create_blob_from_path_with_properties(self):
         # parallel tests introduce random order of requests, can only run live
@@ -623,17 +627,19 @@ class StorageBlockBlobTest(StorageTestCase):
             stream.write(data)
 
         # Act
-        progress = []  # TODO support upload progress
-
-        def callback(current, total):
-            progress.append((current, total))
+        progress = []
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream) # progress_callback=callback)
+            blob.upload_blob(stream, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        #self.assert_upload_progress(len(data), self.config.blob_settings.max_block_size, progress, unknown_size=True)
+        self.assert_upload_progress(len(data), self.config.blob_settings.max_block_size, progress)
 
     def test_create_blob_from_stream_chunked_upload_with_count(self):
         # parallel tests introduce random order of requests, can only run live
@@ -746,16 +752,18 @@ class StorageBlockBlobTest(StorageTestCase):
         data = text.encode('utf-16')
 
         # Act
-        progress = []  # TODO: upload progress
+        progress = []
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
-        def callback(current, total):
-            progress.append((current, total))
-
-        blob.upload_blob(text, encoding='utf-16') #progress_callback=callback)
+        blob.upload_blob(text, encoding='utf-16', raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        #self.assert_upload_progress(len(data), self.bs.MAX_BLOCK_SIZE, progress)
+        self.assert_upload_progress(len(data), self.config.blob_settings.max_block_size, progress)
 
     def test_create_blob_from_text_chunked_upload(self):
         # parallel tests introduce random order of requests, can only run live

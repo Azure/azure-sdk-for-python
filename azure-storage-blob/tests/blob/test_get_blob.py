@@ -239,7 +239,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         def callback(response):
-            current = response.context['data_stream_current']
+            current = response.context['download_stream_current']
             total = response.context['data_stream_total']
             progress.append((current, total))
 
@@ -261,7 +261,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         def callback(response):
-            current = response.context['data_stream_current']
+            current = response.context['download_stream_current']
             total = response.context['data_stream_total']
             progress.append((current, total))
 
@@ -287,7 +287,7 @@ class StorageGetBlobTest(StorageTestCase):
         progress = []
 
         def callback(response):
-            current = response.context['data_stream_current']
+            current = response.context['download_stream_current']
             total = response.context['data_stream_total']
             progress.append((current, total))
 
@@ -331,7 +331,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         def callback(response):
-            current = response.context['data_stream_current']
+            current = response.context['download_stream_current']
             total = response.context['data_stream_total']
             progress.append((current, total))
 
@@ -357,7 +357,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         def callback(response):
-            current = response.context['data_stream_current']
+            current = response.context['download_stream_current']
             total = response.context['data_stream_total']
             progress.append((current, total))
 
@@ -388,7 +388,7 @@ class StorageGetBlobTest(StorageTestCase):
         progress = []
 
         def callback(response):
-            current = response.context['data_stream_current']
+            current = response.context['download_stream_current']
             total = response.context['data_stream_total']
             progress.append((current, total))
 
@@ -439,7 +439,7 @@ class StorageGetBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         def callback(response):
-            current = response.context['data_stream_current']
+            current = response.context['download_stream_current']
             total = response.context['data_stream_total']
             progress.append((current, total))
 
@@ -576,7 +576,7 @@ class StorageGetBlobTest(StorageTestCase):
         progress = []
 
         def callback(response):
-            current = response.context['data_stream_current']
+            current = response.context['download_stream_current']
             total = response.context['data_stream_total']
             progress.append((current, total))
 
@@ -602,7 +602,7 @@ class StorageGetBlobTest(StorageTestCase):
         progress = []
 
         def callback(response):
-            current = response.context['data_stream_current']
+            current = response.context['download_stream_current']
             total = response.context['data_stream_total']
             progress.append((current, total))
 
@@ -628,7 +628,7 @@ class StorageGetBlobTest(StorageTestCase):
         progress = []
 
         def callback(response):
-            current = response.context['data_stream_current']
+            current = response.context['download_stream_current']
             total = response.context['data_stream_total']
             progress.append((current, total))
 
@@ -669,7 +669,7 @@ class StorageGetBlobTest(StorageTestCase):
         progress = []
 
         def callback(response):
-            current = response.context['data_stream_current']
+            current = response.context['download_stream_current']
             total = response.context['data_stream_total']
             progress.append((current, total))
 
@@ -727,7 +727,7 @@ class StorageGetBlobTest(StorageTestCase):
         progress = []
 
         def callback(response):
-            current = response.context['data_stream_current']
+            current = response.context['download_stream_current']
             total = response.context['data_stream_total']
             progress.append((current, total))
 
@@ -757,7 +757,7 @@ class StorageGetBlobTest(StorageTestCase):
         progress = []
 
         def callback(response):
-            current = response.context['data_stream_current']
+            current = response.context['download_stream_current']
             total = response.context['data_stream_total']
             progress.append((current, total))
 
@@ -788,7 +788,7 @@ class StorageGetBlobTest(StorageTestCase):
         progress = []
 
         def callback(response):
-            current = response.context['data_stream_current']
+            current = response.context['download_stream_current']
             total = response.context['data_stream_total']
             progress.append((current, total))
 

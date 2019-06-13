@@ -230,17 +230,18 @@ class StorageLargeBlockBlobTest(StorageTestCase):
 
         # Act
         progress = []
-
-        def callback(current, total):
-            progress.append((current, total))
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=2)
+            blob.upload_blob(stream, max_connections=2, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        # TODO support upload progress
-        #self.assert_upload_progress(len(data), self.bs.MAX_BLOCK_SIZE, progress)
+        self.assert_upload_progress(len(data), self.config.blob_settings.max_block_size, progress)
 
     def test_create_large_blob_from_path_with_properties(self):
         # parallel tests introduce random order of requests, can only run live
@@ -300,17 +301,19 @@ class StorageLargeBlockBlobTest(StorageTestCase):
 
         # Act
         progress = []
-
-        def callback(current, total):
-            progress.append((current, total))
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=2)
+            blob.upload_blob(stream, max_connections=2, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        # TODO: Support upload progress
-        #self.assert_upload_progress(len(data), self.bs.MAX_BLOCK_SIZE, progress, unknown_size=True)
+        self.assert_upload_progress(
+            len(data), self.config.blob_settings.max_block_size, progress)
 
     def test_create_large_blob_from_stream_chunked_upload_with_count(self):
         # parallel tests introduce random order of requests, can only run live

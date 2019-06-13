@@ -680,6 +680,9 @@ class StorageCommonBlobTest(StorageTestCase):
                 self.container_name, blob_name, snapshot=blob_snapshot_1)
             snapshot_1.delete_blob()
 
+            with self.assertRaises(ValueError):
+                snapshot_1.delete_blob_snapshots()
+
             container = self.bsc.get_container_client(self.container_name)
             blob_list = list(container.list_blobs(include=["snapshots", "deleted"]))
 
@@ -719,7 +722,7 @@ class StorageCommonBlobTest(StorageTestCase):
             blob_snapshot_2 = blob.create_snapshot()
 
             # Soft delete all snapshots
-            blob.delete_blob(delete_snapshots='only')
+            blob.delete_blob_snapshots()
             container = self.bsc.get_container_client(self.container_name)
             blob_list = list(container.list_blobs(include=["snapshots", "deleted"]))
 
@@ -762,7 +765,7 @@ class StorageCommonBlobTest(StorageTestCase):
             blob_snapshot_2 = blob.create_snapshot()
 
             # Soft delete blob and all snapshots
-            blob.delete_blob(delete_snapshots="include")
+            blob.delete_blob()
             container = self.bsc.get_container_client(self.container_name)
             blob_list = list(container.list_blobs(include=["snapshots", "deleted"]))
 

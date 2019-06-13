@@ -22,10 +22,6 @@ from azure.storage.blob import (
     ExponentialRetry,
     NoRetry
 )
-# from azure.storage.common import (
-#     LocationMode,
-#     AzureSigningError,
-# )
 
 from tests.testcase import (
     StorageTestCase,
@@ -33,14 +29,6 @@ from tests.testcase import (
     ResponseCallback,
     RetryCounter,
 )
-
-
-# --Helper Classes---------------------------------------------------------------
-
-class _OperationContext(object):
-    def __init__(self, location_lock=False):
-        self.location_lock = location_lock
-        self.host_location = None
 
 
 # --Test Class -----------------------------------------------------------------
@@ -396,7 +384,6 @@ class StorageRetryTest(StorageTestCase):
 
     @record
     def test_location_lock(self):
-        pytest.skip("")
         # Arrange
         retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
@@ -410,20 +397,25 @@ class StorageRetryTest(StorageTestCase):
         # Assert
         # Confirm that the first request gets retried to secondary
         # The given test account must be GRS
-        def retry_callback(retry_context):
-            self.assertEqual(LocationMode.SECONDARY, retry_context.location_mode)
-
-        service.retry_callback = retry_callback
-        service.list_containers(name_starts_with='lock', _context=context)
+        def retry_callback(retry_count=None, location_mode=None, **kwargs):
+            self.assertEqual(LocationMode.SECONDARY, location_mode)
 
         # Confirm that the second list request done with the same context sticks 
         # to the final location of the first list request (aka secondary) despite 
         # the client normally trying primary first
+        requests = []
         def request_callback(request):
-            self.assertNotEqual(-1, request.host.find('-secondary'))
+            if not requests:
+                print("first request", request.context.options)
+                requests.append(request)
+            else:
+                print("second request", request.context.options)
+                self.assertNotEqual(-1, request.http_request.url.find('-secondary'))
 
-        service.request_callback = request_callback
-        service._list_containers(prefix='lock', _context=context)
+        containers = service.list_containers(
+            results_per_page=1, retry_hook=retry_callback)
+        next(containers)
+        next(containers)
 
     def test_invalid_account_key(self):
         # Arrange

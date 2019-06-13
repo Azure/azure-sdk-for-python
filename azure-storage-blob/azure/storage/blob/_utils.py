@@ -51,7 +51,6 @@ from ._policies import (
     StorageBlobSettings,
     StorageHeadersPolicy,
     StorageContentValidation,
-    StorageSecondaryAccount,
     StoragePipelineHook,
     StorageLoggingPolicy,
     StorageHosts,
@@ -403,7 +402,7 @@ def normalize_headers(headers):
     for key, value in headers.items():
         if key.startswith('x-ms-'):
             key = key[5:]
-        normalized[k.lower().replace('-', '_')] = value
+        normalized[key.lower().replace('-', '_')] = value
     return normalized
 
 
@@ -411,8 +410,12 @@ def return_response_headers(response, deserialized, response_headers):
     return normalize_headers(response_headers)
 
 
-def return_response_and_deserialized(response, deserialized, response_headers):
+def return_headers_and_deserialized(response, deserialized, response_headers):
     return normalize_headers(response_headers), deserialized
+
+
+def return_context_and_deserialized(response, deserialized, response_headers):
+    return response.location_mode, deserialized
 
 
 def create_client(url, pipeline):
@@ -445,7 +448,6 @@ def create_pipeline(configuration, credentials, **kwargs):
     if not transport:
         transport = RequestsTransport(config)
     policies = [
-        StorageSecondaryAccount(),
         config.user_agent_policy,
         config.headers_policy,
         StorageContentValidation(),

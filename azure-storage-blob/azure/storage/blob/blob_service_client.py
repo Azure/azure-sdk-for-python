@@ -189,7 +189,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.blob._generated.models.StorageServiceStats
         """
         try:
-            return self._client.service.get_statistics(timeout=timeout, secondary_storage=True, **kwargs)
+            return self._client.service.get_statistics(
+                timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 

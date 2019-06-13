@@ -557,7 +557,6 @@ class StorageContainerTest(StorageTestCase):
 
     @record
     def test_set_container_acl_too_many_ids(self):
-        # TODO: ADD validation logic for when too many access policies provided
         # Arrange
         container_name = self._create_container()
 

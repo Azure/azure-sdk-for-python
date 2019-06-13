@@ -131,7 +131,6 @@ class SharedKeyCredentials(SansIOHTTPPolicy):
         except Exception as ex:
             # Wrap any error that occurred as signing error
             # Doing so will clarify/locate the source of problem
-            # TODO: AzureSigningError
             raise _wrap_exception(ex, AzureSigningError)
 
     def on_request(self, request, **kwargs):

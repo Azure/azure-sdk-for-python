@@ -493,7 +493,7 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    def test_create_blob_from_bytes_with_progress(self):
+    def test_create_blob_from_bytes_with_progress_first(self):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
             return
@@ -504,18 +504,22 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act
         progress = []
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
-        # TODO
-        #def callback(current, total):
-        #    progress.append((current, total))
-
-        create_resp = blob.upload_blob(data, blob_type=BlobType.PageBlob)
+        create_resp = blob.upload_blob(
+            data, blob_type=BlobType.PageBlob, raw_response_hook=callback)
         props = blob.get_blob_properties()
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data)
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
+        self.assert_upload_progress(
+            LARGE_BLOB_SIZE, self.config.blob_settings.max_page_size, progress)
 
     def test_create_blob_from_bytes_with_index(self):
         # parallel tests introduce random order of requests, can only run live
@@ -584,17 +588,19 @@ class StoragePageBlobTest(StorageTestCase):
             stream.write(data)
 
         # Act
-        progress = []  # TODO Upload progress
-
-        def callback(current, total):
-            progress.append((current, total))
+        progress = []
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, blob_type=BlobType.PageBlob)
+            blob.upload_blob(stream, blob_type=BlobType.PageBlob, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data)
-        #self.assert_upload_progress(len(data), self.config.blob_settings.max_page_size, progress)
+        self.assert_upload_progress(len(data), self.config.blob_settings.max_page_size, progress)
 
     def test_create_blob_from_stream(self):
         # parallel tests introduce random order of requests, can only run live
@@ -686,18 +692,21 @@ class StoragePageBlobTest(StorageTestCase):
             stream.write(data)
 
         # Act
-        progress = []  # TODO upload progress
-
-        def callback(current, total):
-            progress.append((current, total))
+        progress = []
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
         blob_size = len(data)
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, length=blob_size, blob_type=BlobType.PageBlob)
+            blob.upload_blob(
+                stream, length=blob_size, blob_type=BlobType.PageBlob, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
-        #self.assert_upload_progress(len(data), self.config.blob_settings.max_page_size, progress)
+        self.assert_upload_progress(len(data), self.config.blob_settings.max_page_size, progress)
 
     def test_create_blob_from_stream_truncated(self):
         # parallel tests introduce random order of requests, can only run live
@@ -730,18 +739,21 @@ class StoragePageBlobTest(StorageTestCase):
             stream.write(data)
 
         # Act
-        progress = []  # TODO support upload progress
-
-        def callback(current, total):
-            progress.append((current, total))
+        progress = []
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
         blob_size = len(data) - 512
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, length=blob_size, blob_type=BlobType.PageBlob)  #, progress_callback=callback)
+            blob.upload_blob(
+                stream, length=blob_size, blob_type=BlobType.PageBlob, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
-        #self.assert_upload_progress(blob_size, self.config.blob_settings.max_page_size, progress)
+        self.assert_upload_progress(blob_size, self.config.blob_settings.max_page_size, progress)
 
     @record
     def test_create_blob_with_md5_small(self):
@@ -780,7 +792,8 @@ class StoragePageBlobTest(StorageTestCase):
         resp2 = source_blob.upload_page(data, 1024, 1535)
         source_snapshot_blob = source_blob.create_snapshot()
 
-        snapshot_blob = BlobClient(source_blob.url, snapshot=source_snapshot_blob)
+        snapshot_blob = BlobClient(
+            source_blob.url, credentials=source_blob.credentials, snapshot=source_snapshot_blob)
         sas_token = snapshot_blob.generate_shared_access_signature(
             permission=BlobPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),

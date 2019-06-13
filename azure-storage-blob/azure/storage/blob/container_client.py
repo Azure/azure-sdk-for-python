@@ -39,7 +39,8 @@ from ._utils import (
     serialize_iso,
     parse_query,
     is_credential_sastoken,
-    return_response_and_deserialized)
+    return_headers_and_deserialized,
+    return_context_and_deserialized)
 from ._deserialize import (
     deserialize_container_properties,
     deserialize_metadata
@@ -352,7 +353,7 @@ class ContainerClient(StorageAccountHostsMixin):
             response, identifiers = self._client.container.get_access_policy(
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
-                cls=return_response_and_deserialized,
+                cls=return_headers_and_deserialized,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)

@@ -16,6 +16,7 @@ from ._utils import (
     validate_and_format_range_headers,
     parse_length_from_content_range,
     process_storage_error)
+from .common import LocationMode
 from ._generated.models import ModifiedAccessConditions, StorageErrorException
 from ._deserialize import deserialize_blob_stream
 from ._encryption import _decrypt_blob
@@ -82,6 +83,7 @@ class StorageStreamDownloader(object):
         self.key_encryption_key = key_encryption_key
         self.key_resolver_function = key_resolver_function
         self.request_options = kwargs
+        self.location_mode = None
         self._download_complete = False
 
         # The service only provides transactional MD5s for chunks under 4MB.
@@ -160,6 +162,7 @@ class StorageStreamDownloader(object):
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function,
+            use_location=self.location_mode,
             cls=deserialize_blob_stream,
             **self.request_options)
 
@@ -174,10 +177,8 @@ class StorageStreamDownloader(object):
             end_range_required=False,
             check_content_md5=self.validate_content)
 
-        # Send a context object to make sure we always retry to the initial location
-        #operation_context = _OperationContext(location_lock=True)
         try:
-            blob = self.service.download(
+            location_mode, blob = self.service.download(
                 timeout=self.timeout,
                 range=range_header,
                 range_get_content_md5=range_validation,
@@ -186,8 +187,12 @@ class StorageStreamDownloader(object):
                 validate_content=self.validate_content,
                 cls=deserialize_blob_stream,
                 data_stream_total=None,
-                data_stream_current=0,
+                download_stream_current=0,
                 **self.request_options)
+
+            # Check the location we read from to ensure we use the same one
+            # for subsequent requests.
+            self.location_mode = location_mode
 
             # Parse the total blob size and adjust the download size if ranges
             # were specified
@@ -206,14 +211,14 @@ class StorageStreamDownloader(object):
                 # request a range, do a regular get request in order to get
                 # any properties.
                 try:
-                    blob = self.service.download(
+                    _, blob = self.service.download(
                         timeout=self.timeout,
                         lease_access_conditions=self.access_conditions,
                         modified_access_conditions=self.mod_conditions,
                         validate_content=self.validate_content,
                         cls=deserialize_blob_stream,
                         data_stream_total=0,
-                        data_stream_current=0,
+                        download_stream_current=0,
                         **self.request_options)
                 except StorageErrorException as error:
                     process_storage_error(error)
@@ -297,6 +302,7 @@ class StorageStreamDownloader(object):
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function,
+            use_location=self.location_mode,
             cls=deserialize_blob_stream,
             **self.request_options)
 
@@ -391,7 +397,7 @@ class _BlobChunkDownloader(object):
             check_content_md5=self.validate_content)
 
         try:
-            response = self.blob_service.download(
+            _, response = self.blob_service.download(
                 timeout=self.timeout,
                 range=range_header,
                 range_get_content_md5=range_validation,
@@ -399,7 +405,7 @@ class _BlobChunkDownloader(object):
                 modified_access_conditions=self.mod_conditions,
                 validate_content=self.validate_content,
                 data_stream_total=self.download_size,
-                data_stream_current=self.progress_total,
+                download_stream_current=self.progress_total,
                 **self.request_options)
         except StorageErrorException as error:
             process_storage_error(error)

@@ -47,7 +47,6 @@ from ._utils import (
 )
 from ._deserialize import (
     deserialize_blob_properties,
-    deserialize_blob_stream,
     deserialize_metadata
 )
 from ._generated.models import (
@@ -148,7 +147,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self.scheme,
             hostname,
             quote(self.container),
-            self.blob_name.replace(' ', '%20').replace('?', '%3F'),  # TODO: Confirm why recordings don't urlencode chars
+            self.blob_name.replace(' ', '%20').replace('?', '%3F'),
             self._query_str)
 
     @classmethod
@@ -238,7 +237,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
-        if not hasattr(self.credentials, 'account_key') and not self.credentials.account_key:
+        if not hasattr(self.credentials, 'account_key') or not self.credentials.account_key:
             raise ValueError("No account SAS key available.")
         sas = BlobSharedAccessSignature(self.credentials.account_name, self.credentials.account_key)
         return sas.generate_blob(
@@ -414,6 +413,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                         headers=headers,
                         cls=return_response_headers,
                         validate_content=validate_content,
+                        data_stream_total=adjusted_count,
+                        upload_stream_current=0,
                         **kwargs)
                 else:
                     cek, iv, encryption_data = None, None, None
@@ -634,11 +635,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
+        if not self.snapshot:
+            kwargs['delete_snapshots'] = "include"
         try:
             self._client.blob.delete(
                 timeout=timeout,
                 snapshot=self.snapshot,
-                delete_snapshots="include",
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
@@ -701,10 +703,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         access_conditions = get_access_conditions(lease)
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
+        if self.snapshot:
+            raise ValueError("This operation cannot be performed on a snapshot.")
         try:
             self._client.blob.delete(
                 timeout=timeout,
-                snapshot=self.snapshot,
                 delete_snapshots="only",
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,

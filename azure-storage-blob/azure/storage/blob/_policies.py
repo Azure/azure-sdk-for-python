@@ -55,7 +55,7 @@ def encode_base64(data):
     return encoded.decode('utf-8')
 
 
-def is_retry(response, mode=None):
+def is_retry(response, mode):
     """Is this method/status code retryable? (Based on whitelists and control
     variables such as the number of total retries to allow, whether to
     respect the Retry-After header, whether this header is present, and
@@ -122,6 +122,28 @@ class StorageHosts(SansIOHTTPPolicy):
     def on_request(self, request):
         # type: (PipelineRequest, Any) -> None
         request.context.options['hosts'] = self.hosts
+        parsed_url = urlparse(request.http_request.url)
+
+        # Detect what location mode we're currently requesting with
+        location_mode = LocationMode.PRIMARY
+        for key, value in self.hosts.items():
+            if parsed_url.netloc == value:
+                location_mode = key
+
+        # See if a specific location mode has been specified, and if so, redirect
+        use_location = request.context.options.pop('use_location', None)
+        if use_location:
+            # Lock retries to the specific location
+            request.context.options['retry_to_secondary'] = False
+            if use_location not in self.hosts:
+                raise ValueError("Attempting to use undefined host location {}".format(use_location))
+            if use_location != location_mode:
+                # Update request URL to use the specified location
+                updated = parsed_url._replace(netloc=self.hosts[use_location])
+                request.http_request.url = updated.geturl()
+                location_mode = use_location
+
+        request.context.options['location_mode'] = location_mode
 
 
 class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
@@ -203,21 +225,6 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                 _LOGGER.debug("Failed to log response: %s", repr(err))
 
 
-class StorageSecondaryAccount(SansIOHTTPPolicy):
-
-    def __init__(self, **kwargs):
-        super(StorageSecondaryAccount, self).__init__()
-
-    def on_request(self, request):
-        # type: (PipelineRequest, Any) -> None
-        use_secondary = request.context.options.pop('secondary_storage', False)
-        if use_secondary:
-            parsed_url = urlparse(request.http_request.url)
-            account = parsed_url.hostname.split(".blob.core.")[0]
-            secondary_account = account if account.endswith('-secondary') else account + '-secondary'
-            request.http_request.url = request.http_request.url.replace(account, secondary_account, 1)
-
-
 class StoragePipelineHook(HTTPPolicy):
 
     def __init__(self, **kwargs):
@@ -227,8 +234,12 @@ class StoragePipelineHook(HTTPPolicy):
 
     def send(self, request):
         # type: (PipelineRequest) -> PipelineResponse
-        data_stream_total = request.context.get('data_stream_total') or request.context.options.pop('data_stream_total', None)
-        data_stream_current = request.context.get('data_stream_current') or request.context.options.pop('data_stream_current', None)
+        data_stream_total = request.context.get('data_stream_total') or \
+            request.context.options.pop('data_stream_total', None)
+        download_stream_current = request.context.get('download_stream_current') or \
+            request.context.options.pop('download_stream_current', None)
+        upload_stream_current = request.context.get('upload_stream_current') or \
+            request.context.options.pop('upload_stream_current', None)
         response_callback = request.context.get('response_callback') or \
             request.context.options.pop('raw_response_hook', self._response_callback)
         request_callback = request.context.get('request_callback') or \
@@ -239,17 +250,21 @@ class StoragePipelineHook(HTTPPolicy):
             request.context['request_callback'] = request_callback
 
         response = self.next.send(request)
-        if not is_retry(response) and data_stream_current is not None:
-            data_stream_current += int(response.http_response.headers.get('Content-Length', 0))
+        will_retry = is_retry(response, request.context.options.get('mode'))
+        if not will_retry and download_stream_current is not None:
+            download_stream_current += int(response.http_response.headers.get('Content-Length', 0))
             if data_stream_total is None:
                 content_range = response.http_response.headers.get('Content-Range')
                 if content_range:
                     data_stream_total = int(content_range.split(' ', 1)[1].split('/', 1)[1])
                 else:
-                    data_stream_total = data_stream_current
-            for pipeline_obj in [request, response]:
-                pipeline_obj.context['data_stream_total'] = data_stream_total
-                pipeline_obj.context['data_stream_current'] = data_stream_current
+                    data_stream_total = download_stream_current
+        elif not will_retry and upload_stream_current is not None:
+            upload_stream_current += int(response.http_request.headers.get('Content-Length', 0))
+        for pipeline_obj in [request, response]:
+            pipeline_obj.context['data_stream_total'] = data_stream_total
+            pipeline_obj.context['download_stream_current'] = download_stream_current
+            pipeline_obj.context['upload_stream_current'] = upload_stream_current
         if response_callback:
             response_callback(response)
             request.context['response_callback'] = response_callback
@@ -368,7 +383,6 @@ class StorageRetryPolicy(HTTPPolicy):
             'status': options.pop("retry_status", self.status_retries),
             'retry_secondary': options.pop("retry_to_secondary", self.retry_to_secondary),
             'mode': options.pop("location_mode", LocationMode.PRIMARY),
-            'location_lock': options.pop("location_lock", False),
             'hosts': options.pop("hosts", None),
             'hook': options.pop("retry_hook", None),
             'body_position': body_position,
@@ -428,7 +442,7 @@ class StorageRetryPolicy(HTTPPolicy):
                 settings['history'].append(RequestHistory(request, http_response=response))
 
         if not self.is_exhausted(settings):
-            if request.method not in ['PUT'] and settings['retry_secondary'] and not settings['location_lock']:
+            if request.method not in ['PUT'] and settings['retry_secondary']:
                 self._set_next_host_location(settings, request)
 
             # rewind the request body if it is a stream
@@ -480,6 +494,7 @@ class StorageRetryPolicy(HTTPPolicy):
                 raise err
         if retry_settings['history']:
             response.context['history'] = retry_settings['history']
+        response.http_response.location_mode = retry_settings['mode']
         return response
 
 
