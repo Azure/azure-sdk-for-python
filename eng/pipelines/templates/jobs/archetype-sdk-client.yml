@@ -143,7 +143,7 @@ jobs:
         displayName: 'Setup and Run Tests'
         inputs:
           scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-          arguments: '"azure-*" --junitxml="junit/test-results.xml" --service="${{parameters.ServiceDirectory}}"'
+          arguments: '"azure-*" --junitxml="junit/test-results.xml" --service="${{parameters.ServiceDirectory}}" --mark_arg="${{parameters.TestMarkArgument}}"'
 
       - task: PublishTestResults@2
         condition: succeededOrFailed()
@@ -200,6 +200,6 @@ jobs:
           cd $(Build.SourcesDirectory)
           PATH=/home/vsts/pypy3-v6.0.0-linux64/bin/:$PATH
           pypy3 -m ensurepip
-          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "azure-*" --disablecov --service=${{parameters.ServiceDirectory}}
+          python ./scripts/devops_tasks/setup_execute_tests.py -p pypy3 "azure-*" --disablecov --service=${{parameters.ServiceDirectory}} --mark_arg="${{parameters.TestMarkArgument}}"
         displayName: 'Setup and Run Filtered Tests PyPy3'
         continueOnError: true
