@@ -9,6 +9,7 @@ trigger:
     include:
     - sdk/containerregistry/
 
+
 pr:
   branches:
     include:
