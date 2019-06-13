@@ -187,18 +187,13 @@ class StorageTestCase(unittest.TestCase):
             self.settings.REMOTE_STORAGE_ACCOUNT_NAME
         )
 
-    def _create_storage_service(self, service_class, settings):
+    def _create_storage_service(self, service_class, settings, **kwargs):
         if settings.CONNECTION_STRING:
-            service = service_class(connection_string=settings.CONNECTION_STRING)
-        elif settings.IS_EMULATED:
-            service = service_class(is_emulated=True)
+            service = service_class.from_connection_string(settings.CONNECTION_STRING, **kwargs)
         else:
-            service = service_class(
-                settings.STORAGE_ACCOUNT_NAME,
-                settings.STORAGE_ACCOUNT_KEY,
-                protocol=settings.PROTOCOL,
-            )
-        self._set_test_proxy(service, settings)
+            url = self._get_account_url()
+            credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
+            service = service_class(url, credentials=credentials, **kwargs)
         return service
 
     # for blob storage account
@@ -215,9 +210,6 @@ class StorageTestCase(unittest.TestCase):
             )
         else:
             raise SkipTest('BLOB_CONNECTION_STRING or BLOB_STORAGE_ACCOUNT_NAME must be populated to run this test')
-
-        self._set_test_proxy(service, settings)
-        return service
 
     def _create_premium_storage_service(self, service_class, settings):
         if hasattr(settings, 'PREMIUM_CONNECTION_STRING') and settings.PREMIUM_CONNECTION_STRING != "":
@@ -430,14 +422,15 @@ class ResponseCallback(object):
         self.count = 0
 
     def override_first_status(self, response):
-        if self.first and response.status == self.status:
-            response.status = self.new_status
+        if self.first and response.http_response.status_code == self.status:
+            response.http_response.status_code = self.new_status
             self.first = False
         self.count += 1
 
     def override_status(self, response):
-        if response.status == self.status:
-            response.status = self.new_status
+        if response.http_response.status_code == self.status:
+            print(response.http_response.status_code, self.new_status)
+            response.http_response.status_code = self.new_status
         self.count += 1
 
 
@@ -459,8 +452,8 @@ class LogCaptured(object):
         self.handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
 
         # get and enable the logger to send the outputs to the string stream
-        self.logger = logging.getLogger('azure.storage')
-        self.logger.level = logging.INFO
+        self.logger = logging.getLogger('azure.storage.blob')
+        self.logger.level = logging.DEBUG
         self.logger.addHandler(self.handler)
 
         # the stream is returned to the user so that the capture logs can be retrieved

@@ -86,6 +86,8 @@ class ContainerClient(StorageAccountHostsMixin):
         parsed_url = urlparse(container_url.rstrip('/'))
         if not parsed_url.path and not container:
             raise ValueError("Please specify a container name.")
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(container_url))
 
         path_container = ""
         if parsed_url.path:
@@ -284,13 +286,9 @@ class ContainerClient(StorageAccountHostsMixin):
         :returns: A dict of account information (SKU and account type).
         """
         try:
-            response = self._client.container.get_account_info(cls=return_response_headers, **kwargs)
+            return self._client.container.get_account_info(cls=return_response_headers, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        return {
-            'SKU': response.get('x-ms-sku-name'),
-            'AccountType': response.get('x-ms-account-kind')
-        }
 
     def get_container_properties(self, lease=None, timeout=None, **kwargs):
         # type: (Optional[Union[LeaseClient, str]], Optional[int], **Any) -> ContainerProperties
@@ -351,7 +349,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         access_conditions = get_access_conditions(lease)
         try:
-            response = self._client.container.get_access_policy(
+            response, identifiers = self._client.container.get_access_policy(
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 cls=return_response_and_deserialized,
@@ -359,8 +357,8 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
         return {
-            'public_access': response.get('header').get('x-ms-blob-public-access'),
-            'signed_identifiers': response.get('deserialized', [])
+            'public_access': response.get('blob_public_access'),
+            'signed_identifiers': identifiers or []
         }
 
     def set_container_acl(
@@ -389,7 +387,7 @@ class ContainerClient(StorageAccountHostsMixin):
             if_modified_since, if_unmodified_since)
         access_conditions = get_access_conditions(lease)
         try:
-            response = self._client.container.set_access_policy(
+            return self._client.container.set_access_policy(
                 container_acl=signed_identifiers or None,
                 timeout=timeout,
                 access=public_access,
@@ -399,10 +397,6 @@ class ContainerClient(StorageAccountHostsMixin):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        return {
-            'ETag': response.get('ETag'),
-            'Last-Modified': response.get('Last-Modified')
-        }
 
     def list_blobs(self, name_starts_with=None, include=None, marker=None, timeout=None, **kwargs):
         # type: (Optional[str], Optional[Include], Optional[int]) -> Iterable[BlobProperties]

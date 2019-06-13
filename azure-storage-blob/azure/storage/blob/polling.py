@@ -65,10 +65,10 @@ class CopyBlob(PollingMethod):
             self.id = initial_status
             self._update_status()
         else:
-            self._status = initial_status['x-ms-copy-status']
-            self.id = initial_status['x-ms-copy-id']
-            self.etag = initial_status['ETag']
-            self.last_modified = initial_status['Last-Modified']
+            self._status = initial_status['copy_status']
+            self.id = initial_status['copy_id']
+            self.etag = initial_status['etag']
+            self.last_modified = initial_status['last_modified']
 
     def run(self):
         # type: () -> None

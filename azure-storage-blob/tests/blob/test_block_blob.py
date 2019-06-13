@@ -145,8 +145,8 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         content = blob.download_blob()
         self.assertEqual(b"".join(list(content)), b'AAABBBCCC')
-        self.assertEqual(content.properties.etag, put_block_list_resp.get('ETag'))
-        self.assertEqual(content.properties.last_modified, put_block_list_resp.get('Last-Modified'))
+        self.assertEqual(content.properties.etag, put_block_list_resp.get('etag'))
+        self.assertEqual(content.properties.last_modified, put_block_list_resp.get('last_modified'))
 
     @record
     def test_put_block_list_invalid_block_id(self):
@@ -259,8 +259,8 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self.assertEqual(props.etag, create_resp.get('ETag'))
-        self.assertEqual(props.last_modified, create_resp.get('Last-Modified'))
+        self.assertEqual(props.etag, create_resp.get('etag'))
+        self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
     @record
     def test_create_blob_from_0_bytes(self):
@@ -275,8 +275,8 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self.assertEqual(props.etag, create_resp.get('ETag'))
-        self.assertEqual(props.last_modified, create_resp.get('Last-Modified'))
+        self.assertEqual(props.etag, create_resp.get('etag'))
+        self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
     @record
     def test_create_from_bytes_blob_unicode(self):
@@ -291,8 +291,8 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self.assertEqual(props.etag, create_resp.get('ETag'))
-        self.assertEqual(props.last_modified, create_resp.get('Last-Modified'))
+        self.assertEqual(props.etag, create_resp.get('etag'))
+        self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
     @record
     def test_create_from_bytes_blob_unicode(self):
@@ -307,8 +307,8 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data.encode('utf-8'))
-        self.assertEqual(props.etag, create_resp.get('ETag'))
-        self.assertEqual(props.last_modified, create_resp.get('Last-Modified'))
+        self.assertEqual(props.etag, create_resp.get('etag'))
+        self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
     def test_create_from_bytes_blob_with_lease_id(self):
         # parallel tests introduce random order of requests, can only run live
@@ -326,8 +326,8 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         output = blob.download_blob(lease=lease)
         self.assertEqual(b"".join(list(output)), data)
-        self.assertEqual(output.properties.etag, create_resp.get('ETag'))
-        self.assertEqual(output.properties.last_modified, create_resp.get('Last-Modified'))
+        self.assertEqual(output.properties.etag, create_resp.get('etag'))
+        self.assertEqual(output.properties.last_modified, create_resp.get('last_modified'))
 
     def test_create_blob_from_bytes_with_metadata(self):
         # parallel tests introduce random order of requests, can only run live
@@ -392,8 +392,8 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
         #self.assert_upload_progress(len(data), self.config.blob_settings.max_block_size, progress)
-        self.assertEqual(props.etag, create_resp.get('ETag'))
-        self.assertEqual(props.last_modified, create_resp.get('Last-Modified'))
+        self.assertEqual(props.etag, create_resp.get('etag'))
+        self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
     def test_create_blob_from_bytes_with_index(self):
         # parallel tests introduce random order of requests, can only run live
@@ -475,8 +475,8 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self.assertEqual(props.etag, create_resp.get('ETag'))
-        self.assertEqual(props.last_modified, create_resp.get('Last-Modified'))
+        self.assertEqual(props.etag, create_resp.get('etag'))
+        self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
     @record
     def test_create_blob_from_path_non_parallel(self):
@@ -494,8 +494,8 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self.assertEqual(props.etag, create_resp.get('ETag'))
-        self.assertEqual(props.last_modified, create_resp.get('Last-Modified'))
+        self.assertEqual(props.etag, create_resp.get('etag'))
+        self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
     def test_create_blob_from_path_with_progress(self):
         # parallel tests introduce random order of requests, can only run live
@@ -566,8 +566,8 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self.assertEqual(props.etag, create_resp.get('ETag'))
-        self.assertEqual(props.last_modified, create_resp.get('Last-Modified'))
+        self.assertEqual(props.etag, create_resp.get('etag'))
+        self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
     def test_create_blob_from_stream_non_seekable_chunked_upload_known_size(self):
         # parallel tests introduce random order of requests, can only run live
@@ -720,8 +720,8 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        self.assertEqual(props.etag, create_resp.get('ETag'))
-        self.assertEqual(props.last_modified, create_resp.get('Last-Modified'))
+        self.assertEqual(props.etag, create_resp.get('etag'))
+        self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
     @record
     def test_create_blob_from_text_with_encoding(self):

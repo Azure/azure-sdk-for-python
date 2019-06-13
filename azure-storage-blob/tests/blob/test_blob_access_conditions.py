@@ -78,7 +78,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         container = self._create_container(container_name)
         blob = self.bsc.get_blob_client(container_name, blob_name)
         resp = blob.upload_blob(blob_data, length=len(blob_data))
-        self.assertIsNotNone(resp.get('ETag'))
+        self.assertIsNotNone(resp.get('etag'))
         return container, blob
 
     def _create_container_and_page_blob(self, container_name, blob_name,
@@ -296,7 +296,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         resp = blob.upload_blob(data, length=len(data), if_modified_since=test_datetime)
 
         # Assert
-        self.assertIsNotNone(resp.get('ETag'))
+        self.assertIsNotNone(resp.get('etag'))
 
     @record
     def test_put_blob_with_if_modified_fail(self):
@@ -327,7 +327,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         resp = blob.upload_blob(data, length=len(data), if_unmodified_since=test_datetime)
 
         # Assert
-        self.assertIsNotNone(resp.get('ETag'))
+        self.assertIsNotNone(resp.get('etag'))
 
     @record
     def test_put_blob_with_if_unmodified_fail(self):
@@ -357,7 +357,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         resp = blob.upload_blob(data, length=len(data), if_match=etag)
 
         # Assert
-        self.assertIsNotNone(resp.get('ETag'))
+        self.assertIsNotNone(resp.get('etag'))
 
     @record
     def test_put_blob_with_if_match_fail(self):
@@ -384,7 +384,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         resp = blob.upload_blob(data, length=len(data), if_none_match='0x111111111111111')
 
         # Assert
-        self.assertIsNotNone(resp.get('ETag'))
+        self.assertIsNotNone(resp.get('etag'))
 
     @record
     def test_put_blob_with_if_none_match_fail(self):
@@ -1168,7 +1168,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(resp)
-        self.assertIsNotNone(resp.snapshot)
+        self.assertIsNotNone(resp['snapshot'])
 
     @record
     def test_snapshot_blob_with_if_modified_fail(self):
@@ -1200,7 +1200,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(resp)
-        self.assertIsNotNone(resp.snapshot)
+        self.assertIsNotNone(resp['snapshot'])
 
     @record
     def test_snapshot_blob_with_if_unmodified_fail(self):
@@ -1231,7 +1231,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(resp)
-        self.assertIsNotNone(resp.snapshot)
+        self.assertIsNotNone(resp['snapshot'])
 
     @record
     def test_snapshot_blob_with_if_match_fail(self):
@@ -1259,7 +1259,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(resp)
-        self.assertIsNotNone(resp.snapshot)
+        self.assertIsNotNone(resp['snapshot'])
 
     @record
     def test_snapshot_blob_with_if_none_match_fail(self):

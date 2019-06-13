@@ -154,7 +154,6 @@ class StorageCommonBlobTest(StorageTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         exists = blob.get_blob_properties()
-        print("Props", exists)
 
         # Assert
         self.assertTrue(exists)
@@ -177,7 +176,7 @@ class StorageCommonBlobTest(StorageTestCase):
         snapshot = blob.create_snapshot()
 
         # Act
-        blob = self.bsc.get_blob_client(self.container_name, snapshot)
+        blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=snapshot)
         exists = blob.get_blob_properties()
 
         # Assert
@@ -249,7 +248,7 @@ class StorageCommonBlobTest(StorageTestCase):
         resp = blob.upload_blob(data, length=len(data), lease=lease)
 
         # Assert
-        self.assertIsNotNone(resp.get('ETag'))
+        self.assertIsNotNone(resp.get('etag'))
         content = b"".join(list(blob.download_blob(lease=lease)))
         self.assertEqual(content, data)
 
@@ -265,7 +264,7 @@ class StorageCommonBlobTest(StorageTestCase):
         resp = blob.upload_blob(data, length=len(data), metadata=metadata)
 
         # Assert
-        self.assertIsNotNone(resp.get('ETag'))
+        self.assertIsNotNone(resp.get('etag'))
         md = blob.get_blob_properties().metadata
         self.assertDictEqual(md, metadata)
 
@@ -287,7 +286,8 @@ class StorageCommonBlobTest(StorageTestCase):
         # Arrange
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        snapshot = self.bsc.get_blob_client(self.container_name, blob.create_snapshot())
+        snapshot = self.bsc.get_blob_client(
+            self.container_name, blob_name, snapshot=blob.create_snapshot())
 
         # Act
         data = snapshot.download_blob()
@@ -301,7 +301,8 @@ class StorageCommonBlobTest(StorageTestCase):
         # Arrange
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        snapshot = self.bsc.get_blob_client(self.container_name, blob.create_snapshot())
+        snapshot = self.bsc.get_blob_client(
+            self.container_name, blob_name, snapshot=blob.create_snapshot())
 
         upload_data = b'hello world again'
         blob.upload_blob(upload_data, length=len(upload_data))
@@ -500,7 +501,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(len(blobs), 2)
 
         # Act
-        snapshot = self.bsc.get_blob_client(self.container_name, res)
+        snapshot = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=res)
         props = snapshot.get_blob_properties()
 
         # Assert
@@ -585,7 +586,8 @@ class StorageCommonBlobTest(StorageTestCase):
         # Arrange
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        snapshot = self.bsc.get_blob_client(self.container_name, blob.create_snapshot())
+        snapshot = self.bsc.get_blob_client(
+            self.container_name, blob_name, snapshot=blob.create_snapshot())
 
         # Act
         snapshot.delete_blob()
@@ -605,7 +607,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob.create_snapshot()
 
         # Act
-        blob.delete_blob(delete_snapshots='only')  # TODO: Separate calls?
+        blob.delete_blob_snapshots()
 
         # Assert
         container = self.bsc.get_container_client(self.container_name)
@@ -621,7 +623,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob.create_snapshot()
 
         # Act
-        blob.delete_blob(delete_snapshots='include')
+        blob.delete_blob()
 
         # Assert
         container = self.bsc.get_container_client(self.container_name)
@@ -674,7 +676,8 @@ class StorageCommonBlobTest(StorageTestCase):
             blob_snapshot_2 = blob.create_snapshot()
 
             # Soft delete blob_snapshot_1
-            snapshot_1 = self.bsc.get_blob_client(self.container_name, blob_snapshot_1)
+            snapshot_1 = self.bsc.get_blob_client(
+                self.container_name, blob_name, snapshot=blob_snapshot_1)
             snapshot_1.delete_blob()
 
             container = self.bsc.get_container_client(self.container_name)
@@ -683,7 +686,7 @@ class StorageCommonBlobTest(StorageTestCase):
             # Assert
             self.assertEqual(len(blob_list), 3)
             for listedblob in blob_list:
-                if listedblob.snapshot == blob_snapshot_1.snapshot:
+                if listedblob.snapshot == blob_snapshot_1['snapshot']:
                     self._assert_blob_is_soft_deleted(listedblob)
                 else:
                     self._assert_blob_not_soft_deleted(listedblob)
@@ -723,9 +726,9 @@ class StorageCommonBlobTest(StorageTestCase):
             # Assert
             self.assertEqual(len(blob_list), 3)
             for listedblob in blob_list:
-                if listedblob.snapshot == blob_snapshot_1.snapshot:
+                if listedblob.snapshot == blob_snapshot_1['snapshot']:
                     self._assert_blob_is_soft_deleted(listedblob)
-                elif listedblob.snapshot == blob_snapshot_2.snapshot:
+                elif listedblob.snapshot == blob_snapshot_2['snapshot']:
                     self._assert_blob_is_soft_deleted(listedblob)
                 else:
                     self._assert_blob_not_soft_deleted(listedblob)
@@ -953,7 +956,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Assert
         self.assertIsNotNone(resp)
-        self.assertIsNotNone(resp.snapshot)
+        self.assertIsNotNone(resp['snapshot'])
 
     @record
     def test_lease_blob_acquire_and_release(self):
@@ -1034,7 +1037,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert
         self.assertIsNotNone(lease.id)
         self.assertIsNotNone(lease_time)
-        self.assertIsNotNone(resp.get('ETag'))
+        self.assertIsNotNone(resp.get('etag'))
 
     @record
     def test_lease_blob_acquire_and_renew(self):
@@ -1089,7 +1092,7 @@ class StorageCommonBlobTest(StorageTestCase):
         resp = blob.upload_blob(data)
 
         # Assert
-        self.assertIsNotNone(resp.get('ETag'))
+        self.assertIsNotNone(resp.get('etag'))
 
     @record
     def test_no_sas_private_blob(self):
@@ -1379,8 +1382,8 @@ class StorageCommonBlobTest(StorageTestCase):
         info = self.bsc.get_account_information()
 
         # Assert
-        self.assertIsNotNone(info.get('SKU'))
-        self.assertIsNotNone(info.get('AccountType'))
+        self.assertIsNotNone(info.get('sku_name'))
+        self.assertIsNotNone(info.get('account_kind'))
 
     @record
     def test_get_account_information_with_container_name(self):
@@ -1390,8 +1393,8 @@ class StorageCommonBlobTest(StorageTestCase):
         info = container.get_account_information()
 
         # Assert
-        self.assertIsNotNone(info.get('SKU'))
-        self.assertIsNotNone(info.get('AccountType'))
+        self.assertIsNotNone(info.get('sku_name'))
+        self.assertIsNotNone(info.get('account_kind'))
 
     @record
     def test_get_account_information_with_blob_name(self):
@@ -1401,8 +1404,8 @@ class StorageCommonBlobTest(StorageTestCase):
         info = blob.get_account_information()
 
         # Assert
-        self.assertIsNotNone(info.get('SKU'))
-        self.assertIsNotNone(info.get('AccountType'))
+        self.assertIsNotNone(info.get('sku_name'))
+        self.assertIsNotNone(info.get('account_kind'))
 
     @record
     def test_get_account_information_with_container_sas(self):
@@ -1422,8 +1425,8 @@ class StorageCommonBlobTest(StorageTestCase):
         info = sas_container.get_account_information()
 
         # Assert
-        self.assertIsNotNone(info.get('SKU'))
-        self.assertIsNotNone(info.get('AccountType'))
+        self.assertIsNotNone(info.get('sku_name'))
+        self.assertIsNotNone(info.get('account_kind'))
 
     @record
     def test_get_account_information_with_blob_sas(self):
@@ -1445,8 +1448,8 @@ class StorageCommonBlobTest(StorageTestCase):
         info = sas_blob.get_account_information()
 
         # Assert
-        self.assertIsNotNone(info.get('SKU'))
-        self.assertIsNotNone(info.get('AccountType'))
+        self.assertIsNotNone(info.get('sku_name'))
+        self.assertIsNotNone(info.get('account_kind'))
 
 
 #------------------------------------------------------------------------------

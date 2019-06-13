@@ -89,9 +89,9 @@ class LeaseClient(object):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        self.id = response.get('x-ms-lease-id')  # type: str
-        self.last_modified = response.get('Last-Modified')   # type: datetime 
-        self.etag = kwargs.get('ETag')  # type: str
+        self.id = response.get('lease_id')  # type: str
+        self.last_modified = response.get('last_modified')   # type: datetime 
+        self.etag = kwargs.get('etag')  # type: str
 
     def renew(
             self, if_modified_since=None,  # type: Optional[datetime]
@@ -113,9 +113,9 @@ class LeaseClient(object):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        self.etag = response.get('ETag')  # type: str
-        self.id = response.get('x-ms-lease-id')  # type: str
-        self.last_modified = response.get('Last-Modified')   # type: datetime 
+        self.etag = response.get('etag')  # type: str
+        self.id = response.get('lease_id')  # type: str
+        self.last_modified = response.get('last_modified')   # type: datetime
 
     def release(
             self, if_modified_since=None,  # type: Optional[datetime]
@@ -137,9 +137,9 @@ class LeaseClient(object):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        self.etag = response.get('ETag')  # type: str
-        self.id = response.get('x-ms-lease-id')  # type: str
-        self.last_modified = response.get('Last-Modified')   # type: datetime 
+        self.etag = response.get('etag')  # type: str
+        self.id = response.get('lease_id')  # type: str
+        self.last_modified = response.get('last_modified')   # type: datetime
 
     def change(
             self, proposed_lease_id,  # type: str
@@ -163,9 +163,9 @@ class LeaseClient(object):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        self.etag = response.get('ETag')  # type: str
-        self.id = response.get('x-ms-lease-id')  # type: str
-        self.last_modified = response.get('Last-Modified')   # type: datetime 
+        self.etag = response.get('etag')  # type: str
+        self.id = response.get('lease_id')  # type: str
+        self.last_modified = response.get('last_modified')   # type: datetime
 
     def break_lease(
             self, lease_break_period=None,  # type: Optional[int]
@@ -221,4 +221,4 @@ class LeaseClient(object):
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        return response.get('x-ms-lease-time')
+        return response.get('lease_time')

@@ -49,20 +49,21 @@ class StorageClientTest(StorageTestCase):
         self.connection_string = self.settings.CONNECTION_STRING
 
     # --Helpers-----------------------------------------------------------------
-    def validate_standard_account_endpoints(self, service, type):
+    def validate_standard_account_endpoints(self, service, url_type):
         self.assertIsNotNone(service)
-        self.assertEqual(service.account, self.account_name)
-        # self.assertEqual(service.account_key, self.account_key)  # TODO
+        self.assertEqual(service.credentials.account_name, self.account_name)
+        self.assertEqual(service.credentials.account_key, self.account_key)
         self.assertTrue('{}.{}.core.windows.net'.format(self.account_name, type) in service.url)
-        #self.assertEqual(service.secondary_endpoint, '{}-secondary.{}.core.windows.net'.format(self.account_name, type))  # TODO
+        self.assertEqual(service.secondary_endpoint, '{}-secondary.{}.core.windows.net'.format(self.account_name, url_type))
 
     # --Direct Parameters Test Cases --------------------------------------------
     def test_create_service_with_key(self):
         # Arrange
 
-        for type in SERVICES.items():
+        for client, url in SERVICES.items():
             # Act
-            service = type[0](self.account_name, self.account_key)
+            creds = Shared
+            service = client(self.account_name, self.account_key)
 
             # Assert
             self.validate_standard_account_endpoints(service, type[1])
@@ -137,20 +138,6 @@ class StorageClientTest(StorageTestCase):
             # Assert
             self.validate_standard_account_endpoints(service, type[1])
             self.assertEqual(service.protocol, 'http')
-
-    def test_create_service_with_emulator(self):
-        # Arrange
-
-        # Act
-        service = BlockBlobService(is_emulated=True)
-
-        # Assert
-        self.assertIsNotNone(service)
-        self.assertEqual(service.account_name, 'devstoreaccount1')
-        self.assertIsNotNone(service.account_key)
-        self.assertEqual(service.protocol, 'http')
-        self.assertEqual(service.primary_endpoint, '127.0.0.1:10000/devstoreaccount1')
-        self.assertEqual(service.secondary_endpoint, '127.0.0.1:10000/devstoreaccount1-secondary')
 
     def test_create_blob_service_anonymous(self):
         # Arrange

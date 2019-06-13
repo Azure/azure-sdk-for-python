@@ -52,7 +52,9 @@ from ._policies import (
     StorageHeadersPolicy,
     StorageContentValidation,
     StorageSecondaryAccount,
-    StorageResponseHook,
+    StoragePipelineHook,
+    StorageLoggingPolicy,
+    StorageHosts,
     ExponentialRetry,
     LinearRetry)
 from ._generated import AzureBlobStorage
@@ -154,7 +156,8 @@ class StorageAccountHostsMixin(object):
         self.key_encryption_key = kwargs.get('key_encryption_key')
         self.key_resolver_function = kwargs.get('key_resolver_function')
 
-        self._config, self._pipeline = create_pipeline(configuration, credentials, **kwargs)
+        self._config, self._pipeline = create_pipeline(
+            configuration, credentials, hosts=self._hosts, **kwargs)
         self._client = create_client(self.url, self._pipeline)
 
     @property
@@ -169,10 +172,6 @@ class StorageAccountHostsMixin(object):
     def primary_hostname(self):
         return self._hosts[LocationMode.PRIMARY]
 
-    @primary_hostname.setter
-    def secondary_hostname(self, value):
-        self._hosts[LocationMode.PRIMARY] = value
-
     @property
     def secondary_endpoint(self):
         return self._format_url(self._hosts[LocationMode.SECONDARY])
@@ -181,10 +180,6 @@ class StorageAccountHostsMixin(object):
     def secondary_hostname(self):
         return self._hosts[LocationMode.SECONDARY]
 
-    @secondary_hostname.setter
-    def secondary_hostname(self, value):
-        self._hosts[LocationMode.SECONDARY] = value
-
     @property
     def location_mode(self):
         return self._location_mode
@@ -192,9 +187,10 @@ class StorageAccountHostsMixin(object):
     @location_mode.setter
     def location_mode(self, value):
         if self._hosts.get(value):
-            self._client._config.url = self._hosts[value]
             self._location_mode = value
-        raise ValueError("No host URL for location mode: {}".format(value))
+            self._client._config.url = self.url
+        else:
+            raise ValueError("No host URL for location mode: {}".format(value))
 
     @staticmethod
     def create_configuration(**kwargs):
@@ -335,6 +331,7 @@ def get_length(data):
 
     return length
 
+
 def read_length(data):
     try:
         if hasattr(data, 'read'):
@@ -350,7 +347,6 @@ def read_length(data):
     except:
         pass
     raise ValueError("Unable to calculate content length, please specify.")
-
 
 
 def parse_length_from_content_range(content_range):
@@ -402,12 +398,21 @@ def validate_and_format_range_headers(start_range, end_range, start_range_requir
     return range_header, range_validation
 
 
+def normalize_headers(headers):
+    normalized = {}
+    for key, value in headers.items():
+        if key.startswith('x-ms-'):
+            key = key[5:]
+        normalized[k.lower().replace('-', '_')] = value
+    return normalized
+
+
 def return_response_headers(response, deserialized, response_headers):
-    return response_headers
+    return normalize_headers(response_headers)
 
 
 def return_response_and_deserialized(response, deserialized, response_headers):
-    return {'header': response_headers, 'deserialized': deserialized}
+    return normalize_headers(response_headers), deserialized
 
 
 def create_client(url, pipeline):
@@ -422,9 +427,9 @@ def create_configuration(**kwargs):
     config.user_agent_policy = UserAgentPolicy(**kwargs)
     config.retry_policy = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
     config.redirect_policy = RedirectPolicy(**kwargs)
-    config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
+    config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
-    config.custom_hook_policy = StorageResponseHook(**kwargs)
+    config.custom_hook_policy = StoragePipelineHook(**kwargs)
     config.blob_settings = StorageBlobSettings(**kwargs)
     return config
 
@@ -447,6 +452,7 @@ def create_pipeline(configuration, credentials, **kwargs):
         credentials,
         ContentDecodePolicy(),
         config.redirect_policy,
+        StorageHosts(**kwargs),
         config.retry_policy,
         config.logging_policy,
         config.custom_hook_policy,

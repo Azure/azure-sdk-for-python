@@ -66,6 +66,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
         ):
         # type: (...) -> None
         parsed_url = urlparse(account_url.rstrip('/'))
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(account_url))
+
         _, sas_token = parse_query(parsed_url.query)
         self._query_str = self._format_query_string(sas_token, credentials)
         super(BlobServiceClient, self).__init__(parsed_url, credentials, configuration, **kwargs)
@@ -156,13 +159,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: dict(str, str)
         """
         try:
-            response = self._client.service.get_account_info(cls=return_response_headers)
+            return self._client.service.get_account_info(cls=return_response_headers)
         except StorageErrorException as error:
             process_storage_error(error)
-        return {
-            'SKU': response.get('x-ms-sku-name'),
-            'AccountType': response.get('x-ms-account-kind')
-        }
 
     def get_service_stats(self, timeout=None, **kwargs):
         # type: (Optional[int], **Any) -> Dict[str, Any]

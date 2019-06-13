@@ -21,7 +21,7 @@ from azure.core import Configuration
 
 from .common import BlobType, LocationMode
 from .lease import LeaseClient
-from .models import SnapshotProperties, BlobBlock
+from .models import BlobBlock
 from .polling import CopyBlob, CopyStatusPoller
 from ._shared_access_signature import BlobSharedAccessSignature
 from ._encryption import _generate_blob_encryption_data, _encrypt_blob
@@ -87,7 +87,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, blob_url,  # type: str
             container=None,  # type: Optional[Union[str, ContainerProperties]]
             blob=None,  # type: Optional[Union[str, BlobProperties]]
-            snapshot=None,  # type: Optional[str]
+            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
             credentials=None,  # type: Optional[HTTPPolicy]
             configuration=None,  # type: Optional[Configuration]
             **kwargs  # type: Any
@@ -113,6 +113,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         parsed_url = urlparse(blob_url.rstrip('/'))
         if not parsed_url.path and not (container and blob):
             raise ValueError("Please specify a container and blob name.")
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(blob_url))
 
         path_container = ""
         path_blob = ""
@@ -128,7 +130,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         try:
             self.snapshot = snapshot.snapshot
         except AttributeError:
-            self.snapshot = snapshot or path_snapshot
+            try:
+                self.snapshot = snapshot['snapshot']
+            except TypeError:
+                self.snapshot = snapshot or path_snapshot
         try:
             self.blob_name = blob.name
             if not snapshot:
@@ -258,11 +263,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: A dict of account information (SKU and account type).
         """
         try:
-            response = self._client.blob.get_account_info(cls=return_response_headers)
-            return {
-                'SKU': response.get('x-ms-sku-name'),
-                'AccountType': response.get('x-ms-account-kind')
-            }
+            return self._client.blob.get_account_info(cls=return_response_headers)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -495,7 +496,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 if length == 0:
                     return response
 
-                mod_conditions = get_modification_conditions(if_match=response['ETag'])
+                mod_conditions = get_modification_conditions(if_match=response['etag'])
                 return _upload_blob_chunks(
                     blob_service=self._client.page_blob,
                     blob_size=length,
@@ -579,7 +580,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     def delete_blob(
             self, lease=None,  # type: Optional[Union[str, LeaseClient]]
-            delete_snapshots=None,  # type: Optional[str]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
@@ -606,10 +606,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
-        :param str delete_snapshots:
-            Required if the blob has associated snapshots. Values include:
-             - "only": Deletes only the blobs snapshots.
-             - "include": Deletes the blob along with all snapshots.
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -642,7 +638,74 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self._client.blob.delete(
                 timeout=timeout,
                 snapshot=self.snapshot,
-                delete_snapshots=delete_snapshots,
+                delete_snapshots="include",
+                lease_access_conditions=access_conditions,
+                modified_access_conditions=mod_conditions,
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    def delete_blob_snapshots(
+            self, lease=None,  # type: Optional[Union[str, LeaseClient]]
+            if_modified_since=None,  # type: Optional[datetime]
+            if_unmodified_since=None,  # type: Optional[datetime]
+            if_match=None,  # type: Optional[str]
+            if_none_match=None,  # type: Optional[str]
+            timeout=None,  # type: Optional[int]
+            **kwargs,
+        ):
+        # type: (...) -> None
+        """
+        Marks the specified blob or snapshot for deletion.
+        The blob is later deleted during garbage collection.
+
+        Note that in order to delete a blob, you must delete all of its
+        snapshots. You can delete both at the same time with the Delete
+        Blob operation.
+
+        If a delete retention policy is enabled for the service, then this operation soft deletes the blob or snapshot
+        and retains the blob or snapshot for specified number of days.
+        After specified number of days, blob's data is removed from the service during garbage collection.
+        Soft deleted blob or snapshot is accessible through List Blobs API specifying include=Include.Deleted option.
+        Soft-deleted blob or snapshot can be restored using Undelete API.
+
+        :param lease:
+            Required if the blob has an active lease. Value can be a LeaseClient object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        access_conditions = get_access_conditions(lease)
+        mod_conditions = get_modification_conditions(
+            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        try:
+            self._client.blob.delete(
+                timeout=timeout,
+                snapshot=self.snapshot,
+                delete_snapshots="only",
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
@@ -989,7 +1052,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         mod_conditions = get_modification_conditions(
             if_modified_since, if_unmodified_since, if_match, if_none_match)
         try:
-            properties = self._client.blob.create_snapshot(
+            return self._client.blob.create_snapshot(
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
@@ -998,10 +1061,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        snapshot = SnapshotProperties(**properties)
-        snapshot.name = self.blob_name
-        snapshot.container = self.container
-        return snapshot
 
     def copy_blob_from_url(
             self, source_url,  # type: str
@@ -1477,7 +1536,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             self, start_range=None, # type: Optional[int]
             end_range=None, # type: Optional[int]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
-            previous_snapshot_diff=None,  # type: Optional[str]
+            previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
             if_match=None,  # type: Optional[str]
@@ -1548,7 +1607,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 try:
                     prev_snapshot = previous_snapshot_diff.snapshot
                 except AttributeError:
-                    prev_snapshot = previous_snapshot_diff
+                    try:
+                        prev_snapshot = previous_snapshot_diff['snapshot']
+                    except TypeError:
+                        prev_snapshot = previous_snapshot_diff
                 ranges = self._client.page_blob.get_page_ranges_diff(
                     snapshot=self.snapshot,
                     prevsnapshot=prev_snapshot,

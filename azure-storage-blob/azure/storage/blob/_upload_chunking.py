@@ -291,7 +291,7 @@ class _PageBlobChunkUploader(_BlobChunkUploader):
 
             if not self.parallel:
                 self.modified_access_conditions = get_modification_conditions(
-                    if_match=self.response_headers['ETag'])
+                    if_match=self.response_headers['etag'])
         return None
 
 
@@ -310,7 +310,7 @@ class _AppendBlobChunkUploader(_BlobChunkUploader):
                 cls=return_response_headers,
                 **self.request_options
             )
-            self.current_length = int(self.response_headers['x-ms-blob-append-offset'])
+            self.current_length = int(self.response_headers['blob_append_offset'])
         else:
             self.append_conditions.append_position = self.current_length + chunk_offset
             self.response_headers = self.blob_service.append_block(

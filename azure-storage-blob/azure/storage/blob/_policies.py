@@ -7,6 +7,7 @@
 import base64
 import hashlib
 import sys
+import re
 import random
 from time import time
 from io import SEEK_SET, UnsupportedOperation
@@ -14,13 +15,24 @@ import logging
 import uuid
 from wsgiref.handlers import format_date_time
 try:
-    from urllib.parse import urlparse
+    from urllib.parse import (
+        urlparse,
+        parse_qsl,
+        urlunparse,
+        urlencode,
+    )
 except ImportError:
-    from urlparse import urlparse
+    from urlparse import (
+        urlparse,
+        parse_qsl,
+        urlunparse,
+    )
+    from urllib import urlencode
 
 from azure.core.pipeline.policies import (
     HeadersPolicy,
     SansIOHTTPPolicy,
+    NetworkTraceLoggingPolicy,
     HTTPPolicy)
 from azure.core.pipeline.policies.base import RequestHistory
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
@@ -33,7 +45,7 @@ except NameError:
     _unicode_type = str
 
 
-logger = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(__name__)
 
 
 def encode_base64(data):
@@ -41,6 +53,34 @@ def encode_base64(data):
         data = data.encode('utf-8')
     encoded = base64.b64encode(data)
     return encoded.decode('utf-8')
+
+
+def is_retry(response, mode=None):
+    """Is this method/status code retryable? (Based on whitelists and control
+    variables such as the number of total retries to allow, whether to
+    respect the Retry-After header, whether this header is present, and
+    whether the returned status code is on the list of status codes to
+    be retried upon on the presence of the aforementioned header)
+    """
+    status = response.http_response.status_code
+    if 300 <= status < 500:
+        # An exception occured, but in most cases it was expected. Examples could 
+        # include a 309 Conflict or 412 Precondition Failed.
+        if status == 404 and mode == LocationMode.SECONDARY:
+            # Response code 404 should be retried if secondary was used.
+            return True
+        if status == 408:
+            # Response code 408 is a timeout and should be retried.
+            return True
+        return False
+    elif status >= 500:
+        # Response codes above 500 with the exception of 501 Not Implemented and 
+        # 505 Version Not Supported indicate a server issue and should be retried.
+        if status == 501 or status == 505:
+            return False
+        return True
+    else:
+        return False
 
 
 class StorageBlobSettings(object):
@@ -74,6 +114,95 @@ class StorageHeadersPolicy(HeadersPolicy):
         request.http_request.headers['x-ms-client-request-id'] = custom_id or str(uuid.uuid1())
 
 
+class StorageHosts(SansIOHTTPPolicy):
+
+    def __init__(self, hosts=None, **kwargs):
+        self.hosts = hosts
+
+    def on_request(self, request):
+        # type: (PipelineRequest, Any) -> None
+        request.context.options['hosts'] = self.hosts
+
+
+class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
+    """A policy that logs HTTP request and response to the DEBUG logger.
+
+    This accepts both global configuration, and per-request level with "enable_http_logger"
+    """
+
+    def on_request(self, request):
+        # type: (PipelineRequest, Any) -> None
+        http_request = request.http_request
+        options = request.context.options
+        if options.pop("logging_enable", self.enable_http_logger):
+            request.context["logging_enable"] = True
+            if not _LOGGER.isEnabledFor(logging.DEBUG):
+                return
+
+            try:
+                log_url = http_request.url
+                query_params = http_request.query
+                if 'sig' in query_params:
+                    log_url = log_url.replace(query_params['sig'], "sig=*****")
+                _LOGGER.debug("Request URL: %r", log_url)
+                _LOGGER.debug("Request method: %r", http_request.method)
+                _LOGGER.debug("Request headers:")
+                for header, value in http_request.headers.items():
+                    if header.lower() == 'authorization':
+                        value = '*****'
+                    elif header.lower() == 'x-ms-copy-source' and 'sig' in value:
+                        # take the url apart and scrub away the signed signature
+                        scheme, netloc, path, params, query, fragment = urlparse(value)
+                        parsed_qs = dict(parse_qsl(query))
+                        parsed_qs['sig'] = '*****'
+
+                        # the SAS needs to be put back together
+                        value = urlunparse((scheme, netloc, path, params, urlencode(parsed_qs), fragment))
+
+                    _LOGGER.debug("    %r: %r", header, value)
+                _LOGGER.debug("Request body:")
+
+                # We don't want to log the binary data of a file upload.
+                if isinstance(http_request.body, types.GeneratorType):
+                    _LOGGER.debug("File upload")
+                else:
+                    _LOGGER.debug(str(http_request.body))
+            except Exception as err:  # pylint: disable=broad-except
+                _LOGGER.debug("Failed to log request: %r", err)
+
+    def on_response(self, request, response):
+        # type: (PipelineRequest, PipelineResponse, Any) -> None
+        if response.context.pop("logging_enable", self.enable_http_logger):
+            if not _LOGGER.isEnabledFor(logging.DEBUG):
+                return
+
+            try:
+                _LOGGER.debug("Response status: %r", response.http_response.status_code)
+                _LOGGER.debug("Response headers:")
+                for res_header, value in response.http_response.headers.items():
+                    _LOGGER.debug("    %r: %r", res_header, value)
+
+                # We don't want to log binary data if the response is a file.
+                _LOGGER.debug("Response content:")
+                pattern = re.compile(r'attachment; ?filename=["\w.]+', re.IGNORECASE)
+                header = response.http_response.headers.get('content-disposition')
+
+                if header and pattern.match(header):
+                    filename = header.partition('=')[2]
+                    _LOGGER.debug("File attachments: %s", filename)
+                elif response.http_response.headers.get("content-type", "").endswith("octet-stream"):
+                    _LOGGER.debug("Body contains binary data.")
+                elif response.http_response.headers.get("content-type", "").startswith("image"):
+                    _LOGGER.debug("Body contains image data.")
+                else:
+                    if response.context.options.get('stream', False):
+                        _LOGGER.debug("Body is streamable")
+                    else:
+                        _LOGGER.debug(response.http_response.text())
+            except Exception as err:  # pylint: disable=broad-except
+                _LOGGER.debug("Failed to log response: %s", repr(err))
+
+
 class StorageSecondaryAccount(SansIOHTTPPolicy):
 
     def __init__(self, **kwargs):
@@ -89,19 +218,28 @@ class StorageSecondaryAccount(SansIOHTTPPolicy):
             request.http_request.url = request.http_request.url.replace(account, secondary_account, 1)
 
 
-class StorageResponseHook(HTTPPolicy):
+class StoragePipelineHook(HTTPPolicy):
 
     def __init__(self, **kwargs):
-        super(StorageResponseHook, self).__init__()
+        self._response_callback = kwargs.get('raw_response_hook')
+        self._request_callback = kwargs.get('raw_request_hook')
+        super(StoragePipelineHook, self).__init__()
 
     def send(self, request):
         # type: (PipelineRequest) -> PipelineResponse
-        data_stream_total = request.context.options.pop('data_stream_total', None)
-        data_stream_current = request.context.options.pop('data_stream_current', None)
-        callback = request.context.options.pop('raw_response_hook', None)
+        data_stream_total = request.context.get('data_stream_total') or request.context.options.pop('data_stream_total', None)
+        data_stream_current = request.context.get('data_stream_current') or request.context.options.pop('data_stream_current', None)
+        response_callback = request.context.get('response_callback') or \
+            request.context.options.pop('raw_response_hook', self._response_callback)
+        request_callback = request.context.get('request_callback') or \
+            request.context.options.pop('raw_request_hook', self._request_callback)
+
+        if request_callback:
+            request_callback(request)
+            request.context['request_callback'] = request_callback
 
         response = self.next.send(request)
-        if data_stream_current is not None:
+        if not is_retry(response) and data_stream_current is not None:
             data_stream_current += int(response.http_response.headers.get('Content-Length', 0))
             if data_stream_total is None:
                 content_range = response.http_response.headers.get('Content-Range')
@@ -109,11 +247,12 @@ class StorageResponseHook(HTTPPolicy):
                     data_stream_total = int(content_range.split(' ', 1)[1].split('/', 1)[1])
                 else:
                     data_stream_total = data_stream_current
-            response.context['data_stream_total'] = data_stream_total
-            response.context['data_stream_current'] = data_stream_current
-        if callback:
-            callback(response)
-            response.context['callback'] = callback
+            for pipeline_obj in [request, response]:
+                pipeline_obj.context['data_stream_total'] = data_stream_total
+                pipeline_obj.context['data_stream_current'] = data_stream_current
+        if response_callback:
+            response_callback(response)
+            request.context['response_callback'] = response_callback
         return response
 
 
@@ -231,6 +370,7 @@ class StorageRetryPolicy(HTTPPolicy):
             'mode': options.pop("location_mode", LocationMode.PRIMARY),
             'location_lock': options.pop("location_lock", False),
             'hosts': options.pop("hosts", None),
+            'hook': options.pop("retry_hook", None),
             'body_position': body_position,
             'count': 0,
             'history': []
@@ -249,33 +389,6 @@ class StorageRetryPolicy(HTTPPolicy):
         if not backoff or backoff < 0:
             return
         transport.sleep(backoff)
-
-    def is_retry(self, settings, response):
-        """Is this method/status code retryable? (Based on whitelists and control
-        variables such as the number of total retries to allow, whether to
-        respect the Retry-After header, whether this header is present, and
-        whether the returned status code is on the list of status codes to
-        be retried upon on the presence of the aforementioned header)
-        """
-        status = response.http_response.status_code
-        if 300 <= status < 500:
-            # An exception occured, but in most cases it was expected. Examples could 
-            # include a 309 Conflict or 412 Precondition Failed.
-            if status == 404 and settings['mode'] == LocationMode.SECONDARY:
-                # Response code 404 should be retried if secondary was used.
-                return True
-            if status == 408:
-                # Response code 408 is a timeout and should be retried.
-                return True
-            return False
-        elif status >= 500:
-            # Response codes above 500 with the exception of 501 Not Implemented and 
-            # 505 Version Not Supported indicate a server issue and should be retried.
-            if status == 501 or status == 505:
-                return False
-            return True
-        else:
-            return False
 
     def is_exhausted(self, settings):
         """Are we out of retries?"""
@@ -315,7 +428,7 @@ class StorageRetryPolicy(HTTPPolicy):
                 settings['history'].append(RequestHistory(request, http_response=response))
 
         if not self.is_exhausted(settings):
-            if settings['retry_secondary'] and not settings['location_lock']:
+            if request.method not in ['PUT'] and settings['retry_secondary'] and not settings['location_lock']:
                 self._set_next_host_location(settings, request)
 
             # rewind the request body if it is a stream
@@ -330,7 +443,14 @@ class StorageRetryPolicy(HTTPPolicy):
                     except UnsupportedOperation:
                         # if body is not seekable, then retry would not work
                         return False
-            # Raise error for un-rewindable body - e.g. generator
+            if settings['hook']:
+                settings['hook'](
+                    request=request,
+                    response=response,
+                    error=error,
+                    retry_count=settings['count'],
+                    location_mode=settings['mode'])
+            settings['count'] += 1
             return True
         return False
 
@@ -341,14 +461,14 @@ class StorageRetryPolicy(HTTPPolicy):
         while retries_remaining:
             try:
                 response = self.next.send(request)
-                if self.is_retry(retry_settings, response):
+                if is_retry(response, retry_settings['mode']):
                     retries_remaining = self.increment(
                         retry_settings,
                         request=request.http_request,
                         response=response.http_response)
                     if retries_remaining:
                         self.sleep(retry_settings, request.context.transport)
-                        retry_settings['count'] += 1
+                        
                         continue
                 break
             except AzureError as err:
@@ -356,12 +476,20 @@ class StorageRetryPolicy(HTTPPolicy):
                     retry_settings, request=request.http_request, error=err)
                 if retries_remaining:
                     self.sleep(retry_settings, request.context.transport)
-                    retry_settings['count'] += 1
                     continue
                 raise err
         if retry_settings['history']:
             response.context['history'] = retry_settings['history']
         return response
+
+
+class NoRetry(StorageRetryPolicy):
+
+    def __init__(self):
+        super(NoRetry, self).__init__(retry_total=0)
+
+    def increment(self, *args, **kwargs):
+        return False
 
 
 class ExponentialRetry(StorageRetryPolicy):

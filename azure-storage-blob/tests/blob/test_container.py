@@ -404,8 +404,8 @@ class StorageContainerTest(StorageTestCase):
         # Act
         response = container.set_container_acl()
 
-        self.assertIsNotNone(response.get('ETag'))
-        self.assertIsNotNone(response.get('Last-Modified'))
+        self.assertIsNotNone(response.get('etag'))
+        self.assertIsNotNone(response.get('last_modified'))
 
         # Assert
         acl = container.get_container_acl()
@@ -428,8 +428,8 @@ class StorageContainerTest(StorageTestCase):
         response = container.set_container_acl(signed_identifier)
 
         # Assert
-        self.assertIsNotNone(response.get('ETag'))
-        self.assertIsNotNone(response.get('Last-Modified'))
+        self.assertIsNotNone(response.get('etag'))
+        self.assertIsNotNone(response.get('last_modified'))
     @record
     def test_set_container_acl_with_one_signed_identifier(self):
         # Arrange
@@ -446,8 +446,8 @@ class StorageContainerTest(StorageTestCase):
         response = container.set_container_acl(signed_identifiers)
 
         # Assert
-        self.assertIsNotNone(response.get('ETag'))
-        self.assertIsNotNone(response.get('Last-Modified'))
+        self.assertIsNotNone(response.get('etag'))
+        self.assertIsNotNone(response.get('last_modified'))
 
     @record
     def test_set_container_acl_with_lease_id(self):

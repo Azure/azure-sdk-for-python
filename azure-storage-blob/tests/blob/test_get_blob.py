@@ -219,7 +219,7 @@ class StorageGetBlobTest(StorageTestCase):
         # Arrange
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
         snapshot_ref = blob.create_snapshot()
-        snapshot = self.bsc.get_blob_client(self.container_name, snapshot_ref)
+        snapshot = self.bsc.get_blob_client(self.container_name, self.byte_blob, snapshot=snapshot_ref)
         
         blob.upload_blob(self.byte_data) # Modify the blob so the Etag no longer matches
 

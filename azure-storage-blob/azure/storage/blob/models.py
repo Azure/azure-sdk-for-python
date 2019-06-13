@@ -303,17 +303,6 @@ class ContainerPropertiesPaged(Paged):
         return ContainerProperties._from_generated(item)
 
 
-class SnapshotProperties(DictMixin):
-
-    def __init__(self, **kwargs):
-        self.name = None
-        self.container = None
-        self.snapshot = kwargs.get('x-ms-snapshot')
-        self.blob_type = None
-        self.last_modified = kwargs.get('Last-Modified')
-        self.etag = kwargs.get('ETag')
-
-
 class BlobProperties(DictMixin):
     """
     Blob Properties
