@@ -10,6 +10,12 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+try:
+    from urllib.parse import urlparse, quote, unquote, parse_qs
+except ImportError:
+    from urlparse import urlparse, parse_qs
+    from urllib2 import quote, unquote
+
 from azure.core import Configuration
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
@@ -25,7 +31,7 @@ from azure.core.pipeline.policies import (
 )
 
 from ._policies import (
-    StorageBlobSettings,
+    StorageQueueSettings,
     StorageHeadersPolicy,
     StorageContentValidation,
     StorageSecondaryAccount)
@@ -104,7 +110,7 @@ def is_credential_sastoken(credential):
     return False
 
 # TODO: duplicate from blob
-def parse_query(query):
+def parse_query(query_str):
     sas_values = _QueryStringConstants.to_list()
     parsed_query = {k: v[0] for k, v in parse_qs(query_str).items()}
     sas_params = ["{}={}".format(k, v) for k, v in parsed_query.items() if k in sas_values]
@@ -139,6 +145,9 @@ def _sign_string(key, string_to_sign, key_is_base64=True):
     digest = signed_hmac_sha256.digest()
     encoded_digest = encode_base64(digest)
     return encoded_diges
+
+def url_quote(url):
+    return quote(url)
 
 
 class _QueryStringConstants(object):

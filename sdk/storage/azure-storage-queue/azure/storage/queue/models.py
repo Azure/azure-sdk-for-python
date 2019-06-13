@@ -95,3 +95,162 @@ class QueueMessage(object):
         self.content = content
         self.pop_receipt = None
         self.time_next_visible = None
+
+class QueueMessageFormat:
+    ''' 
+    Encoding and decoding methods which can be used to modify how the queue service 
+    encodes and decodes queue messages. Set these to queueservice.encode_function 
+    and queueservice.decode_function to modify the behavior. The defaults are 
+    text_xmlencode and text_xmldecode, respectively.
+    '''
+
+    @staticmethod
+    def text_base64encode(data):
+        '''
+        Base64 encode unicode text.
+        
+        :param str data: String to encode.
+        :return: Base64 encoded string.
+        :rtype: str
+        '''
+        _validate_message_type_text(data)
+        return b64encode(data.encode('utf-8')).decode('utf-8')
+
+    @staticmethod
+    def text_base64decode(data):
+        '''
+        Base64 decode to unicode text.
+        
+        :param str data: String data to decode to unicode.
+        :return: Base64 decoded string.
+        :rtype: str
+        '''
+        try:
+            return b64decode(data.encode('utf-8')).decode('utf-8')
+        except (ValueError, TypeError):
+            # ValueError for Python 3, TypeError for Python 2
+            raise ValueError(_ERROR_MESSAGE_NOT_BASE64)
+
+    @staticmethod
+    def binary_base64encode(data):
+        '''
+        Base64 encode byte strings.
+        
+        :param str data: Binary string to encode.
+        :return: Base64 encoded data.
+        :rtype: str
+        '''
+        _validate_message_type_bytes(data)
+        return b64encode(data).decode('utf-8')
+
+    @staticmethod
+    def binary_base64decode(data):
+        '''
+        Base64 decode to byte string.
+        
+        :param str data: Data to decode to a byte string.
+        :return: Base64 decoded data.
+        :rtype: str
+        '''
+        try:
+            return b64decode(data.encode('utf-8'))
+        except (ValueError, TypeError):
+            # ValueError for Python 3, TypeError for Python 2
+            raise ValueError(_ERROR_MESSAGE_NOT_BASE64)
+
+    @staticmethod
+    def text_xmlencode(data):
+        ''' 
+        XML encode unicode text.
+        :param str data: Unicode string to encode
+        :return: XML encoded data.
+        :rtype: str
+        '''
+        _validate_message_type_text(data)
+        return xml_escape(data)
+
+    @staticmethod
+    def text_xmldecode(data):
+        ''' 
+        XML decode to unicode text.
+        :param str data: Data to decode to unicode.
+        :return: XML decoded data.
+        :rtype: str
+        '''
+        return xml_unescape(data)
+
+    @staticmethod
+    def noencode(data):
+        ''' 
+        Do no encoding. 
+        :param str data: Data.
+        :return: The data passed in is returned unmodified.
+        :rtype: str
+        '''
+        return data
+
+    @staticmethod
+    def nodecode(data):
+        '''
+        Do no decoding.
+        
+        :param str data: Data.
+        :return: The data passed in is returned unmodified.
+        :rtype: str        
+        '''
+        return data
+
+
+class QueuePermissions(object):
+    '''
+    QueuePermissions class to be used with :func:`~azure.storage.queue.queueservice.QueueService.generate_queue_shared_access_signature`
+    method and for the AccessPolicies used with :func:`~azure.storage.queue.queueservice.QueueService.set_queue_acl`. 
+    :ivar QueuePermissions QueuePermissions.READ: 
+        Read metadata and properties, including message count. Peek at messages. 
+    :ivar QueuePermissions QueuePermissions.ADD: 
+        Add messages to the queue.
+    :ivar QueuePermissions QueuePermissions.UPDATE:
+        Update messages in the queue. Note: Use the Process permission with 
+        Update so you can first get the message you want to update.
+    :ivar QueuePermissions QueuePermissions.PROCESS: Delete entities.
+        Get and delete messages from the queue. 
+    '''
+
+    def __init__(self, read=False, add=False, update=False, process=False, _str=None):
+        '''
+        :param bool read:
+            Read metadata and properties, including message count. Peek at messages.
+        :param bool add:
+            Add messages to the queue.
+        :param bool update:
+            Update messages in the queue. Note: Use the Process permission with 
+            Update so you can first get the message you want to update.
+        :param bool process: 
+            Get and delete messages from the queue.
+        :param str _str: 
+            A string representing the permissions.
+        '''
+        if not _str:
+            _str = ''
+        self.read = read or ('r' in _str)
+        self.add = add or ('a' in _str)
+        self.update = update or ('u' in _str)
+        self.process = process or ('p' in _str)
+
+    def __or__(self, other):
+        return QueuePermissions(_str=str(self) + str(other))
+
+    def __add__(self, other):
+        return QueuePermissions(_str=str(self) + str(other))
+
+    def __str__(self):
+        return (('r' if self.read else '') +
+                ('a' if self.add else '') +
+                ('u' if self.update else '') +
+                ('p' if self.process else ''))
+
+
+QueuePermissions.READ = QueuePermissions(read=True)
+QueuePermissions.ADD = QueuePermissions(add=True)
+QueuePermissions.UPDATE = QueuePermissions(update=True)
+QueuePermissions.PROCESS = QueuePermissions(process=True)
