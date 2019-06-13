@@ -43,6 +43,9 @@ class DocumentDbCollectionSink(CopySink):
     :param nesting_separator: Nested properties separator. Default is . (dot).
      Type: string (or Expression with resultType string).
     :type nesting_separator: object
+    :param write_behavior: Describes how to write data to Azure Cosmos DB.
+     Allowed values: insert and upsert.
+    :type write_behavior: object
     """
 
     _validation = {
@@ -58,9 +61,11 @@ class DocumentDbCollectionSink(CopySink):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'nesting_separator': {'key': 'nestingSeparator', 'type': 'object'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, nesting_separator=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, nesting_separator=None, write_behavior=None, **kwargs) -> None:
         super(DocumentDbCollectionSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.nesting_separator = nesting_separator
+        self.write_behavior = write_behavior
         self.type = 'DocumentDbCollectionSink'

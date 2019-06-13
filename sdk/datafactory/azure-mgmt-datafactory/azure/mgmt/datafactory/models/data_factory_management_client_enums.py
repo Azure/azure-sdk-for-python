@@ -321,18 +321,6 @@ class SybaseAuthenticationType(str, Enum):
     windows = "Windows"
 
 
-class DatasetCompressionLevel(str, Enum):
-
-    optimal = "Optimal"
-    fastest = "Fastest"
-
-
-class JsonFormatFilePattern(str, Enum):
-
-    set_of_objects = "setOfObjects"
-    array_of_objects = "arrayOfObjects"
-
-
 class AzureFunctionActivityMethod(str, Enum):
 
     get = "GET"
@@ -352,34 +340,15 @@ class WebActivityMethod(str, Enum):
     delete = "DELETE"
 
 
-class CassandraSourceReadConsistencyLevels(str, Enum):
-
-    all = "ALL"
-    each_quorum = "EACH_QUORUM"
-    quorum = "QUORUM"
-    local_quorum = "LOCAL_QUORUM"
-    one = "ONE"
-    two = "TWO"
-    three = "THREE"
-    local_one = "LOCAL_ONE"
-    serial = "SERIAL"
-    local_serial = "LOCAL_SERIAL"
-
-
 class StoredProcedureParameterType(str, Enum):
 
     string = "String"
     int_enum = "Int"
+    int64 = "Int64"
     decimal_enum = "Decimal"
     guid = "Guid"
     boolean = "Boolean"
     date_enum = "Date"
-
-
-class SalesforceSourceReadBehavior(str, Enum):
-
-    query = "Query"
-    query_all = "QueryAll"
 
 
 class HDInsightActivityDebugInfoOption(str, Enum):
@@ -389,35 +358,10 @@ class HDInsightActivityDebugInfoOption(str, Enum):
     failure = "Failure"
 
 
-class SalesforceSinkWriteBehavior(str, Enum):
-
-    insert = "Insert"
-    upsert = "Upsert"
-
-
-class AzureSearchIndexWriteBehaviorType(str, Enum):
-
-    merge = "Merge"
-    upload = "Upload"
-
-
-class CopyBehaviorType(str, Enum):
-
-    preserve_hierarchy = "PreserveHierarchy"
-    flatten_hierarchy = "FlattenHierarchy"
-    merge_files = "MergeFiles"
-
-
 class PolybaseSettingsRejectType(str, Enum):
 
     value = "value"
     percentage = "percentage"
-
-
-class SapCloudForCustomerSinkWriteBehavior(str, Enum):
-
-    insert = "Insert"
-    update = "Update"
 
 
 class WebHookActivityMethod(str, Enum):
@@ -462,6 +406,12 @@ class ManagedIntegrationRuntimeNodeStatus(str, Enum):
     available = "Available"
     recycling = "Recycling"
     unavailable = "Unavailable"
+
+
+class IntegrationRuntimeEntityReferenceType(str, Enum):
+
+    integration_runtime_reference = "IntegrationRuntimeReference"
+    linked_service_reference = "LinkedServiceReference"
 
 
 class IntegrationRuntimeSsisCatalogPricingTier(str, Enum):
