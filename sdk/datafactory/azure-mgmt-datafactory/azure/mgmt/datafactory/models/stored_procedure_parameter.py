@@ -19,7 +19,7 @@ class StoredProcedureParameter(Model):
      Expression with resultType string).
     :type value: object
     :param type: Stored procedure parameter type. Possible values include:
-     'String', 'Int', 'Decimal', 'Guid', 'Boolean', 'Date'
+     'String', 'Int', 'Int64', 'Decimal', 'Guid', 'Boolean', 'Date'
     :type type: str or
      ~azure.mgmt.datafactory.models.StoredProcedureParameterType
     """

@@ -30,10 +30,8 @@ class JsonFormat(DatasetStorageFormat):
     :type type: str
     :param file_pattern: File pattern of JSON. To be more specific, the way of
      separating a collection of JSON objects. The default value is
-     'setOfObjects'. It is case-sensitive. Possible values include:
-     'setOfObjects', 'arrayOfObjects'
-    :type file_pattern: str or
-     ~azure.mgmt.datafactory.models.JsonFormatFilePattern
+     'setOfObjects'. It is case-sensitive.
+    :type file_pattern: object
     :param nesting_separator: The character used to separate nesting levels.
      Default value is '.' (dot). Type: string (or Expression with resultType
      string).
@@ -67,7 +65,7 @@ class JsonFormat(DatasetStorageFormat):
         'serializer': {'key': 'serializer', 'type': 'object'},
         'deserializer': {'key': 'deserializer', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'file_pattern': {'key': 'filePattern', 'type': 'str'},
+        'file_pattern': {'key': 'filePattern', 'type': 'object'},
         'nesting_separator': {'key': 'nestingSeparator', 'type': 'object'},
         'encoding_name': {'key': 'encodingName', 'type': 'object'},
         'json_node_reference': {'key': 'jsonNodeReference', 'type': 'object'},

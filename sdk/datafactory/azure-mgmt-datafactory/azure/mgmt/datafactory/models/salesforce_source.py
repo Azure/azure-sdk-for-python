@@ -37,9 +37,8 @@ class SalesforceSource(CopySource):
      string).
     :type query: object
     :param read_behavior: The read behavior for the operation. Default is
-     Query. Possible values include: 'Query', 'QueryAll'
-    :type read_behavior: str or
-     ~azure.mgmt.datafactory.models.SalesforceSourceReadBehavior
+     Query.
+    :type read_behavior: object
     """
 
     _validation = {
@@ -53,7 +52,7 @@ class SalesforceSource(CopySource):
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
-        'read_behavior': {'key': 'readBehavior', 'type': 'str'},
+        'read_behavior': {'key': 'readBehavior', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):

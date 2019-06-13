@@ -30,6 +30,10 @@ class IntegrationRuntimeSsisProperties(Model):
      a managed dedicated integration runtime.
     :type custom_setup_script_properties:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeCustomSetupScriptProperties
+    :param data_proxy_properties: Data proxy properties for a managed
+     dedicated integration runtime.
+    :type data_proxy_properties:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeDataProxyProperties
     :param edition: The edition for the SSIS Integration Runtime. Possible
      values include: 'Standard', 'Enterprise'
     :type edition: str or
@@ -41,13 +45,15 @@ class IntegrationRuntimeSsisProperties(Model):
         'catalog_info': {'key': 'catalogInfo', 'type': 'IntegrationRuntimeSsisCatalogInfo'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'custom_setup_script_properties': {'key': 'customSetupScriptProperties', 'type': 'IntegrationRuntimeCustomSetupScriptProperties'},
+        'data_proxy_properties': {'key': 'dataProxyProperties', 'type': 'IntegrationRuntimeDataProxyProperties'},
         'edition': {'key': 'edition', 'type': 'str'},
     }
 
-    def __init__(self, *, additional_properties=None, catalog_info=None, license_type=None, custom_setup_script_properties=None, edition=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, catalog_info=None, license_type=None, custom_setup_script_properties=None, data_proxy_properties=None, edition=None, **kwargs) -> None:
         super(IntegrationRuntimeSsisProperties, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.catalog_info = catalog_info
         self.license_type = license_type
         self.custom_setup_script_properties = custom_setup_script_properties
+        self.data_proxy_properties = data_proxy_properties
         self.edition = edition
