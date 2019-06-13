@@ -233,6 +233,7 @@ try:
     from .rest_resource_dataset_py3 import RestResourceDataset
     from .sql_server_table_dataset_py3 import SqlServerTableDataset
     from .sap_open_hub_table_dataset_py3 import SapOpenHubTableDataset
+    from .sap_hana_table_dataset_py3 import SapHanaTableDataset
     from .sap_ecc_resource_dataset_py3 import SapEccResourceDataset
     from .sap_cloud_for_customer_resource_dataset_py3 import SapCloudForCustomerResourceDataset
     from .salesforce_object_dataset_py3 import SalesforceObjectDataset
@@ -324,6 +325,7 @@ try:
     from .sql_source_py3 import SqlSource
     from .rest_source_py3 import RestSource
     from .sap_open_hub_source_py3 import SapOpenHubSource
+    from .sap_hana_source_py3 import SapHanaSource
     from .sap_ecc_source_py3 import SapEccSource
     from .sap_cloud_for_customer_source_py3 import SapCloudForCustomerSource
     from .salesforce_source_py3 import SalesforceSource
@@ -641,6 +643,7 @@ except (SyntaxError, ImportError):
     from .rest_resource_dataset import RestResourceDataset
     from .sql_server_table_dataset import SqlServerTableDataset
     from .sap_open_hub_table_dataset import SapOpenHubTableDataset
+    from .sap_hana_table_dataset import SapHanaTableDataset
     from .sap_ecc_resource_dataset import SapEccResourceDataset
     from .sap_cloud_for_customer_resource_dataset import SapCloudForCustomerResourceDataset
     from .salesforce_object_dataset import SalesforceObjectDataset
@@ -732,6 +735,7 @@ except (SyntaxError, ImportError):
     from .sql_source import SqlSource
     from .rest_source import RestSource
     from .sap_open_hub_source import SapOpenHubSource
+    from .sap_hana_source import SapHanaSource
     from .sap_ecc_source import SapEccSource
     from .sap_cloud_for_customer_source import SapCloudForCustomerSource
     from .salesforce_source import SalesforceSource
@@ -1124,6 +1128,7 @@ __all__ = [
     'RestResourceDataset',
     'SqlServerTableDataset',
     'SapOpenHubTableDataset',
+    'SapHanaTableDataset',
     'SapEccResourceDataset',
     'SapCloudForCustomerResourceDataset',
     'SalesforceObjectDataset',
@@ -1215,6 +1220,7 @@ __all__ = [
     'SqlSource',
     'RestSource',
     'SapOpenHubSource',
+    'SapHanaSource',
     'SapEccSource',
     'SapCloudForCustomerSource',
     'SalesforceSource',
