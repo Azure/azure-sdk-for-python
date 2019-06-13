@@ -9,13 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .deployments_operations import DeploymentsOperations
-from .providers_operations import ProvidersOperations
-from .resources_operations import ResourcesOperations
-from .resource_groups_operations import ResourceGroupsOperations
-from .tags_operations import TagsOperations
-from .deployment_operations import DeploymentOperations
+from ._operations import Operations
+from ._deployments_operations import DeploymentsOperations
+from ._providers_operations import ProvidersOperations
+from ._resources_operations import ResourcesOperations
+from ._resource_groups_operations import ResourceGroupsOperations
+from ._tags_operations import TagsOperations
+from ._deployment_operations import DeploymentOperations
 
 __all__ = [
     'Operations',
