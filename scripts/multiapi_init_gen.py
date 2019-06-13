@@ -312,8 +312,6 @@ def get_floating_latest(api_versions_list):
     trimmed_preview = [
         version for version in api_versions_list if "preview" not in version
     ]
-    _LOGGER.info("Received: %s", api_versions_list)
-    _LOGGER.info("Trimmed: %s", trimmed_preview)
 
     # If there is no preview, easy: the absolute latest is the only latest
     if not trimmed_preview:
@@ -353,8 +351,6 @@ def main(input_str):
     client_folder = find_module_folder(package_name, module_name)
     last_api_version = get_floating_latest(mod_to_api_version.keys())
     last_api_path = client_folder / last_api_version
-
-    _LOGGER.info("Copy _configuration.py if possible")
 
     shutil.copy(
         client_folder / last_api_version / "_configuration.py",
