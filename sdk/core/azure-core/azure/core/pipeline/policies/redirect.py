@@ -141,7 +141,7 @@ class RedirectPolicy(HTTPPolicy):
             response.http_request.method = 'GET'
         for non_redirect_header in self._remove_headers_on_redirect:
             response.http_request.headers.pop(non_redirect_header, None)
-        return settings['redirects'] > 0
+        return settings['redirects'] >= 0
 
     def send(self, request):
         """Sends the PipelineRequest object to the next policy.
