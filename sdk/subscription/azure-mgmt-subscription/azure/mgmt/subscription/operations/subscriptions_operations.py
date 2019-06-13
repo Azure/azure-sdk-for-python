@@ -37,7 +37,7 @@ class SubscriptionsOperations(object):
 
     def cancel(
             self, subscription_id, custom_headers=None, raw=False, **operation_config):
-        """Cancels the subscription.
+        """The operation to cancel a subscription.
 
         :param subscription_id: Subscription Id.
         :type subscription_id: str
@@ -96,7 +96,7 @@ class SubscriptionsOperations(object):
 
     def rename(
             self, subscription_id, subscription_name=None, custom_headers=None, raw=False, **operation_config):
-        """Renames the subscription.
+        """The operation to rename a subscription.
 
         :param subscription_id: Subscription Id.
         :type subscription_id: str
