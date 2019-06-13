@@ -17,6 +17,9 @@ pr:
     include:
     - sdk/cosmos/
 
+variables:
+  TestMarkArgument: 'not cosmosEmulator'
+
 jobs:
 - template: ../../eng/pipelines/templates/jobs/archetype-sdk-client.yml
   parameters:
