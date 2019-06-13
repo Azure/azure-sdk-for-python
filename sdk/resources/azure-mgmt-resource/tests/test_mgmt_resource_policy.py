@@ -28,16 +28,16 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
             {
                 'policy_type':'Custom',
                 'description':'Don\'t create a VM anywhere',
-                'policy_rule':{  
-                    'if':{  
-                      'allOf':[  
-                        {  
+                'policy_rule':{
+                    'if':{
+                      'allOf':[
+                        {
                           'source':'action',
                           'equals':'Microsoft.Compute/virtualMachines/write'
                         },
-                        {  
+                        {
                           'field':'location',
-                          'in':[  
+                          'in':[
                             'eastus',
                             'eastus2',
                             'centralus'
@@ -45,7 +45,7 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
                         }
                       ]
                     },
-                    'then':{  
+                    'then':{
                       'effect':'deny'
                     }
                 }
@@ -57,7 +57,7 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
         )
 
         policies = list(self.policy_client.policy_definitions.list())
-        self.assertGreater(len(policies), 0)
+        assert len(policies) > 0
 
         # Policy Assignement - By Name
         scope = '/subscriptions/{}/resourceGroups/{}'.format(
@@ -78,12 +78,12 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
         )
 
         assignments = list(self.policy_client.policy_assignments.list())
-        self.assertGreater(len(assignments), 0)
+        assert len(assignments) > 0
 
         assignments = list(self.policy_client.policy_assignments.list_for_resource_group(
             resource_group.name
         ))
-        self.assertEqual(len(assignments), 1)
+        assert len(assignments) >= 1  # At least mine, could be more
 
         self.policy_client.policy_assignments.delete(
             scope,
@@ -104,7 +104,7 @@ class MgmtResourcePolicyTest(AzureMgmtTestCase):
             {
                 'policy_definition_id': definition.id,
             }
-        )            
+        )
 
         assignment = self.policy_client.policy_assignments.get_by_id(
             assignment.id,
