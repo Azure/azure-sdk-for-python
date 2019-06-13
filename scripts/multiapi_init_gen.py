@@ -9,7 +9,7 @@ import sys
 import shutil
 from pathlib import Path
 
-from typing import List, Tuple, Any
+from typing import List, Tuple, Any, Union
 
 try:
     import msrestazure
@@ -341,7 +341,33 @@ def find_client_file(package_name, module_name):
     return next(module_path.glob("*_client.py"))
 
 
+def patch_import(file_path: Union[str, Path]) -> None:
+    """If multi-client package, we need to patch import to be
+    from ..version
+    and not
+    from .version
+
+    That should probably means those files should become a template, but since right now
+    it's literally one dot, let's do it the raw way.
+    """
+    # That's a dirty hack, maybe it's worth making configuration a template?
+    with open(file_path, "rb") as read_fd:
+        conf_bytes: bytes = read_fd.read()
+    conf_bytes = conf_bytes.replace(
+        b" .version", b" ..version"
+    )  # Just a dot right? Worth its own template for that? :)
+    with open(file_path, "wb") as write_fd:
+        write_fd.write(conf_bytes)
+
+
+def has_subscription_id(client_class):
+    return "subscription_id" in inspect.signature(client_class).parameters
+
+
 def main(input_str):
+    # The only known multi-client package right now is azure-mgmt-resource
+    is_multi_client_package = "#" in input_str
+
     package_name, module_name = parse_input(input_str)
     versioned_modules = get_versioned_modules(package_name, module_name)
     versioned_operations_dict, mod_to_api_version = build_operation_meta(
@@ -359,6 +385,10 @@ def main(input_str):
     shutil.copy(
         client_folder / last_api_version / "__init__.py", client_folder / "__init__.py"
     )
+    if is_multi_client_package:
+        _LOGGER.warning("Patching multi-api client basic files")
+        patch_import(client_folder / "_configuration.py")
+        patch_import(client_folder / "__init__.py")
 
     versionned_mod = versioned_modules[last_api_version]
     client_name = get_client_class_name_from_module(versionned_mod)
@@ -401,6 +431,7 @@ def main(input_str):
     conf = {
         "api_version_modules": sorted(mod_to_api_version.keys()),
         "client_name": client_name,
+        "has_subscription_id": has_subscription_id(client_class),
         "module_name": module_name,
         "operations": versioned_operations_dict,
         "mixin_operations": mixin_operations,
