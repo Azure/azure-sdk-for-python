@@ -52,15 +52,14 @@ class ContainerRegistryManagementClient(MultiApiClientMixin, SDKClient):
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
+            'build_steps': '2018-02-01-preview',
+            'build_tasks': '2018-02-01-preview',
+            'builds': '2018-02-01-preview',
             'scope_maps': '2019-05-01-preview',
             'tokens': '2019-05-01-preview',
-            'build_steps': '2018-02-01-preview',
-            'build_taks': '2018-02-01-preview',
-            'builds': '2018-02-01-preview',
         }},
         _PROFILE_TAG + " latest"
     )
-
 
     def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
         self.config = ContainerRegistryManagementClientConfiguration(credentials, subscription_id, base_url)

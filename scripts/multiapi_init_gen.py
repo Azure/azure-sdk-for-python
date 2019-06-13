@@ -43,7 +43,10 @@ import pkg_resources
 
 pkg_resources.declare_namespace("azure")
 
-_GENERATE_MARKER = "############ Generated from here ############\n"
+# If True, means the auto-profile will consider preview versions.
+# If not, if it exists a stable API version for a global or RT, will always be used
+_PREVIEW_MODE = False
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -278,6 +281,50 @@ def build_operation_mixin_meta(versioned_modules):
     return mixin_operations
 
 
+def build_last_rt_list(
+    versioned_operations_dict, mixin_operations, mod_to_api_version, last_api_version
+):
+    """Build the a mapping RT => API version if RT doesn't exist in latest detected API version.
+    """
+    last_rt_list = {}
+    for operation, operation_metadata in versioned_operations_dict.items():
+        api_versions_list = (meta[0] for meta in operation_metadata)
+        local_last_api_version = get_floating_latest(api_versions_list)
+        if local_last_api_version == last_api_version:
+            continue
+        last_rt_list[operation] = mod_to_api_version[local_last_api_version]
+
+    for operation, operation_metadata in mixin_operations.items():
+        local_last_api_version = get_floating_latest(
+            operation_metadata["available_apis"]
+        )
+        if local_last_api_version == last_api_version:
+            continue
+        last_rt_list[operation] = mod_to_api_version[local_last_api_version]
+    return last_rt_list
+
+
+def get_floating_latest(api_versions_list):
+    """Get the floating latest, from a random list of API versions.
+    """
+    api_versions_list = list(api_versions_list)
+    absolute_latest = sorted(api_versions_list)[-1]
+    trimmed_preview = [
+        version for version in api_versions_list if "preview" not in version
+    ]
+
+    # If there is no preview, easy: the absolute latest is the only latest
+    if not trimmed_preview:
+        return absolute_latest
+
+    # If preview mode, let's use the absolute latest, I don't care preview or stable
+    if _PREVIEW_MODE:
+        return absolute_latest
+
+    # IF not preview mode, and there is preview, take the latest known stable
+    return sorted(trimmed_preview)[-1]
+
+
 def find_module_folder(package_name, module_name):
     sdk_root = Path(__file__).parents[1]
     _LOGGER.debug("SDK root is: %s", sdk_root)
@@ -302,10 +349,8 @@ def main(input_str):
     )
 
     client_folder = find_module_folder(package_name, module_name)
-    last_api_version = sorted(mod_to_api_version.keys())[-1]
+    last_api_version = get_floating_latest(mod_to_api_version.keys())
     last_api_path = client_folder / last_api_version
-
-    _LOGGER.info("Copy _configuration.py if possible")
 
     shutil.copy(
         client_folder / last_api_version / "_configuration.py",
@@ -342,19 +387,16 @@ def main(input_str):
     #         ]
     #     }
     # }
+    # last_rt_list = {
+    #    'check_dns_name_availability': 'v2018_05_01'
+    # }
 
-    last_rt_list = {}
-    for operation, operation_metadata in versioned_operations_dict.items():
-        local_last_api_version = sorted(operation_metadata)[-1][0]
-        if local_last_api_version == last_api_version:
-            continue
-        last_rt_list[operation] = mod_to_api_version[local_last_api_version]
-
-    for operation, operation_metadata in mixin_operations.items():
-        local_last_api_version = sorted(operation_metadata['available_apis'])[-1]
-        if local_last_api_version == last_api_version:
-            continue
-        last_rt_list[operation] = mod_to_api_version[local_last_api_version]
+    last_rt_list = build_last_rt_list(
+        versioned_operations_dict,
+        mixin_operations,
+        mod_to_api_version,
+        last_api_version,
+    )
 
     conf = {
         "api_version_modules": sorted(mod_to_api_version.keys()),
