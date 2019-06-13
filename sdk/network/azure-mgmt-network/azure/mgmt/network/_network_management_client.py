@@ -51,9 +51,9 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     _PROFILE_TAG = "azure.mgmt.network.NetworkManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION,
             'interface_endpoints': '2019-02-01',
             'virtual_wa_ns': '2018-07-01',
-            None: DEFAULT_API_VERSION
         }},
         _PROFILE_TAG + " latest"
     )
