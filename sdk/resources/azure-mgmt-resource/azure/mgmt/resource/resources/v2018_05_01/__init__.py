@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_management_client import ResourceManagementClient
-from .version import VERSION
+from ._configuration import ResourceManagementClientConfiguration
+from ._resource_management_client import ResourceManagementClient
+__all__ = ['ResourceManagementClient', 'ResourceManagementClientConfiguration']
 
-__all__ = ['ResourceManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
