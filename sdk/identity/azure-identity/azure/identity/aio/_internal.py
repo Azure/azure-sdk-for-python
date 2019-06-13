@@ -11,7 +11,7 @@ from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
 
 from ._authn_client import AsyncAuthnClient
-from ..constants import Endpoints, MSI_ENDPOINT, MSI_SECRET
+from ..constants import Endpoints, EnvironmentVariables
 from ..exceptions import AuthenticationError
 from .._internal import _ManagedIdentityBase
 
@@ -64,7 +64,7 @@ class AsyncImdsCredential(_AsyncManagedIdentityBase):
 
 class AsyncMsiCredential(_AsyncManagedIdentityBase):
     def __init__(self, config: Optional[Configuration] = None, **kwargs: Any) -> None:
-        endpoint = os.environ.get(MSI_ENDPOINT)
+        endpoint = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
         self._endpoint_available = endpoint is not None
         if self._endpoint_available:
             super(AsyncMsiCredential, self).__init__(endpoint=endpoint, config=config, **kwargs)  # type: ignore
@@ -82,8 +82,7 @@ class AsyncMsiCredential(_AsyncManagedIdentityBase):
             if resource.endswith("/.default"):
                 resource = resource[: -len("/.default")]
 
-            # TODO: support user-assigned client id
-            secret = os.environ.get(MSI_SECRET)
+            secret = os.environ.get(EnvironmentVariables.MSI_SECRET)
             if secret:
                 # MSI_ENDPOINT and MSI_SECRET set -> app service
                 token = await self._client.request_token(

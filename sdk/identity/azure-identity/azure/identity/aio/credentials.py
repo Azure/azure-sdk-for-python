@@ -13,7 +13,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, Net
 from ._authn_client import AsyncAuthnClient
 from ._internal import AsyncImdsCredential, AsyncMsiCredential
 from .._base import ClientSecretCredentialBase, CertificateCredentialBase
-from ..constants import Endpoints, EnvironmentVariables, MSI_ENDPOINT
+from ..constants import Endpoints, EnvironmentVariables
 from ..credentials import TokenCredentialChain
 from ..exceptions import AuthenticationError
 
@@ -92,7 +92,7 @@ class AsyncManagedIdentityCredential(object):
     """factory for MSI and IMDS credentials"""
 
     def __new__(cls, *args, **kwargs):
-        if os.environ.get(MSI_ENDPOINT):
+        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
             return AsyncMsiCredential(*args, **kwargs)
         return AsyncImdsCredential(*args, **kwargs)
 

@@ -21,7 +21,7 @@ from azure.identity import (
     AsyncTokenCredentialChain,
 )
 from azure.identity.aio._internal import AsyncImdsCredential
-from azure.identity.constants import EnvironmentVariables, MSI_ENDPOINT, MSI_SECRET
+from azure.identity.constants import EnvironmentVariables
 
 
 @pytest.mark.asyncio
@@ -238,13 +238,13 @@ async def test_imds_credential_retries():
 async def test_managed_identity_app_service(monkeypatch):
     # in App Service, MSI_SECRET and MSI_ENDPOINT are set
     msi_secret = "secret"
-    monkeypatch.setenv(MSI_SECRET, msi_secret)
-    monkeypatch.setenv(MSI_ENDPOINT, "https://foo.bar")
+    monkeypatch.setenv(EnvironmentVariables.MSI_SECRET, msi_secret)
+    monkeypatch.setenv(EnvironmentVariables.MSI_ENDPOINT, "https://foo.bar")
 
     success_message = "test passed"
 
     async def validate_request(req, *args, **kwargs):
-        assert req.url.startswith(os.environ[MSI_ENDPOINT])
+        assert req.url.startswith(os.environ[EnvironmentVariables.MSI_ENDPOINT])
         assert req.headers["secret"] == msi_secret
         exception = Exception()
         exception.message = success_message
@@ -259,13 +259,13 @@ async def test_managed_identity_app_service(monkeypatch):
 async def test_managed_identity_cloud_shell(monkeypatch):
     # in Cloud Shell, only MSI_ENDPOINT is set
     msi_endpoint = "https://localhost:50432"
-    monkeypatch.setenv(MSI_ENDPOINT, msi_endpoint)
+    monkeypatch.setenv(EnvironmentVariables.MSI_ENDPOINT, msi_endpoint)
 
     success_message = "test passed"
 
     async def validate_request(req, *args, **kwargs):
         assert req.headers["Metadata"] == "true"
-        assert req.url.startswith(os.environ[MSI_ENDPOINT])
+        assert req.url.startswith(os.environ[EnvironmentVariables.MSI_ENDPOINT])
         exception = Exception()
         exception.message = success_message
         raise exception

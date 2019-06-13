@@ -19,7 +19,7 @@ from azure.core import Configuration
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
 
 from ._authn_client import AuthnClient
-from .constants import Endpoints, MSI_ENDPOINT, MSI_SECRET
+from .constants import Endpoints, EnvironmentVariables
 from .exceptions import AuthenticationError
 
 
@@ -103,7 +103,7 @@ class MsiCredential(_ManagedIdentityBase):
 
     def __init__(self, config=None, **kwargs):
         # type: (Optional[Configuration], Mapping[str, Any]) -> None
-        endpoint = os.environ.get(MSI_ENDPOINT)
+        endpoint = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
         self._endpoint_available = endpoint is not None
         if self._endpoint_available:
             super(MsiCredential, self).__init__(  # type: ignore
@@ -123,8 +123,7 @@ class MsiCredential(_ManagedIdentityBase):
             resource = scopes[0]
             if resource.endswith("/.default"):
                 resource = resource[: -len("/.default")]
-            # TODO: support user-assigned client id
-            secret = os.environ.get(MSI_SECRET)
+            secret = os.environ.get(EnvironmentVariables.MSI_SECRET)
             if secret:
                 # MSI_ENDPOINT and MSI_SECRET set -> App Service
                 token = self._client.request_token(
