@@ -5,336 +5,303 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Type: [application/json; charset=utf-8]
-      User-Agent: [python/3.6.3 (Windows-10-10.0.17134-SP0) requests/2.18.4 msrest/0.5.0
-          msrest_azure/0.4.31 resourcemanagementclient/2.0.0rc2 Azure-SDK-For-Python]
+      User-Agent: [python/3.7.0 (Windows-10-10.0.18362-SP0) msrest/0.6.4 msrest_azure/0.6.0
+          resourcemanagementclient/2.3.0 Azure-SDK-For-Python]
       accept-language: [en-US]
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web?api-version=2018-05-01
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web?api-version=2019-05-01
   response:
-    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web","namespace":"Microsoft.Web","authorization":{"applicationId":"abfa0a7c-a6b6-4736-8310-5855508787cd","roleDefinitionId":"f47ed98b-b063-4a5b-9e10-4b9b44fa7735"},"resourceTypes":[{"resourceType":"sites/instances","locations":["Central
+    body: {string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web","namespace":"Microsoft.Web","authorization":{"applicationId":"abfa0a7c-a6b6-4736-8310-5855508787cd","roleDefinitionId":"f47ed98b-b063-4a5b-9e10-4b9b44fa7735"},"resourceTypes":[{"resourceType":"publishingUsers","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
         East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2016-08-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"sites/slots/instances","locations":["Central
+        US (Stage)","North Central US (Stage)","France Central","South Africa North","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"ishostnameavailable","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
         East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2016-08-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"sites/instances/extensions","locations":["Central
-        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
-        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
-        US","South Central US","Brazil South","Australia East","Australia Southeast","West
-        India","Central India","South India","Canada Central","Canada East","West
-        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2016-08-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"sites/slots/instances/extensions","locations":["Central
-        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
-        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
-        US","South Central US","Brazil South","Australia East","Australia Southeast","West
-        India","Central India","South India","Canada Central","Canada East","West
-        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2016-08-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"publishingUsers","locations":["Central
-        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
-        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
-        US","South Central US","Brazil South","Australia East","Australia Southeast","West
-        India","Central India","South India","Canada Central","Canada East","West
-        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"}]},{"resourceType":"ishostnameavailable","locations":["Central
-        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
-        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
-        US","South Central US","Brazil South","Australia East","Australia Southeast","West
-        India","Central India","South India","Canada Central","Canada East","West
-        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"}]},{"resourceType":"validate","locations":["Central
+        US (Stage)","North Central US (Stage)","France Central","South Africa North","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"validate","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","West US 2","MSFT West US","MSFT East US","MSFT East Asia","MSFT
         North Europe","East US 2 (Stage)","East Asia (Stage)","Central US (Stage)","North
-        Central US (Stage)","France Central","East US 2 EUAP","Central US EUAP"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"}]},{"resourceType":"isusernameavailable","locations":["Central
+        Central US (Stage)","France Central","South Africa North","East US 2 EUAP","Central
+        US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"isusernameavailable","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
         East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"}]},{"resourceType":"sourceControls","locations":["Central
+        US (Stage)","North Central US (Stage)","France Central","South Africa North","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"sourceControls","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
         East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"}]},{"resourceType":"availableStacks","locations":["Central
+        US (Stage)","North Central US (Stage)","France Central","South Africa North","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"availableStacks","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
         East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"}]},{"resourceType":"listSitesAssignedToHostName","locations":["Central
+        US (Stage)","North Central US (Stage)","France Central","South Africa North","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"listSitesAssignedToHostName","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
         East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"}]},{"resourceType":"sites/hostNameBindings","locations":["Central
+        US (Stage)","North Central US (Stage)","France Central","South Africa North","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"sites/networkConfig","locations":["Central
+        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
+        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
+        US","South Central US","Brazil South","Australia East","Australia Southeast","West
+        India","Central India","South India","Canada Central","Canada East","West
+        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","South Africa North","East Asia (Stage)","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-08-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"sites/slots/networkConfig","locations":["Central
+        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
+        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
+        US","South Central US","Brazil South","Australia East","Australia Southeast","West
+        India","Central India","South India","Canada Central","Canada East","West
+        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","South Africa North","East Asia (Stage)","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-08-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"sites/hostNameBindings","locations":["Central
+        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
+        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
+        US","South Central US","Brazil South","Australia East","Australia Southeast","West
+        India","Central India","South India","Canada Central","Canada East","West
+        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","South Africa North","East Asia (Stage)","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-08-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"sites/slots/hostNameBindings","locations":["Central
+        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
+        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
+        US","South Central US","Brazil South","Australia East","Australia Southeast","West
+        India","Central India","South India","Canada Central","Canada East","West
+        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","South Africa North","East Asia (Stage)","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-08-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"operations","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
         East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2016-08-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"sites/domainOwnershipIdentifiers","locations":["Central
+        US (Stage)","North Central US (Stage)","France Central","South Africa North","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"certificates","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2016-08-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"sites/slots/hostNameBindings","locations":["Central
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","South Africa North","East Asia (Stage)","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01-preview","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"CrossSubscriptionResourceMove,
+        SupportsTags, SupportsLocation"},{"resourceType":"serverFarms","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2016-08-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"operations","locations":["Central
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","South Africa North","East Asia (Stage)","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2017-08-01","2016-09-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-09-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"sites","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"certificates","locations":["Central
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","South Africa North","East Asia (Stage)","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2017-08-01","2016-09-01","2016-08-01","2016-03-01","2015-11-01","2015-08-01-preview","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2015-01-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SystemAssignedResourceIdentity, SupportsTags,
+        SupportsLocation"},{"resourceType":"sites/slots","locations":["Central US","North
+        Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
+        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
+        US","South Central US","Brazil South","Australia East","Australia Southeast","West
+        India","Central India","South India","Canada Central","Canada East","West
+        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","South Africa North","East Asia (Stage)","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2017-08-01","2016-09-01","2016-08-01","2016-03-01","2015-11-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2015-01-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SystemAssignedResourceIdentity, SupportsTags,
+        SupportsLocation"},{"resourceType":"runtimes","locations":[],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"recommendations","locations":[],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"resourceHealthMetadata","locations":[],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"georegions","locations":[],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"sites/premieraddons","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2016-03-01","2015-08-01-preview","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}],"capabilities":"CrossSubscriptionResourceMove"},{"resourceType":"serverFarms","locations":["Central
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","South Africa North","East Asia (Stage)","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"hostingEnvironments","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2017-08-01","2016-09-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-09-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}],"capabilities":"CrossResourceGroupResourceMove,
-        CrossSubscriptionResourceMove"},{"resourceType":"serverFarms/workers","locations":["Central
-        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
-        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
-        US","South Central US","Brazil South","Australia East","Australia Southeast","West
-        India","Central India","South India","Canada Central","Canada East","West
-        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2017-08-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"sites","locations":["Central
-        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
-        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
-        US","South Central US","Brazil South","Australia East","Australia Southeast","West
-        India","Central India","South India","Canada Central","Canada East","West
-        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2016-08-01","2016-03-01","2015-08-01-preview","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}],"capabilities":"CrossResourceGroupResourceMove,
-        CrossSubscriptionResourceMove, SystemAssignedResourceIdentity"},{"resourceType":"sites/slots","locations":["Central
-        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
-        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
-        US","South Central US","Brazil South","Australia East","Australia Southeast","West
-        India","Central India","South India","Canada Central","Canada East","West
-        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2016-08-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}],"capabilities":"CrossResourceGroupResourceMove,
-        CrossSubscriptionResourceMove, SystemAssignedResourceIdentity"},{"resourceType":"runtimes","locations":[],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"}]},{"resourceType":"sites/metrics","locations":["Central
-        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
-        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
-        US","South Central US","Brazil South","Australia East","Australia Southeast","West
-        India","Central India","South India","Canada Central","Canada East","West
-        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"sites/metricDefinitions","locations":["East
-        Asia (Stage)"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"sites/slots/metrics","locations":["Central
-        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
-        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
-        US","South Central US","Brazil South","Australia East","Australia Southeast","West
-        India","Central India","South India","Canada Central","Canada East","West
-        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"sites/slots/metricDefinitions","locations":["East
-        Asia (Stage)"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"serverFarms/metrics","locations":["East
-        Asia (Stage)"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"serverFarms/metricDefinitions","locations":["East
-        Asia (Stage)"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"sites/recommendations","locations":[],"apiVersions":["2018-02-01","2016-08-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"recommendations","locations":[],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"}]},{"resourceType":"sites/resourceHealthMetadata","locations":[],"apiVersions":["2018-02-01","2016-08-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-08-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"resourceHealthMetadata","locations":[],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"}]},{"resourceType":"georegions","locations":[],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"}]},{"resourceType":"sites/premieraddons","locations":["Central
-        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
-        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
-        US","South Central US","Brazil South","Australia East","Australia Southeast","West
-        India","Central India","South India","Canada Central","Canada East","West
-        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2016-03-01"}],"capabilities":"CrossResourceGroupResourceMove,
-        CrossSubscriptionResourceMove"},{"resourceType":"hostingEnvironments","locations":["Central
-        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
-        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
-        US","South Central US","Brazil South","Australia East","Australia Southeast","West
-        India","Central India","South India","Canada Central","Canada East","West
-        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","Central US EUAP"],"apiVersions":["2018-02-01","2017-08-01","2016-09-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-09-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}],"zoneMappings":[{"location":"East
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","South Africa North","East Asia (Stage)","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2019-02-01","2019-01-01","2018-11-01","2018-08-01","2018-02-01","2017-08-01","2016-09-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-09-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}],"zoneMappings":[{"location":"East
         US 2","zones":["1","2","3"]},{"location":"Central US","zones":["1","2","3"]},{"location":"West
-        Europe","zones":["1","2","3"]},{"location":"Central US EUAP","zones":["1","2"]},{"location":"France
-        Central","zones":["1","2","3"]},{"location":"Southeast Asia","zones":["1","2","3"]},{"location":"West
-        US 2","zones":["1","2","3"]}],"capabilities":"None"},{"resourceType":"hostingEnvironments/multiRolePools","locations":["Central
+        Europe","zones":["1","2","3"]},{"location":"East US 2 EUAP","zones":["1","2","3"]},{"location":"Central
+        US EUAP","zones":["1","2"]},{"location":"France Central","zones":["1","2","3"]},{"location":"Southeast
+        Asia","zones":["1","2","3"]},{"location":"West US 2","zones":["1","2","3"]},{"location":"North
+        Europe","zones":["1","2","3"]},{"location":"East US","zones":["1","2","3"]},{"location":"UK
+        South","zones":["1","2","3"]},{"location":"Japan East","zones":["1","2","3"]},{"location":"Australia
+        East","zones":[]}],"capabilities":"SupportsTags, SupportsLocation"},{"resourceType":"hostingEnvironments/multiRolePools","locations":["Central
+        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
+        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
+        US","South Central US","Brazil South","Australia East","Australia Southeast","West
+        India","Central India","South India","Canada Central","Canada East","West
+        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","South Africa North","East Asia (Stage)","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2019-02-01","2018-11-01","2018-08-01","2018-02-01","2017-08-01","2016-09-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-09-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"hostingEnvironments/workerPools","locations":["Central
+        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
+        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
+        US","South Central US","Brazil South","Australia East","Australia Southeast","West
+        India","Central India","South India","Canada Central","Canada East","West
+        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","South Africa North","East Asia (Stage)","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2019-02-01","2018-11-01","2018-08-01","2018-02-01","2017-08-01","2016-09-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-09-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"deploymentLocations","locations":["Central
+        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
+        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
+        US","South Central US","Brazil South","Australia East","Australia Southeast","West
+        India","Central India","South India","Canada Central","Canada East","West
+        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","South Africa North"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"functions","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
         East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","Central US EUAP"],"apiVersions":["2018-02-01","2017-08-01","2016-09-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-09-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"hostingEnvironments/workerPools","locations":["Central
+        US (Stage)","North Central US (Stage)","France Central","South Africa North","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"deletedSites","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","Central US EUAP"],"apiVersions":["2018-02-01","2017-08-01","2016-09-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-09-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"hostingEnvironments/metrics","locations":["Central
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","East Asia (Stage)","East US 2 EUAP","Central
+        US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"locations/deletedSites","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"hostingEnvironments/metricDefinitions","locations":["East
-        Asia (Stage)"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"hostingEnvironments/multiRolePools/metrics","locations":["East
-        Asia (Stage)"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"hostingEnvironments/multiRolePools/metricDefinitions","locations":["East
-        Asia (Stage)"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"hostingEnvironments/workerPools/metrics","locations":["East
-        Asia (Stage)"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"hostingEnvironments/workerPools/metricDefinitions","locations":["East
-        Asia (Stage)"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"hostingEnvironments/multiRolePools/instances","locations":[],"apiVersions":["2018-02-01","2017-08-01","2016-09-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-09-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"hostingEnvironments/multiRolePools/instances/metrics","locations":["East
-        Asia (Stage)"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"hostingEnvironments/multiRolePools/instances/metricDefinitions","locations":["East
-        Asia (Stage)"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"hostingEnvironments/workerPools/instances","locations":[],"apiVersions":["2018-02-01","2017-08-01","2016-09-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-09-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2017-08-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"hostingEnvironments/workerPools/instances/metrics","locations":["East
-        Asia (Stage)"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"hostingEnvironments/workerPools/instances/metricDefinitions","locations":["East
-        Asia (Stage)"],"apiVersions":["2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2014-04-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2014-04-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2014-04-01"}]},{"resourceType":"deploymentLocations","locations":[],"apiVersions":["2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"functions","locations":["Central
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","East Asia (Stage)","East US 2 EUAP","Central
+        US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"defaultApiVersion":"2018-02-01","apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"ishostingenvironmentnameavailable","locations":[],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"locations/deleteVirtualNetworkOrSubnets","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"deletedSites","locations":["Central
-        US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
-        US","East US","Japan West","Japan East","East Asia","East US 2","North Central
-        US","South Central US","Brazil South","Australia East","Australia Southeast","West
-        India","Central India","South India","Canada Central","Canada East","West
-        Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
-        East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central"],"apiVersions":["2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"ishostingenvironmentnameavailable","locations":[],"apiVersions":["2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"classicMobileServices","locations":[],"apiVersions":["2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"connections","locations":["North
+        East Asia","MSFT North Europe","East US 2 (Stage)","Central US (Stage)","North
+        Central US (Stage)","France Central","South Africa North","East Asia (Stage)","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-11-01","2016-08-01","2016-03-01","2015-08-01-preview","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"defaultApiVersion":"2018-02-01","apiProfiles":[{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"connections","locations":["North
+        Central US","Central US","South Central US","North Europe","West Europe","East
+        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
+        East","Brazil South","Australia East","Australia Southeast","South India","Central
+        India","West India","West US 2","West Central US","Canada Central","Canada
+        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"customApis","locations":["North
+        Central US","Central US","South Central US","North Europe","West Europe","East
+        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
+        East","Brazil South","Australia East","Australia Southeast","South India","Central
+        India","West India","West US 2","West Central US","Canada Central","Canada
+        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"CrossResourceGroupResourceMove,
+        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"locations","locations":[],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/listWsdlInterfaces","locations":["North
+        Central US","Central US","South Central US","North Europe","West Europe","East
+        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
+        East","Brazil South","Australia East","Australia Southeast","South India","Central
+        India","West India","West US 2","West Central US","Canada Central","Canada
+        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/extractApiDefinitionFromWsdl","locations":["North
+        Central US","Central US","South Central US","North Europe","West Europe","East
+        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
+        East","Brazil South","Australia East","Australia Southeast","South India","Central
+        India","West India","West US 2","West Central US","Canada Central","Canada
+        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/managedApis","locations":["North
+        Central US","Central US","South Central US","North Europe","West Europe","East
+        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
+        East","Brazil South","Australia East","Australia Southeast","South India","Central
+        India","West India","West US 2","West Central US","Canada Central","Canada
+        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/runtimes","locations":["North
+        Central US","Central US","South Central US","North Europe","West Europe","East
+        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
+        East","Brazil South","Australia East","Australia Southeast","South India","Central
+        India","West India","West US 2","West Central US","Canada Central","Canada
+        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"locations/apiOperations","locations":["North
+        Central US","Central US","South Central US","North Europe","West Europe","East
+        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
+        East","Brazil South","Australia East","Australia Southeast","South India","Central
+        India","West India","West US 2","West Central US","Canada Central","Canada
+        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-07-01-preview","2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"connectionGateways","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
         East","Brazil South","Australia East","Australia Southeast","South India","Central
         India","West India","West US 2","West Central US","Canada Central","Canada
         East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"CrossResourceGroupResourceMove,
-        CrossSubscriptionResourceMove"},{"resourceType":"customApis","locations":["North
+        CrossSubscriptionResourceMove, SupportsTags, SupportsLocation"},{"resourceType":"locations/connectionGatewayInstallations","locations":["North
         Central US","Central US","South Central US","North Europe","West Europe","East
         Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
         East","Brazil South","Australia East","Australia Southeast","South India","Central
         India","West India","West US 2","West Central US","Canada Central","Canada
-        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"CrossResourceGroupResourceMove,
-        CrossSubscriptionResourceMove"},{"resourceType":"locations","locations":[],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}]},{"resourceType":"locations/listWsdlInterfaces","locations":["North
-        Central US","Central US","South Central US","North Europe","West Europe","East
-        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
-        East","Brazil South","Australia East","Australia Southeast","South India","Central
-        India","West India","West US 2","West Central US","Canada Central","Canada
-        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}]},{"resourceType":"locations/extractApiDefinitionFromWsdl","locations":["North
-        Central US","Central US","South Central US","North Europe","West Europe","East
-        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
-        East","Brazil South","Australia East","Australia Southeast","South India","Central
-        India","West India","West US 2","West Central US","Canada Central","Canada
-        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}]},{"resourceType":"locations/managedApis","locations":["North
-        Central US","Central US","South Central US","North Europe","West Europe","East
-        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
-        East","Brazil South","Australia East","Australia Southeast","South India","Central
-        India","West India","West US 2","West Central US","Canada Central","Canada
-        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}]},{"resourceType":"locations/runtimes","locations":["North
-        Central US","Central US","South Central US","North Europe","West Europe","East
-        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
-        East","Brazil South","Australia East","Australia Southeast","South India","Central
-        India","West India","West US 2","West Central US","Canada Central","Canada
-        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}]},{"resourceType":"locations/apiOperations","locations":["North
-        Central US","Central US","South Central US","North Europe","West Europe","East
-        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
-        East","Brazil South","Australia East","Australia Southeast","South India","Central
-        India","West India","West US 2","West Central US","Canada Central","Canada
-        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}]},{"resourceType":"connectionGateways","locations":["North
-        Central US","Central US","South Central US","North Europe","West Europe","East
-        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
-        East","Brazil South","Australia East","Australia Southeast","South India","Central
-        India","West India","West US 2","West Central US","Canada Central","Canada
-        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"CrossResourceGroupResourceMove,
-        CrossSubscriptionResourceMove"},{"resourceType":"locations/connectionGatewayInstallations","locations":["North
-        Central US","Central US","South Central US","North Europe","West Europe","East
-        Asia","Southeast Asia","West US","East US","East US 2","Japan West","Japan
-        East","Brazil South","Australia East","Australia Southeast","South India","Central
-        India","West India","West US 2","West Central US","Canada Central","Canada
-        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}]},{"resourceType":"checkNameAvailability","locations":["Central
+        East","UK South","UK West","Central US EUAP","East US 2 EUAP"],"apiVersions":["2018-03-01-preview","2016-06-01","2015-08-01-preview"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-06-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-06-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-03-01-preview"}],"capabilities":"None"},{"resourceType":"checkNameAvailability","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
         East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2016-03-01","2015-08-01-preview","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"billingMeters","locations":["Central
+        US (Stage)","North Central US (Stage)","France Central","South Africa North","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01-preview","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"billingMeters","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
         East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2016-03-01","2015-08-01-preview","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]},{"resourceType":"verifyHostingEnvironmentVnet","locations":["Central
+        US (Stage)","North Central US (Stage)","France Central","South Africa North","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01-preview","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"},{"resourceType":"verifyHostingEnvironmentVnet","locations":["Central
         US","North Europe","West Europe","Southeast Asia","Korea Central","Korea South","West
         US","East US","Japan West","Japan East","East Asia","East US 2","North Central
         US","South Central US","Brazil South","Australia East","Australia Southeast","West
         India","Central India","South India","Canada Central","Canada East","West
         Central US","UK West","UK South","West US 2","MSFT West US","MSFT East US","MSFT
         East Asia","MSFT North Europe","East US 2 (Stage)","East Asia (Stage)","Central
-        US (Stage)","North Central US (Stage)","France Central","East US 2 EUAP","Central
-        US EUAP"],"apiVersions":["2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"}]}],"registrationState":"Registered"}'}
+        US (Stage)","North Central US (Stage)","France Central","South Africa North","East
+        US 2 EUAP","Central US EUAP"],"apiVersions":["2018-11-01","2018-02-01","2016-03-01","2015-08-01","2015-07-01","2015-06-01","2015-05-01","2015-04-01","2015-02-01","2014-11-01","2014-06-01","2014-04-01-preview","2014-04-01"],"apiProfiles":[{"profileVersion":"2017-03-09-profile","apiVersion":"2016-03-01"},{"profileVersion":"2018-03-01-hybrid","apiVersion":"2016-03-01"},{"profileVersion":"2018-06-01-profile","apiVersion":"2018-02-01"},{"profileVersion":"2019-03-01-hybrid","apiVersion":"2018-02-01"}],"capabilities":"None"}],"registrationState":"Registered","registrationPolicy":"RegistrationRequired"}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['49732']
+      content-length: ['43641']
       content-type: [application/json; charset=utf-8]
-      date: ['Wed, 13 Jun 2018 16:39:05 GMT']
+      date: ['Fri, 31 May 2019 16:14:29 GMT']
       expires: ['-1']
       pragma: [no-cache]
       strict-transport-security: [max-age=31536000; includeSubDomains]
