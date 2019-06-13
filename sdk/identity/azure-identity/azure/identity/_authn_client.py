@@ -79,6 +79,7 @@ class AuthnClientBase(object):
         except Exception as ex:
             raise AuthenticationError("Authentication failed: {}".format(str(ex)))
 
+    # TODO: public, factor out of request_token
     def _prepare_request(self, method="POST", headers=None, form_data=None, params=None):
         # type: (Optional[str], Optional[Mapping[str, str]], Optional[Mapping[str, str]], Optional[Dict[str, str]]) -> HttpRequest
         request = HttpRequest(method, self._auth_url, headers=headers)

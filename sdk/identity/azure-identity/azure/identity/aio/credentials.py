@@ -96,9 +96,14 @@ class AsyncManagedIdentityCredential(object):
             return AsyncMsiCredential(*args, **kwargs)
         return AsyncImdsCredential(*args, **kwargs)
 
+    # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
+    # they exist so tooling gets accurate signatures for Imds- and MsiCredential
+    def __init__(self, client_id: Optional[str] = None, config: Optional[Configuration] = None, **kwargs: Any) -> None:
+        pass
+
     @staticmethod
     def create_config(**kwargs: Dict[str, Any]) -> Configuration:
-        pass
+        return Configuration()
 
     async def get_token(self, *scopes: str) -> AccessToken:
         return AccessToken()

@@ -24,8 +24,9 @@ from .exceptions import AuthenticationError
 
 
 class _ManagedIdentityBase(object):
-    def __init__(self, endpoint, client_cls, config=None, **kwargs):
-        # type: (str, Type, Optional[Configuration], Mapping[str, Any]) -> None
+    def __init__(self, endpoint, client_cls, config=None, client_id=None, **kwargs):
+        # type: (str, Type, Optional[Configuration], Optional[str], Any) -> None
+        self._client_id = client_id
         config = config or self.create_config(**kwargs)
         policies = [ContentDecodePolicy(), config.headers_policy, config.retry_policy, config.logging_policy]
         self._client = client_cls(endpoint, config, policies, **kwargs)
@@ -38,7 +39,9 @@ class _ManagedIdentityBase(object):
 
         # retry is the only IO policy, so its class is a kwarg to increase async code sharing
         retry_policy = kwargs.pop("retry_policy", RetryPolicy)  # type: ignore
-        config.retry_policy = retry_policy(**_ManagedIdentityBase._retry_settings, **kwargs)  # type: ignore
+        args = kwargs.copy()  # combine kwargs and default retry settings in a Python 2-compatible way
+        args.update(_ManagedIdentityBase._retry_settings)  # type: ignore
+        config.retry_policy = retry_policy(**args)  # type: ignore
 
         # Metadata header is required by IMDS and in Cloud Shell; App Service ignores it
         config.headers_policy = HeadersPolicy(base_headers={"Metadata": "true"}, **kwargs)
@@ -61,7 +64,7 @@ class ImdsCredential(_ManagedIdentityBase):
     """Authenticates with a managed identity via the IMDS endpoint"""
 
     def __init__(self, config=None, **kwargs):
-        # type: (Optional[Configuration], Mapping[str, Any]) -> None
+        # type: (Optional[Configuration], Any) -> None
         super(ImdsCredential, self).__init__(endpoint=Endpoints.IMDS, client_cls=AuthnClient, config=config, **kwargs)
         self._endpoint_available = None  # type: Optional[bool]
 
@@ -69,11 +72,10 @@ class ImdsCredential(_ManagedIdentityBase):
         # type: (*str) -> AccessToken
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
-            # we send a request it would immediately reject (missing header, wrong verb),
-            # setting a short timeout. The timeout was chosen by benchmarking: of 2000
-            # requests, the slowest was 14ms, 99th percentile was 7ms, mean was 3.7ms.
+            # we send a request it would immediately reject (missing a required header),
+            # setting a short timeout.
             try:
-                self._client.request_token(scopes, connection_timeout=0.17)
+                self._client.request_token(scopes, method="GET", connection_timeout=0.3)
                 self._endpoint_available = True
             except AuthenticationError:
                 # received a response that couldn't be deserialized because it was an error response)
@@ -92,14 +94,15 @@ class ImdsCredential(_ManagedIdentityBase):
             resource = scopes[0]
             if resource.endswith("/.default"):
                 resource = resource[: -len("/.default")]
-            token = self._client.request_token(
-                scopes, method="GET", params={"api-version": "2018-02-01", "resource": resource}
-            )
+            params = {"api-version": "2018-02-01", "resource": resource}
+            if self._client_id:
+                params["client_id"] = self._client_id
+            token = self._client.request_token(scopes, method="GET", params=params)
         return token
 
 
 class MsiCredential(_ManagedIdentityBase):
-    """Authenticates via the MSI endpoint"""
+    """Authenticates via the MSI endpoint in App Service or Cloud Shell"""
 
     def __init__(self, config=None, **kwargs):
         # type: (Optional[Configuration], Mapping[str, Any]) -> None
@@ -126,13 +129,20 @@ class MsiCredential(_ManagedIdentityBase):
             secret = os.environ.get(EnvironmentVariables.MSI_SECRET)
             if secret:
                 # MSI_ENDPOINT and MSI_SECRET set -> App Service
-                token = self._client.request_token(
-                    scopes,
-                    method="GET",
-                    headers={"secret": secret},
-                    params={"api-version": "2017-09-01", "resource": resource},
-                )
+                token = self._request_app_service_token(scopes=scopes, resource=resource, secret=secret)
             else:
                 # only MSI_ENDPOINT set -> legacy-style MSI (Cloud Shell)
-                token = self._client.request_token(scopes, method="POST", form_data={"resource": resource})
+                token = self._request_legacy_token(scopes=scopes, resource=resource)
         return token
+
+    def _request_app_service_token(self, scopes, resource, secret):
+        params = {"api-version": "2017-09-01", "resource": resource}
+        if self._client_id:
+            params["client_id"] = self._client_id
+        return self._client.request_token(scopes, method="GET", headers={"secret": secret}, params=params)
+
+    def _request_legacy_token(self, scopes, resource):
+        form_data = {"resource": resource}
+        if self._client_id:
+            form_data["client_id"] = self._client_id
+        return self._client.request_token(scopes, method="POST", form_data=form_data)

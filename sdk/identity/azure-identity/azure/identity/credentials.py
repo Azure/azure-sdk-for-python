@@ -104,7 +104,8 @@ class ManagedIdentityCredential(object):
 
     # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
     # they exist so tooling gets accurate signatures for Imds- and MsiCredential
-    def __init__(self, config=None, user_assigned_identity=None, **kwargs):
+    def __init__(self, client_id=None, config=None, **kwargs):
+        # type: (Optional[str], Optional[Configuration], Any) -> None
         pass
 
     @staticmethod

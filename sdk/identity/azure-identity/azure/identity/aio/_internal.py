@@ -33,11 +33,10 @@ class AsyncImdsCredential(_AsyncManagedIdentityBase):
     async def get_token(self, *scopes: str) -> AccessToken:
         if self._endpoint_available is None:
             # Lacking another way to determine whether the IMDS endpoint is listening,
-            # we send a request it would immediately reject (missing header, wrong verb),
-            # setting a short timeout. The timeout was chosen by benchmarking: of 2000
-            # requests, the slowest was 14ms, 99th percentile was 7ms, mean was 3.7ms.
+            # we send a request it would immediately reject (missing a required header),
+            # setting a short timeout.
             try:
-                await self._client.request_token(scopes, connection_timeout=0.17)
+                await self._client.request_token(scopes, method="GET", connection_timeout=0.3)
                 self._endpoint_available = True
             except AuthenticationError:
                 # received a response that couldn't be deserialized (because it was an error response)
@@ -56,9 +55,10 @@ class AsyncImdsCredential(_AsyncManagedIdentityBase):
             resource = scopes[0]
             if resource.endswith("/.default"):
                 resource = resource[: -len("/.default")]
-            token = await self._client.request_token(
-                scopes, method="GET", params={"api-version": "2018-02-01", "resource": resource}
-            )
+            params = {"api-version": "2018-02-01", "resource": resource}
+            if self._client_id:
+                params["client_id"] = self._client_id
+            token = await self._client.request_token(scopes, method="GET", params=params)
         return token
 
 
@@ -67,7 +67,7 @@ class AsyncMsiCredential(_AsyncManagedIdentityBase):
         endpoint = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
         self._endpoint_available = endpoint is not None
         if self._endpoint_available:
-            super(AsyncMsiCredential, self).__init__(endpoint=endpoint, config=config, **kwargs)  # type: ignore
+            super().__init__(endpoint=endpoint, config=config, **kwargs)  # type: ignore
 
     async def get_token(self, *scopes: str) -> AccessToken:
         if not self._endpoint_available:
@@ -84,16 +84,21 @@ class AsyncMsiCredential(_AsyncManagedIdentityBase):
 
             secret = os.environ.get(EnvironmentVariables.MSI_SECRET)
             if secret:
-                # MSI_ENDPOINT and MSI_SECRET set -> app service
-                token = await self._client.request_token(
-                    scopes,
-                    method="GET",
-                    headers={"secret": secret},
-                    params={"api-version": "2017-09-01", "resource": resource},
-                )
+                # MSI_ENDPOINT and MSI_SECRET set -> App Service
+                token = await self._request_app_service_token(scopes=scopes, resource=resource, secret=secret)
             else:
                 # only MSI_ENDPOINT set -> legacy-style MSI (Cloud Shell)
-                token = await self._client.request_token(
-                    scopes, method="POST", form_data={"resource": resource}, headers={"Metadata": "true"}
-                )
+                token = await self._request_legacy_token(scopes=scopes, resource=resource)
         return token
+
+    async def _request_app_service_token(self, scopes, resource, secret):
+        params = {"api-version": "2017-09-01", "resource": resource}
+        if self._client_id:
+            params["client_id"] = self._client_id
+        return await self._client.request_token(scopes, method="GET", headers={"secret": secret}, params=params)
+
+    async def _request_legacy_token(self, scopes, resource):
+        form_data = {"resource": resource}
+        if self._client_id:
+            form_data["client_id"] = self._client_id
+        return await self._client.request_token(scopes, method="POST", form_data=form_data)
