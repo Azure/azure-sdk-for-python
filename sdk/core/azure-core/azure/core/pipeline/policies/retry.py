@@ -105,7 +105,7 @@ class RetryPolicy(HTTPPolicy):
     def no_retries(cls):
         """Disable retries.
         """
-        return cls(retry_count_total=0)
+        return cls(retry_total=0)
 
     def configure_retries(self, options):
         """Configures the retry settings.
