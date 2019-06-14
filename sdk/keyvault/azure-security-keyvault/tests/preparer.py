@@ -10,6 +10,7 @@ try:
 except ImportError:  # python < 3.3
     from mock import Mock
 
+from azure.core.credentials import AccessToken
 from azure.identity import EnvironmentCredential
 from azure.security.keyvault import VaultClient
 
@@ -134,7 +135,7 @@ class VaultClientPreparer(AzureMgmtPreparer):
         if self.is_live:
             credential = EnvironmentCredential()
         else:
-            credential = Mock(get_token=lambda _: "fake-token")
+            credential = Mock(get_token=lambda _: AccessToken("fake-token", 0))
         return VaultClient(vault_uri, credential)
 
     def remove_resource(self, name, **kwargs):

@@ -6,6 +6,7 @@
 import asyncio
 from unittest.mock import Mock
 
+from azure.core.credentials import AccessToken
 from azure.identity.aio import AsyncEnvironmentCredential
 from azure.security.keyvault.aio import VaultClient
 
@@ -17,5 +18,5 @@ class AsyncVaultClientPreparer(VaultClientPreparer):
         if self.is_live:
             credential = AsyncEnvironmentCredential()
         else:
-            credential = Mock(get_token=asyncio.coroutine(lambda _: "fake-token"))
+            credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0)))
         return VaultClient(vault_uri, credential)
