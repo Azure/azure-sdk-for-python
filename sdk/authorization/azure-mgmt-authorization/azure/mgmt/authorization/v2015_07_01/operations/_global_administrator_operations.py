@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class ElevateAccessOperations(object):
-    """ElevateAccessOperations operations.
+class GlobalAdministratorOperations(object):
+    """GlobalAdministratorOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,7 +39,7 @@ class ElevateAccessOperations(object):
 
         self.config = config
 
-    def post(
+    def elevate_access(
             self, custom_headers=None, raw=False, **operation_config):
         """Elevates access for a Global Administrator.
 
@@ -53,7 +53,7 @@ class ElevateAccessOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.post.metadata['url']
+        url = self.elevate_access.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -80,4 +80,4 @@ class ElevateAccessOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    post.metadata = {'url': '/providers/Microsoft.Authorization/elevateAccess'}
+    elevate_access.metadata = {'url': '/providers/Microsoft.Authorization/elevateAccess'}
