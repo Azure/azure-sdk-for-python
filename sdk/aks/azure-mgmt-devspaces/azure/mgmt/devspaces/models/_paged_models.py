@@ -25,3 +25,16 @@ class ResourceProviderOperationDefinitionPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ResourceProviderOperationDefinitionPaged, self).__init__(*args, **kwargs)
+class ControllerPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Controller <azure.mgmt.devspaces.models.Controller>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Controller]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ControllerPaged, self).__init__(*args, **kwargs)
