@@ -161,6 +161,8 @@ try:
     from .recoverable_managed_database_py3 import RecoverableManagedDatabase
     from .managed_instance_vulnerability_assessment_py3 import ManagedInstanceVulnerabilityAssessment
     from .server_vulnerability_assessment_py3 import ServerVulnerabilityAssessment
+    from .instance_pool_py3 import InstancePool
+    from .instance_pool_update_py3 import InstancePoolUpdate
 except (SyntaxError, ImportError):
     from .recoverable_database import RecoverableDatabase
     from .restorable_dropped_database import RestorableDroppedDatabase
@@ -313,6 +315,8 @@ except (SyntaxError, ImportError):
     from .recoverable_managed_database import RecoverableManagedDatabase
     from .managed_instance_vulnerability_assessment import ManagedInstanceVulnerabilityAssessment
     from .server_vulnerability_assessment import ServerVulnerabilityAssessment
+    from .instance_pool import InstancePool
+    from .instance_pool_update import InstancePoolUpdate
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .server_paged import ServerPaged
@@ -378,6 +382,7 @@ from .managed_instance_encryption_protector_paged import ManagedInstanceEncrypti
 from .recoverable_managed_database_paged import RecoverableManagedDatabasePaged
 from .managed_instance_vulnerability_assessment_paged import ManagedInstanceVulnerabilityAssessmentPaged
 from .server_vulnerability_assessment_paged import ServerVulnerabilityAssessmentPaged
+from .instance_pool_paged import InstancePoolPaged
 from .sql_management_client_enums import (
     CheckNameAvailabilityReason,
     ServerConnectionType,
@@ -455,6 +460,7 @@ from .sql_management_client_enums import (
     VulnerabilityAssessmentScanTriggerType,
     VulnerabilityAssessmentScanState,
     InstanceFailoverGroupReplicationRole,
+    InstancePoolLicenseType,
     LongTermRetentionDatabaseState,
     VulnerabilityAssessmentPolicyBaselineName,
     SensitivityLabelSource,
@@ -613,6 +619,8 @@ __all__ = [
     'RecoverableManagedDatabase',
     'ManagedInstanceVulnerabilityAssessment',
     'ServerVulnerabilityAssessment',
+    'InstancePool',
+    'InstancePoolUpdate',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -678,6 +686,7 @@ __all__ = [
     'RecoverableManagedDatabasePaged',
     'ManagedInstanceVulnerabilityAssessmentPaged',
     'ServerVulnerabilityAssessmentPaged',
+    'InstancePoolPaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
@@ -754,6 +763,7 @@ __all__ = [
     'VulnerabilityAssessmentScanTriggerType',
     'VulnerabilityAssessmentScanState',
     'InstanceFailoverGroupReplicationRole',
+    'InstancePoolLicenseType',
     'LongTermRetentionDatabaseState',
     'VulnerabilityAssessmentPolicyBaselineName',
     'SensitivityLabelSource',
