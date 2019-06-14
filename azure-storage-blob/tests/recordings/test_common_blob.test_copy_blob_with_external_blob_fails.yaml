@@ -1,0 +1,258 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 2209ee34-8ecb-11e9-b5b5-f45c89a7d159
+      x-ms-copy-source:
+      - http://www.gutenberg.org/files/59466/59466-0.txt
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:37:51 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://remotestoragename.blob.core.windows.net/utcontainer8f8b16f6/59466-0.txt
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 14 Jun 2019 17:37:57 GMT
+      ETag:
+      - '"0x8D6F0EF0AB8D403"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:37:58 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-copy-id:
+      - c824ef62-a427-412d-b4ef-c4cb7bf111af
+      x-ms-copy-status:
+      - pending
+      x-ms-request-id:
+      - e803b9b8-001e-006c-1ad7-22cfd3000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 26137a1e-8ecb-11e9-9fde-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:37:57 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: HEAD
+    uri: https://remotestoragename.blob.core.windows.net/utcontainer8f8b16f6/59466-0.txt
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Fri, 14 Jun 2019 17:37:58 GMT
+      ETag:
+      - '"0x8D6F0EF0AB8D403"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:37:58 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-id:
+      - c824ef62-a427-412d-b4ef-c4cb7bf111af
+      x-ms-copy-progress:
+      - 0/439274
+      x-ms-copy-source:
+      - http://www.gutenberg.org/files/59466/59466-0.txt
+      x-ms-copy-status:
+      - pending
+      x-ms-creation-time:
+      - Fri, 14 Jun 2019 17:37:58 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - e803c43d-001e-006c-74d7-22cfd3000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 274dfb5e-8ecb-11e9-bf9e-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:38:00 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: HEAD
+    uri: https://remotestoragename.blob.core.windows.net/utcontainer8f8b16f6/59466-0.txt
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Fri, 14 Jun 2019 17:38:00 GMT
+      ETag:
+      - '"0x8D6F0EF0AB8D403"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:37:58 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-id:
+      - c824ef62-a427-412d-b4ef-c4cb7bf111af
+      x-ms-copy-progress:
+      - 0/439274
+      x-ms-copy-source:
+      - http://www.gutenberg.org/files/59466/59466-0.txt
+      x-ms-copy-status:
+      - pending
+      x-ms-creation-time:
+      - Fri, 14 Jun 2019 17:37:58 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - e803c7a6-001e-006c-0fd7-22cfd3000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 288774be-8ecb-11e9-aeff-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:38:02 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: HEAD
+    uri: https://remotestoragename.blob.core.windows.net/utcontainer8f8b16f6/59466-0.txt
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Fri, 14 Jun 2019 17:38:02 GMT
+      ETag:
+      - '"0x8D6F0EF0CF2B03E"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:38:02 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-copy-completion-time:
+      - Fri, 14 Jun 2019 17:38:02 GMT
+      x-ms-copy-id:
+      - c824ef62-a427-412d-b4ef-c4cb7bf111af
+      x-ms-copy-progress:
+      - 0/439274
+      x-ms-copy-source:
+      - http://www.gutenberg.org/files/59466/59466-0.txt
+      x-ms-copy-status:
+      - failed
+      x-ms-copy-status-description:
+      - 500 InternalServerError "Copy failed."
+      x-ms-creation-time:
+      - Fri, 14 Jun 2019 17:37:58 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - e803cc30-001e-006c-3ed7-22cfd3000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+version: 1

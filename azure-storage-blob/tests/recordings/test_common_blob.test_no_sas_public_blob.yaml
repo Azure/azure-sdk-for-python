@@ -2,76 +2,143 @@ interactions:
 - request:
     body: null
     headers:
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
-      x-ms-blob-public-access: [blob]
-      x-ms-client-request-id: [bbc68466-e473-11e8-9ac5-acde48001122]
-      x-ms-date: ['Fri, 09 Nov 2018 23:03:55 GMT']
-      x-ms-version: ['2018-03-28']
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-blob-public-access:
+      - blob
+      x-ms-client-request-id:
+      - 4750ff34-8ecb-11e9-b681-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:38:53 GMT
+      x-ms-version:
+      - '2018-03-28'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/container508f1053?restype=container
+    uri: https://remotestoragename.blob.core.windows.net/container508f1053?restype=container
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Date: ['Fri, 09 Nov 2018 23:03:55 GMT']
-      ETag: ['"0x8D64697A0100AFD"']
-      Last-Modified: ['Fri, 09 Nov 2018 23:03:55 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-      x-ms-request-id: [9132f983-801e-0034-6980-786083000000]
-      x-ms-version: ['2018-03-28']
-    status: {code: 201, message: Created}
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 14 Jun 2019 17:38:54 GMT
+      ETag:
+      - '"0x8D6F0EF2C156D65"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:38:54 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 862d8770-901e-00a5-30d8-225f19000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
 - request:
     body: a public blob can be read without a shared access signature
     headers:
-      Connection: [keep-alive]
-      Content-Length: ['59']
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
-      x-ms-blob-type: [BlockBlob]
-      x-ms-client-request-id: [bbdf3862-e473-11e8-9ac5-acde48001122]
-      x-ms-date: ['Fri, 09 Nov 2018 23:03:55 GMT']
-      x-ms-version: ['2018-03-28']
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '59'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 4770ba98-8ecb-11e9-9c3f-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:38:53 GMT
+      x-ms-version:
+      - '2018-03-28'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/container508f1053/blob1.txt
+    uri: https://remotestoragename.blob.core.windows.net/container508f1053/blob1.txt
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Content-MD5: [j6l0UPTGPwk/3tcnDpRzcQ==]
-      Date: ['Fri, 09 Nov 2018 23:03:55 GMT']
-      ETag: ['"0x8D64697A0129423"']
-      Last-Modified: ['Fri, 09 Nov 2018 23:03:55 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-      x-ms-request-id: [9132f997-801e-0034-7780-786083000000]
-      x-ms-request-server-encrypted: ['true']
-      x-ms-version: ['2018-03-28']
-    status: {code: 201, message: Created}
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - j6l0UPTGPwk/3tcnDpRzcQ==
+      Date:
+      - Fri, 14 Jun 2019 17:38:54 GMT
+      ETag:
+      - '"0x8D6F0EF2C1F2BC5"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:38:54 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 862d87ab-901e-00a5-64d8-225f19000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.19.1]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.21.0
     method: GET
-    uri: https://storagename.blob.core.windows.net/container508f1053/blob1.txt
+    uri: https://remotestoragename.blob.core.windows.net/container508f1053/blob1.txt
   response:
-    body: {string: a public blob can be read without a shared access signature}
+    body:
+      string: a public blob can be read without a shared access signature
     headers:
-      Accept-Ranges: [bytes]
-      Content-Length: ['59']
-      Content-MD5: [j6l0UPTGPwk/3tcnDpRzcQ==]
-      Content-Type: [application/octet-stream]
-      Date: ['Fri, 09 Nov 2018 23:03:55 GMT']
-      ETag: ['"0x8D64697A0129423"']
-      Last-Modified: ['Fri, 09 Nov 2018 23:03:55 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Vary: [Origin]
-      x-ms-blob-type: [BlockBlob]
-      x-ms-lease-state: [available]
-      x-ms-lease-status: [unlocked]
-      x-ms-request-id: [02a653cc-801e-0059-6a80-78caad000000]
-      x-ms-version: ['2014-02-14']
-    status: {code: 200, message: OK}
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '59'
+      Content-MD5:
+      - j6l0UPTGPwk/3tcnDpRzcQ==
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Fri, 14 Jun 2019 17:38:54 GMT
+      ETag:
+      - '"0x8D6F0EF2C1F2BC5"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:38:54 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - 9a5469ee-101e-0096-37d8-220634000000
+      x-ms-version:
+      - '2014-02-14'
+    status:
+      code: 200
+      message: OK
 version: 1

@@ -1223,6 +1223,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_token_credential(self):
+        pytest.skip("Pending rebase")
         try:
             token_credential = self.generate_oauth_token()
             get_token = token_credential.get_token

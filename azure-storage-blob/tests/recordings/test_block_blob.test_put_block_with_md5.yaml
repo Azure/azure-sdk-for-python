@@ -2,49 +2,97 @@ interactions:
 - request:
     body: null
     headers:
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
-      x-ms-blob-type: [BlockBlob]
-      x-ms-client-request-id: [56cab618-e473-11e8-9ac5-acde48001122]
-      x-ms-date: ['Fri, 09 Nov 2018 23:01:06 GMT']
-      x-ms-version: ['2018-03-28']
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - aaf195fa-8eca-11e9-8f45-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:34:31 GMT
+      x-ms-version:
+      - '2018-03-28'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer3e2f0fb9/blob3e2f0fb9
+    uri: https://remotestoragename.blob.core.windows.net/utcontainer3e2f0fb9/blob3e2f0fb9
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Content-MD5: [1B2M2Y8AsgTpgAmY7PhCfg==]
-      Date: ['Fri, 09 Nov 2018 23:01:06 GMT']
-      ETag: ['"0x8D646973B18F2EE"']
-      Last-Modified: ['Fri, 09 Nov 2018 23:01:06 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-      x-ms-request-id: [1532f5cc-001e-002e-2c80-784fec000000]
-      x-ms-request-server-encrypted: ['true']
-      x-ms-version: ['2018-03-28']
-    status: {code: 201, message: Created}
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - 1B2M2Y8AsgTpgAmY7PhCfg==
+      Date:
+      - Fri, 14 Jun 2019 17:34:31 GMT
+      ETag:
+      - '"0x8D6F0EE8FB57FAE"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:34:32 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 9027ad1f-601e-005e-49d7-229703000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
 - request:
     body: block
     headers:
-      Connection: [keep-alive]
-      Content-Length: ['5']
-      Content-MD5: [FFEfL1VkZQ0SnKfKvDMyeA==]
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
-      x-ms-client-request-id: [56eba986-e473-11e8-9ac5-acde48001122]
-      x-ms-date: ['Fri, 09 Nov 2018 23:01:06 GMT']
-      x-ms-version: ['2018-03-28']
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '5'
+      Content-MD5:
+      - FFEfL1VkZQ0SnKfKvDMyeA==
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - ab0f63f4-8eca-11e9-94a3-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:34:31 GMT
+      x-ms-version:
+      - '2018-03-28'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer3e2f0fb9/blob3e2f0fb9?comp=block&blockid=MQ%3D%3D
+    uri: https://remotestoragename.blob.core.windows.net/utcontainer3e2f0fb9/blob3e2f0fb9?blockid=MQ%3D%3D&comp=block
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Content-MD5: [FFEfL1VkZQ0SnKfKvDMyeA==]
-      Date: ['Fri, 09 Nov 2018 23:01:06 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-      x-ms-request-id: [1532f5ee-001e-002e-4a80-784fec000000]
-      x-ms-request-server-encrypted: ['true']
-      x-ms-version: ['2018-03-28']
-    status: {code: 201, message: Created}
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - FFEfL1VkZQ0SnKfKvDMyeA==
+      Date:
+      - Fri, 14 Jun 2019 17:34:32 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 9027ad34-601e-005e-5cd7-229703000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
 version: 1

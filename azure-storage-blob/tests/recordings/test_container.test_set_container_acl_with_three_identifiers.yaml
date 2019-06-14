@@ -1,0 +1,134 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - d667fc70-8ecb-11e9-81e3-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:42:53 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://remotestoragename.blob.core.windows.net/containerf11f18b4?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 14 Jun 2019 17:42:54 GMT
+      ETag:
+      - '"0x8D6F0EFBB38033B"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:42:54 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - d82f9229-301e-006f-3ed8-22ccd4000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <SignedIdentifiers><SignedIdentifier><Id>0</Id></SignedIdentifier><SignedIdentifier><Id>1</Id></SignedIdentifier><SignedIdentifier><Id>2</Id></SignedIdentifier></SignedIdentifiers>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '219'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - d692c8d8-8ecb-11e9-8f56-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:42:54 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://remotestoragename.blob.core.windows.net/containerf11f18b4?restype=container&comp=acl
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 14 Jun 2019 17:42:54 GMT
+      ETag:
+      - '"0x8D6F0EFBB42221A"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:42:54 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - d82f9236-301e-006f-49d8-22ccd4000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - d69c89f4-8ecb-11e9-924b-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:42:54 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://remotestoragename.blob.core.windows.net/containerf11f18b4?restype=container&comp=acl
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>0</Id></SignedIdentifier><SignedIdentifier><Id>1</Id></SignedIdentifier><SignedIdentifier><Id>2</Id></SignedIdentifier></SignedIdentifiers>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Fri, 14 Jun 2019 17:42:54 GMT
+      ETag:
+      - '"0x8D6F0EFBB42221A"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:42:54 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - d82f9242-301e-006f-53d8-22ccd4000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+version: 1

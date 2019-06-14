@@ -2,43 +2,39 @@ interactions:
 - request:
     body: null
     headers:
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
-      x-ms-client-request-id: [a24fec4c-e474-11e8-9ac5-acde48001122]
-      x-ms-date: ['Fri, 09 Nov 2018 23:10:22 GMT']
-      x-ms-version: ['2018-03-28']
-    method: PUT
-    uri: https://storagename.blob.core.windows.net/46e31063?restype=container
-  response:
-    body: {string: ''}
-    headers:
-      Date: ['Fri, 09 Nov 2018 23:10:22 GMT']
-      ETag: ['"0x8D6469886A1E61F"']
-      Last-Modified: ['Fri, 09 Nov 2018 23:10:22 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-      x-ms-request-id: [127dde8e-901e-0020-7281-78a3e7000000]
-      x-ms-version: ['2018-03-28']
-    status: {code: 201, message: Created}
-- request:
-    body: null
-    headers:
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
-      x-ms-client-request-id: [a2776c86-e474-11e8-9ac5-acde48001122]
-      x-ms-date: ['Fri, 09 Nov 2018 23:10:22 GMT']
-      x-ms-version: ['2018-03-28']
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 3fd9190a-8ecc-11e9-b939-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:45:50 GMT
+      x-ms-version:
+      - '2018-03-28'
     method: DELETE
-    uri: https://storagename.blob.core.windows.net/46e31063?restype=container
+    uri: https://remotestoragename.blob.core.windows.net/46e31063?restype=container
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Date: ['Fri, 09 Nov 2018 23:10:22 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-      x-ms-request-id: [127ddec8-901e-0020-2481-78a3e7000000]
-      x-ms-version: ['2018-03-28']
-    status: {code: 202, message: Accepted}
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 14 Jun 2019 17:45:51 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 55f8362e-301e-008a-35d9-22de23000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 202
+      message: Accepted
 version: 1

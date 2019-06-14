@@ -20,48 +20,87 @@ interactions:
       Dj9Xr75nNJNuUarC53atkl7PmKtpp9ycNmQbExAPGU/NtK2akfe8pHyT2V32jCEG4RGSAUilxikB
       NU3sdYbBwQ+zi+MNmiVlTEbwVrHtcFZUFn1lDviDXeQuc4o628Z+MrloBibqh5yJdNR0fGDYCA==
     headers:
-      Connection: [keep-alive]
-      Content-Length: ['1024']
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
-      x-ms-blob-type: [BlockBlob]
-      x-ms-client-request-id: [bb635792-e473-11e8-9ac5-acde48001122]
-      x-ms-date: ['Fri, 09 Nov 2018 23:03:55 GMT']
-      x-ms-version: ['2018-03-28']
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 46d3218c-8ecb-11e9-9528-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:38:52 GMT
+      x-ms-version:
+      - '2018-03-28'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
+    uri: https://remotestoragename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Content-MD5: [oCH+lQmNcNij0X2pgU0v3A==]
-      Date: ['Fri, 09 Nov 2018 23:03:54 GMT']
-      ETag: ['"0x8D646979FA98007"']
-      Last-Modified: ['Fri, 09 Nov 2018 23:03:55 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-      x-ms-request-id: [469ad7aa-001e-0048-3480-78fdb6000000]
-      x-ms-request-server-encrypted: ['true']
-      x-ms-version: ['2018-03-28']
-    status: {code: 201, message: Created}
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - oCH+lQmNcNij0X2pgU0v3A==
+      Date:
+      - Fri, 14 Jun 2019 17:38:53 GMT
+      ETag:
+      - '"0x8D6F0EF2B98F39F"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:38:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 6d3760e2-f01e-001f-0ed8-22bf10000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.19.1]
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.21.0
     method: GET
-    uri: https://storagename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
+    uri: https://remotestoragename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
   response:
-    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The\
-        \ specified resource does not exist.\nRequestId:79f34947-201e-0032-1180-7897fb000000\n\
-        Time:2018-11-09T23:03:55.4054019Z</Message></Error>"}
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The\
+        \ specified resource does not exist.\nRequestId:33d54af8-001e-0028-55d8-2213bf000000\n\
+        Time:2019-06-14T17:38:54.0956424Z</Message></Error>"
     headers:
-      Content-Length: ['223']
-      Content-Type: [application/xml]
-      Date: ['Fri, 09 Nov 2018 23:03:55 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Vary: [Origin]
-      x-ms-request-id: [79f34947-201e-0032-1180-7897fb000000]
-      x-ms-version: ['2014-02-14']
-    status: {code: 404, message: The specified resource does not exist.}
+      Content-Length:
+      - '223'
+      Content-Type:
+      - application/xml
+      Date:
+      - Fri, 14 Jun 2019 17:38:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - 33d54af8-001e-0028-55d8-2213bf000000
+      x-ms-version:
+      - '2014-02-14'
+    status:
+      code: 404
+      message: The specified resource does not exist.
 version: 1

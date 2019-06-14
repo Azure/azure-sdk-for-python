@@ -20,52 +20,84 @@ interactions:
       QuaOiiRLR5aPJLMtAtcWmJya1DLP8IEEw7qJBqb8xH1oy/eDX9byg5eoDGtadMdiwGfqcf7vCF6q
       W3dHr/2ZlcT6MDWfxSTLAeNj4Xfs/sWdb0wre6yAl4IYc+1L9P2uamMCgvgKCjdZLoUEFVyaIQ==
     headers:
-      Connection: [keep-alive]
-      Content-Length: ['1024']
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
-      x-ms-blob-type: [BlockBlob]
-      x-ms-client-request-id: [a43e46ee-e473-11e8-9ac5-acde48001122]
-      x-ms-date: ['Fri, 09 Nov 2018 23:03:16 GMT']
-      x-ms-version: ['2018-03-28']
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 3141539a-8ecb-11e9-8201-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:38:16 GMT
+      x-ms-version:
+      - '2018-03-28'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer93bf11cd/blob93bf11cd
+    uri: https://remotestoragename.blob.core.windows.net/utcontainer93bf11cd/blob93bf11cd
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Content-MD5: [24p9/0SDtD0kmDoz35grUQ==]
-      Date: ['Fri, 09 Nov 2018 23:03:16 GMT']
-      ETag: ['"0x8D6469788833FD4"']
-      Last-Modified: ['Fri, 09 Nov 2018 23:03:16 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-      x-ms-request-id: [367c46dc-c01e-005e-6980-783c28000000]
-      x-ms-request-server-encrypted: ['true']
-      x-ms-version: ['2018-03-28']
-    status: {code: 201, message: Created}
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - 24p9/0SDtD0kmDoz35grUQ==
+      Date:
+      - Fri, 14 Jun 2019 17:38:17 GMT
+      ETag:
+      - '"0x8D6F0EF16061AA1"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:38:17 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 3f687356-401e-0024-4ad7-22fd4e000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
-      Connection: [keep-alive]
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
-      x-ms-client-request-id: [a456bc60-e473-11e8-9ac5-acde48001122]
-      x-ms-date: ['Fri, 09 Nov 2018 23:03:16 GMT']
-      x-ms-version: ['2018-03-28']
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 31611c18-8ecb-11e9-88dc-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:38:16 GMT
+      x-ms-version:
+      - '2018-03-28'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/utcontainer93bf11cd/blob93bf11cd?snapshot=1&comp=metadata
+    uri: https://remotestoragename.blob.core.windows.net/utcontainer93bf11cd/blob93bf11cd?snapshot=1
   response:
-    body: {string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidQueryParameterValue</Code><Message>Value\
-        \ for one of the query parameters specified in the request URI is invalid.\n\
-        RequestId:367c46fd-c01e-005e-0680-783c28000000\nTime:2018-11-09T23:03:16.4448702Z</Message><QueryParameterName>snapshot</QueryParameterName><QueryParameterValue>1</QueryParameterValue><Reason>Must\
-        \ be in the specific snapshot date time format.</Reason></Error>"}
+    body:
+      string: ''
     headers:
-      Content-Length: ['433']
-      Content-Type: [application/xml]
-      Date: ['Fri, 09 Nov 2018 23:03:16 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Vary: [Origin]
-      x-ms-error-code: [InvalidQueryParameterValue]
-      x-ms-request-id: [367c46fd-c01e-005e-0680-783c28000000]
-      x-ms-version: ['2018-03-28']
-    status: {code: 400, message: Value for one of the query parameters specified in
-        the request URI is invalid.}
+      Date:
+      - Fri, 14 Jun 2019 17:38:17 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 3f68737b-401e-0024-66d7-22fd4e000000
+    status:
+      code: 400
+      message: Value for one of the query parameters specified in the request URI
+        is invalid.
 version: 1

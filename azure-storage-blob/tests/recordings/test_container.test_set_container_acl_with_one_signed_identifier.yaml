@@ -1,0 +1,90 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - d548afc6-8ecb-11e9-8b6f-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:42:51 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://remotestoragename.blob.core.windows.net/container573d1a44?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 14 Jun 2019 17:42:52 GMT
+      ETag:
+      - '"0x8D6F0EFBA0E26D3"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:42:52 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 7a0c3740-901e-00ae-39d8-22476d000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-06-15T00:42:52Z</Start><Expiry>2019-06-14T18:42:52Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '257'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - d56932b4-8ecb-11e9-ba7e-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:42:52 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://remotestoragename.blob.core.windows.net/container573d1a44?restype=container&comp=acl
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 14 Jun 2019 17:42:52 GMT
+      ETag:
+      - '"0x8D6F0EFBA179D0B"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:42:52 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 7a0c3757-901e-00ae-49d8-22476d000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+version: 1

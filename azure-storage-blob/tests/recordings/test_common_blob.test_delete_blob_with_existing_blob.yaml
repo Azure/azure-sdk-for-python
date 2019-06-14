@@ -20,47 +20,93 @@ interactions:
       AXy/OuI70oaMxxjhDv72WHzf159GLPogf1r3VdJI0jWd4AixexQmX0pxCPEtOkm88WMrVr84Hh39
       AdOs0h2LqVTN2oKebYcksN4yI1dNOyWK055+1XHobmd3m6cFCniKOirzJ+UNgtM8dYQ+HNsatg==
     headers:
-      Connection: [keep-alive]
-      Content-Length: ['1024']
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
-      x-ms-blob-type: [BlockBlob]
-      x-ms-client-request-id: [a1e6823a-e473-11e8-9ac5-acde48001122]
-      x-ms-date: ['Fri, 09 Nov 2018 23:03:12 GMT']
-      x-ms-version: ['2018-03-28']
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 2e4341c6-8ecb-11e9-a2cd-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:38:11 GMT
+      x-ms-version:
+      - '2018-03-28'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer33c61548/blob33c61548
+    uri: https://remotestoragename.blob.core.windows.net/utcontainer33c61548/blob33c61548
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Content-MD5: [ZeN8jirS5VpgYDUpuv7WRg==]
-      Date: ['Fri, 09 Nov 2018 23:03:11 GMT']
-      ETag: ['"0x8D64697862AB75A"']
-      Last-Modified: ['Fri, 09 Nov 2018 23:03:12 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-      x-ms-request-id: [00fd8112-e01e-0024-0c80-785665000000]
-      x-ms-request-server-encrypted: ['true']
-      x-ms-version: ['2018-03-28']
-    status: {code: 201, message: Created}
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - ZeN8jirS5VpgYDUpuv7WRg==
+      Date:
+      - Fri, 14 Jun 2019 17:38:12 GMT
+      ETag:
+      - '"0x8D6F0EF13079287"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:38:12 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - c2cbf88c-301e-0064-54d7-22d4a0000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
-      x-ms-client-request-id: [a1fe043c-e473-11e8-9ac5-acde48001122]
-      x-ms-date: ['Fri, 09 Nov 2018 23:03:12 GMT']
-      x-ms-version: ['2018-03-28']
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - 2e63022c-8ecb-11e9-8814-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:38:11 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2018-03-28'
     method: DELETE
-    uri: https://storagename.blob.core.windows.net/utcontainer33c61548/blob33c61548
+    uri: https://remotestoragename.blob.core.windows.net/utcontainer33c61548/blob33c61548
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Date: ['Fri, 09 Nov 2018 23:03:11 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-      x-ms-delete-type-permanent: ['true']
-      x-ms-request-id: [00fd812f-e01e-0024-2680-785665000000]
-      x-ms-version: ['2018-03-28']
-    status: {code: 202, message: Accepted}
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 14 Jun 2019 17:38:12 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-delete-type-permanent:
+      - 'true'
+      x-ms-request-id:
+      - c2cbf8a3-301e-0064-69d7-22d4a0000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 202
+      message: Accepted
 version: 1

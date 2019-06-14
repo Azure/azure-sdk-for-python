@@ -2,72 +2,139 @@ interactions:
 - request:
     body: null
     headers:
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
-      x-ms-client-request-id: [36303ba2-e474-11e8-9ac5-acde48001122]
-      x-ms-date: ['Fri, 09 Nov 2018 23:07:21 GMT']
-      x-ms-version: ['2018-03-28']
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - ae207686-8ecb-11e9-ac82-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:41:46 GMT
+      x-ms-version:
+      - '2018-03-28'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/container77341677?restype=container
+    uri: https://remotestoragename.blob.core.windows.net/container77341677?restype=container
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Date: ['Fri, 09 Nov 2018 23:07:21 GMT']
-      ETag: ['"0x8D646981A73BA24"']
-      Last-Modified: ['Fri, 09 Nov 2018 23:07:21 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-      x-ms-request-id: [fb0c69dc-201e-001b-2f80-78e1b9000000]
-      x-ms-version: ['2018-03-28']
-    status: {code: 201, message: Created}
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 14 Jun 2019 17:41:46 GMT
+      ETag:
+      - '"0x8D6F0EF92E5196A"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:41:47 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 0ec9a82c-001e-00cd-34d8-220148000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
-      x-ms-client-request-id: [364aacf8-e474-11e8-9ac5-acde48001122]
-      x-ms-date: ['Fri, 09 Nov 2018 23:07:21 GMT']
-      x-ms-lease-action: [acquire]
-      x-ms-lease-duration: ['-1']
-      x-ms-version: ['2018-03-28']
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - ae3fd5a6-8ecb-11e9-bd34-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:41:46 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '-1'
+      x-ms-proposed-lease-id:
+      - 1c73ab70-5f1a-45a4-8c44-48ce3ba321b3
+      x-ms-version:
+      - '2018-03-28'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/container77341677?restype=container&comp=lease
+    uri: https://remotestoragename.blob.core.windows.net/container77341677?comp=lease&restype=container
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Date: ['Fri, 09 Nov 2018 23:07:21 GMT']
-      ETag: ['"0x8D646981A73BA24"']
-      Last-Modified: ['Fri, 09 Nov 2018 23:07:21 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-      x-ms-lease-id: [41283c85-5734-4716-a243-18adbd262e8b]
-      x-ms-request-id: [fb0c6a17-201e-001b-6080-78e1b9000000]
-      x-ms-version: ['2018-03-28']
-    status: {code: 201, message: Created}
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 14 Jun 2019 17:41:46 GMT
+      ETag:
+      - '"0x8D6F0EF92E5196A"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:41:47 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-lease-id:
+      - 1c73ab70-5f1a-45a4-8c44-48ce3ba321b3
+      x-ms-request-id:
+      - 0ec9a843-001e-00cd-49d8-220148000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      User-Agent: [Azure-Storage/1.4.0-1.4.0 (Python CPython 3.7.0; Darwin 18.2.0)]
-      x-ms-client-request-id: [3653bcee-e474-11e8-9ac5-acde48001122]
-      x-ms-date: ['Fri, 09 Nov 2018 23:07:21 GMT']
-      x-ms-lease-action: [release]
-      x-ms-lease-id: [41283c85-5734-4716-a243-18adbd262e8b]
-      x-ms-version: ['2018-03-28']
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      x-ms-client-request-id:
+      - ae48597e-8ecb-11e9-abd4-f45c89a7d159
+      x-ms-date:
+      - Fri, 14 Jun 2019 17:41:46 GMT
+      x-ms-lease-action:
+      - release
+      x-ms-lease-id:
+      - 1c73ab70-5f1a-45a4-8c44-48ce3ba321b3
+      x-ms-version:
+      - '2018-03-28'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/container77341677?restype=container&comp=lease
+    uri: https://remotestoragename.blob.core.windows.net/container77341677?comp=lease&restype=container
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Date: ['Fri, 09 Nov 2018 23:07:21 GMT']
-      ETag: ['"0x8D646981A73BA24"']
-      Last-Modified: ['Fri, 09 Nov 2018 23:07:21 GMT']
-      Server: [Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-      x-ms-request-id: [fb0c6a31-201e-001b-7880-78e1b9000000]
-      x-ms-version: ['2018-03-28']
-    status: {code: 200, message: OK}
+      Content-Length:
+      - '0'
+      Date:
+      - Fri, 14 Jun 2019 17:41:46 GMT
+      ETag:
+      - '"0x8D6F0EF92E5196A"'
+      Last-Modified:
+      - Fri, 14 Jun 2019 17:41:47 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 0ec9a850-001e-00cd-56d8-220148000000
+      x-ms-version:
+      - '2018-03-28'
+    status:
+      code: 200
+      message: OK
 version: 1
