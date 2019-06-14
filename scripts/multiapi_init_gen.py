@@ -282,25 +282,59 @@ def build_operation_mixin_meta(versioned_modules):
 
 
 def build_last_rt_list(
-    versioned_operations_dict, mixin_operations, mod_to_api_version, last_api_version
+    versioned_operations_dict, mixin_operations, last_api_version
 ):
     """Build the a mapping RT => API version if RT doesn't exist in latest detected API version.
+
+    Example:
+    last_rt_list = {
+       'check_dns_name_availability': '2018-05-01'
+    }
+
+    There is one subtle scenario if PREVIEW mode is disabled:
+    - RT1 available on 2019-05-01 and 2019-06-01-preview
+    - RT2 available on 2019-06-01-preview
+    - RT3 available on 2019-07-01-preview
+
+    Then, if I put "RT2: 2019-06-01-preview" in the list, this means I have to make
+    "2019-06-01-preview" the default for models loading (otherwise "RT2: 2019-06-01-preview" won't work).
+    But this likely breaks RT1 default operations at "2019-05-01", with default models at "2019-06-01-preview"
+    since "models" are shared for the entire set of operations groups (I wished models would be split by operation groups, but meh, that's not the case)
+
+    So, until we have a smarter Autorest to deal with that, only preview RTs which do not share models with a stable RT can be added to this map.
+    In this case, RT2 is out, RT3 is in.
     """
+
+    def there_is_a_rt_that_contains_api_version(rt_dict, api_version):
+        "Test in the given api_version is is one of those RT."
+        for rt_api_version in rt_dict.values():
+            if api_version in rt_api_version:
+                return True
+        return False
+
     last_rt_list = {}
-    for operation, operation_metadata in versioned_operations_dict.items():
-        api_versions_list = (meta[0] for meta in operation_metadata)
+    # Operation groups
+    versioned_dict = {
+        operation_name: [meta[0] for meta in operation_metadata]
+        for operation_name, operation_metadata in versioned_operations_dict.items()
+    }
+    # Operations at client level
+    versioned_dict.update(
+        {
+            operation_name: operation_metadata["available_apis"]
+            for operation_name, operation_metadata in mixin_operations.items()
+        }
+    )
+
+    for operation, api_versions_list in versioned_dict.items():
         local_last_api_version = get_floating_latest(api_versions_list)
         if local_last_api_version == last_api_version:
             continue
-        last_rt_list[operation] = mod_to_api_version[local_last_api_version]
-
-    for operation, operation_metadata in mixin_operations.items():
-        local_last_api_version = get_floating_latest(
-            operation_metadata["available_apis"]
-        )
-        if local_last_api_version == last_api_version:
+        # If some others RT contains "local_last_api_version", and it's greater than the future default, danger, don't profile it
+        if there_is_a_rt_that_contains_api_version(versioned_dict, local_last_api_version) and local_last_api_version > last_api_version:
             continue
-        last_rt_list[operation] = mod_to_api_version[local_last_api_version]
+        last_rt_list[operation] = local_last_api_version
+
     return last_rt_list
 
 
@@ -321,7 +355,7 @@ def get_floating_latest(api_versions_list):
     if _PREVIEW_MODE:
         return absolute_latest
 
-    # IF not preview mode, and there is preview, take the latest known stable
+    # If not preview mode, and there is preview, take the latest known stable
     return sorted(trimmed_preview)[-1]
 
 
@@ -418,18 +452,16 @@ def main(input_str):
     #     }
     # }
     # last_rt_list = {
-    #    'check_dns_name_availability': 'v2018_05_01'
+    #    'check_dns_name_availability': '2018-05-01'
     # }
 
     last_rt_list = build_last_rt_list(
         versioned_operations_dict,
         mixin_operations,
-        mod_to_api_version,
         last_api_version,
     )
 
     conf = {
-        "api_version_modules": sorted(mod_to_api_version.keys()),
         "client_name": client_name,
         "has_subscription_id": has_subscription_id(client_class),
         "module_name": module_name,
@@ -439,6 +471,7 @@ def main(input_str):
         "last_api_version": mod_to_api_version[last_api_version],
         "client_doc": client_class.__doc__.split("\n")[0],
         "last_rt_list": last_rt_list,
+        "default_models": sorted({last_api_version} | {versions for _, versions in last_rt_list.items()})
     }
 
     env = Environment(
