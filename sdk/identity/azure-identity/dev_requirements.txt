@@ -1,0 +1,2 @@
+-e ../../core/azure-core
+typing_extensions>=3.7.2

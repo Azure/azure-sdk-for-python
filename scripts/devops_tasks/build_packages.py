@@ -30,17 +30,30 @@ if __name__ == '__main__':
     parser.add_argument(
         '-d',
         '--distribution-directory',
-        dest = 'distribution_directory',
-        help = 'The path to the distribution directory. Should be passed $(Build.ArtifactStagingDirectory) from the devops yaml definition.',
-        required = True)
+        dest='distribution_directory',
+        help='The path to the distribution directory. Should be passed $(Build.ArtifactStagingDirectory) from the devops yaml definition.',
+        required=True)
 
     parser.add_argument(
         'glob_string',
         nargs='?',
-        help = ('A comma separated list of glob strings that will target the top level directories that contain packages. '
+        help=('A comma separated list of glob strings that will target the top level directories that contain packages. '
                 'Examples: All == "azure-*", Single = "azure-keyvault"'))
+
+    parser.add_argument(
+        '--service',
+        help=('Name of service directory (under sdk/) to build.'
+              'Example: --service applicationinsights'))
 
     args = parser.parse_args()
 
-    targeted_packages = process_glob_string(args.glob_string, root_dir)
+    # We need to support both CI builds of everything and individual service
+    # folders. This logic allows us to do both.
+    if args.service:
+        service_dir = os.path.join('sdk', args.service)
+        target_dir = os.path.join(root_dir, service_dir)
+    else:
+        target_dir = root_dir
+
+    targeted_packages = process_glob_string(args.glob_string, target_dir)
     build_packages(targeted_packages, args.distribution_directory)

@@ -1,4 +1,3 @@
-
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -26,14 +25,15 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import Any, List, Union, Callable, AsyncIterator, Optional, Generic, TypeVar
+from typing import Any, Union, List, Generic, TypeVar
 
-from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext, Pipeline
+from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-
+ImplPoliciesType = List[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]] #pylint: disable=unsubscriptable-object
+AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore
@@ -49,8 +49,13 @@ except ImportError: # Python <= 3.7
             return None
 
 
-class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
+class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]): #pylint: disable=unsubscriptable-object
     """Async implementation of the SansIO policy.
+
+    Modifies the request and sends to the next policy in the chain.
+
+    :param policy: A SansIO policy.
+    :type policy: ~azure.core.pipeline.policies.SansIOHTTPPolicy
     """
 
     def __init__(self, policy: SansIOHTTPPolicy) -> None:
@@ -58,10 +63,17 @@ class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPRes
         self._policy = policy
 
     async def send(self, request: PipelineRequest):
+        """Modifies the request and sends to the next policy in the chain.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The PipelineResponse object.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
         self._policy.on_request(request)
         try:
             response = await self.next.send(request)  # type: ignore
-        except Exception:
+        except Exception: #pylint: disable=broad-except
             if not self._policy.on_exception(request):
                 raise
         else:
@@ -69,13 +81,25 @@ class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPRes
         return response
 
 
-class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
+class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]): #pylint: disable=unsubscriptable-object
+    """Async Transport runner.
 
+    Uses specified HTTP transport type to send request and returns response.
+
+    :param sender: The async Http Transport type.
+    """
     def __init__(self, sender) -> None:
         super(_AsyncTransportRunner, self).__init__()
         self._sender = sender
 
     async def send(self, request):
+        """Async HTTP transport send method.
+
+        :param request: The PipelineRequest object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The PipelineResponse object.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
         return PipelineResponse(
             request.http_request,
             await self._sender.send(request.http_request, **request.context.options),
@@ -84,14 +108,17 @@ class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseTy
 
 
 class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncHTTPResponseType]):
-    """A pipeline implementation.
+    """Async pipeline implementation.
 
     This is implemented as a context manager, that will activate the context
     of the HTTP sender.
+
+    :param transport: The async Http Transport type.
+    :param list policies: List of configured policies.
     """
 
-    def __init__(self, transport, policies: List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]] = None) -> None:
-        self._impl_policies = []  # type: List[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]]
+    def __init__(self, transport, policies: AsyncPoliciesType = None) -> None:
+        self._impl_policies = []  # type: ImplPoliciesType
         self._transport = transport
 
         for policy in (policies or []):
@@ -119,8 +146,14 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         await self._transport.__aexit__(*exc_details)
 
     async def run(self, request: PipelineRequest, **kwargs: Any):
+        """Runs the HTTP Request through the chained policies.
+
+        :param request: The HTTP request object.
+        :type request: ~azure.core.pipeline.transport.HttpRequest
+        :return: The PipelineResponse object.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context)
         first_node = self._impl_policies[0] if self._impl_policies else _AsyncTransportRunner(self._transport)
         return await first_node.send(pipeline_request)  # type: ignore
-

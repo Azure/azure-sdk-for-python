@@ -24,8 +24,8 @@ class HanaInstance(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :ivar location: Resource location
-    :vartype location: str
+    :param location: Resource location
+    :type location: str
     :ivar tags: Resource tags
     :vartype tags: dict[str, str]
     :param hardware_profile: Specifies the hardware settings for the HANA
@@ -50,18 +50,26 @@ class HanaInstance(Resource):
     :vartype proximity_placement_group: str
     :ivar hw_revision: Hardware revision of a HANA instance
     :vartype hw_revision: str
+    :param partner_node_id: ARM ID of another HanaInstance that will share a
+     network with this HanaInstance
+    :type partner_node_id: str
+    :ivar provisioning_state: State of provisioning of the HanaInstance.
+     Possible values include: 'Accepted', 'Creating', 'Updating', 'Failed',
+     'Succeeded', 'Deleting', 'Migrating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.hanaonazure.models.HanaProvisioningStatesEnum
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'location': {'readonly': True},
         'tags': {'readonly': True},
         'hana_instance_id': {'readonly': True},
         'power_state': {'readonly': True},
         'proximity_placement_group': {'readonly': True},
         'hw_revision': {'readonly': True},
+        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -78,6 +86,8 @@ class HanaInstance(Resource):
         'power_state': {'key': 'properties.powerState', 'type': 'str'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'str'},
         'hw_revision': {'key': 'properties.hwRevision', 'type': 'str'},
+        'partner_node_id': {'key': 'properties.partnerNodeId', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -90,3 +100,5 @@ class HanaInstance(Resource):
         self.power_state = None
         self.proximity_placement_group = None
         self.hw_revision = None
+        self.partner_node_id = kwargs.get('partner_node_id', None)
+        self.provisioning_state = None

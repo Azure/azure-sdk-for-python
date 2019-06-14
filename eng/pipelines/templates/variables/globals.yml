@@ -1,2 +1,3 @@
 variables:
   PythonVersion: '3.6'
+  skipComponentGovernanceDetection: true
