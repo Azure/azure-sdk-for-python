@@ -12,11 +12,11 @@ from azure.keyvault.models import StorageAccountAttributes
 
 class KeyVaultSecretTest(KeyvaultTestCase):
 
+    @pytest.mark.skip(reason="Cannot use a ServicePrincipal to execute set_storage_account. See issue azure-sdk-for-python#5858.")
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='kvsa1')
     @KeyVaultPreparer()
     def test_e2e(self, vault, storage_account, resource_group, **kwargs):
-
         if not self.is_live:
             sa_id = '{}/providers/Microsoft.Storage/storageAccounts/{}'.format(resource_group.id, storage_account.name)
         else:
