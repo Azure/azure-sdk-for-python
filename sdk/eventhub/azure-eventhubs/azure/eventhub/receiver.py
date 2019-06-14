@@ -144,6 +144,11 @@ class EventReceiver(object):
                     raise TimeoutError(str(shutdown), shutdown)
             except StopIteration:
                 raise
+            except KeyboardInterrupt:
+                log.info("EventReceiver stops due to keyboard interrupt")
+                print("EventReceiver stopped")
+                self.close()
+                exit()
             except Exception as e:
                 log.info("Unexpected error occurred (%r). Shutting down.", e)
                 error = EventHubError("Receive failed: {}".format(e))
@@ -422,6 +427,11 @@ class EventReceiver(object):
                     log.info("EventReceiver timed out. Shutting down.")
                     self.close(shutdown)
                     raise TimeoutError(str(shutdown), shutdown)
+            except KeyboardInterrupt:
+                log.info("EventReceiver stops due to keyboard interrupt")
+                print("EventReceiver stopped")
+                self.close()
+                exit()
             except Exception as e:
                 log.info("Unexpected error occurred (%r). Shutting down.", e)
                 error = EventHubError("Receive failed: {}".format(e))
