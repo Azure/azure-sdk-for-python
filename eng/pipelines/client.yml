@@ -1,10 +1,11 @@
 trigger: none
 
 variables:
-  ReleaseTag: 'RELEASE_CANDIDATE'
-  TestMarkArgument: 'not cosmosEmulator'
-  PythonVersion: '3.6'
-  skipComponentGovernanceDetection: true
+  - template: variables/globals.yml
+  - name: ReleaseTag
+    value: 'RELEASE_CANDIDATE'
+  - name: TestMarkArgument
+    value: 'not cosmosEmulator'
 
 jobs:
   - template: templates/jobs/archetype-sdk-client.yml

@@ -135,10 +135,13 @@ jobs:
   - job: 'Test_PyPy'
 
     variables:
-      OSName: 'Linux'
-      PythonVersion: 'pypy3'
-      OSVmImage: ubuntu-16.04
-      skipComponentGovernanceDetection: true
+      - template: ../variables/globals.yml
+      - name: OSName
+        value: 'Linux'
+      - name: PythonVersion
+        value: 'pypy3'
+      - name: OSVmImage
+        value: ubuntu-16.04
 
     dependsOn:
       - 'Build'
