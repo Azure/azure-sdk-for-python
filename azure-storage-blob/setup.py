@@ -94,7 +94,7 @@ setup(
     ]),
     install_requires=[
         #'azure-core~=0.0.1',
-        'azure-common>=1.1.5',
+        'azure-common~=1.1',
     ],
     extras_require={
         ":python_version<'3.0'": ['futures'],
