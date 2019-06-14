@@ -148,7 +148,7 @@ class EventReceiver(object):
                 log.info("EventReceiver stops due to keyboard interrupt")
                 print("EventReceiver stopped")
                 self.close()
-                exit()
+                raise
             except Exception as e:
                 log.info("Unexpected error occurred (%r). Shutting down.", e)
                 error = EventHubError("Receive failed: {}".format(e))
@@ -431,7 +431,7 @@ class EventReceiver(object):
                 log.info("EventReceiver stops due to keyboard interrupt")
                 print("EventReceiver stopped")
                 self.close()
-                exit()
+                raise
             except Exception as e:
                 log.info("Unexpected error occurred (%r). Shutting down.", e)
                 error = EventHubError("Receive failed: {}".format(e))
