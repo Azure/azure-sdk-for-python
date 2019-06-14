@@ -28,7 +28,8 @@ from tests.testcase import (
 if sys.version_info >= (3,):
     from urllib.parse import parse_qs, quote
 else:
-    from urlparse import parse_qs, quote
+    from urlparse import parse_qs
+    from urllib2 import quote
 
 _AUTHORIZATION_HEADER_NAME = 'Authorization'
 

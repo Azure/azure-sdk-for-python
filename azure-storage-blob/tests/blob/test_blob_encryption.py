@@ -201,6 +201,8 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
     @record
     def test_invalid_value_kek_unwrap(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return 
         # Arrange
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
@@ -264,6 +266,8 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
     @record
     def test_get_blob_nonmatching_kid(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return 
         # Arrange
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
