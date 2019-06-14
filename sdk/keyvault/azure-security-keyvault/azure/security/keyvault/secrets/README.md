@@ -65,7 +65,7 @@ Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZU
     credential = AsyncDefaultAzureCredential()
 
     # Create a new secret client using a client secret credential
-    secret_client = SecretClient(vault_url=vault_url, credential=credential)
+    secret_client = SecretClient(vault_url=<your-vault-url>, credential=credential)
 ```
 ## Key concepts
 ### Secret
@@ -94,7 +94,7 @@ The following section provides several code snippets using the above created `se
 ```python
     secret = secret_client.set_secret("secret-name", "secret-value", enabled=True)
 
-    print(secret.id)
+    print(secret.name)
     print(secret.value)
     print(secret.version)
     print(secret.enabled)
@@ -105,7 +105,7 @@ The following section provides several code snippets using the above created `se
 ```python
     secret = secret_client.get_secret("secret-name")
 
-    print(secret.id)
+    print(secret.name)
     print(secret.value)
 ```
 
@@ -119,7 +119,7 @@ The following section provides several code snippets using the above created `se
 
     updated_secret = secret_client.update_secret("secret-name", content_type=content_type, tags=tags)
 
-    print(updated_secret.id)
+    print(updated_secret.name)
     print(updated_secret.value)
     print(updated_secret.version)
     print(updated_secret.updated)
@@ -133,7 +133,6 @@ The following section provides several code snippets using the above created `se
 ```python
     secret = secret_client.delete_secret("secret-name")
 
-    print(deleted_secret.id)
     print(deleted_secret.name)
     print(deleted_secret.deleted_date)
 ```
@@ -144,7 +143,6 @@ This example lists all the secrets in the specified Key Vault.
 
     for secret in secrets:
         # the list doesn't include values or versions of the secrets
-        print(secret.id)
         print(secret.name)
 ```
 
@@ -167,7 +165,7 @@ This example creates a secret in the specified Key Vault with the specified opti
     # Sends secret data and asynchronously waits until acknowledgement is received
     secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True)
 
-    print(secret.id)
+    print(secret.name)
     print(secret.value)
     print(secret.version)
     print(secret.enabled)
@@ -180,7 +178,6 @@ This example lists all the secrets in the specified Key Vault.
     # Recieve secrets data asynchronously from Key Vault service
     async for secret in secrets:
         # the list doesn't include values or versions of the secrets
-        print(secret.id)
         print(secret.name)
 ```
 
@@ -191,12 +188,10 @@ The Key Vault APIs generate exceptions that can fall into one of the azure-core 
 For example, if you try to retrieve a secret after it is deleted a `404` error is returned, indicating resource not found. In the following snippet, the error is handled gracefully by catching the exception and displaying additional information about the error.
 ```python
 try:
-    client.get_secret("deleted_secret")
+    secret_client.get_secret("deleted_secret")
 except ResourceNotFoundError as e:
-    if e.code == 404:
-        print(e.message)
-    else:
-        raise
+    print(e.message)
+    raise
 
 Output: "Secret not found:deleted_secret"
 ```
@@ -212,7 +207,7 @@ Http request and response details are printed to stdout with this logging config
 ## Next steps
 Several KeyVault Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Key Vault:
 * [test_examples_secrets_sync.py](TODO) and [test_examples_secrets_async.py](TODO) - Contains the code snippets working with Key Vault secrets.
-* [hello_world.py](TODO) and [hello_world_async.py](TODO) - Python code for working with Azure key Vault, including:
+* [hello_world.py](TODO) and [hello_world_async.py](TODO) - Python code for working with Azure Key Vault, including:
   * Create a secret
   * Get an existing secret
   * Update an existing secret
