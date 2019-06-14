@@ -51,8 +51,6 @@ class EventHubManagementClient(MultiApiClientMixin, SDKClient):
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
-            'clusters': '2018-01-01-preview',
-            'configuration': '2018-01-01-preview',
         }},
         _PROFILE_TAG + " latest"
     )
