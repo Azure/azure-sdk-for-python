@@ -19,6 +19,7 @@ from .entities_operations import EntitiesOperations
 from .office_consents_operations import OfficeConsentsOperations
 from .product_settings_operations import ProductSettingsOperations
 from .cases_aggregations_operations import CasesAggregationsOperations
+from .entity_queries_operations import EntityQueriesOperations
 
 __all__ = [
     'Operations',
@@ -31,4 +32,5 @@ __all__ = [
     'OfficeConsentsOperations',
     'ProductSettingsOperations',
     'CasesAggregationsOperations',
+    'EntityQueriesOperations',
 ]
