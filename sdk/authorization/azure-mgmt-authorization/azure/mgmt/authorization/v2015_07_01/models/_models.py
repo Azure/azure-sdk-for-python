@@ -21,29 +21,6 @@ class ClassicAdministrator(Model):
     :type name: str
     :param type: The type of the administrator.
     :type type: str
-    :param properties: Properties for the classic administrator.
-    :type properties:
-     ~azure.mgmt.authorization.v2015_07_01.models.ClassicAdministratorProperties
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ClassicAdministratorProperties'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ClassicAdministrator, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.type = kwargs.get('type', None)
-        self.properties = kwargs.get('properties', None)
-
-
-class ClassicAdministratorProperties(Model):
-    """Classic Administrator properties.
-
     :param email_address: The email address of the administrator.
     :type email_address: str
     :param role: The role of the administrator.
@@ -51,12 +28,18 @@ class ClassicAdministratorProperties(Model):
     """
 
     _attribute_map = {
-        'email_address': {'key': 'emailAddress', 'type': 'str'},
-        'role': {'key': 'role', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'email_address': {'key': 'properties.emailAddress', 'type': 'str'},
+        'role': {'key': 'properties.role', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(ClassicAdministratorProperties, self).__init__(**kwargs)
+        super(ClassicAdministrator, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
         self.email_address = kwargs.get('email_address', None)
         self.role = kwargs.get('role', None)
 

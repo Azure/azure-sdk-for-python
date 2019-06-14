@@ -21,29 +21,6 @@ class ClassicAdministrator(Model):
     :type name: str
     :param type: The type of the administrator.
     :type type: str
-    :param properties: Properties for the classic administrator.
-    :type properties:
-     ~azure.mgmt.authorization.v2015_07_01.models.ClassicAdministratorProperties
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ClassicAdministratorProperties'},
-    }
-
-    def __init__(self, *, id: str=None, name: str=None, type: str=None, properties=None, **kwargs) -> None:
-        super(ClassicAdministrator, self).__init__(**kwargs)
-        self.id = id
-        self.name = name
-        self.type = type
-        self.properties = properties
-
-
-class ClassicAdministratorProperties(Model):
-    """Classic Administrator properties.
-
     :param email_address: The email address of the administrator.
     :type email_address: str
     :param role: The role of the administrator.
@@ -51,12 +28,18 @@ class ClassicAdministratorProperties(Model):
     """
 
     _attribute_map = {
-        'email_address': {'key': 'emailAddress', 'type': 'str'},
-        'role': {'key': 'role', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'email_address': {'key': 'properties.emailAddress', 'type': 'str'},
+        'role': {'key': 'properties.role', 'type': 'str'},
     }
 
-    def __init__(self, *, email_address: str=None, role: str=None, **kwargs) -> None:
-        super(ClassicAdministratorProperties, self).__init__(**kwargs)
+    def __init__(self, *, id: str=None, name: str=None, type: str=None, email_address: str=None, role: str=None, **kwargs) -> None:
+        super(ClassicAdministrator, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.type = type
         self.email_address = email_address
         self.role = role
 
