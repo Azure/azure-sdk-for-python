@@ -1,9 +1,7 @@
 # Azure Key Vault Secret client library for Python
 Azure Key Vault is a cloud service that provides a secure storage of secrets, such as passwords and database connection strings. Secret client library allows you to securely store and tightly control the access to tokens, passwords, API keys, and other secrets. This library offers operations to create, retrieve, update, delete, purge,backup, restore and and list the secrets and its versions.
 
-Use the secret client library to create and manage secrets.
-
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets) | [Package (Pypi)](TODO) | [API reference documentation](TODO) | [Product documentation](https://docs.microsoft.com/en-us/azure/key-vault/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets) | [Package (PyPI)](TODO) | [API reference documentation](TODO) | [Product documentation](https://docs.microsoft.com/en-us/azure/key-vault/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets/samples)
 ## Getting started
 ### Install the package
 Install the Azure Key Vault client library for Python with [pip](https://pypi.org/project/pip/):
@@ -22,7 +20,7 @@ az keyvault create --resource-group <your-resource-group-name> --name <your-key-
 ```
 
 ### Authenticate the client
-In order to interact with the Key Vault service, you'll need to create an instance of the [KeyVaultClient](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault) class. You need a **vault url**, **client secret credentials (client id, client secret, tenant id)** and a [resource url](https://vault.azure.net) to instantiate a client object.
+In order to interact with the Key Vault service, you'll need to create an instance of the [SecretClient](TODO-rst-docs) class. You would need a **vault url** and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object. Specifying Client secret credentials are being used in this getting started section but you can find more ways to authenticate with [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity)
 
  #### Create/Get credentials
 Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to create/get client secret credentials.
@@ -34,18 +32,18 @@ Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to creat
     Output:
     ```json
     {
-        "appId": "fa7c8686-c4f5-4639-ab88-497ee122bad3",
-        "displayName": "myspn",
-        "name": "http://myspn",
-        "password": "30e5c628-a322-3497-8429-52f2f98788c7",
-        "tenant": "72f988bf-86f1-41fg-91ab-2d7cd011db47"
+        "appId": "generated-app-ID",
+        "displayName": "dummy-app-name",
+        "name": "http://dummy-app-name",
+        "password": "random-password",
+        "tenant": "tenant-ID"
     }
     ```
-* Use the above returned credentials information to set **AZURE_CLIENT_ID**(appId), **AZURE_CLIENT_SECRET**(password) and **AZURE_TENANT_ID**(tenant) environment variables.
+* Use the above returned credentials information to set **AZURE_CLIENT_ID**(appId), **AZURE_CLIENT_SECRET**(password) and **AZURE_TENANT_ID**(tenant) environment variables. The following example shows a way to do this in Bash:
   ```Bash
-    export AZURE_CLIENT_ID="fa7c8686-c4f5-4639-ab88-497ee122bad3"
-    export AZURE_CLIENT_SECRET="30e5c628-a322-3497-8429-52f2f98788c7"
-    export AZURE_TENANT_ID="72f988bf-86f1-41fg-91ab-2d7cd011db47"
+    export AZURE_CLIENT_ID="generated-app-ID"
+    export AZURE_CLIENT_SECRET="random-password"
+    export AZURE_TENANT_ID="tenant-ID"
   ```
 
 * Grant the above mentioned application authorization to perform secret operations on the keyvault:
@@ -55,16 +53,21 @@ Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to creat
     > --secret-permissions:
     > Accepted values: backup, delete, get, list, purge, recover, restore, set
 
+* Use the above mentioned Key Vault name to retreive details of your Vault which also contains your Key Vault URL:
+    ```Bash
+    az keyvault show --name <your-key-vault-name> 
+    ```
+
 #### Create Secret client
-Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables, you can create the [SecretClient](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets/_client.py):
+Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables and replaced <your-vault-url> with the above returned URI, you can create the [SecretClient](TODO-rst-docs):
 
 ```python
     from azure.identity import DefaultAzureCredential
     from azure.security.keyvault import SecretClient
 
-    credential = AsyncDefaultAzureCredential()
+    credential = DefaultAzureCredential()
 
-    # Create a new secret client using a client secret credential
+    # Create a new secret client using the default credential
     secret_client = SecretClient(vault_url=<your-vault-url>, credential=credential)
 ```
 ## Key concepts
@@ -73,8 +76,8 @@ Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZU
 * expires: Identifies the expiration time on or after which the secret data should not be retrieved.
 * not_before: Identifies the time after which the secret will be active.
 * enabled: Specifies whether the secret data can be retrieved.
-* created: Indicates when this version of the secret was created.(read-only)
-* updated: Indicates when this version of the secret was updated.(read-only)
+* created: Indicates when this version of the secret was created.
+* updated: Indicates when this version of the secret was updated.
 
 ### Secret Client:
 The Secret client performs the interactions with the Azure Key Vault service for getting, setting, updating,deleting, and listing secrets and its versions. An asynchronous and synchronous, SecretClient, client exists in the SDK allowing for selection of a client based on an application's use case. Once you've initialized a SecretClient, you can interact with the primary resource types in Key Vault.
@@ -148,21 +151,20 @@ This example lists all the secrets in the specified Key Vault.
 
 ### Async operations
 Python’s [asyncio package](https://pypi.org/project/asyncio/) (introduced in Python 3.4) and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
+The package supports async API on Python 3.5+ and is identical to synchronous API. 
 The following examples provide code snippets for performing async operations in the Secret Client library:
 
 ### Async create a secret
 This example creates a secret in the specified Key Vault with the specified optional arguments.
 ```python
-    import asyncio
-
     from azure.identity import AsyncDefaultAzureCredential
     from azure.security.keyvault.aio import SecretClient
 
+    # for async operations use AsyncDefaultAzureCredential
     credential = AsyncDefaultAzureCredential()
-    # Create a new secret client using a client secret credential
+    # Create a new secret client using the default credential
     secret_client = SecretClient(vault_url=vault_url, credential=credential)
 
-    # Sends secret data and asynchronously waits until acknowledgement is received
     secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True)
 
     print(secret.name)
@@ -175,7 +177,6 @@ This example lists all the secrets in the specified Key Vault.
 ```python
     secrets = secret_client.list_secrets()
 
-    # Recieve secrets data asynchronously from Key Vault service
     async for secret in secrets:
         # the list doesn't include values or versions of the secrets
         print(secret.name)
@@ -183,7 +184,7 @@ This example lists all the secrets in the specified Key Vault.
 
 ## Troubleshooting
 ### General
-The Key Vault APIs generate exceptions that can fall into one of the azure-core defined exceptions. For more detailed infromation about exceptions and how to deal with them, see [Azure Core exceptions](TODO).
+Key Vault clients raise exceptions defined in azure-core. For more detailed infromation about exceptions and how to deal with them, see [Azure Core exceptions](TODO).
 
 For example, if you try to retrieve a secret after it is deleted a `404` error is returned, indicating resource not found. In the following snippet, the error is handled gracefully by catching the exception and displaying additional information about the error.
 ```python
