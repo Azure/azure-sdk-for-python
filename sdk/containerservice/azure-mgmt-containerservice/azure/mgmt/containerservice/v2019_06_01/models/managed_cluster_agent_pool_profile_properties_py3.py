@@ -124,7 +124,7 @@ class ManagedClusterAgentPoolProfileProperties(Model):
     :type scale_set_eviction_policy: str or
      ~azure.mgmt.containerservice.v2019_06_01.models.ScaleSetEvictionPolicy
     :param node_taints: Taints added to new nodes during node pool create and
-     scale.
+     scale. For example, key=value:NoSchedule.
     :type node_taints: list[str]
     """
 
