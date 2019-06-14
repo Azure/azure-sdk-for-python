@@ -6,16 +6,16 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show sending events to an Event Hub partition.
+An example to show iterator receiver.
 """
 
-# pylint: disable=C0111
-
-import logging
-import time
 import os
+import time
+import logging
+import asyncio
 
-from azure.eventhub import EventHubClient, EventData, EventHubSharedKeyCredential
+from azure.eventhub.aio import EventHubClient
+from azure.eventhub import EventPosition, EventHubSharedKeyCredential, EventData
 
 import examples
 logger = examples.get_logger(logging.INFO)
@@ -27,28 +27,23 @@ EVENT_HUB = os.environ.get('EVENT_HUB_NAME')
 USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
-try:
+EVENT_POSITION = EventPosition.first_available_event()
+
+
+async def iter_receiver(receiver):
+    async with receiver:
+        async for item in receiver:
+            print(item.body_as_str(), item.offset.value, receiver.name)
+
+
+async def main():
     if not HOSTNAME:
         raise ValueError("No EventHubs URL supplied.")
-
     client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
                             network_tracing=False)
-    sender = client.create_sender(partition_id="0")
+    receiver = client.create_receiver(partition_id="0", event_position=EVENT_POSITION)
+    await iter_receiver(receiver)
 
-    ed = EventData("msg")
+if __name__ == '__main__':
+    asyncio.run(main())
 
-    try:
-        start_time = time.time()
-        with sender:
-            for i in range(100):
-                logger.info("Sending message: {}".format(i))
-                sender.send(ed)
-    except:
-        raise
-    finally:
-        end_time = time.time()
-        run_time = end_time - start_time
-        logger.info("Runtime: {} seconds".format(run_time))
-
-except KeyboardInterrupt:
-    pass

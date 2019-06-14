@@ -1,9 +1,9 @@
 from .event_hubs_client_async import EventHubClient
-from .receiver_async import Receiver
-from .sender_async import Sender
+from .receiver_async import EventReceiver
+from .sender_async import EventSender
 
 __all__ = [
     "EventHubClient",
-    "Receiver",
-    "Sender"
+    "EventReceiver",
+    "EventSender"
 ]

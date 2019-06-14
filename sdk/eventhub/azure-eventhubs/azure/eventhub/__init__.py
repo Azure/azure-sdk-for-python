@@ -3,31 +3,33 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-__version__ = "1.3.1"
+__version__ = "2.0.0-preview.1"
 
 from azure.eventhub.common import EventData, EventPosition
-from azure.eventhub.error import EventHubError, EventDataError, ConnectError, AuthenticationError
+from azure.eventhub.error import EventHubError, EventDataError, ConnectError, \
+    AuthenticationError, EventDataSendError, ConnectionLostError
 from azure.eventhub.client import EventHubClient
-from azure.eventhub.sender import Sender
-from azure.eventhub.receiver import Receiver
+from azure.eventhub.sender import EventSender
+from azure.eventhub.receiver import EventReceiver
 from .constants import MessageSendResult
 from .constants import TransportType
-from .common import FIRST_AVAILABLE, NEW_EVENTS_ONLY, SharedKeyCredentials, SASTokenCredentials
+from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 
 __all__ = [
     "__version__",
     "EventData",
     "EventHubError",
     "ConnectError",
+    "ConnectionLostError",
     "EventDataError",
+    "EventDataSendError",
     "AuthenticationError",
     "EventPosition",
     "EventHubClient",
-    "Sender",
-    "Receiver",
+    "EventSender",
+    "EventReceiver",
     "MessageSendResult",
     "TransportType",
-    "FIRST_AVAILABLE", "NEW_EVENTS_ONLY",
-    "SharedKeyCredentials",
-    "SASTokenCredentials",
+    "EventHubSharedKeyCredential",
+    "EventHubSASTokenCredential",
 ]

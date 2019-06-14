@@ -15,6 +15,7 @@ try:
     from urllib import unquote_plus, urlencode, quote_plus
 except ImportError:
     from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
+from typing import Any, List, Dict
 
 import uamqp
 from uamqp import Message, AMQPClient
@@ -22,12 +23,12 @@ from uamqp import authentication
 from uamqp import constants
 
 from azure.eventhub import __version__
-from azure.eventhub.sender import Sender
-from azure.eventhub.receiver import Receiver
-from azure.eventhub.common import parse_sas_token
+from azure.eventhub.sender import EventSender
+from azure.eventhub.receiver import EventReceiver
+from azure.eventhub.common import parse_sas_token, EventPosition
 from azure.eventhub.error import EventHubError
 from .client_abstract import EventHubClientAbstract
-from .common import SASTokenCredentials, SharedKeyCredentials
+from .common import EventHubSASTokenCredential, EventHubSharedKeyCredential
 
 
 log = logging.getLogger(__name__)
@@ -63,7 +64,7 @@ class EventHubClient(EventHubClientAbstract):
         auth_timeout = self.config.auth_timeout
 
         # TODO: the following code can be refactored to create auth from classes directly instead of using if-else
-        if isinstance(self.credential, SharedKeyCredentials):
+        if isinstance(self.credential, EventHubSharedKeyCredential):
             username = username or self._auth_config['username']
             password = password or self._auth_config['password']
             if "@sas.root" in username:
@@ -73,7 +74,7 @@ class EventHubClient(EventHubClientAbstract):
                 self.auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
                 transport_type=transport_type)
 
-        elif isinstance(self.credential, SASTokenCredentials):
+        elif isinstance(self.credential, EventHubSASTokenCredential):
             token = self.credential.get_sas_token()
             try:
                 expiry = int(parse_sas_token(token)['se'])
@@ -93,16 +94,14 @@ class EventHubClient(EventHubClientAbstract):
                                                get_jwt_token, http_proxy=http_proxy,
                                                transport_type=transport_type)
 
-
     def get_properties(self):
+        # type:() -> Dict[str, Any]
         """
-        Get details on the specified EventHub.
+        Get properties of the specified EventHub.
         Keys in the details dictionary include:
 
-            -'name'
-            -'type'
+            -'path'
             -'created_at'
-            -'partition_count'
             -'partition_ids'
 
         :rtype: dict
@@ -132,21 +131,27 @@ class EventHubClient(EventHubClientAbstract):
             mgmt_client.close()
 
     def get_partition_ids(self):
+        # type:() -> List[str]
+        """
+        Get partition ids of the specified EventHub.
+
+        :rtype: list[str]
+        """
         return self.get_properties()['partition_ids']
 
     def get_partition_properties(self, partition):
+        # type:(str) -> Dict[str, str]
         """
-        Get information on the specified partition async.
+        Get properties of the specified partition.
         Keys in the details dictionary include:
 
-            -'name'
-            -'type'
-            -'partition'
-            -'begin_sequence_number'
+            -'event_hub_path'
+            -'id'
+            -'beginning_sequence_number'
             -'last_enqueued_sequence_number'
             -'last_enqueued_offset'
             -'last_enqueued_time_utc'
-            -'is_partition_empty'
+            -'is_empty'
 
         :param partition: The target partition id.
         :type partition: str
@@ -171,7 +176,6 @@ class EventHubClient(EventHubClientAbstract):
             output = {}
             if partition_info:
                 output['event_hub_path'] = partition_info[b'name'].decode('utf-8')
-                # output['type'] = partition_info[b'type'].decode('utf-8')
                 output['id'] = partition_info[b'partition'].decode('utf-8')
                 output['beginning_sequence_number'] = partition_info[b'begin_sequence_number']
                 output['last_enqueued_sequence_number'] = partition_info[b'last_enqueued_sequence_number']
@@ -184,24 +188,28 @@ class EventHubClient(EventHubClientAbstract):
             mgmt_client.close()
 
     def create_receiver(
-            self, partition_id, consumer_group="$Default", event_position=None, exclusive_receiver_priority=None, operation=None,
-            prefetch=None,
+            self, partition_id, consumer_group="$Default", event_position=EventPosition.first_available_event(),
+            exclusive_receiver_priority=None, operation=None, prefetch=None,
     ):
+        # type: (str, str, EventPosition, int, str, int) -> EventReceiver
         """
-        Add a receiver to the client for a particular consumer group and partition.
+        Create a receiver to the client for a particular consumer group and partition.
 
-        :param consumer_group: The name of the consumer group.
+        :param partition_id: The ID of the partition.
+        :type partition_id: str
+        :param consumer_group: The name of the consumer group. Default value is `$Default`.
         :type consumer_group: str
-        :param partition: The ID of the partition.
-        :type partition: str
         :param event_position: The position from which to start receiving.
         :type event_position: ~azure.eventhub.common.EventPosition
-        :param prefetch: The message prefetch count of the receiver. Default is 300.
-        :type prefetch: int
-        :operation: An optional operation to be appended to the hostname in the source URL.
+        :param exclusive_receiver_priority: The priority of the exclusive receiver. The client will create an exclusive
+         receiver if exclusive_receiver_priority is set.
+        :type exclusive_receiver_priority: int
+        :param operation: An optional operation to be appended to the hostname in the source URL.
          The value must start with `/` character.
         :type operation: str
-        :rtype: ~azure.eventhub.receiver.Receiver
+        :param prefetch: The message prefetch count of the receiver. Default is 300.
+        :type prefetch: int
+        :rtype: ~azure.eventhub.receiver.EventReceiver
 
         Example:
             .. literalinclude:: ../examples/test_examples_eventhub.py
@@ -217,32 +225,27 @@ class EventHubClient(EventHubClientAbstract):
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition_id)
-        handler = Receiver(
+        handler = EventReceiver(
             self, source_url, event_position=event_position, exclusive_receiver_priority=exclusive_receiver_priority,
             prefetch=prefetch)
         return handler
 
     def create_sender(self, partition_id=None, operation=None, send_timeout=None):
+        # type: (str, str, float) -> EventSender
         """
-        Add a sender to the client to send EventData object to an EventHub.
+        Create a sender to the client to send EventData object to an EventHub.
 
-        :param partition: Optionally specify a particular partition to send to.
+        :param partition_id: Optionally specify a particular partition to send to.
          If omitted, the events will be distributed to available partitions via
          round-robin.
-        :type parition: str
-        :operation: An optional operation to be appended to the hostname in the target URL.
+        :type partition_id: str
+        :param operation: An optional operation to be appended to the hostname in the target URL.
          The value must start with `/` character.
         :type operation: str
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: int
-        :param keep_alive: The time interval in seconds between pinging the connection to keep it alive during
-         periods of inactivity. The default value is 30 seconds. If set to `None`, the connection will not
-         be pinged.
-        :type keep_alive: int
-        :param auto_reconnect: Whether to automatically reconnect the sender if a retryable error occurs.
-         Default value is `True`.
-        :rtype: ~azure.eventhub.sender.Sender
+        :rtype: ~azure.eventhub.sender.EventSender
 
         Example:
             .. literalinclude:: ../examples/test_examples_eventhub.py
@@ -258,6 +261,6 @@ class EventHubClient(EventHubClientAbstract):
             target = target + operation
         send_timeout = self.config.send_timeout if send_timeout is None else send_timeout
 
-        handler = Sender(
+        handler = EventSender(
             self, target, partition=partition_id, send_timeout=send_timeout)
         return handler

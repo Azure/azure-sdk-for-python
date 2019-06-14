@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show receiving events from an Event Hub partition as an epoch receiver.
+An example to show running concurrent receivers.
 """
 
 import os
@@ -15,10 +15,11 @@ import logging
 import asyncio
 
 from azure.eventhub.aio import EventHubClient
-from azure.eventhub import EventHubSharedKeyCredential
+from azure.eventhub import EventPosition, EventHubSharedKeyCredential
 
 import examples
 logger = examples.get_logger(logging.INFO)
+
 
 HOSTNAME = os.environ.get('EVENT_HUB_HOSTNAME')  # <mynamespace>.servicebus.windows.net
 EVENT_HUB = os.environ.get('EVENT_HUB_NAME')
@@ -26,18 +27,18 @@ EVENT_HUB = os.environ.get('EVENT_HUB_NAME')
 USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
-EXCLUSIVE_RECEIVER_PRIORITY = 42
-PARTITION = "0"
+EVENT_POSITION = EventPosition.first_available_event()
 
 
-async def pump(client, exclusive_receiver_priority):
-    receiver = client.create_receiver(partition_id=PARTITION, exclusive_receiver_priority=exclusive_receiver_priority)
+async def pump(client, partition):
+    receiver = client.create_receiver(partition_id=partition, event_position=EVENT_POSITION, prefetch=5)
     async with receiver:
         total = 0
         start_time = time.time()
-        for event_data in await receiver.receive(timeout=5):
+        for event_data in await receiver.receive(timeout=10):
             last_offset = event_data.offset
             last_sn = event_data.sequence_number
+            print("Received: {}, {}".format(last_offset.value, last_sn))
             total += 1
         end_time = time.time()
         run_time = end_time - start_time
@@ -50,7 +51,10 @@ try:
     loop = asyncio.get_event_loop()
     client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
                             network_tracing=False)
-    loop.run_until_complete(pump(client, 20))
+    tasks = [
+        asyncio.ensure_future(pump(client, "0")),
+        asyncio.ensure_future(pump(client, "1"))]
+    loop.run_until_complete(asyncio.wait(tasks))
     loop.close()
 
 except KeyboardInterrupt:

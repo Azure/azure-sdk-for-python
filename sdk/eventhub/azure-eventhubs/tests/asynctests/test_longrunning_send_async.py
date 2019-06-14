@@ -104,13 +104,12 @@ async def test_long_running_partition_send_async(connection_str):
     if args.conn_str:
         client = EventHubClient.from_connection_string(
             args.conn_str,
-            eventhub=args.eventhub, network_tracing=True)
+            event_hub_path=args.eventhub, network_tracing=True)
     elif args.address:
-        client = EventHubClient(
-            args.address,
-            username=args.sas_policy,
-            password=args.sas_key,
-            auth_timeout=500)
+        client = EventHubClient(host=args.address,
+                                event_hub_path=args.eventhub,
+                                credential=EventHubSharedKeyCredential(args.sas_policy, args.sas_key),
+                                network_tracing=False)
     else:
         try:
             import pytest
@@ -134,9 +133,7 @@ async def test_long_running_partition_send_async(connection_str):
         results = await asyncio.gather(*pumps, return_exceptions=True)
         assert not results
     except Exception as e:
-        logger.error("Sender failed: {}".format(e))
-    finally:
-        pass
+        logger.error("EventSender failed: {}".format(e))
 
 
 if __name__ == '__main__':

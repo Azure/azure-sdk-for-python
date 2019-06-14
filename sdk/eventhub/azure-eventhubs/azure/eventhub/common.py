@@ -82,7 +82,7 @@ class EventData(object):
             self._annotations = message.annotations
             self._app_properties = message.application_properties
         else:
-            if isinstance(body, list) and body:
+            if body and isinstance(body, list):
                 self.message = Message(body[0], properties=self.msg_properties)
                 for more in body[1:]:
                     self.message._body.append(more)  # pylint: disable=protected-access
@@ -105,11 +105,11 @@ class EventData(object):
             dic['enqueued_time'] = str(self.enqueued_time)
         if self.device_id:
             dic['device_id'] = str(self.device_id)
-        if self._batching_label:
-            dic['_batching_label'] = str(self._batching_label)
-
-
+        if self.partition_key:
+            dic['partition_key'] = str(self.partition_key)
         return str(dic)
+
+
 
     @property
     def sequence_number(self):
@@ -155,7 +155,7 @@ class EventData(object):
         return self._annotations.get(EventData.PROP_DEVICE_ID, None)
 
     @property
-    def _batching_label(self):
+    def partition_key(self):
         """
         The partition key of the event data object.
 
@@ -166,8 +166,7 @@ class EventData(object):
         except KeyError:
             return self._annotations.get(EventData.PROP_PARTITION_KEY, None)
 
-    @_batching_label.setter
-    def _batching_label(self, value):
+    def _set_partition_key(self, value):
         """
         Set the partition key of the event data object.
 
@@ -256,11 +255,11 @@ class EventData(object):
 
 
 class _BatchSendEventData(EventData):
-    def __init__(self, batch_event_data, batching_label=None):
+    def __init__(self, batch_event_data, partition_key=None):
         self.message = BatchMessage(data=batch_event_data, multi_messages=False, properties=None)
-        self.set_batching_label(batching_label)
+        self._set_partition_key(partition_key)
 
-    def set_batching_label(self, value):
+    def _set_partition_key(self, value):
         if value:
             annotations = self.message.annotations
             if annotations is None:
@@ -292,9 +291,9 @@ class EventPosition(object):
 
     def __init__(self, value, inclusive=False):
         """
-        Initialize Offset.
+        Initialize EventPosition.
 
-        :param value: The offset value.
+        :param value: The event position value.
         :type value: ~datetime.datetime or int or str
         :param inclusive: Whether to include the supplied value as the start point.
         :type inclusive: bool
@@ -305,7 +304,7 @@ class EventPosition(object):
     def __str__(self):
         return str(self.value)
 
-    def selector(self):
+    def _selector(self):
         """
         Creates a selector expression of the offset.
 
@@ -319,34 +318,81 @@ class EventPosition(object):
             return ("amqp.annotation.x-opt-sequence-number {} '{}'".format(operator, self.value)).encode('utf-8')
         return ("amqp.annotation.x-opt-offset {} '{}'".format(operator, self.value)).encode('utf-8')
 
-    @staticmethod
-    def first_available():
-        return FIRST_AVAILABLE
+    @classmethod
+    def first_available_event(cls):
+        """
+        Get the beginning of the event stream.
+
+        :rtype: azure.eventhub.common.EventPosition
+        """
+
+        return cls("-1")
 
     @classmethod
     def new_events_only(cls):
-        return NEW_EVENTS_ONLY
+        """
+        Get the end of the event stream.
 
-    @staticmethod
-    def from_offset(offset, inclusive=False):
-        return EventPosition(offset, inclusive)
+        :rtype: azure.eventhub.common.EventPosition
+        """
 
-    @staticmethod
-    def from_sequence(sequence, inclusive=False):
-        return EventPosition(sequence, inclusive)
+        return cls("@latest")
 
-    @staticmethod
-    def from_enqueued_time(enqueued_time, inclusive=False):
-        return EventPosition(enqueued_time, inclusive)
+    @classmethod
+    def from_offset(cls, offset, inclusive=False):
+        """
+        Get the event position from/after the specified offset.
 
+        :param offset: the offset value
+        :type offset: str
+        :param inclusive: Whether to include the supplied value as the start point.
+        :type inclusive: bool
+        :rtype: azure.eventhub.common.EventPosition
+        """
 
-FIRST_AVAILABLE = EventPosition("-1")
-NEW_EVENTS_ONLY = EventPosition("@latest")
+        return cls(offset, inclusive)
+
+    @classmethod
+    def from_sequence(cls, sequence, inclusive=False):
+        """
+        Get the event position from/after the specified sequence number.
+
+        :param sequence: the sequence number
+        :type sequence: int, long
+        :param inclusive: Whether to include the supplied value as the start point.
+        :type inclusive: bool
+        :rtype: azure.eventhub.common.EventPosition
+        """
+
+        return cls(sequence, inclusive)
+
+    @classmethod
+    def from_enqueued_time(cls, enqueued_time, inclusive=False):
+        """
+        Get the event position from/after the specified enqueue time.
+
+        :param enqueued_time: the enqueue datetime
+        :type enqueued_time: datetime.datetime
+        :param inclusive: Whether to include the supplied value as the start point.
+        :type inclusive: bool
+        :rtype: azure.eventhub.common.EventPosition
+        """
+
+        return cls(enqueued_time, inclusive)
 
 
 # TODO: move some behaviors to these two classes.
-class SASTokenCredentials(object):
+class EventHubSASTokenCredential(object):
+    """
+    SAS token used for authentication.
+    """
     def __init__(self, token):
+        """
+        :param token: A SAS token or function that returns a SAS token. If a function is supplied,
+         it will be used to retrieve subsequent tokens in the case of token expiry. The function should
+         take no arguments.
+        :type token: str or callable
+        """
         self.token = token
 
     def get_sas_token(self):
@@ -356,13 +402,23 @@ class SASTokenCredentials(object):
             return self.token
 
 
-class SharedKeyCredentials(object):
+class EventHubSharedKeyCredential(object):
+    """
+    The shared access key credential used for authentication.
+    """
     def __init__(self, policy, key):
+        """
+        :param policy: The name of the shared access policy.
+        :type policy: str
+        :param key: The shared access key.
+        :type key: str
+        """
+
         self.policy = policy
         self.key = key
 
 
-class Address(object):
+class _Address(object):
     def __init__(self, hostname=None, path=None):
         self.hostname = hostname
         self.path = path

@@ -5,7 +5,7 @@
 
 from uamqp import types, constants, errors
 import six
-from azure.core import AzureError
+from azure.core.exceptions import AzureError
 
 _NO_RETRY_ERRORS = (
     b"com.microsoft:argument-out-of-range",
@@ -14,6 +14,7 @@ _NO_RETRY_ERRORS = (
     b"com.microsoft:precondition-failed",
     b"com.microsoft:argument-error"
 )
+
 
 def _error_handler(error):
     """
@@ -95,14 +96,46 @@ class EventHubError(AzureError):
             self.details = details
 
 
-class AuthenticationError(EventHubError):
+class ConnectionLostError(EventHubError):
+    """Connection to event hub is lost. SDK will retry. So this shouldn't happen.
+
+    """
     pass
 
 
 class ConnectError(EventHubError):
+    """Fail to connect to event hubs
+
+    """
+    pass
+
+
+class AuthenticationError(ConnectError):
+    """Fail to connect to event hubs because of authentication problem
+
+
+    """
     pass
 
 
 class EventDataError(EventHubError):
+    """Problematic event data so the send will fail at client side
+
+    """
     pass
+
+
+class EventDataSendError(EventHubError):
+    """Service returns error while an event data is being sent
+
+    """
+    pass
+
+'''
+class ConnectionTimeoutError(ConnectError):
+    """Time out when accessing event hub service
+    Should retry?
+
+    """
+'''
 

@@ -14,6 +14,7 @@ from azure.eventhub import (
     EventHubError,
     EventHubClient)
 
+SLEEP = False
 
 @pytest.mark.liveTest
 def test_send_with_long_interval_sync(connstr_receivers):
@@ -23,12 +24,17 @@ def test_send_with_long_interval_sync(connstr_receivers):
     with sender:
         sender.send(EventData(b"A single event"))
         for _ in range(1):
-            time.sleep(300)
+            if SLEEP:
+                time.sleep(300)
+            else:
+                sender._handler._connection._conn.destroy()
             sender.send(EventData(b"A single event"))
 
     received = []
     for r in receivers:
-       received.extend(r.receive(timeout=1))
+        if not SLEEP:
+            r._handler._connection._conn.destroy()
+        received.extend(r.receive(timeout=3))
 
     assert len(received) == 2
     assert list(received[0].body)[0] == b"A single event"
@@ -42,16 +48,23 @@ def test_send_with_forced_conn_close_sync(connstr_receivers):
     with sender:
         sender.send(EventData(b"A single event"))
         sender._handler._connection._conn.destroy()
-        time.sleep(300)
+        if SLEEP:
+            time.sleep(300)
+        else:
+            sender._handler._connection._conn.destroy()
         sender.send(EventData(b"A single event"))
         sender.send(EventData(b"A single event"))
-        sender._handler._connection._conn.destroy()
-        time.sleep(300)
+        if SLEEP:
+            time.sleep(300)
+        else:
+            sender._handler._connection._conn.destroy()
         sender.send(EventData(b"A single event"))
         sender.send(EventData(b"A single event"))
     
     received = []
     for r in receivers:
-       received.extend(r.receive(timeout=1))
+        if not SLEEP:
+            r._handler._connection._conn.destroy()
+        received.extend(r.receive(timeout=1))
     assert len(received) == 5
     assert list(received[0].body)[0] == b"A single event"

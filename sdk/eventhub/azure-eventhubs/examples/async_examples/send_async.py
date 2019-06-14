@@ -6,20 +6,21 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show sending events to an Event Hub partition.
+An example to show sending events asynchronously to an Event Hub with partition keys.
 """
 
 # pylint: disable=C0111
 
 import logging
 import time
+import asyncio
 import os
 
-from azure.eventhub import EventHubClient, EventData, EventHubSharedKeyCredential
+from azure.eventhub.aio import EventHubClient
+from azure.eventhub import EventData, EventHubSharedKeyCredential
 
 import examples
 logger = examples.get_logger(logging.INFO)
-
 
 HOSTNAME = os.environ.get('EVENT_HUB_HOSTNAME')  # <mynamespace>.servicebus.windows.net
 EVENT_HUB = os.environ.get('EVENT_HUB_NAME')
@@ -27,28 +28,35 @@ EVENT_HUB = os.environ.get('EVENT_HUB_NAME')
 USER = os.environ.get('EVENT_HUB_SAS_POLICY')
 KEY = os.environ.get('EVENT_HUB_SAS_KEY')
 
+
+async def run(client):
+    sender = client.create_sender()
+    await send(sender, 4)
+
+
+async def send(sender, count):
+    async with sender:
+        for i in range(count):
+            logger.info("Sending message: {}".format(i))
+            data = EventData(str(i))
+            await sender.send(data)
+
 try:
     if not HOSTNAME:
         raise ValueError("No EventHubs URL supplied.")
 
+    loop = asyncio.get_event_loop()
     client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
                             network_tracing=False)
-    sender = client.create_sender(partition_id="0")
-
-    ed = EventData("msg")
-
-    try:
-        start_time = time.time()
-        with sender:
-            for i in range(100):
-                logger.info("Sending message: {}".format(i))
-                sender.send(ed)
-    except:
-        raise
-    finally:
-        end_time = time.time()
-        run_time = end_time - start_time
-        logger.info("Runtime: {} seconds".format(run_time))
+    tasks = asyncio.gather(
+        run(client),
+        run(client))
+    start_time = time.time()
+    loop.run_until_complete(tasks)
+    end_time = time.time()
+    run_time = end_time - start_time
+    logger.info("Runtime: {} seconds".format(run_time))
+    loop.close()
 
 except KeyboardInterrupt:
     pass

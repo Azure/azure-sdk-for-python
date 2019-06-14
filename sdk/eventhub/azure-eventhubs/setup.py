@@ -41,14 +41,14 @@ exclude_packages = [
         'examples',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
-        '*.eventprocessorhost',
-        '*.eventprocessorhost.*'
     ]
 
-if sys.version_info[0] < 3 or (sys.version_info[0] == 3 and sys.version_info[1] < 5):
+if sys.version_info < (3, 5, 3):
     exclude_packages.extend([
         '*.aio',
-        '*.aio.*'
+        '*.aio.*',
+        '*.eventprocessorhost',
+        '*.eventprocessorhost.*'
     ])
 
 setup(
@@ -66,7 +66,6 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        # 'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
@@ -79,7 +78,7 @@ setup(
         'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
         'azure-storage-blob~=1.3',
-        'azure-core~=1.0',
+        'azure-core>=0.0.1',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],

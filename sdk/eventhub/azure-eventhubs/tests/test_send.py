@@ -26,17 +26,17 @@ def test_send_with_partition_key(connstr_receivers):
                 data = EventData(str(data_val))
                 #data.partition_key = partition_key
                 data_val += 1
-                sender.send(data, batching_label=partition_key)
+                sender.send(data, partition_key=partition_key)
 
     found_partition_keys = {}
     for index, partition in enumerate(receivers):
         received = partition.receive(timeout=5)
         for message in received:
             try:
-                existing = found_partition_keys[message._batching_label]
+                existing = found_partition_keys[message._partition_key]
                 assert existing == index
             except KeyError:
-                found_partition_keys[message._batching_label] = index
+                found_partition_keys[message._partition_key] = index
 
 
 @pytest.mark.liveTest

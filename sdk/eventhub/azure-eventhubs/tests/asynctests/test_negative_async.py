@@ -15,8 +15,10 @@ from azure.eventhub import (
     EventPosition,
     EventHubError,
     ConnectError,
+    ConnectionLostError,
     AuthenticationError,
     EventDataError,
+    EventDataSendError,
 )
 from azure.eventhub.aio import EventHubClient
 
@@ -95,7 +97,7 @@ async def test_send_partition_key_with_partition_async(connection_str):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_non_existing_entity_sender_async(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, eventhub="nemo", network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str, event_hub_path="nemo", network_tracing=False)
     sender = client.create_sender(partition_id="1")
     with pytest.raises(AuthenticationError):
         await sender._open()
@@ -104,7 +106,7 @@ async def test_non_existing_entity_sender_async(connection_str):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_non_existing_entity_receiver_async(connection_str):
-    client = EventHubClient.from_connection_string(connection_str, eventhub="nemo", network_tracing=False)
+    client = EventHubClient.from_connection_string(connection_str, event_hub_path="nemo", network_tracing=False)
     receiver = client.create_receiver(partition_id="0")
     with pytest.raises(AuthenticationError):
         await receiver._open()
@@ -147,7 +149,7 @@ async def test_send_too_large_message_async(connection_str):
     sender = client.create_sender()
     try:
         data = EventData(b"A" * 1100000)
-        with pytest.raises(EventDataError):
+        with pytest.raises(EventDataSendError):
             await sender.send(data)
     finally:
         await sender.close()
