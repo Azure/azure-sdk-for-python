@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .dev_spaces_management_client import DevSpacesManagementClient
-from .version import VERSION
+from ._configuration import DevSpacesManagementClientConfiguration
+from ._dev_spaces_management_client import DevSpacesManagementClient
+__all__ = ['DevSpacesManagementClient', 'DevSpacesManagementClientConfiguration']
 
-__all__ = ['DevSpacesManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

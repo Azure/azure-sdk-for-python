@@ -20,6 +20,8 @@ from .. import models
 class ControllersOperations(object):
     """ControllersOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -91,7 +93,6 @@ class ControllersOperations(object):
             raise models.DevSpacesErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Controller', response)
 
@@ -353,7 +354,6 @@ class ControllersOperations(object):
             raise models.DevSpacesErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Controller', response)
         if response.status_code == 201:
@@ -387,8 +387,7 @@ class ControllersOperations(object):
         :raises:
          :class:`DevSpacesErrorResponseException<azure.mgmt.devspaces.models.DevSpacesErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']
@@ -418,6 +417,11 @@ class ControllersOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -426,12 +430,10 @@ class ControllersOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ControllerPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.ControllerPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.ControllerPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevSpaces/controllers'}
@@ -454,8 +456,7 @@ class ControllersOperations(object):
         :raises:
          :class:`DevSpacesErrorResponseException<azure.mgmt.devspaces.models.DevSpacesErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -484,6 +485,11 @@ class ControllersOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -492,12 +498,10 @@ class ControllersOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ControllerPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.ControllerPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.ControllerPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.DevSpaces/controllers'}
@@ -566,7 +570,6 @@ class ControllersOperations(object):
             raise models.DevSpacesErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ControllerConnectionDetailsList', response)
 

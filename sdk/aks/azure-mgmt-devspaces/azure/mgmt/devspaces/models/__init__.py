@@ -10,60 +10,60 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .container_host_mapping_py3 import ContainerHostMapping
-    from .tracked_resource_py3 import TrackedResource
-    from .resource_provider_operation_display_py3 import ResourceProviderOperationDisplay
-    from .resource_provider_operation_definition_py3 import ResourceProviderOperationDefinition
-    from .sku_py3 import Sku
-    from .controller_py3 import Controller
-    from .controller_update_parameters_py3 import ControllerUpdateParameters
-    from .list_connection_details_parameters_py3 import ListConnectionDetailsParameters
-    from .orchestrator_specific_connection_details_py3 import OrchestratorSpecificConnectionDetails
-    from .controller_connection_details_py3 import ControllerConnectionDetails
-    from .controller_connection_details_list_py3 import ControllerConnectionDetailsList
-    from .resource_py3 import Resource
-    from .kubernetes_connection_details_py3 import KubernetesConnectionDetails
-    from .error_details_py3 import ErrorDetails
-    from .dev_spaces_error_response_py3 import DevSpacesErrorResponse, DevSpacesErrorResponseException
+    from ._models_py3 import ContainerHostMapping
+    from ._models_py3 import Controller
+    from ._models_py3 import ControllerConnectionDetails
+    from ._models_py3 import ControllerConnectionDetailsList
+    from ._models_py3 import ControllerUpdateParameters
+    from ._models_py3 import DevSpacesErrorResponse, DevSpacesErrorResponseException
+    from ._models_py3 import ErrorDetails
+    from ._models_py3 import KubernetesConnectionDetails
+    from ._models_py3 import ListConnectionDetailsParameters
+    from ._models_py3 import OrchestratorSpecificConnectionDetails
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceProviderOperationDefinition
+    from ._models_py3 import ResourceProviderOperationDisplay
+    from ._models_py3 import Sku
+    from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
-    from .container_host_mapping import ContainerHostMapping
-    from .tracked_resource import TrackedResource
-    from .resource_provider_operation_display import ResourceProviderOperationDisplay
-    from .resource_provider_operation_definition import ResourceProviderOperationDefinition
-    from .sku import Sku
-    from .controller import Controller
-    from .controller_update_parameters import ControllerUpdateParameters
-    from .list_connection_details_parameters import ListConnectionDetailsParameters
-    from .orchestrator_specific_connection_details import OrchestratorSpecificConnectionDetails
-    from .controller_connection_details import ControllerConnectionDetails
-    from .controller_connection_details_list import ControllerConnectionDetailsList
-    from .resource import Resource
-    from .kubernetes_connection_details import KubernetesConnectionDetails
-    from .error_details import ErrorDetails
-    from .dev_spaces_error_response import DevSpacesErrorResponse, DevSpacesErrorResponseException
-from .resource_provider_operation_definition_paged import ResourceProviderOperationDefinitionPaged
-from .controller_paged import ControllerPaged
-from .dev_spaces_management_client_enums import (
+    from ._models import ContainerHostMapping
+    from ._models import Controller
+    from ._models import ControllerConnectionDetails
+    from ._models import ControllerConnectionDetailsList
+    from ._models import ControllerUpdateParameters
+    from ._models import DevSpacesErrorResponse, DevSpacesErrorResponseException
+    from ._models import ErrorDetails
+    from ._models import KubernetesConnectionDetails
+    from ._models import ListConnectionDetailsParameters
+    from ._models import OrchestratorSpecificConnectionDetails
+    from ._models import Resource
+    from ._models import ResourceProviderOperationDefinition
+    from ._models import ResourceProviderOperationDisplay
+    from ._models import Sku
+    from ._models import TrackedResource
+from ._paged_models import ControllerPaged
+from ._paged_models import ResourceProviderOperationDefinitionPaged
+from ._dev_spaces_management_client_enums import (
     ProvisioningState,
     SkuTier,
 )
 
 __all__ = [
     'ContainerHostMapping',
-    'TrackedResource',
-    'ResourceProviderOperationDisplay',
-    'ResourceProviderOperationDefinition',
-    'Sku',
     'Controller',
-    'ControllerUpdateParameters',
-    'ListConnectionDetailsParameters',
-    'OrchestratorSpecificConnectionDetails',
     'ControllerConnectionDetails',
     'ControllerConnectionDetailsList',
-    'Resource',
-    'KubernetesConnectionDetails',
-    'ErrorDetails',
+    'ControllerUpdateParameters',
     'DevSpacesErrorResponse', 'DevSpacesErrorResponseException',
+    'ErrorDetails',
+    'KubernetesConnectionDetails',
+    'ListConnectionDetailsParameters',
+    'OrchestratorSpecificConnectionDetails',
+    'Resource',
+    'ResourceProviderOperationDefinition',
+    'ResourceProviderOperationDisplay',
+    'Sku',
+    'TrackedResource',
     'ResourceProviderOperationDefinitionPaged',
     'ControllerPaged',
     'ProvisioningState',
