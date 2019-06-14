@@ -26,7 +26,8 @@ class IdentityTokenResponse(Model):
      until the expiration time. This value is used to determine the lifetime of
      cached tokens.
     :type expires_on: str
-    :param ext_expires_in: This indicates the extended lifetime of the token.
+    :param ext_expires_in: This indicates the extended lifetime of the token
+     (in seconds).
     :type ext_expires_in: str
     :param not_before: This is the time when the access token becomes
      effective. The date is represented as the number of seconds from
