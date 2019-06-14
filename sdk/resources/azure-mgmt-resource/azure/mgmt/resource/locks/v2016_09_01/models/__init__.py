@@ -10,26 +10,26 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .management_lock_owner_py3 import ManagementLockOwner
-    from .management_lock_object_py3 import ManagementLockObject
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
+    from ._models_py3 import ManagementLockObject
+    from ._models_py3 import ManagementLockOwner
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
 except (SyntaxError, ImportError):
-    from .management_lock_owner import ManagementLockOwner
-    from .management_lock_object import ManagementLockObject
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-from .operation_paged import OperationPaged
-from .management_lock_object_paged import ManagementLockObjectPaged
-from .management_lock_client_enums import (
+    from ._models import ManagementLockObject
+    from ._models import ManagementLockOwner
+    from ._models import Operation
+    from ._models import OperationDisplay
+from ._paged_models import ManagementLockObjectPaged
+from ._paged_models import OperationPaged
+from ._management_lock_client_enums import (
     LockLevel,
 )
 
 __all__ = [
-    'ManagementLockOwner',
     'ManagementLockObject',
-    'OperationDisplay',
+    'ManagementLockOwner',
     'Operation',
+    'OperationDisplay',
     'OperationPaged',
     'ManagementLockObjectPaged',
     'LockLevel',

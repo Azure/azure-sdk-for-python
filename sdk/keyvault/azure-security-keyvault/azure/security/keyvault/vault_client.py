@@ -21,6 +21,17 @@ from .secrets._client import SecretClient
 
 
 class VaultClient(_KeyVaultClientBase):
+    """VaultClient is a high-level interface for managing a vault's resources.
+
+    Example:
+        .. literalinclude:: ../tests/test_examples_vault_client.py
+            :start-after: [START create_vault_client]
+            :end-before: [END create_vault_client]
+            :language: python
+            :caption: Creates a new instance of VaultClient
+
+    """
+
     def __init__(self, vault_url, credential, config=None, transport=None, api_version=None, **kwargs):
         # type: (str, TokenCredential, Configuration, Optional[HttpTransport], Optional[str], **Any) -> None
         super(VaultClient, self).__init__(
