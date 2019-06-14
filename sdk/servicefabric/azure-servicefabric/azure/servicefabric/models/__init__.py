@@ -10,1537 +10,1565 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .fabric_error_error_py3 import FabricErrorError
-    from .fabric_error_py3 import FabricError, FabricErrorException
-    from .container_logs_py3 import ContainerLogs
-    from .aad_metadata_py3 import AadMetadata
-    from .aad_metadata_object_py3 import AadMetadataObject
-    from .analysis_event_metadata_py3 import AnalysisEventMetadata
-    from .application_event_py3 import ApplicationEvent
-    from .service_health_state_py3 import ServiceHealthState
-    from .deployed_application_health_state_py3 import DeployedApplicationHealthState
-    from .application_health_py3 import ApplicationHealth
-    from .health_evaluation_py3 import HealthEvaluation
-    from .health_evaluation_wrapper_py3 import HealthEvaluationWrapper
-    from .application_health_evaluation_py3 import ApplicationHealthEvaluation
-    from .service_type_health_policy_py3 import ServiceTypeHealthPolicy
-    from .service_type_health_policy_map_item_py3 import ServiceTypeHealthPolicyMapItem
-    from .application_health_policy_py3 import ApplicationHealthPolicy
-    from .application_health_policy_map_item_py3 import ApplicationHealthPolicyMapItem
-    from .application_health_policies_py3 import ApplicationHealthPolicies
-    from .application_health_state_py3 import ApplicationHealthState
-    from .replica_health_state_chunk_py3 import ReplicaHealthStateChunk
-    from .replica_health_state_chunk_list_py3 import ReplicaHealthStateChunkList
-    from .partition_health_state_chunk_py3 import PartitionHealthStateChunk
-    from .partition_health_state_chunk_list_py3 import PartitionHealthStateChunkList
-    from .service_health_state_chunk_py3 import ServiceHealthStateChunk
-    from .service_health_state_chunk_list_py3 import ServiceHealthStateChunkList
-    from .deployed_service_package_health_state_chunk_py3 import DeployedServicePackageHealthStateChunk
-    from .deployed_service_package_health_state_chunk_list_py3 import DeployedServicePackageHealthStateChunkList
-    from .deployed_application_health_state_chunk_py3 import DeployedApplicationHealthStateChunk
-    from .deployed_application_health_state_chunk_list_py3 import DeployedApplicationHealthStateChunkList
-    from .application_health_state_chunk_py3 import ApplicationHealthStateChunk
-    from .application_health_state_chunk_list_py3 import ApplicationHealthStateChunkList
-    from .replica_health_state_filter_py3 import ReplicaHealthStateFilter
-    from .partition_health_state_filter_py3 import PartitionHealthStateFilter
-    from .service_health_state_filter_py3 import ServiceHealthStateFilter
-    from .deployed_service_package_health_state_filter_py3 import DeployedServicePackageHealthStateFilter
-    from .deployed_application_health_state_filter_py3 import DeployedApplicationHealthStateFilter
-    from .application_health_state_filter_py3 import ApplicationHealthStateFilter
-    from .application_parameter_py3 import ApplicationParameter
-    from .application_info_py3 import ApplicationInfo
-    from .application_metric_description_py3 import ApplicationMetricDescription
-    from .application_load_info_py3 import ApplicationLoadInfo
-    from .application_name_info_py3 import ApplicationNameInfo
-    from .applications_health_evaluation_py3 import ApplicationsHealthEvaluation
-    from .application_type_applications_health_evaluation_py3 import ApplicationTypeApplicationsHealthEvaluation
-    from .application_type_health_policy_map_item_py3 import ApplicationTypeHealthPolicyMapItem
-    from .application_type_info_py3 import ApplicationTypeInfo
-    from .paged_application_type_info_list_py3 import PagedApplicationTypeInfoList
-    from .application_type_manifest_py3 import ApplicationTypeManifest
-    from .monitoring_policy_description_py3 import MonitoringPolicyDescription
-    from .application_upgrade_description_py3 import ApplicationUpgradeDescription
-    from .upgrade_domain_info_py3 import UpgradeDomainInfo
-    from .safety_check_py3 import SafetyCheck
-    from .safety_check_wrapper_py3 import SafetyCheckWrapper
-    from .node_upgrade_progress_info_py3 import NodeUpgradeProgressInfo
-    from .current_upgrade_domain_progress_info_py3 import CurrentUpgradeDomainProgressInfo
-    from .failure_upgrade_domain_progress_info_py3 import FailureUpgradeDomainProgressInfo
-    from .application_upgrade_progress_info_py3 import ApplicationUpgradeProgressInfo
-    from .cluster_configuration_py3 import ClusterConfiguration
-    from .cluster_event_py3 import ClusterEvent
-    from .node_id_py3 import NodeId
-    from .node_health_state_py3 import NodeHealthState
-    from .cluster_health_py3 import ClusterHealth
-    from .node_health_state_chunk_py3 import NodeHealthStateChunk
-    from .node_health_state_chunk_list_py3 import NodeHealthStateChunkList
-    from .cluster_health_chunk_py3 import ClusterHealthChunk
-    from .node_health_state_filter_py3 import NodeHealthStateFilter
-    from .cluster_health_policy_py3 import ClusterHealthPolicy
-    from .cluster_health_chunk_query_description_py3 import ClusterHealthChunkQueryDescription
-    from .cluster_health_policies_py3 import ClusterHealthPolicies
-    from .cluster_manifest_py3 import ClusterManifest
-    from .cluster_version_py3 import ClusterVersion
-    from .container_api_request_body_py3 import ContainerApiRequestBody
-    from .container_api_result_py3 import ContainerApiResult
-    from .container_api_response_py3 import ContainerApiResponse
-    from .container_instance_event_py3 import ContainerInstanceEvent
-    from .deactivation_intent_description_py3 import DeactivationIntentDescription
-    from .delta_nodes_check_health_evaluation_py3 import DeltaNodesCheckHealthEvaluation
-    from .deployed_service_package_health_state_py3 import DeployedServicePackageHealthState
-    from .deployed_application_health_py3 import DeployedApplicationHealth
-    from .deployed_application_health_evaluation_py3 import DeployedApplicationHealthEvaluation
-    from .deployed_application_info_py3 import DeployedApplicationInfo
-    from .deployed_applications_health_evaluation_py3 import DeployedApplicationsHealthEvaluation
-    from .deployed_service_package_health_py3 import DeployedServicePackageHealth
-    from .deployed_service_package_health_evaluation_py3 import DeployedServicePackageHealthEvaluation
-    from .deployed_service_packages_health_evaluation_py3 import DeployedServicePackagesHealthEvaluation
-    from .deployed_service_replica_info_py3 import DeployedServiceReplicaInfo
-    from .reconfiguration_information_py3 import ReconfigurationInformation
-    from .deployed_stateful_service_replica_info_py3 import DeployedStatefulServiceReplicaInfo
-    from .deployed_stateless_service_instance_info_py3 import DeployedStatelessServiceInstanceInfo
-    from .health_event_py3 import HealthEvent
-    from .health_state_count_py3 import HealthStateCount
-    from .entity_kind_health_state_count_py3 import EntityKindHealthStateCount
-    from .health_statistics_py3 import HealthStatistics
-    from .entity_health_py3 import EntityHealth
-    from .entity_health_state_py3 import EntityHealthState
-    from .entity_health_state_chunk_py3 import EntityHealthStateChunk
-    from .entity_health_state_chunk_list_py3 import EntityHealthStateChunkList
-    from .epoch_py3 import Epoch
-    from .event_health_evaluation_py3 import EventHealthEvaluation
-    from .fabric_event_py3 import FabricEvent
-    from .fabric_code_version_info_py3 import FabricCodeVersionInfo
-    from .fabric_config_version_info_py3 import FabricConfigVersionInfo
-    from .cluster_configuration_upgrade_status_info_py3 import ClusterConfigurationUpgradeStatusInfo
-    from .health_information_py3 import HealthInformation
-    from .int64_range_partition_information_py3 import Int64RangePartitionInformation
-    from .named_partition_information_py3 import NamedPartitionInformation
-    from .node_deactivation_task_id_py3 import NodeDeactivationTaskId
-    from .node_deactivation_task_py3 import NodeDeactivationTask
-    from .node_deactivation_info_py3 import NodeDeactivationInfo
-    from .node_event_py3 import NodeEvent
-    from .node_health_py3 import NodeHealth
-    from .node_health_evaluation_py3 import NodeHealthEvaluation
-    from .node_info_py3 import NodeInfo
-    from .node_load_metric_information_py3 import NodeLoadMetricInformation
-    from .node_load_info_py3 import NodeLoadInfo
-    from .nodes_health_evaluation_py3 import NodesHealthEvaluation
-    from .paged_application_info_list_py3 import PagedApplicationInfoList
-    from .paged_deployed_application_info_list_py3 import PagedDeployedApplicationInfoList
-    from .paged_node_info_list_py3 import PagedNodeInfoList
-    from .partition_information_py3 import PartitionInformation
-    from .service_partition_info_py3 import ServicePartitionInfo
-    from .paged_service_partition_info_list_py3 import PagedServicePartitionInfoList
-    from .replica_info_py3 import ReplicaInfo
-    from .paged_replica_info_list_py3 import PagedReplicaInfoList
-    from .service_info_py3 import ServiceInfo
-    from .paged_service_info_list_py3 import PagedServiceInfoList
-    from .partition_analysis_event_py3 import PartitionAnalysisEvent
-    from .partition_event_py3 import PartitionEvent
-    from .replica_health_state_py3 import ReplicaHealthState
-    from .partition_health_py3 import PartitionHealth
-    from .partition_health_evaluation_py3 import PartitionHealthEvaluation
-    from .partition_health_state_py3 import PartitionHealthState
-    from .provision_fabric_description_py3 import ProvisionFabricDescription
-    from .provision_application_type_description_base_py3 import ProvisionApplicationTypeDescriptionBase
-    from .provision_application_type_description_py3 import ProvisionApplicationTypeDescription
-    from .external_store_provision_application_type_description_py3 import ExternalStoreProvisionApplicationTypeDescription
-    from .unprovision_fabric_description_py3 import UnprovisionFabricDescription
-    from .resume_cluster_upgrade_description_py3 import ResumeClusterUpgradeDescription
-    from .cluster_upgrade_health_policy_object_py3 import ClusterUpgradeHealthPolicyObject
-    from .start_cluster_upgrade_description_py3 import StartClusterUpgradeDescription
-    from .rolling_upgrade_update_description_py3 import RollingUpgradeUpdateDescription
-    from .update_cluster_upgrade_description_py3 import UpdateClusterUpgradeDescription
-    from .partition_safety_check_py3 import PartitionSafetyCheck
-    from .ensure_availability_safety_check_py3 import EnsureAvailabilitySafetyCheck
-    from .ensure_partition_qurum_safety_check_py3 import EnsurePartitionQurumSafetyCheck
-    from .seed_node_safety_check_py3 import SeedNodeSafetyCheck
-    from .partitions_health_evaluation_py3 import PartitionsHealthEvaluation
-    from .replica_event_py3 import ReplicaEvent
-    from .replica_health_py3 import ReplicaHealth
-    from .replica_health_evaluation_py3 import ReplicaHealthEvaluation
-    from .replicas_health_evaluation_py3 import ReplicasHealthEvaluation
-    from .restart_node_description_py3 import RestartNodeDescription
-    from .service_event_py3 import ServiceEvent
-    from .service_from_template_description_py3 import ServiceFromTemplateDescription
-    from .service_health_evaluation_py3 import ServiceHealthEvaluation
-    from .service_health_py3 import ServiceHealth
-    from .service_name_info_py3 import ServiceNameInfo
-    from .service_placement_invalid_domain_policy_description_py3 import ServicePlacementInvalidDomainPolicyDescription
-    from .service_placement_non_partially_place_service_policy_description_py3 import ServicePlacementNonPartiallyPlaceServicePolicyDescription
-    from .service_placement_policy_description_py3 import ServicePlacementPolicyDescription
-    from .service_placement_prefer_primary_domain_policy_description_py3 import ServicePlacementPreferPrimaryDomainPolicyDescription
-    from .service_placement_required_domain_policy_description_py3 import ServicePlacementRequiredDomainPolicyDescription
-    from .service_placement_require_domain_distribution_policy_description_py3 import ServicePlacementRequireDomainDistributionPolicyDescription
-    from .services_health_evaluation_py3 import ServicesHealthEvaluation
-    from .service_load_metric_description_py3 import ServiceLoadMetricDescription
-    from .service_type_extension_description_py3 import ServiceTypeExtensionDescription
-    from .service_type_description_py3 import ServiceTypeDescription
-    from .service_type_info_py3 import ServiceTypeInfo
-    from .service_type_manifest_py3 import ServiceTypeManifest
-    from .singleton_partition_information_py3 import SingletonPartitionInformation
-    from .stateful_service_info_py3 import StatefulServiceInfo
-    from .stateful_service_partition_info_py3 import StatefulServicePartitionInfo
-    from .stateful_service_replica_health_py3 import StatefulServiceReplicaHealth
-    from .stateful_service_replica_health_state_py3 import StatefulServiceReplicaHealthState
-    from .stateful_service_type_description_py3 import StatefulServiceTypeDescription
-    from .stateless_service_info_py3 import StatelessServiceInfo
-    from .stateless_service_instance_health_py3 import StatelessServiceInstanceHealth
-    from .stateless_service_instance_health_state_py3 import StatelessServiceInstanceHealthState
-    from .stateless_service_partition_info_py3 import StatelessServicePartitionInfo
-    from .stateless_service_type_description_py3 import StatelessServiceTypeDescription
-    from .system_application_health_evaluation_py3 import SystemApplicationHealthEvaluation
-    from .upgrade_domain_delta_nodes_check_health_evaluation_py3 import UpgradeDomainDeltaNodesCheckHealthEvaluation
-    from .upgrade_domain_nodes_health_evaluation_py3 import UpgradeDomainNodesHealthEvaluation
-    from .wait_for_inbuild_replica_safety_check_py3 import WaitForInbuildReplicaSafetyCheck
-    from .wait_for_primary_placement_safety_check_py3 import WaitForPrimaryPlacementSafetyCheck
-    from .wait_for_primary_swap_safety_check_py3 import WaitForPrimarySwapSafetyCheck
-    from .wait_for_reconfiguration_safety_check_py3 import WaitForReconfigurationSafetyCheck
-    from .load_metric_report_py3 import LoadMetricReport
-    from .partition_load_information_py3 import PartitionLoadInformation
-    from .stateful_service_replica_info_py3 import StatefulServiceReplicaInfo
-    from .stateless_service_instance_info_py3 import StatelessServiceInstanceInfo
-    from .cluster_upgrade_description_object_py3 import ClusterUpgradeDescriptionObject
-    from .failed_upgrade_domain_progress_object_py3 import FailedUpgradeDomainProgressObject
-    from .cluster_upgrade_progress_object_py3 import ClusterUpgradeProgressObject
-    from .cluster_configuration_upgrade_description_py3 import ClusterConfigurationUpgradeDescription
-    from .upgrade_orchestration_service_state_py3 import UpgradeOrchestrationServiceState
-    from .upgrade_orchestration_service_state_summary_py3 import UpgradeOrchestrationServiceStateSummary
-    from .application_type_image_store_path_py3 import ApplicationTypeImageStorePath
-    from .unprovision_application_type_description_info_py3 import UnprovisionApplicationTypeDescriptionInfo
-    from .code_package_entry_point_statistics_py3 import CodePackageEntryPointStatistics
-    from .code_package_entry_point_py3 import CodePackageEntryPoint
-    from .deployed_code_package_info_py3 import DeployedCodePackageInfo
-    from .chaos_context_py3 import ChaosContext
-    from .chaos_target_filter_py3 import ChaosTargetFilter
-    from .chaos_parameters_py3 import ChaosParameters
-    from .chaos_py3 import Chaos
-    from .chaos_parameters_dictionary_item_py3 import ChaosParametersDictionaryItem
-    from .chaos_event_py3 import ChaosEvent
-    from .chaos_event_wrapper_py3 import ChaosEventWrapper
-    from .chaos_events_segment_py3 import ChaosEventsSegment
-    from .chaos_schedule_job_active_days_of_week_py3 import ChaosScheduleJobActiveDaysOfWeek
-    from .time_of_day_py3 import TimeOfDay
-    from .time_range_py3 import TimeRange
-    from .chaos_schedule_job_py3 import ChaosScheduleJob
-    from .chaos_schedule_py3 import ChaosSchedule
-    from .chaos_schedule_description_py3 import ChaosScheduleDescription
-    from .executing_faults_chaos_event_py3 import ExecutingFaultsChaosEvent
-    from .started_chaos_event_py3 import StartedChaosEvent
-    from .stopped_chaos_event_py3 import StoppedChaosEvent
-    from .test_error_chaos_event_py3 import TestErrorChaosEvent
-    from .validation_failed_chaos_event_py3 import ValidationFailedChaosEvent
-    from .waiting_chaos_event_py3 import WaitingChaosEvent
-    from .application_capacity_description_py3 import ApplicationCapacityDescription
-    from .application_description_py3 import ApplicationDescription
-    from .compose_deployment_status_info_py3 import ComposeDeploymentStatusInfo
-    from .registry_credential_py3 import RegistryCredential
-    from .compose_deployment_upgrade_description_py3 import ComposeDeploymentUpgradeDescription
-    from .compose_deployment_upgrade_progress_info_py3 import ComposeDeploymentUpgradeProgressInfo
-    from .paged_compose_deployment_status_info_list_py3 import PagedComposeDeploymentStatusInfoList
-    from .create_compose_deployment_description_py3 import CreateComposeDeploymentDescription
-    from .deployed_service_package_info_py3 import DeployedServicePackageInfo
-    from .service_correlation_description_py3 import ServiceCorrelationDescription
-    from .partition_scheme_description_py3 import PartitionSchemeDescription
-    from .named_partition_scheme_description_py3 import NamedPartitionSchemeDescription
-    from .singleton_partition_scheme_description_py3 import SingletonPartitionSchemeDescription
-    from .uniform_int64_range_partition_scheme_description_py3 import UniformInt64RangePartitionSchemeDescription
-    from .scaling_trigger_description_py3 import ScalingTriggerDescription
-    from .scaling_mechanism_description_py3 import ScalingMechanismDescription
-    from .scaling_policy_description_py3 import ScalingPolicyDescription
-    from .service_description_py3 import ServiceDescription
-    from .stateful_service_description_py3 import StatefulServiceDescription
-    from .stateless_service_description_py3 import StatelessServiceDescription
-    from .replicator_queue_status_py3 import ReplicatorQueueStatus
-    from .replicator_status_py3 import ReplicatorStatus
-    from .remote_replicator_acknowledgement_detail_py3 import RemoteReplicatorAcknowledgementDetail
-    from .remote_replicator_acknowledgement_status_py3 import RemoteReplicatorAcknowledgementStatus
-    from .remote_replicator_status_py3 import RemoteReplicatorStatus
-    from .primary_replicator_status_py3 import PrimaryReplicatorStatus
-    from .secondary_replicator_status_py3 import SecondaryReplicatorStatus
-    from .secondary_active_replicator_status_py3 import SecondaryActiveReplicatorStatus
-    from .secondary_idle_replicator_status_py3 import SecondaryIdleReplicatorStatus
-    from .load_metric_report_info_py3 import LoadMetricReportInfo
-    from .deployed_service_replica_detail_info_py3 import DeployedServiceReplicaDetailInfo
-    from .key_value_store_replica_status_py3 import KeyValueStoreReplicaStatus
-    from .deployed_stateful_service_replica_detail_info_py3 import DeployedStatefulServiceReplicaDetailInfo
-    from .deployed_stateless_service_instance_detail_info_py3 import DeployedStatelessServiceInstanceDetailInfo
-    from .replica_status_base_py3 import ReplicaStatusBase
-    from .service_update_description_py3 import ServiceUpdateDescription
-    from .stateful_service_update_description_py3 import StatefulServiceUpdateDescription
-    from .stateless_service_update_description_py3 import StatelessServiceUpdateDescription
-    from .file_version_py3 import FileVersion
-    from .file_info_py3 import FileInfo
-    from .folder_info_py3 import FolderInfo
-    from .image_store_content_py3 import ImageStoreContent
-    from .image_store_copy_description_py3 import ImageStoreCopyDescription
-    from .restart_deployed_code_package_description_py3 import RestartDeployedCodePackageDescription
-    from .deployed_service_type_info_py3 import DeployedServiceTypeInfo
-    from .resolved_service_endpoint_py3 import ResolvedServiceEndpoint
-    from .resolved_service_partition_py3 import ResolvedServicePartition
-    from .selected_partition_py3 import SelectedPartition
-    from .invoke_data_loss_result_py3 import InvokeDataLossResult
-    from .invoke_quorum_loss_result_py3 import InvokeQuorumLossResult
-    from .node_result_py3 import NodeResult
-    from .node_transition_result_py3 import NodeTransitionResult
-    from .node_transition_progress_py3 import NodeTransitionProgress
-    from .operation_status_py3 import OperationStatus
-    from .partition_data_loss_progress_py3 import PartitionDataLossProgress
-    from .partition_quorum_loss_progress_py3 import PartitionQuorumLossProgress
-    from .restart_partition_result_py3 import RestartPartitionResult
-    from .partition_restart_progress_py3 import PartitionRestartProgress
-    from .package_sharing_policy_info_py3 import PackageSharingPolicyInfo
-    from .deploy_service_package_to_node_description_py3 import DeployServicePackageToNodeDescription
-    from .resume_application_upgrade_description_py3 import ResumeApplicationUpgradeDescription
-    from .application_upgrade_update_description_py3 import ApplicationUpgradeUpdateDescription
-    from .name_description_py3 import NameDescription
-    from .paged_sub_name_info_list_py3 import PagedSubNameInfoList
-    from .property_value_py3 import PropertyValue
-    from .binary_property_value_py3 import BinaryPropertyValue
-    from .int64_property_value_py3 import Int64PropertyValue
-    from .double_property_value_py3 import DoublePropertyValue
-    from .string_property_value_py3 import StringPropertyValue
-    from .guid_property_value_py3 import GuidPropertyValue
-    from .property_metadata_py3 import PropertyMetadata
-    from .property_info_py3 import PropertyInfo
-    from .paged_property_info_list_py3 import PagedPropertyInfoList
-    from .property_description_py3 import PropertyDescription
-    from .property_batch_operation_py3 import PropertyBatchOperation
-    from .property_batch_description_list_py3 import PropertyBatchDescriptionList
-    from .check_exists_property_batch_operation_py3 import CheckExistsPropertyBatchOperation
-    from .check_sequence_property_batch_operation_py3 import CheckSequencePropertyBatchOperation
-    from .check_value_property_batch_operation_py3 import CheckValuePropertyBatchOperation
-    from .delete_property_batch_operation_py3 import DeletePropertyBatchOperation
-    from .get_property_batch_operation_py3 import GetPropertyBatchOperation
-    from .put_property_batch_operation_py3 import PutPropertyBatchOperation
-    from .property_batch_info_py3 import PropertyBatchInfo
-    from .successful_property_batch_info_py3 import SuccessfulPropertyBatchInfo
-    from .failed_property_batch_info_py3 import FailedPropertyBatchInfo
-    from .backup_schedule_description_py3 import BackupScheduleDescription
-    from .backup_storage_description_py3 import BackupStorageDescription
-    from .retention_policy_description_py3 import RetentionPolicyDescription
-    from .backup_policy_description_py3 import BackupPolicyDescription
-    from .paged_backup_policy_description_list_py3 import PagedBackupPolicyDescriptionList
-    from .basic_retention_policy_description_py3 import BasicRetentionPolicyDescription
-    from .disable_backup_description_py3 import DisableBackupDescription
-    from .application_backup_configuration_info_py3 import ApplicationBackupConfigurationInfo
-    from .service_backup_configuration_info_py3 import ServiceBackupConfigurationInfo
-    from .backup_suspension_info_py3 import BackupSuspensionInfo
-    from .backup_configuration_info_py3 import BackupConfigurationInfo
-    from .paged_backup_configuration_info_list_py3 import PagedBackupConfigurationInfoList
-    from .restore_partition_description_py3 import RestorePartitionDescription
-    from .restore_progress_info_py3 import RestoreProgressInfo
-    from .backup_partition_description_py3 import BackupPartitionDescription
-    from .backup_info_py3 import BackupInfo
-    from .paged_backup_info_list_py3 import PagedBackupInfoList
-    from .azure_blob_backup_storage_description_py3 import AzureBlobBackupStorageDescription
-    from .file_share_backup_storage_description_py3 import FileShareBackupStorageDescription
-    from .frequency_based_backup_schedule_description_py3 import FrequencyBasedBackupScheduleDescription
-    from .time_based_backup_schedule_description_py3 import TimeBasedBackupScheduleDescription
-    from .backup_progress_info_py3 import BackupProgressInfo
-    from .partition_backup_configuration_info_py3 import PartitionBackupConfigurationInfo
-    from .backup_entity_py3 import BackupEntity
-    from .application_backup_entity_py3 import ApplicationBackupEntity
-    from .service_backup_entity_py3 import ServiceBackupEntity
-    from .partition_backup_entity_py3 import PartitionBackupEntity
-    from .enable_backup_description_py3 import EnableBackupDescription
-    from .paged_backup_entity_list_py3 import PagedBackupEntityList
-    from .get_backup_by_storage_query_description_py3 import GetBackupByStorageQueryDescription
-    from .node_impact_py3 import NodeImpact
-    from .node_repair_impact_description_py3 import NodeRepairImpactDescription
-    from .node_repair_target_description_py3 import NodeRepairTargetDescription
-    from .repair_impact_description_base_py3 import RepairImpactDescriptionBase
-    from .repair_target_description_base_py3 import RepairTargetDescriptionBase
-    from .repair_task_history_py3 import RepairTaskHistory
-    from .repair_task_py3 import RepairTask
-    from .repair_task_approve_description_py3 import RepairTaskApproveDescription
-    from .repair_task_cancel_description_py3 import RepairTaskCancelDescription
-    from .repair_task_delete_description_py3 import RepairTaskDeleteDescription
-    from .repair_task_update_health_policy_description_py3 import RepairTaskUpdateHealthPolicyDescription
-    from .repair_task_update_info_py3 import RepairTaskUpdateInfo
-    from .upload_chunk_range_py3 import UploadChunkRange
-    from .upload_session_info_py3 import UploadSessionInfo
-    from .upload_session_py3 import UploadSession
-    from .average_partition_load_scaling_trigger_py3 import AveragePartitionLoadScalingTrigger
-    from .average_service_load_scaling_trigger_py3 import AverageServiceLoadScalingTrigger
-    from .partition_instance_count_scale_mechanism_py3 import PartitionInstanceCountScaleMechanism
-    from .add_remove_incremental_named_partition_scaling_mechanism_py3 import AddRemoveIncrementalNamedPartitionScalingMechanism
-    from .application_created_event_py3 import ApplicationCreatedEvent
-    from .application_deleted_event_py3 import ApplicationDeletedEvent
-    from .application_new_health_report_event_py3 import ApplicationNewHealthReportEvent
-    from .application_health_report_expired_event_py3 import ApplicationHealthReportExpiredEvent
-    from .application_upgrade_completed_event_py3 import ApplicationUpgradeCompletedEvent
-    from .application_upgrade_domain_completed_event_py3 import ApplicationUpgradeDomainCompletedEvent
-    from .application_upgrade_rollback_completed_event_py3 import ApplicationUpgradeRollbackCompletedEvent
-    from .application_upgrade_rollback_started_event_py3 import ApplicationUpgradeRollbackStartedEvent
-    from .application_upgrade_started_event_py3 import ApplicationUpgradeStartedEvent
-    from .deployed_application_new_health_report_event_py3 import DeployedApplicationNewHealthReportEvent
-    from .deployed_application_health_report_expired_event_py3 import DeployedApplicationHealthReportExpiredEvent
-    from .application_process_exited_event_py3 import ApplicationProcessExitedEvent
-    from .application_container_instance_exited_event_py3 import ApplicationContainerInstanceExitedEvent
-    from .node_aborted_event_py3 import NodeAbortedEvent
-    from .node_added_to_cluster_event_py3 import NodeAddedToClusterEvent
-    from .node_closed_event_py3 import NodeClosedEvent
-    from .node_deactivate_completed_event_py3 import NodeDeactivateCompletedEvent
-    from .node_deactivate_started_event_py3 import NodeDeactivateStartedEvent
-    from .node_down_event_py3 import NodeDownEvent
-    from .node_new_health_report_event_py3 import NodeNewHealthReportEvent
-    from .node_health_report_expired_event_py3 import NodeHealthReportExpiredEvent
-    from .node_open_succeeded_event_py3 import NodeOpenSucceededEvent
-    from .node_open_failed_event_py3 import NodeOpenFailedEvent
-    from .node_removed_from_cluster_event_py3 import NodeRemovedFromClusterEvent
-    from .node_up_event_py3 import NodeUpEvent
-    from .partition_new_health_report_event_py3 import PartitionNewHealthReportEvent
-    from .partition_health_report_expired_event_py3 import PartitionHealthReportExpiredEvent
-    from .partition_reconfigured_event_py3 import PartitionReconfiguredEvent
-    from .partition_primary_move_analysis_event_py3 import PartitionPrimaryMoveAnalysisEvent
-    from .service_created_event_py3 import ServiceCreatedEvent
-    from .service_deleted_event_py3 import ServiceDeletedEvent
-    from .service_new_health_report_event_py3 import ServiceNewHealthReportEvent
-    from .service_health_report_expired_event_py3 import ServiceHealthReportExpiredEvent
-    from .deployed_service_package_new_health_report_event_py3 import DeployedServicePackageNewHealthReportEvent
-    from .deployed_service_package_health_report_expired_event_py3 import DeployedServicePackageHealthReportExpiredEvent
-    from .stateful_replica_new_health_report_event_py3 import StatefulReplicaNewHealthReportEvent
-    from .stateful_replica_health_report_expired_event_py3 import StatefulReplicaHealthReportExpiredEvent
-    from .stateless_replica_new_health_report_event_py3 import StatelessReplicaNewHealthReportEvent
-    from .stateless_replica_health_report_expired_event_py3 import StatelessReplicaHealthReportExpiredEvent
-    from .cluster_new_health_report_event_py3 import ClusterNewHealthReportEvent
-    from .cluster_health_report_expired_event_py3 import ClusterHealthReportExpiredEvent
-    from .cluster_upgrade_completed_event_py3 import ClusterUpgradeCompletedEvent
-    from .cluster_upgrade_domain_completed_event_py3 import ClusterUpgradeDomainCompletedEvent
-    from .cluster_upgrade_rollback_completed_event_py3 import ClusterUpgradeRollbackCompletedEvent
-    from .cluster_upgrade_rollback_started_event_py3 import ClusterUpgradeRollbackStartedEvent
-    from .cluster_upgrade_started_event_py3 import ClusterUpgradeStartedEvent
-    from .chaos_stopped_event_py3 import ChaosStoppedEvent
-    from .chaos_started_event_py3 import ChaosStartedEvent
-    from .chaos_code_package_restart_scheduled_event_py3 import ChaosCodePackageRestartScheduledEvent
-    from .chaos_replica_removal_scheduled_event_py3 import ChaosReplicaRemovalScheduledEvent
-    from .chaos_partition_secondary_move_scheduled_event_py3 import ChaosPartitionSecondaryMoveScheduledEvent
-    from .chaos_partition_primary_move_scheduled_event_py3 import ChaosPartitionPrimaryMoveScheduledEvent
-    from .chaos_replica_restart_scheduled_event_py3 import ChaosReplicaRestartScheduledEvent
-    from .chaos_node_restart_scheduled_event_py3 import ChaosNodeRestartScheduledEvent
-    from .secret_resource_properties_py3 import SecretResourceProperties
-    from .inlined_value_secret_resource_properties_py3 import InlinedValueSecretResourceProperties
-    from .secret_resource_description_py3 import SecretResourceDescription
-    from .paged_secret_resource_description_list_py3 import PagedSecretResourceDescriptionList
-    from .secret_resource_properties_base_py3 import SecretResourcePropertiesBase
-    from .secret_value_py3 import SecretValue
-    from .secret_value_properties_py3 import SecretValueProperties
-    from .secret_value_resource_description_py3 import SecretValueResourceDescription
-    from .paged_secret_value_resource_description_list_py3 import PagedSecretValueResourceDescriptionList
-    from .volume_provider_parameters_azure_file_py3 import VolumeProviderParametersAzureFile
-    from .volume_reference_py3 import VolumeReference
-    from .application_scoped_volume_creation_parameters_py3 import ApplicationScopedVolumeCreationParameters
-    from .application_scoped_volume_py3 import ApplicationScopedVolume
-    from .application_scoped_volume_creation_parameters_service_fabric_volume_disk_py3 import ApplicationScopedVolumeCreationParametersServiceFabricVolumeDisk
-    from .volume_resource_description_py3 import VolumeResourceDescription
-    from .paged_volume_resource_description_list_py3 import PagedVolumeResourceDescriptionList
-    from .network_resource_properties_py3 import NetworkResourceProperties
-    from .local_network_resource_properties_py3 import LocalNetworkResourceProperties
-    from .endpoint_ref_py3 import EndpointRef
-    from .network_ref_py3 import NetworkRef
-    from .network_resource_description_py3 import NetworkResourceDescription
-    from .network_resource_properties_base_py3 import NetworkResourcePropertiesBase
-    from .paged_network_resource_description_list_py3 import PagedNetworkResourceDescriptionList
-    from .gateway_destination_py3 import GatewayDestination
-    from .tcp_config_py3 import TcpConfig
-    from .http_route_match_path_py3 import HttpRouteMatchPath
-    from .http_route_match_header_py3 import HttpRouteMatchHeader
-    from .http_route_match_rule_py3 import HttpRouteMatchRule
-    from .http_route_config_py3 import HttpRouteConfig
-    from .http_host_config_py3 import HttpHostConfig
-    from .http_config_py3 import HttpConfig
-    from .gateway_resource_description_py3 import GatewayResourceDescription
-    from .paged_gateway_resource_description_list_py3 import PagedGatewayResourceDescriptionList
-    from .image_registry_credential_py3 import ImageRegistryCredential
-    from .environment_variable_py3 import EnvironmentVariable
-    from .setting_py3 import Setting
-    from .container_label_py3 import ContainerLabel
-    from .endpoint_properties_py3 import EndpointProperties
-    from .resource_requests_py3 import ResourceRequests
-    from .resource_limits_py3 import ResourceLimits
-    from .resource_requirements_py3 import ResourceRequirements
-    from .diagnostics_ref_py3 import DiagnosticsRef
-    from .reliable_collections_ref_py3 import ReliableCollectionsRef
-    from .container_state_py3 import ContainerState
-    from .container_event_py3 import ContainerEvent
-    from .container_instance_view_py3 import ContainerInstanceView
-    from .container_code_package_properties_py3 import ContainerCodePackageProperties
-    from .auto_scaling_trigger_py3 import AutoScalingTrigger
-    from .auto_scaling_mechanism_py3 import AutoScalingMechanism
-    from .auto_scaling_policy_py3 import AutoScalingPolicy
-    from .service_resource_description_py3 import ServiceResourceDescription
-    from .diagnostics_sink_properties_py3 import DiagnosticsSinkProperties
-    from .diagnostics_description_py3 import DiagnosticsDescription
-    from .azure_internal_monitoring_pipeline_sink_description_py3 import AzureInternalMonitoringPipelineSinkDescription
-    from .add_remove_replica_scaling_mechanism_py3 import AddRemoveReplicaScalingMechanism
-    from .auto_scaling_metric_py3 import AutoScalingMetric
-    from .auto_scaling_resource_metric_py3 import AutoScalingResourceMetric
-    from .service_properties_py3 import ServiceProperties
-    from .service_replica_properties_py3 import ServiceReplicaProperties
-    from .service_replica_description_py3 import ServiceReplicaDescription
-    from .average_load_scaling_trigger_py3 import AverageLoadScalingTrigger
-    from .paged_service_resource_description_list_py3 import PagedServiceResourceDescriptionList
-    from .paged_service_replica_description_list_py3 import PagedServiceReplicaDescriptionList
-    from .application_resource_description_py3 import ApplicationResourceDescription
-    from .paged_application_resource_description_list_py3 import PagedApplicationResourceDescriptionList
+    from ._models_py3 import AadMetadata
+    from ._models_py3 import AadMetadataObject
+    from ._models_py3 import AddRemoveIncrementalNamedPartitionScalingMechanism
+    from ._models_py3 import AddRemoveReplicaScalingMechanism
+    from ._models_py3 import AnalysisEventMetadata
+    from ._models_py3 import ApplicationBackupConfigurationInfo
+    from ._models_py3 import ApplicationBackupEntity
+    from ._models_py3 import ApplicationCapacityDescription
+    from ._models_py3 import ApplicationContainerInstanceExitedEvent
+    from ._models_py3 import ApplicationCreatedEvent
+    from ._models_py3 import ApplicationDeletedEvent
+    from ._models_py3 import ApplicationDescription
+    from ._models_py3 import ApplicationEvent
+    from ._models_py3 import ApplicationHealth
+    from ._models_py3 import ApplicationHealthEvaluation
+    from ._models_py3 import ApplicationHealthPolicies
+    from ._models_py3 import ApplicationHealthPolicy
+    from ._models_py3 import ApplicationHealthPolicyMapItem
+    from ._models_py3 import ApplicationHealthReportExpiredEvent
+    from ._models_py3 import ApplicationHealthState
+    from ._models_py3 import ApplicationHealthStateChunk
+    from ._models_py3 import ApplicationHealthStateChunkList
+    from ._models_py3 import ApplicationHealthStateFilter
+    from ._models_py3 import ApplicationInfo
+    from ._models_py3 import ApplicationLoadInfo
+    from ._models_py3 import ApplicationMetricDescription
+    from ._models_py3 import ApplicationNameInfo
+    from ._models_py3 import ApplicationNewHealthReportEvent
+    from ._models_py3 import ApplicationParameter
+    from ._models_py3 import ApplicationProcessExitedEvent
+    from ._models_py3 import ApplicationResourceDescription
+    from ._models_py3 import ApplicationScopedVolume
+    from ._models_py3 import ApplicationScopedVolumeCreationParameters
+    from ._models_py3 import ApplicationScopedVolumeCreationParametersServiceFabricVolumeDisk
+    from ._models_py3 import ApplicationsHealthEvaluation
+    from ._models_py3 import ApplicationTypeApplicationsHealthEvaluation
+    from ._models_py3 import ApplicationTypeHealthPolicyMapItem
+    from ._models_py3 import ApplicationTypeImageStorePath
+    from ._models_py3 import ApplicationTypeInfo
+    from ._models_py3 import ApplicationTypeManifest
+    from ._models_py3 import ApplicationUpgradeCompletedEvent
+    from ._models_py3 import ApplicationUpgradeDescription
+    from ._models_py3 import ApplicationUpgradeDomainCompletedEvent
+    from ._models_py3 import ApplicationUpgradeProgressInfo
+    from ._models_py3 import ApplicationUpgradeRollbackCompletedEvent
+    from ._models_py3 import ApplicationUpgradeRollbackStartedEvent
+    from ._models_py3 import ApplicationUpgradeStartedEvent
+    from ._models_py3 import ApplicationUpgradeUpdateDescription
+    from ._models_py3 import AutoScalingMechanism
+    from ._models_py3 import AutoScalingMetric
+    from ._models_py3 import AutoScalingPolicy
+    from ._models_py3 import AutoScalingResourceMetric
+    from ._models_py3 import AutoScalingTrigger
+    from ._models_py3 import AverageLoadScalingTrigger
+    from ._models_py3 import AveragePartitionLoadScalingTrigger
+    from ._models_py3 import AverageServiceLoadScalingTrigger
+    from ._models_py3 import AzureBlobBackupStorageDescription
+    from ._models_py3 import AzureInternalMonitoringPipelineSinkDescription
+    from ._models_py3 import BackupConfigurationInfo
+    from ._models_py3 import BackupEntity
+    from ._models_py3 import BackupInfo
+    from ._models_py3 import BackupPartitionDescription
+    from ._models_py3 import BackupPolicyDescription
+    from ._models_py3 import BackupProgressInfo
+    from ._models_py3 import BackupScheduleDescription
+    from ._models_py3 import BackupStorageDescription
+    from ._models_py3 import BackupSuspensionInfo
+    from ._models_py3 import BasicRetentionPolicyDescription
+    from ._models_py3 import BinaryPropertyValue
+    from ._models_py3 import Chaos
+    from ._models_py3 import ChaosCodePackageRestartScheduledEvent
+    from ._models_py3 import ChaosContext
+    from ._models_py3 import ChaosEvent
+    from ._models_py3 import ChaosEventsSegment
+    from ._models_py3 import ChaosEventWrapper
+    from ._models_py3 import ChaosNodeRestartScheduledEvent
+    from ._models_py3 import ChaosParameters
+    from ._models_py3 import ChaosParametersDictionaryItem
+    from ._models_py3 import ChaosPartitionPrimaryMoveScheduledEvent
+    from ._models_py3 import ChaosPartitionSecondaryMoveScheduledEvent
+    from ._models_py3 import ChaosReplicaRemovalScheduledEvent
+    from ._models_py3 import ChaosReplicaRestartScheduledEvent
+    from ._models_py3 import ChaosSchedule
+    from ._models_py3 import ChaosScheduleDescription
+    from ._models_py3 import ChaosScheduleJob
+    from ._models_py3 import ChaosScheduleJobActiveDaysOfWeek
+    from ._models_py3 import ChaosStartedEvent
+    from ._models_py3 import ChaosStoppedEvent
+    from ._models_py3 import ChaosTargetFilter
+    from ._models_py3 import CheckExistsPropertyBatchOperation
+    from ._models_py3 import CheckSequencePropertyBatchOperation
+    from ._models_py3 import CheckValuePropertyBatchOperation
+    from ._models_py3 import ClusterConfiguration
+    from ._models_py3 import ClusterConfigurationUpgradeDescription
+    from ._models_py3 import ClusterConfigurationUpgradeStatusInfo
+    from ._models_py3 import ClusterEvent
+    from ._models_py3 import ClusterHealth
+    from ._models_py3 import ClusterHealthChunk
+    from ._models_py3 import ClusterHealthChunkQueryDescription
+    from ._models_py3 import ClusterHealthPolicies
+    from ._models_py3 import ClusterHealthPolicy
+    from ._models_py3 import ClusterHealthReportExpiredEvent
+    from ._models_py3 import ClusterLoadInfo
+    from ._models_py3 import ClusterManifest
+    from ._models_py3 import ClusterNewHealthReportEvent
+    from ._models_py3 import ClusterUpgradeCompletedEvent
+    from ._models_py3 import ClusterUpgradeDescriptionObject
+    from ._models_py3 import ClusterUpgradeDomainCompletedEvent
+    from ._models_py3 import ClusterUpgradeHealthPolicyObject
+    from ._models_py3 import ClusterUpgradeProgressObject
+    from ._models_py3 import ClusterUpgradeRollbackCompletedEvent
+    from ._models_py3 import ClusterUpgradeRollbackStartedEvent
+    from ._models_py3 import ClusterUpgradeStartedEvent
+    from ._models_py3 import ClusterVersion
+    from ._models_py3 import CodePackageEntryPoint
+    from ._models_py3 import CodePackageEntryPointStatistics
+    from ._models_py3 import ComposeDeploymentStatusInfo
+    from ._models_py3 import ComposeDeploymentUpgradeDescription
+    from ._models_py3 import ComposeDeploymentUpgradeProgressInfo
+    from ._models_py3 import ContainerApiRequestBody
+    from ._models_py3 import ContainerApiResponse
+    from ._models_py3 import ContainerApiResult
+    from ._models_py3 import ContainerCodePackageProperties
+    from ._models_py3 import ContainerEvent
+    from ._models_py3 import ContainerInstanceEvent
+    from ._models_py3 import ContainerInstanceView
+    from ._models_py3 import ContainerLabel
+    from ._models_py3 import ContainerLogs
+    from ._models_py3 import ContainerState
+    from ._models_py3 import CreateComposeDeploymentDescription
+    from ._models_py3 import CurrentUpgradeDomainProgressInfo
+    from ._models_py3 import DeactivationIntentDescription
+    from ._models_py3 import DeletePropertyBatchOperation
+    from ._models_py3 import DeltaNodesCheckHealthEvaluation
+    from ._models_py3 import DeployedApplicationHealth
+    from ._models_py3 import DeployedApplicationHealthEvaluation
+    from ._models_py3 import DeployedApplicationHealthReportExpiredEvent
+    from ._models_py3 import DeployedApplicationHealthState
+    from ._models_py3 import DeployedApplicationHealthStateChunk
+    from ._models_py3 import DeployedApplicationHealthStateChunkList
+    from ._models_py3 import DeployedApplicationHealthStateFilter
+    from ._models_py3 import DeployedApplicationInfo
+    from ._models_py3 import DeployedApplicationNewHealthReportEvent
+    from ._models_py3 import DeployedApplicationsHealthEvaluation
+    from ._models_py3 import DeployedCodePackageInfo
+    from ._models_py3 import DeployedServicePackageHealth
+    from ._models_py3 import DeployedServicePackageHealthEvaluation
+    from ._models_py3 import DeployedServicePackageHealthReportExpiredEvent
+    from ._models_py3 import DeployedServicePackageHealthState
+    from ._models_py3 import DeployedServicePackageHealthStateChunk
+    from ._models_py3 import DeployedServicePackageHealthStateChunkList
+    from ._models_py3 import DeployedServicePackageHealthStateFilter
+    from ._models_py3 import DeployedServicePackageInfo
+    from ._models_py3 import DeployedServicePackageNewHealthReportEvent
+    from ._models_py3 import DeployedServicePackagesHealthEvaluation
+    from ._models_py3 import DeployedServiceReplicaDetailInfo
+    from ._models_py3 import DeployedServiceReplicaInfo
+    from ._models_py3 import DeployedServiceTypeInfo
+    from ._models_py3 import DeployedStatefulServiceReplicaDetailInfo
+    from ._models_py3 import DeployedStatefulServiceReplicaInfo
+    from ._models_py3 import DeployedStatelessServiceInstanceDetailInfo
+    from ._models_py3 import DeployedStatelessServiceInstanceInfo
+    from ._models_py3 import DeployServicePackageToNodeDescription
+    from ._models_py3 import DiagnosticsDescription
+    from ._models_py3 import DiagnosticsRef
+    from ._models_py3 import DiagnosticsSinkProperties
+    from ._models_py3 import DisableBackupDescription
+    from ._models_py3 import DoublePropertyValue
+    from ._models_py3 import EnableBackupDescription
+    from ._models_py3 import EndpointProperties
+    from ._models_py3 import EndpointRef
+    from ._models_py3 import EnsureAvailabilitySafetyCheck
+    from ._models_py3 import EnsurePartitionQuorumSafetyCheck
+    from ._models_py3 import EntityHealth
+    from ._models_py3 import EntityHealthState
+    from ._models_py3 import EntityHealthStateChunk
+    from ._models_py3 import EntityHealthStateChunkList
+    from ._models_py3 import EntityKindHealthStateCount
+    from ._models_py3 import EnvironmentVariable
+    from ._models_py3 import Epoch
+    from ._models_py3 import EventHealthEvaluation
+    from ._models_py3 import ExecutingFaultsChaosEvent
+    from ._models_py3 import ExternalStoreProvisionApplicationTypeDescription
+    from ._models_py3 import FabricCodeVersionInfo
+    from ._models_py3 import FabricConfigVersionInfo
+    from ._models_py3 import FabricError, FabricErrorException
+    from ._models_py3 import FabricErrorError
+    from ._models_py3 import FabricEvent
+    from ._models_py3 import FailedPropertyBatchInfo
+    from ._models_py3 import FailedUpgradeDomainProgressObject
+    from ._models_py3 import FailureUpgradeDomainProgressInfo
+    from ._models_py3 import FileInfo
+    from ._models_py3 import FileShareBackupStorageDescription
+    from ._models_py3 import FileVersion
+    from ._models_py3 import FolderInfo
+    from ._models_py3 import FolderSizeInfo
+    from ._models_py3 import FrequencyBasedBackupScheduleDescription
+    from ._models_py3 import GatewayDestination
+    from ._models_py3 import GatewayResourceDescription
+    from ._models_py3 import GetBackupByStorageQueryDescription
+    from ._models_py3 import GetPropertyBatchOperation
+    from ._models_py3 import GuidPropertyValue
+    from ._models_py3 import HealthEvaluation
+    from ._models_py3 import HealthEvaluationWrapper
+    from ._models_py3 import HealthEvent
+    from ._models_py3 import HealthInformation
+    from ._models_py3 import HealthStateCount
+    from ._models_py3 import HealthStatistics
+    from ._models_py3 import HttpConfig
+    from ._models_py3 import HttpHostConfig
+    from ._models_py3 import HttpRouteConfig
+    from ._models_py3 import HttpRouteMatchHeader
+    from ._models_py3 import HttpRouteMatchPath
+    from ._models_py3 import HttpRouteMatchRule
+    from ._models_py3 import IdentityDescription
+    from ._models_py3 import IdentityItemDescription
+    from ._models_py3 import ImageRegistryCredential
+    from ._models_py3 import ImageStoreContent
+    from ._models_py3 import ImageStoreCopyDescription
+    from ._models_py3 import InlinedValueSecretResourceProperties
+    from ._models_py3 import Int64PropertyValue
+    from ._models_py3 import Int64RangePartitionInformation
+    from ._models_py3 import InvokeDataLossResult
+    from ._models_py3 import InvokeQuorumLossResult
+    from ._models_py3 import KeyValueStoreReplicaStatus
+    from ._models_py3 import LoadMetricInformation
+    from ._models_py3 import LoadMetricReport
+    from ._models_py3 import LoadMetricReportInfo
+    from ._models_py3 import LocalNetworkResourceProperties
+    from ._models_py3 import ManagedApplicationIdentity
+    from ._models_py3 import ManagedApplicationIdentityDescription
+    from ._models_py3 import MonitoringPolicyDescription
+    from ._models_py3 import NameDescription
+    from ._models_py3 import NamedPartitionInformation
+    from ._models_py3 import NamedPartitionSchemeDescription
+    from ._models_py3 import NetworkRef
+    from ._models_py3 import NetworkResourceDescription
+    from ._models_py3 import NetworkResourceProperties
+    from ._models_py3 import NetworkResourcePropertiesBase
+    from ._models_py3 import NodeAbortedEvent
+    from ._models_py3 import NodeAddedToClusterEvent
+    from ._models_py3 import NodeClosedEvent
+    from ._models_py3 import NodeDeactivateCompletedEvent
+    from ._models_py3 import NodeDeactivateStartedEvent
+    from ._models_py3 import NodeDeactivationInfo
+    from ._models_py3 import NodeDeactivationTask
+    from ._models_py3 import NodeDeactivationTaskId
+    from ._models_py3 import NodeDownEvent
+    from ._models_py3 import NodeEvent
+    from ._models_py3 import NodeHealth
+    from ._models_py3 import NodeHealthEvaluation
+    from ._models_py3 import NodeHealthReportExpiredEvent
+    from ._models_py3 import NodeHealthState
+    from ._models_py3 import NodeHealthStateChunk
+    from ._models_py3 import NodeHealthStateChunkList
+    from ._models_py3 import NodeHealthStateFilter
+    from ._models_py3 import NodeId
+    from ._models_py3 import NodeImpact
+    from ._models_py3 import NodeInfo
+    from ._models_py3 import NodeLoadInfo
+    from ._models_py3 import NodeLoadMetricInformation
+    from ._models_py3 import NodeNewHealthReportEvent
+    from ._models_py3 import NodeOpenFailedEvent
+    from ._models_py3 import NodeOpenSucceededEvent
+    from ._models_py3 import NodeRemovedFromClusterEvent
+    from ._models_py3 import NodeRepairImpactDescription
+    from ._models_py3 import NodeRepairTargetDescription
+    from ._models_py3 import NodeResult
+    from ._models_py3 import NodesHealthEvaluation
+    from ._models_py3 import NodeTransitionProgress
+    from ._models_py3 import NodeTransitionResult
+    from ._models_py3 import NodeUpEvent
+    from ._models_py3 import NodeUpgradeProgressInfo
+    from ._models_py3 import OperationStatus
+    from ._models_py3 import PackageSharingPolicyInfo
+    from ._models_py3 import PagedApplicationInfoList
+    from ._models_py3 import PagedApplicationResourceDescriptionList
+    from ._models_py3 import PagedApplicationTypeInfoList
+    from ._models_py3 import PagedBackupConfigurationInfoList
+    from ._models_py3 import PagedBackupEntityList
+    from ._models_py3 import PagedBackupInfoList
+    from ._models_py3 import PagedBackupPolicyDescriptionList
+    from ._models_py3 import PagedComposeDeploymentStatusInfoList
+    from ._models_py3 import PagedDeployedApplicationInfoList
+    from ._models_py3 import PagedGatewayResourceDescriptionList
+    from ._models_py3 import PagedNetworkResourceDescriptionList
+    from ._models_py3 import PagedNodeInfoList
+    from ._models_py3 import PagedPropertyInfoList
+    from ._models_py3 import PagedReplicaInfoList
+    from ._models_py3 import PagedSecretResourceDescriptionList
+    from ._models_py3 import PagedSecretValueResourceDescriptionList
+    from ._models_py3 import PagedServiceInfoList
+    from ._models_py3 import PagedServicePartitionInfoList
+    from ._models_py3 import PagedServiceReplicaDescriptionList
+    from ._models_py3 import PagedServiceResourceDescriptionList
+    from ._models_py3 import PagedSubNameInfoList
+    from ._models_py3 import PagedVolumeResourceDescriptionList
+    from ._models_py3 import PartitionAnalysisEvent
+    from ._models_py3 import PartitionBackupConfigurationInfo
+    from ._models_py3 import PartitionBackupEntity
+    from ._models_py3 import PartitionDataLossProgress
+    from ._models_py3 import PartitionEvent
+    from ._models_py3 import PartitionHealth
+    from ._models_py3 import PartitionHealthEvaluation
+    from ._models_py3 import PartitionHealthReportExpiredEvent
+    from ._models_py3 import PartitionHealthState
+    from ._models_py3 import PartitionHealthStateChunk
+    from ._models_py3 import PartitionHealthStateChunkList
+    from ._models_py3 import PartitionHealthStateFilter
+    from ._models_py3 import PartitionInformation
+    from ._models_py3 import PartitionInstanceCountScaleMechanism
+    from ._models_py3 import PartitionLoadInformation
+    from ._models_py3 import PartitionNewHealthReportEvent
+    from ._models_py3 import PartitionPrimaryMoveAnalysisEvent
+    from ._models_py3 import PartitionQuorumLossProgress
+    from ._models_py3 import PartitionReconfiguredEvent
+    from ._models_py3 import PartitionRestartProgress
+    from ._models_py3 import PartitionSafetyCheck
+    from ._models_py3 import PartitionSchemeDescription
+    from ._models_py3 import PartitionsHealthEvaluation
+    from ._models_py3 import PrimaryReplicatorStatus
+    from ._models_py3 import PropertyBatchDescriptionList
+    from ._models_py3 import PropertyBatchInfo
+    from ._models_py3 import PropertyBatchOperation
+    from ._models_py3 import PropertyDescription
+    from ._models_py3 import PropertyInfo
+    from ._models_py3 import PropertyMetadata
+    from ._models_py3 import PropertyValue
+    from ._models_py3 import ProvisionApplicationTypeDescription
+    from ._models_py3 import ProvisionApplicationTypeDescriptionBase
+    from ._models_py3 import ProvisionFabricDescription
+    from ._models_py3 import PutPropertyBatchOperation
+    from ._models_py3 import ReconfigurationInformation
+    from ._models_py3 import RegistryCredential
+    from ._models_py3 import ReliableCollectionsRef
+    from ._models_py3 import RemoteReplicatorAcknowledgementDetail
+    from ._models_py3 import RemoteReplicatorAcknowledgementStatus
+    from ._models_py3 import RemoteReplicatorStatus
+    from ._models_py3 import RepairImpactDescriptionBase
+    from ._models_py3 import RepairTargetDescriptionBase
+    from ._models_py3 import RepairTask
+    from ._models_py3 import RepairTaskApproveDescription
+    from ._models_py3 import RepairTaskCancelDescription
+    from ._models_py3 import RepairTaskDeleteDescription
+    from ._models_py3 import RepairTaskHistory
+    from ._models_py3 import RepairTaskUpdateHealthPolicyDescription
+    from ._models_py3 import RepairTaskUpdateInfo
+    from ._models_py3 import ReplicaEvent
+    from ._models_py3 import ReplicaHealth
+    from ._models_py3 import ReplicaHealthEvaluation
+    from ._models_py3 import ReplicaHealthState
+    from ._models_py3 import ReplicaHealthStateChunk
+    from ._models_py3 import ReplicaHealthStateChunkList
+    from ._models_py3 import ReplicaHealthStateFilter
+    from ._models_py3 import ReplicaInfo
+    from ._models_py3 import ReplicasHealthEvaluation
+    from ._models_py3 import ReplicaStatusBase
+    from ._models_py3 import ReplicatorQueueStatus
+    from ._models_py3 import ReplicatorStatus
+    from ._models_py3 import ResolvedServiceEndpoint
+    from ._models_py3 import ResolvedServicePartition
+    from ._models_py3 import ResourceLimits
+    from ._models_py3 import ResourceRequests
+    from ._models_py3 import ResourceRequirements
+    from ._models_py3 import RestartDeployedCodePackageDescription
+    from ._models_py3 import RestartNodeDescription
+    from ._models_py3 import RestartPartitionResult
+    from ._models_py3 import RestorePartitionDescription
+    from ._models_py3 import RestoreProgressInfo
+    from ._models_py3 import ResumeApplicationUpgradeDescription
+    from ._models_py3 import ResumeClusterUpgradeDescription
+    from ._models_py3 import RetentionPolicyDescription
+    from ._models_py3 import RollingUpgradeUpdateDescription
+    from ._models_py3 import SafetyCheck
+    from ._models_py3 import SafetyCheckWrapper
+    from ._models_py3 import ScalingMechanismDescription
+    from ._models_py3 import ScalingPolicyDescription
+    from ._models_py3 import ScalingTriggerDescription
+    from ._models_py3 import SecondaryActiveReplicatorStatus
+    from ._models_py3 import SecondaryIdleReplicatorStatus
+    from ._models_py3 import SecondaryReplicatorStatus
+    from ._models_py3 import SecretResourceDescription
+    from ._models_py3 import SecretResourceProperties
+    from ._models_py3 import SecretResourcePropertiesBase
+    from ._models_py3 import SecretValue
+    from ._models_py3 import SecretValueProperties
+    from ._models_py3 import SecretValueResourceDescription
+    from ._models_py3 import SeedNodeSafetyCheck
+    from ._models_py3 import SelectedPartition
+    from ._models_py3 import ServiceBackupConfigurationInfo
+    from ._models_py3 import ServiceBackupEntity
+    from ._models_py3 import ServiceCorrelationDescription
+    from ._models_py3 import ServiceCreatedEvent
+    from ._models_py3 import ServiceDeletedEvent
+    from ._models_py3 import ServiceDescription
+    from ._models_py3 import ServiceEvent
+    from ._models_py3 import ServiceFromTemplateDescription
+    from ._models_py3 import ServiceHealth
+    from ._models_py3 import ServiceHealthEvaluation
+    from ._models_py3 import ServiceHealthReportExpiredEvent
+    from ._models_py3 import ServiceHealthState
+    from ._models_py3 import ServiceHealthStateChunk
+    from ._models_py3 import ServiceHealthStateChunkList
+    from ._models_py3 import ServiceHealthStateFilter
+    from ._models_py3 import ServiceIdentity
+    from ._models_py3 import ServiceInfo
+    from ._models_py3 import ServiceLoadMetricDescription
+    from ._models_py3 import ServiceNameInfo
+    from ._models_py3 import ServiceNewHealthReportEvent
+    from ._models_py3 import ServicePartitionInfo
+    from ._models_py3 import ServicePlacementInvalidDomainPolicyDescription
+    from ._models_py3 import ServicePlacementNonPartiallyPlaceServicePolicyDescription
+    from ._models_py3 import ServicePlacementPolicyDescription
+    from ._models_py3 import ServicePlacementPreferPrimaryDomainPolicyDescription
+    from ._models_py3 import ServicePlacementRequiredDomainPolicyDescription
+    from ._models_py3 import ServicePlacementRequireDomainDistributionPolicyDescription
+    from ._models_py3 import ServiceProperties
+    from ._models_py3 import ServiceReplicaDescription
+    from ._models_py3 import ServiceReplicaProperties
+    from ._models_py3 import ServiceResourceDescription
+    from ._models_py3 import ServicesHealthEvaluation
+    from ._models_py3 import ServiceTypeDescription
+    from ._models_py3 import ServiceTypeExtensionDescription
+    from ._models_py3 import ServiceTypeHealthPolicy
+    from ._models_py3 import ServiceTypeHealthPolicyMapItem
+    from ._models_py3 import ServiceTypeInfo
+    from ._models_py3 import ServiceTypeManifest
+    from ._models_py3 import ServiceUpdateDescription
+    from ._models_py3 import Setting
+    from ._models_py3 import SingletonPartitionInformation
+    from ._models_py3 import SingletonPartitionSchemeDescription
+    from ._models_py3 import StartClusterUpgradeDescription
+    from ._models_py3 import StartedChaosEvent
+    from ._models_py3 import StatefulReplicaHealthReportExpiredEvent
+    from ._models_py3 import StatefulReplicaNewHealthReportEvent
+    from ._models_py3 import StatefulServiceDescription
+    from ._models_py3 import StatefulServiceInfo
+    from ._models_py3 import StatefulServicePartitionInfo
+    from ._models_py3 import StatefulServiceReplicaHealth
+    from ._models_py3 import StatefulServiceReplicaHealthState
+    from ._models_py3 import StatefulServiceReplicaInfo
+    from ._models_py3 import StatefulServiceTypeDescription
+    from ._models_py3 import StatefulServiceUpdateDescription
+    from ._models_py3 import StatelessReplicaHealthReportExpiredEvent
+    from ._models_py3 import StatelessReplicaNewHealthReportEvent
+    from ._models_py3 import StatelessServiceDescription
+    from ._models_py3 import StatelessServiceInfo
+    from ._models_py3 import StatelessServiceInstanceHealth
+    from ._models_py3 import StatelessServiceInstanceHealthState
+    from ._models_py3 import StatelessServiceInstanceInfo
+    from ._models_py3 import StatelessServicePartitionInfo
+    from ._models_py3 import StatelessServiceTypeDescription
+    from ._models_py3 import StatelessServiceUpdateDescription
+    from ._models_py3 import StoppedChaosEvent
+    from ._models_py3 import StringPropertyValue
+    from ._models_py3 import SuccessfulPropertyBatchInfo
+    from ._models_py3 import SystemApplicationHealthEvaluation
+    from ._models_py3 import TcpConfig
+    from ._models_py3 import TestErrorChaosEvent
+    from ._models_py3 import TimeBasedBackupScheduleDescription
+    from ._models_py3 import TimeOfDay
+    from ._models_py3 import TimeRange
+    from ._models_py3 import UniformInt64RangePartitionSchemeDescription
+    from ._models_py3 import UnplacedReplicaInformation
+    from ._models_py3 import UnprovisionApplicationTypeDescriptionInfo
+    from ._models_py3 import UnprovisionFabricDescription
+    from ._models_py3 import UpdateClusterUpgradeDescription
+    from ._models_py3 import UpgradeDomainDeltaNodesCheckHealthEvaluation
+    from ._models_py3 import UpgradeDomainInfo
+    from ._models_py3 import UpgradeDomainNodesHealthEvaluation
+    from ._models_py3 import UpgradeOrchestrationServiceState
+    from ._models_py3 import UpgradeOrchestrationServiceStateSummary
+    from ._models_py3 import UploadChunkRange
+    from ._models_py3 import UploadSession
+    from ._models_py3 import UploadSessionInfo
+    from ._models_py3 import ValidationFailedChaosEvent
+    from ._models_py3 import VolumeProviderParametersAzureFile
+    from ._models_py3 import VolumeReference
+    from ._models_py3 import VolumeResourceDescription
+    from ._models_py3 import WaitForInbuildReplicaSafetyCheck
+    from ._models_py3 import WaitForPrimaryPlacementSafetyCheck
+    from ._models_py3 import WaitForPrimarySwapSafetyCheck
+    from ._models_py3 import WaitForReconfigurationSafetyCheck
+    from ._models_py3 import WaitingChaosEvent
 except (SyntaxError, ImportError):
-    from .fabric_error_error import FabricErrorError
-    from .fabric_error import FabricError, FabricErrorException
-    from .container_logs import ContainerLogs
-    from .aad_metadata import AadMetadata
-    from .aad_metadata_object import AadMetadataObject
-    from .analysis_event_metadata import AnalysisEventMetadata
-    from .application_event import ApplicationEvent
-    from .service_health_state import ServiceHealthState
-    from .deployed_application_health_state import DeployedApplicationHealthState
-    from .application_health import ApplicationHealth
-    from .health_evaluation import HealthEvaluation
-    from .health_evaluation_wrapper import HealthEvaluationWrapper
-    from .application_health_evaluation import ApplicationHealthEvaluation
-    from .service_type_health_policy import ServiceTypeHealthPolicy
-    from .service_type_health_policy_map_item import ServiceTypeHealthPolicyMapItem
-    from .application_health_policy import ApplicationHealthPolicy
-    from .application_health_policy_map_item import ApplicationHealthPolicyMapItem
-    from .application_health_policies import ApplicationHealthPolicies
-    from .application_health_state import ApplicationHealthState
-    from .replica_health_state_chunk import ReplicaHealthStateChunk
-    from .replica_health_state_chunk_list import ReplicaHealthStateChunkList
-    from .partition_health_state_chunk import PartitionHealthStateChunk
-    from .partition_health_state_chunk_list import PartitionHealthStateChunkList
-    from .service_health_state_chunk import ServiceHealthStateChunk
-    from .service_health_state_chunk_list import ServiceHealthStateChunkList
-    from .deployed_service_package_health_state_chunk import DeployedServicePackageHealthStateChunk
-    from .deployed_service_package_health_state_chunk_list import DeployedServicePackageHealthStateChunkList
-    from .deployed_application_health_state_chunk import DeployedApplicationHealthStateChunk
-    from .deployed_application_health_state_chunk_list import DeployedApplicationHealthStateChunkList
-    from .application_health_state_chunk import ApplicationHealthStateChunk
-    from .application_health_state_chunk_list import ApplicationHealthStateChunkList
-    from .replica_health_state_filter import ReplicaHealthStateFilter
-    from .partition_health_state_filter import PartitionHealthStateFilter
-    from .service_health_state_filter import ServiceHealthStateFilter
-    from .deployed_service_package_health_state_filter import DeployedServicePackageHealthStateFilter
-    from .deployed_application_health_state_filter import DeployedApplicationHealthStateFilter
-    from .application_health_state_filter import ApplicationHealthStateFilter
-    from .application_parameter import ApplicationParameter
-    from .application_info import ApplicationInfo
-    from .application_metric_description import ApplicationMetricDescription
-    from .application_load_info import ApplicationLoadInfo
-    from .application_name_info import ApplicationNameInfo
-    from .applications_health_evaluation import ApplicationsHealthEvaluation
-    from .application_type_applications_health_evaluation import ApplicationTypeApplicationsHealthEvaluation
-    from .application_type_health_policy_map_item import ApplicationTypeHealthPolicyMapItem
-    from .application_type_info import ApplicationTypeInfo
-    from .paged_application_type_info_list import PagedApplicationTypeInfoList
-    from .application_type_manifest import ApplicationTypeManifest
-    from .monitoring_policy_description import MonitoringPolicyDescription
-    from .application_upgrade_description import ApplicationUpgradeDescription
-    from .upgrade_domain_info import UpgradeDomainInfo
-    from .safety_check import SafetyCheck
-    from .safety_check_wrapper import SafetyCheckWrapper
-    from .node_upgrade_progress_info import NodeUpgradeProgressInfo
-    from .current_upgrade_domain_progress_info import CurrentUpgradeDomainProgressInfo
-    from .failure_upgrade_domain_progress_info import FailureUpgradeDomainProgressInfo
-    from .application_upgrade_progress_info import ApplicationUpgradeProgressInfo
-    from .cluster_configuration import ClusterConfiguration
-    from .cluster_event import ClusterEvent
-    from .node_id import NodeId
-    from .node_health_state import NodeHealthState
-    from .cluster_health import ClusterHealth
-    from .node_health_state_chunk import NodeHealthStateChunk
-    from .node_health_state_chunk_list import NodeHealthStateChunkList
-    from .cluster_health_chunk import ClusterHealthChunk
-    from .node_health_state_filter import NodeHealthStateFilter
-    from .cluster_health_policy import ClusterHealthPolicy
-    from .cluster_health_chunk_query_description import ClusterHealthChunkQueryDescription
-    from .cluster_health_policies import ClusterHealthPolicies
-    from .cluster_manifest import ClusterManifest
-    from .cluster_version import ClusterVersion
-    from .container_api_request_body import ContainerApiRequestBody
-    from .container_api_result import ContainerApiResult
-    from .container_api_response import ContainerApiResponse
-    from .container_instance_event import ContainerInstanceEvent
-    from .deactivation_intent_description import DeactivationIntentDescription
-    from .delta_nodes_check_health_evaluation import DeltaNodesCheckHealthEvaluation
-    from .deployed_service_package_health_state import DeployedServicePackageHealthState
-    from .deployed_application_health import DeployedApplicationHealth
-    from .deployed_application_health_evaluation import DeployedApplicationHealthEvaluation
-    from .deployed_application_info import DeployedApplicationInfo
-    from .deployed_applications_health_evaluation import DeployedApplicationsHealthEvaluation
-    from .deployed_service_package_health import DeployedServicePackageHealth
-    from .deployed_service_package_health_evaluation import DeployedServicePackageHealthEvaluation
-    from .deployed_service_packages_health_evaluation import DeployedServicePackagesHealthEvaluation
-    from .deployed_service_replica_info import DeployedServiceReplicaInfo
-    from .reconfiguration_information import ReconfigurationInformation
-    from .deployed_stateful_service_replica_info import DeployedStatefulServiceReplicaInfo
-    from .deployed_stateless_service_instance_info import DeployedStatelessServiceInstanceInfo
-    from .health_event import HealthEvent
-    from .health_state_count import HealthStateCount
-    from .entity_kind_health_state_count import EntityKindHealthStateCount
-    from .health_statistics import HealthStatistics
-    from .entity_health import EntityHealth
-    from .entity_health_state import EntityHealthState
-    from .entity_health_state_chunk import EntityHealthStateChunk
-    from .entity_health_state_chunk_list import EntityHealthStateChunkList
-    from .epoch import Epoch
-    from .event_health_evaluation import EventHealthEvaluation
-    from .fabric_event import FabricEvent
-    from .fabric_code_version_info import FabricCodeVersionInfo
-    from .fabric_config_version_info import FabricConfigVersionInfo
-    from .cluster_configuration_upgrade_status_info import ClusterConfigurationUpgradeStatusInfo
-    from .health_information import HealthInformation
-    from .int64_range_partition_information import Int64RangePartitionInformation
-    from .named_partition_information import NamedPartitionInformation
-    from .node_deactivation_task_id import NodeDeactivationTaskId
-    from .node_deactivation_task import NodeDeactivationTask
-    from .node_deactivation_info import NodeDeactivationInfo
-    from .node_event import NodeEvent
-    from .node_health import NodeHealth
-    from .node_health_evaluation import NodeHealthEvaluation
-    from .node_info import NodeInfo
-    from .node_load_metric_information import NodeLoadMetricInformation
-    from .node_load_info import NodeLoadInfo
-    from .nodes_health_evaluation import NodesHealthEvaluation
-    from .paged_application_info_list import PagedApplicationInfoList
-    from .paged_deployed_application_info_list import PagedDeployedApplicationInfoList
-    from .paged_node_info_list import PagedNodeInfoList
-    from .partition_information import PartitionInformation
-    from .service_partition_info import ServicePartitionInfo
-    from .paged_service_partition_info_list import PagedServicePartitionInfoList
-    from .replica_info import ReplicaInfo
-    from .paged_replica_info_list import PagedReplicaInfoList
-    from .service_info import ServiceInfo
-    from .paged_service_info_list import PagedServiceInfoList
-    from .partition_analysis_event import PartitionAnalysisEvent
-    from .partition_event import PartitionEvent
-    from .replica_health_state import ReplicaHealthState
-    from .partition_health import PartitionHealth
-    from .partition_health_evaluation import PartitionHealthEvaluation
-    from .partition_health_state import PartitionHealthState
-    from .provision_fabric_description import ProvisionFabricDescription
-    from .provision_application_type_description_base import ProvisionApplicationTypeDescriptionBase
-    from .provision_application_type_description import ProvisionApplicationTypeDescription
-    from .external_store_provision_application_type_description import ExternalStoreProvisionApplicationTypeDescription
-    from .unprovision_fabric_description import UnprovisionFabricDescription
-    from .resume_cluster_upgrade_description import ResumeClusterUpgradeDescription
-    from .cluster_upgrade_health_policy_object import ClusterUpgradeHealthPolicyObject
-    from .start_cluster_upgrade_description import StartClusterUpgradeDescription
-    from .rolling_upgrade_update_description import RollingUpgradeUpdateDescription
-    from .update_cluster_upgrade_description import UpdateClusterUpgradeDescription
-    from .partition_safety_check import PartitionSafetyCheck
-    from .ensure_availability_safety_check import EnsureAvailabilitySafetyCheck
-    from .ensure_partition_qurum_safety_check import EnsurePartitionQurumSafetyCheck
-    from .seed_node_safety_check import SeedNodeSafetyCheck
-    from .partitions_health_evaluation import PartitionsHealthEvaluation
-    from .replica_event import ReplicaEvent
-    from .replica_health import ReplicaHealth
-    from .replica_health_evaluation import ReplicaHealthEvaluation
-    from .replicas_health_evaluation import ReplicasHealthEvaluation
-    from .restart_node_description import RestartNodeDescription
-    from .service_event import ServiceEvent
-    from .service_from_template_description import ServiceFromTemplateDescription
-    from .service_health_evaluation import ServiceHealthEvaluation
-    from .service_health import ServiceHealth
-    from .service_name_info import ServiceNameInfo
-    from .service_placement_invalid_domain_policy_description import ServicePlacementInvalidDomainPolicyDescription
-    from .service_placement_non_partially_place_service_policy_description import ServicePlacementNonPartiallyPlaceServicePolicyDescription
-    from .service_placement_policy_description import ServicePlacementPolicyDescription
-    from .service_placement_prefer_primary_domain_policy_description import ServicePlacementPreferPrimaryDomainPolicyDescription
-    from .service_placement_required_domain_policy_description import ServicePlacementRequiredDomainPolicyDescription
-    from .service_placement_require_domain_distribution_policy_description import ServicePlacementRequireDomainDistributionPolicyDescription
-    from .services_health_evaluation import ServicesHealthEvaluation
-    from .service_load_metric_description import ServiceLoadMetricDescription
-    from .service_type_extension_description import ServiceTypeExtensionDescription
-    from .service_type_description import ServiceTypeDescription
-    from .service_type_info import ServiceTypeInfo
-    from .service_type_manifest import ServiceTypeManifest
-    from .singleton_partition_information import SingletonPartitionInformation
-    from .stateful_service_info import StatefulServiceInfo
-    from .stateful_service_partition_info import StatefulServicePartitionInfo
-    from .stateful_service_replica_health import StatefulServiceReplicaHealth
-    from .stateful_service_replica_health_state import StatefulServiceReplicaHealthState
-    from .stateful_service_type_description import StatefulServiceTypeDescription
-    from .stateless_service_info import StatelessServiceInfo
-    from .stateless_service_instance_health import StatelessServiceInstanceHealth
-    from .stateless_service_instance_health_state import StatelessServiceInstanceHealthState
-    from .stateless_service_partition_info import StatelessServicePartitionInfo
-    from .stateless_service_type_description import StatelessServiceTypeDescription
-    from .system_application_health_evaluation import SystemApplicationHealthEvaluation
-    from .upgrade_domain_delta_nodes_check_health_evaluation import UpgradeDomainDeltaNodesCheckHealthEvaluation
-    from .upgrade_domain_nodes_health_evaluation import UpgradeDomainNodesHealthEvaluation
-    from .wait_for_inbuild_replica_safety_check import WaitForInbuildReplicaSafetyCheck
-    from .wait_for_primary_placement_safety_check import WaitForPrimaryPlacementSafetyCheck
-    from .wait_for_primary_swap_safety_check import WaitForPrimarySwapSafetyCheck
-    from .wait_for_reconfiguration_safety_check import WaitForReconfigurationSafetyCheck
-    from .load_metric_report import LoadMetricReport
-    from .partition_load_information import PartitionLoadInformation
-    from .stateful_service_replica_info import StatefulServiceReplicaInfo
-    from .stateless_service_instance_info import StatelessServiceInstanceInfo
-    from .cluster_upgrade_description_object import ClusterUpgradeDescriptionObject
-    from .failed_upgrade_domain_progress_object import FailedUpgradeDomainProgressObject
-    from .cluster_upgrade_progress_object import ClusterUpgradeProgressObject
-    from .cluster_configuration_upgrade_description import ClusterConfigurationUpgradeDescription
-    from .upgrade_orchestration_service_state import UpgradeOrchestrationServiceState
-    from .upgrade_orchestration_service_state_summary import UpgradeOrchestrationServiceStateSummary
-    from .application_type_image_store_path import ApplicationTypeImageStorePath
-    from .unprovision_application_type_description_info import UnprovisionApplicationTypeDescriptionInfo
-    from .code_package_entry_point_statistics import CodePackageEntryPointStatistics
-    from .code_package_entry_point import CodePackageEntryPoint
-    from .deployed_code_package_info import DeployedCodePackageInfo
-    from .chaos_context import ChaosContext
-    from .chaos_target_filter import ChaosTargetFilter
-    from .chaos_parameters import ChaosParameters
-    from .chaos import Chaos
-    from .chaos_parameters_dictionary_item import ChaosParametersDictionaryItem
-    from .chaos_event import ChaosEvent
-    from .chaos_event_wrapper import ChaosEventWrapper
-    from .chaos_events_segment import ChaosEventsSegment
-    from .chaos_schedule_job_active_days_of_week import ChaosScheduleJobActiveDaysOfWeek
-    from .time_of_day import TimeOfDay
-    from .time_range import TimeRange
-    from .chaos_schedule_job import ChaosScheduleJob
-    from .chaos_schedule import ChaosSchedule
-    from .chaos_schedule_description import ChaosScheduleDescription
-    from .executing_faults_chaos_event import ExecutingFaultsChaosEvent
-    from .started_chaos_event import StartedChaosEvent
-    from .stopped_chaos_event import StoppedChaosEvent
-    from .test_error_chaos_event import TestErrorChaosEvent
-    from .validation_failed_chaos_event import ValidationFailedChaosEvent
-    from .waiting_chaos_event import WaitingChaosEvent
-    from .application_capacity_description import ApplicationCapacityDescription
-    from .application_description import ApplicationDescription
-    from .compose_deployment_status_info import ComposeDeploymentStatusInfo
-    from .registry_credential import RegistryCredential
-    from .compose_deployment_upgrade_description import ComposeDeploymentUpgradeDescription
-    from .compose_deployment_upgrade_progress_info import ComposeDeploymentUpgradeProgressInfo
-    from .paged_compose_deployment_status_info_list import PagedComposeDeploymentStatusInfoList
-    from .create_compose_deployment_description import CreateComposeDeploymentDescription
-    from .deployed_service_package_info import DeployedServicePackageInfo
-    from .service_correlation_description import ServiceCorrelationDescription
-    from .partition_scheme_description import PartitionSchemeDescription
-    from .named_partition_scheme_description import NamedPartitionSchemeDescription
-    from .singleton_partition_scheme_description import SingletonPartitionSchemeDescription
-    from .uniform_int64_range_partition_scheme_description import UniformInt64RangePartitionSchemeDescription
-    from .scaling_trigger_description import ScalingTriggerDescription
-    from .scaling_mechanism_description import ScalingMechanismDescription
-    from .scaling_policy_description import ScalingPolicyDescription
-    from .service_description import ServiceDescription
-    from .stateful_service_description import StatefulServiceDescription
-    from .stateless_service_description import StatelessServiceDescription
-    from .replicator_queue_status import ReplicatorQueueStatus
-    from .replicator_status import ReplicatorStatus
-    from .remote_replicator_acknowledgement_detail import RemoteReplicatorAcknowledgementDetail
-    from .remote_replicator_acknowledgement_status import RemoteReplicatorAcknowledgementStatus
-    from .remote_replicator_status import RemoteReplicatorStatus
-    from .primary_replicator_status import PrimaryReplicatorStatus
-    from .secondary_replicator_status import SecondaryReplicatorStatus
-    from .secondary_active_replicator_status import SecondaryActiveReplicatorStatus
-    from .secondary_idle_replicator_status import SecondaryIdleReplicatorStatus
-    from .load_metric_report_info import LoadMetricReportInfo
-    from .deployed_service_replica_detail_info import DeployedServiceReplicaDetailInfo
-    from .key_value_store_replica_status import KeyValueStoreReplicaStatus
-    from .deployed_stateful_service_replica_detail_info import DeployedStatefulServiceReplicaDetailInfo
-    from .deployed_stateless_service_instance_detail_info import DeployedStatelessServiceInstanceDetailInfo
-    from .replica_status_base import ReplicaStatusBase
-    from .service_update_description import ServiceUpdateDescription
-    from .stateful_service_update_description import StatefulServiceUpdateDescription
-    from .stateless_service_update_description import StatelessServiceUpdateDescription
-    from .file_version import FileVersion
-    from .file_info import FileInfo
-    from .folder_info import FolderInfo
-    from .image_store_content import ImageStoreContent
-    from .image_store_copy_description import ImageStoreCopyDescription
-    from .restart_deployed_code_package_description import RestartDeployedCodePackageDescription
-    from .deployed_service_type_info import DeployedServiceTypeInfo
-    from .resolved_service_endpoint import ResolvedServiceEndpoint
-    from .resolved_service_partition import ResolvedServicePartition
-    from .selected_partition import SelectedPartition
-    from .invoke_data_loss_result import InvokeDataLossResult
-    from .invoke_quorum_loss_result import InvokeQuorumLossResult
-    from .node_result import NodeResult
-    from .node_transition_result import NodeTransitionResult
-    from .node_transition_progress import NodeTransitionProgress
-    from .operation_status import OperationStatus
-    from .partition_data_loss_progress import PartitionDataLossProgress
-    from .partition_quorum_loss_progress import PartitionQuorumLossProgress
-    from .restart_partition_result import RestartPartitionResult
-    from .partition_restart_progress import PartitionRestartProgress
-    from .package_sharing_policy_info import PackageSharingPolicyInfo
-    from .deploy_service_package_to_node_description import DeployServicePackageToNodeDescription
-    from .resume_application_upgrade_description import ResumeApplicationUpgradeDescription
-    from .application_upgrade_update_description import ApplicationUpgradeUpdateDescription
-    from .name_description import NameDescription
-    from .paged_sub_name_info_list import PagedSubNameInfoList
-    from .property_value import PropertyValue
-    from .binary_property_value import BinaryPropertyValue
-    from .int64_property_value import Int64PropertyValue
-    from .double_property_value import DoublePropertyValue
-    from .string_property_value import StringPropertyValue
-    from .guid_property_value import GuidPropertyValue
-    from .property_metadata import PropertyMetadata
-    from .property_info import PropertyInfo
-    from .paged_property_info_list import PagedPropertyInfoList
-    from .property_description import PropertyDescription
-    from .property_batch_operation import PropertyBatchOperation
-    from .property_batch_description_list import PropertyBatchDescriptionList
-    from .check_exists_property_batch_operation import CheckExistsPropertyBatchOperation
-    from .check_sequence_property_batch_operation import CheckSequencePropertyBatchOperation
-    from .check_value_property_batch_operation import CheckValuePropertyBatchOperation
-    from .delete_property_batch_operation import DeletePropertyBatchOperation
-    from .get_property_batch_operation import GetPropertyBatchOperation
-    from .put_property_batch_operation import PutPropertyBatchOperation
-    from .property_batch_info import PropertyBatchInfo
-    from .successful_property_batch_info import SuccessfulPropertyBatchInfo
-    from .failed_property_batch_info import FailedPropertyBatchInfo
-    from .backup_schedule_description import BackupScheduleDescription
-    from .backup_storage_description import BackupStorageDescription
-    from .retention_policy_description import RetentionPolicyDescription
-    from .backup_policy_description import BackupPolicyDescription
-    from .paged_backup_policy_description_list import PagedBackupPolicyDescriptionList
-    from .basic_retention_policy_description import BasicRetentionPolicyDescription
-    from .disable_backup_description import DisableBackupDescription
-    from .application_backup_configuration_info import ApplicationBackupConfigurationInfo
-    from .service_backup_configuration_info import ServiceBackupConfigurationInfo
-    from .backup_suspension_info import BackupSuspensionInfo
-    from .backup_configuration_info import BackupConfigurationInfo
-    from .paged_backup_configuration_info_list import PagedBackupConfigurationInfoList
-    from .restore_partition_description import RestorePartitionDescription
-    from .restore_progress_info import RestoreProgressInfo
-    from .backup_partition_description import BackupPartitionDescription
-    from .backup_info import BackupInfo
-    from .paged_backup_info_list import PagedBackupInfoList
-    from .azure_blob_backup_storage_description import AzureBlobBackupStorageDescription
-    from .file_share_backup_storage_description import FileShareBackupStorageDescription
-    from .frequency_based_backup_schedule_description import FrequencyBasedBackupScheduleDescription
-    from .time_based_backup_schedule_description import TimeBasedBackupScheduleDescription
-    from .backup_progress_info import BackupProgressInfo
-    from .partition_backup_configuration_info import PartitionBackupConfigurationInfo
-    from .backup_entity import BackupEntity
-    from .application_backup_entity import ApplicationBackupEntity
-    from .service_backup_entity import ServiceBackupEntity
-    from .partition_backup_entity import PartitionBackupEntity
-    from .enable_backup_description import EnableBackupDescription
-    from .paged_backup_entity_list import PagedBackupEntityList
-    from .get_backup_by_storage_query_description import GetBackupByStorageQueryDescription
-    from .node_impact import NodeImpact
-    from .node_repair_impact_description import NodeRepairImpactDescription
-    from .node_repair_target_description import NodeRepairTargetDescription
-    from .repair_impact_description_base import RepairImpactDescriptionBase
-    from .repair_target_description_base import RepairTargetDescriptionBase
-    from .repair_task_history import RepairTaskHistory
-    from .repair_task import RepairTask
-    from .repair_task_approve_description import RepairTaskApproveDescription
-    from .repair_task_cancel_description import RepairTaskCancelDescription
-    from .repair_task_delete_description import RepairTaskDeleteDescription
-    from .repair_task_update_health_policy_description import RepairTaskUpdateHealthPolicyDescription
-    from .repair_task_update_info import RepairTaskUpdateInfo
-    from .upload_chunk_range import UploadChunkRange
-    from .upload_session_info import UploadSessionInfo
-    from .upload_session import UploadSession
-    from .average_partition_load_scaling_trigger import AveragePartitionLoadScalingTrigger
-    from .average_service_load_scaling_trigger import AverageServiceLoadScalingTrigger
-    from .partition_instance_count_scale_mechanism import PartitionInstanceCountScaleMechanism
-    from .add_remove_incremental_named_partition_scaling_mechanism import AddRemoveIncrementalNamedPartitionScalingMechanism
-    from .application_created_event import ApplicationCreatedEvent
-    from .application_deleted_event import ApplicationDeletedEvent
-    from .application_new_health_report_event import ApplicationNewHealthReportEvent
-    from .application_health_report_expired_event import ApplicationHealthReportExpiredEvent
-    from .application_upgrade_completed_event import ApplicationUpgradeCompletedEvent
-    from .application_upgrade_domain_completed_event import ApplicationUpgradeDomainCompletedEvent
-    from .application_upgrade_rollback_completed_event import ApplicationUpgradeRollbackCompletedEvent
-    from .application_upgrade_rollback_started_event import ApplicationUpgradeRollbackStartedEvent
-    from .application_upgrade_started_event import ApplicationUpgradeStartedEvent
-    from .deployed_application_new_health_report_event import DeployedApplicationNewHealthReportEvent
-    from .deployed_application_health_report_expired_event import DeployedApplicationHealthReportExpiredEvent
-    from .application_process_exited_event import ApplicationProcessExitedEvent
-    from .application_container_instance_exited_event import ApplicationContainerInstanceExitedEvent
-    from .node_aborted_event import NodeAbortedEvent
-    from .node_added_to_cluster_event import NodeAddedToClusterEvent
-    from .node_closed_event import NodeClosedEvent
-    from .node_deactivate_completed_event import NodeDeactivateCompletedEvent
-    from .node_deactivate_started_event import NodeDeactivateStartedEvent
-    from .node_down_event import NodeDownEvent
-    from .node_new_health_report_event import NodeNewHealthReportEvent
-    from .node_health_report_expired_event import NodeHealthReportExpiredEvent
-    from .node_open_succeeded_event import NodeOpenSucceededEvent
-    from .node_open_failed_event import NodeOpenFailedEvent
-    from .node_removed_from_cluster_event import NodeRemovedFromClusterEvent
-    from .node_up_event import NodeUpEvent
-    from .partition_new_health_report_event import PartitionNewHealthReportEvent
-    from .partition_health_report_expired_event import PartitionHealthReportExpiredEvent
-    from .partition_reconfigured_event import PartitionReconfiguredEvent
-    from .partition_primary_move_analysis_event import PartitionPrimaryMoveAnalysisEvent
-    from .service_created_event import ServiceCreatedEvent
-    from .service_deleted_event import ServiceDeletedEvent
-    from .service_new_health_report_event import ServiceNewHealthReportEvent
-    from .service_health_report_expired_event import ServiceHealthReportExpiredEvent
-    from .deployed_service_package_new_health_report_event import DeployedServicePackageNewHealthReportEvent
-    from .deployed_service_package_health_report_expired_event import DeployedServicePackageHealthReportExpiredEvent
-    from .stateful_replica_new_health_report_event import StatefulReplicaNewHealthReportEvent
-    from .stateful_replica_health_report_expired_event import StatefulReplicaHealthReportExpiredEvent
-    from .stateless_replica_new_health_report_event import StatelessReplicaNewHealthReportEvent
-    from .stateless_replica_health_report_expired_event import StatelessReplicaHealthReportExpiredEvent
-    from .cluster_new_health_report_event import ClusterNewHealthReportEvent
-    from .cluster_health_report_expired_event import ClusterHealthReportExpiredEvent
-    from .cluster_upgrade_completed_event import ClusterUpgradeCompletedEvent
-    from .cluster_upgrade_domain_completed_event import ClusterUpgradeDomainCompletedEvent
-    from .cluster_upgrade_rollback_completed_event import ClusterUpgradeRollbackCompletedEvent
-    from .cluster_upgrade_rollback_started_event import ClusterUpgradeRollbackStartedEvent
-    from .cluster_upgrade_started_event import ClusterUpgradeStartedEvent
-    from .chaos_stopped_event import ChaosStoppedEvent
-    from .chaos_started_event import ChaosStartedEvent
-    from .chaos_code_package_restart_scheduled_event import ChaosCodePackageRestartScheduledEvent
-    from .chaos_replica_removal_scheduled_event import ChaosReplicaRemovalScheduledEvent
-    from .chaos_partition_secondary_move_scheduled_event import ChaosPartitionSecondaryMoveScheduledEvent
-    from .chaos_partition_primary_move_scheduled_event import ChaosPartitionPrimaryMoveScheduledEvent
-    from .chaos_replica_restart_scheduled_event import ChaosReplicaRestartScheduledEvent
-    from .chaos_node_restart_scheduled_event import ChaosNodeRestartScheduledEvent
-    from .secret_resource_properties import SecretResourceProperties
-    from .inlined_value_secret_resource_properties import InlinedValueSecretResourceProperties
-    from .secret_resource_description import SecretResourceDescription
-    from .paged_secret_resource_description_list import PagedSecretResourceDescriptionList
-    from .secret_resource_properties_base import SecretResourcePropertiesBase
-    from .secret_value import SecretValue
-    from .secret_value_properties import SecretValueProperties
-    from .secret_value_resource_description import SecretValueResourceDescription
-    from .paged_secret_value_resource_description_list import PagedSecretValueResourceDescriptionList
-    from .volume_provider_parameters_azure_file import VolumeProviderParametersAzureFile
-    from .volume_reference import VolumeReference
-    from .application_scoped_volume_creation_parameters import ApplicationScopedVolumeCreationParameters
-    from .application_scoped_volume import ApplicationScopedVolume
-    from .application_scoped_volume_creation_parameters_service_fabric_volume_disk import ApplicationScopedVolumeCreationParametersServiceFabricVolumeDisk
-    from .volume_resource_description import VolumeResourceDescription
-    from .paged_volume_resource_description_list import PagedVolumeResourceDescriptionList
-    from .network_resource_properties import NetworkResourceProperties
-    from .local_network_resource_properties import LocalNetworkResourceProperties
-    from .endpoint_ref import EndpointRef
-    from .network_ref import NetworkRef
-    from .network_resource_description import NetworkResourceDescription
-    from .network_resource_properties_base import NetworkResourcePropertiesBase
-    from .paged_network_resource_description_list import PagedNetworkResourceDescriptionList
-    from .gateway_destination import GatewayDestination
-    from .tcp_config import TcpConfig
-    from .http_route_match_path import HttpRouteMatchPath
-    from .http_route_match_header import HttpRouteMatchHeader
-    from .http_route_match_rule import HttpRouteMatchRule
-    from .http_route_config import HttpRouteConfig
-    from .http_host_config import HttpHostConfig
-    from .http_config import HttpConfig
-    from .gateway_resource_description import GatewayResourceDescription
-    from .paged_gateway_resource_description_list import PagedGatewayResourceDescriptionList
-    from .image_registry_credential import ImageRegistryCredential
-    from .environment_variable import EnvironmentVariable
-    from .setting import Setting
-    from .container_label import ContainerLabel
-    from .endpoint_properties import EndpointProperties
-    from .resource_requests import ResourceRequests
-    from .resource_limits import ResourceLimits
-    from .resource_requirements import ResourceRequirements
-    from .diagnostics_ref import DiagnosticsRef
-    from .reliable_collections_ref import ReliableCollectionsRef
-    from .container_state import ContainerState
-    from .container_event import ContainerEvent
-    from .container_instance_view import ContainerInstanceView
-    from .container_code_package_properties import ContainerCodePackageProperties
-    from .auto_scaling_trigger import AutoScalingTrigger
-    from .auto_scaling_mechanism import AutoScalingMechanism
-    from .auto_scaling_policy import AutoScalingPolicy
-    from .service_resource_description import ServiceResourceDescription
-    from .diagnostics_sink_properties import DiagnosticsSinkProperties
-    from .diagnostics_description import DiagnosticsDescription
-    from .azure_internal_monitoring_pipeline_sink_description import AzureInternalMonitoringPipelineSinkDescription
-    from .add_remove_replica_scaling_mechanism import AddRemoveReplicaScalingMechanism
-    from .auto_scaling_metric import AutoScalingMetric
-    from .auto_scaling_resource_metric import AutoScalingResourceMetric
-    from .service_properties import ServiceProperties
-    from .service_replica_properties import ServiceReplicaProperties
-    from .service_replica_description import ServiceReplicaDescription
-    from .average_load_scaling_trigger import AverageLoadScalingTrigger
-    from .paged_service_resource_description_list import PagedServiceResourceDescriptionList
-    from .paged_service_replica_description_list import PagedServiceReplicaDescriptionList
-    from .application_resource_description import ApplicationResourceDescription
-    from .paged_application_resource_description_list import PagedApplicationResourceDescriptionList
-from .service_fabric_client_ap_is_enums import (
-    HealthState,
-    FabricErrorCodes,
+    from ._models import AadMetadata
+    from ._models import AadMetadataObject
+    from ._models import AddRemoveIncrementalNamedPartitionScalingMechanism
+    from ._models import AddRemoveReplicaScalingMechanism
+    from ._models import AnalysisEventMetadata
+    from ._models import ApplicationBackupConfigurationInfo
+    from ._models import ApplicationBackupEntity
+    from ._models import ApplicationCapacityDescription
+    from ._models import ApplicationContainerInstanceExitedEvent
+    from ._models import ApplicationCreatedEvent
+    from ._models import ApplicationDeletedEvent
+    from ._models import ApplicationDescription
+    from ._models import ApplicationEvent
+    from ._models import ApplicationHealth
+    from ._models import ApplicationHealthEvaluation
+    from ._models import ApplicationHealthPolicies
+    from ._models import ApplicationHealthPolicy
+    from ._models import ApplicationHealthPolicyMapItem
+    from ._models import ApplicationHealthReportExpiredEvent
+    from ._models import ApplicationHealthState
+    from ._models import ApplicationHealthStateChunk
+    from ._models import ApplicationHealthStateChunkList
+    from ._models import ApplicationHealthStateFilter
+    from ._models import ApplicationInfo
+    from ._models import ApplicationLoadInfo
+    from ._models import ApplicationMetricDescription
+    from ._models import ApplicationNameInfo
+    from ._models import ApplicationNewHealthReportEvent
+    from ._models import ApplicationParameter
+    from ._models import ApplicationProcessExitedEvent
+    from ._models import ApplicationResourceDescription
+    from ._models import ApplicationScopedVolume
+    from ._models import ApplicationScopedVolumeCreationParameters
+    from ._models import ApplicationScopedVolumeCreationParametersServiceFabricVolumeDisk
+    from ._models import ApplicationsHealthEvaluation
+    from ._models import ApplicationTypeApplicationsHealthEvaluation
+    from ._models import ApplicationTypeHealthPolicyMapItem
+    from ._models import ApplicationTypeImageStorePath
+    from ._models import ApplicationTypeInfo
+    from ._models import ApplicationTypeManifest
+    from ._models import ApplicationUpgradeCompletedEvent
+    from ._models import ApplicationUpgradeDescription
+    from ._models import ApplicationUpgradeDomainCompletedEvent
+    from ._models import ApplicationUpgradeProgressInfo
+    from ._models import ApplicationUpgradeRollbackCompletedEvent
+    from ._models import ApplicationUpgradeRollbackStartedEvent
+    from ._models import ApplicationUpgradeStartedEvent
+    from ._models import ApplicationUpgradeUpdateDescription
+    from ._models import AutoScalingMechanism
+    from ._models import AutoScalingMetric
+    from ._models import AutoScalingPolicy
+    from ._models import AutoScalingResourceMetric
+    from ._models import AutoScalingTrigger
+    from ._models import AverageLoadScalingTrigger
+    from ._models import AveragePartitionLoadScalingTrigger
+    from ._models import AverageServiceLoadScalingTrigger
+    from ._models import AzureBlobBackupStorageDescription
+    from ._models import AzureInternalMonitoringPipelineSinkDescription
+    from ._models import BackupConfigurationInfo
+    from ._models import BackupEntity
+    from ._models import BackupInfo
+    from ._models import BackupPartitionDescription
+    from ._models import BackupPolicyDescription
+    from ._models import BackupProgressInfo
+    from ._models import BackupScheduleDescription
+    from ._models import BackupStorageDescription
+    from ._models import BackupSuspensionInfo
+    from ._models import BasicRetentionPolicyDescription
+    from ._models import BinaryPropertyValue
+    from ._models import Chaos
+    from ._models import ChaosCodePackageRestartScheduledEvent
+    from ._models import ChaosContext
+    from ._models import ChaosEvent
+    from ._models import ChaosEventsSegment
+    from ._models import ChaosEventWrapper
+    from ._models import ChaosNodeRestartScheduledEvent
+    from ._models import ChaosParameters
+    from ._models import ChaosParametersDictionaryItem
+    from ._models import ChaosPartitionPrimaryMoveScheduledEvent
+    from ._models import ChaosPartitionSecondaryMoveScheduledEvent
+    from ._models import ChaosReplicaRemovalScheduledEvent
+    from ._models import ChaosReplicaRestartScheduledEvent
+    from ._models import ChaosSchedule
+    from ._models import ChaosScheduleDescription
+    from ._models import ChaosScheduleJob
+    from ._models import ChaosScheduleJobActiveDaysOfWeek
+    from ._models import ChaosStartedEvent
+    from ._models import ChaosStoppedEvent
+    from ._models import ChaosTargetFilter
+    from ._models import CheckExistsPropertyBatchOperation
+    from ._models import CheckSequencePropertyBatchOperation
+    from ._models import CheckValuePropertyBatchOperation
+    from ._models import ClusterConfiguration
+    from ._models import ClusterConfigurationUpgradeDescription
+    from ._models import ClusterConfigurationUpgradeStatusInfo
+    from ._models import ClusterEvent
+    from ._models import ClusterHealth
+    from ._models import ClusterHealthChunk
+    from ._models import ClusterHealthChunkQueryDescription
+    from ._models import ClusterHealthPolicies
+    from ._models import ClusterHealthPolicy
+    from ._models import ClusterHealthReportExpiredEvent
+    from ._models import ClusterLoadInfo
+    from ._models import ClusterManifest
+    from ._models import ClusterNewHealthReportEvent
+    from ._models import ClusterUpgradeCompletedEvent
+    from ._models import ClusterUpgradeDescriptionObject
+    from ._models import ClusterUpgradeDomainCompletedEvent
+    from ._models import ClusterUpgradeHealthPolicyObject
+    from ._models import ClusterUpgradeProgressObject
+    from ._models import ClusterUpgradeRollbackCompletedEvent
+    from ._models import ClusterUpgradeRollbackStartedEvent
+    from ._models import ClusterUpgradeStartedEvent
+    from ._models import ClusterVersion
+    from ._models import CodePackageEntryPoint
+    from ._models import CodePackageEntryPointStatistics
+    from ._models import ComposeDeploymentStatusInfo
+    from ._models import ComposeDeploymentUpgradeDescription
+    from ._models import ComposeDeploymentUpgradeProgressInfo
+    from ._models import ContainerApiRequestBody
+    from ._models import ContainerApiResponse
+    from ._models import ContainerApiResult
+    from ._models import ContainerCodePackageProperties
+    from ._models import ContainerEvent
+    from ._models import ContainerInstanceEvent
+    from ._models import ContainerInstanceView
+    from ._models import ContainerLabel
+    from ._models import ContainerLogs
+    from ._models import ContainerState
+    from ._models import CreateComposeDeploymentDescription
+    from ._models import CurrentUpgradeDomainProgressInfo
+    from ._models import DeactivationIntentDescription
+    from ._models import DeletePropertyBatchOperation
+    from ._models import DeltaNodesCheckHealthEvaluation
+    from ._models import DeployedApplicationHealth
+    from ._models import DeployedApplicationHealthEvaluation
+    from ._models import DeployedApplicationHealthReportExpiredEvent
+    from ._models import DeployedApplicationHealthState
+    from ._models import DeployedApplicationHealthStateChunk
+    from ._models import DeployedApplicationHealthStateChunkList
+    from ._models import DeployedApplicationHealthStateFilter
+    from ._models import DeployedApplicationInfo
+    from ._models import DeployedApplicationNewHealthReportEvent
+    from ._models import DeployedApplicationsHealthEvaluation
+    from ._models import DeployedCodePackageInfo
+    from ._models import DeployedServicePackageHealth
+    from ._models import DeployedServicePackageHealthEvaluation
+    from ._models import DeployedServicePackageHealthReportExpiredEvent
+    from ._models import DeployedServicePackageHealthState
+    from ._models import DeployedServicePackageHealthStateChunk
+    from ._models import DeployedServicePackageHealthStateChunkList
+    from ._models import DeployedServicePackageHealthStateFilter
+    from ._models import DeployedServicePackageInfo
+    from ._models import DeployedServicePackageNewHealthReportEvent
+    from ._models import DeployedServicePackagesHealthEvaluation
+    from ._models import DeployedServiceReplicaDetailInfo
+    from ._models import DeployedServiceReplicaInfo
+    from ._models import DeployedServiceTypeInfo
+    from ._models import DeployedStatefulServiceReplicaDetailInfo
+    from ._models import DeployedStatefulServiceReplicaInfo
+    from ._models import DeployedStatelessServiceInstanceDetailInfo
+    from ._models import DeployedStatelessServiceInstanceInfo
+    from ._models import DeployServicePackageToNodeDescription
+    from ._models import DiagnosticsDescription
+    from ._models import DiagnosticsRef
+    from ._models import DiagnosticsSinkProperties
+    from ._models import DisableBackupDescription
+    from ._models import DoublePropertyValue
+    from ._models import EnableBackupDescription
+    from ._models import EndpointProperties
+    from ._models import EndpointRef
+    from ._models import EnsureAvailabilitySafetyCheck
+    from ._models import EnsurePartitionQuorumSafetyCheck
+    from ._models import EntityHealth
+    from ._models import EntityHealthState
+    from ._models import EntityHealthStateChunk
+    from ._models import EntityHealthStateChunkList
+    from ._models import EntityKindHealthStateCount
+    from ._models import EnvironmentVariable
+    from ._models import Epoch
+    from ._models import EventHealthEvaluation
+    from ._models import ExecutingFaultsChaosEvent
+    from ._models import ExternalStoreProvisionApplicationTypeDescription
+    from ._models import FabricCodeVersionInfo
+    from ._models import FabricConfigVersionInfo
+    from ._models import FabricError, FabricErrorException
+    from ._models import FabricErrorError
+    from ._models import FabricEvent
+    from ._models import FailedPropertyBatchInfo
+    from ._models import FailedUpgradeDomainProgressObject
+    from ._models import FailureUpgradeDomainProgressInfo
+    from ._models import FileInfo
+    from ._models import FileShareBackupStorageDescription
+    from ._models import FileVersion
+    from ._models import FolderInfo
+    from ._models import FolderSizeInfo
+    from ._models import FrequencyBasedBackupScheduleDescription
+    from ._models import GatewayDestination
+    from ._models import GatewayResourceDescription
+    from ._models import GetBackupByStorageQueryDescription
+    from ._models import GetPropertyBatchOperation
+    from ._models import GuidPropertyValue
+    from ._models import HealthEvaluation
+    from ._models import HealthEvaluationWrapper
+    from ._models import HealthEvent
+    from ._models import HealthInformation
+    from ._models import HealthStateCount
+    from ._models import HealthStatistics
+    from ._models import HttpConfig
+    from ._models import HttpHostConfig
+    from ._models import HttpRouteConfig
+    from ._models import HttpRouteMatchHeader
+    from ._models import HttpRouteMatchPath
+    from ._models import HttpRouteMatchRule
+    from ._models import IdentityDescription
+    from ._models import IdentityItemDescription
+    from ._models import ImageRegistryCredential
+    from ._models import ImageStoreContent
+    from ._models import ImageStoreCopyDescription
+    from ._models import InlinedValueSecretResourceProperties
+    from ._models import Int64PropertyValue
+    from ._models import Int64RangePartitionInformation
+    from ._models import InvokeDataLossResult
+    from ._models import InvokeQuorumLossResult
+    from ._models import KeyValueStoreReplicaStatus
+    from ._models import LoadMetricInformation
+    from ._models import LoadMetricReport
+    from ._models import LoadMetricReportInfo
+    from ._models import LocalNetworkResourceProperties
+    from ._models import ManagedApplicationIdentity
+    from ._models import ManagedApplicationIdentityDescription
+    from ._models import MonitoringPolicyDescription
+    from ._models import NameDescription
+    from ._models import NamedPartitionInformation
+    from ._models import NamedPartitionSchemeDescription
+    from ._models import NetworkRef
+    from ._models import NetworkResourceDescription
+    from ._models import NetworkResourceProperties
+    from ._models import NetworkResourcePropertiesBase
+    from ._models import NodeAbortedEvent
+    from ._models import NodeAddedToClusterEvent
+    from ._models import NodeClosedEvent
+    from ._models import NodeDeactivateCompletedEvent
+    from ._models import NodeDeactivateStartedEvent
+    from ._models import NodeDeactivationInfo
+    from ._models import NodeDeactivationTask
+    from ._models import NodeDeactivationTaskId
+    from ._models import NodeDownEvent
+    from ._models import NodeEvent
+    from ._models import NodeHealth
+    from ._models import NodeHealthEvaluation
+    from ._models import NodeHealthReportExpiredEvent
+    from ._models import NodeHealthState
+    from ._models import NodeHealthStateChunk
+    from ._models import NodeHealthStateChunkList
+    from ._models import NodeHealthStateFilter
+    from ._models import NodeId
+    from ._models import NodeImpact
+    from ._models import NodeInfo
+    from ._models import NodeLoadInfo
+    from ._models import NodeLoadMetricInformation
+    from ._models import NodeNewHealthReportEvent
+    from ._models import NodeOpenFailedEvent
+    from ._models import NodeOpenSucceededEvent
+    from ._models import NodeRemovedFromClusterEvent
+    from ._models import NodeRepairImpactDescription
+    from ._models import NodeRepairTargetDescription
+    from ._models import NodeResult
+    from ._models import NodesHealthEvaluation
+    from ._models import NodeTransitionProgress
+    from ._models import NodeTransitionResult
+    from ._models import NodeUpEvent
+    from ._models import NodeUpgradeProgressInfo
+    from ._models import OperationStatus
+    from ._models import PackageSharingPolicyInfo
+    from ._models import PagedApplicationInfoList
+    from ._models import PagedApplicationResourceDescriptionList
+    from ._models import PagedApplicationTypeInfoList
+    from ._models import PagedBackupConfigurationInfoList
+    from ._models import PagedBackupEntityList
+    from ._models import PagedBackupInfoList
+    from ._models import PagedBackupPolicyDescriptionList
+    from ._models import PagedComposeDeploymentStatusInfoList
+    from ._models import PagedDeployedApplicationInfoList
+    from ._models import PagedGatewayResourceDescriptionList
+    from ._models import PagedNetworkResourceDescriptionList
+    from ._models import PagedNodeInfoList
+    from ._models import PagedPropertyInfoList
+    from ._models import PagedReplicaInfoList
+    from ._models import PagedSecretResourceDescriptionList
+    from ._models import PagedSecretValueResourceDescriptionList
+    from ._models import PagedServiceInfoList
+    from ._models import PagedServicePartitionInfoList
+    from ._models import PagedServiceReplicaDescriptionList
+    from ._models import PagedServiceResourceDescriptionList
+    from ._models import PagedSubNameInfoList
+    from ._models import PagedVolumeResourceDescriptionList
+    from ._models import PartitionAnalysisEvent
+    from ._models import PartitionBackupConfigurationInfo
+    from ._models import PartitionBackupEntity
+    from ._models import PartitionDataLossProgress
+    from ._models import PartitionEvent
+    from ._models import PartitionHealth
+    from ._models import PartitionHealthEvaluation
+    from ._models import PartitionHealthReportExpiredEvent
+    from ._models import PartitionHealthState
+    from ._models import PartitionHealthStateChunk
+    from ._models import PartitionHealthStateChunkList
+    from ._models import PartitionHealthStateFilter
+    from ._models import PartitionInformation
+    from ._models import PartitionInstanceCountScaleMechanism
+    from ._models import PartitionLoadInformation
+    from ._models import PartitionNewHealthReportEvent
+    from ._models import PartitionPrimaryMoveAnalysisEvent
+    from ._models import PartitionQuorumLossProgress
+    from ._models import PartitionReconfiguredEvent
+    from ._models import PartitionRestartProgress
+    from ._models import PartitionSafetyCheck
+    from ._models import PartitionSchemeDescription
+    from ._models import PartitionsHealthEvaluation
+    from ._models import PrimaryReplicatorStatus
+    from ._models import PropertyBatchDescriptionList
+    from ._models import PropertyBatchInfo
+    from ._models import PropertyBatchOperation
+    from ._models import PropertyDescription
+    from ._models import PropertyInfo
+    from ._models import PropertyMetadata
+    from ._models import PropertyValue
+    from ._models import ProvisionApplicationTypeDescription
+    from ._models import ProvisionApplicationTypeDescriptionBase
+    from ._models import ProvisionFabricDescription
+    from ._models import PutPropertyBatchOperation
+    from ._models import ReconfigurationInformation
+    from ._models import RegistryCredential
+    from ._models import ReliableCollectionsRef
+    from ._models import RemoteReplicatorAcknowledgementDetail
+    from ._models import RemoteReplicatorAcknowledgementStatus
+    from ._models import RemoteReplicatorStatus
+    from ._models import RepairImpactDescriptionBase
+    from ._models import RepairTargetDescriptionBase
+    from ._models import RepairTask
+    from ._models import RepairTaskApproveDescription
+    from ._models import RepairTaskCancelDescription
+    from ._models import RepairTaskDeleteDescription
+    from ._models import RepairTaskHistory
+    from ._models import RepairTaskUpdateHealthPolicyDescription
+    from ._models import RepairTaskUpdateInfo
+    from ._models import ReplicaEvent
+    from ._models import ReplicaHealth
+    from ._models import ReplicaHealthEvaluation
+    from ._models import ReplicaHealthState
+    from ._models import ReplicaHealthStateChunk
+    from ._models import ReplicaHealthStateChunkList
+    from ._models import ReplicaHealthStateFilter
+    from ._models import ReplicaInfo
+    from ._models import ReplicasHealthEvaluation
+    from ._models import ReplicaStatusBase
+    from ._models import ReplicatorQueueStatus
+    from ._models import ReplicatorStatus
+    from ._models import ResolvedServiceEndpoint
+    from ._models import ResolvedServicePartition
+    from ._models import ResourceLimits
+    from ._models import ResourceRequests
+    from ._models import ResourceRequirements
+    from ._models import RestartDeployedCodePackageDescription
+    from ._models import RestartNodeDescription
+    from ._models import RestartPartitionResult
+    from ._models import RestorePartitionDescription
+    from ._models import RestoreProgressInfo
+    from ._models import ResumeApplicationUpgradeDescription
+    from ._models import ResumeClusterUpgradeDescription
+    from ._models import RetentionPolicyDescription
+    from ._models import RollingUpgradeUpdateDescription
+    from ._models import SafetyCheck
+    from ._models import SafetyCheckWrapper
+    from ._models import ScalingMechanismDescription
+    from ._models import ScalingPolicyDescription
+    from ._models import ScalingTriggerDescription
+    from ._models import SecondaryActiveReplicatorStatus
+    from ._models import SecondaryIdleReplicatorStatus
+    from ._models import SecondaryReplicatorStatus
+    from ._models import SecretResourceDescription
+    from ._models import SecretResourceProperties
+    from ._models import SecretResourcePropertiesBase
+    from ._models import SecretValue
+    from ._models import SecretValueProperties
+    from ._models import SecretValueResourceDescription
+    from ._models import SeedNodeSafetyCheck
+    from ._models import SelectedPartition
+    from ._models import ServiceBackupConfigurationInfo
+    from ._models import ServiceBackupEntity
+    from ._models import ServiceCorrelationDescription
+    from ._models import ServiceCreatedEvent
+    from ._models import ServiceDeletedEvent
+    from ._models import ServiceDescription
+    from ._models import ServiceEvent
+    from ._models import ServiceFromTemplateDescription
+    from ._models import ServiceHealth
+    from ._models import ServiceHealthEvaluation
+    from ._models import ServiceHealthReportExpiredEvent
+    from ._models import ServiceHealthState
+    from ._models import ServiceHealthStateChunk
+    from ._models import ServiceHealthStateChunkList
+    from ._models import ServiceHealthStateFilter
+    from ._models import ServiceIdentity
+    from ._models import ServiceInfo
+    from ._models import ServiceLoadMetricDescription
+    from ._models import ServiceNameInfo
+    from ._models import ServiceNewHealthReportEvent
+    from ._models import ServicePartitionInfo
+    from ._models import ServicePlacementInvalidDomainPolicyDescription
+    from ._models import ServicePlacementNonPartiallyPlaceServicePolicyDescription
+    from ._models import ServicePlacementPolicyDescription
+    from ._models import ServicePlacementPreferPrimaryDomainPolicyDescription
+    from ._models import ServicePlacementRequiredDomainPolicyDescription
+    from ._models import ServicePlacementRequireDomainDistributionPolicyDescription
+    from ._models import ServiceProperties
+    from ._models import ServiceReplicaDescription
+    from ._models import ServiceReplicaProperties
+    from ._models import ServiceResourceDescription
+    from ._models import ServicesHealthEvaluation
+    from ._models import ServiceTypeDescription
+    from ._models import ServiceTypeExtensionDescription
+    from ._models import ServiceTypeHealthPolicy
+    from ._models import ServiceTypeHealthPolicyMapItem
+    from ._models import ServiceTypeInfo
+    from ._models import ServiceTypeManifest
+    from ._models import ServiceUpdateDescription
+    from ._models import Setting
+    from ._models import SingletonPartitionInformation
+    from ._models import SingletonPartitionSchemeDescription
+    from ._models import StartClusterUpgradeDescription
+    from ._models import StartedChaosEvent
+    from ._models import StatefulReplicaHealthReportExpiredEvent
+    from ._models import StatefulReplicaNewHealthReportEvent
+    from ._models import StatefulServiceDescription
+    from ._models import StatefulServiceInfo
+    from ._models import StatefulServicePartitionInfo
+    from ._models import StatefulServiceReplicaHealth
+    from ._models import StatefulServiceReplicaHealthState
+    from ._models import StatefulServiceReplicaInfo
+    from ._models import StatefulServiceTypeDescription
+    from ._models import StatefulServiceUpdateDescription
+    from ._models import StatelessReplicaHealthReportExpiredEvent
+    from ._models import StatelessReplicaNewHealthReportEvent
+    from ._models import StatelessServiceDescription
+    from ._models import StatelessServiceInfo
+    from ._models import StatelessServiceInstanceHealth
+    from ._models import StatelessServiceInstanceHealthState
+    from ._models import StatelessServiceInstanceInfo
+    from ._models import StatelessServicePartitionInfo
+    from ._models import StatelessServiceTypeDescription
+    from ._models import StatelessServiceUpdateDescription
+    from ._models import StoppedChaosEvent
+    from ._models import StringPropertyValue
+    from ._models import SuccessfulPropertyBatchInfo
+    from ._models import SystemApplicationHealthEvaluation
+    from ._models import TcpConfig
+    from ._models import TestErrorChaosEvent
+    from ._models import TimeBasedBackupScheduleDescription
+    from ._models import TimeOfDay
+    from ._models import TimeRange
+    from ._models import UniformInt64RangePartitionSchemeDescription
+    from ._models import UnplacedReplicaInformation
+    from ._models import UnprovisionApplicationTypeDescriptionInfo
+    from ._models import UnprovisionFabricDescription
+    from ._models import UpdateClusterUpgradeDescription
+    from ._models import UpgradeDomainDeltaNodesCheckHealthEvaluation
+    from ._models import UpgradeDomainInfo
+    from ._models import UpgradeDomainNodesHealthEvaluation
+    from ._models import UpgradeOrchestrationServiceState
+    from ._models import UpgradeOrchestrationServiceStateSummary
+    from ._models import UploadChunkRange
+    from ._models import UploadSession
+    from ._models import UploadSessionInfo
+    from ._models import ValidationFailedChaosEvent
+    from ._models import VolumeProviderParametersAzureFile
+    from ._models import VolumeReference
+    from ._models import VolumeResourceDescription
+    from ._models import WaitForInbuildReplicaSafetyCheck
+    from ._models import WaitForPrimaryPlacementSafetyCheck
+    from ._models import WaitForPrimarySwapSafetyCheck
+    from ._models import WaitForReconfigurationSafetyCheck
+    from ._models import WaitingChaosEvent
+from ._service_fabric_client_ap_is_enums import (
     ApplicationDefinitionKind,
-    ApplicationStatus,
     ApplicationPackageCleanupPolicy,
+    ApplicationScopedVolumeKind,
+    ApplicationStatus,
     ApplicationTypeDefinitionKind,
     ApplicationTypeStatus,
-    UpgradeKind,
-    UpgradeMode,
-    FailureAction,
-    UpgradeDomainState,
-    UpgradeState,
-    NodeUpgradePhase,
-    FailureReason,
-    DeactivationIntent,
-    DeployedApplicationStatus,
-    ReplicaStatus,
-    ReplicaRole,
-    ReconfigurationPhase,
-    ReconfigurationType,
-    EntityKind,
-    FabricEventKind,
-    HealthEvaluationKind,
-    NodeDeactivationIntent,
-    NodeDeactivationStatus,
-    NodeDeactivationTaskType,
-    NodeStatus,
-    ServicePartitionStatus,
-    ServiceStatus,
-    ProvisionApplicationTypeKind,
-    UpgradeType,
-    SafetyCheckKind,
-    CreateFabricDump,
-    ServicePackageActivationMode,
-    ServiceKind,
-    ServicePartitionKind,
-    ServicePlacementPolicyType,
-    ServiceLoadMetricWeight,
-    HostType,
-    HostIsolationMode,
-    DeploymentStatus,
-    EntryPointStatus,
-    ChaosStatus,
-    ChaosScheduleStatus,
-    ChaosEventKind,
-    ComposeDeploymentStatus,
-    ComposeDeploymentUpgradeState,
-    ServiceCorrelationScheme,
-    MoveCost,
-    PartitionScheme,
-    ServiceOperationName,
-    ReplicatorOperationName,
-    PartitionAccessStatus,
-    FabricReplicaStatus,
-    ReplicaKind,
-    ServiceTypeRegistrationStatus,
-    ServiceEndpointRole,
-    OperationState,
-    OperationType,
-    PackageSharingPolicyScope,
-    PropertyValueKind,
-    PropertyBatchOperationKind,
-    PropertyBatchInfoKind,
-    RetentionPolicyType,
-    BackupStorageKind,
-    BackupScheduleKind,
-    BackupPolicyScope,
-    BackupSuspensionScope,
-    RestoreState,
-    BackupType,
-    BackupScheduleFrequencyType,
-    DayOfWeek,
-    BackupState,
-    BackupEntityKind,
-    ImpactLevel,
-    RepairImpactKind,
-    RepairTargetKind,
-    State,
-    ResultStatus,
-    RepairTaskHealthCheckState,
-    ScalingTriggerKind,
-    ScalingMechanismKind,
-    ResourceStatus,
-    SecretKind,
-    VolumeProvider,
-    SizeTypes,
-    ApplicationScopedVolumeKind,
-    NetworkKind,
-    HeaderMatchType,
-    OperatingSystemType,
-    DiagnosticsSinkKind,
     AutoScalingMechanismKind,
     AutoScalingMetricKind,
     AutoScalingResourceMetricName,
     AutoScalingTriggerKind,
-    NodeStatusFilter,
-    ReplicaHealthReportServiceKind,
+    BackupEntityKind,
+    BackupPolicyScope,
+    BackupScheduleFrequencyType,
+    BackupScheduleKind,
+    BackupState,
+    BackupStorageKind,
+    BackupSuspensionScope,
+    BackupType,
+    ChaosEventKind,
+    ChaosScheduleStatus,
+    ChaosStatus,
+    ComposeDeploymentStatus,
+    ComposeDeploymentUpgradeState,
+    CreateFabricDump,
     DataLossMode,
+    DayOfWeek,
+    DeactivationIntent,
+    DeployedApplicationStatus,
+    DeploymentStatus,
+    DiagnosticsSinkKind,
+    EntityKind,
+    EntryPointStatus,
+    FabricErrorCodes,
+    FabricEventKind,
+    FabricReplicaStatus,
+    FailureAction,
+    FailureReason,
+    HeaderMatchType,
+    HealthEvaluationKind,
+    HealthState,
+    HostIsolationMode,
+    HostType,
+    ImpactLevel,
+    MoveCost,
+    NetworkKind,
+    NodeDeactivationIntent,
+    NodeDeactivationStatus,
+    NodeDeactivationTaskType,
+    NodeStatus,
+    NodeStatusFilter,
     NodeTransitionType,
+    NodeUpgradePhase,
+    OperatingSystemType,
+    OperationState,
+    OperationType,
+    PackageSharingPolicyScope,
+    PartitionAccessStatus,
+    PartitionScheme,
+    PropertyBatchInfoKind,
+    PropertyBatchOperationKind,
+    PropertyValueKind,
+    ProvisionApplicationTypeKind,
     QuorumLossMode,
+    ReconfigurationPhase,
+    ReconfigurationType,
+    RepairImpactKind,
+    RepairTargetKind,
+    RepairTaskHealthCheckState,
+    ReplicaHealthReportServiceKind,
+    ReplicaKind,
+    ReplicaRole,
+    ReplicaStatus,
+    ReplicatorOperationName,
+    ResourceStatus,
     RestartPartitionMode,
+    RestoreState,
+    ResultStatus,
+    RetentionPolicyType,
+    SafetyCheckKind,
+    ScalingMechanismKind,
+    ScalingTriggerKind,
+    SecretKind,
+    ServiceCorrelationScheme,
+    ServiceEndpointRole,
+    ServiceKind,
+    ServiceLoadMetricWeight,
+    ServiceOperationName,
+    ServicePackageActivationMode,
+    ServicePartitionKind,
+    ServicePartitionStatus,
+    ServicePlacementPolicyType,
+    ServiceStatus,
+    ServiceTypeRegistrationStatus,
+    SizeTypes,
+    State,
+    UpgradeDomainState,
+    UpgradeKind,
+    UpgradeMode,
+    UpgradeSortOrder,
+    UpgradeState,
+    UpgradeType,
+    VolumeProvider,
 )
 
 __all__ = [
-    'FabricErrorError',
-    'FabricError', 'FabricErrorException',
-    'ContainerLogs',
     'AadMetadata',
     'AadMetadataObject',
+    'AddRemoveIncrementalNamedPartitionScalingMechanism',
+    'AddRemoveReplicaScalingMechanism',
     'AnalysisEventMetadata',
+    'ApplicationBackupConfigurationInfo',
+    'ApplicationBackupEntity',
+    'ApplicationCapacityDescription',
+    'ApplicationContainerInstanceExitedEvent',
+    'ApplicationCreatedEvent',
+    'ApplicationDeletedEvent',
+    'ApplicationDescription',
     'ApplicationEvent',
-    'ServiceHealthState',
-    'DeployedApplicationHealthState',
     'ApplicationHealth',
-    'HealthEvaluation',
-    'HealthEvaluationWrapper',
     'ApplicationHealthEvaluation',
-    'ServiceTypeHealthPolicy',
-    'ServiceTypeHealthPolicyMapItem',
+    'ApplicationHealthPolicies',
     'ApplicationHealthPolicy',
     'ApplicationHealthPolicyMapItem',
-    'ApplicationHealthPolicies',
+    'ApplicationHealthReportExpiredEvent',
     'ApplicationHealthState',
-    'ReplicaHealthStateChunk',
-    'ReplicaHealthStateChunkList',
-    'PartitionHealthStateChunk',
-    'PartitionHealthStateChunkList',
-    'ServiceHealthStateChunk',
-    'ServiceHealthStateChunkList',
-    'DeployedServicePackageHealthStateChunk',
-    'DeployedServicePackageHealthStateChunkList',
-    'DeployedApplicationHealthStateChunk',
-    'DeployedApplicationHealthStateChunkList',
     'ApplicationHealthStateChunk',
     'ApplicationHealthStateChunkList',
-    'ReplicaHealthStateFilter',
-    'PartitionHealthStateFilter',
-    'ServiceHealthStateFilter',
-    'DeployedServicePackageHealthStateFilter',
-    'DeployedApplicationHealthStateFilter',
     'ApplicationHealthStateFilter',
-    'ApplicationParameter',
     'ApplicationInfo',
-    'ApplicationMetricDescription',
     'ApplicationLoadInfo',
+    'ApplicationMetricDescription',
     'ApplicationNameInfo',
+    'ApplicationNewHealthReportEvent',
+    'ApplicationParameter',
+    'ApplicationProcessExitedEvent',
+    'ApplicationResourceDescription',
+    'ApplicationScopedVolume',
+    'ApplicationScopedVolumeCreationParameters',
+    'ApplicationScopedVolumeCreationParametersServiceFabricVolumeDisk',
     'ApplicationsHealthEvaluation',
     'ApplicationTypeApplicationsHealthEvaluation',
     'ApplicationTypeHealthPolicyMapItem',
+    'ApplicationTypeImageStorePath',
     'ApplicationTypeInfo',
-    'PagedApplicationTypeInfoList',
     'ApplicationTypeManifest',
-    'MonitoringPolicyDescription',
+    'ApplicationUpgradeCompletedEvent',
     'ApplicationUpgradeDescription',
-    'UpgradeDomainInfo',
-    'SafetyCheck',
-    'SafetyCheckWrapper',
-    'NodeUpgradeProgressInfo',
-    'CurrentUpgradeDomainProgressInfo',
-    'FailureUpgradeDomainProgressInfo',
+    'ApplicationUpgradeDomainCompletedEvent',
     'ApplicationUpgradeProgressInfo',
+    'ApplicationUpgradeRollbackCompletedEvent',
+    'ApplicationUpgradeRollbackStartedEvent',
+    'ApplicationUpgradeStartedEvent',
+    'ApplicationUpgradeUpdateDescription',
+    'AutoScalingMechanism',
+    'AutoScalingMetric',
+    'AutoScalingPolicy',
+    'AutoScalingResourceMetric',
+    'AutoScalingTrigger',
+    'AverageLoadScalingTrigger',
+    'AveragePartitionLoadScalingTrigger',
+    'AverageServiceLoadScalingTrigger',
+    'AzureBlobBackupStorageDescription',
+    'AzureInternalMonitoringPipelineSinkDescription',
+    'BackupConfigurationInfo',
+    'BackupEntity',
+    'BackupInfo',
+    'BackupPartitionDescription',
+    'BackupPolicyDescription',
+    'BackupProgressInfo',
+    'BackupScheduleDescription',
+    'BackupStorageDescription',
+    'BackupSuspensionInfo',
+    'BasicRetentionPolicyDescription',
+    'BinaryPropertyValue',
+    'Chaos',
+    'ChaosCodePackageRestartScheduledEvent',
+    'ChaosContext',
+    'ChaosEvent',
+    'ChaosEventsSegment',
+    'ChaosEventWrapper',
+    'ChaosNodeRestartScheduledEvent',
+    'ChaosParameters',
+    'ChaosParametersDictionaryItem',
+    'ChaosPartitionPrimaryMoveScheduledEvent',
+    'ChaosPartitionSecondaryMoveScheduledEvent',
+    'ChaosReplicaRemovalScheduledEvent',
+    'ChaosReplicaRestartScheduledEvent',
+    'ChaosSchedule',
+    'ChaosScheduleDescription',
+    'ChaosScheduleJob',
+    'ChaosScheduleJobActiveDaysOfWeek',
+    'ChaosStartedEvent',
+    'ChaosStoppedEvent',
+    'ChaosTargetFilter',
+    'CheckExistsPropertyBatchOperation',
+    'CheckSequencePropertyBatchOperation',
+    'CheckValuePropertyBatchOperation',
     'ClusterConfiguration',
+    'ClusterConfigurationUpgradeDescription',
+    'ClusterConfigurationUpgradeStatusInfo',
     'ClusterEvent',
-    'NodeId',
-    'NodeHealthState',
     'ClusterHealth',
-    'NodeHealthStateChunk',
-    'NodeHealthStateChunkList',
     'ClusterHealthChunk',
-    'NodeHealthStateFilter',
-    'ClusterHealthPolicy',
     'ClusterHealthChunkQueryDescription',
     'ClusterHealthPolicies',
+    'ClusterHealthPolicy',
+    'ClusterHealthReportExpiredEvent',
+    'ClusterLoadInfo',
     'ClusterManifest',
+    'ClusterNewHealthReportEvent',
+    'ClusterUpgradeCompletedEvent',
+    'ClusterUpgradeDescriptionObject',
+    'ClusterUpgradeDomainCompletedEvent',
+    'ClusterUpgradeHealthPolicyObject',
+    'ClusterUpgradeProgressObject',
+    'ClusterUpgradeRollbackCompletedEvent',
+    'ClusterUpgradeRollbackStartedEvent',
+    'ClusterUpgradeStartedEvent',
     'ClusterVersion',
+    'CodePackageEntryPoint',
+    'CodePackageEntryPointStatistics',
+    'ComposeDeploymentStatusInfo',
+    'ComposeDeploymentUpgradeDescription',
+    'ComposeDeploymentUpgradeProgressInfo',
     'ContainerApiRequestBody',
-    'ContainerApiResult',
     'ContainerApiResponse',
+    'ContainerApiResult',
+    'ContainerCodePackageProperties',
+    'ContainerEvent',
     'ContainerInstanceEvent',
+    'ContainerInstanceView',
+    'ContainerLabel',
+    'ContainerLogs',
+    'ContainerState',
+    'CreateComposeDeploymentDescription',
+    'CurrentUpgradeDomainProgressInfo',
     'DeactivationIntentDescription',
+    'DeletePropertyBatchOperation',
     'DeltaNodesCheckHealthEvaluation',
-    'DeployedServicePackageHealthState',
     'DeployedApplicationHealth',
     'DeployedApplicationHealthEvaluation',
+    'DeployedApplicationHealthReportExpiredEvent',
+    'DeployedApplicationHealthState',
+    'DeployedApplicationHealthStateChunk',
+    'DeployedApplicationHealthStateChunkList',
+    'DeployedApplicationHealthStateFilter',
     'DeployedApplicationInfo',
+    'DeployedApplicationNewHealthReportEvent',
     'DeployedApplicationsHealthEvaluation',
+    'DeployedCodePackageInfo',
     'DeployedServicePackageHealth',
     'DeployedServicePackageHealthEvaluation',
+    'DeployedServicePackageHealthReportExpiredEvent',
+    'DeployedServicePackageHealthState',
+    'DeployedServicePackageHealthStateChunk',
+    'DeployedServicePackageHealthStateChunkList',
+    'DeployedServicePackageHealthStateFilter',
+    'DeployedServicePackageInfo',
+    'DeployedServicePackageNewHealthReportEvent',
     'DeployedServicePackagesHealthEvaluation',
+    'DeployedServiceReplicaDetailInfo',
     'DeployedServiceReplicaInfo',
-    'ReconfigurationInformation',
+    'DeployedServiceTypeInfo',
+    'DeployedStatefulServiceReplicaDetailInfo',
     'DeployedStatefulServiceReplicaInfo',
+    'DeployedStatelessServiceInstanceDetailInfo',
     'DeployedStatelessServiceInstanceInfo',
-    'HealthEvent',
-    'HealthStateCount',
-    'EntityKindHealthStateCount',
-    'HealthStatistics',
+    'DeployServicePackageToNodeDescription',
+    'DiagnosticsDescription',
+    'DiagnosticsRef',
+    'DiagnosticsSinkProperties',
+    'DisableBackupDescription',
+    'DoublePropertyValue',
+    'EnableBackupDescription',
+    'EndpointProperties',
+    'EndpointRef',
+    'EnsureAvailabilitySafetyCheck',
+    'EnsurePartitionQuorumSafetyCheck',
     'EntityHealth',
     'EntityHealthState',
     'EntityHealthStateChunk',
     'EntityHealthStateChunkList',
+    'EntityKindHealthStateCount',
+    'EnvironmentVariable',
     'Epoch',
     'EventHealthEvaluation',
-    'FabricEvent',
+    'ExecutingFaultsChaosEvent',
+    'ExternalStoreProvisionApplicationTypeDescription',
     'FabricCodeVersionInfo',
     'FabricConfigVersionInfo',
-    'ClusterConfigurationUpgradeStatusInfo',
+    'FabricError', 'FabricErrorException',
+    'FabricErrorError',
+    'FabricEvent',
+    'FailedPropertyBatchInfo',
+    'FailedUpgradeDomainProgressObject',
+    'FailureUpgradeDomainProgressInfo',
+    'FileInfo',
+    'FileShareBackupStorageDescription',
+    'FileVersion',
+    'FolderInfo',
+    'FolderSizeInfo',
+    'FrequencyBasedBackupScheduleDescription',
+    'GatewayDestination',
+    'GatewayResourceDescription',
+    'GetBackupByStorageQueryDescription',
+    'GetPropertyBatchOperation',
+    'GuidPropertyValue',
+    'HealthEvaluation',
+    'HealthEvaluationWrapper',
+    'HealthEvent',
     'HealthInformation',
+    'HealthStateCount',
+    'HealthStatistics',
+    'HttpConfig',
+    'HttpHostConfig',
+    'HttpRouteConfig',
+    'HttpRouteMatchHeader',
+    'HttpRouteMatchPath',
+    'HttpRouteMatchRule',
+    'IdentityDescription',
+    'IdentityItemDescription',
+    'ImageRegistryCredential',
+    'ImageStoreContent',
+    'ImageStoreCopyDescription',
+    'InlinedValueSecretResourceProperties',
+    'Int64PropertyValue',
     'Int64RangePartitionInformation',
+    'InvokeDataLossResult',
+    'InvokeQuorumLossResult',
+    'KeyValueStoreReplicaStatus',
+    'LoadMetricInformation',
+    'LoadMetricReport',
+    'LoadMetricReportInfo',
+    'LocalNetworkResourceProperties',
+    'ManagedApplicationIdentity',
+    'ManagedApplicationIdentityDescription',
+    'MonitoringPolicyDescription',
+    'NameDescription',
     'NamedPartitionInformation',
-    'NodeDeactivationTaskId',
-    'NodeDeactivationTask',
+    'NamedPartitionSchemeDescription',
+    'NetworkRef',
+    'NetworkResourceDescription',
+    'NetworkResourceProperties',
+    'NetworkResourcePropertiesBase',
+    'NodeAbortedEvent',
+    'NodeAddedToClusterEvent',
+    'NodeClosedEvent',
+    'NodeDeactivateCompletedEvent',
+    'NodeDeactivateStartedEvent',
     'NodeDeactivationInfo',
+    'NodeDeactivationTask',
+    'NodeDeactivationTaskId',
+    'NodeDownEvent',
     'NodeEvent',
     'NodeHealth',
     'NodeHealthEvaluation',
+    'NodeHealthReportExpiredEvent',
+    'NodeHealthState',
+    'NodeHealthStateChunk',
+    'NodeHealthStateChunkList',
+    'NodeHealthStateFilter',
+    'NodeId',
+    'NodeImpact',
     'NodeInfo',
-    'NodeLoadMetricInformation',
     'NodeLoadInfo',
+    'NodeLoadMetricInformation',
+    'NodeNewHealthReportEvent',
+    'NodeOpenFailedEvent',
+    'NodeOpenSucceededEvent',
+    'NodeRemovedFromClusterEvent',
+    'NodeRepairImpactDescription',
+    'NodeRepairTargetDescription',
+    'NodeResult',
     'NodesHealthEvaluation',
+    'NodeTransitionProgress',
+    'NodeTransitionResult',
+    'NodeUpEvent',
+    'NodeUpgradeProgressInfo',
+    'OperationStatus',
+    'PackageSharingPolicyInfo',
     'PagedApplicationInfoList',
+    'PagedApplicationResourceDescriptionList',
+    'PagedApplicationTypeInfoList',
+    'PagedBackupConfigurationInfoList',
+    'PagedBackupEntityList',
+    'PagedBackupInfoList',
+    'PagedBackupPolicyDescriptionList',
+    'PagedComposeDeploymentStatusInfoList',
     'PagedDeployedApplicationInfoList',
+    'PagedGatewayResourceDescriptionList',
+    'PagedNetworkResourceDescriptionList',
     'PagedNodeInfoList',
-    'PartitionInformation',
-    'ServicePartitionInfo',
-    'PagedServicePartitionInfoList',
-    'ReplicaInfo',
+    'PagedPropertyInfoList',
     'PagedReplicaInfoList',
-    'ServiceInfo',
+    'PagedSecretResourceDescriptionList',
+    'PagedSecretValueResourceDescriptionList',
     'PagedServiceInfoList',
+    'PagedServicePartitionInfoList',
+    'PagedServiceReplicaDescriptionList',
+    'PagedServiceResourceDescriptionList',
+    'PagedSubNameInfoList',
+    'PagedVolumeResourceDescriptionList',
     'PartitionAnalysisEvent',
+    'PartitionBackupConfigurationInfo',
+    'PartitionBackupEntity',
+    'PartitionDataLossProgress',
     'PartitionEvent',
-    'ReplicaHealthState',
     'PartitionHealth',
     'PartitionHealthEvaluation',
+    'PartitionHealthReportExpiredEvent',
     'PartitionHealthState',
-    'ProvisionFabricDescription',
-    'ProvisionApplicationTypeDescriptionBase',
-    'ProvisionApplicationTypeDescription',
-    'ExternalStoreProvisionApplicationTypeDescription',
-    'UnprovisionFabricDescription',
-    'ResumeClusterUpgradeDescription',
-    'ClusterUpgradeHealthPolicyObject',
-    'StartClusterUpgradeDescription',
-    'RollingUpgradeUpdateDescription',
-    'UpdateClusterUpgradeDescription',
+    'PartitionHealthStateChunk',
+    'PartitionHealthStateChunkList',
+    'PartitionHealthStateFilter',
+    'PartitionInformation',
+    'PartitionInstanceCountScaleMechanism',
+    'PartitionLoadInformation',
+    'PartitionNewHealthReportEvent',
+    'PartitionPrimaryMoveAnalysisEvent',
+    'PartitionQuorumLossProgress',
+    'PartitionReconfiguredEvent',
+    'PartitionRestartProgress',
     'PartitionSafetyCheck',
-    'EnsureAvailabilitySafetyCheck',
-    'EnsurePartitionQurumSafetyCheck',
-    'SeedNodeSafetyCheck',
+    'PartitionSchemeDescription',
     'PartitionsHealthEvaluation',
+    'PrimaryReplicatorStatus',
+    'PropertyBatchDescriptionList',
+    'PropertyBatchInfo',
+    'PropertyBatchOperation',
+    'PropertyDescription',
+    'PropertyInfo',
+    'PropertyMetadata',
+    'PropertyValue',
+    'ProvisionApplicationTypeDescription',
+    'ProvisionApplicationTypeDescriptionBase',
+    'ProvisionFabricDescription',
+    'PutPropertyBatchOperation',
+    'ReconfigurationInformation',
+    'RegistryCredential',
+    'ReliableCollectionsRef',
+    'RemoteReplicatorAcknowledgementDetail',
+    'RemoteReplicatorAcknowledgementStatus',
+    'RemoteReplicatorStatus',
+    'RepairImpactDescriptionBase',
+    'RepairTargetDescriptionBase',
+    'RepairTask',
+    'RepairTaskApproveDescription',
+    'RepairTaskCancelDescription',
+    'RepairTaskDeleteDescription',
+    'RepairTaskHistory',
+    'RepairTaskUpdateHealthPolicyDescription',
+    'RepairTaskUpdateInfo',
     'ReplicaEvent',
     'ReplicaHealth',
     'ReplicaHealthEvaluation',
+    'ReplicaHealthState',
+    'ReplicaHealthStateChunk',
+    'ReplicaHealthStateChunkList',
+    'ReplicaHealthStateFilter',
+    'ReplicaInfo',
     'ReplicasHealthEvaluation',
+    'ReplicaStatusBase',
+    'ReplicatorQueueStatus',
+    'ReplicatorStatus',
+    'ResolvedServiceEndpoint',
+    'ResolvedServicePartition',
+    'ResourceLimits',
+    'ResourceRequests',
+    'ResourceRequirements',
+    'RestartDeployedCodePackageDescription',
     'RestartNodeDescription',
+    'RestartPartitionResult',
+    'RestorePartitionDescription',
+    'RestoreProgressInfo',
+    'ResumeApplicationUpgradeDescription',
+    'ResumeClusterUpgradeDescription',
+    'RetentionPolicyDescription',
+    'RollingUpgradeUpdateDescription',
+    'SafetyCheck',
+    'SafetyCheckWrapper',
+    'ScalingMechanismDescription',
+    'ScalingPolicyDescription',
+    'ScalingTriggerDescription',
+    'SecondaryActiveReplicatorStatus',
+    'SecondaryIdleReplicatorStatus',
+    'SecondaryReplicatorStatus',
+    'SecretResourceDescription',
+    'SecretResourceProperties',
+    'SecretResourcePropertiesBase',
+    'SecretValue',
+    'SecretValueProperties',
+    'SecretValueResourceDescription',
+    'SeedNodeSafetyCheck',
+    'SelectedPartition',
+    'ServiceBackupConfigurationInfo',
+    'ServiceBackupEntity',
+    'ServiceCorrelationDescription',
+    'ServiceCreatedEvent',
+    'ServiceDeletedEvent',
+    'ServiceDescription',
     'ServiceEvent',
     'ServiceFromTemplateDescription',
-    'ServiceHealthEvaluation',
     'ServiceHealth',
+    'ServiceHealthEvaluation',
+    'ServiceHealthReportExpiredEvent',
+    'ServiceHealthState',
+    'ServiceHealthStateChunk',
+    'ServiceHealthStateChunkList',
+    'ServiceHealthStateFilter',
+    'ServiceIdentity',
+    'ServiceInfo',
+    'ServiceLoadMetricDescription',
     'ServiceNameInfo',
+    'ServiceNewHealthReportEvent',
+    'ServicePartitionInfo',
     'ServicePlacementInvalidDomainPolicyDescription',
     'ServicePlacementNonPartiallyPlaceServicePolicyDescription',
     'ServicePlacementPolicyDescription',
     'ServicePlacementPreferPrimaryDomainPolicyDescription',
     'ServicePlacementRequiredDomainPolicyDescription',
     'ServicePlacementRequireDomainDistributionPolicyDescription',
+    'ServiceProperties',
+    'ServiceReplicaDescription',
+    'ServiceReplicaProperties',
+    'ServiceResourceDescription',
     'ServicesHealthEvaluation',
-    'ServiceLoadMetricDescription',
-    'ServiceTypeExtensionDescription',
     'ServiceTypeDescription',
+    'ServiceTypeExtensionDescription',
+    'ServiceTypeHealthPolicy',
+    'ServiceTypeHealthPolicyMapItem',
     'ServiceTypeInfo',
     'ServiceTypeManifest',
+    'ServiceUpdateDescription',
+    'Setting',
     'SingletonPartitionInformation',
+    'SingletonPartitionSchemeDescription',
+    'StartClusterUpgradeDescription',
+    'StartedChaosEvent',
+    'StatefulReplicaHealthReportExpiredEvent',
+    'StatefulReplicaNewHealthReportEvent',
+    'StatefulServiceDescription',
     'StatefulServiceInfo',
     'StatefulServicePartitionInfo',
     'StatefulServiceReplicaHealth',
     'StatefulServiceReplicaHealthState',
+    'StatefulServiceReplicaInfo',
     'StatefulServiceTypeDescription',
+    'StatefulServiceUpdateDescription',
+    'StatelessReplicaHealthReportExpiredEvent',
+    'StatelessReplicaNewHealthReportEvent',
+    'StatelessServiceDescription',
     'StatelessServiceInfo',
     'StatelessServiceInstanceHealth',
     'StatelessServiceInstanceHealthState',
+    'StatelessServiceInstanceInfo',
     'StatelessServicePartitionInfo',
     'StatelessServiceTypeDescription',
+    'StatelessServiceUpdateDescription',
+    'StoppedChaosEvent',
+    'StringPropertyValue',
+    'SuccessfulPropertyBatchInfo',
     'SystemApplicationHealthEvaluation',
+    'TcpConfig',
+    'TestErrorChaosEvent',
+    'TimeBasedBackupScheduleDescription',
+    'TimeOfDay',
+    'TimeRange',
+    'UniformInt64RangePartitionSchemeDescription',
+    'UnplacedReplicaInformation',
+    'UnprovisionApplicationTypeDescriptionInfo',
+    'UnprovisionFabricDescription',
+    'UpdateClusterUpgradeDescription',
     'UpgradeDomainDeltaNodesCheckHealthEvaluation',
+    'UpgradeDomainInfo',
     'UpgradeDomainNodesHealthEvaluation',
+    'UpgradeOrchestrationServiceState',
+    'UpgradeOrchestrationServiceStateSummary',
+    'UploadChunkRange',
+    'UploadSession',
+    'UploadSessionInfo',
+    'ValidationFailedChaosEvent',
+    'VolumeProviderParametersAzureFile',
+    'VolumeReference',
+    'VolumeResourceDescription',
     'WaitForInbuildReplicaSafetyCheck',
     'WaitForPrimaryPlacementSafetyCheck',
     'WaitForPrimarySwapSafetyCheck',
     'WaitForReconfigurationSafetyCheck',
-    'LoadMetricReport',
-    'PartitionLoadInformation',
-    'StatefulServiceReplicaInfo',
-    'StatelessServiceInstanceInfo',
-    'ClusterUpgradeDescriptionObject',
-    'FailedUpgradeDomainProgressObject',
-    'ClusterUpgradeProgressObject',
-    'ClusterConfigurationUpgradeDescription',
-    'UpgradeOrchestrationServiceState',
-    'UpgradeOrchestrationServiceStateSummary',
-    'ApplicationTypeImageStorePath',
-    'UnprovisionApplicationTypeDescriptionInfo',
-    'CodePackageEntryPointStatistics',
-    'CodePackageEntryPoint',
-    'DeployedCodePackageInfo',
-    'ChaosContext',
-    'ChaosTargetFilter',
-    'ChaosParameters',
-    'Chaos',
-    'ChaosParametersDictionaryItem',
-    'ChaosEvent',
-    'ChaosEventWrapper',
-    'ChaosEventsSegment',
-    'ChaosScheduleJobActiveDaysOfWeek',
-    'TimeOfDay',
-    'TimeRange',
-    'ChaosScheduleJob',
-    'ChaosSchedule',
-    'ChaosScheduleDescription',
-    'ExecutingFaultsChaosEvent',
-    'StartedChaosEvent',
-    'StoppedChaosEvent',
-    'TestErrorChaosEvent',
-    'ValidationFailedChaosEvent',
     'WaitingChaosEvent',
-    'ApplicationCapacityDescription',
-    'ApplicationDescription',
-    'ComposeDeploymentStatusInfo',
-    'RegistryCredential',
-    'ComposeDeploymentUpgradeDescription',
-    'ComposeDeploymentUpgradeProgressInfo',
-    'PagedComposeDeploymentStatusInfoList',
-    'CreateComposeDeploymentDescription',
-    'DeployedServicePackageInfo',
-    'ServiceCorrelationDescription',
-    'PartitionSchemeDescription',
-    'NamedPartitionSchemeDescription',
-    'SingletonPartitionSchemeDescription',
-    'UniformInt64RangePartitionSchemeDescription',
-    'ScalingTriggerDescription',
-    'ScalingMechanismDescription',
-    'ScalingPolicyDescription',
-    'ServiceDescription',
-    'StatefulServiceDescription',
-    'StatelessServiceDescription',
-    'ReplicatorQueueStatus',
-    'ReplicatorStatus',
-    'RemoteReplicatorAcknowledgementDetail',
-    'RemoteReplicatorAcknowledgementStatus',
-    'RemoteReplicatorStatus',
-    'PrimaryReplicatorStatus',
-    'SecondaryReplicatorStatus',
-    'SecondaryActiveReplicatorStatus',
-    'SecondaryIdleReplicatorStatus',
-    'LoadMetricReportInfo',
-    'DeployedServiceReplicaDetailInfo',
-    'KeyValueStoreReplicaStatus',
-    'DeployedStatefulServiceReplicaDetailInfo',
-    'DeployedStatelessServiceInstanceDetailInfo',
-    'ReplicaStatusBase',
-    'ServiceUpdateDescription',
-    'StatefulServiceUpdateDescription',
-    'StatelessServiceUpdateDescription',
-    'FileVersion',
-    'FileInfo',
-    'FolderInfo',
-    'ImageStoreContent',
-    'ImageStoreCopyDescription',
-    'RestartDeployedCodePackageDescription',
-    'DeployedServiceTypeInfo',
-    'ResolvedServiceEndpoint',
-    'ResolvedServicePartition',
-    'SelectedPartition',
-    'InvokeDataLossResult',
-    'InvokeQuorumLossResult',
-    'NodeResult',
-    'NodeTransitionResult',
-    'NodeTransitionProgress',
-    'OperationStatus',
-    'PartitionDataLossProgress',
-    'PartitionQuorumLossProgress',
-    'RestartPartitionResult',
-    'PartitionRestartProgress',
-    'PackageSharingPolicyInfo',
-    'DeployServicePackageToNodeDescription',
-    'ResumeApplicationUpgradeDescription',
-    'ApplicationUpgradeUpdateDescription',
-    'NameDescription',
-    'PagedSubNameInfoList',
-    'PropertyValue',
-    'BinaryPropertyValue',
-    'Int64PropertyValue',
-    'DoublePropertyValue',
-    'StringPropertyValue',
-    'GuidPropertyValue',
-    'PropertyMetadata',
-    'PropertyInfo',
-    'PagedPropertyInfoList',
-    'PropertyDescription',
-    'PropertyBatchOperation',
-    'PropertyBatchDescriptionList',
-    'CheckExistsPropertyBatchOperation',
-    'CheckSequencePropertyBatchOperation',
-    'CheckValuePropertyBatchOperation',
-    'DeletePropertyBatchOperation',
-    'GetPropertyBatchOperation',
-    'PutPropertyBatchOperation',
-    'PropertyBatchInfo',
-    'SuccessfulPropertyBatchInfo',
-    'FailedPropertyBatchInfo',
-    'BackupScheduleDescription',
-    'BackupStorageDescription',
-    'RetentionPolicyDescription',
-    'BackupPolicyDescription',
-    'PagedBackupPolicyDescriptionList',
-    'BasicRetentionPolicyDescription',
-    'DisableBackupDescription',
-    'ApplicationBackupConfigurationInfo',
-    'ServiceBackupConfigurationInfo',
-    'BackupSuspensionInfo',
-    'BackupConfigurationInfo',
-    'PagedBackupConfigurationInfoList',
-    'RestorePartitionDescription',
-    'RestoreProgressInfo',
-    'BackupPartitionDescription',
-    'BackupInfo',
-    'PagedBackupInfoList',
-    'AzureBlobBackupStorageDescription',
-    'FileShareBackupStorageDescription',
-    'FrequencyBasedBackupScheduleDescription',
-    'TimeBasedBackupScheduleDescription',
-    'BackupProgressInfo',
-    'PartitionBackupConfigurationInfo',
-    'BackupEntity',
-    'ApplicationBackupEntity',
-    'ServiceBackupEntity',
-    'PartitionBackupEntity',
-    'EnableBackupDescription',
-    'PagedBackupEntityList',
-    'GetBackupByStorageQueryDescription',
-    'NodeImpact',
-    'NodeRepairImpactDescription',
-    'NodeRepairTargetDescription',
-    'RepairImpactDescriptionBase',
-    'RepairTargetDescriptionBase',
-    'RepairTaskHistory',
-    'RepairTask',
-    'RepairTaskApproveDescription',
-    'RepairTaskCancelDescription',
-    'RepairTaskDeleteDescription',
-    'RepairTaskUpdateHealthPolicyDescription',
-    'RepairTaskUpdateInfo',
-    'UploadChunkRange',
-    'UploadSessionInfo',
-    'UploadSession',
-    'AveragePartitionLoadScalingTrigger',
-    'AverageServiceLoadScalingTrigger',
-    'PartitionInstanceCountScaleMechanism',
-    'AddRemoveIncrementalNamedPartitionScalingMechanism',
-    'ApplicationCreatedEvent',
-    'ApplicationDeletedEvent',
-    'ApplicationNewHealthReportEvent',
-    'ApplicationHealthReportExpiredEvent',
-    'ApplicationUpgradeCompletedEvent',
-    'ApplicationUpgradeDomainCompletedEvent',
-    'ApplicationUpgradeRollbackCompletedEvent',
-    'ApplicationUpgradeRollbackStartedEvent',
-    'ApplicationUpgradeStartedEvent',
-    'DeployedApplicationNewHealthReportEvent',
-    'DeployedApplicationHealthReportExpiredEvent',
-    'ApplicationProcessExitedEvent',
-    'ApplicationContainerInstanceExitedEvent',
-    'NodeAbortedEvent',
-    'NodeAddedToClusterEvent',
-    'NodeClosedEvent',
-    'NodeDeactivateCompletedEvent',
-    'NodeDeactivateStartedEvent',
-    'NodeDownEvent',
-    'NodeNewHealthReportEvent',
-    'NodeHealthReportExpiredEvent',
-    'NodeOpenSucceededEvent',
-    'NodeOpenFailedEvent',
-    'NodeRemovedFromClusterEvent',
-    'NodeUpEvent',
-    'PartitionNewHealthReportEvent',
-    'PartitionHealthReportExpiredEvent',
-    'PartitionReconfiguredEvent',
-    'PartitionPrimaryMoveAnalysisEvent',
-    'ServiceCreatedEvent',
-    'ServiceDeletedEvent',
-    'ServiceNewHealthReportEvent',
-    'ServiceHealthReportExpiredEvent',
-    'DeployedServicePackageNewHealthReportEvent',
-    'DeployedServicePackageHealthReportExpiredEvent',
-    'StatefulReplicaNewHealthReportEvent',
-    'StatefulReplicaHealthReportExpiredEvent',
-    'StatelessReplicaNewHealthReportEvent',
-    'StatelessReplicaHealthReportExpiredEvent',
-    'ClusterNewHealthReportEvent',
-    'ClusterHealthReportExpiredEvent',
-    'ClusterUpgradeCompletedEvent',
-    'ClusterUpgradeDomainCompletedEvent',
-    'ClusterUpgradeRollbackCompletedEvent',
-    'ClusterUpgradeRollbackStartedEvent',
-    'ClusterUpgradeStartedEvent',
-    'ChaosStoppedEvent',
-    'ChaosStartedEvent',
-    'ChaosCodePackageRestartScheduledEvent',
-    'ChaosReplicaRemovalScheduledEvent',
-    'ChaosPartitionSecondaryMoveScheduledEvent',
-    'ChaosPartitionPrimaryMoveScheduledEvent',
-    'ChaosReplicaRestartScheduledEvent',
-    'ChaosNodeRestartScheduledEvent',
-    'SecretResourceProperties',
-    'InlinedValueSecretResourceProperties',
-    'SecretResourceDescription',
-    'PagedSecretResourceDescriptionList',
-    'SecretResourcePropertiesBase',
-    'SecretValue',
-    'SecretValueProperties',
-    'SecretValueResourceDescription',
-    'PagedSecretValueResourceDescriptionList',
-    'VolumeProviderParametersAzureFile',
-    'VolumeReference',
-    'ApplicationScopedVolumeCreationParameters',
-    'ApplicationScopedVolume',
-    'ApplicationScopedVolumeCreationParametersServiceFabricVolumeDisk',
-    'VolumeResourceDescription',
-    'PagedVolumeResourceDescriptionList',
-    'NetworkResourceProperties',
-    'LocalNetworkResourceProperties',
-    'EndpointRef',
-    'NetworkRef',
-    'NetworkResourceDescription',
-    'NetworkResourcePropertiesBase',
-    'PagedNetworkResourceDescriptionList',
-    'GatewayDestination',
-    'TcpConfig',
-    'HttpRouteMatchPath',
-    'HttpRouteMatchHeader',
-    'HttpRouteMatchRule',
-    'HttpRouteConfig',
-    'HttpHostConfig',
-    'HttpConfig',
-    'GatewayResourceDescription',
-    'PagedGatewayResourceDescriptionList',
-    'ImageRegistryCredential',
-    'EnvironmentVariable',
-    'Setting',
-    'ContainerLabel',
-    'EndpointProperties',
-    'ResourceRequests',
-    'ResourceLimits',
-    'ResourceRequirements',
-    'DiagnosticsRef',
-    'ReliableCollectionsRef',
-    'ContainerState',
-    'ContainerEvent',
-    'ContainerInstanceView',
-    'ContainerCodePackageProperties',
-    'AutoScalingTrigger',
-    'AutoScalingMechanism',
-    'AutoScalingPolicy',
-    'ServiceResourceDescription',
-    'DiagnosticsSinkProperties',
-    'DiagnosticsDescription',
-    'AzureInternalMonitoringPipelineSinkDescription',
-    'AddRemoveReplicaScalingMechanism',
-    'AutoScalingMetric',
-    'AutoScalingResourceMetric',
-    'ServiceProperties',
-    'ServiceReplicaProperties',
-    'ServiceReplicaDescription',
-    'AverageLoadScalingTrigger',
-    'PagedServiceResourceDescriptionList',
-    'PagedServiceReplicaDescriptionList',
-    'ApplicationResourceDescription',
-    'PagedApplicationResourceDescriptionList',
     'HealthState',
     'FabricErrorCodes',
     'ApplicationDefinitionKind',
@@ -1550,6 +1578,7 @@ __all__ = [
     'ApplicationTypeStatus',
     'UpgradeKind',
     'UpgradeMode',
+    'UpgradeSortOrder',
     'FailureAction',
     'UpgradeDomainState',
     'UpgradeState',
