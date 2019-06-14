@@ -213,7 +213,7 @@ class StorageAccountHostsMixin(object):
         return create_configuration(**kwargs)
 
     def _format_shared_key_credential(self, account, credential):
-        if isinstance(credential, six.text_type):
+        if isinstance(credential, six.string_types):
             if len(account) < 2:
                 raise ValueError("Unable to determine account name for shared key credential.")
             credential = {
