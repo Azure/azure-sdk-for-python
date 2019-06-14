@@ -51,7 +51,6 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
-            'classic_administrators': '2015-06-01',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -101,10 +100,13 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
         """Instance depends on the API version:
 
            * 2015-06-01: :class:`ClassicAdministratorsOperations<azure.mgmt.authorization.v2015_06_01.operations.ClassicAdministratorsOperations>`
+           * 2015-07-01: :class:`ClassicAdministratorsOperations<azure.mgmt.authorization.v2015_07_01.operations.ClassicAdministratorsOperations>`
         """
         api_version = self._get_api_version('classic_administrators')
         if api_version == '2015-06-01':
             from .v2015_06_01.operations import ClassicAdministratorsOperations as OperationClass
+        elif api_version == '2015-07-01':
+            from .v2015_07_01.operations import ClassicAdministratorsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -123,14 +125,14 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
-    def elevate_access(self):
+    def global_administrator(self):
         """Instance depends on the API version:
 
-           * 2015-07-01: :class:`ElevateAccessOperations<azure.mgmt.authorization.v2015_07_01.operations.ElevateAccessOperations>`
+           * 2015-07-01: :class:`GlobalAdministratorOperations<azure.mgmt.authorization.v2015_07_01.operations.GlobalAdministratorOperations>`
         """
-        api_version = self._get_api_version('elevate_access')
+        api_version = self._get_api_version('global_administrator')
         if api_version == '2015-07-01':
-            from .v2015_07_01.operations import ElevateAccessOperations as OperationClass
+            from .v2015_07_01.operations import GlobalAdministratorOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))

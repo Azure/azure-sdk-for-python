@@ -10,15 +10,17 @@
 # --------------------------------------------------------------------------
 
 from ._permissions_operations import PermissionsOperations
-from ._provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from ._role_assignments_operations import RoleAssignmentsOperations
 from ._role_definitions_operations import RoleDefinitionsOperations
-from ._elevate_access_operations import ElevateAccessOperations
+from ._provider_operations_metadata_operations import ProviderOperationsMetadataOperations
+from ._global_administrator_operations import GlobalAdministratorOperations
+from ._role_assignments_operations import RoleAssignmentsOperations
+from ._classic_administrators_operations import ClassicAdministratorsOperations
 
 __all__ = [
     'PermissionsOperations',
-    'ProviderOperationsMetadataOperations',
-    'RoleAssignmentsOperations',
     'RoleDefinitionsOperations',
-    'ElevateAccessOperations',
+    'ProviderOperationsMetadataOperations',
+    'GlobalAdministratorOperations',
+    'RoleAssignmentsOperations',
+    'ClassicAdministratorsOperations',
 ]

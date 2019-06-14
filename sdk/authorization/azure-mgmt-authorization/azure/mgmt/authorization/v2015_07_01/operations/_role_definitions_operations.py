@@ -160,16 +160,16 @@ class RoleDefinitionsOperations(object):
     get.metadata = {'url': '/{scope}/providers/Microsoft.Authorization/roleDefinitions/{roleDefinitionId}'}
 
     def create_or_update(
-            self, scope, role_definition_id, properties=None, custom_headers=None, raw=False, **operation_config):
+            self, scope, role_definition_id, role_definition, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a role definition.
 
         :param scope: The scope of the role definition.
         :type scope: str
         :param role_definition_id: The ID of the role definition.
         :type role_definition_id: str
-        :param properties: Role definition properties.
-        :type properties:
-         ~azure.mgmt.authorization.v2015_07_01.models.RoleDefinitionProperties
+        :param role_definition: The values for the role definition.
+        :type role_definition:
+         ~azure.mgmt.authorization.v2015_07_01.models.RoleDefinition
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -180,8 +180,6 @@ class RoleDefinitionsOperations(object):
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        role_definition = models.RoleDefinition(properties=properties)
-
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {

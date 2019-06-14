@@ -25,6 +25,19 @@ class PermissionPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PermissionPaged, self).__init__(*args, **kwargs)
+class RoleDefinitionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`RoleDefinition <azure.mgmt.authorization.v2015_07_01.models.RoleDefinition>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[RoleDefinition]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(RoleDefinitionPaged, self).__init__(*args, **kwargs)
 class ProviderOperationsMetadataPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ProviderOperationsMetadata <azure.mgmt.authorization.v2015_07_01.models.ProviderOperationsMetadata>` object
@@ -51,16 +64,16 @@ class RoleAssignmentPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(RoleAssignmentPaged, self).__init__(*args, **kwargs)
-class RoleDefinitionPaged(Paged):
+class ClassicAdministratorPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`RoleDefinition <azure.mgmt.authorization.v2015_07_01.models.RoleDefinition>` object
+    A paging container for iterating over a list of :class:`ClassicAdministrator <azure.mgmt.authorization.v2015_07_01.models.ClassicAdministrator>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[RoleDefinition]'}
+        'current_page': {'key': 'value', 'type': '[ClassicAdministrator]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(RoleDefinitionPaged, self).__init__(*args, **kwargs)
+        super(ClassicAdministratorPaged, self).__init__(*args, **kwargs)

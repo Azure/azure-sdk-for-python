@@ -12,6 +12,55 @@
 from msrest.serialization import Model
 
 
+class ClassicAdministrator(Model):
+    """Classic Administrators.
+
+    :param id: The ID of the administrator.
+    :type id: str
+    :param name: The name of the administrator.
+    :type name: str
+    :param type: The type of the administrator.
+    :type type: str
+    :param properties: Properties for the classic administrator.
+    :type properties:
+     ~azure.mgmt.authorization.v2015_07_01.models.ClassicAdministratorProperties
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ClassicAdministratorProperties'},
+    }
+
+    def __init__(self, *, id: str=None, name: str=None, type: str=None, properties=None, **kwargs) -> None:
+        super(ClassicAdministrator, self).__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.type = type
+        self.properties = properties
+
+
+class ClassicAdministratorProperties(Model):
+    """Classic Administrator properties.
+
+    :param email_address: The email address of the administrator.
+    :type email_address: str
+    :param role: The role of the administrator.
+    :type role: str
+    """
+
+    _attribute_map = {
+        'email_address': {'key': 'emailAddress', 'type': 'str'},
+        'role': {'key': 'role', 'type': 'str'},
+    }
+
+    def __init__(self, *, email_address: str=None, role: str=None, **kwargs) -> None:
+        super(ClassicAdministratorProperties, self).__init__(**kwargs)
+        self.email_address = email_address
+        self.role = role
+
+
 class CloudError(Model):
     """CloudError.
     """
@@ -278,9 +327,17 @@ class RoleDefinition(Model):
     :vartype name: str
     :ivar type: The role definition type.
     :vartype type: str
-    :param properties: Role definition properties.
-    :type properties:
-     ~azure.mgmt.authorization.v2015_07_01.models.RoleDefinitionProperties
+    :param role_name: The role name.
+    :type role_name: str
+    :param description: The role definition description.
+    :type description: str
+    :param role_type: The role type.
+    :type role_type: str
+    :param permissions: Role definition permissions.
+    :type permissions:
+     list[~azure.mgmt.authorization.v2015_07_01.models.Permission]
+    :param assignable_scopes: Role definition assignable scopes.
+    :type assignable_scopes: list[str]
     """
 
     _validation = {
@@ -293,15 +350,23 @@ class RoleDefinition(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'RoleDefinitionProperties'},
+        'role_name': {'key': 'properties.roleName', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'role_type': {'key': 'properties.type', 'type': 'str'},
+        'permissions': {'key': 'properties.permissions', 'type': '[Permission]'},
+        'assignable_scopes': {'key': 'properties.assignableScopes', 'type': '[str]'},
     }
 
-    def __init__(self, *, properties=None, **kwargs) -> None:
+    def __init__(self, *, role_name: str=None, description: str=None, role_type: str=None, permissions=None, assignable_scopes=None, **kwargs) -> None:
         super(RoleDefinition, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.properties = properties
+        self.role_name = role_name
+        self.description = description
+        self.role_type = role_type
+        self.permissions = permissions
+        self.assignable_scopes = assignable_scopes
 
 
 class RoleDefinitionFilter(Model):
@@ -318,36 +383,3 @@ class RoleDefinitionFilter(Model):
     def __init__(self, *, role_name: str=None, **kwargs) -> None:
         super(RoleDefinitionFilter, self).__init__(**kwargs)
         self.role_name = role_name
-
-
-class RoleDefinitionProperties(Model):
-    """Role definition properties.
-
-    :param role_name: The role name.
-    :type role_name: str
-    :param description: The role definition description.
-    :type description: str
-    :param type: The role type.
-    :type type: str
-    :param permissions: Role definition permissions.
-    :type permissions:
-     list[~azure.mgmt.authorization.v2015_07_01.models.Permission]
-    :param assignable_scopes: Role definition assignable scopes.
-    :type assignable_scopes: list[str]
-    """
-
-    _attribute_map = {
-        'role_name': {'key': 'roleName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'permissions': {'key': 'permissions', 'type': '[Permission]'},
-        'assignable_scopes': {'key': 'assignableScopes', 'type': '[str]'},
-    }
-
-    def __init__(self, *, role_name: str=None, description: str=None, type: str=None, permissions=None, assignable_scopes=None, **kwargs) -> None:
-        super(RoleDefinitionProperties, self).__init__(**kwargs)
-        self.role_name = role_name
-        self.description = description
-        self.type = type
-        self.permissions = permissions
-        self.assignable_scopes = assignable_scopes
