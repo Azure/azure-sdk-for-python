@@ -591,7 +591,7 @@ class ContainerClient(StorageAccountHostsMixin):
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
-            **kwargs,
+            **kwargs
         ):
         # type: (...) -> None
         """

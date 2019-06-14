@@ -659,7 +659,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_match=None,  # type: Optional[str]
             if_none_match=None,  # type: Optional[str]
             timeout=None,  # type: Optional[int]
-            **kwargs,
+            **kwargs
         ):
         # type: (...) -> None
         """
