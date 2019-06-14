@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.7.1 (2019-06-12)
+++++++++++++++++++
+
+**Bugfixes**
+
+- Make mutable some attributes that were read-only by mistake (so they can be set on creation)
+
 0.7.0 (2019-05-30)
 ++++++++++++++++++
 

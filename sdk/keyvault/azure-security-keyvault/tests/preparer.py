@@ -2,14 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
-from collections import namedtuple
-import io
-import os
-import requests
+# -------------------------------------------------------------------------
 import time
 
+try:
+    from unittest.mock import Mock
+except ImportError:  # python < 3.3
+    from mock import Mock
+
+from azure.identity import EnvironmentCredential
 from azure.security.keyvault import VaultClient
+
 from azure.mgmt.keyvault import KeyVaultManagementClient
 from azure.mgmt.keyvault.models import (
     SecretPermissions,
@@ -22,15 +25,11 @@ from azure.mgmt.keyvault.models import (
     AccessPolicyEntry,
     VaultProperties,
     VaultCreateOrUpdateParameters,
-    Vault,
 )
-from azure_devtools.scenario_tests.preparers import AbstractPreparer, SingleValueReplacer
 from azure_devtools.scenario_tests.exceptions import AzureTestError
 
-from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
+from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
-
-FakeAccount = namedtuple("FakeResource", ["name", "account_endpoint"])
 
 DEFAULT_PERMISSIONS = Permissions(
     keys=[perm.value for perm in KeyPermissions],
@@ -110,17 +109,33 @@ class VaultClientPreparer(AzureMgmtPreparer):
                 enable_purge_protection=None,
             )
             parameters = VaultCreateOrUpdateParameters(location=self.location, properties=properties)
+
             self.management_client = self.create_mgmt_client(KeyVaultManagementClient)
-            vault = self.management_client.vaults.create_or_update(group, name, parameters).result()
+
+            # ARM may return not found at first even though the resource group has been created
+            retries = 4
+            for i in range(retries):
+                try:
+                    vault = self.management_client.vaults.create_or_update(group, name, parameters).result()
+                except Exception as ex:
+                    if "ResourceGroupNotFound" not in str(ex) or i == retries - 1:
+                        raise
+                    time.sleep(3)
             vault_uri = vault.properties.vault_uri
         else:
             # playback => we need only the uri used in the recording
             vault_uri = "https://{}.vault.azure.net/".format(name)
 
-        vault_credentials = self.test_class_instance.settings.get_credentials(resource="https://vault.azure.net")
-        client = VaultClient(vault_uri, vault_credentials)
+        client = self.create_vault_client(vault_uri)
 
         return {self.parameter_name: client}
+
+    def create_vault_client(self, vault_uri):
+        if self.is_live:
+            credential = EnvironmentCredential()
+        else:
+            credential = Mock(get_token=lambda _: "fake-token")
+        return VaultClient(vault_uri, credential)
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:
