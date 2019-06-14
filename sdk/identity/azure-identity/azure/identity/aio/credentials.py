@@ -7,6 +7,7 @@ import os
 from typing import Any, Dict, Mapping, Optional, Union
 
 from azure.core import Configuration
+from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
 
 from ._authn_client import AsyncAuthnClient
@@ -31,7 +32,7 @@ class AsyncClientSecretCredential(ClientSecretCredentialBase):
         super(AsyncClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
         self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
 
-    async def get_token(self, *scopes: str) -> str:
+    async def get_token(self, *scopes: str) -> AccessToken:
         token = self._client.get_cached_token(scopes)
         if not token:
             data = dict(self._form_data, scope=" ".join(scopes))
@@ -51,7 +52,7 @@ class AsyncCertificateCredential(CertificateCredentialBase):
         super(AsyncCertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
         self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
 
-    async def get_token(self, *scopes: str) -> str:
+    async def get_token(self, *scopes: str) -> AccessToken:
         token = self._client.get_cached_token(scopes)
         if not token:
             data = dict(self._form_data, scope=" ".join(scopes))
@@ -78,7 +79,7 @@ class AsyncEnvironmentCredential:
                 **kwargs
             )
 
-    async def get_token(self, *scopes: str) -> str:
+    async def get_token(self, *scopes: str) -> AccessToken:
         if not self._credential:
             message = "Missing environment settings. To authenticate with a client secret, set {}. To authenticate with a certificate, set {}.".format(
                 ", ".join(EnvironmentVariables.CLIENT_SECRET_VARS), ", ".join(EnvironmentVariables.CERT_VARS)
@@ -99,14 +100,14 @@ class AsyncManagedIdentityCredential(object):
     def create_config(**kwargs: Dict[str, Any]) -> Configuration:
         pass
 
-    async def get_token(self, *scopes: str) -> str:
+    async def get_token(self, *scopes: str) -> AccessToken:
         pass
 
 
 class AsyncTokenCredentialChain(TokenCredentialChain):
     """A sequence of token credentials"""
 
-    async def get_token(self, *scopes: str) -> str:  # type: ignore
+    async def get_token(self, *scopes: str) -> AccessToken:  # type: ignore
         """Attempts to get a token from each credential, in order, returning the first token.
            If no token is acquired, raises an exception listing error messages.
         """
