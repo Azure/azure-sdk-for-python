@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
-from azure.core.pipeline.policies.credentials import _BearerTokenCredentialPolicyBase
+from azure.core.pipeline.policies.authentication import _BearerTokenCredentialPolicyBase
 
 
 class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, AsyncHTTPPolicy):
@@ -13,7 +13,7 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, AsyncHT
     """Adds a bearer token Authorization header to requests.
 
     :param credential: The credential.
-    :type credential: ~azure.core.SupportsGetToken
+    :type credential: ~azure.core.credentials.TokenCredential
     :param str scopes: Lets you specify the type of access needed.
     """
 
