@@ -19,7 +19,7 @@ from ._configuration import AuthorizationManagementClientConfiguration
 
 
 class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
-    """Role based access control provides you a way to apply granular level policy administration down to individual resources or resource groups. These operations enable you to manage role definitions and role assignments. A role definition describes the set of actions that can be performed on resources. A role assignment grants access to Azure Active Directory users.
+    """Role based access control provides you a way to apply granular level policy administration down to individual resources or resource groups. These operations enable you to manage role assignments. A role assignment grants access to Azure Active Directory users.
 
     This ready contains multiple API versions, to help you deal with all Azure clouds
     (Azure Stack, Azure Government, Azure China, etc.).
@@ -46,15 +46,17 @@ class AuthorizationManagementClient(MultiApiClientMixin, SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2018-01-01-preview'
+    DEFAULT_API_VERSION = '2018-09-01-preview'
     _PROFILE_TAG = "azure.mgmt.authorization.AuthorizationManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION,
             'classic_administrators': '2015-06-01',
-            'elevate_access': '2015-07-01',
             'deny_assignments': '2018-07-01-preview',
-            'role_assignments': '2018-09-01-preview',
-            None: DEFAULT_API_VERSION
+            'elevate_access': '2015-07-01',
+            'permissions': '2018-01-01-preview',
+            'provider_operations_metadata': '2018-01-01-preview',
+            'role_definitions': '2018-01-01-preview',
         }},
         _PROFILE_TAG + " latest"
     )
