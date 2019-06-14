@@ -153,7 +153,7 @@ class AutomaticOSUpgradePolicy(Model):
     :param enable_automatic_os_upgrade: Indicates whether OS upgrades should
      automatically be applied to scale set instances in a rolling fashion when
      a newer version of the OS image becomes available. Default value is false.
-     <br /><br /> If this is set to true for Windows based scale sets,
+     <br><br> If this is set to true for Windows based scale sets,
      [enableAutomaticUpdates](https://docs.microsoft.com/dotnet/api/microsoft.azure.management.compute.models.windowsconfiguration.enableautomaticupdates?view=azure-dotnet)
      is automatically set to false and cannot be set to true.
     :type enable_automatic_os_upgrade: bool
@@ -6394,9 +6394,9 @@ class WindowsConfiguration(Model):
      can be added to the VM later.
     :type provision_vm_agent: bool
     :param enable_automatic_updates: Indicates whether Automatic Updates is
-     enabled for the Windows virtual machine. Default value is true. <br /><br
-     /> For virtual machine scale sets, this property can be updated and
-     updates will take effect on OS reprovisioning.
+     enabled for the Windows virtual machine. Default value is true. <br><br>
+     For virtual machine scale sets, this property can be updated and updates
+     will take effect on OS reprovisioning.
     :type enable_automatic_updates: bool
     :param time_zone: Specifies the time zone of the virtual machine. e.g.
      "Pacific Standard Time"
