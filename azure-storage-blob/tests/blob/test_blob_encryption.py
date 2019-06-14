@@ -38,7 +38,6 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    SharedKeyCredentials,
     BlobType
 )
 from tests.encryption_test_helper import (
@@ -68,7 +67,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         super(StorageBlobEncryptionTest, self).setUp()
 
         url = self._get_account_url()
-        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
+        credential = self._get_shared_key_credential()
 
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
@@ -78,7 +77,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self.config.blob_settings.max_block_size = 4 * 1024
         self.config.blob_settings.max_page_size = 4 * 1024
 
-        self.bsc = BlobServiceClient(url, credentials=credentials, configuration=self.config)
+        self.bsc = BlobServiceClient(url, credential=credential, configuration=self.config)
         self.container_name = self.get_resource_name('utcontainer')
         self.blob_types = (BlobType.BlockBlob, BlobType.PageBlob, BlobType.AppendBlob)
 

@@ -748,8 +748,8 @@ class AccessPolicy(GenAccessPolicy):
             be UTC.
         :type start: datetime or str
         '''
-        self.start = serialize_iso(start)
-        self.expiry = serialize_iso(expiry)
+        self.start = start
+        self.expiry = expiry
         self.permission = permission
 
 

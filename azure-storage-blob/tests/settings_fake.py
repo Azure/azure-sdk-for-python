@@ -30,9 +30,6 @@ PREMIUM_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=premiums
 # Use 'https' or 'http' protocol for sending requests, 'https' highly recommended
 PROTOCOL = "https"
 
-# Set to true to target the development storage emulator
-IS_EMULATED = False
-
 # Set to true if server side file encryption is enabled
 IS_SERVER_SIDE_FILE_ENCRYPTION_ENABLED = True
 

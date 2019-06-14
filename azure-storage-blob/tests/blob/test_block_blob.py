@@ -14,7 +14,6 @@ import pytest
 from azure.common import AzureHttpError
 from azure.core import HttpResponseError
 from azure.storage.blob import (
-    SharedKeyCredentials,
     BlobServiceClient,
     ContainerClient,
     BlobClient
@@ -39,7 +38,6 @@ class StorageBlockBlobTest(StorageTestCase):
         super(StorageBlockBlobTest, self).setUp()
 
         url = self._get_account_url()
-        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
 
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
@@ -48,7 +46,8 @@ class StorageBlockBlobTest(StorageTestCase):
         self.config.blob_settings.max_single_put_size = 32 * 1024
         self.config.blob_settings.max_block_size = 4 * 1024
 
-        self.bsc = BlobServiceClient(url, credentials=credentials, configuration=self.config)
+        self.bsc = BlobServiceClient(
+            url, credential=self.settings.STORAGE_ACCOUNT_KEY, configuration=self.config)
         self.container_name = self.get_resource_name('utcontainer')
 
         if not self.is_playback():

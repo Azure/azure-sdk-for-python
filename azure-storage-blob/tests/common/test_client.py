@@ -6,14 +6,11 @@
 import unittest
 import pytest
 
-pytestmark = pytest.mark.xfail
 from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
 )
-#from azure.storage.file import FileService
-#from azure.storage.queue import QueueService
 from tests.testcase import (
     StorageTestCase,
     record,
@@ -27,17 +24,9 @@ SERVICES = {
     BlobClient: 'blob',
 }
 
-_CONNECTION_ENDPOINTS = {
-    'blob': 'BlobEndpoint',
-    'queue': 'QueueEndpoint',
-    'file': 'FileEndpoint',
-}
+_CONNECTION_ENDPOINTS = {'blob': 'BlobEndpoint'}
 
-_CONNECTION_ENDPOINTS_SECONDARY = {
-    'blob': 'BlobSecondaryEndpoint',
-    'queue': 'QueueSecondaryEndpoint',
-    'file': 'FileSecondaryEndpoint',
-}
+_CONNECTION_ENDPOINTS_SECONDARY = {'blob': 'BlobSecondaryEndpoint'}
 
 class StorageClientTest(StorageTestCase):
     def setUp(self):
@@ -45,16 +34,16 @@ class StorageClientTest(StorageTestCase):
         self.account_name = self.settings.STORAGE_ACCOUNT_NAME
         self.account_key = self.settings.STORAGE_ACCOUNT_KEY
         self.sas_token = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
-        # self.token_credential = TokenCredential('initial_token')  # TODO
+        self.token_credential = self.generate_oauth_token()
         self.connection_string = self.settings.CONNECTION_STRING
 
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, url_type):
         self.assertIsNotNone(service)
-        self.assertEqual(service.credentials.account_name, self.account_name)
-        self.assertEqual(service.credentials.account_key, self.account_key)
-        self.assertTrue('{}.{}.core.windows.net'.format(self.account_name, type) in service.url)
-        self.assertEqual(service.secondary_endpoint, '{}-secondary.{}.core.windows.net'.format(self.account_name, url_type))
+        self.assertEqual(service.credential.account_name, self.account_name)
+        self.assertEqual(service.credential.account_key, self.account_key)
+        self.assertTrue('{}.{}.core.windows.net'.format(self.account_name, url_type) in service.url)
+        self.assertTrue('{}-secondary.{}.core.windows.net'.format(self.account_name, url_type) in service.secondary_endpoint)
 
     # --Direct Parameters Test Cases --------------------------------------------
     def test_create_service_with_key(self):
@@ -62,145 +51,147 @@ class StorageClientTest(StorageTestCase):
 
         for client, url in SERVICES.items():
             # Act
-            creds = Shared
-            service = client(self.account_name, self.account_key)
+            service = client(
+                self._get_account_url(), credential=self.account_key, container='foo', blob='bar')
 
             # Assert
-            self.validate_standard_account_endpoints(service, type[1])
-            self.assertEqual(service.protocol, 'https')
+            self.validate_standard_account_endpoints(service, url)
+            self.assertEqual(service.scheme, 'https')
 
     def test_create_service_with_connection_string(self):
 
-        for type in SERVICES.items():
+        for service_type in SERVICES.items():
             # Act
-            service = type[0].from_connection_string(self.connection_string, container="test", blob="test")
+            service = service_type[0].from_connection_string(
+                self.connection_string, container="test", blob="test")
 
             # Assert
-            self.validate_standard_account_endpoints(service, type[1])
+            self.validate_standard_account_endpoints(service, service_type[1])
             self.assertEqual(service.scheme, 'https')
 
     def test_create_service_with_sas(self):
         # Arrange
 
-        for type in SERVICES:
+        for service_type in SERVICES:
             # Act
-            service = type(self.account_name, sas_token=self.sas_token)
+            service = service_type(
+                self._get_account_url(), credential=self.sas_token, container='foo', blob='bar')
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, self.account_name)
-            self.assertEqual(service.sas_token, self.sas_token)
-            self.assertIsNone(service.account_key)
+            self.assertTrue(service.url.startswith('https://' + self.account_name + '.blob.core.windows.net'))
+            self.assertTrue(service.url.endswith(self.sas_token))
+            self.assertIsNone(service.credential)
 
     def test_create_service_with_token(self):
-        for type in SERVICES:
+        for service_type in SERVICES:
             # Act
-            # token credential is not available for FileService
-            if type != FileService:
-                service = type(self.account_name, token_credential=self.token_credential)
+            service = service_type(
+                self._get_account_url(), credential=self.token_credential, container='foo', blob='bar')
 
-                # Assert
-                self.assertIsNotNone(service)
-                self.assertEqual(service.account_name, self.account_name)
-                self.assertEqual(service.token_credential, self.token_credential)
-                self.assertIsNone(service.account_key)
+            # Assert
+            self.assertIsNotNone(service)
+            self.assertTrue(service.url.startswith('https://' + self.account_name + '.blob.core.windows.net'))
+            self.assertEqual(service.credential, self.token_credential)
+            self.assertFalse(hasattr(service.credential, 'account_key'))
+            self.assertTrue(hasattr(service.credential, 'get_token'))
 
     def test_create_service_with_token_and_http(self):
-        for type in SERVICES:
+        for service_type in SERVICES:
             # Act
-            # token credential is not available for FileService
-            if type != FileService:
-                with self.assertRaises(ValueError):
-                    type(self.settings.STORAGE_ACCOUNT_NAME, token_credential=self.token_credential, protocol="HTTP")
+            with self.assertRaises(ValueError):
+                url = self._get_account_url().replace('https', 'http')
+                service_type(url, credential=self.token_credential, container='foo', blob='bar')
 
     def test_create_service_china(self):
         # Arrange
 
-        for type in SERVICES.items():
+        for service_type in SERVICES.items():
             # Act
-            service = type[0](self.account_name, self.account_key, endpoint_suffix='core.chinacloudapi.cn')
+            url = self._get_account_url().replace('core.windows.net', 'core.chinacloudapi.cn')
+            service = service_type[0](
+                url, credential=self.account_key, container='foo', blob='bar')
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, self.account_name)
-            self.assertEqual(service.account_key, self.account_key)
-            self.assertEqual(service.primary_endpoint, '{}.{}.core.chinacloudapi.cn'.format(self.account_name, type[1]))
-            self.assertEqual(service.secondary_endpoint,
-                             '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, type[1]))
+            self.assertEqual(service.credential.account_name, self.account_name)
+            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertTrue(service.primary_endpoint.startswith(
+                'https://{}.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])))
+            self.assertTrue(service.secondary_endpoint.startswith(
+                'https://{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])))
 
     def test_create_service_protocol(self):
         # Arrange
 
-        for type in SERVICES.items():
+        for service_type in SERVICES.items():
             # Act
-            service = type[0](self.account_name, self.account_key, protocol='http')
+            url = self._get_account_url().replace('https', 'http')
+            service = service_type[0](
+                url, credential=self.account_key, container='foo', blob='bar')
 
             # Assert
-            self.validate_standard_account_endpoints(service, type[1])
-            self.assertEqual(service.protocol, 'http')
+            self.validate_standard_account_endpoints(service, service_type[1])
+            self.assertEqual(service.scheme, 'http')
 
     def test_create_blob_service_anonymous(self):
         # Arrange
-        BLOB_SERVICES = [BlockBlobService, PageBlobService, AppendBlobService]
+        BLOB_SERVICES = [BlobServiceClient, ContainerClient, BlobClient]
 
-        for type in BLOB_SERVICES:
+        for service_type in BLOB_SERVICES:
             # Act
-            service = type(self.account_name)
+            service = service_type(self._get_account_url(), container='foo', blob='bar')
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, self.account_name)
-            self.assertIsNone(service.account_key)
-            self.assertIsNone(service.sas_token)
+            self.assertTrue(service.url.startswith('https://' + self.account_name + '.blob.core.windows.net'))
+            self.assertIsNone(service.credential)
 
     def test_create_blob_service_custom_domain(self):
         # Arrange
-        BLOB_SERVICES = [BlockBlobService, PageBlobService, AppendBlobService]
+        BLOB_SERVICES = [BlobServiceClient, ContainerClient, BlobClient]
 
-        for type in BLOB_SERVICES:
+        for service_type in BLOB_SERVICES:
             # Act
-            service = type(self.account_name, self.account_key, custom_domain='www.mydomain.com')
+            service = service_type(
+                'www.mydomain.com',
+                credential={'account_name': self.account_name, 'account_key':self.account_key},
+                container='foo',
+                blob='bar')
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, self.account_name)
-            self.assertEqual(service.account_key, self.account_key)
-            self.assertEqual(service.primary_endpoint, 'www.mydomain.com')
-            self.assertEqual(service.secondary_endpoint, self.account_name + '-secondary.blob.core.windows.net')
-
-    def test_create_service_empty_key(self):
-        # Arrange
-        NON_BLOB_SERVICES = [QueueService, FileService]
-
-        for type in NON_BLOB_SERVICES:
-            # Act
-            try:
-                test_service = type('testaccount', '')
-                self.fail('Passing an empty key to create account should fail.')
-            except ValueError as e:
-                self.assertTrue(str(
-                    e) == 'You need to provide an account name and either an account_key or sas_token when creating a storage service.')
+            self.assertEqual(service.credential.account_name, self.account_name)
+            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
+            self.assertTrue(service.secondary_endpoint.startswith('https://' + self.account_name + '-secondary.blob.core.windows.net'))
 
     def test_create_service_missing_arguments(self):
         # Arrange
 
-        for type in SERVICES:
+        for service_type in SERVICES:
             # Act
             with self.assertRaises(ValueError):
-                service = type()
+                service = service_type(None)
 
                 # Assert
 
     def test_create_service_with_socket_timeout(self):
         # Arrange
 
-        for type in SERVICES.items():
+        for service_type in SERVICES.items():
             # Act
-            service = type[0](self.account_name, self.account_key, socket_timeout=22)
+            default_service = service_type[0](
+                self._get_account_url(), credential=self.account_key,
+                container='foo', blob='bar')
+            service = service_type[0](
+                self._get_account_url(), credential=self.account_key,
+                container='foo', blob='bar', connection_timeout=22)
 
             # Assert
-            self.validate_standard_account_endpoints(service, type[1])
-            self.assertEqual(service.socket_timeout, 22)
+            self.validate_standard_account_endpoints(service, service_type[1])
+            self.assertEqual(service._config.connection.timeout, 22)
+            self.assertTrue(default_service._config.connection.timeout in [20, (20, 2000)])
 
     # --Connection String Test Cases --------------------------------------------
 
@@ -208,163 +199,173 @@ class StorageClientTest(StorageTestCase):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};'.format(self.account_name, self.account_key)
 
-        for type in SERVICES.items():
+        for service_type in SERVICES.items():
             # Act
-            service = type[0](connection_string=conn_string)
+            service = service_type[0].from_connection_string(
+                conn_string, container='foo', blob='bar')
 
             # Assert
-            self.validate_standard_account_endpoints(service, type[1])
-            self.assertEqual(service.protocol, 'https')
+            self.validate_standard_account_endpoints(service, service_type[1])
+            self.assertEqual(service.scheme, 'https')
 
     def test_create_service_with_connection_string_sas(self):
         # Arrange
         conn_string = 'AccountName={};SharedAccessSignature={};'.format(self.account_name, self.sas_token)
 
-        for type in SERVICES:
+        for service_type in SERVICES:
             # Act
-            service = type(connection_string=conn_string)
+            service = service_type.from_connection_string(
+                conn_string, container='foo', blob='bar')
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, self.account_name)
-            self.assertEqual(service.sas_token, self.sas_token)
-            self.assertIsNone(service.account_key)
+            self.assertTrue(service.url.startswith('https://' + self.account_name + '.blob.core.windows.net'))
+            self.assertTrue(service.url.endswith(self.sas_token))
+            self.assertIsNone(service.credential)
 
     def test_create_service_with_connection_string_endpoint_protocol(self):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
             self.account_name, self.account_key)
 
-        for type in SERVICES.items():
+        for service_type in SERVICES.items():
             # Act
-            service = type[0](connection_string=conn_string)
+            service = service_type[0].from_connection_string(conn_string, container="foo", blob="bar")
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, self.account_name)
-            self.assertEqual(service.account_key, self.account_key)
-            self.assertEqual(service.primary_endpoint, '{}.{}.core.chinacloudapi.cn'.format(self.account_name, type[1]))
-            self.assertEqual(service.secondary_endpoint,
-                             '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, type[1]))
-            self.assertEqual(service.protocol, 'http')
+            self.assertEqual(service.credential.account_name, self.account_name)
+            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertTrue(
+                service.primary_endpoint.startswith(
+                    'http://{}.{}.core.chinacloudapi.cn/'.format(self.account_name, service_type[1])))
+            self.assertTrue(
+                service.secondary_endpoint.startswith(
+                    'http://{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])))
+            self.assertEqual(service.scheme, 'http')
 
     def test_create_service_with_connection_string_emulated(self):
         # Arrange
-        conn_string = 'UseDevelopmentStorage=true;'.format(self.account_name, self.account_key)
+        for service_type in SERVICES.items():
+            conn_string = 'UseDevelopmentStorage=true;'.format(self.account_name, self.account_key)
 
-        # Act
-        service = BlockBlobService(connection_string=conn_string)
-
-        # Assert
-        self.assertIsNotNone(service)
-        self.assertEqual(service.account_name, 'devstoreaccount1')
-        self.assertIsNotNone(service.account_key)
-        self.assertEqual(service.protocol, 'http')
-        self.assertEqual(service.primary_endpoint, '127.0.0.1:10000/devstoreaccount1')
-        self.assertEqual(service.secondary_endpoint, '127.0.0.1:10000/devstoreaccount1-secondary')
-
-    def test_create_service_with_connection_string_emulated_explicit(self):
-        # Arrange
-        conn_string = 'DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;' \
-            .format(self.account_name, self.account_key)
-
-        # Act
-        service = BlockBlobService(connection_string=conn_string)
-
-        # Assert
-        self.assertIsNotNone(service)
-        self.assertEqual(service.account_name, 'devstoreaccount1')
-        self.assertIsNotNone(service.account_key)
-        self.assertEqual(service.protocol, 'http')
-        self.assertEqual(service.primary_endpoint, '127.0.0.1:10000/devstoreaccount1')
+            # Act
+            with self.assertRaises(ValueError):
+                service = service_type[0].from_connection_string(conn_string, container="foo", blob="bar")
 
     def test_create_service_with_connection_string_anonymous(self):
         # Arrange
-        conn_string = 'BlobEndpoint=www.mydomain.com;'
+        for service_type in SERVICES.items():
+            conn_string = 'BlobEndpoint=www.mydomain.com;'
 
-        # Act
-        service = BlockBlobService(connection_string=conn_string)
+            # Act
+            service = service_type[0].from_connection_string(conn_string, container="foo", blob="bar")
 
         # Assert
         self.assertIsNotNone(service)
-        self.assertIsNone(service.account_name)
-        self.assertIsNone(service.account_key)
-        self.assertIsNone(service.sas_token)
-        self.assertEqual(service.primary_endpoint, 'www.mydomain.com')
+        self.assertIsNone(service.credential)
+        self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
+        with self.assertRaises(ValueError):
+            service.secondary_endpoint
 
     def test_create_service_with_connection_string_custom_domain(self):
         # Arrange
-        conn_string = 'AccountName={};AccountKey={};BlobEndpoint=www.mydomain.com;'.format(self.account_name,
-                                                                                           self.account_key)
+        for service_type in SERVICES.items():
+            conn_string = 'AccountName={};AccountKey={};BlobEndpoint=www.mydomain.com;'.format(
+                self.account_name, self.account_key)
 
-        # Act
-        service = BlockBlobService(connection_string=conn_string)
+            # Act
+            service = service_type[0].from_connection_string(conn_string, container="foo", blob="bar")
 
-        # Assert
-        self.assertIsNotNone(service)
-        self.assertEqual(service.account_name, self.account_name)
-        self.assertEqual(service.account_key, self.account_key)
-        self.assertEqual(service.primary_endpoint, 'www.mydomain.com')
-        self.assertEqual(service.secondary_endpoint, self.account_name + '-secondary.blob.core.windows.net')
+            # Assert
+            self.assertIsNotNone(service)
+            self.assertEqual(service.credential.account_name, self.account_name)
+            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
+            self.assertTrue(service.secondary_endpoint.startswith('https://' + self.account_name + '-secondary.blob.core.windows.net'))
 
     def test_create_service_with_connection_string_custom_domain_trailing_slash(self):
         # Arrange
-        conn_string = 'AccountName={};AccountKey={};BlobEndpoint=www.mydomain.com/;'.format(self.account_name,
-                                                                                            self.account_key)
+        for service_type in SERVICES.items():
+            conn_string = 'AccountName={};AccountKey={};BlobEndpoint=www.mydomain.com/;'.format(
+                self.account_name, self.account_key)
 
-        # Act
-        service = BlockBlobService(connection_string=conn_string)
+            # Act
+            service = service_type[0].from_connection_string(conn_string, container="foo", blob="bar")
 
-        # Assert
-        self.assertIsNotNone(service)
-        self.assertEqual(service.account_name, self.account_name)
-        self.assertEqual(service.account_key, self.account_key)
-        self.assertEqual(service.primary_endpoint, 'www.mydomain.com')
-        self.assertEqual(service.secondary_endpoint, self.account_name + '-secondary.blob.core.windows.net')
+            # Assert
+            self.assertIsNotNone(service)
+            self.assertEqual(service.credential.account_name, self.account_name)
+            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
+            self.assertTrue(service.secondary_endpoint.startswith('https://' + self.account_name + '-secondary.blob.core.windows.net'))
+
+
+    def test_create_service_with_connection_string_custom_domain_secondary_override(self):
+        # Arrange
+        for service_type in SERVICES.items():
+            conn_string = 'AccountName={};AccountKey={};BlobEndpoint=www.mydomain.com/;'.format(
+                self.account_name, self.account_key)
+
+            # Act
+            service = service_type[0].from_connection_string(
+                conn_string, secondary_hostname="www-sec.mydomain.com", container="foo", blob="bar")
+
+            # Assert
+            self.assertIsNotNone(service)
+            self.assertEqual(service.credential.account_name, self.account_name)
+            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
+            self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com/'))
+
 
     def test_create_service_with_connection_string_fails_if_secondary_without_primary(self):
-        for type in SERVICES.items():
+        for service_type in SERVICES.items():
             # Arrange
-            conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;'.format(self.account_name, self.account_key, _CONNECTION_ENDPOINTS_SECONDARY.get(type[1]))
+            conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;'.format(
+                self.account_name, self.account_key,
+                _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
             # Act
 
             # Fails if primary excluded
             with self.assertRaises(ValueError):
-                service = type[0](connection_string=conn_string)
+                service = service_type[0].from_connection_string(conn_string, container="foo", blob="bar")
 
     def test_create_service_with_connection_string_succeeds_if_secondary_with_primary(self):
-        for type in SERVICES.items():
+        for service_type in SERVICES.items():
             # Arrange
-            conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;{}=www-sec.mydomain.com;'.format(self.account_name, self.account_key, _CONNECTION_ENDPOINTS.get(type[1]), _CONNECTION_ENDPOINTS_SECONDARY.get(type[1]))
+            conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;{}=www-sec.mydomain.com;'.format(
+                self.account_name,
+                self.account_key,
+                _CONNECTION_ENDPOINTS.get(service_type[1]),
+                _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
             # Act
-            service = type[0](connection_string=conn_string)
+            service = service_type[0].from_connection_string(conn_string, container="foo", blob="bar")
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.account_name, self.account_name)
-            self.assertEqual(service.account_key, self.account_key)
-            self.assertEqual(service.primary_endpoint, 'www.mydomain.com')
-            self.assertEqual(service.secondary_endpoint, 'www-sec.mydomain.com')
+            self.assertEqual(service.credential.account_name, self.account_name)
+            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
+            self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com/'))
 
     @record
     def test_request_callback_signed_header(self):
         # Arrange
-        service = BlockBlobService(self.account_name, self.account_key, is_emulated=self.settings.IS_EMULATED)
+        service = BlobServiceClient(self._get_account_url(), credential=self.account_key)
         name = self.get_resource_name('cont')
 
         # Act
         def callback(request):
-            if request.method == 'PUT':
-                request.headers['x-ms-meta-hello'] = 'world'
-
-        service.request_callback = callback
+            if request.http_request.method == 'PUT':
+                request.http_request.headers['x-ms-meta-hello'] = 'world'
 
         # Assert
         try:
-            service.create_container(name)
-            metadata = service.get_container_metadata(name)
+            container = service.create_container(name, raw_request_hook=callback)
+            metadata = container.get_container_properties().metadata
             self.assertEqual(metadata, {'hello': 'world'})
         finally:
             service.delete_container(name)
@@ -372,19 +373,17 @@ class StorageClientTest(StorageTestCase):
     @record
     def test_response_callback(self):
         # Arrange
-        service = BlockBlobService(self.account_name, self.account_key, is_emulated=self.settings.IS_EMULATED)
+        service = BlobServiceClient(self._get_account_url(), credential=self.account_key)
         name = self.get_resource_name('cont')
+        container = service.get_container_client(name)
 
         # Act
         def callback(response):
-            response.status = 200
-            response.headers.clear()
-
-        # Force an exists call to succeed by resetting the status
-        service.response_callback = callback
+            response.http_response.status_code = 200
+            response.http_response.headers.clear()
 
         # Assert
-        exists = service.exists(name)
+        exists = container.get_container_properties(raw_response_hook=callback)
         self.assertTrue(exists)
 
 

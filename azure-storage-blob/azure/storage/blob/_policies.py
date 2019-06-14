@@ -225,12 +225,24 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                 _LOGGER.debug("Failed to log response: %s", repr(err))
 
 
-class StoragePipelineHook(HTTPPolicy):
+class StorageRequestHook(SansIOHTTPPolicy):
+
+    def __init__(self, **kwargs):
+        self._request_callback = kwargs.get('raw_request_hook')
+        super(StorageRequestHook, self).__init__()
+
+    def on_request(self, request):
+        # type: (PipelineRequest) -> PipelineResponse
+        request_callback = request.context.options.pop('raw_request_hook', self._request_callback)
+        if request_callback:
+            request_callback(request)
+
+
+class StorageResponseHook(HTTPPolicy):
 
     def __init__(self, **kwargs):
         self._response_callback = kwargs.get('raw_response_hook')
-        self._request_callback = kwargs.get('raw_request_hook')
-        super(StoragePipelineHook, self).__init__()
+        super(StorageResponseHook, self).__init__()
 
     def send(self, request):
         # type: (PipelineRequest) -> PipelineResponse
@@ -242,12 +254,6 @@ class StoragePipelineHook(HTTPPolicy):
             request.context.options.pop('upload_stream_current', None)
         response_callback = request.context.get('response_callback') or \
             request.context.options.pop('raw_response_hook', self._response_callback)
-        request_callback = request.context.get('request_callback') or \
-            request.context.options.pop('raw_request_hook', self._request_callback)
-
-        if request_callback:
-            request_callback(request)
-            request.context['request_callback'] = request_callback
 
         response = self.next.send(request)
         will_retry = is_retry(response, request.context.options.get('mode'))

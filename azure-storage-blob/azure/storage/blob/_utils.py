@@ -35,6 +35,7 @@ from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
     NetworkTraceLoggingPolicy,
+    BearerTokenCredentialPolicy,
     ProxyPolicy)
 from azure.core.exceptions import (
     HttpResponseError,
@@ -45,13 +46,15 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     DecodeError)
 
+from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
 from .common import StorageErrorCode, LocationMode
-from .authentication import SharedKeyCredentials
+from .authentication import SharedKeyCredentialPolicy
 from ._policies import (
     StorageBlobSettings,
     StorageHeadersPolicy,
     StorageContentValidation,
-    StoragePipelineHook,
+    StorageRequestHook,
+    StorageResponseHook,
     StorageLoggingPolicy,
     StorageHosts,
     ExponentialRetry,
@@ -127,24 +130,29 @@ class StorageAccountHostsMixin(object):
 
     def __init__(
             self, parsed_url,  # type: str
-            credentials=None,  # type: Optional[HTTPPolicy]
+            credential=None,  # type: Optional[Any]
             configuration=None, # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         # type: (...) -> None
         self._location_mode = kwargs.get('_location_mode', LocationMode.PRIMARY)
         self._hosts = kwargs.get('_hosts')
-        self.credentials = credentials
         self.scheme = parsed_url.scheme
 
+        account = parsed_url.netloc.split(".blob.core.")
+        secondary_hostname = None
+        self.credential = self._format_shared_key_credential(account, credential)
+        if self.scheme.lower() != 'https' and hasattr(self.credential, 'get_token'):
+            raise ValueError("Token credential is only supported with HTTPS.")
+        elif hasattr(self.credential, 'account_name'):
+            secondary_hostname = "{}-secondary.blob.{}".format(
+                self.credential.account_name, SERVICE_HOST_BASE)
+
         if not self._hosts:
-            account = parsed_url.netloc.split(".blob.core.")
-            secondary_hostname = None
-            primary_account = account[0]
             if len(account) > 1:
                 secondary_hostname = parsed_url.netloc.replace(
-                    primary_account,
-                    primary_account + '-secondary')
+                    account[0],
+                    account[0] + '-secondary')
             if kwargs.get('secondary_hostname'):
                 secondary_hostname = kwargs['secondary_hostname']
             self._hosts = {
@@ -156,7 +164,7 @@ class StorageAccountHostsMixin(object):
         self.key_resolver_function = kwargs.get('key_resolver_function')
 
         self._config, self._pipeline = create_pipeline(
-            configuration, credentials, hosts=self._hosts, **kwargs)
+            configuration, self.credential, hosts=self._hosts, **kwargs)
         self._client = create_client(self.url, self._pipeline)
 
     @property
@@ -173,6 +181,8 @@ class StorageAccountHostsMixin(object):
 
     @property
     def secondary_endpoint(self):
+        if not self._hosts[LocationMode.SECONDARY]:
+            raise ValueError("No secondary host configured.")
         return self._format_url(self._hosts[LocationMode.SECONDARY])
 
     @property
@@ -202,30 +212,76 @@ class StorageAccountHostsMixin(object):
         """
         return create_configuration(**kwargs)
 
-    def _format_query_string(self, sas_token, credentials, snapshot=None):
+    def _format_shared_key_credential(self, account, credential):
+        if isinstance(credential, six.text_type):
+            if len(account) < 2:
+                raise ValueError("Unable to determine account name for shared key credential.")
+            credential = {
+                'account_name': account[0],
+                'account_key': credential
+            }
+        if isinstance(credential, dict):
+            if 'account_name' not in credential:
+                raise ValueError("Shared key credential missing 'account_name")
+            elif 'account_key' not in credential:
+                raise ValueError("Shared key credential missing 'account_key")
+            return SharedKeyCredentialPolicy(**credential)
+        return credential
+
+    def _format_query_string(self, sas_token, credential, snapshot=None):
         query_str = "?"
         if snapshot:
             query_str += 'snapshot={}&'.format(self.snapshot)
-        if sas_token and not credentials:
+        if sas_token and not credential:
             query_str += sas_token
-        elif is_credential_sastoken(credentials):
-            query_str += credentials
-        return query_str.rstrip('?&')
+        elif is_credential_sastoken(credential):
+            query_str += credential.lstrip('?')
+            credential = None
+        return query_str.rstrip('?&'), credential
 
 
-def parse_connection_str(conn_str, credentials):
+def parse_connection_str(conn_str, credential):
+    conn_str = conn_str.rstrip(';')
     conn_settings = dict([s.split('=', 1) for s in conn_str.split(';')])
-    try:
-        account_url = "{}://{}.blob.{}".format(
-            conn_settings['DefaultEndpointsProtocol'],
-            conn_settings['AccountName'],
-            conn_settings['EndpointSuffix']
-        )
-        creds = credentials or SharedKeyCredentials(
-            conn_settings['AccountName'], conn_settings['AccountKey'])
-        return account_url, creds
-    except KeyError as error:
-        raise ValueError("Connection string missing setting: '{}'".format(error.args[0]))
+    primary = None
+    secondary = None
+    if not credential:
+        try:
+            credential = {
+                'account_name': conn_settings['AccountName'],
+                'account_key': conn_settings['AccountKey']
+            }
+        except KeyError:
+            credential = conn_settings.get('SharedAccessSignature')
+    if 'BlobEndpoint' in conn_settings:
+        primary = conn_settings['BlobEndpoint']
+        if 'BlobSecondaryEndpoint' in conn_settings:
+            secondary = conn_settings['BlobSecondaryEndpoint']
+    else:
+        if 'BlobSecondaryEndpoint' in conn_settings:
+            raise ValueError("Connection string specifies only secondary endpoint.")
+        try:
+            primary = "{}://{}.blob.{}".format(
+                conn_settings['DefaultEndpointsProtocol'],
+                conn_settings['AccountName'],
+                conn_settings['EndpointSuffix']
+            )
+            secondary = "{}-secondary.blob.{}".format(
+                conn_settings['AccountName'],
+                conn_settings['EndpointSuffix']
+            )
+        except KeyError as error:
+            pass
+
+    if not primary:
+        try:
+            primary = "https://{}.blob.{}".format(
+                conn_settings['AccountName'],
+                conn_settings.get('EndpointSuffix', SERVICE_HOST_BASE)
+            )
+        except KeyError:
+            raise ValueError("Connection string missing required connection details.")
+    return primary, secondary, credential
 
 
 def url_quote(url):
@@ -425,6 +481,8 @@ def create_client(url, pipeline):
 
 def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
+    if not 'connection_timeout' in kwargs:
+        kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = UserAgentPolicy(**kwargs)
@@ -432,15 +490,20 @@ def create_configuration(**kwargs):
     config.redirect_policy = RedirectPolicy(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
-    config.custom_hook_policy = StoragePipelineHook(**kwargs)
     config.blob_settings = StorageBlobSettings(**kwargs)
     return config
 
 
-def create_pipeline(configuration, credentials, **kwargs):
+def create_pipeline(configuration, credential, **kwargs):
     # type: (Configuration, Optional[HTTPPolicy], **Any) -> Tuple[Configuration, Pipeline]
-    if not isinstance(credentials, SharedKeyCredentials):
-        credentials = None
+    credential_policy = None
+    if hasattr(credential, 'get_token'):
+        credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+    elif isinstance(credential, SharedKeyCredentialPolicy):
+        credential_policy = credential
+    elif credential is not None:
+        raise TypeError("Unsupported credential: {}".format(credential))
+
     config = configuration or create_configuration(**kwargs)
     if kwargs.get('_pipeline'):
         return config, kwargs['_pipeline']
@@ -451,13 +514,14 @@ def create_pipeline(configuration, credentials, **kwargs):
         config.user_agent_policy,
         config.headers_policy,
         StorageContentValidation(),
-        credentials,
+        StorageRequestHook(**kwargs),
+        credential_policy,
         ContentDecodePolicy(),
         config.redirect_policy,
         StorageHosts(**kwargs),
         config.retry_policy,
         config.logging_policy,
-        config.custom_hook_policy,
+        StorageResponseHook(**kwargs),
     ]
     return config, Pipeline(transport, policies=policies)
 
@@ -474,11 +538,11 @@ def parse_query(query_str):
 
 
 def is_credential_sastoken(credential):
-    if credential and not isinstance(credential, six.string_types):
+    if not credential or not isinstance(credential, six.string_types):
         return False
 
     sas_values = _QueryStringConstants.to_list()
-    parsed_query = parse_qs(credential)
+    parsed_query = parse_qs(credential.lstrip('?'))
     if parsed_query and all([k in sas_values for k in parsed_query.keys()]):
         return True
     return False

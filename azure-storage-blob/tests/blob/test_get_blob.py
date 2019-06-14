@@ -19,7 +19,6 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    SharedKeyCredentials,
     StorageErrorCode
 )
 from azure.storage.blob.models import BlobProperties
@@ -41,7 +40,7 @@ class StorageGetBlobTest(StorageTestCase):
         super(StorageGetBlobTest, self).setUp()
 
         url = self._get_account_url()
-        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
+        credential = self._get_shared_key_credential()
 
         # test chunking functionality by reducing the threshold
         # for chunking and the size of each chunk, otherwise
@@ -50,7 +49,7 @@ class StorageGetBlobTest(StorageTestCase):
         self.config.blob_settings.max_single_get_size = 32 * 1024
         self.config.blob_settings.max_chunk_get_size = 4 * 1024
 
-        self.bsc = BlobServiceClient(url, credentials=credentials, configuration=self.config)
+        self.bsc = BlobServiceClient(url, credential=credential, configuration=self.config)
         self.container_name = self.get_resource_name('utcontainer')
 
         if not self.is_playback():

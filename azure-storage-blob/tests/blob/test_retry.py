@@ -8,7 +8,6 @@ import pytest
 
 from io import BytesIO, UnsupportedOperation
 from azure.storage.blob import (
-    SharedKeyCredentials,
     BlobServiceClient,
     ContainerClient,
     BlobClient,
@@ -32,10 +31,10 @@ class StorageBlobRetryTest(StorageTestCase):
         super(StorageBlobRetryTest, self).setUp()
 
         url = self._get_account_url()
-        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
+        credential = self._get_shared_key_credential()
         retry = ExponentialRetry(initial_backoff=1, increment_base=2, retry_total=3)
 
-        self.bs = BlobServiceClient(url, credentials=credentials, retry_policy=retry)
+        self.bs = BlobServiceClient(url, credential=credential, retry_policy=retry)
         self.container_name = self.get_resource_name('utcontainer')
 
         if not self.is_playback():

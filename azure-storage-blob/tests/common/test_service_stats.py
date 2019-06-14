@@ -6,10 +6,7 @@
 import unittest
 import pytest
 
-from azure.storage.blob import BlobServiceClient, SharedKeyCredentials
-#from azure.storage.common.retry import (
-#    LinearRetry
-#)
+from azure.storage.blob import BlobServiceClient
 
 from tests.testcase import (
     StorageTestCase,
@@ -28,9 +25,8 @@ class ServiceStatsTest(StorageTestCase):
         self.assertIsNotNone(stats)
         self.assertIsNotNone(stats.geo_replication)
 
-        if not self.settings.IS_EMULATED:
-            self.assertEqual(stats.geo_replication.status, 'live')
-            self.assertIsNotNone(stats.geo_replication.last_sync_time)
+        self.assertEqual(stats.geo_replication.status, 'live')
+        self.assertIsNotNone(stats.geo_replication.last_sync_time)
 
     def _assert_stats_unavailable(self, stats):
         self.assertIsNotNone(stats)
@@ -49,8 +45,8 @@ class ServiceStatsTest(StorageTestCase):
     def test_blob_service_stats(self):
         # Arrange
         url = self._get_account_url()
-        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
-        bs = BlobServiceClient(url, credentials=credentials)
+        credential = self._get_shared_key_credential()
+        bs = BlobServiceClient(url, credential=credential)
         # Act
         stats = bs.get_service_stats()
 
@@ -61,8 +57,8 @@ class ServiceStatsTest(StorageTestCase):
     def test_blob_service_stats_when_unavailable(self):
         # Arrange
         url = self._get_account_url()
-        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
-        bs = BlobServiceClient(url, credentials=credentials)
+        credential = self._get_shared_key_credential()
+        bs = BlobServiceClient(url, credential=credential)
 
         # Act
         stats = bs.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)

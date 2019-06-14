@@ -87,7 +87,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             container=None,  # type: Optional[Union[str, ContainerProperties]]
             blob=None,  # type: Optional[Union[str, BlobProperties]]
             snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credentials=None,  # type: Optional[HTTPPolicy]
+            credential=None,  # type: Optional[Any]
             configuration=None,  # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
@@ -103,12 +103,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param blob: The blob with which to interact. If specified, this value will override
          a blob value specified in the blob URL.
         :type blob: str or ~azure.storage.blob.models.BlobProperties
-        :param ~azure.storage.blob.authentication.SharedKeyCredentials credentials: Optional shared
-         key credentials. This is not necessary if the URL contains a SAS token, or if the blob is
-         publicly available.
+        :param credential:
         :param configuration: A optional pipeline configuration.
          This can be retrieved with :func:`BlobClient.create_configuration()`
         """
+        try:
+            if not blob_url.lower().startswith('http'):
+                blob_url = "https://" + blob_url
+        except AttributeError:
+            raise ValueError("Blob URL must be a string.")
         parsed_url = urlparse(blob_url.rstrip('/'))
         if not parsed_url.path and not (container and blob):
             raise ValueError("Please specify a container and blob name.")
@@ -139,15 +142,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 self.snapshot = blob.snapshot
         except AttributeError:
             self.blob_name = blob or unquote(path_blob)
-        self._query_str = self._format_query_string(sas_token, credentials, self.snapshot)
-        super(BlobClient, self).__init__(parsed_url, credentials, configuration, **kwargs)
+        self._query_str, credential = self._format_query_string(sas_token, credential, self.snapshot)
+        super(BlobClient, self).__init__(parsed_url, credential, configuration, **kwargs)
 
     def _format_url(self, hostname):
         return "{}://{}/{}/{}{}".format(
             self.scheme,
             hostname,
             quote(self.container),
-            self.blob_name.replace(' ', '%20').replace('?', '%3F'),
+            quote(self.blob_name, safe='~'),
             self._query_str)
 
     @classmethod
@@ -156,17 +159,19 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             container,  # type: Union[str, ContainerProperties]
             blob,  # type: Union[str, BlobProperties]
             snapshot=None,  # type: Optional[str]
-            credentials=None,  # type: Optional[HTTPPolicy]
+            credential=None,  # type: Optional[Any]
             configuration=None,  # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         """
         Create BlobClient from a Connection String.
         """
-        account_url, creds = parse_connection_str(conn_str, credentials)
+        account_url, secondary, credential = parse_connection_str(conn_str, credential)
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
         return cls(
             account_url, container=container, blob=blob, snapshot=snapshot,
-            credentials=creds, configuration=configuration, **kwargs)
+            credential=credential, configuration=configuration, **kwargs)
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[BlobPermissions, str]]
@@ -237,9 +242,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
-        if not hasattr(self.credentials, 'account_key') or not self.credentials.account_key:
+        if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
             raise ValueError("No account SAS key available.")
-        sas = BlobSharedAccessSignature(self.credentials.account_name, self.credentials.account_key)
+        sas = BlobSharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_blob(
             self.container,
             self.blob_name,

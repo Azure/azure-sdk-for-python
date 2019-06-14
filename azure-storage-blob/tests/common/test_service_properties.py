@@ -12,7 +12,6 @@ from azure.common import AzureHttpError
 from azure.core.exceptions import HttpResponseError
 
 from azure.storage.blob import (
-    SharedKeyCredentials,
     BlobServiceClient,
     ContainerClient,
     BlobClient,
@@ -40,9 +39,8 @@ class ServicePropertiesTest(StorageTestCase):
         super(ServicePropertiesTest, self).setUp()
 
         url = self._get_account_url()
-        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
-        self.bsc = BlobServiceClient(url, credentials=credentials)
-        #self.bs = self._create_storage_service(BlockBlobService, self.settings)
+        credential = self._get_shared_key_credential()
+        self.bsc = BlobServiceClient(url, credential=credential)
 
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):

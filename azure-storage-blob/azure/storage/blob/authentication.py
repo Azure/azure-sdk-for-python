@@ -80,12 +80,12 @@ class AzureSigningError(ClientAuthenticationError):
 
 
 # pylint: disable=no-self-use
-class SharedKeyCredentials(SansIOHTTPPolicy):
+class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
     def __init__(self, account_name, account_key):
         self.account_name = account_name
         self.account_key = account_key
-        super(SharedKeyCredentials, self).__init__()
+        super(SharedKeyCredentialPolicy, self).__init__()
 
     def _get_headers(self, request, headers_to_sign):
         headers = dict((name.lower(), value) for name, value in request.http_request.headers.items() if value)

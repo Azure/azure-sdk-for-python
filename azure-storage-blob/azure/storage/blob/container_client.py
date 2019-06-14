@@ -65,7 +65,7 @@ class ContainerClient(StorageAccountHostsMixin):
     def __init__(
             self, container_url,  # type: str
             container=None,  # type: Union[ContainerProperties, str]
-            credentials=None,  # type: Optional[HTTPPolicy]
+            credential=None,  # type: Optional[Any]
             configuration=None,  # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
@@ -78,12 +78,15 @@ class ContainerClient(StorageAccountHostsMixin):
         :param container: The container for the blob. If specified, this value will override
          a container value specified in the blob URL.
         :type container: str or ~azure.storage.blob.models.ContainerProperties
-        :param ~azure.storage.blob.authentication.SharedKeyCredentials credentials: Optional shared
-         key credentials. This is not necessary if the URL contains a SAS token, or if the blob is
-         publicly available.
+        :param credential: 
         :param configuration: A optional pipeline configuration.
          This can be retrieved with :func:`ContainerClient.create_configuration()`
         """
+        try:
+            if not container_url.lower().startswith('http'):
+                container_url = "https://" + container_url
+        except AttributeError:
+            raise ValueError("Container URL must be a string.")
         parsed_url = urlparse(container_url.rstrip('/'))
         if not parsed_url.path and not container:
             raise ValueError("Please specify a container name.")
@@ -98,8 +101,8 @@ class ContainerClient(StorageAccountHostsMixin):
             self.container_name = container.name
         except AttributeError:
             self.container_name = container or unquote(path_container)
-        self._query_str = self._format_query_string(sas_token, credentials)
-        super(ContainerClient, self).__init__(parsed_url, credentials, configuration, **kwargs)
+        self._query_str, credential = self._format_query_string(sas_token, credential)
+        super(ContainerClient, self).__init__(parsed_url, credential, configuration, **kwargs)
 
     def _format_url(self, hostname):
         return "{}://{}/{}{}".format(
@@ -112,17 +115,19 @@ class ContainerClient(StorageAccountHostsMixin):
     def from_connection_string(
             cls, conn_str,  # type: str
             container,  # type: Union[str, ContainerProperties]
-            credentials=None,  # type: Optional[HTTPPolicy]
+            credential=None,  # type: Optional[Any]
             configuration=None,  # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
         """
         Create ContainerClient from a Connection String.
         """
-        account_url, creds = parse_connection_str(conn_str, credentials)
+        account_url, secondary, credential = parse_connection_str(conn_str, credential)
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
         return cls(
-            account_url, container=container,
-            credentials=creds, configuration=configuration, **kwargs)
+            account_url, container=container, credential=credential,
+            configuration=configuration, **kwargs)
 
     def generate_shared_access_signature(
             self, permission=None,  # type: Optional[Union[ContainerPermissions, str]]
@@ -138,9 +143,9 @@ class ContainerClient(StorageAccountHostsMixin):
             content_type=None  # type: Optional[str]
         ):
         # type: (...) -> str
-        if not hasattr(self.credentials, 'account_key') and not self.credentials.account_key:
+        if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
             raise ValueError("No account SAS key available.")
-        sas = BlobSharedAccessSignature(self.credentials.account_name, self.credentials.account_key)
+        sas = BlobSharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_container(
             self.container_name,
             permission=permission,
@@ -343,7 +348,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def get_container_acl(self, lease=None, timeout=None, **kwargs):
+    def get_container_access_policy(self, lease=None, timeout=None, **kwargs):
         # type: (Optional[Union[LeaseClient, str]], Optional[int]) -> Dict[str, str]
         """
         :returns: Access policy information in a dict.
@@ -362,7 +367,7 @@ class ContainerClient(StorageAccountHostsMixin):
             'signed_identifiers': identifiers or []
         }
 
-    def set_container_acl(
+    def set_container_access_policy(
             self, signed_identifiers=None,  # type: Optional[Dict[str, Optional[AccessPolicy]]]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
@@ -381,6 +386,9 @@ class ContainerClient(StorageAccountHostsMixin):
                     'more than 5 access policies on a single resource.')
             identifiers = []
             for key, value in signed_identifiers.items():
+                if value:
+                    value.start = serialize_iso(value.start)
+                    value.expiry = serialize_iso(value.expiry)
                 identifiers.append(SignedIdentifier(id=key, access_policy=value))
             signed_identifiers = identifiers
 
@@ -665,7 +673,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         return BlobClient(
             self.url, container=self.container_name, blob=blob_name, snapshot=snapshot,
-            credentials=self.credentials, configuration=self._config,
+            credential=self.credential, configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)

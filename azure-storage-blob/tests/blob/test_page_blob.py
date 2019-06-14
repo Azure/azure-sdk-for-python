@@ -20,7 +20,6 @@ from azure.storage.blob.common import (
     SequenceNumberAction)
 from azure.storage.blob.models import BlobProperties, BlobPermissions
 from azure.storage.blob import (
-    SharedKeyCredentials,
     BlobServiceClient,
     ContainerClient,
     BlobClient,
@@ -54,9 +53,9 @@ class StoragePageBlobTest(StorageTestCase):
         # otherwise the tests would take too long to execute
         self.config.connection.data_block_size = 4 * 1024
         self.config.blob_settings.max_page_size = 4 * 1024
-        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
+        credential = self._get_shared_key_credential()
 
-        self.bs = BlobServiceClient(url, credentials=credentials, configuration=self.config)
+        self.bs = BlobServiceClient(url, credential=credential, configuration=self.config)
         self.container_name = self.get_resource_name('utcontainer')
 
         if not self.is_playback():
@@ -793,12 +792,12 @@ class StoragePageBlobTest(StorageTestCase):
         source_snapshot_blob = source_blob.create_snapshot()
 
         snapshot_blob = BlobClient(
-            source_blob.url, credentials=source_blob.credentials, snapshot=source_snapshot_blob)
+            source_blob.url, credential=source_blob.credential, snapshot=source_snapshot_blob)
         sas_token = snapshot_blob.generate_shared_access_signature(
             permission=BlobPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_blob = BlobClient(snapshot_blob.url, credentials=sas_token)
+        sas_blob = BlobClient(snapshot_blob.url, credential=sas_token)
 
 
         # Act
@@ -821,8 +820,8 @@ class StoragePageBlobTest(StorageTestCase):
     @record
     def test_blob_tier_on_create(self):
         url = self._get_premium_account_url()
-        credentials = SharedKeyCredentials(*self._get_premium_shared_key_credentials())
-        pbs = BlobServiceClient(url, credentials=credentials)
+        credential = self._get_premium_shared_key_credential()
+        pbs = BlobServiceClient(url, credential=credential)
 
         try:
             container_name = self.get_resource_name('utpremiumcontainer')
@@ -873,8 +872,8 @@ class StoragePageBlobTest(StorageTestCase):
     @record
     def test_blob_tier_set_tier_api(self):
         url = self._get_premium_account_url()
-        credentials = SharedKeyCredentials(*self._get_premium_shared_key_credentials())
-        pbs = BlobServiceClient(url, credentials=credentials)
+        credential = self._get_premium_shared_key_credential()
+        pbs = BlobServiceClient(url, credential=credential)
 
         try:
             container_name = self.get_resource_name('utpremiumcontainer')
@@ -924,8 +923,8 @@ class StoragePageBlobTest(StorageTestCase):
     @record
     def test_blob_tier_copy_blob(self):
         url = self._get_premium_account_url()
-        credentials = SharedKeyCredentials(*self._get_premium_shared_key_credentials())
-        pbs = BlobServiceClient(url, credentials=credentials)
+        credential = self._get_premium_shared_key_credential()
+        pbs = BlobServiceClient(url, credential=credential)
 
         try:
             container_name = self.get_resource_name('utpremiumcontainer')

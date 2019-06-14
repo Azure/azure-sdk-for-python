@@ -11,7 +11,6 @@ import sys
 from datetime import datetime, timedelta
 
 from azure.storage.blob import (
-    SharedKeyCredentials,
     BlobServiceClient,
     ContainerClient,
     BlobClient,
@@ -39,9 +38,9 @@ class StorageLoggingTest(StorageTestCase):
         super(StorageLoggingTest, self).setUp()
 
         url = self._get_account_url()
-        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
+        credential = self._get_shared_key_credential()
 
-        self.bsc = BlobServiceClient(url, credentials=credentials)
+        self.bsc = BlobServiceClient(url, credential=credential)
         self.container_name = self.get_resource_name('utcontainer')
 
         # create source blob to be copied from
@@ -58,7 +57,7 @@ class StorageLoggingTest(StorageTestCase):
             permission=BlobPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_source = BlobClient(source_blob.url, credentials=sas_token)
+        sas_source = BlobClient(source_blob.url, credential=sas_token)
         self.source_blob_url = sas_source.url
 
     def tearDown(self):
@@ -97,7 +96,7 @@ class StorageLoggingTest(StorageTestCase):
         token_components = parse_qs(token)
         signed_signature = quote(token_components[_QueryStringConstants.SIGNED_SIGNATURE][0])
 
-        sas_service = ContainerClient(container.url, credentials=token)
+        sas_service = ContainerClient(container.url, credential=token)
 
         # Act
         with LogCaptured(self) as log_captured:

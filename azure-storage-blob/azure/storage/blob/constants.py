@@ -19,7 +19,6 @@ if sys.version_info >= (3, 5):
     # the 2000 seconds was calculated with: 100MB (max block size)/ 50KB/s (an arbitrarily chosen minimum upload speed)
     DEFAULT_SOCKET_TIMEOUT = (20, 2000)
 
-# Default credentials for Development Storage Service
-DEV_ACCOUNT_NAME = 'devstoreaccount1'
-DEV_ACCOUNT_SECONDARY_NAME = 'devstoreaccount1-secondary'
-DEV_ACCOUNT_KEY = 'Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=='
+STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
+
+SERVICE_HOST_BASE = 'core.windows.net'

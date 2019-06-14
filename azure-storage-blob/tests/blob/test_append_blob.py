@@ -14,8 +14,7 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    BlobType,
-    SharedKeyCredentials,
+    BlobType
 )
 from tests.testcase import (
     StorageTestCase,
@@ -37,9 +36,9 @@ class StorageAppendBlobTest(StorageTestCase):
         url = self._get_account_url()
         self.config = BlobServiceClient.create_configuration()
         self.config.blob_settings.max_block_size = 4 * 1024
-        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
+        credential = self._get_shared_key_credential()
 
-        self.bsc = BlobServiceClient(url, credentials=credentials, configuration=self.config)
+        self.bsc = BlobServiceClient(url, credential=credential, configuration=self.config)
         self.container_name = self.get_resource_name('utcontainer')
 
         if not self.is_playback():

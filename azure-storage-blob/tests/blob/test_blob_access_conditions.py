@@ -19,7 +19,6 @@ from azure.storage.blob import (
     BlobServiceClient,
     ContainerClient,
     BlobClient,
-    SharedKeyCredentials,
     LeaseClient,
     StorageErrorCode,
 )
@@ -44,14 +43,14 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         super(StorageBlobAccessConditionsTest, self).setUp()
 
         url = self._get_account_url()
-        credentials = SharedKeyCredentials(*self._get_shared_key_credentials())
 
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         self.config = BlobServiceClient.create_configuration()
         self.config.connection.data_block_size = 4 * 1024
 
-        self.bsc = BlobServiceClient(url, credentials=credentials, configuration=self.config)
+        self.bsc = BlobServiceClient(
+            url, credential=self.settings.STORAGE_ACCOUNT_KEY, configuration=self.config)
 
         #self.bs = self._create_storage_service(BlockBlobService, self.settings)
         #self.pbs = self._create_storage_service(PageBlobService, self.settings)
@@ -132,10 +131,10 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_datetime = (datetime.datetime.utcnow() -
                          datetime.timedelta(minutes=15))
         # Act
-        container.set_container_acl(if_modified_since=test_datetime)
+        container.set_container_access_policy(if_modified_since=test_datetime)
 
         # Assert
-        acl = container.get_container_acl()
+        acl = container.get_container_access_policy()
         self.assertIsNotNone(acl)
 
     @record
@@ -146,7 +145,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            container.set_container_acl(if_modified_since=test_datetime)
+            container.set_container_access_policy(if_modified_since=test_datetime)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)
@@ -158,10 +157,10 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
         test_datetime = (datetime.datetime.utcnow() +
                          datetime.timedelta(minutes=15))
         # Act
-        container.set_container_acl(if_unmodified_since=test_datetime)
+        container.set_container_access_policy(if_unmodified_since=test_datetime)
 
         # Assert
-        acl = container.get_container_acl()
+        acl = container.get_container_access_policy()
         self.assertIsNotNone(acl)
 
     @record
@@ -172,7 +171,7 @@ class StorageBlobAccessConditionsTest(StorageTestCase):
                          datetime.timedelta(minutes=15))
         # Act
         with self.assertRaises(ResourceModifiedError) as e:
-            container.set_container_acl(if_unmodified_since=test_datetime)
+            container.set_container_access_policy(if_unmodified_since=test_datetime)
 
         # Assert
         self.assertEqual(StorageErrorCode.condition_not_met, e.exception.error_code)

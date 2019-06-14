@@ -544,7 +544,6 @@ class ContainerOperations(object):
         if container_acl is not None:
             body_content = self._serialize.serialize_iter(container_acl, 'SignedIdentifier',
                                                           serialization_ctxt=serialization_ctxt)
-            print(body_content)
         else:
             body_content = None
 

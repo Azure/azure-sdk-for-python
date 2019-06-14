@@ -406,10 +406,8 @@ class StorageRetryTest(StorageTestCase):
         requests = []
         def request_callback(request):
             if not requests:
-                print("first request", request.context.options)
                 requests.append(request)
             else:
-                print("second request", request.context.options)
                 self.assertNotEqual(-1, request.http_request.url.find('-secondary'))
 
         containers = service.list_containers(
@@ -423,8 +421,8 @@ class StorageRetryTest(StorageTestCase):
         retry = ExponentialRetry(initial_backoff=1, increment_base=3, retry_total=3)
         service = self._create_storage_service(
             BlobServiceClient, self.settings, retry_policy=retry)
-        service.credentials.account_name = "dummy_account_name"
-        service.credentials.account_key = "dummy_account_key"
+        service.credential.account_name = "dummy_account_name"
+        service.credential.account_key = "dummy_account_key"
 
         # Shorten retries and add counter
         retry_counter = RetryCounter()
