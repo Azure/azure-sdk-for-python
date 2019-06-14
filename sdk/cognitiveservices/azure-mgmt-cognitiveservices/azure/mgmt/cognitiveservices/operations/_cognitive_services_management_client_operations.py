@@ -9,44 +9,20 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
-
 from .. import models
+import uuid
 
 
-class CheckSkuAvailabilityOperations(object):
-    """CheckSkuAvailabilityOperations operations.
+class CognitiveServicesManagementClientOperationsMixin(object):
 
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Current version is 2017-04-18. Constant value: "2017-04-18".
-    """
+    def check_domain_availability(
+            self, subdomain_name, type, custom_headers=None, raw=False, **operation_config):
+        """Check whether a domain is available.
 
-    models = models
-
-    def __init__(self, client, config, serializer, deserializer):
-
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self.api_version = "2017-04-18"
-
-        self.config = config
-
-    def list(
-            self, location, skus, kind, type, custom_headers=None, raw=False, **operation_config):
-        """Check available SKUs.
-
-        :param location: Resource location.
-        :type location: str
-        :param skus: The SKU of the resource.
-        :type skus: list[str]
-        :param kind: The Kind of the resource.
-        :type kind: str
+        :param subdomain_name: The subdomain name to use.
+        :type subdomain_name: str
         :param type: The Type of the resource.
         :type type: str
         :param dict custom_headers: headers that will be added to the request
@@ -54,20 +30,19 @@ class CheckSkuAvailabilityOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: CheckSkuAvailabilityResultList or ClientRawResponse if
+        :return: CheckDomainAvailabilityResult or ClientRawResponse if
          raw=true
         :rtype:
-         ~azure.mgmt.cognitiveservices.models.CheckSkuAvailabilityResultList or
+         ~azure.mgmt.cognitiveservices.models.CheckDomainAvailabilityResult or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        parameters = models.CheckSkuAvailabilityParameter(skus=skus, kind=kind, type=type)
+        parameters = models.CheckDomainAvailabilityParameter(subdomain_name=subdomain_name, type=type)
 
         # Construct URL
-        url = self.list.metadata['url']
+        url = self.check_domain_availability.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'location': self._serialize.url("location", location, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -87,7 +62,7 @@ class CheckSkuAvailabilityOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(parameters, 'CheckSkuAvailabilityParameter')
+        body_content = self._serialize.body(parameters, 'CheckDomainAvailabilityParameter')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)
@@ -99,13 +74,12 @@ class CheckSkuAvailabilityOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('CheckSkuAvailabilityResultList', response)
+            deserialized = self._deserialize('CheckDomainAvailabilityResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/locations/{location}/checkSkuAvailability'}
+    check_domain_availability.metadata = {'url': '/providers/Microsoft.CognitiveServices/checkDomainAvailability'}

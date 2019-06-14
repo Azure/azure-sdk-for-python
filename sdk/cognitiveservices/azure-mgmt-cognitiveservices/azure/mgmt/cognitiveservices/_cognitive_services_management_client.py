@@ -11,48 +11,17 @@
 
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
-from .operations.accounts_operations import AccountsOperations
-from .operations.resource_skus_operations import ResourceSkusOperations
-from .operations.operations import Operations
-from .operations.check_sku_availability_operations import CheckSkuAvailabilityOperations
+
+from ._configuration import CognitiveServicesManagementClientConfiguration
+from .operations import CognitiveServicesManagementClientOperationsMixin
+from .operations import AccountsOperations
+from .operations import ResourceSkusOperations
+from .operations import Operations
+from .operations import CheckSkuAvailabilityOperations
 from . import models
 
 
-class CognitiveServicesManagementClientConfiguration(AzureConfiguration):
-    """Configuration for CognitiveServicesManagementClient
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param subscription_id: Azure Subscription ID.
-    :type subscription_id: str
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, subscription_id, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(CognitiveServicesManagementClientConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-cognitiveservices/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
-        self.subscription_id = subscription_id
-
-
-class CognitiveServicesManagementClient(SDKClient):
+class CognitiveServicesManagementClient(CognitiveServicesManagementClientOperationsMixin, SDKClient):
     """Cognitive Services Management Client
 
     :ivar config: Configuration for client.
