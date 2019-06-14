@@ -424,7 +424,7 @@ class StorageContainerTest(StorageTestCase):
         # Act
         access_policy = AccessPolicy(permission=ContainerPermissions.READ,
                                      expiry=datetime.utcnow() + timedelta(hours=1),
-                                     start=datetime.utcnow().astimezone(tzutc()))
+                                     start=datetime.utcnow())
         signed_identifier = {'testid': access_policy}
 
         response = container.set_container_access_policy(signed_identifier)
