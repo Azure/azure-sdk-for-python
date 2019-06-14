@@ -65,7 +65,10 @@ class StorageContainerTest(StorageTestCase):
     def _create_container(self, prefix=TEST_CONTAINER_PREFIX):
         container_name = self._get_container_reference(prefix)
         container = self.bsc.get_container_client(container_name)
-        container.create_container()
+        try:
+            container.create_container()
+        except ResourceExistsError:
+            pass
         return container
 
     #--Test cases for containers -----------------------------------------

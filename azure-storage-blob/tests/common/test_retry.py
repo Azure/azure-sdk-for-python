@@ -26,6 +26,7 @@ from azure.storage.blob import (
 from tests.testcase import (
     StorageTestCase,
     record,
+    TestMode,
     ResponseCallback,
     RetryCounter,
 )
@@ -110,6 +111,8 @@ class StorageRetryTest(StorageTestCase):
 
     @record
     def test_retry_on_socket_timeout(self):
+        if TestMode.need_recording_file(self.test_mode):
+            return
         # Arrange
         container_name = self.get_resource_name()
         retry = LinearRetry(backoff=1)

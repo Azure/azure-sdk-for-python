@@ -18,6 +18,7 @@ from azure.common import (
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
+    ResourceExistsError,
     ClientAuthenticationError)
 from azure.storage.blob import (
     BlobServiceClient,
@@ -60,7 +61,10 @@ class StorageCommonBlobTest(StorageTestCase):
 
         if not self.is_playback():
             container = self.bsc.get_container_client(self.container_name)
-            container.create_container()
+            try:
+                container.create_container(timeout=5)
+            except ResourceExistsError:
+                pass
 
         self.byte_data = self.get_random_bytes(1024)
 
@@ -72,7 +76,7 @@ class StorageCommonBlobTest(StorageTestCase):
     def tearDown(self):
         if not self.is_playback():
             try:
-                self.bsc.delete_container(self.container_name)
+                self.bsc.delete_container(self.container_name, timeout=5)
             except:
                 pass
 
@@ -100,7 +104,10 @@ class StorageCommonBlobTest(StorageTestCase):
     def _create_remote_container(self):
         self.remote_container_name = self.get_resource_name('remotectnr')
         remote_container = self.bsc2.get_container_client(self.remote_container_name)
-        remote_container.create_container()
+        try:
+            remote_container.create_container()
+        except ResourceExistsError:
+            pass
 
     def _create_remote_block_blob(self, blob_data=None):
         if not blob_data:
@@ -832,6 +839,8 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_copy_blob_with_existing_blob(self):
+        #if TestMode.need_recording_file(self.test_mode):
+        #    return
         # Arrange
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -853,7 +862,8 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_copy_blob_with_external_blob_fails(self):
-
+        #if TestMode.need_recording_file(self.test_mode):
+        #    return
         # Arrange
         source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
         copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
@@ -863,7 +873,8 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(copy.status(), 'pending')
 
         with self.assertRaises(ValueError) as e:
-            copy.wait()
+            copy.wait(timeout=120)
+            self.fail("Wait timeout without error.")
 
         # Assert
         self.assertTrue('500 InternalServerError' in str(e.exception))
@@ -871,7 +882,9 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertIsNotNone(copy.copy_id())
 
     @record
-    def test_copy_blob_async_private_blob(self):
+    def test_copy_blob_async_private_blob_f(self):
+        #if TestMode.need_recording_file(self.test_mode):
+        #    return
         # Arrange
         self._create_remote_container()
         source_blob = self._create_remote_block_blob()
@@ -880,18 +893,19 @@ class StorageCommonBlobTest(StorageTestCase):
         target_blob_name = 'targetblob'
         target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
         copy = target_blob.copy_blob_from_url(source_blob.url)
-        copy.wait()
+        copy.wait(timeout=120)
 
         # Assert
         self.assertEqual(copy.status(), 'success')
 
     @record
     def test_copy_blob_async_private_blob_with_sas(self):
+        #if TestMode.need_recording_file(self.test_mode):
+        #    return
         # Arrange
         data = b'12345678' * 1024 * 1024
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
-
         sas_token = source_blob.generate_shared_access_signature(
             permission=BlobPermissions.READ,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -904,7 +918,7 @@ class StorageCommonBlobTest(StorageTestCase):
         copy_resp = target_blob.copy_blob_from_url(blob.url)
 
         # Assert
-        copy_resp.wait()
+        copy_resp.wait(timeout=120)
         self.assertEqual(copy_resp.status(), 'success')
         actual_data = target_blob.download_blob()
         self.assertEqual(b"".join(list(actual_data)), data)
@@ -921,7 +935,8 @@ class StorageCommonBlobTest(StorageTestCase):
 
         copy.abort()
         with self.assertRaises(ValueError):
-            copy.wait()
+            copy.wait(timeout=120)
+            self.fail("Wait timeout without error.")
         self.assertEqual(copy.status(), 'aborted')
 
         # Assert
@@ -1113,7 +1128,10 @@ class StorageCommonBlobTest(StorageTestCase):
         data = b'a public blob can be read without a shared access signature'
         blob_name = 'blob1.txt'
         container_name = self._get_container_reference()
-        container = self.bsc.create_container(container_name, public_access='blob')
+        try:
+            container = self.bsc.create_container(container_name, public_access='blob')
+        except ResourceExistsError:
+            container = self.bsc.get_container_client(container_name)
         blob = container.upload_blob(blob_name, data)
 
         # Act
@@ -1129,7 +1147,10 @@ class StorageCommonBlobTest(StorageTestCase):
         data = b'public access blob'
         blob_name = 'blob1.txt'
         container_name = self._get_container_reference()
-        container = self.bsc.create_container(container_name, public_access='blob')
+        try:
+            container = self.bsc.create_container(container_name, public_access='blob')
+        except ResourceExistsError:
+            container = self.bsc.get_container_client(container_name)
         blob = container.upload_blob(blob_name, data)
 
         # Act

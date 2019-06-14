@@ -93,7 +93,7 @@ setup(
         'tests.common'
     ]),
     install_requires=[
-        'azure-core',
+        'azure-core~=0.0.1',
         'azure-common>=1.1.5',
     ],
     extras_require={

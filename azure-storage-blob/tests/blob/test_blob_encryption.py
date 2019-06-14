@@ -391,8 +391,8 @@ class StorageBlobEncryptionTest(StorageTestCase):
         blob.upload_blob(
             content[2:],
             length=self.config.blob_settings.max_single_put_size + 5,
-            max_connections=2)
-        blob_content = blob.download_blob().content_as_bytes(max_connections=2)
+            max_connections=1)
+        blob_content = blob.download_blob().content_as_bytes(max_connections=1)
 
         # Assert
         self.assertEqual(content[2:2 + self.config.blob_settings.max_single_put_size + 5], blob_content)
