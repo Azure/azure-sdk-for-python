@@ -474,7 +474,7 @@ class ContainerClient(StorageAccountHostsMixin):
     #     return BlobPropertiesWalked(command, prefix=name_starts_with, results_per_page=results_per_page,  marker=marker)
 
     def upload_blob(
-            self, blob_name,  # type: Union[str, BlobProperties]
+            self, name,  # type: Union[str, BlobProperties]
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
@@ -497,9 +497,9 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         Creates a new blob from a data source with automatic chunking.
 
-        :param blob_name: The blob with which to interact. If specified, this value will override
+        :param name: The blob with which to interact. If specified, this value will override
          a blob value specified in the blob URL.
-        :type blob_name: str or ~azure.storage.blob.models.BlobProperties
+        :type name: str or ~azure.storage.blob.models.BlobProperties
         :param ~azure.storage.blob.common.BlobType blob_type: The type of the blob. This can be
          either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
         :param int length:
@@ -560,7 +560,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: dict[str, Any]
         """
-        blob = self.get_blob_client(blob_name)
+        blob = self.get_blob_client(name)
         blob.upload_blob(
             data,
             blob_type=blob_type,
@@ -583,7 +583,7 @@ class ContainerClient(StorageAccountHostsMixin):
         return blob
 
     def delete_blob(
-            self, blob_name,  # type: Union[str, BlobProperties]
+            self, blob,  # type: Union[str, BlobProperties]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
             delete_snapshots=None,  # type: Optional[str]
             if_modified_since=None,  # type: Optional[datetime]
@@ -608,9 +608,9 @@ class ContainerClient(StorageAccountHostsMixin):
         Soft deleted blob or snapshot is accessible through List Blobs API specifying include=Include.Deleted option.
         Soft-deleted blob or snapshot can be restored using Undelete API.
 
-        :param blob_name: The blob with which to interact. If specified, this value will override
+        :param blob: The blob with which to interact. If specified, this value will override
          a blob value specified in the blob URL.
-        :type blob_name: str or ~azure.storage.blob.models.BlobProperties
+        :type blob: str or ~azure.storage.blob.models.BlobProperties
         :param lease:
             Required if the blob has an active lease. Value can be a Lease object
             or the lease ID as a string.
@@ -644,7 +644,7 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        blob = self.get_blob_client(blob_name)
+        blob = self.get_blob_client(blob)
         blob.delete_blob(
             lease=lease,
             delete_snapshots=delete_snapshots,
@@ -656,7 +656,7 @@ class ContainerClient(StorageAccountHostsMixin):
             **kwargs)
 
     def get_blob_client(
-            self, blob_name,  # type: Union[str, BlobProperties]
+            self, blob,  # type: Union[str, BlobProperties]
             snapshot=None  # type: str
         ):
         # type: (...) -> BlobClient
@@ -664,15 +664,15 @@ class ContainerClient(StorageAccountHostsMixin):
         Get a client to interact with the specified blob.
         The blob need not already exist.
 
-        :param blob_name: The blob with which to interact. If specified, this value will override
+        :param blob: The blob with which to interact. If specified, this value will override
          a blob value specified in the blob URL.
-        :type blob_name: str or ~azure.storage.blob.models.BlobProperties
+        :type blob: str or ~azure.storage.blob.models.BlobProperties
         :param str snapshot: The optional blob snapshot on which to operate.
         :returns: A BlobClient.
         :rtype: ~azure.core.blob.blob_client.BlobClient
         """
         return BlobClient(
-            self.url, container=self.container_name, blob=blob_name, snapshot=snapshot,
+            self.url, container=self.container_name, blob=blob, snapshot=snapshot,
             credential=self.credential, configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,

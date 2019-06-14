@@ -321,7 +321,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
     def create_container(
-            self, container_name,  # type: Union[ContainerProperties, str]
+            self, name,  # type: Union[ContainerProperties, str]
             metadata=None,  # type: Optional[Dict[str, str]]
             public_access=None,  # type: Optional[Union[PublicAccess, str]]
             timeout=None,  # type: Optional[int]
@@ -332,9 +332,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
         Creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
 
-        :param container_name: The container for the blob. If specified, this value will override
+        :param container: The container for the blob. If specified, this value will override
          a container value specified in the blob URL.
-        :type container_name: str or ~azure.storage.blob.models.ContainerProperties
+        :type container: str or ~azure.storage.blob.models.ContainerProperties
         :param metadata:
             A dict with name_value pairs to associate with the
             container as metadata. Example:{'Category':'test'}
@@ -345,13 +345,13 @@ class BlobServiceClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        container = self.get_container_client(container_name)
+        container = self.get_container_client(name)
         container.create_container(
             metadata=metadata, public_access=public_access, timeout=timeout, **kwargs)
         return container
 
     def delete_container(
-            self, container_name,  # type: Union[ContainerProperties, str]
+            self, container,  # type: Union[ContainerProperties, str]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
             if_modified_since=None,  # type: Optional[datetime]
             if_unmodified_since=None,  # type: Optional[datetime]
@@ -365,7 +365,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         Marks the specified container for deletion. The container and any blobs
         contained within it are later deleted during garbage collection.
 
-        :param container_name: The container for the blob. If specified, this value will override
+        :param container: The container for the blob. If specified, this value will override
          a container value specified in the blob URL.
         :param ~azure.storage.blob.lease.LeaseClient lease:
             If specified, delete_container only succeeds if the
@@ -387,7 +387,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        container = self.get_container_client(container_name)
+        container = self.get_container_client(container)
         container.delete_container(
             lease=lease,
             if_modified_since=if_modified_since,
@@ -397,27 +397,27 @@ class BlobServiceClient(StorageAccountHostsMixin):
             timeout=timeout,
             **kwargs)
 
-    def get_container_client(self, container_name):
+    def get_container_client(self, container):
         # type: (Union[ContainerProperties, str]) -> ContainerClient
         """
         Get a client to interact with the specified container.
         The container need not already exist.
 
-        :param container_name: The container for the blob. If specified, this value will override
+        :param container: The container for the blob. If specified, this value will override
          a container value specified in the blob URL.
-        :type container_name: str or ~azure.storage.blob.models.ContainerProperties
+        :type container: str or ~azure.storage.blob.models.ContainerProperties
         :returns: A ContainerClient.
         :rtype: ~azure.core.blob.container_client.ContainerClient
         """
-        return ContainerClient(self.url, container=container_name,
+        return ContainerClient(self.url, container=container,
             credential=self.credential, configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function)
 
     def get_blob_client(
-            self, container_name,  # type: Union[ContainerProperties, str]
-            blob_name,  # type: Union[BlobProperties, str]
+            self, container,  # type: Union[ContainerProperties, str]
+            blob,  # type: Union[BlobProperties, str]
             snapshot=None  # type: Optional[Union[SnapshotProperties, str]]
         ):
         # type: (...) -> BlobClient
@@ -436,7 +436,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: ~azure.core.blob.blob_client.BlobClient
         """
         return BlobClient(
-            self.url, container=container_name, blob=blob_name, snapshot=snapshot,
+            self.url, container=container, blob=blob, snapshot=snapshot,
             credential=self.credential, configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,

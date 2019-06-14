@@ -963,7 +963,7 @@ class StoragePageBlobTest(StorageTestCase):
 
             source_blob2.create_page_blob(1024)
             source_blob2_url = '{0}/{1}/{2}'.format(
-                self._get_premium_account_url(), source_blob2.container, source_blob2.blob_name)
+                self._get_premium_account_url(), source_blob2.container_name, source_blob2.blob_name)
 
             copy_blob2 = pbs.get_blob_client(container_name, 'blob2copy')
             copy2 = copy_blob2.copy_blob_from_url(source_blob2_url, premium_page_blob_tier=PremiumPageBlobTier.P60)

@@ -126,9 +126,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         path_snapshot, sas_token = parse_query(parsed_url.query)
 
         try:
-            self.container = container.name
+            self.container_name = container.name
         except AttributeError:
-            self.container = container or unquote(path_container)
+            self.container_name = container or unquote(path_container)
         try:
             self.snapshot = snapshot.snapshot
         except AttributeError:
@@ -149,7 +149,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return "{}://{}/{}/{}{}".format(
             self.scheme,
             hostname,
-            quote(self.container),
+            quote(self.container_name),
             quote(self.blob_name, safe='~'),
             self._query_str)
 
@@ -246,7 +246,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             raise ValueError("No account SAS key available.")
         sas = BlobSharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_blob(
-            self.container,
+            self.container_name,
             self.blob_name,
             permission,
             expiry,
@@ -570,7 +570,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
         return StorageStreamDownloader(
             name=self.blob_name,
-            container=self.container,
+            container=self.container_name,
             service=self._client.blob,
             config=self._config.blob_settings,
             offset=offset,
@@ -757,7 +757,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
         blob_props.name = self.blob_name
-        blob_props.container = self.container
+        blob_props.container = self.container_name
         return blob_props
 
     def set_http_headers(
