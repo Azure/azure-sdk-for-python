@@ -8,9 +8,9 @@ jobs:
     # Will be adding more elements to the matrix, once this has couple of succesful runs
     strategy:
       matrix:
-        Linux_Python37:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
+        Windows_Python37:
+          OSName: 'Windows'
+          OSVmImage: 'vs2017-win2016'
           PythonVersion: '3.7'
       maxParallel: 1
     continueOnError: false
