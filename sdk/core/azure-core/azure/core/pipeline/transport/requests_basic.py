@@ -169,6 +169,14 @@ class RequestsTransport(HttpTransport):
     :param session: The session.
     :type session: requests.Session
     :param bool session_owner: Defaults to True.
+
+    Example:
+        .. literalinclude:: ../examples/examples_sync.py
+            :start-after: [START requests]
+            :end-before: [END requests]
+            :language: python
+            :dedent: 4
+            :caption: Synchronous transport with Requests.
     """
 
     _protocols = ['http://', 'https://']

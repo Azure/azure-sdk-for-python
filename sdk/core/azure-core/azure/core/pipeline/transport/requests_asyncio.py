@@ -62,7 +62,15 @@ def _get_running_loop():
 #pylint: disable=too-many-ancestors
 class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
-     asynchronous methods. Uses the built-in asyncio event loop.
+    asynchronous methods. Uses the built-in asyncio event loop.
+
+    Example:
+        .. literalinclude:: ../examples/examples_async.py
+            :start-after: [START asyncio]
+            :end-before: [END asyncio]
+            :language: python
+            :dedent: 4
+            :caption: Asynchronous transport with asyncio.
     """
     async def __aenter__(self):
         return super(AsyncioRequestsTransport, self).__enter__()
