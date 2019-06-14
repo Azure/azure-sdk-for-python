@@ -192,7 +192,6 @@ try:
     secret_client.get_secret("deleted_secret")
 except ResourceNotFoundError as e:
     print(e.message)
-    raise
 
 Output: "Secret not found:deleted_secret"
 ```
