@@ -1,3 +1,4 @@
+import argparse
 import ast
 import importlib
 import inspect
@@ -42,11 +43,6 @@ except:
 import pkg_resources
 
 pkg_resources.declare_namespace("azure")
-
-# If True, means the auto-profile will consider preview versions.
-# If not, if it exists a stable API version for a global or RT, will always be used
-_PREVIEW_MODE = False
-
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -282,7 +278,7 @@ def build_operation_mixin_meta(versioned_modules):
 
 
 def build_last_rt_list(
-    versioned_operations_dict, mixin_operations, last_api_version
+    versioned_operations_dict, mixin_operations, last_api_version, preview_mode
 ):
     """Build the a mapping RT => API version if RT doesn't exist in latest detected API version.
 
@@ -327,7 +323,7 @@ def build_last_rt_list(
     )
 
     for operation, api_versions_list in versioned_dict.items():
-        local_last_api_version = get_floating_latest(api_versions_list)
+        local_last_api_version = get_floating_latest(api_versions_list, preview_mode)
         if local_last_api_version == last_api_version:
             continue
         # If some others RT contains "local_last_api_version", and it's greater than the future default, danger, don't profile it
@@ -338,7 +334,7 @@ def build_last_rt_list(
     return last_rt_list
 
 
-def get_floating_latest(api_versions_list):
+def get_floating_latest(api_versions_list, preview_mode):
     """Get the floating latest, from a random list of API versions.
     """
     api_versions_list = list(api_versions_list)
@@ -352,7 +348,7 @@ def get_floating_latest(api_versions_list):
         return absolute_latest
 
     # If preview mode, let's use the absolute latest, I don't care preview or stable
-    if _PREVIEW_MODE:
+    if preview_mode:
         return absolute_latest
 
     # If not preview mode, and there is preview, take the latest known stable
@@ -398,7 +394,12 @@ def has_subscription_id(client_class):
     return "subscription_id" in inspect.signature(client_class).parameters
 
 
-def main(input_str):
+def main(input_str, default_api=None):
+
+    # If True, means the auto-profile will consider preview versions.
+    # If not, if it exists a stable API version for a global or RT, will always be used
+    preview_mode = default_api and "preview" in default_api
+
     # The only known multi-client package right now is azure-mgmt-resource
     is_multi_client_package = "#" in input_str
 
@@ -409,7 +410,14 @@ def main(input_str):
     )
 
     client_folder = find_module_folder(package_name, module_name)
-    last_api_version = get_floating_latest(mod_to_api_version.keys())
+    last_api_version = get_floating_latest(mod_to_api_version.keys(), preview_mode)
+
+    # I need default_api to be v2019_06_07_preview shaped if it exists, let's be smart
+    # and change it automatically so I can take both syntax as input
+    if default_api and not default_api.startswith("v"):
+        last_api_version = [mod_api for mod_api, real_api in mod_to_api_version.items() if real_api == default_api][0]
+        _LOGGER.info("Default API version will be: %s", last_api_version)
+
     last_api_path = client_folder / last_api_version
 
     shutil.copy(
@@ -459,6 +467,7 @@ def main(input_str):
         versioned_operations_dict,
         mixin_operations,
         last_api_version,
+        preview_mode
     )
 
     conf = {
@@ -500,5 +509,21 @@ def main(input_str):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    main(sys.argv[1])
+    parser = argparse.ArgumentParser(
+        description='Multi-API client generation for Azure SDK for Python',
+    )
+    parser.add_argument("--debug",
+                        dest="debug", action="store_true",
+                        help="Verbosity in DEBUG mode")
+    parser.add_argument('--default-api-version',
+                        dest='default_api', default=None,
+                        help='Force default API version, do not detect it. [default: %(default)s]')
+    parser.add_argument('package_name', help='The package name.')
+
+    args = parser.parse_args()
+
+    main_logger = logging.getLogger()
+    logging.basicConfig()
+    main_logger.setLevel(logging.DEBUG if args.debug else logging.INFO)
+
+    main(args.package_name, default_api=args.default_api)
