@@ -38,6 +38,9 @@ class LiveEvent(TrackedResource):
     :type preview: ~azure.mgmt.media.models.LiveEventPreview
     :param encoding: The Live Event encoding.
     :type encoding: ~azure.mgmt.media.models.LiveEventEncoding
+    :param transcriptions: The Live Event transcription.
+    :type transcriptions:
+     list[~azure.mgmt.media.models.LiveEventTranscription]
     :ivar provisioning_state: The provisioning state of the Live Event.
     :vartype provisioning_state: str
     :ivar resource_state: The resource state of the Live Event. Possible
@@ -81,6 +84,7 @@ class LiveEvent(TrackedResource):
         'input': {'key': 'properties.input', 'type': 'LiveEventInput'},
         'preview': {'key': 'properties.preview', 'type': 'LiveEventPreview'},
         'encoding': {'key': 'properties.encoding', 'type': 'LiveEventEncoding'},
+        'transcriptions': {'key': 'properties.transcriptions', 'type': '[LiveEventTranscription]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
         'cross_site_access_policies': {'key': 'properties.crossSiteAccessPolicies', 'type': 'CrossSiteAccessPolicies'},
@@ -96,6 +100,7 @@ class LiveEvent(TrackedResource):
         self.input = kwargs.get('input', None)
         self.preview = kwargs.get('preview', None)
         self.encoding = kwargs.get('encoding', None)
+        self.transcriptions = kwargs.get('transcriptions', None)
         self.provisioning_state = None
         self.resource_state = None
         self.cross_site_access_policies = kwargs.get('cross_site_access_policies', None)
