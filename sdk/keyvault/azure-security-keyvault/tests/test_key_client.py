@@ -250,6 +250,35 @@ class KeyClientTests(KeyVaultTestCase):
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
+    def test_list_deleted_keys(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.keys
+
+        expected = {}
+
+        # create keys
+        for i in range(self.list_test_size):
+            key_name = "key{}".format(i)
+            key_value = "value{}".format(i)
+            expected[key_name] = client.create_key(key_name, "RSA")
+
+        # delete them
+        for key_name in expected.keys():
+            client.delete_key(key_name)
+        for key_name in expected.keys():
+            self._poll_until_no_exception(functools.partial(client.get_deleted_key, key_name), ResourceNotFoundError)
+
+        # validate list deleted keys with attributes
+        for deleted_key in client.list_deleted_keys():
+            self.assertIsNotNone(deleted_key.deleted_date)
+            self.assertIsNotNone(deleted_key.scheduled_purge_date)
+            self.assertIsNotNone(deleted_key.recovery_id)
+
+        # validate all the deleted keys are returned by list_deleted_keys
+        self._validate_key_list(list(client.list_deleted_keys()), expected)
+
+    @ResourceGroupPreparer()
+    @VaultClientPreparer(enable_soft_delete=True)
     def test_recover(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
         client = vault_client.keys

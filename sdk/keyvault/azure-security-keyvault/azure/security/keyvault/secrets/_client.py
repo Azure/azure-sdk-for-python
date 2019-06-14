@@ -305,7 +305,7 @@ class SecretClient(_KeyVaultClientBase):
         """
         max_page_size = kwargs.get("max_page_size", None)
         pages = self._client.get_deleted_secrets(self._vault_url, maxresults=max_page_size)
-        return (SecretAttributes._from_secret_item(item) for item in pages)
+        return (DeletedSecret._from_deleted_secret_item(item) for item in pages)
 
     def purge_deleted_secret(self, name, **kwargs):
         # type: (str, Mapping[str, Any]) -> None
