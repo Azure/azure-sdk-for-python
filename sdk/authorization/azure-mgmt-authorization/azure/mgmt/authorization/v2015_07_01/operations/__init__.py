@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .permissions_operations import PermissionsOperations
-from .provider_operations_metadata_operations import ProviderOperationsMetadataOperations
-from .role_assignments_operations import RoleAssignmentsOperations
-from .role_definitions_operations import RoleDefinitionsOperations
-from .elevate_access_operations import ElevateAccessOperations
+from ._permissions_operations import PermissionsOperations
+from ._provider_operations_metadata_operations import ProviderOperationsMetadataOperations
+from ._role_assignments_operations import RoleAssignmentsOperations
+from ._role_definitions_operations import RoleDefinitionsOperations
+from ._elevate_access_operations import ElevateAccessOperations
 
 __all__ = [
     'PermissionsOperations',

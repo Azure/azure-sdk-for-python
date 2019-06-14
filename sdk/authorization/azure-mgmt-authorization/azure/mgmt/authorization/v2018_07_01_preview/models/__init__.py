@@ -10,21 +10,21 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .deny_assignment_filter_py3 import DenyAssignmentFilter
-    from .deny_assignment_permission_py3 import DenyAssignmentPermission
-    from .principal_py3 import Principal
-    from .deny_assignment_py3 import DenyAssignment
+    from ._models_py3 import DenyAssignment
+    from ._models_py3 import DenyAssignmentFilter
+    from ._models_py3 import DenyAssignmentPermission
+    from ._models_py3 import Principal
 except (SyntaxError, ImportError):
-    from .deny_assignment_filter import DenyAssignmentFilter
-    from .deny_assignment_permission import DenyAssignmentPermission
-    from .principal import Principal
-    from .deny_assignment import DenyAssignment
-from .deny_assignment_paged import DenyAssignmentPaged
+    from ._models import DenyAssignment
+    from ._models import DenyAssignmentFilter
+    from ._models import DenyAssignmentPermission
+    from ._models import Principal
+from ._paged_models import DenyAssignmentPaged
 
 __all__ = [
+    'DenyAssignment',
     'DenyAssignmentFilter',
     'DenyAssignmentPermission',
     'Principal',
-    'DenyAssignment',
     'DenyAssignmentPaged',
 ]
