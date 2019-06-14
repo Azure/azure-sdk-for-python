@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
-# --------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 import json
 import os
 import time
@@ -14,19 +14,18 @@ except ImportError:  # python < 3.3
     from mock import Mock
 
 import pytest
-import requests
 from azure.identity import (
     AuthenticationError,
     ClientSecretCredential,
+    DefaultAzureCredential,
     EnvironmentCredential,
     TokenCredentialChain,
-    ManagedIdentityCredential,
-    CertificateCredential,
 )
-from azure.identity.constants import EnvironmentVariables
+from azure.identity._internal import ImdsCredential, MsiCredential
+from azure.identity.constants import EnvironmentVariables, MSI_ENDPOINT, MSI_SECRET
 
 
-def test_client_secret_credential_cache(monkeypatch):
+def test_client_secret_credential_cache():
     expired = "this token's expired"
     now = time.time()
     token_payload = {
@@ -39,17 +38,22 @@ def test_client_secret_credential_cache(monkeypatch):
         "resource": str(uuid.uuid1()),
     }
 
-    # monkeypatch requests so we can test pipeline configuration
-    mock_response = Mock(text=json.dumps(token_payload), headers={"content-type": "application/json"}, status_code=200)
+    mock_response = Mock(
+        text=lambda: json.dumps(token_payload),
+        headers={"content-type": "application/json"},
+        status_code=200,
+        content_type=["application/json"],
+    )
     mock_send = Mock(return_value=mock_response)
-    monkeypatch.setattr(requests.Session, "send", value=mock_send)
 
-    credential = ClientSecretCredential("client_id", "secret", tenant_id=str(uuid.uuid1()))
+    credential = ClientSecretCredential(
+        "client_id", "secret", tenant_id=str(uuid.uuid1()), transport=Mock(send=mock_send)
+    )
     scopes = ("https://foo.bar/.default", "https://bar.qux/.default")
-    token = credential.get_token(scopes)
+    token = credential.get_token(*scopes)
     assert token == expired
 
-    token = credential.get_token(scopes)
+    token = credential.get_token(*scopes)
     assert token == expired
     assert mock_send.call_count == 2
 
@@ -74,7 +78,7 @@ def test_client_secret_environment_credential(monkeypatch):
 
     credential = EnvironmentCredential(transport=Mock(send=validate_request))
     with pytest.raises(AuthenticationError) as ex:
-        credential.get_token(("",))
+        credential.get_token("scope")
     assert str(ex.value) == success_message
 
 
@@ -98,13 +102,13 @@ def test_cert_environment_credential(monkeypatch):
 
     credential = EnvironmentCredential(transport=Mock(send=validate_request))
     with pytest.raises(AuthenticationError) as ex:
-        credential.get_token(("",))
+        credential.get_token("scope")
     assert str(ex.value) == success_message
 
 
 def test_environment_credential_error():
     with pytest.raises(AuthenticationError):
-        EnvironmentCredential().get_token(("",))
+        EnvironmentCredential().get_token("scope")
 
 
 def test_credential_chain_error_message():
@@ -117,7 +121,7 @@ def test_credential_chain_error_message():
     second_credential = Mock(name="second_credential", get_token=lambda _: raise_authn_error(second_error))
 
     with pytest.raises(AuthenticationError) as ex:
-        TokenCredentialChain([first_credential, second_credential]).get_token(("scope",))
+        TokenCredentialChain(first_credential, second_credential).get_token("scope")
 
     assert "ClientSecretCredential" in ex.value.message
     assert first_error in ex.value.message
@@ -134,7 +138,7 @@ def test_chain_attempts_all_credentials():
         Mock(get_token=Mock(return_value="token")),
     ]
 
-    TokenCredentialChain(credentials).get_token(("scope",))
+    TokenCredentialChain(*credentials).get_token("scope")
 
     for credential in credentials:
         assert credential.get_token.call_count == 1
@@ -145,14 +149,14 @@ def test_chain_returns_first_token():
     first_credential = Mock(get_token=lambda _: expected_token)
     second_credential = Mock(get_token=Mock())
 
-    aggregate = TokenCredentialChain([first_credential, second_credential])
-    credential = aggregate.get_token(("scope",))
+    aggregate = TokenCredentialChain(first_credential, second_credential)
+    credential = aggregate.get_token("scope")
 
     assert credential is expected_token
     assert second_credential.get_token.call_count == 0
 
 
-def test_msi_credential_cache(monkeypatch):
+def test_imds_credential_cache():
     scope = "https://foo.bar"
     expired = "this token's expired"
     now = int(time.time())
@@ -166,13 +170,16 @@ def test_msi_credential_cache(monkeypatch):
         "token_type": "Bearer",
     }
 
-    # monkeypatch requests so we can test pipeline configuration
-    mock_response = Mock(text=json.dumps(token_payload), headers={"content-type": "application/json"}, status_code=200)
+    mock_response = Mock(
+        text=lambda: json.dumps(token_payload),
+        headers={"content-type": "application/json"},
+        status_code=200,
+        content_type=["application/json"],
+    )
     mock_send = Mock(return_value=mock_response)
-    monkeypatch.setattr(requests.Session, "send", value=mock_send)
 
-    credential = ManagedIdentityCredential()
-    token = credential.get_token((scope,))
+    credential = ImdsCredential(transport=Mock(send=mock_send))
+    token = credential.get_token(scope)
     assert token == expired
     assert mock_send.call_count == 1
 
@@ -181,31 +188,56 @@ def test_msi_credential_cache(monkeypatch):
     token_payload["expires_on"] = int(time.time()) + 3600
     token_payload["expires_in"] = 3600
     token_payload["access_token"] = good_for_an_hour
-    mock_response.text = json.dumps(token_payload)
-    token = credential.get_token((scope,))
+    token = credential.get_token(scope)
     assert token == good_for_an_hour
     assert mock_send.call_count == 2
 
     # get_token should return the cached token now
-    token = credential.get_token((scope,))
+    token = credential.get_token(scope)
     assert token == good_for_an_hour
     assert mock_send.call_count == 2
 
 
-def test_msi_credential_retries(monkeypatch):
-    # monkeypatch requests so we can test pipeline configuration
-    mock_response = Mock(headers={"Retry-After": "0"}, text=b"")
+def test_imds_credential_retries():
+    mock_response = Mock(
+        text=lambda: b"",
+        headers={"content-type": "application/json", "Retry-After": "0"},
+        status_code=200,
+        content_type=["application/json"],
+    )
     mock_send = Mock(return_value=mock_response)
-    monkeypatch.setattr(requests.Session, "send", value=mock_send)
 
     retry_total = 1
-    credential = ManagedIdentityCredential(retry_total=retry_total)
+    credential = ImdsCredential(retry_total=retry_total, transport=Mock(send=mock_send))
 
     for status_code in (404, 429, 500):
         mock_response.status_code = status_code
         try:
-            credential.get_token(("",))
+            credential.get_token("scope")
         except AuthenticationError:
             pass
         assert mock_send.call_count is 1 + retry_total
         mock_send.reset_mock()
+
+
+def test_msi_credential(monkeypatch):
+    msi_secret = "secret"
+    monkeypatch.setenv(MSI_SECRET, msi_secret)
+    monkeypatch.setenv(MSI_ENDPOINT, "https://foo.bar")
+
+    success_message = "test passed"
+
+    def validate_request(req, *args, **kwargs):
+        assert req.url.startswith(os.environ[MSI_ENDPOINT])
+        assert req.headers["secret"] == msi_secret
+        exception = Exception()
+        exception.message = success_message
+        raise exception
+
+    with pytest.raises(Exception) as ex:
+        MsiCredential(transport=Mock(send=validate_request)).get_token("https://scope")
+    assert ex.value.message is success_message
+
+
+def test_default_credential():
+    DefaultAzureCredential()

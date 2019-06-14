@@ -5,6 +5,8 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import test_config
 
+pytestmark = pytest.mark.cosmosEmulator
+
 @pytest.mark.usefixtures("teardown")
 class QueryTest(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
@@ -13,8 +15,18 @@ class QueryTest(unittest.TestCase):
     host = config.host
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
-    client = cosmos_client.CosmosClient(host, {'masterKey': masterKey}, connectionPolicy)
-    created_db = config.create_database_if_not_exist(client)
+
+    @classmethod
+    def setUpClass(cls):
+        if (cls.masterKey == '[YOUR_KEY_HERE]' or
+                cls.host == '[YOUR_ENDPOINT_HERE]'):
+            raise Exception(
+                "You must specify your Azure Cosmos account values for "
+                "'masterKey' and 'host' at the top of this class to run the "
+                "tests.")
+        
+        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, cls.connectionPolicy)
+        cls.created_db = cls.config.create_database_if_not_exist(cls.client)
 
     def test_first_and_last_slashes_trimmed_for_query_string (self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)

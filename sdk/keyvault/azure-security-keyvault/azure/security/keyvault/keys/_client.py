@@ -6,77 +6,24 @@
 from typing import Any, Dict, Generator, Mapping, Optional, List
 from datetime import datetime
 
-from azure.core import Configuration
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport
-from azure.security.keyvault._internal import _BearerTokenCredentialPolicy
 
-from .._generated import KeyVaultClient
+from .._internal import _KeyVaultClientBase
 from ._models import Key, KeyBase, DeletedKey, KeyOperationResult
 
 
-class KeyClient:
-    """KeyClient defines a high level interface for
-    managing keys in the specified vault.
-
-    :param credentials:  A credential or credential provider which can be used to authenticate to the vault,
-        a ValueError will be raised if the entity is not provided
-    :type credentials: azure.authentication.Credential or azure.authentication.CredentialProvider
-    :param str vault_url: The url of the vault to which the client will connect,
-        a ValueError will be raised if the entity is not provided
-    :param ~azure.core.configuration.Configuration config:  The configuration for the KeyClient
+class KeyClient(_KeyVaultClientBase):
+    """KeyClient is a high-level interface for managing a vault's keys.
 
     Example:
-        .. literalinclude:: ../tests/test_examples_keyvault.py
+        .. literalinclude:: ../tests/test_examples_keys.py
             :start-after: [START create_key_client]
             :end-before: [END create_key_client]
             :language: python
-            :dedent: 4
             :caption: Creates a new instance of the Key client
     """
 
     # pylint:disable=protected-access
-
-    @staticmethod
-    def create_config(**kwargs):
-        pass  # TODO
-
-    def __init__(self, vault_url, credentials, config=None, api_version=None, **kwargs):
-        # type: (str, Any, Configuration, Optional[str], Mapping[str, Any]) -> None
-        # TODO: update type hint for credentials
-        if not credentials:
-            raise ValueError("credentials")
-
-        if not vault_url:
-            raise ValueError("vault_url")
-
-        self._vault_url = vault_url
-
-        if api_version is None:
-            api_version = KeyVaultClient.DEFAULT_API_VERSION
-
-        config = config or KeyVaultClient.get_configuration_class(api_version)(credentials)
-
-        # TODO generated default pipeline should be fine when token policy isn't necessary
-        policies = [
-            config.headers_policy,
-            config.user_agent_policy,
-            config.proxy_policy,
-            _BearerTokenCredentialPolicy(credentials),
-            config.redirect_policy,
-            config.retry_policy,
-            config.logging_policy,
-        ]
-        transport = RequestsTransport(config)
-        pipeline = Pipeline(transport, policies=policies)
-
-        self._client = KeyVaultClient(credentials, api_version=api_version, pipeline=pipeline)
-
-    @property
-    def vault_url(self):
-        # type: () -> str
-        return self._vault_url
 
     def create_key(
         self,
@@ -132,7 +79,6 @@ class KeyClient:
                 :start-after: [START create_key]
                 :end-before: [END create_key]
                 :language: python
-                :dedent: 4
                 :caption: Creates a key in the key vault
         """
         if enabled is not None or not_before is not None or expires is not None:
@@ -192,7 +138,6 @@ class KeyClient:
                 :start-after: [START create_rsa_key]
                 :end-before: [END create_rsa_key]
                 :language: python
-                :dedent: 4
                 :caption: Creates a key in the key vault
         """
         key_type = "RSA-HSM" if hsm else "RSA"
@@ -257,7 +202,6 @@ class KeyClient:
                 :start-after: [START create_ec_key]
                 :end-before: [END create_ec_key]
                 :language: python
-                :dedent: 4
                 :caption: Creates a key in the key vault
         """
 
@@ -294,7 +238,6 @@ class KeyClient:
                 :start-after: [START delete_key]
                 :end-before: [END delete_key]
                 :language: python
-                :dedent: 4
                 :caption: Deletes a key in the key vault
         """
         bundle = self._client.delete_key(self.vault_url, name, error_map={404: ResourceNotFoundError})
@@ -321,7 +264,6 @@ class KeyClient:
                 :start-after: [START get_key]
                 :end-before: [END get_key]
                 :language: python
-                :dedent: 4
                 :caption: Retrieves a key from the key vault
         """
         if version is None:
@@ -349,7 +291,6 @@ class KeyClient:
                 :start-after: [START get_deleted_key]
                 :end-before: [END get_deleted_key]
                 :language: python
-                :dedent: 4
                 :caption: Retrieves a deleted key from the key vault
         """
         bundle = self._client.get_deleted_key(self.vault_url, name, error_map={404: ResourceNotFoundError})
@@ -376,7 +317,6 @@ class KeyClient:
                 :start-after: [START list_deleted_keys]
                 :end-before: [END list_deleted_keys]
                 :language: python
-                :dedent: 4
                 :caption: List all the deleted keys in the vault
         """
         max_page_size = kwargs.get("max_page_size", None)
@@ -403,7 +343,6 @@ class KeyClient:
                 :start-after: [START list_keys]
                 :end-before: [END list_keys]
                 :language: python
-                :dedent: 4
                 :caption: List all keys in the vault
         """
         max_page_size = kwargs.get("max_page_size", None)
@@ -427,7 +366,6 @@ class KeyClient:
                 :start-after: [START list_key_versions]
                 :end-before: [END list_key_versions]
                 :language: python
-                :dedent: 4
                 :caption: List all versions of the specified key
         """
         max_page_size = kwargs.get("max_page_size", None)
@@ -449,12 +387,12 @@ class KeyClient:
         :rtype: None
 
         Example:
-            .. literalinclude:: ../tests/test_examples_keys.py
-                :start-after: [START purge_deleted_key]
-                :end-before: [END purge_deleted_key]
-                :language: python
-                :dedent: 4
-                :caption: Permanently deletes the specified key
+            .. code-block:: python
+
+                # if the vault has soft-delete enabled, purge permanently deletes a deleted key
+                # (with soft-delete disabled, delete itself is permanent)
+                key_client.purge_deleted_key("key-name")
+
         """
         self._client.purge_deleted_key(self.vault_url, name)
 
@@ -479,7 +417,6 @@ class KeyClient:
                 :start-after: [START recover_deleted_key]
                 :end-before: [END recover_deleted_key]
                 :language: python
-                :dedent: 4
                 :caption: Recovers the specified soft-deleted key
         """
         bundle = self._client.recover_deleted_key(self.vault_url, name)
@@ -523,7 +460,6 @@ class KeyClient:
                 :start-after: [START update_key]
                 :end-before: [END update_key]
                 :language: python
-                :dedent: 4
                 :caption: Updates a key in the key vault
         """
         if enabled is not None or not_before is not None or expires is not None:
@@ -572,7 +508,6 @@ class KeyClient:
                 :start-after: [START backup_key]
                 :end-before: [END backup_key]
                 :language: python
-                :dedent: 4
                 :caption: Backs up the specified key to the key vault
         """
         backup_result = self._client.backup_key(self.vault_url, name, error_map={404: ResourceNotFoundError})
@@ -608,7 +543,6 @@ class KeyClient:
                 :start-after: [START restore_key]
                 :end-before: [END restore_key]
                 :language: python
-                :dedent: 4
                 :caption: Restores a backed up key to the vault
         """
         bundle = self._client.restore_key(self.vault_url, backup, error_map={409: ResourceExistsError})

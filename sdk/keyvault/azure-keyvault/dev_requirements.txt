@@ -1,4 +1,4 @@
 -e ../../authorization/azure-mgmt-authorization
 -e ../../core/azure-core
 -e ../azure-mgmt-keyvault
--e ../../../azure-sdk-tools
+-e ../../../tools/azure-sdk-tools
