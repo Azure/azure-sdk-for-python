@@ -1,17 +1,17 @@
 # Azure Key Vault client library for Python
-Azure Key Vault is a tool used for securely storing and accessing keys, secrets and certificates.
+Azure Key Vault is a service used for securely storing and accessing keys, secrets and certificates.
 
 Cloud applications and services use cryptographic keys and secrets to help keep information secure. Azure Key Vault safeguards these keys, secrets and certificates. When you use Key Vault, you can encrypt authentication keys, storage account keys, data encryption keys, .pfx files, and passwords by using keys that are protected by hardware security modules (HSMs).
 
-Use the Key Vault client library fro Python to:
+Use the Key Vault client library for Python to:
 
 * Securely store and control access to tokens, passwords, certificates, API keys, and other secrets.
 * Create and control encryption keys that encrypt your data.
 * Provision, manage, and deploy public and private Secure Sockets Layer/Transport Layer Security (SSL/TLS) certificates for use with Azure and your internal connected resources.
 * Use either software or FIPS 140-2 Level 2 validated HSMs to help protect secrets and keys.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault) | [Package (Pypi)](TODO) | [API reference documentation](TODO) | [Product documentation](TODO)
-# Getting started
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault) | [Package (PyPI)](TODO) | [API reference documentation](TODO) | [Product documentation](TODO)
+## Getting started
 ### Install the package
 Install the Azure Key Vault client library for Python with [pip](https://pypi.org/project/pip/):
 
@@ -24,12 +24,13 @@ pip install azure-security-keyvault
 * Python 2.7, 3.4 or later to use this package.
 * An existing Key Vault. If you need to create a Key Vault, you can use the [Azure Cloud Shell](https://shell.azure.com/bash) to create one with this Azure CLI command. Replace `<your-resource-group-name>` and `<your-key-vault-name>` with your own, unique names:
 
- ```Bash
-az keyvault create --resource-group <your-resource-group-name> --name <your-key-vault-name>
-```
+    ```Bash
+    az keyvault create --resource-group <your-resource-group-name> --name <your-key-vault-name>
+    ```
 
  ### Authenticate the client
-In order to interact with the Key Vault service, you'll need to create an instance of the [KeyVaultClient](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault) class. You need a **vault url**, **client secret credentials (client id, client secret, tenant id)** and a [resource url](https://vault.azure.net) to instantiate a client object.
+### Authenticate the client
+In order to interact with the Key Vault service, you'll need to create an instance of the [SecretClient](TODO-rst-docs) class. You would need a **vault url** and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object. Client secret credential way of authentication is being used in this getting started section but you can find more ways to authenticate with [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity).
 
   #### Create/Get credentials
 Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to create/get client secret credentials.
@@ -41,27 +42,30 @@ Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to creat
     Output:
     ```json
     {
-        "appId": "fa7c8686-c4f5-4639-ab88-497ee122bad3",
-        "displayName": "myspn",
-        "name": "http://myspn",
-        "password": "30e5c628-a322-3497-8429-52f2f98788c7",
-        "tenant": "72f988bf-86f1-41fg-91ab-2d7cd011db47"
+        "appId": "generated-app-ID",
+        "displayName": "dummy-app-name",
+        "name": "http://dummy-app-name",
+        "password": "random-password",
+        "tenant": "tenant-ID"
     }
     ```
-* Use the above returned credentials information to set **AZURE_CLIENT_ID**(appId), **AZURE_CLIENT_SECRET**(password) and **AZURE_TENANT_ID**(tenant) environment variables.
+* Use the above returned credentials information to set **AZURE_CLIENT_ID**(appId), **AZURE_CLIENT_SECRET**(password) and **AZURE_TENANT_ID**(tenant) environment variables. The following example shows a way to do this in Bash:
   ```Bash
-    export AZURE_CLIENT_ID="fa7c8686-c4f5-4639-ab88-497ee122bad3"
-    export AZURE_CLIENT_SECRET="30e5c628-a322-3497-8429-52f2f98788c7"
-    export AZURE_TENANT_ID="72f988bf-86f1-41fg-91ab-2d7cd011db47"
+    export AZURE_CLIENT_ID="generated-app-ID"
+    export AZURE_CLIENT_SECRET="random-password"
+    export AZURE_TENANT_ID="tenant-ID"
   ```
 
  * Grant the above mentioned application authorization to perform secret operations on the keyvault:
     ```Bash
-    az keyvault set-policy --name <your-key-vault-name> --spn $AZURE_CLIENT_ID --secret-permissions backup delete get list set --key-permissions backup delete get list set 
+    az keyvault set-policy --name <your-key-vault-name> --spn $AZURE_CLIENT_ID --secret-permissions backup delete get list set --key-permissions backup delete get list set
     ```
-    > --secret-permissions/key-permissiona:
+    > --secret-permissions:
     > Accepted values: backup, delete, get, list, purge, recover, restore, set
-
+ * Use the above mentioned Key Vault name to retreive details of your Vault which also contains your Key Vault URL:
+    ```Bash
+    az keyvault show --name <your-key-vault-name> 
+    ```
 ### Create client
 Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables, you can create the [VaultClient](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/vault_client.py):
 ```python
@@ -79,6 +83,16 @@ A user can create a Key Vault to safeguard and manage cryptographic keys and sec
 
 ### Vault Client:
 A vault client performs interactions with the Keys and Secrets client for creating and getting an instance of the Keys/Secrets client. An asynchronous and synchronous, VaultClient, client exists in the SDK allowing for selection of a client based on an application's use case. The Key Vault client library performs cryptographic key operations and vault operations against the Key Vault service. Once you've initialized a VaultClient, you can interact with the primary resource types in Key Vault.
+
+For more information about these resources, see [What is Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-whatis).
+
+### Secret Client:
+A secret client offers operations to create, retrieve, update, delete, purge, backup, restore and list the secrets in the Key Vault. An asynchronous and synchronous, SecretClient, client exists in the SDK allowing for selection of a client based on an application's use case. Once you've initialized a SecretClient, you can interact with the primary resource `Secret` in Key Vault.
+
+For more information on SecretClient, see [API reference documentation](TODO) and [Source Code](TODO) for Secrets Client.
+
+### Key Client:[UPDATE]
+A key client performs interactions with the Keys and Secrets client for creating and getting an instance of the Keys/Secrets client. An asynchronous and synchronous, VaultClient, client exists in the SDK allowing for selection of a client based on an application's use case. The Key Vault client library performs cryptographic key operations and vault operations against the Key Vault service. Once you've initialized a VaultClient, you can interact with the primary resource types in Key Vault.
 
 For more information about these resources, see [What is Azure Key Vault](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-whatis).
 
@@ -103,7 +117,7 @@ The following section provides several code snippets using the above created `va
 
 ## Troubleshooting
 ### General
-he Key Vault APIs generate exceptions that can fall into one of the azure-core defined exceptions. For more detailed infromation about exceptions and how to deal with them, see [Azure Core exceptions](TODO).
+Key Vault clients raise exceptions defined in azure-core. For more detailed infromation about exceptions and how to deal with them,see [Azure Core exceptions](TODO).
 
 ### Logging[TODO]
 This SDK uses Python standard logging library. You can configure logging print out debugging information to the stdout or anywhere you want.
