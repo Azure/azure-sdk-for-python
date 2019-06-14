@@ -437,3 +437,5 @@ class EventReceiver(object):
                 error = EventHubError("Receive failed: {}".format(e))
                 self.close(exception=error)
                 raise error
+
+    next = __next__  # for python2.7
