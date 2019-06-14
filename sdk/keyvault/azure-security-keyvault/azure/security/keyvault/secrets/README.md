@@ -20,7 +20,7 @@ az keyvault create --resource-group <your-resource-group-name> --name <your-key-
 ```
 
 ### Authenticate the client
-In order to interact with the Key Vault service, you'll need to create an instance of the [SecretClient](TODO-rst-docs) class. You would need a **vault url** and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object. Specifying Client secret credentials are being used in this getting started section but you can find more ways to authenticate with [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity)
+In order to interact with the Key Vault service, you'll need to create an instance of the [SecretClient](TODO-rst-docs) class. You would need a **vault url** and **client secret credentials (client id, client secret, tenant id)** to instantiate a client object. Client secret credential way of authentication is being used in this getting started section but you can find more ways to authenticate with [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/identity/azure-identity).
 
  #### Create/Get credentials
 Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to create/get client secret credentials.
@@ -59,7 +59,7 @@ Use the [Azure Cloud Shell](https://shell.azure.com/bash) snippet below to creat
     ```
 
 #### Create Secret client
-Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables and replaced <your-vault-url> with the above returned URI, you can create the [SecretClient](TODO-rst-docs):
+Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZURE_TENANT_ID** environment variables and replaced **your-vault-url** with the above returned URI, you can create the [SecretClient](TODO-rst-docs):
 
 ```python
     from azure.identity import DefaultAzureCredential
@@ -93,7 +93,7 @@ The following section provides several code snippets using the above created `se
 * [Async list Secrets](https://github.com/samvaity/azure-sdk-for-python/tree/secrets-track2-readme/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets#async-list-secrets)
 
 ### Create a Secret
-`set_secret` creates a Secret to be stored in the Azure Key Vault. If a secret with the same name already exists then a new version of the secret is created.
+`set_secret` creates a Secret to be stored in the Azure Key Vault. If a secret with the same name already exists, then a new version of the secret is created.
 ```python
     secret = secret_client.set_secret("secret-name", "secret-value", enabled=True)
 
@@ -152,10 +152,11 @@ This example lists all the secrets in the specified Key Vault.
 ### Async operations
 Python’s [asyncio package](https://pypi.org/project/asyncio/) (introduced in Python 3.4) and its two keywords `async` and `await` serves to declare, build, execute, and manage asynchronous code.
 The package supports async API on Python 3.5+ and is identical to synchronous API. 
+
 The following examples provide code snippets for performing async operations in the Secret Client library:
 
 ### Async create a secret
-This example creates a secret in the specified Key Vault with the specified optional arguments.
+This example creates a secret in the Key Vault with the specified optional arguments.
 ```python
     from azure.identity import AsyncDefaultAzureCredential
     from azure.security.keyvault.aio import SecretClient
