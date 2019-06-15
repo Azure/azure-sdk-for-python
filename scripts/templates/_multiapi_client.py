@@ -54,7 +54,7 @@ class {{ client_name }}({% if mixin_operations %}{{ client_name }}OperationsMixi
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
 {%- for rt_name, api_version in last_rt_list|dictsort %}
-            '{{ rt_name }}': '{{ api_version }}',
+            '{{ rt_name }}': '{{ mod_to_api_version[api_version] }}',
 {%- endfor %}
         }},
         _PROFILE_TAG + " latest"
