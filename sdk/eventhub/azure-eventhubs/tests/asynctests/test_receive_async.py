@@ -101,7 +101,6 @@ async def test_receive_with_datetime_async(connstr_senders):
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_receive_with_sequence_no_async(connstr_senders):
-    # TODO: sampe problem as the sync version
     connection_str, senders = connstr_senders
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     receiver = client.create_receiver(partition_id="0", event_position=EventPosition('@latest'))
@@ -189,6 +188,9 @@ async def test_exclusive_receiver_async(connstr_senders):
         return_exceptions=True)
     assert isinstance(outputs[0], EventHubError)  # TODO; it's LinkDetach error
     assert outputs[1] == 1
+
+    for r in receivers:
+        await r.close()
 
 
 @pytest.mark.liveTest
@@ -281,21 +283,22 @@ async def test_receive_batch_with_app_prop_async(connstr_senders):
 
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     receiver = client.create_receiver(partition_id="0", prefetch=500, event_position=EventPosition('@latest'))
-    async with receiver:
-        received = await receiver.receive(timeout=5)
-        assert len(received) == 0
 
-        senders[0].send(batched())
+    received = await receiver.receive(timeout=5)
+    assert len(received) == 0
 
-        await asyncio.sleep(1)
+    senders[0].send(batched())
 
-        received = await receiver.receive(max_batch_size=15, timeout=5)
-        assert len(received) == 15
+    await asyncio.sleep(1)
 
-        for index, message in enumerate(received):
-            assert list(message.body)[0] == "Event Data {}".format(index).encode('utf-8')
-            assert (app_prop_key.encode('utf-8') in message.application_properties) \
-                and (dict(message.application_properties)[app_prop_key.encode('utf-8')] == app_prop_value.encode('utf-8'))
+    received = await receiver.receive(max_batch_size=15, timeout=5)
+    assert len(received) == 15
+    await receiver.close()
+
+    for index, message in enumerate(received):
+        assert list(message.body)[0] == "Event Data {}".format(index).encode('utf-8')
+        assert (app_prop_key.encode('utf-8') in message.application_properties) \
+            and (dict(message.application_properties)[app_prop_key.encode('utf-8')] == app_prop_value.encode('utf-8'))
 
 
 @pytest.mark.liveTest
@@ -309,14 +312,15 @@ async def test_receive_over_websocket_async(connstr_senders):
     for i in range(20):
         event_list.append(EventData("Event Number {}".format(i)))
 
-    async with receiver:
-        received = await receiver.receive(timeout=5)
-        assert len(received) == 0
+    received = await receiver.receive(timeout=5)
+    assert len(received) == 0
 
-        with senders[0]:
-            senders[0].send(event_list)
+    with senders[0]:
+        senders[0].send(event_list)
 
-        time.sleep(1)
+    time.sleep(1)
 
-        received = await receiver.receive(max_batch_size=50, timeout=5)
-        assert len(received) == 20
+    received = await receiver.receive(max_batch_size=50, timeout=5)
+    assert len(received) == 20
+
+    await receiver.close()

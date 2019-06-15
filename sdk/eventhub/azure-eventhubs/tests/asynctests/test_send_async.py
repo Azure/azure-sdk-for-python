@@ -176,8 +176,9 @@ async def test_send_multiple_clients_async(connstr_receivers):
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     sender_0 = client.create_sender(partition_id="0")
     sender_1 = client.create_sender(partition_id="1")
-    async with sender_0 and sender_1:
+    async with sender_0:
         await sender_0.send(EventData(b"Message 0"))
+    async with sender_1:
         await sender_1.send(EventData(b"Message 1"))
 
     partition_0 = receivers[0].receive(timeout=2)
@@ -242,3 +243,6 @@ async def test_send_over_websocket_async(connstr_receivers):
         received.extend(r.receive(timeout=3))
 
     assert len(received) == 20
+
+    for r in receivers:
+        r.close()

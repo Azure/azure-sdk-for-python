@@ -12,7 +12,7 @@ On Python 3.5 and above, it also includes:
 - An async sender and receiver that supports async/await methods.
 - An Event Processor Host module that manages the distribution of partition readers.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation](https://docs.microsoft.com/python/api/azure-eventhub) | [Product documentation](https://docs.microsoft.com/en-ca/azure/event-hubs/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation](https://docs.microsoft.com/python/api/azure-eventhub) | [Product documentation](https://docs.microsoft.com/en-ca/azure/event-hubs/)
 
 # Getting started
 
@@ -28,7 +28,7 @@ $ pip install azure-eventhub
 
 - An Azure subscription.
 - Python 3.5 or later.
-- An existing Event Hubs namespace and event hub. You can create these entities by following the instructions in [this article](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create>)
+- An existing Event Hubs namespace and event hub. You can create these entities by following the instructions in [this article](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create)
 
 ## Authenticate the client
 
@@ -176,7 +176,7 @@ The Event Hubs APIs generate exceptions that can fall into the following categor
 - **User coding error:** System.ArgumentException, System.InvalidOperationException, System.OperationCanceledException, System.Runtime.Serialization.SerializationException. General action: try to fix the code before proceeding.
 - **Setup/configuration error:** Microsoft.ServiceBus.Messaging.MessagingEntityNotFoundException, Microsoft.Azure.EventHubs.MessagingEntityNotFoundException, System.UnauthorizedAccessException. General action: review your configuration and change if necessary.
 - **Transient exceptions:** Microsoft.ServiceBus.Messaging.MessagingException, Microsoft.ServiceBus.Messaging.ServerBusyException, Microsoft.Azure.EventHubs.ServerBusyException, Microsoft.ServiceBus.Messaging.MessagingCommunicationException. General action: retry the operation or notify users.
-- **Other exceptions:** System.Transactions.TransactionException, System.TimeoutException, Microsoft.ServiceBus.Messaging.MessageLockLostException, Microsoft.ServiceBus.Messaging.SessionLockLostException. General action: specific to the exception type; refer to the table in [Event Hubs messaging exceptions](https://docs.microsoft.com/en-ca/azure/event-hubs/event-hubs-messaging-exceptions).
+- **Other exceptions:** System.Transactions.TransactionException, System.TimeoutException, Microsoft.ServiceBus.Messaging.MessageLockLostException, Microsoft.ServiceBus.Messaging.SessionLockLostException. General action: specific to the exception type, refer to the table in [Event Hubs messaging exceptions](https://docs.microsoft.com/en-ca/azure/event-hubs/event-hubs-messaging-exceptions).
 
 For more detailed infromation about excpetions and how to deal with them , see [Event Hubs messaging exceptions](https://docs.microsoft.com/en-ca/azure/event-hubs/event-hubs-messaging-exceptions).
 
