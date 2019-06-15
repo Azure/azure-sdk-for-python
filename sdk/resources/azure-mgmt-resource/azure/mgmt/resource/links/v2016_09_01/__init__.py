@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .management_link_client import ManagementLinkClient
-from .version import VERSION
+from ._configuration import ManagementLinkClientConfiguration
+from ._management_link_client import ManagementLinkClient
+__all__ = ['ManagementLinkClient', 'ManagementLinkClientConfiguration']
 
-__all__ = ['ManagementLinkClient']
+from .version import VERSION
 
 __version__ = VERSION
 

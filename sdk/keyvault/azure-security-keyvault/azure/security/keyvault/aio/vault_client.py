@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Any, Optional, TYPE_CHECKING
+
 if TYPE_CHECKING:
     try:
         from azure.core.credentials import TokenCredential
@@ -20,6 +21,18 @@ from .secrets._client import SecretClient
 
 
 class VaultClient(_AsyncKeyVaultClientBase):
+    """VaultClient is a high-level interface for managing a vault's resources.
+
+    Example:
+        .. literalinclude:: ../tests/test_examples_vault_client.py
+            :start-after: [START create_async_vault_client]
+            :end-before: [END create_async_vault_client]
+            :language: python
+            :dedent: 4
+            :caption: Creates a new instance of VaultClient
+
+    """
+
     def __init__(
         self,
         vault_url: str,

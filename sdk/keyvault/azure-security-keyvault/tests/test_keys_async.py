@@ -156,6 +156,7 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         if self.is_live:
             # wait to ensure the key's update time won't equal its creation time
             await asyncio.sleep(1)
+
         await self._update_key(client, created_rsa_key)
 
         # delete the new key
@@ -168,9 +169,10 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
             "Missing required deleted key attributes.",
         )
 
-        if self.is_live:
-            # wait to ensure the key has been deleted
-            await asyncio.sleep(30)
+        await self._poll_until_no_exception(
+            client.get_deleted_key, created_rsa_key.name, expected_exception=ResourceNotFoundError
+        )
+
         # get the deleted key when soft deleted enabled
         deleted_key = await client.get_deleted_key(created_rsa_key.name)
         self.assertIsNotNone(deleted_key)
@@ -240,7 +242,9 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
         for key_name in expected.keys():
             await client.delete_key(key_name)
 
-        await self._poll_until_resource_found(client.get_deleted_key, expected.keys())
+        await self._poll_until_no_exception(
+            client.get_deleted_key, *expected.keys(), expected_exception=ResourceNotFoundError
+        )
 
         # validate all our deleted keys are returned by list_deleted_keys
         result = client.list_deleted_keys()
@@ -274,47 +278,63 @@ class KeyVaultKeyTest(AsyncKeyVaultTestCase):
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_recover_purge(self, vault_client, **kwargs):
-
+    async def test_recover(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
         client = vault_client.keys
         keys = {}
 
-        # create keys to recover
+        # create keys
         for i in range(self.list_test_size):
-            key_name = self.get_resource_name("keyrec{}".format(i))
+            key_name = "key{}".format(i)
             keys[key_name] = await client.create_key(key_name, "RSA")
 
-        # create keys to purge
-        for i in range(self.list_test_size):
-            key_name = self.get_resource_name("keyprg{}".format(i))
-            keys[key_name] = await client.create_key(key_name, "RSA")
-
-        # delete all keys
+        # delete them
         for key_name in keys.keys():
             await client.delete_key(key_name)
+        await self._poll_until_no_exception(
+            client.get_deleted_key, *keys.keys(), expected_exception=ResourceNotFoundError
+        )
 
-        await self._poll_until_resource_found(client.get_deleted_key, keys.keys())
-
-        # recover select keys
-        for key_name in [s for s in keys.keys() if s.startswith("keyrec")]:
+        # recover them
+        for key_name in keys.keys():
             recovered_key = await client.recover_deleted_key(key_name)
             expected_key = keys[key_name]
             self._assert_key_attributes_equal(expected_key, recovered_key)
 
-        # purge select keys
-        for key_name in [s for s in keys.keys() if s.startswith("keyprg")]:
-            await client.purge_deleted_key(key_name)
-
         # validate the recovered keys
-        expected = {k: v for k, v in keys.items() if k.startswith("keyrec")}
-        await self._poll_until_resource_found(client.get_key, expected.keys())
+        expected = {k: v for k, v in keys.items()}
+        await self._poll_until_no_exception(client.get_key, *expected.keys(), expected_exception=ResourceNotFoundError)
 
         actual = {}
         for k in expected.keys():
             actual[k] = await client.get_key(k)
 
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
+
+    @ResourceGroupPreparer()
+    @AsyncVaultClientPreparer(enable_soft_delete=True)
+    @AsyncKeyVaultTestCase.await_prepared_test
+    async def test_purge(self, vault_client, **kwargs):
+        self.assertIsNotNone(vault_client)
+        client = vault_client.keys
+
+        keys = {}
+
+        # create keys
+        for i in range(self.list_test_size):
+            key_name = "key{}".format(i)
+            keys[key_name] = await client.create_key(key_name, "RSA")
+
+        # delete them
+        for key_name in keys.keys():
+            await client.delete_key(key_name)
+        await self._poll_until_no_exception(
+            client.get_deleted_key, *keys.keys(), expected_exception=ResourceNotFoundError
+        )
+
+        # purge them
+        for key_name in keys.keys():
+            await client.purge_deleted_key(key_name)
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer()

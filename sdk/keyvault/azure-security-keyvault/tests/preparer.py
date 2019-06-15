@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import time
+
 try:
     from unittest.mock import Mock
 except ImportError:  # python < 3.3
@@ -107,8 +109,18 @@ class VaultClientPreparer(AzureMgmtPreparer):
                 enable_purge_protection=None,
             )
             parameters = VaultCreateOrUpdateParameters(location=self.location, properties=properties)
+
             self.management_client = self.create_mgmt_client(KeyVaultManagementClient)
-            vault = self.management_client.vaults.create_or_update(group, name, parameters).result()
+
+            # ARM may return not found at first even though the resource group has been created
+            retries = 4
+            for i in range(retries):
+                try:
+                    vault = self.management_client.vaults.create_or_update(group, name, parameters).result()
+                except Exception as ex:
+                    if "ResourceGroupNotFound" not in str(ex) or i == retries - 1:
+                        raise
+                    time.sleep(3)
             vault_uri = vault.properties.vault_uri
         else:
             # playback => we need only the uri used in the recording
