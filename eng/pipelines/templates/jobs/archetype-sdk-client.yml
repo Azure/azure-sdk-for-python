@@ -152,7 +152,7 @@ jobs:
     steps:
       - template: ../steps/build-test.yml
         parameters:
-          CoverageParam: '--disablecov'
+          AdditionalTestArgs: '--disablecov'
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
           OSName: $(OSName)
