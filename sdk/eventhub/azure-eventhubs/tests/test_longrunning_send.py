@@ -17,7 +17,7 @@ import logging
 import pytest
 from logging.handlers import RotatingFileHandler
 
-from azure.eventhub import EventHubClient, EventSender, EventData
+from azure.eventhub import EventHubClient, EventSender, EventData, EventHubSharedKeyCredential
 
 
 def get_logger(filename, level=logging.INFO):
@@ -55,30 +55,20 @@ def main(client, args):
     deadline = time.time() + args.duration
     total = 0
 
-    def data_generator():
-        for i in range(args.batch):
-            yield b"D" * args.payload
-
-    if args.batch > 1:
-        print("Sending batched messages")
-    else:
-        print("Sending single messages")
-
     try:
-        while time.time() < deadline:
-            if args.batch > 1:
-                data = EventData(batch=data_generator())
-            else:
-                data = EventData(batch=b"D" * args.payload)
-            sender.queue_message(data, callback=check_send_successful)
-            total += args.batch
-            if total % 10000 == 0:
-                sender.send_pending_messages()
-                print("Send total {}".format(total))
+        with sender:
+            event_list = []
+            while time.time() < deadline:
+                data = EventData(body=b"D" * args.payload)
+                event_list.append(data)
+                total += 1
+                if total % 100 == 0:
+                    sender.send(event_list)
+                    event_list = []
+                    print("Send total {}".format(total))
     except Exception as err:
         print("Send failed {}".format(err))
-    finally:
-        sender.close()
+        raise
     print("Sent total {}".format(total))
 
 
@@ -90,7 +80,6 @@ def test_long_running_send(connection_str):
     parser = argparse.ArgumentParser()
     parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
     parser.add_argument("--payload", help="payload size", type=int, default=512)
-    parser.add_argument("--batch", help="Number of events to send and wait", type=int, default=1)
     parser.add_argument("--conn-str", help="EventHub connection string", default=connection_str)
     parser.add_argument("--eventhub", help="Name of EventHub")
     parser.add_argument("--address", help="Address URI to the EventHub entity")
@@ -119,6 +108,7 @@ def test_long_running_send(connection_str):
         main(client, args)
     except KeyboardInterrupt:
         pass
+
 
 if __name__ == '__main__':
     test_long_running_send(os.environ.get('EVENT_HUB_CONNECTION_STR'))

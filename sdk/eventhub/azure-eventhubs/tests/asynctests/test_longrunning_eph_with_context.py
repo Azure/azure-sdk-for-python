@@ -45,6 +45,7 @@ def get_logger(filename, level=logging.INFO):
 
     return azure_logger
 
+
 logger = get_logger("eph_test_async.log", logging.INFO)
 
 
@@ -130,14 +131,14 @@ async def pump(pid, sender, duration):
 
     try:
         async with sender:
-            list = []
+            event_list = []
             while time.time() < deadline:
                 data = EventData(body=b"D" * 512)
-                list.append(data)
+                event_list.append(data)
                 total += 1
                 if total % 100 == 0:
-                    await sender.send(list)
-                    list = []
+                    await sender.send(event_list)
+                    event_list = []
                     logger.info("{}: Send total {}".format(pid, total))
     except Exception as err:
         logger.error("{}: Send failed {}".format(pid, err))
