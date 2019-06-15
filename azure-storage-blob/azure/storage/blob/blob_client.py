@@ -148,7 +148,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
     def _format_url(self, hostname):
         container_name = self.container_name
         if isinstance(container_name, six.text_type):
-            container_name.encode('UTF-8')
+            container_name = container_name.encode('UTF-8')
         return "{}://{}/{}/{}{}".format(
             self.scheme,
             hostname,
