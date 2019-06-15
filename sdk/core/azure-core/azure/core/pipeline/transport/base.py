@@ -30,8 +30,10 @@ import logging
 import os
 import time
 try:
+    binary_type = str
     from urlparse import urlparse
 except ImportError:
+    binary_type = bytes
     from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
@@ -157,7 +159,8 @@ class HttpRequest(object):
 
     def set_streamed_data_body(self, data):
         """Set a streamable data body."""
-        if not any(hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]):
+        if not isinstance(data, binary_type) and \
+                not any(hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]):
             raise TypeError("A streamable data source must be an open file-like object or iterable.")
         self.data = data
         self.files = None
