@@ -6,8 +6,6 @@
 
 import pytest
 
-#pytestmark = pytest.mark.skip
-
 import unittest
 from io import (
     StringIO,
@@ -22,16 +20,13 @@ from os import (
 
 from azure.common import AzureException
 from azure.core.exceptions import HttpResponseError
-from azure.storage.common._encryption import (
+from azure.storage.blob._encryption import (
     _dict_to_encryption_data,
     _validate_and_unwrap_cek,
     _generate_AES_CBC_cipher,
-)
-from azure.storage.common._error import (
     _ERROR_OBJECT_INVALID,
-    _ERROR_VALUE_SHOULD_BE_BYTES,
-    _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION,
 )
+from azure.storage.blob.blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from cryptography.hazmat.primitives.padding import PKCS7
 
 from azure.storage.blob import (

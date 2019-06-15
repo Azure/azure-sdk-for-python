@@ -26,7 +26,7 @@ class CopyStatusPoller(LROPoller):
             polling_interval = 2
         polling_method = CopyBlobPolling if polling else CopyBlob
         poller = polling_method(polling_interval, **kwargs)
-        super().__init__(client, copy_id, None, poller)
+        super(CopyStatusPoller, self).__init__(client, copy_id, None, poller)
 
     def copy_id(self):
         return self._polling_method.id

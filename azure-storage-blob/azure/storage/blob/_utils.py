@@ -167,6 +167,13 @@ class StorageAccountHostsMixin(object):
             configuration, self.credential, hosts=self._hosts, **kwargs)
         self._client = create_client(self.url, self._pipeline)
 
+    def __enter__(self):
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._client.__exit__(*args)
+
     @property
     def url(self):
         return self._format_url(self._hosts[self._location_mode])

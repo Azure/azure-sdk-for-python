@@ -10,16 +10,16 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
-from azure.storage.blob._shared_access_signature import BlobSharedAccessSignature
-
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
     from urlparse import urlparse
     from urllib2 import quote, unquote
 
+import six
 from azure.core import Configuration
 
+from ._shared_access_signature import BlobSharedAccessSignature
 from .common import BlobType, LocationMode
 from .lease import LeaseClient
 from .blob_client import BlobClient
@@ -105,10 +105,13 @@ class ContainerClient(StorageAccountHostsMixin):
         super(ContainerClient, self).__init__(parsed_url, credential, configuration, **kwargs)
 
     def _format_url(self, hostname):
+        container_name = self.container_name
+        if isinstance(container_name, six.text_type):
+            container_name.encode('UTF-8')
         return "{}://{}/{}{}".format(
             self.scheme,
             hostname,
-            quote(self.container_name),
+            quote(container_name),
             self._query_str)
 
     @classmethod
