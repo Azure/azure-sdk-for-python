@@ -28,7 +28,11 @@ import os
 
 import requests
 import pytest
-from unittest.mock import Mock
+try:
+    from unittest.mock import Mock
+except ImportError:
+    # python < 3.3
+    from mock import Mock
 
 # module under test
 from azure.core.exceptions import HttpResponseError
