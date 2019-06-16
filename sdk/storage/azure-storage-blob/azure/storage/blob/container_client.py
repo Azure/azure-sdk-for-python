@@ -23,7 +23,11 @@ from ._shared_access_signature import BlobSharedAccessSignature
 from .common import BlobType
 from .lease import LeaseClient
 from .blob_client import BlobClient
-from .models import ContainerProperties, BlobProperties, BlobPropertiesPaged
+from .models import (
+    ContainerProperties,
+    BlobProperties,
+    BlobPropertiesPaged,
+    BlobPrefix)
 from ._utils import (
     StorageAccountHostsMixin,
     get_access_conditions,
@@ -425,46 +429,44 @@ class ContainerClient(StorageAccountHostsMixin):
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.container.list_blob_flat_segment,
-            prefix=name_starts_with,
             include=include,
             timeout=timeout,
             **kwargs)
         return BlobPropertiesPaged(command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
-    # def walk_blob_properties(self, name_starts_with=None, include=None, delimiter="/", timeout=None, **kwargs):
-    #     # type: (Optional[str], Optional[Include], Optional[int]) -> Iterable[BlobProperties]
-    #     """
-    #     Returns a generator to list the blobs under the specified container.
-    #     The generator will lazily follow the continuation tokens returned by
-    #     the service.
+    def walk_blobs(self, name_starts_with=None, include=None, delimiter="/", marker=None, timeout=None, **kwargs):
+        # type: (Optional[str], Optional[Include], Optional[int]) -> Iterable[BlobProperties]
+        """
+        Returns a generator to list the blobs under the specified container.
+        The generator will lazily follow the continuation tokens returned by
+        the service.
 
-    #     :param str name_starts_with:
-    #         Filters the results to return only blobs whose names
-    #         begin with the specified prefix.
-    #     :param ~azure.storage.blob.models.Include include:
-    #         Specifies one or more additional datasets to include in the response.
-    #     :param str marker:
-    #         An opaque continuation token. This value can be retrieved from the
-    #         next_marker field of a previous generator object. If specified,
-    #         this generator will begin returning results from this point.
-    #     :param int timeout:
-    #         The timeout parameter is expressed in seconds.
-    #     :returns: An iterable (auto-paging) response of BlobProperties.
-    #     """
-    #     if include and not isinstance(include, list):
-    #         include = [include]
+        :param str name_starts_with:
+            Filters the results to return only blobs whose names
+            begin with the specified prefix.
+        :param ~azure.storage.blob.models.Include include:
+            Specifies one or more additional datasets to include in the response.
+        :param str marker:
+            An opaque continuation token. This value can be retrieved from the
+            next_marker field of a previous generator object. If specified,
+            this generator will begin returning results from this point.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns: An iterable (auto-paging) response of BlobProperties.
+        """
+        if include and not isinstance(include, list):
+            include = [include]
 
-    #     results_per_page = kwargs.pop('results_per_page', None)
-    #     marker = kwargs.pop('marker', "")
-    #     command = functools.partial(
-    #         self._client.container.list_blob_hierarchy_segment(
-    #         delimiter,
-    #         prefix=name_starts_with,
-    #         include=include,
-    #         timeout=timeout,
-    #         **kwargs)
-    #     return BlobPropertiesWalked(
-    #         command, prefix=name_starts_with, results_per_page=results_per_page,  marker=marker)
+        results_per_page = kwargs.pop('results_per_page', None)
+        marker = kwargs.pop('marker', "")
+        command = functools.partial(
+            self._client.container.list_blob_hierarchy_segment,
+            delimiter=delimiter,
+            include=include,
+            timeout=timeout,
+            **kwargs)
+        return BlobPrefix(
+            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
     def upload_blob(
             self, name,  # type: Union[str, BlobProperties]

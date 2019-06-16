@@ -928,17 +928,19 @@ class StorageContainerTest(StorageTestCase):
     @record
     def test_list_blobs_with_delimiter(self):
         # Arrange
-        pytest.skip("walk not yet supported")
+        pytest.skip("not working")
         container = self._create_container()
         data = b'hello world'
 
         container.get_blob_client('a/blob1').upload_blob(data)
         container.get_blob_client('a/blob2').upload_blob(data)
-        container.get_blob_client('b/blob1').upload_blob(data)
-        container.get_blob_client('blob1').upload_blob(data)
+        container.get_blob_client('b/blob3').upload_blob(data)
+        container.get_blob_client('blob4').upload_blob(data)
 
         # Act
-        resp = list(self.bs.list_blobs(container_name, delimiter='/'))
+        resp = list(container.list_blobs())
+        #print("LIST", resp)
+        resp = list(container.walk_blobs())
 
         # Assert
         self.assertIsNotNone(resp)
