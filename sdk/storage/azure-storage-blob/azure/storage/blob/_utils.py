@@ -241,6 +241,7 @@ def format_shared_key_credential(account, credential):
         return SharedKeyCredentialPolicy(**credential)
     return credential
 
+
 def parse_connection_str(conn_str, credential):
     conn_str = conn_str.rstrip(';')
     conn_settings = dict([s.split('=', 1) for s in conn_str.split(';')])  # pylint: disable=consider-using-dict-comprehension

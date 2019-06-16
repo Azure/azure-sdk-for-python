@@ -456,8 +456,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             snapshot=None  # type: Optional[Union[SnapshotProperties, str]]
         ):
         # type: (...) -> BlobClient
-        """
-        Get a client to interact with the specified blob.
+        """Get a client to interact with the specified blob.
         The blob need not already exist.
 
         :param container:

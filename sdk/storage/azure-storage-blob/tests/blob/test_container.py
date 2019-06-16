@@ -928,7 +928,6 @@ class StorageContainerTest(StorageTestCase):
     @record
     def test_list_blobs_with_delimiter(self):
         # Arrange
-        pytest.skip("not working")
         container = self._create_container()
         data = b'hello world'
 
@@ -938,8 +937,6 @@ class StorageContainerTest(StorageTestCase):
         container.get_blob_client('blob4').upload_blob(data)
 
         # Act
-        resp = list(container.list_blobs())
-        #print("LIST", resp)
         resp = list(container.walk_blobs())
 
         # Assert
@@ -947,7 +944,33 @@ class StorageContainerTest(StorageTestCase):
         self.assertEqual(len(resp), 3)
         self.assertNamedItemInContainer(resp, 'a/')
         self.assertNamedItemInContainer(resp, 'b/')
-        self.assertNamedItemInContainer(resp, 'blob1')
+        self.assertNamedItemInContainer(resp, 'blob4')
+
+    @record
+    def test_walk_blobs_with_delimiter(self):
+        # Arrange
+        container = self._create_container()
+        data = b'hello world'
+
+        container.get_blob_client('a/blob1').upload_blob(data)
+        container.get_blob_client('a/blob2').upload_blob(data)
+        container.get_blob_client('b/c/blob3').upload_blob(data)
+        container.get_blob_client('blob4').upload_blob(data)
+
+        blob_list = []
+        def recursive_walk(prefix):
+            for b in prefix:
+                if b.get('prefix'):
+                    recursive_walk(b)
+                else:
+                    blob_list.append(b.name)
+
+        # Act
+        recursive_walk(container.walk_blobs())
+
+        # Assert
+        self.assertEqual(len(blob_list), 4)
+        self.assertEqual(blob_list, ['a/blob1', 'a/blob2', 'b/c/blob3', 'blob4'])
 
     @record
     def test_list_blobs_with_include_multiple(self):

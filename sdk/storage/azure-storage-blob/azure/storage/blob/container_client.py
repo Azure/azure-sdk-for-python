@@ -466,7 +466,11 @@ class ContainerClient(StorageAccountHostsMixin):
             timeout=timeout,
             **kwargs)
         return BlobPrefix(
-            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
+            command,
+            prefix=name_starts_with,
+            results_per_page=results_per_page,
+            marker=marker,
+            delimiter=delimiter)
 
     def upload_blob(
             self, name,  # type: Union[str, BlobProperties]

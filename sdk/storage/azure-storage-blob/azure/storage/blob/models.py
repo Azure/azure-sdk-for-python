@@ -43,10 +43,10 @@ class DictMixin(object):
         return self.__dict__[key]
 
     def __repr__(self):
-        return repr(self.__dict__)
+        return str(self)
 
     def __len__(self):
-        return len(self.__dict__)
+        return len(self.keys())
 
     def __delitem__(self, key):
         self.__dict__[key] = None
@@ -62,7 +62,7 @@ class DictMixin(object):
         return not self.__eq__(other)
 
     def __str__(self):
-        return str(self.__dict__)
+        return str({k: v for k, v in self.__dict__.items() if not k.startswith('_')})
 
     def has_key(self, k):
         return k in self.__dict__
@@ -71,13 +71,18 @@ class DictMixin(object):
         return self.__dict__.update(*args, **kwargs)
 
     def keys(self):
-        return self.__dict__.keys()
+        return [k for k in self.__dict__.keys() if not k.startswith('_')]
 
     def values(self):
-        return self.__dict__.values()
+        return [v for k, v in self.__dict__.items() if not k.startswith('_')]
 
     def items(self):
-        return self.__dict__.items()
+        return [(k, v) for k, v in self.__dict__.items() if not k.startswith('_')]
+
+    def get(self, key, default=None):
+        if key in self.__dict__:
+            return self.__dict__[key]
+        return default
 
 
 class Logging(GeneratedLogging):
@@ -393,7 +398,8 @@ class BlobProperties(DictMixin):
     def _from_generated(cls, generated):
         blob = BlobProperties()
         blob.name = generated.name
-        blob.blob_type = BlobType(_get_enum_value(generated.properties.blob_type))
+        blob_type = _get_enum_value(generated.properties.blob_type)
+        blob.blob_type = BlobType(blob_type) if blob_type else None
         blob.etag = generated.properties.etag
         blob.deleted = generated.deleted
         blob.snapshot = generated.snapshot
@@ -423,6 +429,7 @@ class BlobPropertiesPaged(Paged):
             prefix=None,
             results_per_page=None,
             marker=None,
+            delimiter=None,
             location_mode=None):
         super(BlobPropertiesPaged, self).__init__(command, None)
         self.service_endpoint = None
@@ -430,8 +437,8 @@ class BlobPropertiesPaged(Paged):
         self.current_marker = None
         self.results_per_page = results_per_page
         self.next_marker = marker or ""
-        self.container_name = container
-        self.delimiter = None
+        self.container = container
+        self.delimiter = delimiter
         self.current_page = None
         self.location_mode = location_mode
 
@@ -465,7 +472,7 @@ class BlobPropertiesPaged(Paged):
         self.results_per_page = self._response.max_results
         self.current_page = self._response.segment.blob_items
         self.next_marker = self._response.next_marker or None
-        self.container_name = self._response.container_name
+        self.container = self._response.container_name
         self.delimiter = self._response.delimiter
         return self.current_page
 
@@ -473,7 +480,11 @@ class BlobPropertiesPaged(Paged):
         item = super(BlobPropertiesPaged, self).__next__()
         if isinstance(item, BlobProperties):
             return item
-        return BlobProperties._from_generated(item)  # pylint: disable=protected-access
+        if isinstance(item, BlobItem):
+            blob = BlobProperties._from_generated(item)  # pylint: disable=protected-access
+            blob.container = self.container
+            return blob
+        return item
 
     next = __next__
 
@@ -510,19 +521,15 @@ class BlobPrefix(BlobPropertiesPaged, DictMixin):
         self.current_page = self._response.segment.blob_prefixes
         self.current_page.extend(self._response.segment.blob_items)
         self.next_marker = self._response.next_marker or None
-        self.container_name = self._response.container_name
+        self.container = self._response.container_name
         self.delimiter = self._response.delimiter
 
     def __next__(self):
         item = super(BlobPrefix, self).__next__()
-        if isinstance(item, BlobProperties):
-            return item
-        if isinstance(item, BlobItem):
-            return BlobProperties._from_generated(item)  # pylint: disable=protected-access
         if isinstance(item, GenBlobPrefix):
             return BlobPrefix(
                 self._get_next,
-                container=self.container_name,
+                container=self.container,
                 prefix=item.name,
                 results_per_page=self.results_per_page,
                 location_mode=self.location_mode)
