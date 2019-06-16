@@ -47,6 +47,32 @@ if TYPE_CHECKING:
 
 
 class BlobServiceClient(StorageAccountHostsMixin):
+    """ A client interact with the Blob Service at the account level.
+
+    This client provides operations to retrieve and configure the account properties
+    as well as list, create and delete containers within the account.
+    For operations relating to a specific container or blob, clients for those entities
+    can also be retrieved using the `get_client` functions.
+
+    :ivar str url:
+        The full endpoint URL to the Blob service account. This could be either the
+        primary endpoint, or the secondard endpint depending on the current `location_mode`.
+    :ivar str primary_endpoint:
+        The full primary endpoint URL.
+    :ivar str primary_hostname:
+        The hostname of the primary endpoint.
+    :ivar str secondary_endpoint:
+        The full secondard endpoint URL if configured. If not available
+        a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str secondary_hostname:
+        The hostname of the secondary endpoint. If not available this
+        will be None. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+    :ivar str location_mode:
+        The location mode that the client is currently using. By default
+        this will be "primary". Options include "primary" and "secondary".
+    """
 
     def __init__(
             self, account_url,  # type: str
@@ -55,6 +81,19 @@ class BlobServiceClient(StorageAccountHostsMixin):
             **kwargs  # type: Any
         ):
         # type: (...) -> None
+        """A new BlobServiceClient.
+
+        :param str account_url:
+            The URL to the blob storage account. Any other entities included
+            in the URL path (e.g. container or blob) will be discarded. This URL can be optionally
+            authenticated with a SAS token.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string, and account
+            shared access key, or an instance of a TokenCredentials class from azure.identity.
+        :param ~azure.storage.blob.Configuration configuration:
+            An optional pipeline configuration.
+        """
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -69,6 +108,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
         super(BlobServiceClient, self).__init__(parsed_url, credential, configuration, **kwargs)
 
     def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+        """
         return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
 
     @classmethod
@@ -78,12 +120,17 @@ class BlobServiceClient(StorageAccountHostsMixin):
             configuration=None, # type: Optional[Configuration]
             **kwargs  # type: Any
         ):
-        """
-        Create BlobServiceClient from a Connection String.
+        """Create BlobServiceClient from a Connection String.
 
-        :param str conn_str: A connection string to an Azure Storage account.
+        :param str conn_str:
+            A connection string to an Azure Storage account.
         :param credential:
-        :param configuration: Optional pipeline configuration settings.
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string, and account shared access
+            key, or an instance of a TokenCredentials class from azure.identity.
+        :param configuration:
+            Optional pipeline configuration settings.
         :type configuration: ~azure.core.configuration.Configuration
         """
         account_url, secondary, credential = parse_connection_str(conn_str, credential)
@@ -99,13 +146,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
             ip=None,  # type: Optional[str]
             protocol=None  # type: Optional[str]
         ):
-        '''
+        """
         Generates a shared access signature for the blob service.
-        Use the returned signature with the sas_token parameter of any BlobService.
+        Use the returned signature with the credential parameter of any BlobServiceClient,
+        ContainerClient or BlobClient.
 
-        :param ResourceTypes resource_types:
+        :param ~azure.storage.blob.models.ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account SAS.
-        :param AccountPermissions permission:
+        :param ~azure.storage.blob.models.AccountPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Required unless an id is given referencing a stored access policy
@@ -133,11 +181,10 @@ class BlobServiceClient(StorageAccountHostsMixin):
             For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
             restricts the request to those IP addresses.
         :param str protocol:
-            Specifies the protocol permitted for a request made. The default value
-            is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
+            Specifies the protocol permitted for a request made. The default value is https.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
-        '''
+        """
         if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
             raise ValueError("No account SAS key available.")
 
@@ -147,8 +194,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
     def get_account_information(self, **kwargs):
         # type: (Optional[int]) -> Dict[str, str]
-        """
-        Gets information related to the storage account.
+        """Gets information related to the storage account.
         The information can also be retrieved if the user has a SAS to a container or blob.
 
         :returns: A dict of account information (SKU and account type).
@@ -161,8 +207,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
     def get_service_stats(self, timeout=None, **kwargs):
         # type: (Optional[int], **Any) -> Dict[str, Any]
-        """
-        Retrieves statistics related to replication for the Blob service. It is
+        """Retrieves statistics related to replication for the Blob service. It is
         only available when read-access geo-redundant replication is enabled for
         the storage account.
 
@@ -192,8 +237,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
     def get_service_properties(self, timeout=None, **kwargs):
         # type(Optional[int]) -> Dict[str, Any]
-        """
-        Gets the properties of a storage account's Blob service, including
+        """Gets the properties of a storage account's Blob service, including
         Azure Storage Analytics.
 
         :param int timeout:
@@ -206,19 +250,18 @@ class BlobServiceClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     def set_service_properties(
-            self, logging=None,  # type: Optional[Union[Logging, Dict[str, Any]]]
-            hour_metrics=None,  # type: Optional[Union[Metrics, Dict[str, Any]]]
-            minute_metrics=None,  # type: Optional[Union[Metrics, Dict[str, Any]]]
-            cors=None,  # type: Optional[List[Union[CorsRule, Dict[str, Any]]]]
+            self, logging=None,  # type: Optional[Logging]
+            hour_metrics=None,  # type: Optional[Metrics]
+            minute_metrics=None,  # type: Optional[Metrics]
+            cors=None,  # type: Optional[List[CorsRule]]
             target_version=None,  # type: Optional[str]
+            delete_retention_policy=None,  # type: Optional[RetentionPolicy]
+            static_website=None,  # type: Optional[StaticWebsite]
             timeout=None,  # type: Optional[int]
-            delete_retention_policy=None,  # type: Optional[Union[RetentionPolicy, Dict[str, Any]]]
-            static_website=None,  # type: Optional[Union[StaticWebsite, Dict[str, Any]]]
             **kwargs
         ):
         # type: (...) -> None
-        """
-        Sets the properties of a storage account's Blob service, including
+        """Sets the properties of a storage account's Blob service, including
         Azure Storage Analytics. If an element (e.g. Logging) is left as None, the
         existing settings on the service for that functionality are preserved.
 
@@ -244,8 +287,6 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :param str target_version:
             Indicates the default version to use for requests if an incoming
             request's version is not specified.
-        :param int timeout:
-            The timeout parameter is expressed in seconds.
         :param delete_retention_policy:
             The delete retention policy specifies whether to retain deleted blobs.
             It also specifies the number of days and versions of blob to keep.
@@ -256,6 +297,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
             and if yes, indicates the index document and 404 error document to use.
         :type static_website:
             :class:`~azure.storage.blob.models.StaticWebsite`
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
         :rtype: None
         """
         props = StorageServiceProperties(
@@ -268,7 +311,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             static_website=static_website
         )
         try:
-            return self._client.service.set_properties(props, timeout=timeout, **kwargs)
+            self._client.service.set_properties(props, timeout=timeout, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -276,12 +319,12 @@ class BlobServiceClient(StorageAccountHostsMixin):
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
             marker=None,  # type: Optional[str]
+            results_per_page=None,  # type: Optional[int]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> ContainerPropertiesPaged
-        """
-        Returns a generator to list the containers under the specified account.
+        """Returns a generator to list the containers under the specified account.
         The generator will lazily follow the continuation tokens returned by
         the service and stop when all containers have been returned.
 
@@ -294,13 +337,15 @@ class BlobServiceClient(StorageAccountHostsMixin):
             An opaque continuation token. This value can be retrieved from the
             next_marker field of a previous generator object. If specified,
             this generator will begin returning results from this point.
+        :param int results_per_page:
+            The maximum number of container names to retrieve per API
+            call. If the request does not specify the server will return up to 5,000 items.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: An iterable (auto-paging) of ContainerProperties.
         :rtype: ~azure.core.blob.models.ContainerPropertiesPaged
         """
         include = 'metadata' if include_metadata else None
-        results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
             self._client.service.list_containers_segment,
             prefix=name_starts_with,
@@ -311,20 +356,18 @@ class BlobServiceClient(StorageAccountHostsMixin):
             command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
     def create_container(
-            self, name,  # type: Union[ContainerProperties, str]
+            self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
             public_access=None,  # type: Optional[Union[PublicAccess, str]]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> ContainerClient
-        """
-        Creates a new container under the specified account. If the container
-        with the same name already exists, the operation fails.
+        """Creates a new container under the specified account. If the container
+        with the same name already exists, the operation fails. Returns a client with
+        which to interact with the newly created container.
 
-        :param container: The container for the blob. If specified, this value will override
-         a container value specified in the blob URL.
-        :type container: str or ~azure.storage.blob.models.ContainerProperties
+        :param str name: The name of the container to create.
         :param metadata:
             A dict with name_value pairs to associate with the
             container as metadata. Example:{'Category':'test'}
@@ -333,7 +376,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             Possible values include: container, blob.
         :param int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
+        :rtype: ~azure.storage.blob.container_client.ContainerClient
         """
         container = self.get_container_client(name)
         container.create_container(
@@ -351,12 +394,13 @@ class BlobServiceClient(StorageAccountHostsMixin):
             **kwargs
         ):
         # type: (...) -> None
-        """
-        Marks the specified container for deletion. The container and any blobs
+        """Marks the specified container for deletion. The container and any blobs
         contained within it are later deleted during garbage collection.
 
-        :param container: The container for the blob. If specified, this value will override
-         a container value specified in the blob URL.
+        :param container: 
+            The container to delete. This can either be the name of the container,
+            or an instance of ContainerProperties.
+        :type container: str or ~azure.storage.blob.models.ContainerProperties
         :param ~azure.storage.blob.lease.LeaseClient lease:
             If specified, delete_container only succeeds if the
             container's lease is active and matches this ID.
@@ -389,12 +433,12 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
     def get_container_client(self, container):
         # type: (Union[ContainerProperties, str]) -> ContainerClient
-        """
-        Get a client to interact with the specified container.
+        """Get a client to interact with the specified container.
         The container need not already exist.
 
-        :param container: The container for the blob. If specified, this value will override
-         a container value specified in the blob URL.
+        :param container:
+            The container. This can either be the name of the container,
+            or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.models.ContainerProperties
         :returns: A ContainerClient.
         :rtype: ~azure.core.blob.container_client.ContainerClient
@@ -416,13 +460,16 @@ class BlobServiceClient(StorageAccountHostsMixin):
         Get a client to interact with the specified blob.
         The blob need not already exist.
 
-        :param container: The container for the blob. If specified, this value will override
-         a container value specified in the blob URL.
+        :param container:
+            The container that the blob is in. This can either be the name of the container,
+            or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.models.ContainerProperties
-        :param blob: The blob with which to interact. If specified, this value will override
-         a blob value specified in the blob URL.
+        :param blob:
+            The blob with which to interact. This can either be the name of the blob,
+            or an instance of BlobProperties.
         :type blob: str or ~azure.storage.blob.models.BlobProperties
-        :param str snapshot: The optional blob snapshot on which to operate.
+        :param str snapshot:
+            The optional blob snapshot on which to operate.
         :returns: A BlobClient.
         :rtype: ~azure.core.blob.blob_client.BlobClient
         """
