@@ -20,35 +20,24 @@ import six
 from azure.core import Configuration
 
 from ._shared_access_signature import BlobSharedAccessSignature
-from .common import BlobType, LocationMode
+from .common import BlobType
 from .lease import LeaseClient
 from .blob_client import BlobClient
-from .models import ContainerProperties, BlobProperties, BlobPropertiesPaged, AccessPolicy
+from .models import ContainerProperties, BlobProperties, BlobPropertiesPaged
 from ._utils import (
     StorageAccountHostsMixin,
-    create_client,
-    create_configuration,
-    create_pipeline,
     get_access_conditions,
     get_modification_conditions,
     return_response_headers,
     add_metadata_headers,
     process_storage_error,
-    encode_base64,
     parse_connection_str,
     serialize_iso,
     parse_query,
-    is_credential_sastoken,
-    return_headers_and_deserialized,
-    return_context_and_deserialized)
-from ._deserialize import (
-    deserialize_container_properties,
-    deserialize_metadata
-)
+    return_headers_and_deserialized)
+from ._deserialize import deserialize_container_properties
 
 from ._generated.models import (
-    ListBlobsIncludeItem,
-    BlobHTTPHeaders,
     StorageErrorException,
     SignedIdentifier)
 
@@ -78,7 +67,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param container: The container for the blob. If specified, this value will override
          a container value specified in the blob URL.
         :type container: str or ~azure.storage.blob.models.ContainerProperties
-        :param credential: 
+        :param credential:
         :param configuration: A optional pipeline configuration.
          This can be retrieved with :func:`ContainerClient.create_configuration()`
         """
@@ -213,7 +202,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC. 
+            If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
         :param datetime if_unmodified_since:
@@ -264,7 +253,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC. 
+            If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
         :param datetime if_unmodified_since:
@@ -289,7 +278,7 @@ class ContainerClient(StorageAccountHostsMixin):
             **kwargs)
         return lease
 
-    def get_account_information(self, timeout=None, **kwargs):
+    def get_account_information(self, **kwargs):
         # type: (Optional[int]) -> Dict[str, str]
         """
         :returns: A dict of account information (SKU and account type).
@@ -423,7 +412,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :param ~azure.storage.blob.models.Include include:
             Specifies one or more additional datasets to include in the response.
         :param str marker:
-            An opaque continuation token. This value can be retrieved from the 
+            An opaque continuation token. This value can be retrieved from the
             next_marker field of a previous generator object. If specified,
             this generator will begin returning results from this point.
         :param int timeout:
@@ -440,7 +429,7 @@ class ContainerClient(StorageAccountHostsMixin):
             include=include,
             timeout=timeout,
             **kwargs)
-        return BlobPropertiesPaged(command, prefix=name_starts_with, results_per_page=results_per_page,  marker=marker)
+        return BlobPropertiesPaged(command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
 
     # def walk_blob_properties(self, name_starts_with=None, include=None, delimiter="/", timeout=None, **kwargs):
     #     # type: (Optional[str], Optional[Include], Optional[int]) -> Iterable[BlobProperties]
@@ -455,7 +444,7 @@ class ContainerClient(StorageAccountHostsMixin):
     #     :param ~azure.storage.blob.models.Include include:
     #         Specifies one or more additional datasets to include in the response.
     #     :param str marker:
-    #         An opaque continuation token. This value can be retrieved from the 
+    #         An opaque continuation token. This value can be retrieved from the
     #         next_marker field of a previous generator object. If specified,
     #         this generator will begin returning results from this point.
     #     :param int timeout:
@@ -474,7 +463,8 @@ class ContainerClient(StorageAccountHostsMixin):
     #         include=include,
     #         timeout=timeout,
     #         **kwargs)
-    #     return BlobPropertiesWalked(command, prefix=name_starts_with, results_per_page=results_per_page,  marker=marker)
+    #     return BlobPropertiesWalked(
+    #         command, prefix=name_starts_with, results_per_page=results_per_page,  marker=marker)
 
     def upload_blob(
             self, name,  # type: Union[str, BlobProperties]

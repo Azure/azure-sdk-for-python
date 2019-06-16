@@ -3,33 +3,30 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-many-lines
 
-import sys
 from io import BytesIO
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING
 )
 try:
-    from urllib.parse import urlparse, quote, unquote, parse_qs
+    from urllib.parse import urlparse, quote, unquote
 except ImportError:
-    from urlparse import urlparse, parse_qs
+    from urlparse import urlparse
     from urllib2 import quote, unquote
 
 import six
 from azure.core import Configuration
 
-from .common import BlobType, LocationMode
+from .common import BlobType
 from .lease import LeaseClient
 from .models import BlobBlock
-from .polling import CopyBlob, CopyStatusPoller
+from .polling import CopyStatusPoller
 from ._shared_access_signature import BlobSharedAccessSignature
 from ._encryption import _generate_blob_encryption_data, _encrypt_blob
 from ._utils import (
     StorageAccountHostsMixin,
-    create_client,
-    create_configuration,
-    create_pipeline,
     get_access_conditions,
     get_modification_conditions,
     get_sequence_conditions,
@@ -41,14 +38,9 @@ from ._utils import (
     read_length,
     parse_connection_str,
     parse_query,
-    is_credential_sastoken,
-    validate_and_format_range_headers,
-    parse_length_from_content_range
+    validate_and_format_range_headers
 )
-from ._deserialize import (
-    deserialize_blob_properties,
-    deserialize_metadata
-)
+from ._deserialize import deserialize_blob_properties
 from ._generated.models import (
     BlobHTTPHeaders,
     BlockLookupList,
@@ -72,7 +64,6 @@ if TYPE_CHECKING:
         BlobProperties,
         BlobPermissions,
         ContentSettings,
-        BlobBlock,
     )
 
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
@@ -264,17 +255,17 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             content_type=content_type,
         )
 
-    def get_account_information(self, timeout=None):
+    def get_account_information(self, **kwargs):
         # type: (Optional[int]) -> Dict[str, str]
         """
         :returns: A dict of account information (SKU and account type).
         """
         try:
-            return self._client.blob.get_account_info(cls=return_response_headers)
+            return self._client.blob.get_account_info(cls=return_response_headers, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def upload_blob(
+    def upload_blob(  # pylint: disable=too-many-statements,too-many-branches,too-many-return-statements,too-many-locals
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             length=None,  # type: Optional[int]
@@ -424,66 +415,66 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                         data_stream_total=adjusted_count,
                         upload_stream_current=0,
                         **kwargs)
-                else:
-                    cek, iv, encryption_data = None, None, None
-                    blob_settings = self._config.blob_settings
-                    use_original_upload_path = blob_settings.use_byte_buffer or \
-                        validate_content or self.require_encryption or \
-                        blob_settings.max_block_size < blob_settings.min_large_block_upload_threshold or \
-                        hasattr(stream, 'seekable') and not stream.seekable() or \
-                        not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
 
-                    if use_original_upload_path:
-                        if self.key_encryption_key:
-                            cek, iv, encryption_data = _generate_blob_encryption_data(self.key_encryption_key)
-                            headers['x-ms-meta-encryptiondata'] = encryption_data
-                        block_ids = _upload_blob_chunks(
-                            blob_service=self._client.block_blob,
-                            blob_size=length,
-                            block_size=blob_settings.max_block_size,
-                            stream=stream,
-                            max_connections=max_connections,
-                            validate_content=validate_content,
-                            access_conditions=access_conditions,
-                            uploader_class=_BlockBlobChunkUploader,
-                            timeout=timeout,
-                            content_encryption_key=cek,
-                            initialization_vector=iv,
-                            **kwargs
-                        )
-                    else:
-                        block_ids = _upload_blob_substream_blocks(
-                            blob_service=self._client.block_blob,
-                            blob_size=length,
-                            block_size=blob_settings.max_block_size,
-                            stream=stream,
-                            max_connections=max_connections,
-                            validate_content=validate_content,
-                            access_conditions=access_conditions,
-                            uploader_class=_BlockBlobChunkUploader,
-                            timeout=timeout,
-                            **kwargs
-                        )
+                cek, iv, encryption_data = None, None, None
+                blob_settings = self._config.blob_settings
+                use_original_upload_path = blob_settings.use_byte_buffer or \
+                    validate_content or self.require_encryption or \
+                    blob_settings.max_block_size < blob_settings.min_large_block_upload_threshold or \
+                    hasattr(stream, 'seekable') and not stream.seekable() or \
+                    not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
 
-                    block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
-                    block_lookup.latest = [b.id for b in block_ids]
-                    return self._client.block_blob.commit_block_list(
-                        block_lookup,
-                        blob_http_headers=blob_headers,
-                        lease_access_conditions=access_conditions,
-                        timeout=timeout,
-                        modified_access_conditions=mod_conditions,
-                        cls=return_response_headers,
+                if use_original_upload_path:
+                    if self.key_encryption_key:
+                        cek, iv, encryption_data = _generate_blob_encryption_data(self.key_encryption_key)
+                        headers['x-ms-meta-encryptiondata'] = encryption_data
+                    block_ids = _upload_blob_chunks(
+                        blob_service=self._client.block_blob,
+                        blob_size=length,
+                        block_size=blob_settings.max_block_size,
+                        stream=stream,
+                        max_connections=max_connections,
                         validate_content=validate_content,
-                        headers=headers,
-                        **kwargs)
+                        access_conditions=access_conditions,
+                        uploader_class=_BlockBlobChunkUploader,
+                        timeout=timeout,
+                        content_encryption_key=cek,
+                        initialization_vector=iv,
+                        **kwargs
+                    )
+                else:
+                    block_ids = _upload_blob_substream_blocks(
+                        blob_service=self._client.block_blob,
+                        blob_size=length,
+                        block_size=blob_settings.max_block_size,
+                        stream=stream,
+                        max_connections=max_connections,
+                        validate_content=validate_content,
+                        access_conditions=access_conditions,
+                        uploader_class=_BlockBlobChunkUploader,
+                        timeout=timeout,
+                        **kwargs
+                    )
 
-            elif blob_type == BlobType.PageBlob:
+                block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
+                block_lookup.latest = [b.id for b in block_ids]
+                return self._client.block_blob.commit_block_list(
+                    block_lookup,
+                    blob_http_headers=blob_headers,
+                    lease_access_conditions=access_conditions,
+                    timeout=timeout,
+                    modified_access_conditions=mod_conditions,
+                    cls=return_response_headers,
+                    validate_content=validate_content,
+                    headers=headers,
+                    **kwargs)
+
+            if blob_type == BlobType.PageBlob:
                 if length is None or length < 0:
                     raise ValueError("A content length must be specified for a Page Blob.")
                 if length % 512 != 0:
                     raise ValueError("Invalid page blob size: {0}. "
-                                    "The size must be aligned to a 512-byte boundary.".format(length))
+                                     "The size must be aligned to a 512-byte boundary.".format(length))
                 if premium_page_blob_tier:
                     try:
                         headers['x-ms-access-tier'] = premium_page_blob_tier.value
@@ -521,7 +512,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                     initialization_vector=iv,
                     **kwargs
                 )
-            elif blob_type == BlobType.AppendBlob:
+            if blob_type == BlobType.AppendBlob:
                 if self.require_encryption or (self.key_encryption_key is not None):
                     raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
                 if length == 0:
@@ -545,6 +536,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 )
         except StorageErrorException as error:
             process_storage_error(error)
+        return None
 
     def download_blob(
             self, offset=None,  # type: Optional[int]
@@ -787,7 +779,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC. 
+            If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
         :param datetime if_unmodified_since:
@@ -899,7 +891,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC. 
+            If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
         :param datetime if_unmodified_since:
@@ -989,7 +981,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC. 
+            If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
         :param datetime if_unmodified_since:
@@ -1073,7 +1065,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def copy_blob_from_url(
+    def copy_blob_from_url(  # pylint: disable=too-many-locals
             self, source_url,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
             source_if_modified_since=None,  # type: Optional[datetime]
@@ -1095,56 +1087,56 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         ):
         # type: (...) -> Any
         """
-        Copies a blob asynchronously. This operation returns a copy operation 
+        Copies a blob asynchronously. This operation returns a copy operation
         object that can be used to wait on the completion of the operation,
         as well as check status or abort the copy operation.
         The Blob service copies blobs on a best-effort basis.
 
-        The source blob for a copy operation may be a block blob, an append blob, 
-        or a page blob. If the destination blob already exists, it must be of the 
-        same blob type as the source blob. Any existing destination blob will be 
-        overwritten. The destination blob cannot be modified while a copy operation 
+        The source blob for a copy operation may be a block blob, an append blob,
+        or a page blob. If the destination blob already exists, it must be of the
+        same blob type as the source blob. Any existing destination blob will be
+        overwritten. The destination blob cannot be modified while a copy operation
         is in progress.
 
-        When copying from a page blob, the Blob service creates a destination page 
-        blob of the source blob's length, initially containing all zeroes. Then 
-        the source page ranges are enumerated, and non-empty ranges are copied. 
+        When copying from a page blob, the Blob service creates a destination page
+        blob of the source blob's length, initially containing all zeroes. Then
+        the source page ranges are enumerated, and non-empty ranges are copied.
 
-        For a block blob or an append blob, the Blob service creates a committed 
-        blob of zero length before returning from this operation. When copying 
-        from a block blob, all committed blocks and their block IDs are copied. 
-        Uncommitted blocks are not copied. At the end of the copy operation, the 
+        For a block blob or an append blob, the Blob service creates a committed
+        blob of zero length before returning from this operation. When copying
+        from a block blob, all committed blocks and their block IDs are copied.
+        Uncommitted blocks are not copied. At the end of the copy operation, the
         destination blob will have the same committed block count as the source.
 
-        When copying from an append blob, all committed blocks are copied. At the 
-        end of the copy operation, the destination blob will have the same committed 
+        When copying from an append blob, all committed blocks are copied. At the
+        end of the copy operation, the destination blob will have the same committed
         block count as the source.
 
-        For all blob types, you can call status() on the returned polling object 
+        For all blob types, you can call status() on the returned polling object
         to check the status of the copy operation, or wait() to block until the
         operation is complete. The final blob will be committed when the copy completes.
 
         :param str source_url:
-            A URL of up to 2 KB in length that specifies an Azure file or blob. 
-            The value should be URL-encoded as it would appear in a request URI. 
-            If the source is in another account, the source must either be public 
-            or must be authenticated via a shared access signature. If the source 
+            A URL of up to 2 KB in length that specifies an Azure file or blob.
+            The value should be URL-encoded as it would appear in a request URI.
+            If the source is in another account, the source must either be public
+            or must be authenticated via a shared access signature. If the source
             is public, no authentication is required.
             Examples:
             https://myaccount.blob.core.windows.net/mycontainer/myblob
             https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
             https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
         :param metadata:
-            Name-value pairs associated with the blob as metadata. If no name-value 
-            pairs are specified, the operation will copy the metadata from the 
-            source blob or file to the destination blob. If one or more name-value 
-            pairs are specified, the destination blob is created with the specified 
-            metadata, and metadata is not copied from the source blob or file. 
+            Name-value pairs associated with the blob as metadata. If no name-value
+            pairs are specified, the operation will copy the metadata from the
+            source blob or file to the destination blob. If one or more name-value
+            pairs are specified, the destination blob is created with the specified
+            metadata, and metadata is not copied from the source blob or file.
         :type metadata: dict(str, str)
         :param datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC.  
+            If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this conditional header to copy the blob only if the source
             blob has been modified since the specified date/time.
         :param datetime source_if_unmodified_since:
@@ -1176,7 +1168,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param datetime destination_if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC. 
+            If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this conditional header to copy the blob only
             if the destination blob has not been modified since the specified
             date/time. If the destination blob has been modified, the Blob service
@@ -1399,7 +1391,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         access_conditions = get_access_conditions(lease)
         try:
-            blocks= self._client.block_blob.get_block_list(
+            blocks = self._client.block_blob.get_block_list(
                 list_type=block_list_type,
                 snapshot=self.snapshot,
                 timeout=timeout,
@@ -1410,9 +1402,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         committed = []
         uncommitted = []
         if blocks.committed_blocks:
-            committed = [BlobBlock._from_generated(b) for b in blocks.committed_blocks]
+            committed = [BlobBlock._from_generated(b) for b in blocks.committed_blocks]  # pylint: disable=protected-access
         if blocks.uncommitted_blocks:
-            uncommitted = [BlobBlock._from_generated(b) for b in blocks.uncommitted_blocks]
+            uncommitted = [BlobBlock._from_generated(b) for b in blocks.uncommitted_blocks]  # pylint: disable=protected-access
         return committed, uncommitted
 
     def commit_block_list(
@@ -1442,16 +1434,16 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param metadata:
             Name-value pairs associated with the blob as metadata.
         :param bool validate_content:
-            If true, calculates an MD5 hash of the page content. The storage 
+            If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting 
-            bitflips on the wire if using http instead of https as https (the default) 
-            will already validate. Note that this MD5 hash is not stored with the 
+            with the hash that was sent. This is primarily valuable for detecting
+            bitflips on the wire if using http instead of https as https (the default)
+            will already validate. Note that this MD5 hash is not stored with the
             blob.
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC. 
+            If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
         :param datetime if_unmodified_since:
@@ -1583,7 +1575,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC. 
+            If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
         :param datetime if_unmodified_since:
@@ -1677,7 +1669,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC. 
+            If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
         :param datetime if_unmodified_since:
@@ -1739,7 +1731,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC. 
+            If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
         :param datetime if_unmodified_since:
@@ -1816,11 +1808,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param lease:
             Required if the blob has an active lease.
         :param bool validate_content:
-            If true, calculates an MD5 hash of the page content. The storage 
+            If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
-            with the hash that was sent. This is primarily valuable for detecting 
-            bitflips on the wire if using http instead of https as https (the default) 
-            will already validate. Note that this MD5 hash is not stored with the 
+            with the hash that was sent. This is primarily valuable for detecting
+            bitflips on the wire if using http instead of https as https (the default)
+            will already validate. Note that this MD5 hash is not stored with the
             blob.
         :param int if_sequence_number_lte:
             If the blob's sequence number is less than or equal to
@@ -1834,7 +1826,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC. 
+            If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
         :param datetime if_unmodified_since:
@@ -1996,11 +1988,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             return self._client.append_blob.append_block(
                 data,
                 content_length=length,
-                timeout=None,
+                timeout=timeout,
                 transactional_content_md5=None,
                 lease_access_conditions=access_conditions,
                 append_position_access_conditions=append_conditions,
                 modified_access_conditions=mod_conditions,
+                validate_content=validate_content,
                 cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:

@@ -13,7 +13,7 @@ from ._utils import _sign_string, url_quote, _QueryStringConstants
 
 if sys.version_info < (3,):
     def _str(value):
-        if isinstance(value, unicode):
+        if isinstance(value, unicode):  # pylint: disable=undefined-variable
             return value.encode('utf-8')
 
         return str(value)
@@ -29,7 +29,7 @@ class SharedAccessSignature(object):
     '''
     Provides a factory for creating account access
     signature tokens with an account name and account key. Users can either
-    use the factory or can construct the appropriate service and use the 
+    use the factory or can construct the appropriate service and use the
     generate_*_shared_access_signature method directly.
     '''
 
@@ -50,33 +50,33 @@ class SharedAccessSignature(object):
                          ip=None, protocol=None):
         '''
         Generates a shared access signature for the account.
-        Use the returned signature with the sas_token parameter of the service 
+        Use the returned signature with the sas_token parameter of the service
         or to create a new account object.
 
         :param ResourceTypes resource_types:
-            Specifies the resource types that are accessible with the account 
-            SAS. You can combine values to provide access to more than one 
-            resource type. 
+            Specifies the resource types that are accessible with the account
+            SAS. You can combine values to provide access to more than one
+            resource type.
         :param AccountPermissions permission:
-            The permissions associated with the shared access signature. The 
-            user is restricted to operations allowed by the permissions. 
-            Required unless an id is given referencing a stored access policy 
-            which contains this field. This field must be omitted if it has been 
-            specified in an associated stored access policy. You can combine 
+            The permissions associated with the shared access signature. The
+            user is restricted to operations allowed by the permissions.
+            Required unless an id is given referencing a stored access policy
+            which contains this field. This field must be omitted if it has been
+            specified in an associated stored access policy. You can combine
             values to provide more than one permission.
         :param expiry:
-            The time at which the shared access signature becomes invalid. 
-            Required unless an id is given referencing a stored access policy 
-            which contains this field. This field must be omitted if it has 
-            been specified in an associated stored access policy. Azure will always 
-            convert values to UTC. If a date is passed in without timezone info, it 
+            The time at which the shared access signature becomes invalid.
+            Required unless an id is given referencing a stored access policy
+            which contains this field. This field must be omitted if it has
+            been specified in an associated stored access policy. Azure will always
+            convert values to UTC. If a date is passed in without timezone info, it
             is assumed to be UTC.
         :type expiry: datetime or str
         :param start:
-            The time at which the shared access signature becomes valid. If 
-            omitted, start time for this call is assumed to be the time when the 
-            storage service receives the request. Azure will always convert values 
-            to UTC. If a date is passed in without timezone info, it is assumed to 
+            The time at which the shared access signature becomes valid. If
+            omitted, start time for this call is assumed to be the time when the
+            storage service receives the request. Azure will always convert values
+            to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
         :type start: datetime or str
         :param str ip:
@@ -162,7 +162,7 @@ class _SharedAccessHelper(object):
              get_value_to_append(_QueryStringConstants.SIGNED_PROTOCOL) +
              get_value_to_append(_QueryStringConstants.SIGNED_VERSION))
 
-        if service == 'blob' or service == 'file':
+        if service in ['blob', 'file']:
             string_to_sign += \
                 (get_value_to_append(_QueryStringConstants.SIGNED_CACHE_CONTROL) +
                  get_value_to_append(_QueryStringConstants.SIGNED_CONTENT_DISPOSITION) +

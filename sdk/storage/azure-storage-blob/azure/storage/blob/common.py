@@ -5,13 +5,13 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from ._generated.models import StorageErrorCode
+from ._generated.models import StorageErrorCode  # pylint: disable=unused-import
 
 
 class LocationMode(object):
     """
-    Specifies the location the request should be sent to. This mode only applies 
-    for RA-GRS accounts which allow secondary read access. All other account types 
+    Specifies the location the request should be sent to. This mode only applies
+    for RA-GRS accounts which allow secondary read access. All other account types
     must use PRIMARY.
     """
 

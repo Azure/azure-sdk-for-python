@@ -24,15 +24,15 @@ if TYPE_CHECKING:
 
 class LeaseClient(object):
 
-    def __init__(self, client, lease_id=None, **kwargs):
-        # type: (Union[BlobClient, ContainerClient], Optional[str], **Any) -> None
+    def __init__(self, client, lease_id=None):
+        # type: (Union[BlobClient, ContainerClient], Optional[str]) -> None
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None
         self.etag = None
         if hasattr(client, 'blob_name'):
-            self._client = client._client.blob
+            self._client = client._client.blob  # pylint: disable=protected-access
         elif hasattr(client, 'container_name'):
-            self._client = client._client.container
+            self._client = client._client.container  # pylint: disable=protected-access
         else:
             raise TypeError("Lease must use either BlobClient or ContainerClient.")
 
@@ -64,7 +64,7 @@ class LeaseClient(object):
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC. 
+            If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
         :param datetime if_unmodified_since:
@@ -90,7 +90,7 @@ class LeaseClient(object):
         except StorageErrorException as error:
             process_storage_error(error)
         self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime 
+        self.last_modified = response.get('last_modified')   # type: datetime
         self.etag = kwargs.get('etag')  # type: str
 
     def renew(
@@ -181,7 +181,7 @@ class LeaseClient(object):
         is broken, the lease break period is allowed to elapse, during which time
         no lease operation except break and release can be performed on the container or blob.
         When a lease is successfully broken, the response indicates the interval
-        in seconds until a new lease can be acquired. 
+        in seconds until a new lease can be acquired.
 
         :param int lease_break_period:
             This is the proposed duration of seconds that the lease
@@ -196,7 +196,7 @@ class LeaseClient(object):
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC. 
+            If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
         :param datetime if_unmodified_since:

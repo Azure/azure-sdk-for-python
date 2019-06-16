@@ -8,7 +8,7 @@ from .models import BlobProperties
 from .models import ContainerProperties
 
 
-def deserialize_metadata(response, obj, headers):
+def deserialize_metadata(response, _, headers):  # pylint: disable=unused-argument
     raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
     return {k[10:]: v for k, v in raw_metadata.items()}
 

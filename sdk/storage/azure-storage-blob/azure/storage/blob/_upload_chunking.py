@@ -24,7 +24,7 @@ _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = '{0} should be a seekable file-like/io.IOBase type stream object.'
 
 
-def _upload_blob_chunks(blob_service, blob_size, block_size, stream, max_connections, validate_content,
+def _upload_blob_chunks(blob_service, blob_size, block_size, stream, max_connections, validate_content,  # pylint: disable=too-many-locals
                         access_conditions, uploader_class, append_conditions=None, modified_access_conditions=None,
                         timeout=None, content_encryption_key=None, initialization_vector=None, **kwargs):
 
@@ -60,9 +60,11 @@ def _upload_blob_chunks(blob_service, blob_size, block_size, stream, max_connect
         from threading import BoundedSemaphore
 
         '''
-        Ensures we bound the chunking so we only buffer and submit 'max_connections' amount of work items to the executor.
-        This is necessary as the executor queue will keep accepting submitted work items, which results in buffering all the blocks if
-        the max_connections + 1 ensures the next chunk is already buffered and ready for when the worker thread is available.
+        Ensures we bound the chunking so we only buffer and submit 'max_connections'
+        amount of work items to the executor. This is necessary as the executor queue will keep
+        accepting submitted work items, which results in buffering all the blocks if
+        the max_connections + 1 ensures the next chunk is already buffered and ready for when
+        the worker thread is available.
         '''
         chunk_throttler = BoundedSemaphore(max_connections + 1)
 
@@ -76,8 +78,7 @@ def _upload_blob_chunks(blob_service, blob_size, block_size, stream, max_connect
                 if f.done():
                     if f.exception():
                         raise f.exception()
-                    else:
-                        running_futures.remove(f)
+                    running_futures.remove(f)
 
             chunk_throttler.acquire()
             future = executor.submit(uploader.process_chunk, chunk)
@@ -136,6 +137,7 @@ def _upload_blob_substream_blocks(blob_service, blob_size, block_size, stream, m
 
 
 class _BlobChunkUploader(object):
+
     def __init__(self, blob_service, blob_size, chunk_size, stream, parallel,
                  validate_content, access_conditions, timeout, encryptor, padder):
         self.blob_service = blob_service
@@ -153,6 +155,7 @@ class _BlobChunkUploader(object):
         self.encryptor = encryptor
         self.padder = padder
         self.response_headers = None
+        
 
     def get_chunk_streams(self):
         index = 0
@@ -185,7 +188,7 @@ class _BlobChunkUploader(object):
                     data = self.padder.update(data) + self.padder.finalize()
                 if self.encryptor:
                     data = self.encryptor.update(data) + self.encryptor.finalize()
-                if len(data) > 0:
+                if data:
                     yield index, data
                 break
             index += len(data)
@@ -201,6 +204,9 @@ class _BlobChunkUploader(object):
                 self.progress_total += length
         else:
             self.progress_total += length
+
+    def _upload_chunk(self, chunk_offset, chunk_data):
+        raise NotImplementedError("Must be implemented by child class.")
 
     def _upload_chunk_with_progress(self, chunk_offset, chunk_data):
         range_id = self._upload_chunk(chunk_offset, chunk_data)
@@ -227,6 +233,9 @@ class _BlobChunkUploader(object):
 
     def process_substream_block(self, block_data):
         return self._upload_substream_block_with_progress(block_data[0], block_data[1])
+
+    def _upload_substream_block(self, block_id, block_stream):
+        raise NotImplementedError("Must be implemented by child class.")
 
     def _upload_substream_block_with_progress(self, block_id, block_stream):
         range_id = self._upload_substream_block(block_id, block_stream)

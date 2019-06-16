@@ -14,27 +14,18 @@ try:
 except ImportError:
     from urlparse import urlparse
 
-from ._generated.models import StorageErrorException
+from ._generated.models import StorageErrorException, StorageServiceProperties
 from ._shared_access_signature import SharedAccessSignature
 from .container_client import ContainerClient
 from .blob_client import BlobClient
-from .models import (
-    ContainerProperties,
-    StorageServiceProperties,
-    ContainerPropertiesPaged
-)
-from .common import BlobType, LocationMode
+from .models import ContainerProperties, ContainerPropertiesPaged
+from .common import LocationMode
 from ._utils import (
     StorageAccountHostsMixin,
-    create_client,
-    create_pipeline,
-    create_configuration,
-    get_access_conditions,
     process_storage_error,
     return_response_headers,
     parse_connection_str,
-    parse_query,
-    is_credential_sastoken,
+    parse_query
 )
 
 if TYPE_CHECKING:
@@ -47,7 +38,6 @@ if TYPE_CHECKING:
         AccountPermissions,
         ResourceTypes,
         BlobProperties,
-        SnapshotProperties,
         Logging,
         Metrics,
         RetentionPolicy,
@@ -155,7 +145,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         return sas.generate_account(resource_types, permission,
                                     expiry, start=start, ip=ip, protocol=protocol)
 
-    def get_account_information(self, timeout=None):
+    def get_account_information(self, **kwargs):
         # type: (Optional[int]) -> Dict[str, str]
         """
         Gets information related to the storage account.
@@ -165,7 +155,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :rtype: dict(str, str)
         """
         try:
-            return self._client.service.get_account_info(cls=return_response_headers)
+            return self._client.service.get_account_info(cls=return_response_headers, **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -229,7 +219,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         # type: (...) -> None
         """
         Sets the properties of a storage account's Blob service, including
-        Azure Storage Analytics. If an element (e.g. Logging) is left as None, the 
+        Azure Storage Analytics. If an element (e.g. Logging) is left as None, the
         existing settings on the service for that functionality are preserved.
 
         :param logging:
@@ -237,23 +227,23 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :type logging:
             :class:`~azure.storage.blob.models.Logging`
         :param hour_metrics:
-            The hour metrics settings provide a summary of request 
+            The hour metrics settings provide a summary of request
             statistics grouped by API in hourly aggregates for blobs.
         :type hour_metrics:
             :class:`~azure.storage.blob.models.Metrics`
         :param minute_metrics:
-            The minute metrics settings provide request statistics 
+            The minute metrics settings provide request statistics
             for each minute for blobs.
         :type minute_metrics:
             :class:`~azure.storage.blob.models.Metrics`
         :param cors:
-            You can include up to five CorsRule elements in the 
-            list. If an empty list is specified, all CORS rules will be deleted, 
+            You can include up to five CorsRule elements in the
+            list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
         :type cors: list(:class:`~azure.storage.blob.models.CorsRule`)
         :param str target_version:
-            Indicates the default version to use for requests if an incoming 
-            request's version is not specified. 
+            Indicates the default version to use for requests if an incoming
+            request's version is not specified.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :param delete_retention_policy:
@@ -301,7 +291,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :param bool include_metadata:
             Specifies that container metadata be returned in the response.
         :param str marker:
-            An opaque continuation token. This value can be retrieved from the 
+            An opaque continuation token. This value can be retrieved from the
             next_marker field of a previous generator object. If specified,
             this generator will begin returning results from this point.
         :param int timeout:
@@ -374,7 +364,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :param datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
-            If a date is passed in without timezone info, it is assumed to be UTC. 
+            If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
         :param datetime if_unmodified_since:
@@ -409,7 +399,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
         :returns: A ContainerClient.
         :rtype: ~azure.core.blob.container_client.ContainerClient
         """
-        return ContainerClient(self.url, container=container,
+        return ContainerClient(
+            self.url, container=container,
             credential=self.credential, configuration=self._config,
             _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, key_encryption_key=self.key_encryption_key,

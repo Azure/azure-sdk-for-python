@@ -10,10 +10,10 @@ import hmac
 import logging
 import sys
 try:
-    from urllib.parse import urlparse, quote, unquote
+    from urllib.parse import urlparse, unquote
 except ImportError:
     from urlparse import urlparse
-    from urllib2 import quote, unquote
+    from urllib2 import unquote
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy

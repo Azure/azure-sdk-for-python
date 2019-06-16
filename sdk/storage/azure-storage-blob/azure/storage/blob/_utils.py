@@ -4,26 +4,25 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import base64
-import hashlib
-import hmac
-import sys
-import isodate
-import logging
-from os import fstat
-import xml.etree.ElementTree as ET
-from io import (BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation)
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List, Type,
     TYPE_CHECKING
 )
+import base64
+import hashlib
+import hmac
+import logging
+from os import fstat
+from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
+
 try:
-    from urllib.parse import urlparse, quote, unquote, parse_qs
+    from urllib.parse import quote, unquote, parse_qs
 except ImportError:
-    from urlparse import urlparse, parse_qs
+    from urlparse import parse_qs
     from urllib2 import quote, unquote
 
 import six
+import isodate
 
 from azure.core import Configuration
 from azure.core.exceptions import raise_with_traceback
@@ -31,10 +30,8 @@ from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
-    RetryPolicy,
     RedirectPolicy,
     ContentDecodePolicy,
-    NetworkTraceLoggingPolicy,
     BearerTokenCredentialPolicy,
     ProxyPolicy)
 from azure.core.exceptions import (
@@ -43,7 +40,6 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceExistsError,
     ClientAuthenticationError,
-    ResourceModifiedError,
     DecodeError)
 
 from .constants import STORAGE_OAUTH_SCOPE, SERVICE_HOST_BASE, DEFAULT_SOCKET_TIMEOUT
@@ -57,14 +53,12 @@ from ._policies import (
     StorageResponseHook,
     StorageLoggingPolicy,
     StorageHosts,
-    ExponentialRetry,
-    LinearRetry)
+    ExponentialRetry)
 from ._generated import AzureBlobStorage
 from ._generated.models import (
     LeaseAccessConditions,
     ModifiedAccessConditions,
-    SequenceNumberAccessConditions,
-    StorageErrorException
+    SequenceNumberAccessConditions
 )
 
 if TYPE_CHECKING:
@@ -141,10 +135,10 @@ class StorageAccountHostsMixin(object):
 
         account = parsed_url.netloc.split(".blob.core.")
         secondary_hostname = None
-        self.credential = self._format_shared_key_credential(account, credential)
+        self.credential = format_shared_key_credential(account, credential)
         if self.scheme.lower() != 'https' and hasattr(self.credential, 'get_token'):
             raise ValueError("Token credential is only supported with HTTPS.")
-        elif hasattr(self.credential, 'account_name'):
+        if hasattr(self.credential, 'account_name'):
             secondary_hostname = "{}-secondary.blob.{}".format(
                 self.credential.account_name, SERVICE_HOST_BASE)
 
@@ -204,7 +198,7 @@ class StorageAccountHostsMixin(object):
     def location_mode(self, value):
         if self._hosts.get(value):
             self._location_mode = value
-            self._client._config.url = self.url
+            self._client._config.url = self.url  # pylint: disable=protected-access
         else:
             raise ValueError("No host URL for location mode: {}".format(value))
 
@@ -219,22 +213,6 @@ class StorageAccountHostsMixin(object):
         """
         return create_configuration(**kwargs)
 
-    def _format_shared_key_credential(self, account, credential):
-        if isinstance(credential, six.string_types):
-            if len(account) < 2:
-                raise ValueError("Unable to determine account name for shared key credential.")
-            credential = {
-                'account_name': account[0],
-                'account_key': credential
-            }
-        if isinstance(credential, dict):
-            if 'account_name' not in credential:
-                raise ValueError("Shared key credential missing 'account_name")
-            elif 'account_key' not in credential:
-                raise ValueError("Shared key credential missing 'account_key")
-            return SharedKeyCredentialPolicy(**credential)
-        return credential
-
     def _format_query_string(self, sas_token, credential, snapshot=None):
         query_str = "?"
         if snapshot:
@@ -247,9 +225,25 @@ class StorageAccountHostsMixin(object):
         return query_str.rstrip('?&'), credential
 
 
+def format_shared_key_credential(account, credential):
+    if isinstance(credential, six.string_types):
+        if len(account) < 2:
+            raise ValueError("Unable to determine account name for shared key credential.")
+        credential = {
+            'account_name': account[0],
+            'account_key': credential
+        }
+    if isinstance(credential, dict):
+        if 'account_name' not in credential:
+            raise ValueError("Shared key credential missing 'account_name")
+        if 'account_key' not in credential:
+            raise ValueError("Shared key credential missing 'account_key")
+        return SharedKeyCredentialPolicy(**credential)
+    return credential
+
 def parse_connection_str(conn_str, credential):
     conn_str = conn_str.rstrip(';')
-    conn_settings = dict([s.split('=', 1) for s in conn_str.split(';')])
+    conn_settings = dict([s.split('=', 1) for s in conn_str.split(';')])  # pylint: disable=consider-using-dict-comprehension
     primary = None
     secondary = None
     if not credential:
@@ -277,7 +271,7 @@ def parse_connection_str(conn_str, credential):
                 conn_settings['AccountName'],
                 conn_settings['EndpointSuffix']
             )
-        except KeyError as error:
+        except KeyError:
             pass
 
     if not primary:
@@ -338,7 +332,7 @@ def serialize_iso(attr):
 
     :param Datetime attr: Object to be serialized.
     :rtype: str
-    :raises: SerializationError if format invalid.
+    :raises: ValueError if format invalid.
     """
     if not attr:
         return None
@@ -358,7 +352,7 @@ def serialize_iso(attr):
         return date + 'Z'
     except (ValueError, OverflowError) as err:
         msg = "Unable to serialize datetime object."
-        raise_with_traceback(SerializationError, msg, err)
+        raise_with_traceback(ValueError, msg, err)
     except AttributeError as err:
         msg = "ISO-8601 object must be valid Datetime object."
         raise_with_traceback(TypeError, msg, err)
@@ -369,7 +363,7 @@ def get_length(data):
     # Check if object implements the __len__ method, covers most input cases such as bytearray.
     try:
         length = len(data)
-    except:
+    except:  # pylint: disable=bare-except
         pass
 
     if not length:
@@ -401,12 +395,12 @@ def read_length(data):
             for chunk in iter(lambda: data.read(4096), b""):
                 read_data += chunk
             return len(read_data), read_data
-        elif hasattr(data, '__iter__'):
+        if hasattr(data, '__iter__'):
             read_data = b''
             for chunk in data:
                 read_data += chunk
             return len(read_data), read_data
-    except:
+    except:  # pylint: disable=bare-except
         pass
     raise ValueError("Unable to calculate content length, please specify.")
 
@@ -424,8 +418,9 @@ def parse_length_from_content_range(content_range):
     return int(content_range.split(' ', 1)[1].split('/', 1)[1])
 
 
-def validate_and_format_range_headers(start_range, end_range, start_range_required=True,
-                                       end_range_required=True, check_content_md5=False, align_to_page=False):
+def validate_and_format_range_headers(
+        start_range, end_range, start_range_required=True,
+        end_range_required=True, check_content_md5=False, align_to_page=False):
     # If end range is provided, start range must be provided
     if (start_range_required or end_range is not None) and start_range is None:
         raise ValueError("start_range value cannot be None.")
@@ -469,15 +464,15 @@ def normalize_headers(headers):
     return normalized
 
 
-def return_response_headers(response, deserialized, response_headers):
+def return_response_headers(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return normalize_headers(response_headers)
 
 
-def return_headers_and_deserialized(response, deserialized, response_headers):
+def return_headers_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return normalize_headers(response_headers), deserialized
 
 
-def return_context_and_deserialized(response, deserialized, response_headers):
+def return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
     return response.location_mode, deserialized
 
 
@@ -488,7 +483,7 @@ def create_client(url, pipeline):
 
 def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
-    if not 'connection_timeout' in kwargs:
+    if 'connection_timeout' not in kwargs:
         kwargs['connection_timeout'] = DEFAULT_SOCKET_TIMEOUT
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
@@ -563,7 +558,7 @@ def process_storage_error(storage_error):
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
         if error_body:
-            for info in error_body.getchildren():
+            for info in error_body.iter():
                 if info.tag.lower() == 'code':
                     error_code = info.text
                 elif info.tag.lower() == 'message':
@@ -577,22 +572,22 @@ def process_storage_error(storage_error):
         if error_code:
             error_code = StorageErrorCode(error_code)
             if error_code in [StorageErrorCode.condition_not_met,
-                            StorageErrorCode.blob_overwritten]:
+                              StorageErrorCode.blob_overwritten]:
                 raise_error = ResourceModifiedError
             if error_code in [StorageErrorCode.invalid_authentication_info,
-                            StorageErrorCode.authentication_failed]:
+                              StorageErrorCode.authentication_failed]:
                 raise_error = ClientAuthenticationError
             if error_code in [StorageErrorCode.resource_not_found,
-                            StorageErrorCode.blob_not_found,
-                            StorageErrorCode.container_not_found]:
+                              StorageErrorCode.blob_not_found,
+                              StorageErrorCode.container_not_found]:
                 raise_error = ResourceNotFoundError
             if error_code in [StorageErrorCode.account_already_exists,
-                            StorageErrorCode.account_being_created,
-                            StorageErrorCode.resource_already_exists,
-                            StorageErrorCode.resource_type_mismatch,
-                            StorageErrorCode.blob_already_exists,
-                            StorageErrorCode.container_already_exists,
-                            StorageErrorCode.container_being_deleted]:
+                              StorageErrorCode.account_being_created,
+                              StorageErrorCode.resource_already_exists,
+                              StorageErrorCode.resource_type_mismatch,
+                              StorageErrorCode.blob_already_exists,
+                              StorageErrorCode.container_already_exists,
+                              StorageErrorCode.container_being_deleted]:
                 raise_error = ResourceExistsError
     except ValueError:
         # Got an unknown error code

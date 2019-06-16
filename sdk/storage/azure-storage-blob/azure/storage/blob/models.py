@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
+# pylint: disable=super-init-not-called, too-many-lines
 
 from azure.core.paging import Paged
 
@@ -12,13 +13,11 @@ from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import StaticWebsite as GeneratedStaticWebsite
 from ._generated.models import CorsRule as GeneratedCorsRule
-from ._generated.models import StorageServiceProperties
 from ._generated.models import BlobProperties as GenBlobProps
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import StorageErrorException
 from ._utils import (
     decode_base64,
-    serialize_iso,
     process_storage_error,
     return_context_and_deserialized)
 from .common import BlockState, BlobType
@@ -188,27 +187,27 @@ class CorsRule(GeneratedCorsRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param allowed_origins: 
-        A list of origin domains that will be allowed via CORS, or "*" to allow 
-        all domains. The list of must contain at least one entry. Limited to 64 
+    :param allowed_origins:
+        A list of origin domains that will be allowed via CORS, or "*" to allow
+        all domains. The list of must contain at least one entry. Limited to 64
         origin domains. Each allowed origin can have up to 256 characters.
     :type allowed_origins: list(str)
     :param allowed_methods:
-        A list of HTTP methods that are allowed to be executed by the origin. 
-        The list of must contain at least one entry. For Azure Storage, 
+        A list of HTTP methods that are allowed to be executed by the origin.
+        The list of must contain at least one entry. For Azure Storage,
         permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
     :type allowed_methods: list(str)
     :param int max_age_in_seconds:
-        The number of seconds that the client/browser should cache a 
+        The number of seconds that the client/browser should cache a
         preflight response.
     :param exposed_headers:
-        Defaults to an empty list. A list of response headers to expose to CORS 
-        clients. Limited to 64 defined headers and two prefixed headers. Each 
+        Defaults to an empty list. A list of response headers to expose to CORS
+        clients. Limited to 64 defined headers and two prefixed headers. Each
         header can be up to 256 characters.
     :type exposed_headers: list(str)
     :param allowed_headers:
-        Defaults to an empty list. A list of headers allowed to be part of 
-        the cross-origin request. Limited to 64 defined headers and 2 prefixed 
+        Defaults to an empty list. A list of headers allowed to be part of
+        the cross-origin request. Limited to 64 defined headers and 2 prefixed
         headers. Each header can be up to 256 characters.
     :type allowed_headers: list(str)
     """
@@ -254,7 +253,7 @@ class ContainerProperties(DictMixin):
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
         props.etag = generated.properties.etag
-        props.lease = LeaseProperties._from_generated(generated)
+        props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = generated.properties.public_access
         props.has_immutability_policy = generated.properties.has_immutability_policy
         props.has_legal_hold = generated.properties.has_legal_hold
@@ -307,7 +306,7 @@ class ContainerPropertiesPaged(Paged):
         item = super(ContainerPropertiesPaged, self).__next__()
         if isinstance(item, ContainerProperties):
             return item
-        return ContainerProperties._from_generated(item)
+        return ContainerProperties._from_generated(item)  # pylint: disable=protected-access
 
     next = __next__
 
@@ -397,11 +396,11 @@ class BlobProperties(DictMixin):
         blob.deleted = generated.deleted
         blob.snapshot = generated.snapshot
         blob.metadata = generated.metadata
-        blob.lease = LeaseProperties._from_generated(generated)
-        blob.copy = CopyProperties._from_generated(generated)
+        blob.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
+        blob.copy = CopyProperties._from_generated(generated)  # pylint: disable=protected-access
         blob.last_modified = generated.properties.last_modified
         blob.creation_time = generated.properties.creation_time
-        blob.content_settings = ContentSettings._from_generated(generated)
+        blob.content_settings = ContentSettings._from_generated(generated)  # pylint: disable=protected-access
         blob.size = generated.properties.content_length
         blob.page_blob_sequence_number = generated.properties.blob_sequence_number
         blob.server_encrypted = generated.properties.server_encrypted
@@ -441,7 +440,7 @@ class BlobPropertiesPaged(Paged):
         if self.next_marker is None:
             raise StopIteration("End of paging")
         self._current_page_iter_index = 0
-        
+
         try:
             self.location_mode, self._response = self._get_next(
                 marker=self.next_marker or None,
@@ -465,7 +464,7 @@ class BlobPropertiesPaged(Paged):
         item = super(BlobPropertiesPaged, self).__next__()
         if isinstance(item, BlobProperties):
             return item
-        return BlobProperties._from_generated(item)
+        return BlobProperties._from_generated(item)  # pylint: disable=protected-access
 
     next = __next__
 
@@ -712,45 +711,45 @@ class AccessPolicy(GenAccessPolicy):
     '''
     Access Policy class used by the set and get acl methods in each service.
 
-    A stored access policy can specify the start time, expiry time, and 
-    permissions for the Shared Access Signatures with which it's associated. 
+    A stored access policy can specify the start time, expiry time, and
+    permissions for the Shared Access Signatures with which it's associated.
     Depending on how you want to control access to your resource, you can
-    specify all of these parameters within the stored access policy, and omit 
-    them from the URL for the Shared Access Signature. Doing so permits you to 
-    modify the associated signature's behavior at any time, as well as to revoke 
-    it. Or you can specify one or more of the access policy parameters within 
-    the stored access policy, and the others on the URL. Finally, you can 
-    specify all of the parameters on the URL. In this case, you can use the 
+    specify all of these parameters within the stored access policy, and omit
+    them from the URL for the Shared Access Signature. Doing so permits you to
+    modify the associated signature's behavior at any time, as well as to revoke
+    it. Or you can specify one or more of the access policy parameters within
+    the stored access policy, and the others on the URL. Finally, you can
+    specify all of the parameters on the URL. In this case, you can use the
     stored access policy to revoke the signature, but not to modify its behavior.
 
-    Together the Shared Access Signature and the stored access policy must 
-    include all fields required to authenticate the signature. If any required 
-    fields are missing, the request will fail. Likewise, if a field is specified 
-    both in the Shared Access Signature URL and in the stored access policy, the 
+    Together the Shared Access Signature and the stored access policy must
+    include all fields required to authenticate the signature. If any required
+    fields are missing, the request will fail. Likewise, if a field is specified
+    both in the Shared Access Signature URL and in the stored access policy, the
     request will fail with status code 400 (Bad Request).
     '''
 
     def __init__(self, permission=None, expiry=None, start=None):
         '''
         :param str permission:
-            The permissions associated with the shared access signature. The 
-            user is restricted to operations allowed by the permissions. 
-            Required unless an id is given referencing a stored access policy 
-            which contains this field. This field must be omitted if it has been 
+            The permissions associated with the shared access signature. The
+            user is restricted to operations allowed by the permissions.
+            Required unless an id is given referencing a stored access policy
+            which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
         :param expiry:
-            The time at which the shared access signature becomes invalid. 
-            Required unless an id is given referencing a stored access policy 
-            which contains this field. This field must be omitted if it has 
-            been specified in an associated stored access policy. Azure will always 
-            convert values to UTC. If a date is passed in without timezone info, it 
+            The time at which the shared access signature becomes invalid.
+            Required unless an id is given referencing a stored access policy
+            which contains this field. This field must be omitted if it has
+            been specified in an associated stored access policy. Azure will always
+            convert values to UTC. If a date is passed in without timezone info, it
             is assumed to be UTC.
         :type expiry: datetime or str
         :param start:
-            The time at which the shared access signature becomes valid. If 
-            omitted, start time for this call is assumed to be the time when the 
-            storage service receives the request. Azure will always convert values 
-            to UTC. If a date is passed in without timezone info, it is assumed to 
+            The time at which the shared access signature becomes valid. If
+            omitted, start time for this call is assumed to be the time when the
+            storage service receives the request. Azure will always convert values
+            to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
         :type start: datetime or str
         '''

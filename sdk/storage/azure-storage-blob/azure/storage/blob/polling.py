@@ -7,11 +7,11 @@
 import logging
 import time
 
+from azure.core.polling import PollingMethod, LROPoller
+
 from ._generated.models import StorageErrorException
 from ._utils import process_storage_error
 from ._deserialize import deserialize_blob_properties
-from azure.core.exceptions import AzureError
-from azure.core.polling import PollingMethod, LROPoller, NoPolling
 
 
 logger = logging.getLogger(__name__)
@@ -51,14 +51,15 @@ class CopyBlob(PollingMethod):
 
     def _update_status(self):
         try:
-            self.blob = self._client._client.blob.get_properties(cls=deserialize_blob_properties, **self.kwargs)
+            self.blob = self._client._client.blob.get_properties(  # pylint: disable=protected-access
+                cls=deserialize_blob_properties, **self.kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
         self._status = self.blob.copy.status
         self.etag = self.blob.etag
         self.last_modified = self.blob.last_modified
 
-    def initialize(self, client, initial_status, _):
+    def initialize(self, client, initial_status, _):  # pylint: disable=arguments-differ
         # type: (Any, requests.Response, Callable) -> None
         self._client = client
         if isinstance(initial_status, str):
@@ -74,11 +75,11 @@ class CopyBlob(PollingMethod):
         # type: () -> None
         """Empty run, no polling.
         """
-        pass
 
     def abort(self):
         try:
-            return self._client._client.blob.abort_copy_from_url(self.id, **self.kwargs)
+            return self._client._client.blob.abort_copy_from_url(  # pylint: disable=protected-access
+                self.id, **self.kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
