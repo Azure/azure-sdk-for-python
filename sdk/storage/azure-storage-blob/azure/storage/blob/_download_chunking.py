@@ -5,9 +5,9 @@
 # --------------------------------------------------------------------------
 import threading
 import sys
-if sys.version_info >= (3,):
+try:
     from io import BytesIO
-else:
+except ImportError:
     from cStringIO import StringIO as BytesIO
 
 from azure.core.exceptions import HttpResponseError
@@ -16,7 +16,6 @@ from ._utils import (
     validate_and_format_range_headers,
     parse_length_from_content_range,
     process_storage_error)
-from .common import LocationMode
 from ._generated.models import ModifiedAccessConditions, StorageErrorException
 from ._deserialize import deserialize_blob_stream
 from ._encryption import _decrypt_blob
@@ -64,7 +63,7 @@ def _process_content(blob, start_offset, end_offset, require_encryption, key_enc
         return b"".join(list(blob))
 
 
-class StorageStreamDownloader(object):
+class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
             self, name, container, service, config, offset, length, validate_content,
@@ -154,7 +153,7 @@ class StorageStreamDownloader(object):
             progress=self.first_get_size,
             start_range=self.initial_range[1] + 1,  # start where the first download ended
             end_range=end_blob,
-            stream=stream,
+            stream=None,
             validate_content=self.validate_content,
             access_conditions=self.access_conditions,
             mod_conditions=self.mod_conditions,
@@ -228,7 +227,7 @@ class StorageStreamDownloader(object):
                 self.blob_size = 0
             else:
                 process_storage_error(error)
-    
+
         # If the blob is small, the download is complete at this point.
         # If blob size is large, download the rest of the blob in chunks.
         if blob.properties.size != self.download_size:
@@ -317,12 +316,12 @@ class StorageStreamDownloader(object):
         return self.properties
 
 
-class _BlobChunkDownloader(object):
+class _BlobChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
-        self, blob_service, download_size, chunk_size, progress, start_range, end_range, stream,
-        validate_content, access_conditions, mod_conditions, timeout,
-        require_encryption, key_encryption_key, key_resolver_function, **kwargs):
+            self, blob_service, download_size, chunk_size, progress, start_range, end_range, stream,
+            validate_content, access_conditions, mod_conditions, timeout,
+            require_encryption, key_encryption_key, key_resolver_function, **kwargs):
         # identifiers for the blob
         self.blob_service = blob_service
 
@@ -411,14 +410,14 @@ class _BlobChunkDownloader(object):
             process_storage_error(error)
 
         chunk_data = _process_content(
-                response,
-                offset[0],
-                offset[1],
-                self.require_encryption,
-                self.key_encryption_key,
-                self.key_resolver_function)
+            response,
+            offset[0],
+            offset[1],
+            self.require_encryption,
+            self.key_encryption_key,
+            self.key_resolver_function)
 
-        # This makes sure that if_match is set so that we can validate 
+        # This makes sure that if_match is set so that we can validate
         # that subsequent downloads are to an unmodified blob
         if not self.mod_conditions:
             self.mod_conditions = ModifiedAccessConditions()
@@ -428,9 +427,9 @@ class _BlobChunkDownloader(object):
 
 class _ParallelBlobChunkDownloader(_BlobChunkDownloader):
     def __init__(
-        self, blob_service, download_size, chunk_size, progress, start_range, end_range,
-        stream, validate_content, access_conditions, mod_conditions, timeout,
-        require_encryption, key_encryption_key, key_resolver_function, **kwargs):
+            self, blob_service, download_size, chunk_size, progress, start_range, end_range,
+            stream, validate_content, access_conditions, mod_conditions, timeout,
+            require_encryption, key_encryption_key, key_resolver_function, **kwargs):
 
         super(_ParallelBlobChunkDownloader, self).__init__(
             blob_service, download_size, chunk_size, progress, start_range, end_range,

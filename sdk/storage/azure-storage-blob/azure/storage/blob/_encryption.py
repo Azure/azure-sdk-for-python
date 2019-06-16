@@ -111,7 +111,7 @@ class _EncryptionData:
         :param _EncryptionAgent encryption_agent:
             The encryption agent.
         :param _WrappedContentKey wrapped_content_key:
-            An object that stores the wrapping algorithm, the key identifier, 
+            An object that stores the wrapping algorithm, the key identifier,
             and the encrypted key bytes.
         :param dict key_wrapping_metadata:
             A dict containing metadata related to the key wrapping.
@@ -164,7 +164,7 @@ def _dict_to_encryption_data(encryption_data_dict):
     '''
     Converts the specified dictionary to an EncryptionData object for
     eventual use in decryption.
-    
+
     :param dict encryption_data_dict:
         The dictionary containing the encryption data.
     :return: an _EncryptionData object built from the dictionary.
@@ -172,9 +172,9 @@ def _dict_to_encryption_data(encryption_data_dict):
     '''
     try:
         if encryption_data_dict['EncryptionAgent']['Protocol'] != _ENCRYPTION_PROTOCOL_V1:
-            raise ValueError(_ERROR_UNSUPPORTED_ENCRYPTION_VERSION)
+            raise ValueError("Unsupported encryption version.")
     except KeyError:
-        raise ValueError(_ERROR_UNSUPPORTED_ENCRYPTION_VERSION)
+        raise ValueError("Unsupported encryption version.")
     wrapped_content_key = encryption_data_dict['WrappedContentKey']
     wrapped_content_key = _WrappedContentKey(wrapped_content_key['Algorithm'],
                                              _decode_base64_to_bytes(wrapped_content_key['EncryptedKey']),
@@ -223,7 +223,7 @@ def _validate_and_unwrap_cek(encryption_data, key_encryption_key=None, key_resol
         The key_encryption_key used to unwrap the cek. Please refer to high-level service object
         instance variables for more details.
     :param func key_resolver:
-        A function used that, given a key_id, will return a key_encryption_key. Please refer 
+        A function used that, given a key_id, will return a key_encryption_key. Please refer
         to high-level service object instance variables for more details.
     :return: the content_encryption_key stored in the encryption_data object.
     :rtype: bytes[]
@@ -232,7 +232,7 @@ def _validate_and_unwrap_cek(encryption_data, key_encryption_key=None, key_resol
     _validate_not_none('content_encryption_IV', encryption_data.content_encryption_IV)
     _validate_not_none('encrypted_key', encryption_data.wrapped_content_key.encrypted_key)
 
-    if not (_ENCRYPTION_PROTOCOL_V1 == encryption_data.encryption_agent.protocol):
+    if _ENCRYPTION_PROTOCOL_V1 != encryption_data.encryption_agent.protocol:
         raise ValueError('Encryption version is not supported.')
 
     content_encryption_key = None
@@ -246,7 +246,7 @@ def _validate_and_unwrap_cek(encryption_data, key_encryption_key=None, key_resol
         raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'get_kid'))
     if not hasattr(key_encryption_key, 'unwrap_key') or not callable(key_encryption_key.unwrap_key):
         raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'unwrap_key'))
-    if not (encryption_data.wrapped_content_key.key_id == key_encryption_key.get_kid()):
+    if encryption_data.wrapped_content_key.key_id != key_encryption_key.get_kid():
         raise ValueError('Provided or resolved key-encryption-key does not match the id of key used to encrypt.')
     # Will throw an exception if the specified algorithm is not supported.
     content_encryption_key = key_encryption_key.unwrap_key(encryption_data.wrapped_content_key.encrypted_key,
@@ -259,7 +259,7 @@ def _validate_and_unwrap_cek(encryption_data, key_encryption_key=None, key_resol
 def _encrypt_blob(blob, key_encryption_key):
     '''
     Encrypts the given blob using AES256 in CBC mode with 128 bit padding.
-    Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek). 
+    Wraps the generated content-encryption-key using the user-provided key-encryption-key (kek).
     Returns a json-formatted string containing the encryption metadata. This method should
     only be used when a blob is small enough for single shot upload. Encrypting larger blobs
     is done as a part of the _upload_blob_chunks method.
@@ -302,10 +302,10 @@ def _encrypt_blob(blob, key_encryption_key):
 def _generate_blob_encryption_data(key_encryption_key):
     '''
     Generates the encryption_metadata for the blob.
-    
+
     :param bytes key_encryption_key:
         The key-encryption-key used to wrap the cek associate with this blob.
-    :return: A tuple containing the cek and iv for this blob as well as the 
+    :return: A tuple containing the cek and iv for this blob as well as the
         serialized encryption metadata for the blob.
     :rtype: (bytes, bytes, str)
     '''
@@ -329,7 +329,7 @@ def _decrypt_blob(require_encryption, key_encryption_key, key_resolver,
                   response, start_offset, end_offset):
     '''
     Decrypts the given blob contents and returns only the requested range.
-    
+
     :param bool require_encryption:
         Whether or not the calling blob service requires objects to be decrypted.
     :param object key_encryption_key:
@@ -338,7 +338,7 @@ def _decrypt_blob(require_encryption, key_encryption_key, key_resolver,
         get_key_wrap_algorithm()--returns the algorithm used to wrap the specified symmetric key.
         get_kid()--returns a string key id for this key-encryption-key.
     :param key_resolver(kid):
-        The user-provided key resolver. Uses the kid string to return a key-encryption-key 
+        The user-provided key resolver. Uses the kid string to return a key-encryption-key
         implementing the interface defined above.
     :return: The decrypted blob content.
     :rtype: bytes
@@ -351,20 +351,19 @@ def _decrypt_blob(require_encryption, key_encryption_key, key_resolver,
 
     try:
         encryption_data = _dict_to_encryption_data(loads(response.response.headers['x-ms-meta-encryptiondata']))
-    except:
+    except:  # pylint: disable=bare-except
         if require_encryption:
             raise ValueError(_ERROR_DATA_NOT_ENCRYPTED)
 
         return content
 
-    if not (encryption_data.encryption_agent.encryption_algorithm == _EncryptionAlgorithm.AES_CBC_256):
+    if encryption_data.encryption_agent.encryption_algorithm != _EncryptionAlgorithm.AES_CBC_256:
         raise ValueError(_ERROR_UNSUPPORTED_ENCRYPTION_ALGORITHM)
 
     blob_type = response.response.headers['x-ms-blob-type']
 
     iv = None
     unpad = False
-    start_range, end_range = 0, len(content)
     if 'content-range' in response.response.headers:
         content_range = response.response.headers['content-range']
         # Format: 'bytes x-y/size'
@@ -373,7 +372,6 @@ def _decrypt_blob(require_encryption, key_encryption_key, key_resolver,
         content_range = content_range.split(' ')
 
         content_range = content_range[1].split('-')
-        start_range = int(content_range[0])
         content_range = content_range[1].split('/')
         end_range = int(content_range[0])
         blob_size = int(content_range[1])

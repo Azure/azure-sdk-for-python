@@ -6,13 +6,13 @@
 
 import base64
 import hashlib
-import sys
 import re
 import random
 from time import time
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import uuid
+import types
 from wsgiref.handlers import format_date_time
 try:
     from urllib.parse import (
@@ -22,12 +22,12 @@ try:
         urlencode,
     )
 except ImportError:
+    from urllib import urlencode
     from urlparse import (
         urlparse,
         parse_qsl,
         urlunparse,
     )
-    from urllib import urlencode
 
 from azure.core.pipeline.policies import (
     HeadersPolicy,
@@ -64,7 +64,7 @@ def is_retry(response, mode):
     """
     status = response.http_response.status_code
     if 300 <= status < 500:
-        # An exception occured, but in most cases it was expected. Examples could 
+        # An exception occured, but in most cases it was expected. Examples could
         # include a 309 Conflict or 412 Precondition Failed.
         if status == 404 and mode == LocationMode.SECONDARY:
             # Response code 404 should be retried if secondary was used.
@@ -73,14 +73,13 @@ def is_retry(response, mode):
             # Response code 408 is a timeout and should be retried.
             return True
         return False
-    elif status >= 500:
-        # Response codes above 500 with the exception of 501 Not Implemented and 
+    if status >= 500:
+        # Response codes above 500 with the exception of 501 Not Implemented and
         # 505 Version Not Supported indicate a server issue and should be retried.
-        if status == 501 or status == 505:
+        if status in [501, 505]:
             return False
         return True
-    else:
-        return False
+    return False
 
 
 class StorageBlobSettings(object):
@@ -104,7 +103,7 @@ class StorageBlobSettings(object):
 
 class StorageHeadersPolicy(HeadersPolicy):
 
-    def on_request(self, request):
+    def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
         super(StorageHeadersPolicy, self).on_request(request)
         current_time = format_date_time(time())
@@ -116,10 +115,11 @@ class StorageHeadersPolicy(HeadersPolicy):
 
 class StorageHosts(SansIOHTTPPolicy):
 
-    def __init__(self, hosts=None, **kwargs):
+    def __init__(self, hosts=None, **kwargs):  # pylint: disable=unused-argument
         self.hosts = hosts
+        super(StorageHosts, self).__init__()
 
-    def on_request(self, request):
+    def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
         request.context.options['hosts'] = self.hosts
         parsed_url = urlparse(request.http_request.url)
@@ -152,7 +152,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
     This accepts both global configuration, and per-request level with "enable_http_logger"
     """
 
-    def on_request(self, request):
+    def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
         options = request.context.options
@@ -192,7 +192,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
-    def on_response(self, request, response):
+    def on_response(self, request, response, **kwargs):
         # type: (PipelineRequest, PipelineResponse, Any) -> None
         if response.context.pop("logging_enable", self.enable_http_logger):
             if not _LOGGER.isEnabledFor(logging.DEBUG):
@@ -227,11 +227,11 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
 
 class StorageRequestHook(SansIOHTTPPolicy):
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs):  # pylint: disable=unused-argument
         self._request_callback = kwargs.get('raw_request_hook')
         super(StorageRequestHook, self).__init__()
 
-    def on_request(self, request):
+    def on_request(self, request, **kwargs):
         # type: (PipelineRequest) -> PipelineResponse
         request_callback = request.context.options.pop('raw_request_hook', self._request_callback)
         if request_callback:
@@ -240,7 +240,7 @@ class StorageRequestHook(SansIOHTTPPolicy):
 
 class StorageResponseHook(HTTPPolicy):
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs):  # pylint: disable=unused-argument
         self._response_callback = kwargs.get('raw_response_hook')
         super(StorageResponseHook, self).__init__()
 
@@ -285,7 +285,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
     """
     header_name = 'Content-MD5'
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs):  # pylint: disable=unused-argument
         super(StorageContentValidation, self).__init__()
 
     @staticmethod
@@ -297,7 +297,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
             pos = 0
             try:
                 pos = data.tell()
-            except:
+            except:  # pylint: disable=bare-except
                 pass
             for chunk in iter(lambda: data.read(4096), b""):
                 md5.update(chunk)
@@ -310,7 +310,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
 
         return md5.digest()
 
-    def on_request(self, request):
+    def on_request(self, request, **kwargs):
         # type: (PipelineRequest, Any) -> None
         validate_content = request.context.options.pop('validate_content', False)
         if validate_content and request.http_request.method != 'GET':
@@ -319,16 +319,16 @@ class StorageContentValidation(SansIOHTTPPolicy):
             request.context['validate_content_md5'] = computed_md5
         request.context['validate_content'] = validate_content
 
-    def on_response(self, request, response):
+    def on_response(self, request, response, **kwargs):
         if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
             computed_md5 = request.context.get('validate_content_md5') or \
                 encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
             if response.http_response.headers['content-md5'] != computed_md5:
-               raise AzureError(
-                   'MD5 mismatch. Expected value is \'{0}\', computed value is \'{1}\'.'.format(
-                       response.http_response.headers['content-md5'],computed_md5),
-                   response=response.http_response
-               )
+                raise AzureError(
+                    'MD5 mismatch. Expected value is \'{0}\', computed value is \'{1}\'.'.format(
+                        response.http_response.headers['content-md5'], computed_md5),
+                    response=response.http_response
+                )
 
 
 class StorageRetryPolicy(HTTPPolicy):
@@ -342,25 +342,14 @@ class StorageRetryPolicy(HTTPPolicy):
         self.read_retries = kwargs.pop('retry_read', 3)
         self.status_retries = kwargs.pop('retry_status', 3)
         self.retry_to_secondary = kwargs.pop('retry_to_secondary', False)
+        super(StorageRetryPolicy, self).__init__()
 
-    def _is_connection_error(self, err):
-        """ Errors when we're fairly sure that the server did not receive the
-        request, so it should be safe to retry.
+    def _set_next_host_location(self, settings, request):  # pylint: disable=no-self-use
         """
-        return isinstance(err, ServiceRequestError)
+        A function which sets the next host location on the request, if applicable.
 
-    def _is_read_error(self, err):
-        """ Errors that occur after the request has been started, so we should
-        assume that the server began processing it.
-        """
-        return isinstance(err, ServiceResponseError)
-
-    def _set_next_host_location(self, settings, request):
-        """
-        A function which sets the next host location on the request, if applicable. 
-
-        :param ~azure.storage.models.RetryContext context: 
-            The retry context containing the previous host location and the request 
+        :param ~azure.storage.models.RetryContext context:
+            The retry context containing the previous host location and the request
             to evaluate and possibly modify.
         """
         if settings['hosts'] and all(settings['hosts'].values()):
@@ -373,7 +362,7 @@ class StorageRetryPolicy(HTTPPolicy):
             updated = url._replace(netloc=settings['hosts'].get(settings['mode']))
             request.url = updated.geturl()
 
-    def configure_retries(self, request):
+    def configure_retries(self, request):  # pylint: disable=no-self-use
         body_position = None
         if hasattr(request.http_request.body, 'read'):
             try:
@@ -396,7 +385,7 @@ class StorageRetryPolicy(HTTPPolicy):
             'history': []
         }
 
-    def get_backoff_time(self, settings):
+    def get_backoff_time(self, settings):  # pylint: disable=unused-argument,no-self-use
         """ Formula for computing the current backoff.
         Should be calculated by child class.
 
@@ -410,7 +399,7 @@ class StorageRetryPolicy(HTTPPolicy):
             return
         transport.sleep(backoff)
 
-    def is_exhausted(self, settings):
+    def is_exhausted(self, settings):  # pylint: disable=no-self-use
         """Are we out of retries?"""
         retry_counts = (settings['total'], settings['connect'], settings['read'], settings['status'])
         retry_counts = list(filter(None, retry_counts))
@@ -430,13 +419,15 @@ class StorageRetryPolicy(HTTPPolicy):
         """
         settings['total'] -= 1
 
-        if error and self._is_connection_error(error):
-            # Connect retry?
+        if error and isinstance(error, ServiceRequestError):
+            # Errors when we're fairly sure that the server did not receive the
+            # request, so it should be safe to retry.
             settings['connect'] -= 1
             settings['history'].append(RequestHistory(request, error=error))
 
-        elif error and self._is_read_error(error):
-            # Read retry?
+        elif error and isinstance(error, ServiceResponseError):
+            # Errors that occur after the request has been started, so we should
+            # assume that the server began processing it.
             settings['read'] -= 1
             settings['history'].append(RequestHistory(request, error=error))
 
@@ -456,13 +447,12 @@ class StorageRetryPolicy(HTTPPolicy):
                 # no position was saved, then retry would not work
                 if settings['body_position'] is None:
                     return False
-                else:
-                    try:
-                        # attempt to rewind the body to the initial position
-                        request.body.seek(settings['body_position'], SEEK_SET)
-                    except UnsupportedOperation:
-                        # if body is not seekable, then retry would not work
-                        return False
+                try:
+                    # attempt to rewind the body to the initial position
+                    request.body.seek(settings['body_position'], SEEK_SET)
+                except UnsupportedOperation:
+                    # if body is not seekable, then retry would not work
+                    return False
             if settings['hook']:
                 settings['hook'](
                     request=request,
@@ -488,7 +478,7 @@ class StorageRetryPolicy(HTTPPolicy):
                         response=response.http_response)
                     if retries_remaining:
                         self.sleep(retry_settings, request.context.transport)
-                        
+
                         continue
                 break
             except AzureError as err:
@@ -509,7 +499,7 @@ class NoRetry(StorageRetryPolicy):
     def __init__(self):
         super(NoRetry, self).__init__(retry_total=0)
 
-    def increment(self, *args, **kwargs):
+    def increment(self, *args, **kwargs):  # pylint: disable=unused-argument,arguments-differ
         return False
 
 
@@ -519,22 +509,22 @@ class ExponentialRetry(StorageRetryPolicy):
     def __init__(self, initial_backoff=15, increment_base=3, retry_total=3,
                  retry_to_secondary=False, random_jitter_range=3, **kwargs):
         '''
-        Constructs an Exponential retry object. The initial_backoff is used for 
-        the first retry. Subsequent retries are retried after initial_backoff + 
-        increment_power^retry_count seconds. For example, by default the first retry 
-        occurs after 15 seconds, the second after (15+3^1) = 18 seconds, and the 
+        Constructs an Exponential retry object. The initial_backoff is used for
+        the first retry. Subsequent retries are retried after initial_backoff +
+        increment_power^retry_count seconds. For example, by default the first retry
+        occurs after 15 seconds, the second after (15+3^1) = 18 seconds, and the
         third after (15+3^2) = 24 seconds.
 
-        :param int initial_backoff: 
+        :param int initial_backoff:
             The initial backoff interval, in seconds, for the first retry.
         :param int increment_base:
-            The base, in seconds, to increment the initial_backoff by after the 
+            The base, in seconds, to increment the initial_backoff by after the
             first retry.
-        :param int max_attempts: 
+        :param int max_attempts:
             The maximum number of retry attempts.
         :param bool retry_to_secondary:
-            Whether the request should be retried to secondary, if able. This should 
-            only be enabled of RA-GRS accounts are used and potentially stale data 
+            Whether the request should be retried to secondary, if able. This should
+            only be enabled of RA-GRS accounts are used and potentially stale data
             can be handled.
         :param int random_jitter_range:
             A number in seconds which indicates a range to jitter/randomize for the back-off interval.
@@ -550,8 +540,8 @@ class ExponentialRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :return: 
-            An integer indicating how long to wait before retrying the request, 
+        :return:
+            An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
         :rtype: int or None
         """
@@ -569,13 +559,13 @@ class LinearRetry(StorageRetryPolicy):
         """
         Constructs a Linear retry object.
 
-        :param int backoff: 
+        :param int backoff:
             The backoff interval, in seconds, between retries.
-        :param int max_attempts: 
+        :param int max_attempts:
             The maximum number of retry attempts.
         :param bool retry_to_secondary:
-            Whether the request should be retried to secondary, if able. This should 
-            only be enabled of RA-GRS accounts are used and potentially stale data 
+            Whether the request should be retried to secondary, if able. This should
+            only be enabled of RA-GRS accounts are used and potentially stale data
             can be handled.
         :param int random_jitter_range:
             A number in seconds which indicates a range to jitter/randomize for the back-off interval.
@@ -590,14 +580,15 @@ class LinearRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :return: 
-            An integer indicating how long to wait before retrying the request, 
+        :return:
+            An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
         :rtype: int or None
         """
         random_generator = random.Random()
         # the backoff interval normally does not change, however there is the possibility
         # that it was modified by accessing the property directly after initializing the object
-        self.random_range_start = self.backoff - self.random_jitter_range if self.backoff > self.random_jitter_range else 0
-        self.random_range_end = self.backoff + self.random_jitter_range
-        return random_generator.uniform(self.random_range_start, self.random_range_end)
+        random_range_start = self.backoff - self.random_jitter_range \
+            if self.backoff > self.random_jitter_range else 0
+        random_range_end = self.backoff + self.random_jitter_range
+        return random_generator.uniform(random_range_start, random_range_end)
