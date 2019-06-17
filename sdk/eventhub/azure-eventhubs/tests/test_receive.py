@@ -138,7 +138,7 @@ def test_receive_with_custom_datetime_sync(connstr_senders):
     client = EventHubClient.from_connection_string(connection_str, network_tracing=False)
     for i in range(5):
         senders[0].send(EventData(b"Message before timestamp"))
-    time.sleep(60)
+    time.sleep(65)
 
     now = datetime.datetime.utcnow()
     offset = datetime.datetime(now.year, now.month, now.day, now.hour, now.minute)

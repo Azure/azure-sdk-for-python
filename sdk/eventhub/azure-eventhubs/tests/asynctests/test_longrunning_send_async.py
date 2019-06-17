@@ -13,7 +13,7 @@ import sys
 import pytest
 from logging.handlers import RotatingFileHandler
 
-from azure.eventhub import EventData
+from azure.eventhub import EventData, EventHubSharedKeyCredential
 from azure.eventhub.aio import EventHubClient
 
 
@@ -39,12 +39,8 @@ def get_logger(filename, level=logging.INFO):
 
     return azure_logger
 
+
 logger = get_logger("send_test_async.log", logging.INFO)
-
-
-def check_send_successful(outcome, condition):
-    if outcome.value != 0:
-        print("Send failed {}".format(condition))
 
 
 async def get_partitions(args):
@@ -56,26 +52,16 @@ async def pump(pid, sender, args, duration):
     deadline = time.time() + duration
     total = 0
 
-    def data_generator():
-        for i in range(args.batch):
-            yield b"D" * args.payload
-
-    if args.batch > 1:
-        logger.info("{}: Sending batched messages".format(pid))
-    else:
-        logger.info("{}: Sending single messages".format(pid))
-
     try:
         async with sender:
+            event_list = []
             while time.time() < deadline:
-                if args.batch > 1:
-                    data = EventData(body=data_generator())
-                else:
-                    data = EventData(body=b"D" * args.payload)
-                sender.queue_message(data, callback=check_send_successful)
-                total += args.batch
+                data = EventData(body=b"D" * args.payload)
+                event_list.append(data)
+                total += 1
                 if total % 100 == 0:
-                    await sender.send_pending_messages()
+                    await sender.send(event_list)
+                    event_list = []
                     logger.info("{}: Send total {}".format(pid, total))
     except Exception as err:
         logger.error("{}: Send failed {}".format(pid, err))
@@ -89,8 +75,7 @@ async def test_long_running_partition_send_async(connection_str):
     parser = argparse.ArgumentParser()
     parser.add_argument("--duration", help="Duration in seconds of the test", type=int, default=30)
     parser.add_argument("--payload", help="payload size", type=int, default=1024)
-    parser.add_argument("--batch", help="Number of events to send and wait", type=int, default=200)
-    parser.add_argument("--partitions", help="Comma seperated partition IDs")
+    parser.add_argument("--partitions", help="Comma separated partition IDs")
     parser.add_argument("--conn-str", help="EventHub connection string", default=connection_str)
     parser.add_argument("--eventhub", help="Name of EventHub")
     parser.add_argument("--address", help="Address URI to the EventHub entity")
