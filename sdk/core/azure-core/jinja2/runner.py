@@ -5,7 +5,7 @@ if __name__ == "__main__":
     path = os.path.dirname(os.path.realpath(__file__))
     loader = FileSystemLoader(path+'/templates/')
     env = Environment(loader=loader)
-    template = env.get_template('test_authentication.pyt')
+    template = env.get_template('test_authentication.j2')
     target = path+'/tests/test_authentication.py'
     if os.path.exists(target):
         os.remove(target)
