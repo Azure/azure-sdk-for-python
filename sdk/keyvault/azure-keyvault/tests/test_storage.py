@@ -1,4 +1,7 @@
 import uuid
+
+import pytest
+
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer, StorageAccountPreparer
 from keyvault_preparer import KeyVaultPreparer
 from keyvault_testcase import KeyvaultTestCase

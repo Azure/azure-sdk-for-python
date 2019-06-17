@@ -14,8 +14,6 @@ import argparse
 from collections import Counter
 from subprocess import check_call, CalledProcessError
 
-import pytest
-
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", ".."))
 
 
