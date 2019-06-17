@@ -13,6 +13,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Optional
+    from azure.core.credentials import AccessToken
 
 from azure.core import Configuration
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
@@ -45,14 +46,14 @@ class ImdsCredential:
         return config
 
     def get_token(self, *scopes):
-        # type: (*str) -> str
+        # type: (*str) -> AccessToken
         if len(scopes) != 1:
             raise ValueError("this credential supports one scope per request")
         token = self._client.get_cached_token(scopes)
         if not token:
             resource = scopes[0]
             if resource.endswith("/.default"):
-                resource = resource[:-len("/.default")]
+                resource = resource[: -len("/.default")]
             token = self._client.request_token(
                 scopes, method="GET", params={"api-version": "2018-02-01", "resource": resource}
             )
@@ -84,7 +85,7 @@ class MsiCredential:
         return config
 
     def get_token(self, *scopes):
-        # type: (*str) -> str
+        # type: (*str) -> AccessToken
         if len(scopes) != 1:
             raise ValueError("this credential supports only one scope per request")
         token = self._client.get_cached_token(scopes)
@@ -94,7 +95,7 @@ class MsiCredential:
                 raise AuthenticationError("{} environment variable has no value".format(MSI_SECRET))
             resource = scopes[0]
             if resource.endswith("/.default"):
-                resource = resource[:-len("/.default")]
+                resource = resource[: -len("/.default")]
             # TODO: support user-assigned client id
             token = self._client.request_token(
                 scopes,

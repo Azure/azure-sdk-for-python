@@ -7,6 +7,7 @@ import os
 from typing import Any, Dict, Optional
 
 from azure.core import Configuration
+from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
 
 from ._authn_client import AsyncAuthnClient
@@ -20,7 +21,7 @@ class AsyncImdsCredential:
         policies = [config.header_policy, ContentDecodePolicy(), config.retry_policy, config.logging_policy]
         self._client = AsyncAuthnClient(Endpoints.IMDS, config, policies, **kwargs)
 
-    async def get_token(self, *scopes: str) -> str:
+    async def get_token(self, *scopes: str) -> AccessToken:
         if len(scopes) != 1:
             raise ValueError("this credential supports one scope per request")
         token = self._client.get_cached_token(scopes)
@@ -55,7 +56,7 @@ class AsyncMsiCredential:
             raise ValueError("expected environment variable {} has no value".format(MSI_ENDPOINT))
         self._client = AsyncAuthnClient(endpoint, config, policies, **kwargs)
 
-    async def get_token(self, *scopes: str) -> str:
+    async def get_token(self, *scopes: str) -> AccessToken:
         if len(scopes) != 1:
             raise ValueError("this credential supports only one scope per request")
         token = self._client.get_cached_token(scopes)

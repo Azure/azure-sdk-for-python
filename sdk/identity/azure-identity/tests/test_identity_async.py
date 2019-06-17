@@ -11,6 +11,7 @@ from unittest.mock import Mock
 import uuid
 
 import pytest
+from azure.core.credentials import AccessToken
 from azure.identity import (
     AuthenticationError,
     AsyncClientSecretCredential,
@@ -26,11 +27,13 @@ from azure.identity.constants import EnvironmentVariables, MSI_ENDPOINT, MSI_SEC
 async def test_client_secret_credential_cache():
     expired = "this token's expired"
     now = time.time()
+    expired_on = int(now - 300)
+    expired_token = AccessToken(expired, expired_on)
     token_payload = {
         "access_token": expired,
         "expires_in": 0,
         "ext_expires_in": 0,
-        "expires_on": now - 300,  # expired 5 minutes ago
+        "expires_on": expired_on,
         "not_before": now,
         "token_type": "Bearer",
         "resource": str(uuid.uuid1()),
@@ -49,10 +52,10 @@ async def test_client_secret_credential_cache():
     )
     scopes = ("https://foo.bar/.default", "https://bar.qux/.default")
     token = await credential.get_token(*scopes)
-    assert token == expired
+    assert token == expired_token
 
     token = await credential.get_token(*scopes)
-    assert token == expired
+    assert token == expired_token
     assert mock_send.call_count == 2
 
 
@@ -135,7 +138,7 @@ async def test_chain_attempts_all_credentials():
     async def raise_authn_error(message="it didn't work"):
         raise AuthenticationError(message)
 
-    expected_token = "expected_token"
+    expected_token = AccessToken("expected_token", 0)
     credentials = [
         Mock(get_token=Mock(wraps=raise_authn_error)),
         Mock(get_token=Mock(wraps=raise_authn_error)),
@@ -187,7 +190,7 @@ async def test_imds_credential_cache():
 
     credential = AsyncImdsCredential(transport=Mock(send=asyncio.coroutine(mock_send)))
     token = await credential.get_token(scope)
-    assert token == expired
+    assert token.token == expired
     assert mock_send.call_count == 1
 
     # calling get_token again should provoke another HTTP request
@@ -196,12 +199,12 @@ async def test_imds_credential_cache():
     token_payload["expires_in"] = 3600
     token_payload["access_token"] = good_for_an_hour
     token = await credential.get_token(scope)
-    assert token == good_for_an_hour
+    assert token.token == good_for_an_hour
     assert mock_send.call_count == 2
 
     # get_token should return the cached token now
     token = await credential.get_token(scope)
-    assert token == good_for_an_hour
+    assert token.token == good_for_an_hour
     assert mock_send.call_count == 2
 
 

@@ -6,6 +6,7 @@
 from time import time
 
 from azure.core import Configuration, HttpRequest
+from azure.core.credentials import AccessToken
 from azure.core.pipeline import Pipeline, PipelineRequest
 from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, RetryPolicy
 from azure.core.pipeline.transport import HttpTransport, RequestsTransport
@@ -35,12 +36,13 @@ class AuthnClientBase(object):
         self._cache = TokenCache()
 
     def get_cached_token(self, scopes):
-        # type: (Iterable[str]) -> Optional[str]
+        # type: (Iterable[str]) -> Optional[AccessToken]
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, list(scopes))
         for token in tokens:
             if all((scope in token["target"] for scope in scopes)):
-                if int(token["expires_on"]) - 300 > int(time()):
-                    return token["secret"]
+                expires_on = int(token["expires_on"])
+                if expires_on - 300 > int(time()):
+                    return AccessToken(token["secret"], expires_on)
         return None
 
     def _deserialize_and_cache_token(self, response, scopes):
@@ -60,7 +62,7 @@ class AuthnClientBase(object):
                 payload["ext_expires_in"] = int(payload["ext_expires_in"])
 
             self._cache.add({"response": payload, "scope": scopes})
-            return token
+            return AccessToken(token, int(payload["expires_on"]))
         except KeyError:
             raise AuthenticationError("Unexpected authentication response: {}".format(payload))
         except Exception as ex:
@@ -90,7 +92,7 @@ class AuthnClient(AuthnClientBase):
         super(AuthnClient, self).__init__(auth_url, **kwargs)
 
     def request_token(self, scopes, method="POST", headers=None, form_data=None, params=None):
-        # type: (Iterable[str], Optional[str], Optional[Mapping[str, str]], Optional[Mapping[str, str]], Optional[Dict[str, str]]) -> str
+        # type: (Iterable[str], Optional[str], Optional[Mapping[str, str]], Optional[Mapping[str, str]], Optional[Dict[str, str]]) -> AccessToken
         request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
         response = self._pipeline.run(request, stream=False)
         token = self._deserialize_and_cache_token(response, scopes)
