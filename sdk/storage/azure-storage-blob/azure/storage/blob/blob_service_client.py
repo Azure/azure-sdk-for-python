@@ -397,7 +397,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         """Marks the specified container for deletion. The container and any blobs
         contained within it are later deleted during garbage collection.
 
-        :param container: 
+        :param container:
             The container to delete. This can either be the name of the container,
             or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.models.ContainerProperties

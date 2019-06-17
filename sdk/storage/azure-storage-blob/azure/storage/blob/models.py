@@ -71,7 +71,7 @@ class DictMixin(object):
         return self.__dict__.update(*args, **kwargs)
 
     def keys(self):
-        return [k for k in self.__dict__.keys() if not k.startswith('_')]
+        return [k for k in self.__dict__ if not k.startswith('_')]
 
     def values(self):
         return [v for k, v in self.__dict__.items() if not k.startswith('_')]
