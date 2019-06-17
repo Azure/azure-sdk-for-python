@@ -27,7 +27,7 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, AsyncHT
         :return: The pipeline response object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        if self._cached_token_expired:
+        if self._need_new_token:
             # TODO: a race condition exists here
             # Given the default connection timeout is 100s, problems are unlikely, but if
             # they do arise we can forego caching here (credentials have a thread-safe cache)

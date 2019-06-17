@@ -46,7 +46,7 @@ class _BearerTokenCredentialPolicyBase(object):
         headers["Authorization"] = "Bearer {}".format(token)
 
     @property
-    def _cached_token_expired(self):
+    def _need_new_token(self):
         # type: () -> bool
         return not self._token or self._token.expires_on - time.time() < 300
 
@@ -68,7 +68,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         :return: The pipeline response object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        if self._cached_token_expired:
+        if self._need_new_token:
             self._token = self._credential.get_token(*self._scopes)
         self._update_headers(request.http_request.headers, self._token.token)  # type: ignore
         return self.next.send(request)
