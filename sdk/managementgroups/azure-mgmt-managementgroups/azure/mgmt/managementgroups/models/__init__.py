@@ -22,6 +22,8 @@ try:
     from .management_group_child_info_py3 import ManagementGroupChildInfo
     from .management_group_py3 import ManagementGroup
     from .operation_results_py3 import OperationResults
+    from .descendant_parent_group_info_py3 import DescendantParentGroupInfo
+    from .descendant_info_py3 import DescendantInfo
     from .entity_parent_group_info_py3 import EntityParentGroupInfo
     from .entity_info_py3 import EntityInfo
     from .entity_hierarchy_item_py3 import EntityHierarchyItem
@@ -44,6 +46,8 @@ except (SyntaxError, ImportError):
     from .management_group_child_info import ManagementGroupChildInfo
     from .management_group import ManagementGroup
     from .operation_results import OperationResults
+    from .descendant_parent_group_info import DescendantParentGroupInfo
+    from .descendant_info import DescendantInfo
     from .entity_parent_group_info import EntityParentGroupInfo
     from .entity_info import EntityInfo
     from .entity_hierarchy_item import EntityHierarchyItem
@@ -54,6 +58,7 @@ except (SyntaxError, ImportError):
     from .create_management_group_request import CreateManagementGroupRequest
     from .check_name_availability_request import CheckNameAvailabilityRequest
 from .management_group_info_paged import ManagementGroupInfoPaged
+from .descendant_info_paged import DescendantInfoPaged
 from .operation_paged import OperationPaged
 from .entity_info_paged import EntityInfoPaged
 from .management_groups_api_enums import (
@@ -75,6 +80,8 @@ __all__ = [
     'ManagementGroupChildInfo',
     'ManagementGroup',
     'OperationResults',
+    'DescendantParentGroupInfo',
+    'DescendantInfo',
     'EntityParentGroupInfo',
     'EntityInfo',
     'EntityHierarchyItem',
@@ -85,6 +92,7 @@ __all__ = [
     'CreateManagementGroupRequest',
     'CheckNameAvailabilityRequest',
     'ManagementGroupInfoPaged',
+    'DescendantInfoPaged',
     'OperationPaged',
     'EntityInfoPaged',
     'Reason',
