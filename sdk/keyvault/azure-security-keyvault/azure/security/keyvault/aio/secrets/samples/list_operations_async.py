@@ -52,18 +52,19 @@ async def run_sample():
         print("\n2. List secrets from the Key Vault")
         secrets = client.list_secrets()
         async for secret in secrets:
-            print("Secret with name '{0}' was found.".format(secret.id))
+            retrieved_secret = client.get_secret(secret.name)            
+            print("Secret with name '{0}' with value {1} was found.".format(retrieved_secret.name, retrieved_secret.value))
 
         # The bank account password got updated, so you want to update the secret in Key Vault to ensure it reflects the new password.
         # Calling set_secret on an existing secret creates a new version of the secret in the Key Vault with the new value.
         updated_secret = await client.set_secret(bank_secret.name, "newSecretValue")
-        print("Secret with name '{0}' was updated with new value {1}".format(updated_secret.name, updated_secret.value))
+        print("Secret with name '{0}' was updated with new value '{1}'".format(updated_secret.name, updated_secret.value))
 
         # You need to check all the different values your bank account password secret had previously. Lets print all the versions of this secret.
-        print("\n3. List versions of the secret using its id")
+        print("\n3. List versions of the secret using its name")
         secret_versions = client.list_secret_versions(bank_secret.name)
-        async for secret_version in secret_versions:
-            print("Bank Secret version: '{0}'".format(secret_version.version))
+        async for secret in secret_versions:
+            print("Bank Secret with name '{0}' has version: '{1}'".format(secret.name, secret.version))
 
         # The bank acoount and storage accounts got closed. Let's delete bank and storage accounts secrets.
         await client.delete_secret(bank_secret.name)

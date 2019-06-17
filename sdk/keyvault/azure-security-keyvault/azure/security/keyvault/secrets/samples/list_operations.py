@@ -63,7 +63,7 @@ def run_sample():
         )
 
         # You need to check all the different values your bank account password secret had previously. Lets print all the versions of this secret.
-        print("\n3. List versions of the secret using its id")
+        print("\n3. List versions of the secret using its name")
         secret_versions = client.list_secret_versions(bank_secret.name)
         for secret_version in secret_versions:
             print("Bank Secret with name '{0}' has version: '{1}'.".format(secret_version.name, secret_version.version))
