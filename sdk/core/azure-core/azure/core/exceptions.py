@@ -110,7 +110,7 @@ class HttpResponseError(AzureError):
         if response:
             self.reason = response.reason
             self.status_code = response.status_code
-        message = message or "Operation returned an invalid status code '{}'".format(self.reason)
+        message = message or "Operation returned an invalid status '{}'".format(self.reason)
         try:
             try:
                 if self.error.error.code or self.error.error.message:
