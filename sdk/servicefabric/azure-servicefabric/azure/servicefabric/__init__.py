@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .service_fabric_client_ap_is import ServiceFabricClientAPIs
-from .version import VERSION
+from ._configuration import ServiceFabricClientAPIsConfiguration
+from ._service_fabric_client_ap_is import ServiceFabricClientAPIs
+__all__ = ['ServiceFabricClientAPIs', 'ServiceFabricClientAPIsConfiguration']
 
-__all__ = ['ServiceFabricClientAPIs']
+from .version import VERSION
 
 __version__ = VERSION
 
