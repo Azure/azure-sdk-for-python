@@ -19,11 +19,11 @@ class TeradataPartitionSettings(Model):
      will be used for proceeding range or hash partitioning. Type: string (or
      Expression with resultType string).
     :type partition_column_name: object
-    :param partition_upper_bound: The maximum value of column specificed in
+    :param partition_upper_bound: The maximum value of column specified in
      partitionColumnName that will be used for proceeding range partitioning.
      Type: string (or Expression with resultType string).
     :type partition_upper_bound: object
-    :param partition_lower_bound: The minimum value of column specificed in
+    :param partition_lower_bound: The minimum value of column specified in
      partitionColumnName that will be used for proceeding range partitioning.
      Type: string (or Expression with resultType string).
     :type partition_lower_bound: object
