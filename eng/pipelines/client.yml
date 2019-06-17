@@ -1,0 +1,18 @@
+trigger: none
+
+variables:
+  - template: templates/variables/globals.yml
+  - name: ReleaseTag
+    value: 'RELEASE_CANDIDATE'
+  - name: TestMarkArgument
+    value: 'not cosmosEmulator'
+
+jobs:
+  - template: templates/jobs/archetype-sdk-client.yml
+    parameters:
+      ServiceDirectory: ''
+      TestMarkArgument: $(TestMarkArgument)
+      BeforeBuildJobPublishBuildArtifacts:
+        - script: 'echo "##vso[build.addbuildtag]$(ReleaseTag)"'
+          displayName: 'Tag The Build'
+          condition: eq(variables['CandidateForRelease'], True)
