@@ -4292,6 +4292,10 @@ class VirtualMachineInstanceView(Model):
     :param os_version: The version of Operating System running on the virtual
      machine.
     :type os_version: str
+    :param hyper_vgeneration: Specifies the HyperVGeneration Type associated
+     with a resource. Possible values include: 'V1', 'V2'
+    :type hyper_vgeneration: str or
+     ~azure.mgmt.compute.v2019_03_01.models.HyperVGenerationType
     :param rdp_thumb_print: The Remote desktop certificate thumbprint.
     :type rdp_thumb_print: str
     :param vm_agent: The VM Agent running on the virtual machine.
@@ -4323,6 +4327,7 @@ class VirtualMachineInstanceView(Model):
         'computer_name': {'key': 'computerName', 'type': 'str'},
         'os_name': {'key': 'osName', 'type': 'str'},
         'os_version': {'key': 'osVersion', 'type': 'str'},
+        'hyper_vgeneration': {'key': 'hyperVGeneration', 'type': 'str'},
         'rdp_thumb_print': {'key': 'rdpThumbPrint', 'type': 'str'},
         'vm_agent': {'key': 'vmAgent', 'type': 'VirtualMachineAgentInstanceView'},
         'maintenance_redeploy_status': {'key': 'maintenanceRedeployStatus', 'type': 'MaintenanceRedeployStatus'},
@@ -4332,13 +4337,14 @@ class VirtualMachineInstanceView(Model):
         'statuses': {'key': 'statuses', 'type': '[InstanceViewStatus]'},
     }
 
-    def __init__(self, *, platform_update_domain: int=None, platform_fault_domain: int=None, computer_name: str=None, os_name: str=None, os_version: str=None, rdp_thumb_print: str=None, vm_agent=None, maintenance_redeploy_status=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None, **kwargs) -> None:
+    def __init__(self, *, platform_update_domain: int=None, platform_fault_domain: int=None, computer_name: str=None, os_name: str=None, os_version: str=None, hyper_vgeneration=None, rdp_thumb_print: str=None, vm_agent=None, maintenance_redeploy_status=None, disks=None, extensions=None, boot_diagnostics=None, statuses=None, **kwargs) -> None:
         super(VirtualMachineInstanceView, self).__init__(**kwargs)
         self.platform_update_domain = platform_update_domain
         self.platform_fault_domain = platform_fault_domain
         self.computer_name = computer_name
         self.os_name = os_name
         self.os_version = os_version
+        self.hyper_vgeneration = hyper_vgeneration
         self.rdp_thumb_print = rdp_thumb_print
         self.vm_agent = vm_agent
         self.maintenance_redeploy_status = maintenance_redeploy_status

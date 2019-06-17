@@ -278,6 +278,12 @@ class MaintenanceOperationResultCodeTypes(str, Enum):
     maintenance_completed = "MaintenanceCompleted"
 
 
+class HyperVGenerationType(str, Enum):
+
+    v1 = "V1"
+    v2 = "V2"
+
+
 class UpgradeMode(str, Enum):
 
     automatic = "Automatic"
