@@ -123,6 +123,7 @@ class Architecture(str, Enum):
 
     amd64 = "amd64"
     x86 = "x86"
+    three_eight_six = "386"
     arm = "arm"
     arm64 = "arm64"
 
