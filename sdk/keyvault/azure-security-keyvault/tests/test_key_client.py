@@ -275,7 +275,7 @@ class KeyClientTests(KeyVaultTestCase):
             self.assertIsNotNone(deleted_key.recovery_id)
 
         # validate all the deleted keys are returned by list_deleted_keys
-        self._validate_key_list(list(client.list_deleted_keys()), expected)
+        self._validate_key_list(client.list_deleted_keys(), expected)
 
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
