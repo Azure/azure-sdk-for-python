@@ -7,7 +7,7 @@ trigger:
     - master
   paths:
     include:
-    - sdk/eventgrid/
+    - sdk/devtestlabs/
 
 pr:
   branches:
@@ -15,9 +15,9 @@ pr:
     - master
   paths:
     include:
-    - sdk/eventgrid/
+    - sdk/devtestlabs/
 
 jobs:
 - template: ../../eng/pipelines/templates/jobs/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: eventgrid
+    ServiceDirectory: devtestlabs
