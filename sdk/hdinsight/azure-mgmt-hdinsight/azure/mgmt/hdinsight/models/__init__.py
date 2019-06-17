@@ -57,6 +57,11 @@ try:
     from .localized_name_py3 import LocalizedName
     from .usage_py3 import Usage
     from .usages_list_result_py3 import UsagesListResult
+    from .vm_size_compatibility_filter_v2_py3 import VmSizeCompatibilityFilterV2
+    from .billing_meters_py3 import BillingMeters
+    from .disk_billing_meters_py3 import DiskBillingMeters
+    from .billing_resources_py3 import BillingResources
+    from .billing_response_list_result_py3 import BillingResponseListResult
     from .cluster_configurations_py3 import ClusterConfigurations
     from .extension_py3 import Extension
     from .cluster_monitoring_response_py3 import ClusterMonitoringResponse
@@ -112,6 +117,11 @@ except (SyntaxError, ImportError):
     from .localized_name import LocalizedName
     from .usage import Usage
     from .usages_list_result import UsagesListResult
+    from .vm_size_compatibility_filter_v2 import VmSizeCompatibilityFilterV2
+    from .billing_meters import BillingMeters
+    from .disk_billing_meters import DiskBillingMeters
+    from .billing_resources import BillingResources
+    from .billing_response_list_result import BillingResponseListResult
     from .cluster_configurations import ClusterConfigurations
     from .extension import Extension
     from .cluster_monitoring_response import ClusterMonitoringResponse
@@ -181,6 +191,11 @@ __all__ = [
     'LocalizedName',
     'Usage',
     'UsagesListResult',
+    'VmSizeCompatibilityFilterV2',
+    'BillingMeters',
+    'DiskBillingMeters',
+    'BillingResources',
+    'BillingResponseListResult',
     'ClusterConfigurations',
     'Extension',
     'ClusterMonitoringResponse',
