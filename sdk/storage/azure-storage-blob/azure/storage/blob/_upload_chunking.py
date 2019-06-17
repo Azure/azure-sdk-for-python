@@ -11,10 +11,7 @@ from threading import Lock
 from math import ceil
 
 import six
-from azure.core.exceptions import (
-    ResourceExistsError,
-    ResourceModifiedError,
-    ResourceNotFoundError)
+from azure.core.exceptions import ResourceExistsError, ResourceModifiedError
 
 from ._utils import (
     encode_base64,
@@ -52,7 +49,7 @@ def _convert_mod_error(error):
     raise overwrite_error
 
 
-def upload_block_blob(
+def upload_block_blob(  # pylint: disable=too-many-locals
         client,
         data,
         stream,
@@ -251,7 +248,7 @@ def _create_append_blob(
         cls=return_response_headers,
         headers=headers,
         **kwargs)
-    return None #get_modification_conditions(if_match=created['etag'])
+    get_modification_conditions(if_match=created['etag'])  # TODO: Not working...
 
 
 def upload_append_blob(
@@ -278,7 +275,7 @@ def upload_append_blob(
             append_position=None)
         try:
             if overwrite:
-                mod_conditions = _create_append_blob(
+                _create_append_blob(
                     client,
                     blob_headers,
                     timeout,
@@ -310,7 +307,7 @@ def upload_append_blob(
                 except UnsupportedOperation:
                     # if body is not seekable, then retry would not work
                     raise error
-            mod_conditions = _create_append_blob(
+            _create_append_blob(
                 client,
                 blob_headers,
                 timeout,

@@ -44,6 +44,7 @@ from ._deserialize import deserialize_blob_properties
 from ._generated.models import (
     BlobHTTPHeaders,
     BlockLookupList,
+    AppendPositionAccessConditions,
     StorageErrorException)
 from ._download_chunking import StorageStreamDownloader
 from ._upload_chunking import (
@@ -262,7 +263,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def upload_blob(
+    def upload_blob(  # pylint: disable=too-many-locals
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             overwrite=False,  # type: bool
