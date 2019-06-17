@@ -16,9 +16,8 @@ from azure.core.exceptions import HttpResponseError
 # 3. Microsoft Azure Identity package -
 #    https://pypi.python.org/pypi/azure-identity/
 #
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, YOUR_VAULT_URL. [How to do this](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets#createget-credentials)
 #
-# 5. In the code, replace YOUR_VAULT_URL with your vault url.
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic recover and purge operations on a vault(secret) resource for Azure Key Vault
 #
@@ -48,18 +47,18 @@ def run_sample():
 
         # The storage account was closed, need to delete its credentials from the Key Vault.
         print("\n2. Delete a Secret")
-        secret = client.delete_secret("bankSecretName")
+        secret = client.delete_secret(bank_secret.name)
         time.sleep(20)
         print("Secret with name '{0}' was deleted on date {1}.".format(secret.name, secret.deleted_date))
 
         # We accidentally deleted the bank account secret. Let's recover it.
         # A deleted secret can only be recovered if the Key Vault is soft-delete enabled.
         print("\n3. Recover Deleted  Secret")
-        recovered_secret = client.recover_deleted_secret("bankSecretName")
+        recovered_secret = client.recover_deleted_secret(bank_secret.name)
         print("Recovered Secret with name '{0}'.".format(recovered_secret.name))
 
-        # Let's delete storage account carefully.
-        client.delete_secret("storageSecretName")
+        # Let's delete storage account now.
+        client.delete_secret(storage_secret.name)
 
         # To ensure secret is deleted on the server side.
         print("\nDeleting Secret...")
@@ -68,7 +67,7 @@ def run_sample():
         # To ensure permanent deletion, we might need to purge the secret.
         # If the keyvault is soft-delete enabled, then for permanent deletion deleted secret needs to be purged.
         print("\n4. Purge Deleted Secret")
-        client.purge_deleted_secret("bankSecretName")
+        client.purge_deleted_secret(bank_secret.name)
         print("Secret has been permanently deleted.")
 
     except HttpResponseError as e:

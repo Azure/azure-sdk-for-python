@@ -15,9 +15,8 @@ from azure.core.exceptions import HttpResponseError
 # 3. Microsoft Azure Identity package -
 #    https://pypi.python.org/pypi/azure-identity/
 #
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, YOUR_VAULT_URL. [How to do this](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets#createget-credentials)
 #
-# 5. In the code, replace YOUR_VAULT_URL with your vault url.
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic backup and restore operations on a vault(secret) resource for Azure Key Vault
 #
@@ -48,12 +47,12 @@ def run_sample():
         # Backups are good to have, if in case secrets gets deleted accidentally.
         # For long term storage, it is ideal to write the backup to a file.
         print("\n2. Create a backup for an existing Secret")
-        secret_backup = client.backup_secret("secretName")
+        secret_backup = client.backup_secret(secret.name)
         print("Backup created for secret with name '{0}'.".format(secret.name))
 
         # The storage account secret is no longer in use, so you delete it.
         # If the vault is soft-delete enabled, then you need to purge the secret as well, for permanent deletion.
-        client.delete_secret("secretName")
+        client.delete_secret(secret.name)
 
         # To ensure secret is deleted on the server side.
         print("\nDeleting secret...")

@@ -16,9 +16,8 @@ from azure.core.exceptions import HttpResponseError
 # 3. Microsoft Azure Identity package -
 #    https://pypi.python.org/pypi/azure-identity/
 #
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, YOUR_VAULT_URL. [How to do this](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets#createget-credentials)
 #
-# 5. In the code, replace YOUR_VAULT_URL with your vault url.
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic CRUD operations on a vault(secret) resource for Azure Key Vault
 #
@@ -50,7 +49,7 @@ def run_sample():
 
         # Let's get the bank secret using its name
         print("\n2. Get a Secret by name")
-        bank_secret = client.get_secret("secretName")
+        bank_secret = client.get_secret(secret.name)
         print("Secret with name '{0}' was found with value {1}.".format(bank_secret.name, bank_secret.value))
 
         # After one year, the bank account is still active, we need to update the expiry time of the secret.
@@ -58,23 +57,19 @@ def run_sample():
         # the value of the secret.
         print("\n3. Update a Secret by name")
         expires = bank_secret.expires + datetime.timedelta(days=365)
-        secret = client.update_secret("secretName", expires=expires)
-        # To ensure secret is updated on the server side.
-        time.sleep(5)
-        print("Secret with name '{0}' was updated on date {1}".format(secret.name, secret.updated))
-        print("Secret with name '{0}' was updated to expire on {1}".format(secret.name, secret.expires))
+        updated_secret = client.update_secret(secret.name, expires=expires)
+        print("Secret with name '{0}' was updated on date {1}".format(secret.name, updated_secret.updated))
+        print("Secret with name '{0}' was updated to expire on {1}".format(secret.name, updated_secret.expires))
 
         # Bank forced a password update for security purposes. Let's change the value of the secret in the Key Vault.
         # To achieve this, we need to create a new version of the secret in the Key Vault. The update operation cannot
         # change the value of the secret.
-        secret = client.set_secret("secretName", "newSecretValue")
-        # To ensure secret is updated on the server side.
-        time.sleep(5)
+        secret = client.set_secret(secret.name, "newSecretValue")
         print("Secret with name '{0}' created with value {1}".format(secret.name, secret.value))
 
         # The bank account was closed, need to delete its credentials from the Key Vault.
         print("\n4. Delete Secret")
-        deleted_secret = client.delete_secret("secretName")
+        deleted_secret = client.delete_secret(secret.name)
         print("Deleting Secret..")
         print("Secret with name '{0}' was deleted on {1}".format(deleted_secret.name, deleted_secret.deleted_date))
 
@@ -83,7 +78,7 @@ def run_sample():
 
         # If the Key Vault has soft-delete enabled, then for permanent deletion deleted secret needs to be purged.
         print("\n5. Purge Secret")
-        client.purge_deleted_secret("secretName")
+        client.purge_deleted_secret(secret.name)
         print("Secret has been permanently deleted.")
 
     except HttpResponseError as e:

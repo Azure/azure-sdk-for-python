@@ -1,4 +1,3 @@
-import datetime
 import asyncio
 from azure.security.keyvault.aio import SecretClient
 from azure.identity import AsyncDefaultAzureCredential
@@ -16,9 +15,8 @@ from azure.core.exceptions import HttpResponseError
 # 3. Microsoft Azure Identity package -
 #    https://pypi.python.org/pypi/azure-identity/
 #
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, YOUR_VAULT_URL. [How to do this](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-security-keyvault/azure/security/keyvault/secrets#createget-credentials)
 #
-# 5. In the code, replace YOUR_VAULT_URL with your vault url.
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic list operations on a vault(secret) resource for Azure Key Vault
 #
@@ -58,22 +56,22 @@ async def run_sample():
 
         # The bank account password got updated, so you want to update the secret in Key Vault to ensure it reflects the new password.
         # Calling set_secret on an existing secret creates a new version of the secret in the Key Vault with the new value.
-        updated_secret = await client.set_secret("bankSecretName", "newSecretValue")
+        updated_secret = await client.set_secret(bank_secret.name, "newSecretValue")
         print("Secret with name '{0}' was updated with new value {1}".format(updated_secret.name, updated_secret.value))
 
         # You need to check all the different values your bank account password secret had previously. Lets print all the versions of this secret.
         print("\n3. List versions of the secret using its id")
-        secret_versions = client.list_secret_versions("bankSecretName")
+        secret_versions = client.list_secret_versions(bank_secret.name)
         async for secret_version in secret_versions:
             print("Bank Secret version: '{0}'".format(secret_version.version))
 
         # The bank acoount and storage accounts got closed. Let's delete bank and storage accounts secrets.
-        await client.delete_secret("bankSecretName")
-        await client.delete_secret("storageSecretName")
+        await client.delete_secret(bank_secret.name)
+        await client.delete_secret(storage_secret.name)
 
         # To ensure secret is deleted on the server side.
         print("\nDeleting secrets...")
-        await asyncio.sleep(30)
+        await asyncio.sleep(20)
 
         # You can list all the deleted and non-purged secrets, assuming Key Vault is soft-delete enabled.
         print("\n3. List deleted secrets from the Key Vault")
