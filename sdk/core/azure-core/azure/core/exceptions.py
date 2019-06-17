@@ -105,10 +105,12 @@ class HttpResponseError(AzureError):
 
     def __init__(self, message=None, response=None, **kwargs):
         self.reason = None
+        self.status_code = None
         self.response = response
         if response:
             self.reason = response.reason
-        message = "Operation returned an invalid status code '{}'".format(self.reason)
+            self.status_code = response.status_code
+        message = message or "Operation returned an invalid status '{}'".format(self.reason)
         try:
             try:
                 if self.error.error.code or self.error.error.message:
@@ -119,7 +121,10 @@ class HttpResponseError(AzureError):
                 if self.error.message: #pylint: disable=no-member
                     message = self.error.message #pylint: disable=no-member
         except AttributeError:
-            pass
+            # Exception will only have an error if it has been deserialized from
+            # generated code. We should add the empty attribute if it's not present.
+            if not hasattr(self, 'error'):
+                self.error = None
         super(HttpResponseError, self).__init__(message=message, **kwargs)
 
 

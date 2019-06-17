@@ -29,6 +29,10 @@ import requests
 import datetime
 from enum import Enum
 import unittest
+try:
+    from io import BytesIO
+except ImportError:
+    from cStringIO import StringIO as BytesIO
 
 try:
     from unittest import mock
@@ -140,6 +144,25 @@ class TestClientRequest(unittest.TestCase):
 
         self.assertEqual(request.data, data)
         self.assertEqual(request.headers.get("Content-Length"), "15")
+
+    def test_request_stream(self):
+        request = HttpRequest("GET", "/")
+
+        data = b"Lots of dataaaa"
+        request.set_streamed_data_body(data)
+        self.assertEqual(request.data, data)
+
+        def data_gen():
+            for i in range(10):
+                yield i
+        data = data_gen()
+        request.set_streamed_data_body(data)
+        self.assertEqual(request.data, data)
+
+        data = BytesIO(b"Lots of dataaaa")
+        request.set_streamed_data_body(data)
+        self.assertEqual(request.data, data)
+
 
     def test_request_xml(self):
         request = HttpRequest("GET", "/")

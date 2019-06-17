@@ -30,8 +30,10 @@ import logging
 import os
 import time
 try:
+    binary_type = str
     from urlparse import urljoin, urlparse # type: ignore
 except ImportError:
+    binary_type = bytes
     from urllib.parse import urljoin, urlparse
 import xml.etree.ElementTree as ET
 
@@ -160,7 +162,8 @@ class HttpRequest(object):
 
         :param data: The request field data.
         """
-        if not any(hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]):
+        if not isinstance(data, binary_type) and \
+                not any(hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]):
             raise TypeError("A streamable data source must be an open file-like object or iterable.")
         self.data = data
         self.files = None
