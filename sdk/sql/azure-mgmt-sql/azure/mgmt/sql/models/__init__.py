@@ -163,6 +163,8 @@ try:
     from .server_vulnerability_assessment_py3 import ServerVulnerabilityAssessment
     from .instance_pool_py3 import InstancePool
     from .instance_pool_update_py3 import InstancePoolUpdate
+    from .name_py3 import Name
+    from .usage_py3 import Usage
 except (SyntaxError, ImportError):
     from .recoverable_database import RecoverableDatabase
     from .restorable_dropped_database import RestorableDroppedDatabase
@@ -317,6 +319,8 @@ except (SyntaxError, ImportError):
     from .server_vulnerability_assessment import ServerVulnerabilityAssessment
     from .instance_pool import InstancePool
     from .instance_pool_update import InstancePoolUpdate
+    from .name import Name
+    from .usage import Usage
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .server_paged import ServerPaged
@@ -383,6 +387,7 @@ from .recoverable_managed_database_paged import RecoverableManagedDatabasePaged
 from .managed_instance_vulnerability_assessment_paged import ManagedInstanceVulnerabilityAssessmentPaged
 from .server_vulnerability_assessment_paged import ServerVulnerabilityAssessmentPaged
 from .instance_pool_paged import InstancePoolPaged
+from .usage_paged import UsagePaged
 from .sql_management_client_enums import (
     CheckNameAvailabilityReason,
     ServerConnectionType,
@@ -621,6 +626,8 @@ __all__ = [
     'ServerVulnerabilityAssessment',
     'InstancePool',
     'InstancePoolUpdate',
+    'Name',
+    'Usage',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -687,6 +694,7 @@ __all__ = [
     'ManagedInstanceVulnerabilityAssessmentPaged',
     'ServerVulnerabilityAssessmentPaged',
     'InstancePoolPaged',
+    'UsagePaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',

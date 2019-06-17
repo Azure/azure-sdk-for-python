@@ -90,6 +90,7 @@ from .managed_instance_vulnerability_assessments_operations import ManagedInstan
 from .server_vulnerability_assessments_operations import ServerVulnerabilityAssessmentsOperations
 from .managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
 from .instance_pools_operations import InstancePoolsOperations
+from .usages_operations import UsagesOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -173,4 +174,5 @@ __all__ = [
     'ServerVulnerabilityAssessmentsOperations',
     'ManagedDatabaseSensitivityLabelsOperations',
     'InstancePoolsOperations',
+    'UsagesOperations',
 ]
