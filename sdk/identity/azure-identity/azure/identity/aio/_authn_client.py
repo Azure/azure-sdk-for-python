@@ -6,6 +6,7 @@
 from typing import Any, Dict, Iterable, Mapping, Optional
 
 from azure.core import Configuration
+from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import AsyncRetryPolicy, ContentDecodePolicy, HTTPPolicy, NetworkTraceLoggingPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport
@@ -39,7 +40,7 @@ class AsyncAuthnClient(AuthnClientBase):
         headers: Optional[Mapping[str, str]] = None,
         form_data: Optional[Mapping[str, str]] = None,
         params: Optional[Dict[str, str]] = None,
-    ) -> str:
+    ) -> AccessToken:
         request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
         response = await self._pipeline.run(request, stream=False)
         token = self._deserialize_and_cache_token(response, scopes)

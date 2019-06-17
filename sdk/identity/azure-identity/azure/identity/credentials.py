@@ -6,6 +6,7 @@
 import os
 
 from azure.core import Configuration
+from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
 
 from ._authn_client import AuthnClient
@@ -36,7 +37,7 @@ class ClientSecretCredential(ClientSecretCredentialBase):
         self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), config, **kwargs)
 
     def get_token(self, *scopes):
-        # type: (*str) -> str
+        # type (*str) -> AccessToken
         token = self._client.get_cached_token(scopes)
         if not token:
             data = dict(self._form_data, scope=" ".join(scopes))
@@ -53,7 +54,7 @@ class CertificateCredential(CertificateCredentialBase):
         super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
 
     def get_token(self, *scopes):
-        # type: (*str) -> str
+        # type (*str) -> AccessToken
         token = self._client.get_cached_token(scopes)
         if not token:
             data = dict(self._form_data, scope=" ".join(scopes))
@@ -84,7 +85,7 @@ class EnvironmentCredential:
             )
 
     def get_token(self, *scopes):
-        # type: (*str) -> str
+        # type (*str) -> AccessToken
         if not self._credential:
             message = "Missing environment settings. To authenticate with a client secret, set {}. To authenticate with a certificate, set {}.".format(
                 ", ".join(EnvironmentVariables.CLIENT_SECRET_VARS), ", ".join(EnvironmentVariables.CERT_VARS)
@@ -107,7 +108,7 @@ class ManagedIdentityCredential(object):
         pass
 
     def get_token(self, *scopes):
-        # type: (*str) -> str
+        # type (*str) -> AccessToken
         pass
 
 
@@ -121,7 +122,7 @@ class TokenCredentialChain(object):
         self._credentials = credentials
 
     def get_token(self, *scopes):
-        # type: (*str) -> str
+        # type (*str) -> AccessToken
         """Attempts to get a token from each credential, in order, returning the first token.
            If no token is acquired, raises an exception listing error messages.
         """
