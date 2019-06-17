@@ -28,10 +28,9 @@ import sys
 from azure.core.configuration import Configuration
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline_client import PipelineClient
-from azure.core.pipeline.policies import HeadersPolicy, RedirectPolicy
+from azure.core.pipeline.policies import RedirectPolicy
 from azure.core.pipeline.policies import UserAgentPolicy
-from azure.core.pipeline.policies import NetworkTraceLoggingPolicy
-from azure.core.pipeline.policies import ProxyPolicy, SansIOHTTPPolicy
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 
 def test_example_headers_policy():
@@ -41,6 +40,8 @@ def test_example_headers_policy():
     config.redirect_policy = RedirectPolicy()
 
     # [START headers_policy]
+    from azure.core.pipeline.policies import HeadersPolicy
+
     config.headers_policy = HeadersPolicy()
     config.headers_policy.add_header('CustomValue', 'Foo')
 
@@ -62,6 +63,8 @@ def test_example_user_agent_policy():
     config.redirect_policy = RedirectPolicy()
 
     # [START user_agent_policy]
+    from azure.core.pipeline.policies import UserAgentPolicy
+
     config.user_agent_policy = UserAgentPolicy()
 
     # The user-agent policy allows you to append a custom value to the header.
@@ -85,6 +88,7 @@ def test_example_network_trace_logging():
     config.redirect_policy = RedirectPolicy()
 
     # [START network_trace_logging_policy]
+    from azure.core.pipeline.policies import NetworkTraceLoggingPolicy
     import sys
     import logging
 
@@ -117,13 +121,16 @@ def test_example_network_trace_logging():
 def example_proxy_policy():
 
     # [START proxy_policy]
-    config = Configuration()
+    from azure.core.pipeline.policies import ProxyPolicy
 
+    config = Configuration()
     config.proxy_policy = ProxyPolicy()
 
-    # Examples
+    # Example
     config.proxy_policy.proxies = {'http': 'http://10.10.1.10:3148'}
-    config.proxy_policy.proxies = {'https': 'http://10.10.1.10:1180'}
+
+    # Use basic auth
+    config.proxy_policy.proxies = {'https': 'http://user:password@10.10.1.10:1180/'}
 
     # You can also configure proxies by setting the environment variables
     # HTTP_PROXY and HTTPS_PROXY.
