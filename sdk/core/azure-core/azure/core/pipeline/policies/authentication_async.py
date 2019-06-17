@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import time
+import threading
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
@@ -19,6 +19,10 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, AsyncHT
     :param str scopes: Lets you specify the type of access needed.
     """
 
+    def __init__(self, credential, *scopes, **kwargs):
+        super().__init__(credential, *scopes, **kwargs)
+        self._lock = threading.Lock()
+
     async def send(self, request: PipelineRequest) -> PipelineResponse:
         """Adds a bearer token Authorization header to request and sends request to next policy.
 
@@ -27,10 +31,8 @@ class AsyncBearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, AsyncHT
         :return: The pipeline response object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        if self._need_new_token:
-            # TODO: a race condition exists here
-            # Given the default connection timeout is 100s, problems are unlikely, but if
-            # they do arise we can forego caching here (credentials have a thread-safe cache)
-            self._token = await self._credential.get_token(*self._scopes)  # type: ignore
+        with self._lock:
+            if self._need_new_token:
+                self._token = await self._credential.get_token(*self._scopes)  # type: ignore
         self._update_headers(request.http_request.headers, self._token.token)  # type: ignore
         return await self.next.send(request)  # type: ignore
