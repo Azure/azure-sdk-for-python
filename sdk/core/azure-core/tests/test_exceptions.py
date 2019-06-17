@@ -62,8 +62,8 @@ class TestExceptions(object):
 
     def test_empty_httpresponse_error(self):
         error = HttpResponseError()
-        assert str(error) == "Operation returned an invalid status code 'None'"
-        assert error.message == "Operation returned an invalid status code 'None'"
+        assert str(error) == "Operation returned an invalid status 'None'"
+        assert error.message == "Operation returned an invalid status 'None'"
         assert error.response is None
         assert error.reason is None
         assert error.error is None
@@ -99,7 +99,7 @@ class TestExceptions(object):
         http_response = RequestsTransportResponse(None, response)
 
         error = HttpResponseError(response=http_response)
-        assert error.message == "Operation returned an invalid status code 'OK'"
+        assert error.message == "Operation returned an invalid status 'OK'"
         assert error.response is not None
         assert error.reason == 'OK'
         assert error.status_code == 200
