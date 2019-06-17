@@ -12,25 +12,32 @@
 from msrest.serialization import Model
 
 
-class QuotaUpdateParameters(Model):
-    """Quota update parameters.
+class UpdateWorkspaceQuotasResult(Model):
+    """The result of update workspace quota.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The list for update quota.
+    :ivar value: The list of workspace quota update result.
     :vartype value:
-     list[~azure.mgmt.machinelearningservices.models.QuotaBaseProperties]
+     list[~azure.mgmt.machinelearningservices.models.UpdateWorkspaceQuotas]
+    :ivar next_link: The URI to fetch the next page of workspace quota update
+     result. Call ListNext() with this to fetch the next page of Workspace
+     Quota update result.
+    :vartype next_link: str
     """
 
     _validation = {
         'value': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[QuotaBaseProperties]'},
+        'value': {'key': 'value', 'type': '[UpdateWorkspaceQuotas]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(QuotaUpdateParameters, self).__init__(**kwargs)
+    def __init__(self, **kwargs) -> None:
+        super(UpdateWorkspaceQuotasResult, self).__init__(**kwargs)
         self.value = None
+        self.next_link = None

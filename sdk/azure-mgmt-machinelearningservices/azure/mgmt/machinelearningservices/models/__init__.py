@@ -17,6 +17,7 @@ try:
     from .quota_base_properties_py3 import QuotaBaseProperties
     from .quota_update_parameters_py3 import QuotaUpdateParameters
     from .update_workspace_quotas_py3 import UpdateWorkspaceQuotas
+    from .update_workspace_quotas_result_py3 import UpdateWorkspaceQuotasResult
     from .resource_name_py3 import ResourceName
     from .resource_quota_py3 import ResourceQuota
     from .identity_py3 import Identity
@@ -54,6 +55,7 @@ except (SyntaxError, ImportError):
     from .quota_base_properties import QuotaBaseProperties
     from .quota_update_parameters import QuotaUpdateParameters
     from .update_workspace_quotas import UpdateWorkspaceQuotas
+    from .update_workspace_quotas_result import UpdateWorkspaceQuotasResult
     from .resource_name import ResourceName
     from .resource_quota import ResourceQuota
     from .identity import Identity
@@ -102,6 +104,7 @@ __all__ = [
     'QuotaBaseProperties',
     'QuotaUpdateParameters',
     'UpdateWorkspaceQuotas',
+    'UpdateWorkspaceQuotasResult',
     'ResourceName',
     'ResourceQuota',
     'Identity',

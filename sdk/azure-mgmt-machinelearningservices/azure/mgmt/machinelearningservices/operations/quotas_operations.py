@@ -80,7 +80,7 @@ class QuotasOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('UpdateWorkspaceQuotas', response)
+            deserialized = self._deserialize('UpdateWorkspaceQuotasResult', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -99,12 +99,13 @@ class QuotasOperations(object):
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns UpdateWorkspaceQuotas
-         or ClientRawResponse<UpdateWorkspaceQuotas> if raw==True
+        :return: An instance of LROPoller that returns
+         UpdateWorkspaceQuotasResult or
+         ClientRawResponse<UpdateWorkspaceQuotasResult> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.machinelearningservices.models.UpdateWorkspaceQuotas]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.machinelearningservices.models.UpdateWorkspaceQuotasResult]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.machinelearningservices.models.UpdateWorkspaceQuotas]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.machinelearningservices.models.UpdateWorkspaceQuotasResult]]
         :raises:
          :class:`MachineLearningServiceErrorException<azure.mgmt.machinelearningservices.models.MachineLearningServiceErrorException>`
         """
@@ -116,7 +117,7 @@ class QuotasOperations(object):
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('UpdateWorkspaceQuotas', response)
+            deserialized = self._deserialize('UpdateWorkspaceQuotasResult', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -179,7 +180,7 @@ class QuotasOperations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.post(url, query_parameters, header_parameters)
+            request = self._client.get(url, query_parameters, header_parameters)
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -198,4 +199,4 @@ class QuotasOperations(object):
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/listQuotas'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/Quotas'}

@@ -18,19 +18,19 @@ class QuotaUpdateParameters(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar properties: The properties for update quota.
-    :vartype properties:
+    :ivar value: The list for update quota.
+    :vartype value:
      list[~azure.mgmt.machinelearningservices.models.QuotaBaseProperties]
     """
 
     _validation = {
-        'properties': {'readonly': True},
+        'value': {'readonly': True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': '[QuotaBaseProperties]'},
+        'value': {'key': 'value', 'type': '[QuotaBaseProperties]'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(QuotaUpdateParameters, self).__init__(**kwargs)
-        self.properties = None
+        self.value = None
