@@ -126,7 +126,15 @@ class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse
 
 class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
-     asynchronous methods. Uses the third party trio event loop.
+    asynchronous methods. Uses the third party trio event loop.
+
+    Example:
+        .. literalinclude:: ../examples/examples_async.py
+            :start-after: [START trio]
+            :end-before: [END trio]
+            :language: python
+            :dedent: 4
+            :caption: Asynchronous transport with trio.
     """
     async def __aenter__(self):
         return super(TrioRequestsTransport, self).__enter__()
