@@ -32,7 +32,7 @@ if not version:
 
 with open('README.md') as f:
     readme = f.read()
-with open('HISTORY.rst') as f:
+with open('HISTORY.md') as f:
     history = f.read()
 
 exclude_packages = [
@@ -56,6 +56,7 @@ setup(
     version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + history,
+    long_description_content_type='text/markdown',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
